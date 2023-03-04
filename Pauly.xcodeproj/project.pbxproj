@@ -7,18 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C640C4AC29B1325E009668BF /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AB29B1325E009668BF /* QuizView.swift */; };
+		C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AD29B26FF1009668BF /* CalendarPageView.swift */; };
+		C640C4B029B29035009668BF /* LectureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AF29B29035009668BF /* LectureView.swift */; };
 		C695C01229A7E4F200D983E7 /* PaulyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695C01129A7E4F200D983E7 /* PaulyApp.swift */; };
 		C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695C01329A7E4F200D983E7 /* ContentView.swift */; };
 		C695C01629A7E4F600D983E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01529A7E4F600D983E7 /* Assets.xcassets */; };
 		C695C01929A7E4F600D983E7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */; };
+		C6FC4D3D29AA402A00F6ED3E /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FC4D3C29AA402A00F6ED3E /* Functions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C640C4AB29B1325E009668BF /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
+		C640C4AD29B26FF1009668BF /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CalendarPageView.swift; path = Pauly/CalendarPageView.swift; sourceTree = "<group>"; };
+		C640C4AF29B29035009668BF /* LectureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureView.swift; sourceTree = "<group>"; };
+		C692640329B011BF000F96B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C695C00E29A7E4F200D983E7 /* Pauly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pauly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C695C01129A7E4F200D983E7 /* PaulyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaulyApp.swift; sourceTree = "<group>"; };
 		C695C01329A7E4F200D983E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C695C01529A7E4F600D983E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		C6FC4D3C29AA402A00F6ED3E /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +44,8 @@
 		C695C00529A7E4F200D983E7 = {
 			isa = PBXGroup;
 			children = (
+				C640C4AF29B29035009668BF /* LectureView.swift */,
+				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
 				C695C01029A7E4F200D983E7 /* Pauly */,
 				C695C00F29A7E4F200D983E7 /* Products */,
 			);
@@ -51,8 +62,11 @@
 		C695C01029A7E4F200D983E7 /* Pauly */ = {
 			isa = PBXGroup;
 			children = (
+				C692640329B011BF000F96B9 /* Info.plist */,
 				C695C01129A7E4F200D983E7 /* PaulyApp.swift */,
 				C695C01329A7E4F200D983E7 /* ContentView.swift */,
+				C640C4AB29B1325E009668BF /* QuizView.swift */,
+				C6FC4D3C29AA402A00F6ED3E /* Functions.swift */,
 				C695C01529A7E4F600D983E7 /* Assets.xcassets */,
 				C695C01729A7E4F600D983E7 /* Preview Content */,
 			);
@@ -138,7 +152,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */,
+				C640C4AC29B1325E009668BF /* QuizView.swift in Sources */,
+				C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */,
 				C695C01229A7E4F200D983E7 /* PaulyApp.swift in Sources */,
+				C6FC4D3D29AA402A00F6ED3E /* Functions.swift in Sources */,
+				C640C4B029B29035009668BF /* LectureView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,13 +285,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pauly/Preview Content\"";
+				DEVELOPMENT_TEAM = SYV2CK2N9N;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pauly/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -295,13 +316,16 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pauly/Preview Content\"";
+				DEVELOPMENT_TEAM = SYV2CK2N9N;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Pauly/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
