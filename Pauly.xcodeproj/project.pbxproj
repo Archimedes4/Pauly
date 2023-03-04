@@ -19,7 +19,7 @@
 
 /* Begin PBXFileReference section */
 		C640C4AB29B1325E009668BF /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
-		C640C4AD29B26FF1009668BF /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CalendarPageView.swift; path = Pauly/CalendarPageView.swift; sourceTree = "<group>"; };
+		C640C4AD29B26FF1009668BF /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageView.swift; sourceTree = "<group>"; };
 		C640C4AF29B29035009668BF /* LectureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureView.swift; sourceTree = "<group>"; };
 		C692640329B011BF000F96B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C695C00E29A7E4F200D983E7 /* Pauly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pauly.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,8 +44,6 @@
 		C695C00529A7E4F200D983E7 = {
 			isa = PBXGroup;
 			children = (
-				C640C4AF29B29035009668BF /* LectureView.swift */,
-				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
 				C695C01029A7E4F200D983E7 /* Pauly */,
 				C695C00F29A7E4F200D983E7 /* Products */,
 			);
@@ -63,7 +61,9 @@
 			isa = PBXGroup;
 			children = (
 				C692640329B011BF000F96B9 /* Info.plist */,
+				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
 				C695C01129A7E4F200D983E7 /* PaulyApp.swift */,
+				C640C4AF29B29035009668BF /* LectureView.swift */,
 				C695C01329A7E4F200D983E7 /* ContentView.swift */,
 				C640C4AB29B1325E009668BF /* QuizView.swift */,
 				C6FC4D3C29AA402A00F6ED3E /* Functions.swift */,
