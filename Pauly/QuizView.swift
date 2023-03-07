@@ -8,24 +8,17 @@
 import Foundation
 import SwiftUI
 
-enum GradesEnum{
-    case Unselected
-    case Grade9
-    case Grade10
-    case Grade11
-    case Grade12
+enum GradesEnum: String, CaseIterable{
+    case Grade_9 = "Grade 9"
+    case Grade_10 = "Grade 10"
+    case Grade_11 = "Grade 11"
+    case Grade_12 = "Grade 12"
 }
 
 struct Course {
     let CourseName: String
-    let Grade: [Int]
-    let Teacher: String
+    let Teacher: [String]
 }
-
-let Grade11Coures = [
-    Course(CourseName: "Intro To Calculus and Advanced Math", Grade: [11, 12], Teacher: "Mr. Christopher Regeher"),
-    Course(CourseName: "Computer Science", Grade: [11], Teacher: "Mrs. Latimer")
-]
 
 struct FactoringBinomials: View{
     @Binding var SelectedMode: SelectedModeCalculusEnum
@@ -35,7 +28,7 @@ struct FactoringBinomials: View{
     var body: some View{
         VStack{
             Button("Back"){
-                SelectedMode = .Select
+                SelectedMode = .Home
             }
             Text(FactorDisplay)
                 .onAppear(){
@@ -132,22 +125,45 @@ struct FactoringBinomials: View{
 }
     
 enum SelectedModeCalculusEnum{
-    case Select
+    case Home
     case FactoringBinomials
     case Else
 }
 
-struct CalculusView: View{
-    @Binding var SelectedClass: Grade11Classes
-    @State var SelectedMode: SelectedModeCalculusEnum = .Select
+struct CourseView: View{
+    @Binding var ShowingSelectClassView: Bool
+    @Binding var SelectedCourse: Course
+    @State var SelectedMode: SelectedModeCalculusEnum = .Home
     var body: some View{
-        if SelectedMode == .Select{
-            Button("Back"){
-                SelectedClass = .SelectClass
-            }
-            Text("Calculus View")
-            Button("Factoring Binomials"){
-                SelectedMode = .FactoringBinomials
+        if SelectedMode == .Home{
+            VStack{
+                HStack{
+                    Button(){
+                        ShowingSelectClassView = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "chevron.backward")
+                                .padding(.leading)
+                            Text("Back")
+                        }
+                    }
+                    Spacer()
+                }
+                HStack{
+                    Text("\(SelectedCourse.CourseName)")
+                        .scaledToFit()
+                    Spacer()
+                }
+                HStack{
+                    ForEach(SelectedCourse.Teacher, id: \.self){ teacher in
+                        Text(teacher)
+                    }
+                    Spacer()
+                }
+                Button("Factoring Binomials"){
+                    SelectedMode = .FactoringBinomials
+                }
+                Spacer()
             }
         } else {
             if SelectedMode == .FactoringBinomials{
@@ -157,107 +173,146 @@ struct CalculusView: View{
     }
 }
 
-enum Grade9Classes{
-    case SelectClass
-    case SocialStudies
-    case English
-    case Religion
-    case Math
-    case French
-    case Gym
-}
-
-enum Grade11Classes{
-    case SelectClass
-    case ComputerScience
-    case Calculus
-    case English
-    case French
-    case Religion
-    case History
-    case Physics
-    case Chemistry
-    case Math
-}
-
-struct Grade11View: View{
-    @State var SelectedClass: Grade11Classes = .SelectClass
+struct CourseSelectionView: View{
+    @Binding var ShowingSelectionView: Bool
+    @State var AvaliableCourses: [Course] = []
+    @State var ShowingSelectClassView: Bool = true
     @State var ShowingErrorMessage: Bool = false
     @State var ErrorMessage = ""
+    @State var SelectedClass: GradesEnum
+    @State var SelectedCourse: Course = Course(CourseName: "Error", Teacher: ["Error"])
     var body: some View{
-        if SelectedClass == .SelectClass{
-            VStack{
-                Text("Select Class")
-                ForEach(Grade11Coures, id: \.CourseName) { Course in
-                    Button{
-                        SelectedClass = .Calculus
-                    } label: {
-                        HStack{
-                            Text(Course.CourseName)
-                            Text(Course.Teacher)
+        if ShowingSelectClassView{
+            if AvaliableCourses.count == 0{
+                ProgressView()
+                    .onAppear(){
+                        Task{
+                            var grade: Int = 9
+                            if SelectedClass == .Grade_9{
+                                grade = 9
+                            }
+                            if SelectedClass == .Grade_10{
+                                grade = 10
+                            }
+                            if SelectedClass == .Grade_11{
+                                grade = 11
+                            }
+                            if SelectedClass == .Grade_12{
+                                grade = 12
+                            }
+                            let response = try await Functions().LoadDataJsonEcoder(extensionvar: "Classes/\(grade)")
+                            print(response.result)
+                            if response.result == "Success"{
+                                for x in response.classes{
+                                    let CourseName: String = x.name
+                                    let Teachers: [String] = x.teachers
+                                    AvaliableCourses.append(Course(CourseName: CourseName, Teacher: Teachers))
+                                }
+                            } else {
+                                if response.result == "Invalid Parameter"{
+                                    ShowingErrorMessage = true
+                                    ErrorMessage = "Invalid Parameters"
+                                } else {
+                                    print(response)
+                                }
+                            }
                         }
                     }
-                }
-            }.onAppear(){
-                Task{
-                    let response = try await Functions().LoadDataJsonEcoder(extensionvar: "Classes/11")
-                    print(response.result)
-                    if response.result == "Success"{
-                        response.grade11ResponseClass
-                    } else {
-                        if response.result == "Invalid Parameter"{
-                            ShowingErrorMessage = true
-                            ErrorMessage = "Invalid Parameters"
-                        } else {
-                            print(response)
+            } else {
+                GeometryReader{ geo in
+                    VStack{
+                        HStack(){
+                            Button{
+                                ShowingSelectionView = true
+                            } label: {
+                                HStack{
+                                    Image(systemName: "chevron.backward")
+                                    Text("Back")
+                                }
+                            }.padding(.leading)
+                            Spacer()
+                            Text("Select \(SelectedClass.rawValue) Class")
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            
                         }
+                        List(AvaliableCourses, id: \.CourseName) { course in
+                            Button{
+                                ShowingSelectClassView = false
+                                SelectedCourse = course
+                            } label: {
+                                Text(course.CourseName)
+                            }.buttonStyle(.plain)
+                        }.background(Color.marron)
                     }
                 }
             }
+        } else {
+            CourseView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse)
         }
-        if SelectedClass == .Calculus{
-            CalculusView(SelectedClass: $SelectedClass)
+    }
+}
+
+struct GradeSelectionView: View{
+    @Binding var WindowMode: WindowSrceens
+    @Binding var SelectedUserGrade: GradesEnum
+    @Binding var ShowingSelectionView: Bool
+    var body: some View{
+        HStack(){
+            GeometryReader{ geo in
+                HStack{
+                    Spacer()
+                    VStack(){
+                        HStack{
+                            Button {
+                                WindowMode = .HomePage
+                            } label: {
+                                HStack {
+                                    Image(systemName: "chevron.backward")
+                                    Text("Back")
+                                }
+                            }
+                            Spacer()
+                        }.padding(.bottom)
+                        Text("Select Grade")
+                            .font(.system(size: 55))
+                            .padding(25)
+                        ForEach(GradesEnum.allCases, id: \.rawValue){ grade in
+                            Button{
+                                ShowingSelectionView = false
+                                SelectedUserGrade = grade
+                            } label: {
+                                ZStack{
+                                    Rectangle()
+                                        .foregroundColor(.white)
+                                        .frame(width: geo.frame(in: .global).width * 0.8, height: geo.frame(in: .global).height * 0.15)
+                                        .cornerRadius(15)
+                                    Text(grade.rawValue)
+                                        .foregroundColor(.black)
+                                }
+                            }.buttonStyle(.plain)
+                            .frame(width: geo.frame(in: .global).width * 0.8, height: geo.frame(in: .global).height * 0.15)
+                            .edgesIgnoringSafeArea(.all)
+                        }
+                        Spacer()
+                    }
+                    Spacer()
+                }.background(Color.marron)
+            }
         }
     }
 }
 
 struct QuizView: View{
     @Binding var WindowMode: WindowSrceens
-    @State var SelectedUserGrade: GradesEnum = .Unselected
+    @State var SelectedUserGrade: GradesEnum = .Grade_9
+    @State var ShowingSelectionView: Bool = true
     var body: some View{
-        if SelectedUserGrade == .Unselected{
-            VStack{
-                Button("Grade 9"){
-                    SelectedUserGrade = .Grade9
-                }
-                Button("Grade 10"){
-                    SelectedUserGrade = .Grade10
-                }
-                Button("Grade 11"){
-                    SelectedUserGrade = .Grade11
-                }
-                Button("Grade 12"){
-                    SelectedUserGrade = .Grade12
-                }
-            }
-        }
-        if SelectedUserGrade == .Grade9{
-            Button("Back"){
-                WindowMode = .HomePage
-            }
-        }
-        if SelectedUserGrade == .Grade10{
-            Button("Back"){
-                WindowMode = .HomePage
-            }
-        }
-        if SelectedUserGrade == .Grade11 {
-            Grade11View()
-        }
-        if SelectedUserGrade == .Grade12{
-            Button("Back"){
-                WindowMode = .HomePage
-            }
+        if ShowingSelectionView{
+            GradeSelectionView(WindowMode: $WindowMode, SelectedUserGrade: $SelectedUserGrade, ShowingSelectionView: $ShowingSelectionView)
+        } else {
+            CourseSelectionView(ShowingSelectionView: $ShowingSelectionView, SelectedClass: SelectedUserGrade)
         }
     }
 }

@@ -19,16 +19,10 @@ enum WindowSrceens{
     case NewUser
 }
 
-struct ChatHomePage: View{
-    @Binding var WindowMode: WindowSrceens
-    var body: some View{
-        Text("Chat Home Page")
-        Button("Back"){
-            WindowMode = .HomePage
-        }
-    }
+struct DateProperty: Codable{
+    let Date: Int
+    let ColorName: String
 }
-
 
 struct MonthView: View{
     let date: Date
@@ -40,6 +34,8 @@ struct MonthView: View{
         GridItem(.flexible(), spacing: 0),
         GridItem(.flexible(), spacing: 0)
     ]
+    @State var Data: [Datum] = []
+    @State var SelectedDates: [DateProperty] = []
     
     init() {
         date = Date()
@@ -94,10 +90,18 @@ struct MonthView: View{
                                         .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                         .border(Color.black)
                                 } else{
-                                    Rectangle()
-                                        .foregroundColor(.white)
-                                        .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
-                                        .border(Color.black)
+                                    if let index = SelectedDates.firstIndex(where: { $0.Date == textval }){
+                                        let var1: DateProperty = SelectedDates[index]
+                                        Rectangle()
+                                            .foregroundColor(Color(hexString: var1.ColorName))
+                                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
+                                            .border(Color.black)
+                                    } else{
+                                        Rectangle()
+                                            .foregroundColor(.white)
+                                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
+                                            .border(Color.black)
+                                    }
                                 }
                             }
                             VStack{
@@ -119,9 +123,126 @@ struct MonthView: View{
                     }.frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                 }
             }.padding(0)
+            .onAppear(){
+                let output = UserDefaults.standard.data(forKey: "SelectedDate1")
+                if output != nil{
+                    SelectedDates = try! JSONDecoder().decode([DateProperty].self, from: output!)
+                } else {
+                    UserDefaults.standard.set([], forKey: "SelectedDate1")
+                }
+                Task{
+                    let response = try await Functions().LoadDataCalendar(extensionvar: "Calendar/2023")
+                    var NewSelectedDate: [DateProperty] = []
+                    if response.result == "Success"{
+                        Data = response.data
+                        let index: Int = Int(Calendar.current.component(.month, from: Date()))
+                        for x in Data{
+                            if x.month == index{
+                                if x.value == 1{
+                                    NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#ce0909"))
+                                } else {
+                                    if x.value == 2{
+                                        NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#762e05"))
+                                    } else {
+                                        if x.value == 3{
+                                            NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#9309ce"))
+                                        } else {
+                                            if x.value == 4{
+                                                NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#05760e"))
+                                            } else {
+                                                if x.value == 5{
+                                                    NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#f6c72c"))
+                                                } else {
+                                                    if x.value == 6{
+                                                        NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#2c47f6"))
+                                                    } else {
+                                                        if x.value == 7{
+                                                            NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#f62cce"))
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                continue
+                            }
+                        }
+                        let saving = try JSONEncoder().encode(NewSelectedDate)
+                        UserDefaults.standard.set(saving, forKey: "SelectedDate1")
+                    } else {
+                        print("Error")
+                    }
+                }
+            }
         }
     }
 }
+
+//https://stackoverflow.com/questions/36341358/how-to-convert-uicolor-to-string-and-string-to-uicolor-using-swift#answer-62192394 Start
+extension Color {
+
+    init?(hexString: String) {
+
+        let rgbaData = getrgbaData(hexString: hexString)
+
+        if(rgbaData != nil){
+
+            self.init(
+                        .sRGB,
+                        red:     Double(rgbaData!.r),
+                        green:   Double(rgbaData!.g),
+                        blue:    Double(rgbaData!.b),
+                        opacity: Double(rgbaData!.a)
+                    )
+            return
+        }
+        return nil
+    }
+}
+private func getrgbaData(hexString: String) -> (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat)? {
+
+    var rgbaData : (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat)? = nil
+
+    if hexString.hasPrefix("#") {
+
+        let start = hexString.index(hexString.startIndex, offsetBy: 1)
+        let hexColor = String(hexString[start...]) // Swift 4
+
+        let scanner = Scanner(string: hexColor)
+        var hexNumber: UInt64 = 0
+
+        if scanner.scanHexInt64(&hexNumber) {
+
+            rgbaData = { // start of a closure expression that returns a Vehicle
+                switch hexColor.count {
+                case 8:
+
+                    return ( r: CGFloat((hexNumber & 0xff000000) >> 24) / 255,
+                             g: CGFloat((hexNumber & 0x00ff0000) >> 16) / 255,
+                             b: CGFloat((hexNumber & 0x0000ff00) >> 8)  / 255,
+                             a: CGFloat( hexNumber & 0x000000ff)        / 255
+                           )
+                case 6:
+
+                    return ( r: CGFloat((hexNumber & 0xff0000) >> 16) / 255,
+                             g: CGFloat((hexNumber & 0x00ff00) >> 8)  / 255,
+                             b: CGFloat((hexNumber & 0x0000ff))       / 255,
+                             a: 1.0
+                           )
+                default:
+                    return nil
+                }
+            }()
+
+        }
+    }
+
+    return rgbaData
+}
+
+//End
 
 struct InfiniteScroller<Content: View>: View {
     var contentWidth: CGFloat
@@ -247,7 +368,7 @@ struct HomePage: View{
                     }
                     .buttonStyle(.plain)
                     .border(.black)
-                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
+//                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                     Button(){
                         WindowMode = .LectureHomePage
                     } label: {
@@ -263,7 +384,7 @@ struct HomePage: View{
                     }
                     .buttonStyle(.plain)
                     .border(.black)
-                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
+//                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                 }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.25)
                 Button(){
                     WindowMode = .ChatHomePage
@@ -290,13 +411,15 @@ struct HomePage: View{
 
 struct ContentView: View {
     @State private var WindowMode: WindowSrceens = .PasswordWindow
+    @State var UsernameIn: String = ""
+    @State var GradeIn: Int = 8
     
     var body: some View {
         if WindowMode == .PasswordWindow{
-            PasswordView(WindowMode: $WindowMode)
+            PasswordView(WindowMode: $WindowMode, UsernameIn: $UsernameIn, GradeIn: $GradeIn)
         }
         if WindowMode == .NewUser{
-            CreateNewUserView(WindowMode: $WindowMode)
+            CreateNewUserView(WindowMode: $WindowMode, UsernameIn: $UsernameIn, GradeIn: $GradeIn)
         }
         if WindowMode == .HomePage{
             HomePage(WindowMode: $WindowMode)
@@ -311,13 +434,15 @@ struct ContentView: View {
             LetureHomePage(WindowMode: $WindowMode)
         }
         if WindowMode == .ChatHomePage{
-            ChatHomePage(WindowMode: $WindowMode)
+            ChatOverView(WindowMode: $WindowMode, Username: $UsernameIn)
         }
     }
 }
 
 struct CreateNewUserView: View{
     @Binding var WindowMode: WindowSrceens
+    @Binding var UsernameIn: String
+    @Binding var GradeIn: Int
     @State var Username: String = ""
     @State var Password: String = ""
     @State var ConfirmPassword: String = ""
@@ -326,6 +451,7 @@ struct CreateNewUserView: View{
     @State var ErrorMessage: String = ""
     @State var ShowingPopUpError: Bool = false
     
+    
     var body: some View{
         GeometryReader{ value in
             ZStack{
@@ -333,24 +459,29 @@ struct CreateNewUserView: View{
                     .foregroundColor(Color.marron)
                 VStack(spacing:0){
                     Text("Create New User")
+                        .font(.title)
                     ZStack{
                         Rectangle()
                             .foregroundColor(.white)
                             .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
                             .cornerRadius(15)
                         TextField("Username", text: $Username)
+                            .textContentType(.username)
                             .background(Color.white)
                             .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
+                            .foregroundColor(.black)
                     }.padding()
                     ZStack{
                         Rectangle()
                             .foregroundColor(.white)
                             .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
                             .cornerRadius(15)
-                        SecureField("Password", text: $Password)
+                        TextField("Password", text: $Password)
+                            .textContentType(.newPassword)
                             .background(Color.white)
                             .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
                             .cornerRadius(15)
+                            .foregroundColor(.black)
                     }.padding()
                     ZStack{
                         Rectangle()
@@ -358,9 +489,11 @@ struct CreateNewUserView: View{
                             .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
                             .cornerRadius(15)
                         SecureField("Confirm Password", text: $ConfirmPassword)
+                            .textContentType(.newPassword)
                             .background(Color.white)
                             .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
                             .cornerRadius(15)
+                            .foregroundColor(.black)
                     }.padding()
                     ZStack{
                         Rectangle()
@@ -371,6 +504,7 @@ struct CreateNewUserView: View{
                             .background(Color.white)
                             .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
                             .cornerRadius(15)
+                            .foregroundColor(.black)
                             .onSubmit {
                                 if Grade != "9" && Grade != "10" && Grade != "11" && Grade != "12"{
                                     ShowingPopUpError = true
@@ -384,13 +518,15 @@ struct CreateNewUserView: View{
                             .foregroundColor(.red)
                             .font(.caption)
                     }
-                    HStack(spacing: 0){
+                    HStack(){
                         Button(){
                             if Password == ConfirmPassword && ShowingPopUpError == false{
                                 Task{
-                                    let response = try await Functions().loadData(extensionvar: "CUsername/\(Username)/\(Password)")
+                                    let response = try await Functions().loadData(extensionvar: "CUsername/\(Username)/\(Password)/\(Grade)")
                                     print(response.result)
                                     if response.result == "Success"{
+                                        GradeIn = Int(Grade) ?? 8
+                                        UsernameIn = Username
                                         WindowMode = .HomePage
                                     } else {
                                         if response.result == "Invalid Parameter"{
@@ -409,27 +545,34 @@ struct CreateNewUserView: View{
                             ZStack{
                                 Rectangle()
                                     .foregroundColor(.white)
-                                    .frame(width: value.size.width * 0.4, height: value.size.height * 0.15, alignment: .center)
+                                    .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
                                     .cornerRadius(15)
                                 Text("Confirm")
-                            }.frame(width: value.size.width * 0.4, height: value.size.height * 0.15, alignment: .center)
+                                    .frame(alignment: .center)
+                                    .foregroundColor(.black)
+                            }
                         }.buttonStyle(.plain)
-                        .frame(width: value.size.width * 0.4, height: value.size.height * 0.15, alignment: .center)
+                        .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
                         .cornerRadius(15)
-                        
+                        Spacer()
                         Button{
                             WindowMode = .PasswordWindow
                         } label: {
                             ZStack{
                                 Rectangle()
                                     .foregroundColor(.white)
-                                    .frame(width: value.size.width * 0.4, height: value.size.height * 0.15, alignment: .center)
+                                    .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
                                     .cornerRadius(15)
                                 Text("Back")
+                                    .frame(alignment: .center)
+                                    .foregroundColor(.black)
                             }
-                        }.frame(width: value.size.width * 0.4, height: value.size.height * 0.15, alignment: .center)
-                    }.frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                    .cornerRadius(15)
+                        }
+                        .buttonStyle(.plain)
+                        .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
+                        .cornerRadius(15)
+                    }.padding(.top)
+                    .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
                 }
             }.edgesIgnoringSafeArea(.all)
         }
@@ -438,35 +581,79 @@ struct CreateNewUserView: View{
 
 struct PasswordView: View{
     @Binding var WindowMode: WindowSrceens
-    
+    @Binding var UsernameIn: String
+    @Binding var GradeIn: Int
     @State var Username: String = ""
     @State var Password: String = ""
     @State var ShowingErrorMessage: Bool = false
     @State var ErrorMessage: String = ""
     
     var body: some View {
-        ZStack{
-            Rectangle()
-                .foregroundColor(Color.marron)
-            VStack {
-                Text("Login")
-                Button("ByPass"){
-                    WindowMode = .HomePage
-                }
-                TextField("Username", text: $Username)
-                    .background(Color.white)
-                    .frame(minWidth: 50.0, idealWidth: 90.0, maxWidth: 120.0, minHeight: 50.0, idealHeight: 90.0, maxHeight: 120.0, alignment: .center)
-        
-                SecureField("Password", text: $Password)
-                    .background(Color.white)
-                    .frame(minWidth: 50.0, idealWidth: 90.0, maxWidth: 120.0, minHeight: 50.0, idealHeight: 90.0, maxHeight: 120.0, alignment: .center)
-                    .onSubmit {
+        GeometryReader{ value in
+            ZStack{
+                Rectangle()
+                    .foregroundColor(Color.marron)
+                VStack {
+                    Spacer()
+                    Text("Login")
+                    Button("ByPass"){
+                        GradeIn = 11
+                        UsernameIn = "Andrew"
+                        WindowMode = .HomePage
+                    }
+                    ZStack{
+                        Rectangle()
+                            .foregroundColor(.white)
+                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
+                            .cornerRadius(15)
+                        TextField("Username", text: $Username)
+                            .textContentType(.username)
+                            .keyboardType(.default)
+                            .foregroundColor(.black)
+                            .background(Color.white)
+                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
+                            .cornerRadius(15)
+                    }.padding()
+                    ZStack{
+                        Rectangle()
+                            .foregroundColor(.white)
+                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
+                            .cornerRadius(15)
+                        SecureField("Password", text: $Password)
+                            .textContentType(.password)
+                            .background(Color.white)
+                            .foregroundColor(.black)
+                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
+                            .cornerRadius(15)
+                            .onSubmit {
+                                Task{
+                                    let response = try await Functions().loadData(extensionvar: "Authenticate/\(Username)/\(Password)")
+                                    print(response.result)
+                                    if response.result == "Success"{
+                                        GradeIn = response.Grade ?? 8
+                                        UsernameIn = Username
+                                        WindowMode = .HomePage
+             
+                                    } else {
+                                        if response.result == "Invalid Parameter"{
+                                            ShowingErrorMessage = true
+                                            ErrorMessage = "Invalid Parameters"
+                                        } else {
+                                            print(response)
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                    Button(){
                         Task{
                             let response = try await Functions().loadData(extensionvar: "Authenticate/\(Username)/\(Password)")
                             print(response.result)
                             if response.result == "Success"{
+                                GradeIn = response.Grade ?? 8
+                                UsernameIn = Username
                                 WindowMode = .HomePage
-                                print("Here")
+                                
                             } else {
                                 if response.result == "Invalid Parameter"{
                                     ShowingErrorMessage = true
@@ -476,27 +663,33 @@ struct PasswordView: View{
                                 }
                             }
                         }
+                    } label: {
+                        Text("Login")
                     }
-                Button(){
-                    WindowMode = .NewUser
-                } label: {
-                    Text("Create New User")
+                    Button(){
+                        WindowMode = .NewUser
+                    } label: {
+                        Text("Create New User")
+                    }
+                    Spacer()
+                    Spacer()
+                    Spacer()
                 }
-            }
-            if ShowingErrorMessage {
-                ZStack{
-                    Rectangle()
-                        .foregroundColor(.white)
-                        .frame(width: 100, height: 100)
-                    VStack{
-                        Text(ErrorMessage)
-                        Button("Close Window"){
-                            ShowingErrorMessage = false
+                if ShowingErrorMessage {
+                    ZStack{
+                        Rectangle()
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: 100)
+                        VStack{
+                            Text(ErrorMessage)
+                            Button("Close Window"){
+                                ShowingErrorMessage = false
+                            }
                         }
                     }
                 }
-            }
-        }.edgesIgnoringSafeArea(.all)
+            }.edgesIgnoringSafeArea(.all)
+        }
     }
 }
 extension Color {

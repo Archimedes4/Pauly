@@ -10,6 +10,7 @@
 		C640C4AC29B1325E009668BF /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AB29B1325E009668BF /* QuizView.swift */; };
 		C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AD29B26FF1009668BF /* CalendarPageView.swift */; };
 		C640C4B029B29035009668BF /* LectureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AF29B29035009668BF /* LectureView.swift */; };
+		C640C4B829B45C52009668BF /* ChatHomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4B729B45C52009668BF /* ChatHomePage.swift */; };
 		C695C01229A7E4F200D983E7 /* PaulyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695C01129A7E4F200D983E7 /* PaulyApp.swift */; };
 		C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695C01329A7E4F200D983E7 /* ContentView.swift */; };
 		C695C01629A7E4F600D983E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01529A7E4F600D983E7 /* Assets.xcassets */; };
@@ -21,6 +22,8 @@
 		C640C4AB29B1325E009668BF /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
 		C640C4AD29B26FF1009668BF /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageView.swift; sourceTree = "<group>"; };
 		C640C4AF29B29035009668BF /* LectureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureView.swift; sourceTree = "<group>"; };
+		C640C4B529B433A8009668BF /* Pauly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pauly.entitlements; sourceTree = "<group>"; };
+		C640C4B729B45C52009668BF /* ChatHomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatHomePage.swift; sourceTree = "<group>"; };
 		C692640329B011BF000F96B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C695C00E29A7E4F200D983E7 /* Pauly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pauly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C695C01129A7E4F200D983E7 /* PaulyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaulyApp.swift; sourceTree = "<group>"; };
@@ -60,9 +63,11 @@
 		C695C01029A7E4F200D983E7 /* Pauly */ = {
 			isa = PBXGroup;
 			children = (
+				C640C4B529B433A8009668BF /* Pauly.entitlements */,
 				C692640329B011BF000F96B9 /* Info.plist */,
 				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
 				C695C01129A7E4F200D983E7 /* PaulyApp.swift */,
+				C640C4B729B45C52009668BF /* ChatHomePage.swift */,
 				C640C4AF29B29035009668BF /* LectureView.swift */,
 				C695C01329A7E4F200D983E7 /* ContentView.swift */,
 				C640C4AB29B1325E009668BF /* QuizView.swift */,
@@ -151,6 +156,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C640C4B829B45C52009668BF /* ChatHomePage.swift in Sources */,
 				C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */,
 				C640C4AC29B1325E009668BF /* QuizView.swift in Sources */,
 				C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */,
@@ -282,6 +288,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Pauly/Pauly.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pauly/Preview Content\"";
@@ -299,7 +306,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Archimedes4.Pauly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -313,6 +320,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Pauly/Pauly.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Pauly/Preview Content\"";
@@ -330,7 +338,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Archimedes4.Pauly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
