@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
+import MSAL
 
-enum WindowSrceens{
+public enum WindowSrceens{
     case PasswordWindow
     case TurorForm
     case TurtorChat
@@ -17,6 +18,7 @@ enum WindowSrceens{
     case QuizHomePage
     case Calendar
     case NewUser
+    case Profile
 }
 
 struct DateProperty: Codable{
@@ -182,7 +184,6 @@ struct MonthView: View{
 
 //https://stackoverflow.com/questions/36341358/how-to-convert-uicolor-to-string-and-string-to-uicolor-using-swift#answer-62192394 Start
 extension Color {
-
     init?(hexString: String) {
 
         let rgbaData = getrgbaData(hexString: hexString)
@@ -241,7 +242,6 @@ private func getrgbaData(hexString: String) -> (r: CGFloat, g: CGFloat, b: CGFlo
 
     return rgbaData
 }
-
 //End
 
 struct InfiniteScroller<Content: View>: View {
@@ -281,7 +281,7 @@ struct GeometryGetter: View {
     }
 }
 
-struct ColorView: View {
+struct SildingTileView: View {
     var size: CGFloat
     var text: String
     @Binding var Width: CGFloat
@@ -291,13 +291,12 @@ struct ColorView: View {
             VStack{
                 GeometryReader{ value in
                     Text(text)
-                        .font(.system(size: 80))
+                        .font(.custom("Chalkboard SE", size: 65))
                         .fixedSize(horizontal: true, vertical: true)
                         .edgesIgnoringSafeArea(.all)
-                        .background(GeometryGetter(rect: $Width))
                         .foregroundColor(.white)
                 }
-            }.frame(width: Width/2 ,height: size/4, alignment: .leading)
+            }.frame(width: Width/4 ,height: size/4, alignment: .leading)
             .edgesIgnoringSafeArea(.all)
         }
     }
@@ -307,7 +306,7 @@ struct HomePage: View{
     @Binding var WindowMode: WindowSrceens
     @State private var animationAmount = 1.0
     @State var width: CGFloat = 0.0
-    @State var ScrollText: String = "Today's Special Is Fish and Chips"
+    @State var ScrollText: String = "Today's Special Is Tomato Basil Linquine with Garlic Toast "
     @State var ShowingTextView: Bool = true
     var body: some View{
         GeometryReader{ geometry in
@@ -317,19 +316,25 @@ struct HomePage: View{
                 } label: {
                     if ShowingTextView{
                         Text(ScrollText)
+                            .font(.custom("Chalkboard SE", size: 65))
+                            .fixedSize(horizontal: true, vertical: true)
+                            .onAppear(){
+                                width = 0.0
+                            }
                             .background(GeometryGetter(rect: $width))
                             .onAppear(){
                                 ShowingTextView = false
                             }
-                    }
-                    let size = geometry.size.width
-                    InfiniteScroller(contentWidth: 2206.6666666666665) {
-                        HStack(spacing: 0) {
-                            ColorView(size: size, text: "Today's Special Is Fish and Chips ", Width: $width)
-                            ColorView(size: size, text: "Today's Special Is Fish and Chips ", Width: $width)
+                    } else {
+                        let size = geometry.size.width
+                        InfiniteScroller(contentWidth: 2206.6666666666665) {
+                            HStack(spacing: 0) {
+                                SildingTileView(size: size, text: ScrollText, Width: $width)
+                                SildingTileView(size: size, text: ScrollText, Width: $width)
+                            }
+                        }.onAppear(){
+                            print(width)
                         }
-                    }.onAppear(){
-                        print(width)
                     }
                 }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
                 Button(){
@@ -410,22 +415,32 @@ struct HomePage: View{
 }
 
 struct ContentView: View {
-    @State private var WindowMode: WindowSrceens = .PasswordWindow
+    @State private var WindowMode: WindowSrceens
     @State var UsernameIn: String = ""
     @State var GradeIn: Int = 8
+    @State var accountToken: String?
+    @State var MSALAccount: MSALAccount?
+    
+    init(WindowMode: WindowSrceens, accountToken: String? = nil, MSALAccountIn: MSALAccount? = nil) {
+        self.WindowMode = WindowMode
+        self.accountToken = accountToken
+        self.MSALAccount = MSALAccountIn
+    }
     
     var body: some View {
         if WindowMode == .PasswordWindow{
             PasswordView(WindowMode: $WindowMode, UsernameIn: $UsernameIn, GradeIn: $GradeIn)
+                .environment(\.colorScheme, .light)
         }
         if WindowMode == .NewUser{
             CreateNewUserView(WindowMode: $WindowMode, UsernameIn: $UsernameIn, GradeIn: $GradeIn)
+                .environment(\.colorScheme, .light)
         }
         if WindowMode == .HomePage{
             HomePage(WindowMode: $WindowMode)
         }
         if WindowMode == .QuizHomePage{
-            QuizView(WindowMode: $WindowMode)
+            QuizView(WindowMode: $WindowMode, Grade: $GradeIn)
         }
         if WindowMode == .Calendar{
             CalendarHomePage(WindowMode: $WindowMode)
@@ -434,8 +449,14 @@ struct ContentView: View {
             LetureHomePage(WindowMode: $WindowMode)
         }
         if WindowMode == .ChatHomePage{
-            ChatOverView(WindowMode: $WindowMode, Username: $UsernameIn)
+            ChatOverView(WindowMode: $WindowMode, Username: $UsernameIn, accessToken: $accountToken, MSALAccount: $MSALAccount)
         }
+    }
+}
+
+struct CreateNewUserSecondView: View{
+    var body: some View{
+        Text("Add Courses")
     }
 }
 
@@ -446,135 +467,187 @@ struct CreateNewUserView: View{
     @State var Username: String = ""
     @State var Password: String = ""
     @State var ConfirmPassword: String = ""
-    @State var Grade: String = ""
+    @State var SelectedGrade: String = "9"
     @State var ShowingErrorMessage: Bool = false
     @State var ErrorMessage: String = ""
-    @State var ShowingPopUpError: Bool = false
-    
+    @State var Grades: [String] = ["9", "10", "11", "12"]
     
     var body: some View{
         GeometryReader{ value in
-            ZStack{
-                Rectangle()
-                    .foregroundColor(Color.marron)
-                VStack(spacing:0){
+            ScrollView(.vertical, showsIndicators: false){
+                VStack{
                     Text("Create New User")
-                        .font(.title)
-                    ZStack{
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                        TextField("Username", text: $Username)
-                            .textContentType(.username)
-                            .background(Color.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .foregroundColor(.black)
-                    }.padding()
-                    ZStack{
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                        TextField("Password", text: $Password)
-                            .textContentType(.newPassword)
-                            .background(Color.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                            .foregroundColor(.black)
-                    }.padding()
-                    ZStack{
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                        SecureField("Confirm Password", text: $ConfirmPassword)
-                            .textContentType(.newPassword)
-                            .background(Color.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                            .foregroundColor(.black)
-                    }.padding()
-                    ZStack{
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                        TextField("Grade", text: $Grade)
-                            .background(Color.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                            .foregroundColor(.black)
-                            .onSubmit {
-                                if Grade != "9" && Grade != "10" && Grade != "11" && Grade != "12"{
-                                    ShowingPopUpError = true
-                                } else {
-                                    ShowingPopUpError = false
+                        .font(.custom("Chalkboard SE", size: 45.0))
+                        .padding(.bottom)
+                    Button{
+                        
+                    } label: {
+                        ZStack{
+                            TextField("", text: $Username)
+                                .multilineTextAlignment(.leading)
+                                .textContentType(.username)
+                                .keyboardType(.default)
+                                .placeholder(when: Username.isEmpty) {
+                                        Text("Username").foregroundColor(.black)
                                 }
-                            }
-                    }.padding()
-                    if ShowingPopUpError{
-                        Text("Please Enter A Valid Grade (9, 10, 11, 12)")
-                            .foregroundColor(.red)
-                            .font(.caption)
-                    }
-                    HStack(){
-                        Button(){
-                            if Password == ConfirmPassword && ShowingPopUpError == false{
-                                Task{
-                                    let response = try await Functions().loadData(extensionvar: "CUsername/\(Username)/\(Password)/\(Grade)")
-                                    print(response.result)
-                                    if response.result == "Success"{
-                                        GradeIn = Int(Grade) ?? 8
-                                        UsernameIn = Username
-                                        WindowMode = .HomePage
-                                    } else {
-                                        if response.result == "Invalid Parameter"{
-                                            ShowingErrorMessage = true
-                                            ErrorMessage = "Invalid Parameters"
+                                .background(Color.white)
+                                .frame(width: value.size.width * 0.7, height: value.size.height * 0.075, alignment: .leading)
+                                .cornerRadius(15)
+                                .padding()
+                        }.padding()
+                    }.background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    Button{
+                        
+                    } label: {
+                        ZStack{
+                            TextField("", text: $Password)
+                                .multilineTextAlignment(.leading)
+                                .textContentType(.newPassword)
+                                .keyboardType(.default)
+                                .placeholder(when: Username.isEmpty) {
+                                        Text("Password").foregroundColor(.black)
+                                }
+                                .background(Color.white)
+                                .frame(width: value.size.width * 0.7, height: value.size.height * 0.075, alignment: .leading)
+                                .cornerRadius(15)
+                                .padding()
+                        }.padding()
+                    }.background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding(.top)
+                    
+                    Button{
+                        
+                    } label: {
+                        ZStack{
+                            SecureField("", text: $ConfirmPassword)
+                                .multilineTextAlignment(.leading)
+                                .textContentType(.newPassword)
+                                .keyboardType(.default)
+                                .placeholder(when: Username.isEmpty) {
+                                        Text("Confirm Password").foregroundColor(.black)
+                                }
+                                .background(Color.white)
+                                .frame(width: value.size.width * 0.7, height: value.size.height * 0.075, alignment: .leading)
+                                .cornerRadius(15)
+                                .padding()
+                        }.padding()
+                    }.background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding(.top)
+                    
+                    Button{
+                        
+                    } label: {
+                        ZStack{
+                            Picker("Please choose a Grade", selection: $SelectedGrade) {
+                                ForEach(Grades, id: \.self) {
+                                    Text($0)
+                                }
+                            }.frame(width: value.size.width * 0.7, height: value.size.height * 0.075, alignment: .leading)
+                            .padding()
+                            .foregroundColor(.black)
+                            .pickerStyle(.menu)
+                        }.padding()
+                    }.background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding(.top)
+                    
+                    Button(){
+                        if Username != "" {
+                            if Password != ""{
+                                if Password == ConfirmPassword{
+                                    Task{
+                                        let response = try await Functions().loadData(extensionvar: "CUsername/\(Username)/\(Password)/\(SelectedGrade)")
+                                        print(response.result)
+                                        if response.result == "Success"{
+                                            do{
+                                                let PasswordData = Password.data(using: .utf8)
+                                                try Security.save(password: PasswordData!, service: "Pauly", account: Username)
+                                            } catch KeychainError.duplicateItem{
+                                                print("DuplicateItem")
+                                            } catch KeychainError.unexpectedStatus(let Status){
+                                                print(Status)
+                                            } catch {
+                                                print("Else")
+                                            }
+                                            GradeIn = Int(SelectedGrade) ?? 8
+                                            UsernameIn = Username
+                                            WindowMode = .HomePage
                                         } else {
-                                            print(response)
+                                            if response.result == "Invalid Parameter"{
+                                                ShowingErrorMessage = true
+                                                ErrorMessage = "Invalid Parameters"
+                                            } else {
+                                                print(response)
+                                            }
                                         }
                                     }
+                                } else {
+                                    ErrorMessage = "Passwords do not match"
+                                    ShowingErrorMessage = true
                                 }
                             } else {
-                                ErrorMessage = "Passwords do not match"
+                                ErrorMessage = "Passwords cannot be nothing"
                                 ShowingErrorMessage = true
                             }
-                        } label: {
-                            ZStack{
-                                Rectangle()
-                                    .foregroundColor(.white)
-                                    .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
-                                    .cornerRadius(15)
-                                Text("Confirm")
-                                    .frame(alignment: .center)
-                                    .foregroundColor(.black)
-                            }
-                        }.buttonStyle(.plain)
-                        .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
-                        .cornerRadius(15)
-                        Spacer()
-                        Button{
-                            WindowMode = .PasswordWindow
-                        } label: {
-                            ZStack{
-                                Rectangle()
-                                    .foregroundColor(.white)
-                                    .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
-                                    .cornerRadius(15)
-                                Text("Back")
-                                    .frame(alignment: .center)
-                                    .foregroundColor(.black)
-                            }
+                        } else {
+                            ErrorMessage = "Username Needs cannot be nothing"
+                            ShowingErrorMessage = true
                         }
-                        .buttonStyle(.plain)
-                        .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
-                        .cornerRadius(15)
-                    }.padding(.top)
-                    .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
+                    } label: {
+                        Text("NEXT")
+                            .font(.system(size: 17))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                    }.buttonStyle(.plain)
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
+                    .padding(.top)
+                    Button{
+                        WindowMode = .PasswordWindow
+                    } label: {
+                        Text("Back")
+                            .font(.system(size: 17))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
+                    }
+                    .buttonStyle(.plain)
+                    .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
+                    .cornerRadius(15)
                 }
-            }.edgesIgnoringSafeArea(.all)
+                .padding([.bottom, .top], value.size.height * 0.1)
+                .frame(width: value.size.width * 1.0)
+            }.background(Color.marron)
+            .frame(width: value.size.width * 1.0)
+            .edgesIgnoringSafeArea(.all)
         }
     }
 }
@@ -587,93 +660,246 @@ struct PasswordView: View{
     @State var Password: String = ""
     @State var ShowingErrorMessage: Bool = false
     @State var ErrorMessage: String = ""
+    @State var AnimationValueUsername: Int = 0
+    @State var notLoadingPassword: Bool = true
+    @State var ShowingFailureToFindUserError: Bool = false
+    @State var ShowingIncorrectPasswordError: Bool = false
+    
+    enum FocusedField {
+            case username, password
+        }
+    
+    @FocusState private var focusedField: FocusedField?
     
     var body: some View {
         GeometryReader{ value in
             ZStack{
                 Rectangle()
                     .foregroundColor(Color.marron)
-                VStack {
-                    Spacer()
-                    Text("Login")
-                    Button("ByPass"){
-                        GradeIn = 11
-                        UsernameIn = "Andrew"
-                        WindowMode = .HomePage
-                    }
-                    ZStack{
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                        TextField("Username", text: $Username)
-                            .textContentType(.username)
-                            .keyboardType(.default)
-                            .foregroundColor(.black)
-                            .background(Color.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                    }.padding()
-                    ZStack{
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                        SecureField("Password", text: $Password)
-                            .textContentType(.password)
-                            .background(Color.white)
-                            .foregroundColor(.black)
-                            .frame(width: value.size.width * 0.7, height: value.size.height * 0.15, alignment: .center)
-                            .cornerRadius(15)
-                            .onSubmit {
-                                Task{
-                                    let response = try await Functions().loadData(extensionvar: "Authenticate/\(Username)/\(Password)")
-                                    print(response.result)
-                                    if response.result == "Success"{
-                                        GradeIn = response.Grade ?? 8
-                                        UsernameIn = Username
-                                        WindowMode = .HomePage
-             
-                                    } else {
-                                        if response.result == "Invalid Parameter"{
-                                            ShowingErrorMessage = true
-                                            ErrorMessage = "Invalid Parameters"
-                                        } else {
-                                            print(response)
+                ScrollView{
+                    VStack{
+                        VStack{
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            HStack{
+                                Spacer()
+                                Image("PaulyText")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .scaledToFit()
+                                    .padding()
+                                    .frame(alignment: .leading)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                Spacer()
+                            }
+                        }.frame(width: value.size.width * 1.0, height: value.size.height * 0.3, alignment: .leading)
+                        Button(){
+                            focusedField = .username
+                        } label: {
+                            ZStack{
+                                TextField("", text: $Username)
+                                    .multilineTextAlignment(.leading)
+                                    .textContentType(.username)
+                                    .keyboardType(.default)
+                                    .placeholder(when: Username.isEmpty) {
+                                            Text("Username").foregroundColor(.black)
+                                    }
+                                    .background(Color.white)
+                                    .frame(width: value.size.width * 0.6, height: value.size.height * 0.15, alignment: .leading)
+                                    .cornerRadius(15)
+                                    .padding()
+                                    .focused($focusedField, equals: .username)
+                            }.padding()
+                        }
+                        .frame(width: value.size.width * 0.92, height: value.size.height * 0.15, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding(.bottom)
+                        
+                        if ShowingFailureToFindUserError{
+                            HStack{
+                                Image(systemName: "exclamationmark.circle")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundColor(.red)
+                                Text("Pauly couldn't find an account with the Username.")
+                                    .foregroundColor(.red)
+                            }.frame(height: value.size.height * 0.035)
+                        }
+                        
+                        Button(){
+                            focusedField = .password
+                        } label: {
+                            ZStack{
+                                SecureField("", text: $Password)
+                                    .multilineTextAlignment(.leading)
+                                    .textContentType(.password)
+                                    .placeholder(when: Password.isEmpty) {
+                                            Text("Password").foregroundColor(.black)
+                                    }
+                                    .background(Color.white)
+                                    .frame(width: value.size.width * 0.6, height: value.size.height * 0.15, alignment: .leading)
+                                    .cornerRadius(15)
+                                    .padding()
+                                    .onSubmit {
+                                        if notLoadingPassword{
+                                            if Username != "" && Password != ""{
+                                                notLoadingPassword = false
+                                                Task{
+                                                    do{
+                                                        let response = try await Functions().loadData(extensionvar: "Authenticate/\(Username)/\(Password)")
+                                                        if response.result == "Success"{
+                                                            GradeIn = response.Grade ?? 8
+                                                            UsernameIn = Username
+                                                            WindowMode = .HomePage
+                                                        } else {
+                                                            if response.result == "Invalid Parameter"{
+                                                                notLoadingPassword = true
+                                                                ShowingErrorMessage = true
+                                                                ErrorMessage = "Invalid Parameters"
+                                                            } else {
+                                                                if response.result == "Incorrect Password"{
+                                                                    notLoadingPassword = true
+                                                                    ShowingIncorrectPasswordError = true
+                                                                    ShowingFailureToFindUserError = false
+                                                                } else {
+                                                                    if response.result == "Failure to find user"{
+                                                                        notLoadingPassword = true
+                                                                        ShowingFailureToFindUserError = true
+                                                                        ShowingIncorrectPasswordError = false
+                                                                    } else {
+                                                                        print(response)
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    } catch {
+                                                        notLoadingPassword = true
+                                                    }
+                                                }
+                                            } else {
+                                                //BYPASS REMOVE ON RELASE
+                                                GradeIn = 11
+                                                UsernameIn = "Andrew"
+                                                WindowMode = .HomePage
+                                                //BYPASS REMOVE ON RELASE END
+                                            }
                                         }
                                     }
+                                    .focused($focusedField, equals: .password)
+                            }.padding()
+                        }
+                        .frame(width: value.size.width * 0.92, height: value.size.height * 0.15, alignment: .leading)
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding(.bottom)
+                        .padding(.top)
+                        
+                        if ShowingIncorrectPasswordError{
+                            HStack{
+                                Image(systemName: "exclamationmark.circle")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundColor(.red)
+                                Text("Incorrect Password")
+                                    .foregroundColor(.red)
+                            }.frame(height: value.size.height * 0.035)
+                        }
+                        
+                        Button(){
+                            if notLoadingPassword{
+                                if Username != "" && Password != ""{
+                                    notLoadingPassword = false
+                                    Task{
+                                        do{
+                                            let response = try await Functions().loadData(extensionvar: "Authenticate/\(Username)/\(Password)")
+                                            if response.result == "Success"{
+                                                GradeIn = response.Grade ?? 8
+                                                UsernameIn = Username
+                                                WindowMode = .HomePage
+                                            } else {
+                                                if response.result == "Invalid Parameter"{
+                                                    notLoadingPassword = true
+                                                    ShowingErrorMessage = true
+                                                    ErrorMessage = "Invalid Parameters"
+                                                } else {
+                                                    if response.result == "Incorrect Password"{
+                                                        notLoadingPassword = true
+                                                        ShowingIncorrectPasswordError = true
+                                                        ShowingFailureToFindUserError = false
+                                                    } else {
+                                                        if response.result == "Failure to find user"{
+                                                            notLoadingPassword = true
+                                                            ShowingFailureToFindUserError = true
+                                                            ShowingIncorrectPasswordError = false
+                                                        } else {
+                                                            print(response)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } catch {
+                                            notLoadingPassword = true
+                                        }
+                                    }
+                                } else {
+                                    //BYPASS REMOVE ON RELASE
+                                    GradeIn = 11
+                                    UsernameIn = "Andrew"
+                                    WindowMode = .HomePage
+                                    //BYPASS REMOVE ON RELASE END
                                 }
                             }
-                    }
-                    Button(){
-                        Task{
-                            let response = try await Functions().loadData(extensionvar: "Authenticate/\(Username)/\(Password)")
-                            print(response.result)
-                            if response.result == "Success"{
-                                GradeIn = response.Grade ?? 8
-                                UsernameIn = Username
-                                WindowMode = .HomePage
-                                
+                        } label: {
+                            if notLoadingPassword{
+                                Text("SIGN IN")
+                                    .font(.system(size: 17))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                    .frame(minWidth: 0, maxWidth: .infinity)
+                                    .padding()
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 25)
+                                            .fill(Color.white)
+                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                    )
+                                    .padding()
                             } else {
-                                if response.result == "Invalid Parameter"{
-                                    ShowingErrorMessage = true
-                                    ErrorMessage = "Invalid Parameters"
-                                } else {
-                                    print(response)
-                                }
+                                ProgressView()
+                                    .frame(minWidth: 0, maxWidth: .infinity)
+                                    .padding()
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 25)
+                                            .fill(Color.white)
+                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                    )
+                                    .padding()
                             }
                         }
-                    } label: {
-                        Text("Login")
-                    }
-                    Button(){
-                        WindowMode = .NewUser
-                    } label: {
-                        Text("Create New User")
-                    }
-                    Spacer()
-                    Spacer()
-                    Spacer()
+                        Button(){
+                            WindowMode = .NewUser
+                        } label: {
+                            Text("CREATE NEW USER")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .padding()
+                        }
+                    }.frame(maxHeight: .infinity)
                 }
                 if ShowingErrorMessage {
                     ZStack{
@@ -692,13 +918,22 @@ struct PasswordView: View{
         }
     }
 }
+
 extension Color {
     static let marron = Color("Marron")
 }
-//
-//struct CircleImage_Previews: PreviewProvider {
-//    @State var mode: WindowSrceens = .HomePage
-//    static var previews: some View {
-//        HomePage(WindowMode: .HomePage)
-//    }
-//}
+
+//https://stackoverflow.com/questions/57688242/swiftui-how-to-change-the-placeholder-color-of-the-textfield
+
+extension View {
+    func placeholder<Content: View>(
+        when shouldShow: Bool,
+        alignment: Alignment = .leading,
+        @ViewBuilder placeholder: () -> Content) -> some View {
+
+        ZStack(alignment: alignment) {
+            placeholder().opacity(shouldShow ? 1 : 0)
+            self
+        }
+    }
+}

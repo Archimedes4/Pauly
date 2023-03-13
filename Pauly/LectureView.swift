@@ -23,35 +23,61 @@ struct YouTubeView: UIViewRepresentable {
 
 struct LetureHomePage: View{
     @Binding var WindowMode: WindowSrceens
+    @State var SelectedLectureMode: LectureMode = .SelectionView
+    @State var SelectedVideoID: String = "dQw4w9WgXcQ"
     var body: some View{
-        Text("lectureHomePage")
-        CollectionView()
-        Button("Back"){
-            WindowMode = .HomePage
+        if SelectedLectureMode == .SelectionView{
+            LecutureSelectionView(WindowMode: $WindowMode, SelectedVideoID: $SelectedVideoID, SelectedLectureMode: $SelectedLectureMode)
+        } else {
+            if SelectedLectureMode == .YoutubeView{
+                Button("Back"){
+                    SelectedLectureMode = .SelectionView
+                }
+                YouTubeView(videoId: SelectedVideoID)
+            }
         }
     }
 }
 
-struct CollectionView: View {
-    var ids = ["Akwm2UZJ34o", "kc29axOAzRs", "WMRip0eRER8"]
+enum LectureMode{
+    case YoutubeView
+    case SelectionView
+}
+
+struct VideoView: View {
+    let VideoID: String
+    var body: some View{
+        YouTubeView(videoId: VideoID)
+    }
+}
+
+struct LecutureSelectionView: View {
+    @Binding var WindowMode: WindowSrceens
+    @Binding var SelectedVideoID: String
+    @Binding var SelectedLectureMode: LectureMode
+    var ids = ["Akwm2UZJ34o", "kc29axOAzRs", "WMRip0eRER8", "dQw4w9WgXcQ"]
     var body: some View {
         ZStack {
             Image("cover")
                 .resizable().opacity(0.2)
             ScrollView(showsIndicators: false) {
                 VStack {
-                    Text("Demo")
-                        .font(.title)
-
-                    ForEach(ids, id:\.self) {idData in
-                        YouTubeView(videoId: idData)
-                            .frame(width: 300, height: 300)
-                            .padding()
+                    HStack{
+                        Button("Back"){
+                            WindowMode = .HomePage
+                        }
+                        Spacer()
+                        Text("lectureHomePage")
+                        Spacer()
                     }
-
+                    ForEach(ids, id:\.self) {idData in
+                        Button(idData){
+                            SelectedVideoID = idData
+                            SelectedLectureMode = .YoutubeView
+                        }
+                    }
                 }
             }
-
         }
     }
 }

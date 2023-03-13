@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C620B5AA29B80123007DB698 /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = C620B5A929B80123007DB698 /* Authentication.swift */; };
+		C620B5CE29B81235007DB698 /* Security.swift in Sources */ = {isa = PBXBuildFile; fileRef = C620B5CD29B81235007DB698 /* Security.swift */; };
+		C620B5D129B8BAA4007DB698 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C620B5D029B8BAA4007DB698 /* Security.framework */; };
+		C620B5D329B8BC09007DB698 /* PDFview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C620B5D229B8BC09007DB698 /* PDFview.swift */; };
 		C640C4AC29B1325E009668BF /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AB29B1325E009668BF /* QuizView.swift */; };
 		C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AD29B26FF1009668BF /* CalendarPageView.swift */; };
 		C640C4B029B29035009668BF /* LectureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AF29B29035009668BF /* LectureView.swift */; };
@@ -15,10 +19,17 @@
 		C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695C01329A7E4F200D983E7 /* ContentView.swift */; };
 		C695C01629A7E4F600D983E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01529A7E4F600D983E7 /* Assets.xcassets */; };
 		C695C01929A7E4F600D983E7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */; };
+		C6E229C229BBEE15008DB772 /* MSAL in Frameworks */ = {isa = PBXBuildFile; productRef = C6E229C129BBEE15008DB772 /* MSAL */; };
+		C6E229C429BC0A15008DB772 /* MSAL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229C329BC0A15008DB772 /* MSAL.swift */; };
+		C6E229C829BCDBF1008DB772 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229C729BCDBF1008DB772 /* ProfileView.swift */; };
 		C6FC4D3D29AA402A00F6ED3E /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FC4D3C29AA402A00F6ED3E /* Functions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C620B5A929B80123007DB698 /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
+		C620B5CD29B81235007DB698 /* Security.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Security.swift; sourceTree = "<group>"; };
+		C620B5D029B8BAA4007DB698 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		C620B5D229B8BC09007DB698 /* PDFview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFview.swift; sourceTree = "<group>"; };
 		C640C4AB29B1325E009668BF /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
 		C640C4AD29B26FF1009668BF /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageView.swift; sourceTree = "<group>"; };
 		C640C4AF29B29035009668BF /* LectureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureView.swift; sourceTree = "<group>"; };
@@ -30,6 +41,8 @@
 		C695C01329A7E4F200D983E7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C695C01529A7E4F600D983E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		C6E229C329BC0A15008DB772 /* MSAL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSAL.swift; sourceTree = "<group>"; };
+		C6E229C729BCDBF1008DB772 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C6FC4D3C29AA402A00F6ED3E /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -38,17 +51,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C620B5D129B8BAA4007DB698 /* Security.framework in Frameworks */,
+				C6E229C229BBEE15008DB772 /* MSAL in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C620B5CF29B8BAA4007DB698 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C620B5D029B8BAA4007DB698 /* Security.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C695C00529A7E4F200D983E7 = {
 			isa = PBXGroup;
 			children = (
 				C695C01029A7E4F200D983E7 /* Pauly */,
 				C695C00F29A7E4F200D983E7 /* Products */,
+				C620B5CF29B8BAA4007DB698 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -64,8 +88,13 @@
 			isa = PBXGroup;
 			children = (
 				C640C4B529B433A8009668BF /* Pauly.entitlements */,
+				C620B5CD29B81235007DB698 /* Security.swift */,
+				C6E229C729BCDBF1008DB772 /* ProfileView.swift */,
+				C6E229C329BC0A15008DB772 /* MSAL.swift */,
 				C692640329B011BF000F96B9 /* Info.plist */,
 				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
+				C620B5D229B8BC09007DB698 /* PDFview.swift */,
+				C620B5A929B80123007DB698 /* Authentication.swift */,
 				C695C01129A7E4F200D983E7 /* PaulyApp.swift */,
 				C640C4B729B45C52009668BF /* ChatHomePage.swift */,
 				C640C4AF29B29035009668BF /* LectureView.swift */,
@@ -102,6 +131,9 @@
 			dependencies = (
 			);
 			name = Pauly;
+			packageProductDependencies = (
+				C6E229C129BBEE15008DB772 /* MSAL */,
+			);
 			productName = Pauly;
 			productReference = C695C00E29A7E4F200D983E7 /* Pauly.app */;
 			productType = "com.apple.product-type.application";
@@ -130,6 +162,9 @@
 				Base,
 			);
 			mainGroup = C695C00529A7E4F200D983E7;
+			packageReferences = (
+				C6E229C029BBEE15008DB772 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */,
+			);
 			productRefGroup = C695C00F29A7E4F200D983E7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -156,13 +191,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6E229C829BCDBF1008DB772 /* ProfileView.swift in Sources */,
 				C640C4B829B45C52009668BF /* ChatHomePage.swift in Sources */,
 				C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */,
+				C6E229C429BC0A15008DB772 /* MSAL.swift in Sources */,
 				C640C4AC29B1325E009668BF /* QuizView.swift in Sources */,
 				C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */,
 				C695C01229A7E4F200D983E7 /* PaulyApp.swift in Sources */,
+				C620B5CE29B81235007DB698 /* Security.swift in Sources */,
 				C6FC4D3D29AA402A00F6ED3E /* Functions.swift in Sources */,
 				C640C4B029B29035009668BF /* LectureView.swift in Sources */,
+				C620B5AA29B80123007DB698 /* Authentication.swift in Sources */,
+				C620B5D329B8BC09007DB698 /* PDFview.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,7 +338,7 @@
 				INFOPLIST_FILE = Pauly/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -330,7 +370,7 @@
 				INFOPLIST_FILE = Pauly/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -369,6 +409,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C6E229C029BBEE15008DB772 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AzureAD/microsoft-authentication-library-for-objc#installation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C6E229C129BBEE15008DB772 /* MSAL */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C6E229C029BBEE15008DB772 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */;
+			productName = MSAL;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C695C00629A7E4F200D983E7 /* Project object */;
 }

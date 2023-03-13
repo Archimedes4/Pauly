@@ -7,8 +7,10 @@
 
 import Foundation
 import SwiftUI
+import UIKit
+import MSAL
 
-enum ChatMode: String, CaseIterable{
+public enum ChatMode: String, CaseIterable{
     case Home = "Home"
     case GymBro = "Gym Bro"
     case MessageLEGO = "Message LEGO"
@@ -90,6 +92,7 @@ struct TutoringHomePage: View{
 }
 
 struct RequestATutor: View{
+    @State var isShowingMailView = false
     @Binding var TutoringModeSelected: TutoringMode
     var body: some View{
         HStack{
@@ -145,19 +148,37 @@ struct TutoringPage: View{
 
 struct BugReport: View{
     @Binding var SelectedChatMode: ChatMode
+    var BugTypes: [String] = ["Can't Find something", "App doen't look right"]
+    @State var SelectedBugType: String = "Can't Find something"
     var body: some View{
-        HStack{
-            Button(){
-                SelectedChatMode = .Home
-            } label: {
-                HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
-                    Spacer()
+        VStack{
+            HStack{
+                Button(){
+                    SelectedChatMode = .Home
+                } label: {
+                    HStack{
+                        Image(systemName: "chevron.backward")
+                        Text("Back")
+                        Spacer()
+                    }
+                }.padding()
+            }
+            Text("Report a Bug")
+            Picker("Type", selection: $SelectedBugType){
+                ForEach(BugTypes, id: \.self){
+                    Text($0)
                 }
-            }.padding()
+            }
+            Button{
+                
+            } label: {
+                Text("Submit")
+            }.background(
+                RoundedRectangle(cornerRadius: 25)
+                    .fill(Color.white)
+                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+            )
         }
-        Text("Report a Bug")
     }
 }
 
@@ -173,6 +194,7 @@ struct MessageBubbleView: View {
     let InputColor: Color
     let TimeStamp: String?
     let Sender: String?
+    var ErrorValue: String?
     var body: some View {
         ZStack {
             Rectangle()
@@ -190,6 +212,9 @@ struct MessageBubbleView: View {
                     Text(TimeStamp ?? " ")
                         .font(.caption2)
                 }
+                if ErrorValue != nil{
+                    Text(ErrorValue ?? "")
+                }
             }.saveBounds(viewId: 1)
         }
         .retrieveBounds(viewId: 1, $textSize)
@@ -204,6 +229,9 @@ struct Conversation: View{
     @State var Message = ""
     @State var Messages: [Datum2] = []
     @State var ShowingTimeStamps: Bool = false
+    @State var NumberOfErrors: Int = 0
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View{
         HStack{
             Button(){
@@ -217,26 +245,29 @@ struct Conversation: View{
             Spacer()
         }
         Text("Conversation")
+            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
         Toggle("Show Time Stamp", isOn: $ShowingTimeStamps)
+            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
         Button("Refresh"){
             Task{
                 let result1 = try await Functions().LoadDataMessage(extensionvar: "CheckForMessages/\(SelectedDatum1.chatID)")
                 Messages = result1.data
             }
         }
+        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
         ScrollView(){
             ForEach(Messages, id: \.time) { Message in
                 if Message.sender == Username{
                     HStack{
                         Spacer()
                         VStack{
-                            MessageBubbleView(Message: Message.message, InputColor: Color.blue, TimeStamp: ShowingTimeStamps ? Message.time:nil, Sender: nil)
+                            MessageBubbleView(Message: Message.message, InputColor: Color.blue, TimeStamp: ShowingTimeStamps ? Message.time:nil, Sender: nil, ErrorValue: Message.ErrorType)
                         }.padding()
                     }
                 } else {
                     HStack{
                         VStack{
-                            MessageBubbleView(Message: Message.message, InputColor: Color.gray, TimeStamp: ShowingTimeStamps ? Message.time:nil, Sender: Message.sender)
+                            MessageBubbleView(Message: Message.message, InputColor: Color.gray, TimeStamp: ShowingTimeStamps ? Message.time:nil, Sender: Message.sender, ErrorValue: nil)
                         }.padding()
                         Spacer()
                     }
@@ -248,29 +279,56 @@ struct Conversation: View{
                 Messages = result1.data
             }
         }
-        TextField("Message Content", text: $Message)
-            .onSubmit {
-                if Message != ""{
-                    Task{
-                        let SentMessage = Message.replacingOccurrences(of: " ", with: "_")
-                        let result = try await Functions().loadData(extensionvar: "SendMessage/\(SelectedDatum1.chatID)/\(Username)/\(SentMessage)")
-                        if result.result == "Success"{
-                            let result1 = try await Functions().LoadDataMessage(extensionvar: "CheckForMessages/\(SelectedDatum1.chatID)")
-                            Messages = result1.data
+        HStack{
+            TextField("Message", text: $Message)
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                .cornerRadius(25)
+                .padding()
+                .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(.black, lineWidth: 2)
+                    )
+                .onSubmit {
+                    if Message != ""{
+                        Task{
+                            let SentMessage = Message.replacingOccurrences(of: " ", with: "_")
+                            let result = try await Functions().loadData(extensionvar: "SendMessage/\(SelectedDatum1.chatID)/\(Username)/\(SentMessage)")
+                            if result.result == "Success"{
+                                let result1 = try await Functions().LoadDataMessage(extensionvar: "CheckForMessages/\(SelectedDatum1.chatID)")
+                                Messages = result1.data
+                            }
                         }
                     }
                 }
-            }
-        Button("Send Message"){
-            if Message != ""{
-                Task{
-                    let SentMessage = Message.replacingOccurrences(of: " ", with: "_")
-                    let result = try await Functions().loadData(extensionvar: "SendMessage/\(SelectedDatum1.chatID)/\(Username)/\(SentMessage)")
-                    if result.result == "Success"{
-                        let result1 = try await Functions().LoadDataMessage(extensionvar: "CheckForMessages/\(SelectedDatum1.chatID)")
-                        Messages = result1.data
+            Button(){
+                if Message != ""{
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy/MM/dd HH:mm"
+                    let someDateTime = formatter.date(from: "\(Date.now)")
+                    Messages.append(Datum2(sender: Username, message: Message, time: "\(String(describing: someDateTime))", ErrorType: nil, ErrorID: NumberOfErrors))
+                    NumberOfErrors += 1
+                    Task{
+                        let SentMessage = Message.replacingOccurrences(of: " ", with: "_")
+                        let ErrorValue = NumberOfErrors
+                        do{
+                            let result = try await Functions().loadData(extensionvar: "SendMessage/\(SelectedDatum1.chatID)/\(Username)/\(SentMessage)")
+                            if result.result == "Success"{
+                                let result1 = try await Functions().LoadDataMessage(extensionvar: "CheckForMessages/\(SelectedDatum1.chatID)")
+                                Messages = result1.data
+                            } else {
+                                if let index = Messages.firstIndex(where: { $0.ErrorID == ErrorValue } ) {
+                                    Messages[index].ErrorType = "An Error Has Occured"
+                                }
+                            }
+                        } catch {
+                            if let index = Messages.firstIndex(where: { $0.ErrorID == ErrorValue } ){
+                                Messages[index].ErrorType = "An Error Has Occured"
+                            }
+                        }
                     }
                 }
+            } label: {
+                Image(systemName: "arrow.up.circle")
             }
         }
     }
@@ -403,6 +461,7 @@ struct MessagingHomePage: View{
     @Binding var SelectedDatum1: Datum1
     @Binding var TwoPersonMode: Bool
     @State var Groups: [Datum1] = []
+    @Environment(\.colorScheme) var colorScheme
     var body: some View{
         VStack{
             HStack{
@@ -411,7 +470,9 @@ struct MessagingHomePage: View{
                 } label: {
                     HStack{
                         Image(systemName: "chevron.backward")
+                            .foregroundColor(Color.red)
                         Text("Back")
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
                     }
                 }.padding()
                 Spacer()
@@ -420,8 +481,11 @@ struct MessagingHomePage: View{
                 } label: {
                     Image(systemName: "square.and.pencil")
                 }
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             }
             Text("Messaging")
+                .font(.custom("Chalkboard SE", size: 25))
+                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             List{
                 ForEach(Groups, id: \.chatID){ value in
                     MessagingGroupButton(SelectMessagingMode: $SelectMessagingMode, SelectedDatum1: $SelectedDatum1, TwoPersonMode: $TwoPersonMode, Username: $Username, Datum1Input: value)
@@ -478,20 +542,22 @@ struct ChatHomePage: View{
                         }.padding()
                     }
                     Text("Messaging")
-                        .font(.system(size: 60.0))
+                        .font(.custom("Chalkboard SE", size: 60.0))
                         .padding()
-                    ForEach(ChatMode.allCases, id: \.rawValue){ Selectmode in
-                        if Selectmode != .Home{
-                            Button{
-                                SelectedChatMode = Selectmode
-                            } label: {
-                                ZStack{
-                                    Rectangle()
-                                        .foregroundColor(.white)
-                                        .frame(width: geo.frame(in: .global).width * 0.8, height: geo.frame(in: .global).height * 0.15)
-                                        .cornerRadius(15)
-                                    Text(Selectmode.rawValue)
-                                        .foregroundColor(.black)
+                    ScrollView(showsIndicators: false){
+                        ForEach(ChatMode.allCases, id: \.rawValue){ Selectmode in
+                            if Selectmode != .Home{
+                                Button{
+                                    SelectedChatMode = Selectmode
+                                } label: {
+                                    ZStack{
+                                        Rectangle()
+                                            .foregroundColor(.white)
+                                            .frame(width: geo.frame(in: .global).width * 0.8, height: geo.frame(in: .global).height * 0.15)
+                                            .cornerRadius(15)
+                                        Text(Selectmode.rawValue)
+                                            .foregroundColor(.black)
+                                    }
                                 }
                             }
                         }
@@ -505,25 +571,41 @@ struct ChatHomePage: View{
 struct ChatOverView: View{
     @Binding var WindowMode: WindowSrceens
     @Binding var Username: String
+    @Binding var accessToken: String?
+    @Binding var MSALAccount: MSALAccount?
     @State var SelectedChatMode: ChatMode = .Home
     var body: some View{
-        if SelectedChatMode == .Home{
-            ChatHomePage(SelectedChatMode: $SelectedChatMode, WindowMode: $WindowMode)
+        if MSALAccount == nil{
+            MSALView(WindowMode: $WindowMode)
+                .onAppear(){
+                    print(MSALAccount)
+                }
         } else {
-            if SelectedChatMode == .GymBro{
-                GymBroPage(SelectedChatMode: $SelectedChatMode)
+            if accessToken == nil{
+                Text("Please Wait One moment well Pauly gets everything ready")
+                    .onAppear(){
+                        
+                    }
             } else {
-                if SelectedChatMode == .MessageLEGO{
-                    MessageLEGO(SelectedChatMode: $SelectedChatMode)
+                if SelectedChatMode == .Home{
+                    ChatHomePage(SelectedChatMode: $SelectedChatMode, WindowMode: $WindowMode)
                 } else {
-                    if SelectedChatMode == .ReportBug{
-                        BugReport(SelectedChatMode: $SelectedChatMode)
+                    if SelectedChatMode == .GymBro{
+                        GymBroPage(SelectedChatMode: $SelectedChatMode)
                     } else {
-                        if SelectedChatMode == .TutorHomePage{
-                            TutoringPage(SelectedChatMode: $SelectedChatMode)
+                        if SelectedChatMode == .MessageLEGO{
+                            MessageLEGO(SelectedChatMode: $SelectedChatMode)
                         } else {
-                            if SelectedChatMode == .Message{
-                                MessagingPage(SelectedChatMode: $SelectedChatMode, Username: $Username)
+                            if SelectedChatMode == .ReportBug{
+                                BugReport(SelectedChatMode: $SelectedChatMode)
+                            } else {
+                                if SelectedChatMode == .TutorHomePage{
+                                    TutoringPage(SelectedChatMode: $SelectedChatMode)
+                                } else {
+                                    if SelectedChatMode == .Message{
+                                        MessagingPage(SelectedChatMode: $SelectedChatMode, Username: $Username)
+                                    }
+                                }
                             }
                         }
                     }

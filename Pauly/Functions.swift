@@ -115,11 +115,26 @@ struct MessageResponce: Codable {
 // MARK: - Datum
 struct Datum2: Codable {
     let sender, message, time: String
+    var ErrorType: String?
+    let ErrorID: Int?
 
     enum CodingKeys: String, CodingKey {
         case sender = "Sender"
         case message = "Message"
         case time = "Time"
+        case ErrorType = "Error"
+        case ErrorID = "ErrorID"
+    }
+}
+
+// MARK: - MessageResponce
+struct NotificationResonpce: Codable {
+    let result: String
+    let data: [Int]
+
+    enum CodingKeys: String, CodingKey {
+        case result = "Result"
+        case data = "Data"
     }
 }
 
@@ -158,7 +173,7 @@ class Functions {
     }
 
     public func loadData(extensionvar: String) async throws -> CallingResult {
-        guard let url = URL(string: "https://cae5-24-76-193-238.ngrok.io/\(extensionvar)") else {
+        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -177,7 +192,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataJsonEcoder(extensionvar: String) async throws -> Grade11Response {
-        guard let url = URL(string: "https://cae5-24-76-193-238.ngrok.io/\(extensionvar)") else {
+        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -196,7 +211,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataCalendar(extensionvar: String) async throws -> CalendarResopnse {
-        guard let url = URL(string: "https://cae5-24-76-193-238.ngrok.io/\(extensionvar)") else {
+        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -215,7 +230,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataUsers(extensionvar: String) async throws -> UserListResopnce {
-        guard let url = URL(string: "https://cae5-24-76-193-238.ngrok.io/\(extensionvar)") else {
+        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -234,7 +249,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataChatID(extensionvar: String) async throws -> ChatListResponce {
-        guard let url = URL(string: "https://cae5-24-76-193-238.ngrok.io/\(extensionvar)") else {
+        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -253,7 +268,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataMessage(extensionvar: String) async throws -> MessageResponce {
-        guard let url = URL(string: "https://cae5-24-76-193-238.ngrok.io/\(extensionvar)") else {
+        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -263,6 +278,25 @@ class Functions {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             if let decodedResponse = try? JSONDecoder().decode(MessageResponce.self, from: data) {
+                return decodedResponse
+            }
+        } catch {
+            print(String(describing: error))
+            throw APICallingError.Fatal
+        }
+        throw APICallingError.Fatal
+    }
+    public func LoadDataNotifications(extensionvar: String) async throws -> NotificationResonpce {
+        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
+            print("Invalid url...")
+            throw APICallingError.InvalidURL
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("123456", forHTTPHeaderField: "ngrok-skip-browser-warning")
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            if let decodedResponse = try? JSONDecoder().decode(NotificationResonpce .self, from: data) {
                 return decodedResponse
             }
         } catch {
