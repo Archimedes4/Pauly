@@ -36,7 +36,7 @@ struct GraphMailPost: Codable {
         let subject: String
         let body: Body
         let toRecipients: [ToRecipient]
-        let internetMessageHeaders: [InternetMessageHeader]
+        let internetMessageHeaders: [InternetMessageHeader]?
         // MARK: - Body
         struct Body: Codable {
             let contentType, content: String
@@ -56,164 +56,15 @@ struct GraphMailPost: Codable {
     }
 }
 
-struct MailViewMSAL: View{
-    @Binding var notShowingMailView: Bool
-    let accessToken: String
-    @State var DataPost: GraphMailPost = GraphMailPost(message: GraphMailPost.Message(subject: "Test", body: GraphMailPost.Message.Body(contentType: "HTML", content: "test"), toRecipients: [GraphMailPost.Message.ToRecipient(emailAddress: GraphMailPost.Message.ToRecipient.EmailAddress(address: "andrewmainella@icloud.com"))], internetMessageHeaders: [GraphMailPost.Message.InternetMessageHeader(name: "x-custom-header-group-name", value: "Nevada")]))
-    var body: some View{
-        Text("Mail View")
-        Button("Send Message"){
-            Task{
-                var uri: String = "https://graph.microsoft.com/v1.0/me/sendMail"
-                print(uri)
-                let url = URL(string: uri)
-                var request = URLRequest(url: url!)
-                // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
-                request.httpMethod = "POST"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.setValue("Bearer \(self.accessToken)", forHTTPHeaderField: "Authorization")
-
-                guard let encoded = try? JSONEncoder().encode(DataPost) else {
-                    print("Failed to encode order")
-                    return
-                }
-                do {
-                    let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
-                    // handle the result
-                } catch {
-                    print("Checkout failed.")
-                }
-            }
-        }
-        Button("back"){
-            notShowingMailView = true
-        }
-    }
-}
-
-struct MSALLoggedinView: View{
-    @StateObject var msalModel: MSALScreenViewModel = MSALScreenViewModel()
-    let username: String
-    let accountValue: MSALAccount
-    let accessToken: String?
-    let kGraphEndpoint = "https://graph.microsoft.com/"
-    @State var ApiExtention: String = ""
-    @State var ShowingAccessToken: Bool = false
-    @State var UserID: String = ""
-    @State var notShowingMailView: Bool = true
-    @State var accountValue1: MSALAccount?
-    var body: some View{
-        if notShowingMailView{
-            ScrollView{
-                Text("Welcome")
-                Text(username)
-                if accessToken != nil{
-                    if ShowingAccessToken{
-                        Text(accessToken ?? "Error")
-                        Button("Get Acess Token"){
-                            msalModel.acquireTokenSilently(accountValue)
-                        }.onAppear(){
-                            if accessToken?.count ?? 100 <= 10{
-                                msalModel.acquireTokenSilently(accountValue)
-                            }
-                        }
-                        Button("Hide AccessToken"){
-                            ShowingAccessToken = false
-                        }
-                        Button("Print Token"){
-                            print(accessToken)
-                        }
-                    } else {
-                        Button("Show Access Token"){
-                            ShowingAccessToken = true
-                        }.onAppear(){
-                            if accessToken?.count ?? 100 <= 10{
-                                msalModel.acquireTokenSilently(accountValue)
-                            }
-                        }
-                    }
-                    Text("ID: \(UserID)")
-                        .textSelection(.enabled)
-                    TextField("Extention", text: $ApiExtention)
-                    Button("Call API"){
-                        Task{
-                            var uri: String = "https://graph.microsoft.com/v1.0"
-                            uri = uri + ApiExtention
-                            print(uri)
-                            let url = URL(string: uri)
-                            var request = URLRequest(url: url!)
-                            // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
-                            request.httpMethod = "GET"
-                            request.setValue("Bearer \(self.accessToken!)", forHTTPHeaderField: "Authorization")
-
-                            URLSession.shared.dataTask(with: request) { data, response, error in
-
-                                if let error = error {
-                                    print("Error")
-                                    return
-                                }
-                                guard let result2 = try? JSONSerialization.jsonObject(with: data!, options: []) else {
-                                    print("OH NO REE")
-                                    return
-                                }
-                                print(result2)
-                            }.resume()
-        
-                        }
-                    }
-                    Button("Call API Orignially"){
-                        Task{
-                            var graphURI = getGraphEndpoint()
-                            graphURI = graphURI + ApiExtention
-                            print(graphURI)
-                            let url = URL(string: graphURI)
-                            var request = URLRequest(url: url!)
-                            // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
-                            request.setValue("Bearer \(self.accessToken!)", forHTTPHeaderField: "Authorization")
-
-                            URLSession.shared.dataTask(with: request) { data, response, error in
-
-                                if let error = error {
-                                    print("Error")
-                                    return
-                                }
-                                guard let result2 = try? JSONDecoder().decode(GraphResponce.self, from: data!) else {
-                                    print("OH NO REE")
-                                    return
-                                }
-                                UserID = result2.id!
-                                print(UserID)
-                            }.resume()
-        
-                        }
-                    }
-                    Button("Mail View"){
-                        notShowingMailView = false
-                    }
-                }
-        }
-        } else {
-            MailViewMSAL(notShowingMailView: $notShowingMailView, accessToken: accessToken!)
-        }
-        
-        MSALScreenView_UI(viewModel: msalModel, AccountValue: $accountValue1)
-            .frame(width: 250, height: 250, alignment: .center)
-    }
-    func getGraphEndpoint() -> String {
-            return kGraphEndpoint.hasSuffix("/") ? (kGraphEndpoint + "v1.0/me/") : (kGraphEndpoint + "/v1.0/me/");
-        }
-}
-
-struct MSALView: View {
-    @StateObject var msalModel: MSALScreenViewModel = MSALScreenViewModel()
+struct MSALViewLogin: View {
+    @EnvironmentObject var msalModel: MSALScreenViewModel
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     @State var Account: MSALAccount?
-    @Binding var WindowMode: WindowSrceens
-    
     var body: some View {
         VStack {
             HStack{
                 Button(){
-                    WindowMode = .HomePage
+                    WindowMode.SelectedWindowMode = .HomePage
                 } label: {
                     HStack{
                         Image(systemName: "chevron.backward")
@@ -226,22 +77,28 @@ struct MSALView: View {
                 .font(.largeTitle)
                 .padding()
             Button("Login with MSAL") {
-                msalModel.loadMSALScreen()
+                msalModel.loadMSALScreen(AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn)
             }
-     
-            MSALScreenView_UI(viewModel: msalModel, AccountValue: $Account)
-                .frame(width: 250, height: 250, alignment: .center)
-        }
+            .onAppear(){
+                msalModel.loadMSALScreen(AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn)
+            }
+            Spacer()
+        }.background(Color.marron)
+        .edgesIgnoringSafeArea(.all)
     }
 }
 
-struct MSALTextView: View{
+struct MSALView: View{
+    @StateObject var msalModel: MSALScreenViewModel = MSALScreenViewModel()
+    @State var Account: MSALAccount?
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     var body: some View{
-        Button("Call Api"){
-            
-        }
+        MSALScreenView_UI(viewModel: msalModel, AccountValue: $Account)
+            .frame(alignment: .center)
+            .environmentObject(WindowMode)
+            .environmentObject(msalModel)
+            .background(Color.marron)
     }
-    
 }
 
 // A lot of this code was from stack overflow/ microsoft docs/ what I did was integrate with swiftui https://stackoverflow.com/questions/70654875/im-trying-to-convert-a-msal-login-from-uikit-to-swiftui-and-not-sure-how-i-can?noredirect=1#comment124903620_70654875
@@ -256,12 +113,12 @@ class MSALScreenViewModel: ObservableObject, MSALScreenViewModelProtocol{
 
 
     //MARK: MyAdsViewControllerProtocol
-    func loadMSALScreen() {
-        uiViewController?.loadMSALScreen()
+    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String) {
+        uiViewController?.loadMSALScreen(AccountMode: AccountMode, Grade: Grade, UsernameIn: UsernameIn)
     }
     
-    func acquireTokenSilently(_ account : MSALAccount!) {
-        uiViewController?.acquireTokenSilently(account)
+    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String) {
+        uiViewController?.acquireTokenSilently(account, AccountMode: AccountMode, Grade: Grade, UsernameIn: UsernameIn)
     }
     
 
@@ -282,7 +139,6 @@ struct MSALScreenView_UI: UIViewControllerRepresentable{
 }
 
 class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtocol {
-    
     
     let msalModel = MSALScreenViewModel()
 
@@ -308,6 +164,18 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
         super.init(nibName: nil, bundle: .main)
         // Link between UIKit and SwiftUI
         self.viewModel.uiViewController = self
+        let controller = UIHostingController(rootView: MSALViewLogin())
+               addChild(controller)
+               controller.view.translatesAutoresizingMaskIntoConstraints = false
+               view.addSubview(controller.view)
+               controller.didMove(toParent: self)
+
+               NSLayoutConstraint.activate([
+                    controller.view.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 1.0),
+                    controller.view.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1.0),
+                   controller.view.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                   controller.view.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+               ])
         
     }
 
@@ -315,7 +183,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
         fatalError("init(coder:) has not been implemented")
     }
 
-    func loadMSALScreen() {
+    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String) {
         do {
             let authority = try MSALB2CAuthority(url: URL(string: "https://login.microsoftonline.com/common")!)
             let pcaConfig = MSALPublicClientApplicationConfig(clientId: "82f52bae-8d11-4ed0-b1d1-83d76d2e605c", redirectUri: "msauth.Archimedes4.Pauly://auth", authority: authority)
@@ -332,7 +200,11 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                     print(account)
                     self.applicationContext = application
                     
-                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(WindowMode: WindowSrceens.ChatHomePage, accountToken: self.accessToken, MSALAccountIn: result.account))
+                    var newselectedWindowMode = SelectedWindowMode()
+                    newselectedWindowMode.SelectedWindowMode = AccountMode
+                    newselectedWindowMode.UsernameIn = UsernameIn
+                    newselectedWindowMode.GradeIn = Grade
+                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(WindowMode: newselectedWindowMode, MSALAccount: result.account))
                 }
             }
         } catch {
@@ -371,7 +243,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
             self.getContentWithToken()
         }
     }
-    func acquireTokenSilently(_ account : MSALAccount!) {
+    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String) {
         do{
             let authority1 = try MSALB2CAuthority(url: URL(string: "https://login.microsoftonline.com/common")!)
             let pcaConfig1 = MSALPublicClientApplicationConfig(clientId: "82f52bae-8d11-4ed0-b1d1-83d76d2e605c", redirectUri: "msauth.Archimedes4.Pauly://auth", authority: authority1)
@@ -388,7 +260,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                  authentication flow will be locked down to.
                  */
 
-                let parameters = MSALSilentTokenParameters(scopes: ["user.read"], account: account)
+                let parameters = MSALSilentTokenParameters(scopes: ["user.read"], account: account!)
 
                 applicationContext.acquireTokenSilent(with: parameters) { (result, error) in
 
@@ -422,10 +294,13 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                     }
 
                     self.accessToken = result.accessToken
-                    self.updateLogging(text: "Refreshed Access token is \(self.accessToken)")
                     self.updateSignOutButton(enabled: true)
                     self.getContentWithToken()
-                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: MSALLoggedinView(username: account.username!, accountValue: account, accessToken: self.accessToken))
+                    var newselectedWindowMode = SelectedWindowMode()
+                    newselectedWindowMode.SelectedWindowMode = AccountMode
+                    newselectedWindowMode.UsernameIn = UsernameIn
+                    newselectedWindowMode.GradeIn = Grade
+                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(WindowMode: newselectedWindowMode, accountToken: result.accessToken, MSALAccount: account))
                 }
         } catch {
             print("\(#function) logging error \(error)")
@@ -505,17 +380,170 @@ protocol MSALScreenViewModelProtocol{
     var uiViewController: MSALScreenViewControllerProtocol? { get set }
 
     ///Tells the viewController to load MSAL screen
-    func loadMSALScreen()
+    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String)
     func getAccountName() -> String
-    func acquireTokenSilently(_ account : MSALAccount!)
+    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String)
 }
 
 protocol MSALScreenViewControllerProtocol: UIViewController{
     ///Reference to the SwiftUI ViewModel
     var viewModel: MSALScreenViewModelProtocol { get set }
 
-    func loadMSALScreen()
-    func acquireTokenSilently(_ account : MSALAccount!)
+    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String)
+    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String)
 }
-//
+
+class MSALTools{
+    func callMailApi(Data: GraphMailPost, AccessToken: String) {
+        Task{
+            var uri: String = "https://graph.microsoft.com/v1.0/me/sendMail"
+            print(uri)
+            let url = URL(string: uri)
+            var request = URLRequest(url: url!)
+            // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(AccessToken)", forHTTPHeaderField: "Authorization")
+
+            guard let encoded = try? JSONEncoder().encode(Data) else {
+                print("Failed to encode order")
+                return
+            }
+            do {
+                let (data, _) = try await URLSession.shared.upload(for: request, from: encoded)
+                // handle the result
+            } catch {
+                print("Checkout failed.")
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //// Update the below to your client ID you received in the portal. The below is for running the demo only
+
+//struct MSALLoggedinView: View{
+//    @StateObject var msalModel: MSALScreenViewModel = MSALScreenViewModel()
+//    let username: String
+//    let accountValue: MSALAccount
+//    let accessToken: String?
+//    let kGraphEndpoint = "https://graph.microsoft.com/"
+//    @State var ApiExtention: String = ""
+//    @State var ShowingAccessToken: Bool = false
+//    @State var UserID: String = ""
+//    @State var notShowingMailView: Bool = true
+//    @State var accountValue1: MSALAccount?
+//    var body: some View{
+//        if notShowingMailView{
+//            ScrollView{
+//                Text("Welcome")
+//                Text(username)
+//                if accessToken != nil{
+//                    if ShowingAccessToken{
+//                        Text(accessToken ?? "Error")
+//                        Button("Get Acess Token"){
+//                            msalModel.acquireTokenSilently(accountValue, AccountMode: <#WindowSrceens#>)
+//                        }.onAppear(){
+//                            if accessToken?.count ?? 100 <= 10{
+//                                msalModel.acquireTokenSilently(accountValue)
+//                            }
+//                        }
+//                        Button("Hide AccessToken"){
+//                            ShowingAccessToken = false
+//                        }
+//                        Button("Print Token"){
+//                            print(accessToken)
+//                        }
+//                    } else {
+//                        Button("Show Access Token"){
+//                            ShowingAccessToken = true
+//                        }.onAppear(){
+//                            if accessToken?.count ?? 100 <= 10{
+//                                msalModel.acquireTokenSilently(accountValue)
+//                            }
+//                        }
+//                    }
+//                    Text("ID: \(UserID)")
+//                        .textSelection(.enabled)
+//                    TextField("Extention", text: $ApiExtention)
+//                    Button("Call API"){
+//                        Task{
+//                            var uri: String = "https://graph.microsoft.com/v1.0"
+//                            uri = uri + ApiExtention
+//                            print(uri)
+//                            let url = URL(string: uri)
+//                            var request = URLRequest(url: url!)
+//                            // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
+//                            request.httpMethod = "GET"
+//                            request.setValue("Bearer \(self.accessToken!)", forHTTPHeaderField: "Authorization")
+//
+//                            URLSession.shared.dataTask(with: request) { data, response, error in
+//
+//                                if let error = error {
+//                                    print("Error")
+//                                    return
+//                                }
+//                                guard let result2 = try? JSONSerialization.jsonObject(with: data!, options: []) else {
+//                                    print("OH NO REE")
+//                                    return
+//                                }
+//                                print(result2)
+//                            }.resume()
+//
+//                        }
+//                    }
+//                    Button("Call API Orignially"){
+//                        Task{
+//                            var graphURI = getGraphEndpoint()
+//                            graphURI = graphURI + ApiExtention
+//                            print(graphURI)
+//                            let url = URL(string: graphURI)
+//                            var request = URLRequest(url: url!)
+//                            // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
+//                            request.setValue("Bearer \(self.accessToken!)", forHTTPHeaderField: "Authorization")
+//
+//                            URLSession.shared.dataTask(with: request) { data, response, error in
+//
+//                                if let error = error {
+//                                    print("Error")
+//                                    return
+//                                }
+//                                guard let result2 = try? JSONDecoder().decode(GraphResponce.self, from: data!) else {
+//                                    print("OH NO REE")
+//                                    return
+//                                }
+//                                UserID = result2.id!
+//                                print(UserID)
+//                            }.resume()
+//
+//                        }
+//                    }
+//                    Button("Mail View"){
+//                        notShowingMailView = false
+//                    }
+//                }
+//        }
+//        } else {
+//            MailViewMSAL(notShowingMailView: $notShowingMailView, accessToken: accessToken!)
+//        }
+//
+//        MSALScreenView_UI(viewModel: msalModel, AccountValue: $accountValue1)
+//            .frame(width: 250, height: 250, alignment: .center)
+//    }
+//    func getGraphEndpoint() -> String {
+//            return kGraphEndpoint.hasSuffix("/") ? (kGraphEndpoint + "v1.0/me/") : (kGraphEndpoint + "/v1.0/me/");
+//        }
+//}

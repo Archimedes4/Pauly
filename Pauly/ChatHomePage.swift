@@ -21,6 +21,12 @@ public enum ChatMode: String, CaseIterable{
 
 struct GymBroPage: View{
     @Binding var SelectedChatMode: ChatMode
+    @Binding var AccessToken: String
+    @State var ChatData: GraphMailPost?
+    @State var Subject: String = ""
+    @State var Content: String = ""
+    
+    
     var body: some View{
         HStack{
             Button(){
@@ -32,6 +38,14 @@ struct GymBroPage: View{
                     Spacer()
                 }
             }.padding()
+        }
+        Button("Add Data"){
+            ChatData = GraphMailPost(message: GraphMailPost.Message(subject: Subject, body: GraphMailPost.Message.Body(contentType: "HTML", content: Content), toRecipients: [GraphMailPost.Message.ToRecipient(emailAddress: GraphMailPost.Message.ToRecipient.EmailAddress(address: "andrewmainella@icloud.com"))], internetMessageHeaders: nil))
+        }
+        Button("Send Message"){
+            if ChatData != nil{
+                MSALTools().callMailApi(Data: ChatData!, AccessToken: AccessToken)
+            }
         }
         Text("Gym Bro Page")
     }
@@ -524,15 +538,16 @@ struct MessagingPage: View{
 }
 
 struct ChatHomePage: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @Binding var SelectedChatMode: ChatMode
-    @Binding var WindowMode: WindowSrceens
     var body: some View{
         HStack{
             GeometryReader{ geo in
                 VStack{
                     HStack{
                         Button(){
-                            WindowMode = .HomePage
+                            WindowMode.SelectedWindowMode = .HomePage
                         } label: {
                             HStack{
                                 Image(systemName: "chevron.backward")
@@ -569,29 +584,33 @@ struct ChatHomePage: View{
 }
 
 struct ChatOverView: View{
-    @Binding var WindowMode: WindowSrceens
-    @Binding var Username: String
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    @StateObject var msalModel: MSALScreenViewModel = MSALScreenViewModel()
+    
     @Binding var accessToken: String?
     @Binding var MSALAccount: MSALAccount?
     @State var SelectedChatMode: ChatMode = .Home
     var body: some View{
         if MSALAccount == nil{
-            MSALView(WindowMode: $WindowMode)
-                .onAppear(){
-                    print(MSALAccount)
-                }
+            MSALView()
+                .environmentObject(WindowMode)
         } else {
             if accessToken == nil{
                 Text("Please Wait One moment well Pauly gets everything ready")
                     .onAppear(){
-                        
+                        if accessToken?.count ?? 0 <= 10{
+                            msalModel.acquireTokenSilently(MSALAccount!, AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn)
+                        }
                     }
+                MSALScreenView_UI(viewModel: msalModel, AccountValue: $MSALAccount)
+                    .frame(width: 1, height: 1, alignment: .bottom)
             } else {
                 if SelectedChatMode == .Home{
-                    ChatHomePage(SelectedChatMode: $SelectedChatMode, WindowMode: $WindowMode)
+                    ChatHomePage(SelectedChatMode: $SelectedChatMode)
+                        .environmentObject(WindowMode)
                 } else {
                     if SelectedChatMode == .GymBro{
-                        GymBroPage(SelectedChatMode: $SelectedChatMode)
+                        GymBroPage(SelectedChatMode: $SelectedChatMode, AccessToken: $accessToken as! Binding<String>)
                     } else {
                         if SelectedChatMode == .MessageLEGO{
                             MessageLEGO(SelectedChatMode: $SelectedChatMode)
@@ -603,7 +622,7 @@ struct ChatOverView: View{
                                     TutoringPage(SelectedChatMode: $SelectedChatMode)
                                 } else {
                                     if SelectedChatMode == .Message{
-                                        MessagingPage(SelectedChatMode: $SelectedChatMode, Username: $Username)
+                                        MessagingPage(SelectedChatMode: $SelectedChatMode, Username: $WindowMode.UsernameIn)
                                     }
                                 }
                             }

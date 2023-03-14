@@ -303,10 +303,11 @@ struct SildingTileView: View {
 }
 
 struct HomePage: View{
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @State private var animationAmount = 1.0
     @State var width: CGFloat = 0.0
-    @State var ScrollText: String = "Today's Special Is Tomato Basil Linquine with Garlic Toast "
+    @State var ScrollText: String = "In Loving Memory of Yash Varma "
     @State var ShowingTextView: Bool = true
     var body: some View{
         GeometryReader{ geometry in
@@ -338,7 +339,7 @@ struct HomePage: View{
                     }
                 }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
                 Button(){
-                    WindowMode = .Calendar
+                    WindowMode.SelectedWindowMode = .Calendar
                 } label: {
                     VStack(spacing: 0){
                         Image("CalendarText")
@@ -359,7 +360,7 @@ struct HomePage: View{
                 .background(Color.white)
                 HStack(spacing: 0){
                     Button(){
-                        WindowMode = .QuizHomePage
+                        WindowMode.SelectedWindowMode = .QuizHomePage
                     } label: {
                         ZStack{
                             Rectangle()
@@ -375,7 +376,7 @@ struct HomePage: View{
                     .border(.black)
 //                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                     Button(){
-                        WindowMode = .LectureHomePage
+                        WindowMode.SelectedWindowMode = .LectureHomePage
                     } label: {
                         ZStack{
                             Rectangle()
@@ -392,7 +393,7 @@ struct HomePage: View{
 //                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                 }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.25)
                 Button(){
-                    WindowMode = .ChatHomePage
+                    WindowMode.SelectedWindowMode = .ChatHomePage
                 } label: {
                     ZStack{
                         Rectangle()
@@ -414,54 +415,115 @@ struct HomePage: View{
     }
 }
 
+class SelectedWindowMode: ObservableObject{
+    @Published var SelectedWindowMode: WindowSrceens = .PasswordWindow
+    @Published var GradeIn: Int = 8
+    @Published var UsernameIn: String = ""
+}
+
 struct ContentView: View {
-    @State private var WindowMode: WindowSrceens
-    @State var UsernameIn: String = ""
-    @State var GradeIn: Int = 8
+    @StateObject var WindowMode: SelectedWindowMode = SelectedWindowMode()
     @State var accountToken: String?
     @State var MSALAccount: MSALAccount?
     
-    init(WindowMode: WindowSrceens, accountToken: String? = nil, MSALAccountIn: MSALAccount? = nil) {
-        self.WindowMode = WindowMode
-        self.accountToken = accountToken
-        self.MSALAccount = MSALAccountIn
-    }
-    
     var body: some View {
-        if WindowMode == .PasswordWindow{
-            PasswordView(WindowMode: $WindowMode, UsernameIn: $UsernameIn, GradeIn: $GradeIn)
+        if WindowMode.SelectedWindowMode == .PasswordWindow{
+            PasswordView(UsernameIn: $WindowMode.UsernameIn, GradeIn: $WindowMode.GradeIn)
                 .environment(\.colorScheme, .light)
+                .environmentObject(WindowMode)
         }
-        if WindowMode == .NewUser{
-            CreateNewUserView(WindowMode: $WindowMode, UsernameIn: $UsernameIn, GradeIn: $GradeIn)
+        if WindowMode.SelectedWindowMode == .NewUser{
+            CreateNewUserView(UsernameIn: $WindowMode.UsernameIn, GradeIn: $WindowMode.GradeIn)
                 .environment(\.colorScheme, .light)
+                .environmentObject(WindowMode)
         }
-        if WindowMode == .HomePage{
-            HomePage(WindowMode: $WindowMode)
+        if WindowMode.SelectedWindowMode == .HomePage{
+            HomePage()
+                .environmentObject(WindowMode)
         }
-        if WindowMode == .QuizHomePage{
-            QuizView(WindowMode: $WindowMode, Grade: $GradeIn)
+        if WindowMode.SelectedWindowMode == .QuizHomePage{
+            QuizView(accessToken: $accountToken, MSALAccount: $MSALAccount)
+                .environmentObject(WindowMode)
+            
         }
-        if WindowMode == .Calendar{
-            CalendarHomePage(WindowMode: $WindowMode)
+        if WindowMode.SelectedWindowMode == .Calendar{
+            CalendarHomePage()
+                .environmentObject(WindowMode)
         }
-        if WindowMode == .LectureHomePage{
-            LetureHomePage(WindowMode: $WindowMode)
+        if WindowMode.SelectedWindowMode == .LectureHomePage{
+            LetureHomePage()
+                .environmentObject(WindowMode)
         }
-        if WindowMode == .ChatHomePage{
-            ChatOverView(WindowMode: $WindowMode, Username: $UsernameIn, accessToken: $accountToken, MSALAccount: $MSALAccount)
+        if WindowMode.SelectedWindowMode == .ChatHomePage{
+            ChatOverView(accessToken: $accountToken, MSALAccount: $MSALAccount)
+                .environmentObject(WindowMode)
         }
     }
 }
 
 struct CreateNewUserSecondView: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    @Binding var Username: String
+    @Binding var Password: String
+    @Binding var GradeIn: Int
+    @State var ErrorMessage: String
+    @State var ShowingErrorMessage: Bool = false
+    @State var SelectedGrade: Int = 8
+    @State var UsernameIn: String
+    @State var ConfirmPassword: String
     var body: some View{
         Text("Add Courses")
+        Button(){
+            if Username != "" {
+                if Password != ""{
+                    if Password == ConfirmPassword{
+                        Task{
+                            let response = try await Functions().loadData(extensionvar: "CUsername/\(Username)/\(Password)/\(SelectedGrade)")
+                            print(response.result)
+                            if response.result == "Success"{
+                                do{
+                                    let PasswordData = Password.data(using: .utf8)
+                                    try Security.save(password: PasswordData!, service: "Pauly", account: Username)
+                                } catch KeychainError.duplicateItem{
+                                    print("DuplicateItem")
+                                } catch KeychainError.unexpectedStatus(let Status){
+                                    print(Status)
+                                } catch {
+                                    print("Else")
+                                }
+                                GradeIn = Int(SelectedGrade) ?? 8
+                                UsernameIn = Username
+                                WindowMode.SelectedWindowMode = .HomePage
+                            } else {
+                                if response.result == "Invalid Parameter"{
+                                    ShowingErrorMessage = true
+                                    ErrorMessage = "Invalid Parameters"
+                                } else {
+                                    print(response)
+                                }
+                            }
+                        }
+                    } else {
+                        ErrorMessage = "Passwords do not match"
+                        ShowingErrorMessage = true
+                    }
+                } else {
+                    ErrorMessage = "Passwords cannot be nothing"
+                    ShowingErrorMessage = true
+                }
+            } else {
+                ErrorMessage = "Username Needs cannot be nothing"
+                ShowingErrorMessage = true
+            }
+        } label: {
+            Text("Next")
+        }
     }
 }
 
 struct CreateNewUserView: View{
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @Binding var UsernameIn: String
     @Binding var GradeIn: Int
     @State var Username: String = ""
@@ -476,9 +538,12 @@ struct CreateNewUserView: View{
         GeometryReader{ value in
             ScrollView(.vertical, showsIndicators: false){
                 VStack{
+                    Spacer()
+                    Spacer()
+                    Spacer()
                     Text("Create New User")
                         .font(.custom("Chalkboard SE", size: 45.0))
-                        .padding(.bottom)
+                        .padding()
                     Button{
                         
                     } label: {
@@ -491,7 +556,7 @@ struct CreateNewUserView: View{
                                         Text("Username").foregroundColor(.black)
                                 }
                                 .background(Color.white)
-                                .frame(width: value.size.width * 0.7, height: value.size.height * 0.075, alignment: .leading)
+                                .frame(width: value.size.width * 0.76, height: value.size.height * 0.075, alignment: .leading)
                                 .cornerRadius(15)
                                 .padding()
                         }.padding()
@@ -512,7 +577,7 @@ struct CreateNewUserView: View{
                                         Text("Password").foregroundColor(.black)
                                 }
                                 .background(Color.white)
-                                .frame(width: value.size.width * 0.7, height: value.size.height * 0.075, alignment: .leading)
+                                .frame(width: value.size.width * 0.76, height: value.size.height * 0.075, alignment: .leading)
                                 .cornerRadius(15)
                                 .padding()
                         }.padding()
@@ -535,7 +600,7 @@ struct CreateNewUserView: View{
                                         Text("Confirm Password").foregroundColor(.black)
                                 }
                                 .background(Color.white)
-                                .frame(width: value.size.width * 0.7, height: value.size.height * 0.075, alignment: .leading)
+                                .frame(width: value.size.width * 0.76, height: value.size.height * 0.075, alignment: .leading)
                                 .cornerRadius(15)
                                 .padding()
                         }.padding()
@@ -554,7 +619,7 @@ struct CreateNewUserView: View{
                                 ForEach(Grades, id: \.self) {
                                     Text($0)
                                 }
-                            }.frame(width: value.size.width * 0.7, height: value.size.height * 0.075, alignment: .leading)
+                            }.frame(width: value.size.width * 0.76, height: value.size.height * 0.055, alignment: .leading)
                             .padding()
                             .foregroundColor(.black)
                             .pickerStyle(.menu)
@@ -567,66 +632,9 @@ struct CreateNewUserView: View{
                     .padding(.top)
                     
                     Button(){
-                        if Username != "" {
-                            if Password != ""{
-                                if Password == ConfirmPassword{
-                                    Task{
-                                        let response = try await Functions().loadData(extensionvar: "CUsername/\(Username)/\(Password)/\(SelectedGrade)")
-                                        print(response.result)
-                                        if response.result == "Success"{
-                                            do{
-                                                let PasswordData = Password.data(using: .utf8)
-                                                try Security.save(password: PasswordData!, service: "Pauly", account: Username)
-                                            } catch KeychainError.duplicateItem{
-                                                print("DuplicateItem")
-                                            } catch KeychainError.unexpectedStatus(let Status){
-                                                print(Status)
-                                            } catch {
-                                                print("Else")
-                                            }
-                                            GradeIn = Int(SelectedGrade) ?? 8
-                                            UsernameIn = Username
-                                            WindowMode = .HomePage
-                                        } else {
-                                            if response.result == "Invalid Parameter"{
-                                                ShowingErrorMessage = true
-                                                ErrorMessage = "Invalid Parameters"
-                                            } else {
-                                                print(response)
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    ErrorMessage = "Passwords do not match"
-                                    ShowingErrorMessage = true
-                                }
-                            } else {
-                                ErrorMessage = "Passwords cannot be nothing"
-                                ShowingErrorMessage = true
-                            }
-                        } else {
-                            ErrorMessage = "Username Needs cannot be nothing"
-                            ShowingErrorMessage = true
-                        }
+                        //TO DO Next
                     } label: {
                         Text("NEXT")
-                            .font(.system(size: 17))
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .frame(minWidth: 0, maxWidth: .infinity)
-                            .padding()
-                    }.buttonStyle(.plain)
-                    .background(
-                        RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.white)
-                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    )
-                    .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
-                    .padding(.top)
-                    Button{
-                        WindowMode = .PasswordWindow
-                    } label: {
-                        Text("Back")
                             .font(.system(size: 17))
                             .fontWeight(.bold)
                             .foregroundColor(.black)
@@ -639,12 +647,23 @@ struct CreateNewUserView: View{
                             )
                             .padding()
                     }
-                    .buttonStyle(.plain)
-                    .frame(width: value.size.width * 0.3, height: value.size.height * 0.15, alignment: .center)
-                    .cornerRadius(15)
+                    Button{
+                        WindowMode.SelectedWindowMode = .PasswordWindow
+                    } label: {
+                        Text("BACK")
+                            .font(.system(size: 17))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
+                    }.padding(.top, -15)
                 }
-                .padding([.bottom, .top], value.size.height * 0.1)
-                .frame(width: value.size.width * 1.0)
             }.background(Color.marron)
             .frame(width: value.size.width * 1.0)
             .edgesIgnoringSafeArea(.all)
@@ -653,7 +672,8 @@ struct CreateNewUserView: View{
 }
 
 struct PasswordView: View{
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @Binding var UsernameIn: String
     @Binding var GradeIn: Int
     @State var Username: String = ""
@@ -703,7 +723,7 @@ struct PasswordView: View{
                                     .textContentType(.username)
                                     .keyboardType(.default)
                                     .placeholder(when: Username.isEmpty) {
-                                            Text("Username").foregroundColor(.black)
+                                        Text("Username").foregroundColor(.black)
                                     }
                                     .background(Color.white)
                                     .frame(width: value.size.width * 0.6, height: value.size.height * 0.15, alignment: .leading)
@@ -739,7 +759,7 @@ struct PasswordView: View{
                                     .multilineTextAlignment(.leading)
                                     .textContentType(.password)
                                     .placeholder(when: Password.isEmpty) {
-                                            Text("Password").foregroundColor(.black)
+                                        Text("Password").foregroundColor(.black)
                                     }
                                     .background(Color.white)
                                     .frame(width: value.size.width * 0.6, height: value.size.height * 0.15, alignment: .leading)
@@ -755,7 +775,7 @@ struct PasswordView: View{
                                                         if response.result == "Success"{
                                                             GradeIn = response.Grade ?? 8
                                                             UsernameIn = Username
-                                                            WindowMode = .HomePage
+                                                            WindowMode.SelectedWindowMode = .HomePage
                                                         } else {
                                                             if response.result == "Invalid Parameter"{
                                                                 notLoadingPassword = true
@@ -785,7 +805,7 @@ struct PasswordView: View{
                                                 //BYPASS REMOVE ON RELASE
                                                 GradeIn = 11
                                                 UsernameIn = "Andrew"
-                                                WindowMode = .HomePage
+                                                WindowMode.SelectedWindowMode = .HomePage
                                                 //BYPASS REMOVE ON RELASE END
                                             }
                                         }
@@ -823,7 +843,7 @@ struct PasswordView: View{
                                             if response.result == "Success"{
                                                 GradeIn = response.Grade ?? 8
                                                 UsernameIn = Username
-                                                WindowMode = .HomePage
+                                                WindowMode.SelectedWindowMode = .HomePage
                                             } else {
                                                 if response.result == "Invalid Parameter"{
                                                     notLoadingPassword = true
@@ -853,7 +873,7 @@ struct PasswordView: View{
                                     //BYPASS REMOVE ON RELASE
                                     GradeIn = 11
                                     UsernameIn = "Andrew"
-                                    WindowMode = .HomePage
+                                    WindowMode.SelectedWindowMode = .HomePage
                                     //BYPASS REMOVE ON RELASE END
                                 }
                             }
@@ -884,7 +904,7 @@ struct PasswordView: View{
                             }
                         }
                         Button(){
-                            WindowMode = .NewUser
+                            WindowMode.SelectedWindowMode = .NewUser
                         } label: {
                             Text("CREATE NEW USER")
                                 .font(.system(size: 17))

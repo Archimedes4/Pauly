@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import PDFKit
+import MSAL
 
 enum GradesEnum: String, CaseIterable{
     case Grade_9 = "Grade 9"
@@ -299,7 +300,8 @@ struct CourseView: View{
 }
 
 struct CourseSelectionView: View{
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @Binding var ShowingSelectionView: Bool
     @Binding var OverrideSelectionView: Bool
     @State var AvaliableCourses: [Course] = []
@@ -352,7 +354,7 @@ struct CourseSelectionView: View{
                     VStack{
                         HStack(){
                             Button{
-                                WindowMode = .HomePage
+                                WindowMode.SelectedWindowMode = .HomePage
                             } label: {
                                 HStack{
                                     Image(systemName: "chevron.backward")
@@ -391,7 +393,8 @@ struct CourseSelectionView: View{
 }
 
 struct GradeSelectionView: View{
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @Binding var SelectedUserGrade: GradesEnum
     @Binding var ShowingSelectionView: Bool
     @Binding var OverrideSelectionView: Bool
@@ -403,7 +406,7 @@ struct GradeSelectionView: View{
                     VStack(){
                         HStack{
                             Button {
-                                WindowMode = .HomePage
+                                WindowMode.SelectedWindowMode = .HomePage
                             } label: {
                                 HStack {
                                     Image(systemName: "chevron.backward")
@@ -443,37 +446,64 @@ struct GradeSelectionView: View{
 }
 
 struct QuizView: View{
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @State var SelectedUserGrade: GradesEnum = .Grade_9
     @State var ShowingSelectionView: Bool = true
     @State var OverrideSelectionView: Bool = true
-    @Binding var Grade: Int
+    @Binding var accessToken: String?
+    @Binding var MSALAccount: MSALAccount?
+    @StateObject var msalModel: MSALScreenViewModel = MSALScreenViewModel()
+    
     var body: some View{
-        if ShowingSelectionView{
-            GradeSelectionView(WindowMode: $WindowMode, SelectedUserGrade: $SelectedUserGrade, ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView).onAppear(){
-                if OverrideSelectionView{
-                    if Grade >= 9{
-                        if Grade == 9{
-                            SelectedUserGrade = .Grade_9
-                        } else {
-                            if Grade == 10{
-                                SelectedUserGrade = .Grade_10
-                            } else {
-                                if Grade == 11{
-                                    SelectedUserGrade = .Grade_11
+        if MSALAccount == nil{
+            MSALView()
+                .environmentObject(WindowMode)
+        } else {
+            if accessToken == nil{
+                Text("Please Wait One moment well Pauly gets everything ready")
+                    .onAppear(){
+                        if accessToken?.count ?? 0 <= 10{
+                            msalModel.acquireTokenSilently(MSALAccount!, AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn)
+                        }
+                    }
+                MSALScreenView_UI(viewModel: msalModel, AccountValue: $MSALAccount)
+                    .frame(width: 1, height: 1, alignment: .bottom)
+            } else {
+                if ShowingSelectionView{
+                    GradeSelectionView(SelectedUserGrade: $SelectedUserGrade, ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView).onAppear(){
+                        print("Here2")
+                        print("Overise Selection View: \(OverrideSelectionView)")
+                        if OverrideSelectionView{
+                            print("Going in")
+                            print("Grade \(WindowMode.GradeIn)")
+                            if WindowMode.GradeIn >= 9{
+                                if WindowMode.GradeIn == 9{
+                                    SelectedUserGrade = .Grade_9
                                 } else {
-                                    if Grade == 12{
-                                        SelectedUserGrade = .Grade_12
+                                    if WindowMode.GradeIn == 10{
+                                        SelectedUserGrade = .Grade_10
+                                    } else {
+                                        if WindowMode.GradeIn == 11{
+                                            SelectedUserGrade = .Grade_11
+                                        } else {
+                                            if WindowMode.GradeIn == 12{
+                                                SelectedUserGrade = .Grade_12
+                                            }
+                                        }
                                     }
                                 }
+                                print("Here")
+                                ShowingSelectionView = false
                             }
                         }
-                        ShowingSelectionView = false
                     }
+                    .environmentObject(WindowMode)
+                } else {
+                    CourseSelectionView(ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView, SelectedClass: SelectedUserGrade)
+                        .environmentObject(WindowMode)
                 }
             }
-        } else {
-            CourseSelectionView(WindowMode: $WindowMode, ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView, SelectedClass: SelectedUserGrade)
         }
     }
 }

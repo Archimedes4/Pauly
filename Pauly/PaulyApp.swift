@@ -17,7 +17,7 @@ struct PaulyApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(WindowMode: .PasswordWindow)
+            ContentView()
                 .environment(\.colorScheme, .light)
 //                .onChange(of: phase) { newPhase in
 //                    switch newPhase {

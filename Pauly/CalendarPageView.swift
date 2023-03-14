@@ -9,12 +9,13 @@ import Foundation
 import SwiftUI
 
 struct CalendarHomePage: View{
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     var body: some View{
         Text("CalendarHomePAge")
         MonthViewMain()
         Button("Back"){
-            WindowMode = .HomePage
+            WindowMode.SelectedWindowMode = .HomePage
         }
     }
 }

@@ -22,12 +22,13 @@ struct YouTubeView: UIViewRepresentable {
 }
 
 struct LetureHomePage: View{
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @State var SelectedLectureMode: LectureMode = .SelectionView
     @State var SelectedVideoID: String = "dQw4w9WgXcQ"
     var body: some View{
         if SelectedLectureMode == .SelectionView{
-            LecutureSelectionView(WindowMode: $WindowMode, SelectedVideoID: $SelectedVideoID, SelectedLectureMode: $SelectedLectureMode)
+            LecutureSelectionView(SelectedVideoID: $SelectedVideoID, SelectedLectureMode: $SelectedLectureMode)
         } else {
             if SelectedLectureMode == .YoutubeView{
                 Button("Back"){
@@ -52,7 +53,8 @@ struct VideoView: View {
 }
 
 struct LecutureSelectionView: View {
-    @Binding var WindowMode: WindowSrceens
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
     @Binding var SelectedVideoID: String
     @Binding var SelectedLectureMode: LectureMode
     var ids = ["Akwm2UZJ34o", "kc29axOAzRs", "WMRip0eRER8", "dQw4w9WgXcQ"]
@@ -64,7 +66,7 @@ struct LecutureSelectionView: View {
                 VStack {
                     HStack{
                         Button("Back"){
-                            WindowMode = .HomePage
+                            WindowMode.SelectedWindowMode = .HomePage
                         }
                         Spacer()
                         Text("lectureHomePage")
