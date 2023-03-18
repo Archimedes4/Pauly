@@ -8,15 +8,147 @@
 import Foundation
 import SwiftUI
 
+enum SelectedCalendarMode: String, CaseIterable{
+    case Day = "Day"
+    case Week = "Week"
+    case Month = "Month"
+}
+
 struct CalendarHomePage: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
+    @Environment(\.colorScheme) var colorScheme
+    @State var SelectedMode: SelectedCalendarMode.RawValue = SelectedCalendarMode.Day.rawValue
+    var body: some View{
+        HStack{
+            Button(){
+                WindowMode.SelectedWindowMode = .HomePage
+            } label: {
+                HStack {
+                    Image(systemName: "chevron.backward")
+                        .padding(.leading)
+                    Text("Back")
+                }
+            }
+            VStack{
+                Picker("Apperance", selection: $SelectedMode){
+                    ForEach(SelectedCalendarMode.allCases, id: \.rawValue){ value in
+                        Text(value.rawValue)
+                          
+                    }
+                }.pickerStyle(.segmented)
+                .tint(colorScheme == .dark ? Color.black : Color.white)
+            }
+        }
+        if SelectedMode == "Day" {
+            DayView()
+        } else {
+            if SelectedMode == "Week" {
+                WeekView()
+            } else {
+                if SelectedMode == "Month" {
+                    MonthViewMain()
+                }
+            }
+        }
+    }
+}
+
+struct DayView: View{
+    @State var SelectedDay: Date = Date.now
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View{
-        Text("CalendarHomePAge")
-        MonthViewMain()
-        Button("Back"){
-            WindowMode.SelectedWindowMode = .HomePage
+        VStack{
+            HStack{
+                Button(){
+                    SelectedDay = Calendar.current.date(byAdding: .day, value: -1, to: SelectedDay)!
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                Text(SelectedDay.formatted(date: .long, time: .omitted))
+                Button(){
+                    SelectedDay = Calendar.current.date(byAdding: .day, value: 1, to: SelectedDay)!
+                } label: {
+                    Image(systemName: "chevron.forward")
+                }
+                if SelectedDay.formatted(date: .numeric, time: .omitted) != Date.now.formatted(date: .numeric, time: .omitted){
+                    Button(){
+                        SelectedDay = Date.now
+                    } label: {
+                        Text("Today")
+                    }
+                }
+            }
+            ScrollView{
+                ForEach(0..<24){value in
+                    HStack{
+                        Text("\((value % 12) + 1)")
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                            .background(
+                            Circle()
+                                .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+                                .border(.gray)
+                                .padding()
+                            )
+                        Divider()
+                    }.padding()
+                        .frame(maxWidth: .infinity)
+                }
+            }.frame(maxWidth: .infinity)
         }
+    }
+}
+
+struct WeekView: View{
+    @State var SelectedDay: Date = Date.now
+    @State var Days: [Date] = []
+    var body: some View{
+        VStack{
+            HStack{
+                Button(){
+                    SelectedDay = Calendar.current.date(byAdding: .day, value: -7, to: SelectedDay)!
+                    Days = GetDates(CurrentDate: SelectedDay)
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                Text(SelectedDay, format: .dateTime.month().year())
+                Button(){
+                    SelectedDay = Calendar.current.date(byAdding: .day, value: 7, to: SelectedDay)!
+                    Days = GetDates(CurrentDate: SelectedDay)
+                } label: {
+                    Image(systemName: "chevron.forward")
+                }
+                if SelectedDay.formatted(date: .numeric, time: .omitted) != Date.now.formatted(date: .numeric, time: .omitted){
+                    Button(){
+                        SelectedDay = Date.now
+                    } label: {
+                        Text("Today")
+                    }
+                }
+            }
+            ScrollView{
+                HStack{
+                    ForEach(Days, id: \.self){ WeekDay in
+                        Text(WeekDay, format: .dateTime.day())
+                            .background(Circle().foregroundColor(.red))
+                    }
+                }.onAppear(){
+                    Days = GetDates(CurrentDate: SelectedDay)
+                }
+            }
+        }
+    }
+    func GetDates(CurrentDate: Date) -> [Date] {
+        let weekday = Calendar.current.component(.weekday, from: CurrentDate)
+        var result: [Date] = []
+        for x in 0..<weekday{
+            result.append(Calendar.current.date(byAdding: .day, value: -x, to: CurrentDate)!)
+        }
+        for x in (weekday..<7).enumerated(){
+            result.append(Calendar.current.date(byAdding: .day, value: (x.offset + 1), to: CurrentDate)!)
+        }
+        result.sort()
+        return result
     }
 }
 
@@ -111,4 +243,21 @@ struct MonthViewMain: View{
             }.padding(0)
         }
     }
+}
+
+struct CalendarUI: UIViewRepresentable {
+    
+    let interval: DateInterval
+    
+    func makeUIView(context: Context) -> UICalendarView {
+        let view = UICalendarView()
+        view.calendar = Calendar.current
+        view.availableDateRange = interval
+        return view
+    }
+    
+    func updateUIView(_ uiView: UICalendarView, context: Context) {
+        
+    }
+    
 }

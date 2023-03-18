@@ -544,7 +544,7 @@ struct ChatHomePage: View{
     var body: some View{
         HStack{
             GeometryReader{ geo in
-                VStack{
+                ScrollView(showsIndicators: false){
                     HStack{
                         Button(){
                             WindowMode.SelectedWindowMode = .HomePage
@@ -559,25 +559,50 @@ struct ChatHomePage: View{
                     Text("Messaging")
                         .font(.custom("Chalkboard SE", size: 60.0))
                         .padding()
-                    ScrollView(showsIndicators: false){
-                        ForEach(ChatMode.allCases, id: \.rawValue){ Selectmode in
-                            if Selectmode != .Home{
-                                Button{
-                                    SelectedChatMode = Selectmode
-                                } label: {
-                                    ZStack{
-                                        Rectangle()
-                                            .foregroundColor(.white)
-                                            .frame(width: geo.frame(in: .global).width * 0.8, height: geo.frame(in: .global).height * 0.15)
-                                            .cornerRadius(15)
-                                        Text(Selectmode.rawValue)
-                                            .foregroundColor(.black)
-                                    }
-                                }
+                    ForEach(ChatMode.allCases, id: \.rawValue){ Selectmode in
+                        if Selectmode != .Home{
+                            Button{
+                                SelectedChatMode = Selectmode
+                            } label: {
+                                Text(Selectmode.rawValue)
+                                    .foregroundColor(.black)
                             }
+                            .frame(width: geo.size.width * 0.8, height: geo.size.height * 0.2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
                         }
+                        Spacer()
                     }
-                }
+                }.mask(
+                    GeometryReader{ maskgeo in
+                        VStack(spacing: 0) {
+
+                            // Left gradient
+                            LinearGradient(gradient:
+                               Gradient(
+                                   colors: [Color.black.opacity(0), Color.black]),
+                                           startPoint: .top, endPoint: .bottom
+                               )
+
+                            // Middle
+                            Group{
+                                Rectangle().fill(Color.black)
+                                    .frame(width: maskgeo.size.width * 1.0, height: maskgeo.size.height * 0.93)
+                            }
+
+                            // Right gradient
+                            LinearGradient(gradient:
+                               Gradient(
+                                   colors: [Color.black, Color.black.opacity(0)]),
+                                   startPoint: .top, endPoint: .bottom
+                               )
+                            }
+                    }
+                    )
             }
         }.background(Color.marron)
     }

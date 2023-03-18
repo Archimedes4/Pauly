@@ -9,7 +9,9 @@ import Foundation
 import SwiftUI
 import PDFKit
 import MSAL
+import FirebaseFirestore
 
+// Defining Custom Types
 enum GradesEnum: String, CaseIterable{
     case Grade_9 = "Grade 9"
     case Grade_10 = "Grade 10"
@@ -17,12 +19,39 @@ enum GradesEnum: String, CaseIterable{
     case Grade_12 = "Grade 12"
 }
 
+enum SelectedModeCalculusEnum{
+    case Home
+    case FactoringBinomials
+    case PDFView
+    case MSLFView
+    case YouTube
+    case Else
+}
+
 struct Course {
     let CourseName: String
     let Teacher: [String]
 }
 
+struct CardType: Hashable, Identifiable {
+    let id = UUID()
+    //Card Face
+    let Title: String
+    let Caption: String
+    
+    //Card Destintation
+    let Destination: Int
+    let CardData: [String]
+    let CardDataName: [String]
+}
+//Defineing Cutom types end
+struct AnErrorHasOcurredView: View{
+    var body: some View{
+        Text("An Error has Occured")
+    }
+}
 
+//Factori
 struct FactoringBinomials: View{
     @Binding var SelectedMode: SelectedModeCalculusEnum
     @State var FactorDisplay: AttributedString = AttributedString("")
@@ -131,19 +160,6 @@ struct FactoringBinomials: View{
         }
     }
 }
-enum SelectedModeCalculusEnum{
-    case Home
-    case FactoringBinomials
-    case PDFView
-    case MSLFView
-    case Else
-}
-
-struct AnErrorHasOcurredView: View{
-    var body: some View{
-        Text("An Error has Occured")
-    }
-}
 
 struct PDFSelectionView: View{
     @Binding var SelectedMode: SelectedModeCalculusEnum
@@ -204,22 +220,48 @@ struct PDFSelectionView: View{
     }
 }
 
+//Background for course home page
 struct CourseBackground: View{
+    let BackgroundType: Int
     var body: some View{
-        Rectangle()
-            .fill(
-                LinearGradient(gradient: Gradient(colors: [.purple, .blue, .orange]), startPoint: .top, endPoint: .bottom)
-            )
+        if BackgroundType == 1{
+            Rectangle()
+                .fill(
+                    LinearGradient(gradient: Gradient(colors: [.purple, .blue, .orange]), startPoint: .top, endPoint: .bottom)
+                )
+        } else {
+            if BackgroundType == 2{
+                Rectangle()
+                    .fill(
+                        Color.gray
+                    )
+            }
+        }
     }
 }
 
+//The default card
 struct Card: View{
+    @Binding var SelectedMode: SelectedModeCalculusEnum
     let Title: String
-    let Caption: [String]
+    let Caption: String
     let TextColor: Color
+    let Destination: Int
+    let CardData: [String]
+    let CardDataName: [String]
     var body: some View{
         Button{
-            print("Output needed")
+            if Destination == 0{
+                SelectedMode = .FactoringBinomials
+            } else {
+                if Destination == 1{
+                    SelectedMode = .YouTube
+                } else {
+                    if Destination == 2{
+                        SelectedMode = .PDFView
+                    }
+                }
+            }
         } label: {
             ZStack{
                 Rectangle()
@@ -228,7 +270,7 @@ struct Card: View{
                     Text(Title)
                         .font(.title)
                         .foregroundColor(TextColor)
-                    Text(Caption.description)
+                    Text(Caption)
                         .font(.caption2)
                         .foregroundColor(TextColor)
                 }
@@ -238,14 +280,20 @@ struct Card: View{
     }
 }
 
+
+//the home page of the selected course
 struct ClassHomePageView: View{
     @Binding var ShowingSelectClassView: Bool
-    @Binding var SelectedCourse: Course
+    @Binding var SelectedCourse: String
     @Binding var SelectedMode: SelectedModeCalculusEnum
+    @Binding var GradeIn: Int
+    @State var Teacher = ""
+    @State var AvaliableCards: [CardType] = []
+    @State var BackgroundType: Int = 2
     var body: some View{
         GeometryReader{ value in
             ZStack(alignment: .leading){
-                CourseBackground()
+                CourseBackground(BackgroundType: BackgroundType)
                     .edgesIgnoringSafeArea(.all)
                 VStack(){
                     HStack{
@@ -260,92 +308,142 @@ struct ClassHomePageView: View{
                         }
                         Spacer()
                     }
-                    Card(Title: SelectedCourse.CourseName, Caption: SelectedCourse.Teacher, TextColor: Color.black)
-                        .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
-                        .cornerRadius(25)
-                    
-                    Button("Factoring Binomials"){
-                        SelectedMode = .FactoringBinomials
-                    }
-                    Button("PDFView"){
-                        SelectedMode = .PDFView
-                    }
-                    Button("MSLF View"){
-                        SelectedMode = .MSLFView
+                    ForEach(AvaliableCards, id: \.id) { card in
+                        Card(SelectedMode: $SelectedMode, Title: card.Title, Caption: card.Caption, TextColor: Color.black, Destination: card.Destination, CardData: card.CardData, CardDataName: card.CardDataName)
+                            .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
+                            .cornerRadius(25)
                     }
                     Spacer()
             }
-        }
-        }
-    }
-}
-
-struct CourseView: View{
-    @Binding var ShowingSelectClassView: Bool
-    @Binding var SelectedCourse: Course
-    @State var SelectedMode: SelectedModeCalculusEnum = .Home
-    var body: some View{
-        if SelectedMode == .Home{
-            ClassHomePageView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse, SelectedMode: $SelectedMode)
-        } else {
-            if SelectedMode == .FactoringBinomials{
-                FactoringBinomials(SelectedMode: $SelectedMode)
-            } else {
-                if SelectedMode == .PDFView{
-                    PDFSelectionView(SelectedMode: $SelectedMode)
+            }.onAppear(){
+                Task{
+                    do{
+                        let db = Firestore.firestore()
+                        
+                        var docRef = db.collection("Courses").document("Grade\(GradeIn)").collection("\(SelectedCourse)-1-2023").document("Info")
+                        docRef.getDocument { (document, error) in
+                            guard error == nil else {
+                                print("error", error ?? "")
+                                return
+                            }
+                            
+                            if let document = document, document.exists {
+                                let data = document.data()
+                                if let data = data {
+                                    Teacher = data["Teacher"] as! String
+                                }
+                            }
+                        }
+                        docRef = db.collection("Courses").document("Grade\(GradeIn)").collection("\(SelectedCourse)-1-2023").document("Page Info")
+                        docRef.getDocument { (document, error) in
+                            guard error == nil else {
+                                print("error", error ?? "")
+                                return
+                            }
+                            
+                            if let document = document, document.exists {
+                                let data = document.data()
+                                if let data = data {
+                                    let NumberOfCards = data["NumberOfPages"] as! Int
+                                    print("Number of Cards \(NumberOfCards)")
+                                    for x in 0..<NumberOfCards{
+                                        let docRef = db.collection("Courses").document("Grade\(GradeIn)").collection("\(SelectedCourse)-1-2023").document("Page Info").collection("Card\(x + 1)").document("Info")
+                                        docRef.getDocument { (document, error) in
+                                            guard error == nil else {
+                                                print("error", error ?? "")
+                                                return
+                                            }
+                                            
+                                            if let document = document, document.exists {
+                                                let data = document.data()
+                                                if let data = data {
+                                                    let titleFire = data["Title"] as! String
+                                                    let destinationFire = data["Destination"] as! Int
+                                                    let captionFire = data["Caption"] as! String
+                                                    let cardDataValueFire = data["CardData"] as! [String]
+                                                    let cardDataNameFire = data["CardDataName"] as! [String]
+                                                    AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, Destination: destinationFire, CardData: cardDataValueFire, CardDataName: cardDataNameFire))
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch {
+                        print("Error")
+                    }
                 }
             }
         }
     }
 }
 
+//The view controller for the the selected course
+struct CourseView: View{
+    @Binding var ShowingSelectClassView: Bool
+    @Binding var SelectedCourse: String
+    @Binding var GradeIn: Int
+    @State var SelectedMode: SelectedModeCalculusEnum = .Home
+    var body: some View{
+        if SelectedMode == .Home{
+            ClassHomePageView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse, SelectedMode: $SelectedMode, GradeIn: $GradeIn)
+        } else {
+            if SelectedMode == .FactoringBinomials{
+                FactoringBinomials(SelectedMode: $SelectedMode)
+            } else {
+                if SelectedMode == .PDFView{
+                    PDFSelectionView(SelectedMode: $SelectedMode)
+                } else {
+                    if SelectedMode == .YouTube{
+                        YouTubeView(videoId: "g0amdIcZt5I")
+                    }
+                }
+            }
+        }
+    }
+}
+
+//Picks a course
 struct CourseSelectionView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     
     @Binding var ShowingSelectionView: Bool
     @Binding var OverrideSelectionView: Bool
-    @State var AvaliableCourses: [Course] = []
+    @State var AvaliableCourses: [String] = []
     @State var ShowingSelectClassView: Bool = true
     @State var ShowingErrorMessage: Bool = false
     @State var ErrorMessage = ""
     @State var SelectedClass: GradesEnum
-    @State var SelectedCourse: Course = Course(CourseName: "Error", Teacher: ["Error"])
+    @State var SelectedCourse: String = ""
     @Environment(\.colorScheme) var colorScheme
-    
+
     var body: some View{
         if ShowingSelectClassView{
             if AvaliableCourses.count == 0{
                 ProgressView()
                     .onAppear(){
                         Task{
-                            var grade: Int = 9
-                            if SelectedClass == .Grade_9{
-                                grade = 9
-                            }
-                            if SelectedClass == .Grade_10{
-                                grade = 10
-                            }
-                            if SelectedClass == .Grade_11{
-                                grade = 11
-                            }
-                            if SelectedClass == .Grade_12{
-                                grade = 12
-                            }
-                            let response = try await Functions().LoadDataJsonEcoder(extensionvar: "Classes/\(grade)")
-                            print(response.result)
-                            if response.result == "Success"{
-                                for x in response.classes{
-                                    let CourseName: String = x.name
-                                    let Teachers: [String] = x.teachers
-                                    AvaliableCourses.append(Course(CourseName: CourseName, Teacher: Teachers))
+                            do{
+                                let db = Firestore.firestore()
+                                
+                                let docRef = db.collection("Courses").document("Grade\(WindowMode.GradeIn)")
+                                docRef.getDocument { (document, error) in
+                                    guard error == nil else {
+                                        print("error", error ?? "")
+                                        return
+                                    }
+                                    
+                                    if let document = document, document.exists {
+                                        let data = document.data()
+                                        if let data = data {
+                                            let results = data["Courses"] as! NSArray as? [String] ?? []
+                                            AvaliableCourses = results
+                                        }
+                                    }
                                 }
-                            } else {
-                                if response.result == "Invalid Parameter"{
-                                    ShowingErrorMessage = true
-                                    ErrorMessage = "Invalid Parameters"
-                                } else {
-                                    print(response)
-                                }
+                            } catch {
+                                print("Error")
                             }
                         }
                     }
@@ -375,23 +473,24 @@ struct CourseSelectionView: View{
                                 }
                             }.padding(.trailing)
                         }
-                        List(AvaliableCourses, id: \.CourseName) { course in
+                        List(AvaliableCourses, id: \.self) { course in
                             Button{
                                 ShowingSelectClassView = false
                                 SelectedCourse = course
                             } label: {
-                                Text(course.CourseName)
+                                Text(course)
                             }.buttonStyle(.plain)
                         }.background(Color.marron)
                     }.background(Color.marron)
                 }
             }
         } else {
-            CourseView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse)
+            CourseView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse, GradeIn: $WindowMode.GradeIn)
         }
     }
 }
 
+//Grade Selector view to pick a grade
 struct GradeSelectionView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     
@@ -445,6 +544,9 @@ struct GradeSelectionView: View{
     }
 }
 
+//Handeler for MSAL
+//Checks if grade selected
+//Sends to course selector view
 struct QuizView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     
@@ -472,11 +574,7 @@ struct QuizView: View{
             } else {
                 if ShowingSelectionView{
                     GradeSelectionView(SelectedUserGrade: $SelectedUserGrade, ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView).onAppear(){
-                        print("Here2")
-                        print("Overise Selection View: \(OverrideSelectionView)")
                         if OverrideSelectionView{
-                            print("Going in")
-                            print("Grade \(WindowMode.GradeIn)")
                             if WindowMode.GradeIn >= 9{
                                 if WindowMode.GradeIn == 9{
                                     SelectedUserGrade = .Grade_9

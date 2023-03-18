@@ -173,7 +173,7 @@ class Functions {
     }
 
     public func loadData(extensionvar: String) async throws -> CallingResult {
-        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
+        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -192,7 +192,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataJsonEcoder(extensionvar: String) async throws -> Grade11Response {
-        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
+        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -211,7 +211,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataCalendar(extensionvar: String) async throws -> CalendarResopnse {
-        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
+        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -230,7 +230,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataUsers(extensionvar: String) async throws -> UserListResopnce {
-        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
+        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -249,7 +249,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataChatID(extensionvar: String) async throws -> ChatListResponce {
-        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
+        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -268,7 +268,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataMessage(extensionvar: String) async throws -> MessageResponce {
-        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
+        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }
@@ -287,7 +287,7 @@ class Functions {
         throw APICallingError.Fatal
     }
     public func LoadDataNotifications(extensionvar: String) async throws -> NotificationResonpce {
-        guard let url = URL(string: "https://d35a07a75073b8e3bff87b9d4f0ed7dd.loophole.site/\(extensionvar)") else {
+        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
             print("Invalid url...")
             throw APICallingError.InvalidURL
         }

@@ -73,6 +73,8 @@ struct MSALViewLogin: View {
                     }
                 }.padding()
             }
+            Image("SaintPaulLogo")
+                .resizable()
             Text("👋 Please Enter Your Login Details")
                 .font(.largeTitle)
                 .padding()

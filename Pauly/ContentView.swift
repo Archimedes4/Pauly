@@ -7,18 +7,19 @@
 
 import SwiftUI
 import MSAL
+import FirebaseCore
+import FirebaseAuth
+import FirebaseFirestore
 
 public enum WindowSrceens{
     case PasswordWindow
-    case TurorForm
-    case TurtorChat
     case ChatHomePage
-    case LectureHomePage
     case HomePage
     case QuizHomePage
     case Calendar
     case NewUser
     case Profile
+    case Sports
 }
 
 struct DateProperty: Codable{
@@ -36,7 +37,6 @@ struct MonthView: View{
         GridItem(.flexible(), spacing: 0),
         GridItem(.flexible(), spacing: 0)
     ]
-    @State var Data: [Datum] = []
     @State var SelectedDates: [DateProperty] = []
     
     init() {
@@ -126,54 +126,68 @@ struct MonthView: View{
                 }
             }.padding(0)
             .onAppear(){
-                let output = UserDefaults.standard.data(forKey: "SelectedDate1")
+                let output = UserDefaults.standard.data(forKey: "SelectedDatePauly")
                 if output != nil{
                     SelectedDates = try! JSONDecoder().decode([DateProperty].self, from: output!)
                 } else {
-                    UserDefaults.standard.set([], forKey: "SelectedDate1")
+                    UserDefaults.standard.set([], forKey: "SelectedDatePauly")
                 }
+                
                 Task{
-                    let response = try await Functions().LoadDataCalendar(extensionvar: "Calendar/2023")
-                    var NewSelectedDate: [DateProperty] = []
-                    if response.result == "Success"{
-                        Data = response.data
-                        let index: Int = Int(Calendar.current.component(.month, from: Date()))
-                        for x in Data{
-                            if x.month == index{
-                                if x.value == 1{
-                                    NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#ce0909"))
+                    do{
+                        let db = FirebaseFirestore.Firestore.firestore()
+                        
+                        var NewSelectedDate: [DateProperty] = []
+                        
+                        let monthInt = Calendar.current.component(.month, from: Date())
+                        let docRef = db.collection("Calendar").document("2023").collection("\(monthInt)")
+                        docRef.getDocuments { (snapshot, error) in
+                            guard let snapshot = snapshot, error == nil else {
+                             //handle error
+                             return
+                           }
+                           print("Number of documents: \(snapshot.documents.count ?? -1)")
+                           snapshot.documents.forEach({ (documentSnapshot) in
+                                let documentData = documentSnapshot.data()
+                                let day = documentData["Day"] as? Int ?? 0
+                                let value = documentData["value"] as? Int
+                                if value == 1{
+                                   NewSelectedDate.append(DateProperty(Date: day, ColorName: "#ce0909"))
                                 } else {
-                                    if x.value == 2{
-                                        NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#762e05"))
-                                    } else {
-                                        if x.value == 3{
-                                            NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#9309ce"))
-                                        } else {
-                                            if x.value == 4{
-                                                NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#05760e"))
-                                            } else {
-                                                if x.value == 5{
-                                                    NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#f6c72c"))
-                                                } else {
-                                                    if x.value == 6{
-                                                        NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#2c47f6"))
-                                                    } else {
-                                                        if x.value == 7{
-                                                            NewSelectedDate.append(DateProperty(Date: x.date, ColorName: "#f62cce"))
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
+                                   if value == 2{
+                                       NewSelectedDate.append(DateProperty(Date: day, ColorName: "#762e05"))
+                                   } else {
+                                       if value == 3{
+                                           NewSelectedDate.append(DateProperty(Date: day, ColorName: "#9309ce"))
+                                       } else {
+                                           if value == 4{
+                                               NewSelectedDate.append(DateProperty(Date: day, ColorName: "#05760e"))
+                                           } else {
+                                               if value == 5{
+                                                   NewSelectedDate.append(DateProperty(Date: day, ColorName: "#f6c72c"))
+                                               } else {
+                                                   if value == 6{
+                                                       NewSelectedDate.append(DateProperty(Date: day, ColorName: "#2c47f6"))
+                                                   } else {
+                                                       if value == 7{
+                                                           NewSelectedDate.append(DateProperty(Date: day, ColorName: "#f62cce"))
+                                                       }
+                                                   }
+                                               }
+                                           }
+                                       }
+                                   }
                                 }
-                            } else {
-                                continue
-                            }
+                               SelectedDates = NewSelectedDate
+                               do{
+                                   let saving = try JSONEncoder().encode(NewSelectedDate)
+                                   UserDefaults.standard.set(saving, forKey: "SelectedDatePauly")
+                               } catch {
+                                   print("OH NO AN ERROR Look at month view userdefaults")
+                               }
+                           })
                         }
-                        let saving = try JSONEncoder().encode(NewSelectedDate)
-                        UserDefaults.standard.set(saving, forKey: "SelectedDate1")
-                    } else {
+                    } catch {
                         print("Error")
                     }
                 }
@@ -365,7 +379,7 @@ struct HomePage: View{
                         ZStack{
                             Rectangle()
                                 .foregroundColor(Color.marron)
-                                .scaledToFill()
+                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                             Image("QuizIcon")
                                 .resizable()
                                 .padding()
@@ -374,15 +388,15 @@ struct HomePage: View{
                     }
                     .buttonStyle(.plain)
                     .border(.black)
-//                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
+                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                     Button(){
-                        WindowMode.SelectedWindowMode = .LectureHomePage
+                        WindowMode.SelectedWindowMode = .Sports
                     } label: {
                         ZStack{
                             Rectangle()
                                 .foregroundColor(Color.marron)
-                                .scaledToFill()
-                            Image("VideoButton")
+                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
+                            Image("Football")
                                 .resizable()
                                 .padding()
                                 .scaledToFit()
@@ -390,26 +404,45 @@ struct HomePage: View{
                     }
                     .buttonStyle(.plain)
                     .border(.black)
-//                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
+                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                 }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.25)
-                Button(){
-                    WindowMode.SelectedWindowMode = .ChatHomePage
-                } label: {
-                    ZStack{
-                        Rectangle()
-                            .foregroundColor(Color.marron)
-                        Image("MessagingIcon")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .background(Color.marron)
+                HStack(spacing: 0){
+                    Button(){
+                        WindowMode.SelectedWindowMode = .ChatHomePage
+                    } label: {
+                        ZStack{
+                            Rectangle()
+                                .foregroundColor(Color.marron)
+                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                            Image("MessagingIcon")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .background(Color.marron)
+                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                        }
                     }
-                }
-                .padding(.leading, -geometry.size.width * 0.025)
-                .border(.black)
-                .foregroundColor(.black)
+                    .buttonStyle(.plain)
+                    .border(.black)
+                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                    Button(){
+                        WindowMode.SelectedWindowMode = .Profile
+                    } label: {
+                        ZStack{
+                            Rectangle()
+                                .foregroundColor(Color.marron)
+                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                            Image(systemName: "person.crop.circle")
+                                .resizable()
+                                .padding()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .border(.black)
+                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                }.frame(width: geometry.size.width * 0.999, height: geometry.size.height * 0.3)
                 .edgesIgnoringSafeArea(.all)
-                .frame(width: geometry.size.width * 0.999, height: geometry.size.height * 0.25)
-                .scaledToFill()
             }.background(Color.marron)
         }
     }
@@ -450,121 +483,171 @@ struct ContentView: View {
             CalendarHomePage()
                 .environmentObject(WindowMode)
         }
-        if WindowMode.SelectedWindowMode == .LectureHomePage{
-            LetureHomePage()
-                .environmentObject(WindowMode)
-        }
         if WindowMode.SelectedWindowMode == .ChatHomePage{
             ChatOverView(accessToken: $accountToken, MSALAccount: $MSALAccount)
                 .environmentObject(WindowMode)
         }
-    }
-}
-
-struct CreateNewUserSecondView: View{
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    @Binding var Username: String
-    @Binding var Password: String
-    @Binding var GradeIn: Int
-    @State var ErrorMessage: String
-    @State var ShowingErrorMessage: Bool = false
-    @State var SelectedGrade: Int = 8
-    @State var UsernameIn: String
-    @State var ConfirmPassword: String
-    var body: some View{
-        Text("Add Courses")
-        Button(){
-            if Username != "" {
-                if Password != ""{
-                    if Password == ConfirmPassword{
-                        Task{
-                            let response = try await Functions().loadData(extensionvar: "CUsername/\(Username)/\(Password)/\(SelectedGrade)")
-                            print(response.result)
-                            if response.result == "Success"{
-                                do{
-                                    let PasswordData = Password.data(using: .utf8)
-                                    try Security.save(password: PasswordData!, service: "Pauly", account: Username)
-                                } catch KeychainError.duplicateItem{
-                                    print("DuplicateItem")
-                                } catch KeychainError.unexpectedStatus(let Status){
-                                    print(Status)
-                                } catch {
-                                    print("Else")
-                                }
-                                GradeIn = Int(SelectedGrade) ?? 8
-                                UsernameIn = Username
-                                WindowMode.SelectedWindowMode = .HomePage
-                            } else {
-                                if response.result == "Invalid Parameter"{
-                                    ShowingErrorMessage = true
-                                    ErrorMessage = "Invalid Parameters"
-                                } else {
-                                    print(response)
-                                }
-                            }
-                        }
-                    } else {
-                        ErrorMessage = "Passwords do not match"
-                        ShowingErrorMessage = true
-                    }
-                } else {
-                    ErrorMessage = "Passwords cannot be nothing"
-                    ShowingErrorMessage = true
-                }
-            } else {
-                ErrorMessage = "Username Needs cannot be nothing"
-                ShowingErrorMessage = true
-            }
-        } label: {
-            Text("Next")
+        if WindowMode.SelectedWindowMode == .Profile{
+            ProfileViewMain()
+                .environmentObject(WindowMode)
+        }
+        if WindowMode.SelectedWindowMode == .Sports{
+            SportsView()
+                .environmentObject(WindowMode)
         }
     }
 }
 
-struct CreateNewUserView: View{
+struct CreateNewUserPageTwoView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     
+    @Environment(\.colorScheme) var colorScheme
+    @Binding var SelectedCourseViewPage: CourseViewPage
+    @Binding var Username: String
+    @Binding var Password: String
+    @Binding var GradeIn: Int
+    @State var AvaliableCourses: [Course] = []
+    @State var ErrorMessage: String = ""
+    @State var ShowingErrorMessage: Bool = false
+    @State var CoursesSelected: [Course] = []
+    var body: some View{
+        if AvaliableCourses.count == 0{
+            ProgressView()
+                .onAppear(){
+                    Task{
+                        let response = try await Functions().LoadDataJsonEcoder(extensionvar: "Classes/\(GradeIn)")
+                        print(response.result)
+                        if response.result == "Success"{
+                            for x in response.classes{
+                                let CourseName: String = x.name
+                                let Teachers: [String] = x.teachers
+                                AvaliableCourses.append(Course(CourseName: CourseName, Teacher: Teachers))
+                            }
+                        } else {
+                            if response.result == "Invalid Parameter"{
+                                ShowingErrorMessage = true
+                                ErrorMessage = "Invalid Parameters"
+                            } else {
+                                print(response)
+                            }
+                        }
+                    }
+                }
+        } else {
+            GeometryReader{ geo in
+                VStack{
+                    HStack(){
+                        Button{
+                            SelectedCourseViewPage = .PageOne
+                        } label: {
+                            HStack{
+                                Image(systemName: "chevron.backward")
+                                Text("Back")
+                            }
+                        }.padding(.leading)
+                        Spacer()
+                        Text("Select Grade \(GradeIn) Class")
+                            .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+                        Spacer()
+                        Spacer()
+                    }
+                    List(AvaliableCourses, id: \.CourseName) { course in
+                        Button{
+                            if let index = AvaliableCourses.firstIndex(where: { $0.CourseName == course.CourseName }){
+                                AvaliableCourses.remove(at: index)
+                            }
+                            CoursesSelected.append(course)
+                        } label: {
+                            Text(course.CourseName)
+                        }.buttonStyle(.plain)
+                    }.background(Color.marron)
+                }.background(Color.marron)
+            }
+        }
+        
+        Button(){
+            Auth.auth().createUser(withEmail: Username, password: Password) { authResult, error in
+              // ...
+                if error != nil{
+                    print(error?.localizedDescription)
+                } else {
+                    WindowMode.SelectedWindowMode = .HomePage
+                }
+            }
+        } label: {
+            Text("CONFIRM")
+        }
+        Button(){
+            SelectedCourseViewPage = .PageOne
+        } label: {
+            Text("BACK")
+        }
+    }
+}
+
+struct CreateNewUserPageOneView: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
+    @Binding var SelectedCourseViewPage: CourseViewPage
     @Binding var UsernameIn: String
     @Binding var GradeIn: Int
     @State var Username: String = ""
-    @State var Password: String = ""
+    @Binding var Password: String
     @State var ConfirmPassword: String = ""
     @State var SelectedGrade: String = "9"
     @State var ShowingErrorMessage: Bool = false
     @State var ErrorMessage: String = ""
     @State var Grades: [String] = ["9", "10", "11", "12"]
+    @State var showingPasswordsDoNotMatch: Bool = false
+    @State var showingPleaseEnterAEmail: Bool = false
+    @State var showingPleaseEnterAPassword: Bool = false
     
     var body: some View{
         GeometryReader{ value in
             ScrollView(.vertical, showsIndicators: false){
                 VStack{
-                    Spacer()
-                    Spacer()
-                    Spacer()
-                    Text("Create New User")
-                        .font(.custom("Chalkboard SE", size: 45.0))
-                        .padding()
-                    Button{
-                        
-                    } label: {
-                        ZStack{
-                            TextField("", text: $Username)
-                                .multilineTextAlignment(.leading)
-                                .textContentType(.username)
-                                .keyboardType(.default)
-                                .placeholder(when: Username.isEmpty) {
-                                        Text("Username").foregroundColor(.black)
-                                }
-                                .background(Color.white)
-                                .frame(width: value.size.width * 0.76, height: value.size.height * 0.075, alignment: .leading)
-                                .cornerRadius(15)
-                                .padding()
-                        }.padding()
-                    }.background(
-                        RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.white)
-                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    )
+                    Group{
+                        Spacer()
+                        Spacer()
+                        Spacer()
+                        Text("Create New User")
+                            .font(.custom("Chalkboard SE", size: 45.0))
+                            .padding()
+                        Button{
+                            
+                        } label: {
+                            ZStack{
+                                TextField("", text: $Username)
+                                    .multilineTextAlignment(.leading)
+                                    .textContentType(.username)
+                                    .keyboardType(.default)
+                                    .placeholder(when: Username.isEmpty) {
+                                            Text("Email").foregroundColor(.black)
+                                    }
+                                    .autocapitalization(.none)
+                                    .background(Color.white)
+                                    .frame(width: value.size.width * 0.76, height: value.size.height * 0.075, alignment: .leading)
+                                    .cornerRadius(15)
+                                    .padding()
+                            }.padding()
+                        }.background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                    }
+                    
+                    if showingPleaseEnterAEmail{
+                        HStack{
+                            Image(systemName: "exclamationmark.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(.red)
+                            Text("Please Enter A Email!")
+                                .foregroundColor(.red)
+                        }
+                    }
+                    
                     Button{
                         
                     } label: {
@@ -576,6 +659,7 @@ struct CreateNewUserView: View{
                                 .placeholder(when: Username.isEmpty) {
                                         Text("Password").foregroundColor(.black)
                                 }
+                                .autocapitalization(.none)
                                 .background(Color.white)
                                 .frame(width: value.size.width * 0.76, height: value.size.height * 0.075, alignment: .leading)
                                 .cornerRadius(15)
@@ -588,6 +672,17 @@ struct CreateNewUserView: View{
                     )
                     .padding(.top)
                     
+                    if showingPleaseEnterAPassword{
+                        HStack{
+                            Image(systemName: "exclamationmark.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(.red)
+                            Text("Please Enter A Password!")
+                                .foregroundColor(.red)
+                        }
+                    }
+                    
                     Button{
                         
                     } label: {
@@ -599,6 +694,7 @@ struct CreateNewUserView: View{
                                 .placeholder(when: Username.isEmpty) {
                                         Text("Confirm Password").foregroundColor(.black)
                                 }
+                                .autocapitalization(.none)
                                 .background(Color.white)
                                 .frame(width: value.size.width * 0.76, height: value.size.height * 0.075, alignment: .leading)
                                 .cornerRadius(15)
@@ -610,6 +706,17 @@ struct CreateNewUserView: View{
                             .shadow(color: .gray, radius: 2, x: 0, y: 2)
                     )
                     .padding(.top)
+                    
+                    if showingPasswordsDoNotMatch{
+                        HStack{
+                            Image(systemName: "exclamationmark.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundColor(.red)
+                            Text("Passwords Do Not Match!")
+                                .foregroundColor(.red)
+                        }
+                    }
                     
                     Button{
                         
@@ -632,6 +739,23 @@ struct CreateNewUserView: View{
                     .padding(.top)
                     
                     Button(){
+                        if Username != "" {
+                            showingPleaseEnterAEmail = false
+                            if Password != ""{
+                                showingPleaseEnterAPassword = false
+                                if Password == ConfirmPassword{
+                                    GradeIn = Int(SelectedGrade) ?? 8
+                                    UsernameIn = Username
+                                    SelectedCourseViewPage = .PageTwo
+                                } else {
+                                    showingPasswordsDoNotMatch = true
+                                }
+                            } else {
+                                showingPleaseEnterAPassword = true
+                            }
+                        } else {
+                            showingPleaseEnterAEmail = true
+                        }
                         //TO DO Next
                     } label: {
                         Text("NEXT")
@@ -667,6 +791,30 @@ struct CreateNewUserView: View{
             }.background(Color.marron)
             .frame(width: value.size.width * 1.0)
             .edgesIgnoringSafeArea(.all)
+        }
+    }
+}
+
+enum CourseViewPage{
+    case PageOne
+    case PageTwo
+}
+struct CreateNewUserView: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
+    @Binding var UsernameIn: String
+    @Binding var GradeIn: Int
+    
+    @State var Password: String = ""
+    @State var SelectedCourseViewPage: CourseViewPage = .PageOne
+    
+    var body: some View{
+        if SelectedCourseViewPage == .PageOne{
+            CreateNewUserPageOneView(SelectedCourseViewPage: $SelectedCourseViewPage, UsernameIn: $UsernameIn, GradeIn: $GradeIn, Password: $Password)
+                .environmentObject(WindowMode)
+        } else {
+            CreateNewUserPageTwoView(SelectedCourseViewPage: $SelectedCourseViewPage, Username: $UsernameIn, Password: $Password, GradeIn: $GradeIn)
+                .environmentObject(WindowMode)
         }
     }
 }
@@ -723,8 +871,9 @@ struct PasswordView: View{
                                     .textContentType(.username)
                                     .keyboardType(.default)
                                     .placeholder(when: Username.isEmpty) {
-                                        Text("Username").foregroundColor(.black)
+                                        Text("Email").foregroundColor(.black)
                                     }
+                                    .autocapitalization(.none)
                                     .background(Color.white)
                                     .frame(width: value.size.width * 0.6, height: value.size.height * 0.15, alignment: .leading)
                                     .cornerRadius(15)
@@ -761,6 +910,7 @@ struct PasswordView: View{
                                     .placeholder(when: Password.isEmpty) {
                                         Text("Password").foregroundColor(.black)
                                     }
+                                    .autocapitalization(.none)
                                     .background(Color.white)
                                     .frame(width: value.size.width * 0.6, height: value.size.height * 0.15, alignment: .leading)
                                     .cornerRadius(15)
@@ -769,44 +919,40 @@ struct PasswordView: View{
                                         if notLoadingPassword{
                                             if Username != "" && Password != ""{
                                                 notLoadingPassword = false
-                                                Task{
-                                                    do{
-                                                        let response = try await Functions().loadData(extensionvar: "Authenticate/\(Username)/\(Password)")
-                                                        if response.result == "Success"{
-                                                            GradeIn = response.Grade ?? 8
-                                                            UsernameIn = Username
-                                                            WindowMode.SelectedWindowMode = .HomePage
-                                                        } else {
-                                                            if response.result == "Invalid Parameter"{
+                                                print(Username)
+                                                Auth.auth().signIn(withEmail: Username, password: Password) { authResult, error in
+                                                    guard self != nil else { return }
+                                                    if authResult?.user != nil{
+                                                        GradeIn = 11
+                                                        UsernameIn = "Andrew"
+                                                        WindowMode.SelectedWindowMode = .HomePage
+                                                    } else {
+                                                        if error != nil{
+                                                            if error!.localizedDescription == "The password is invalid or the user does not have a password."{
                                                                 notLoadingPassword = true
-                                                                ShowingErrorMessage = true
-                                                                ErrorMessage = "Invalid Parameters"
+                                                                ShowingIncorrectPasswordError = true
+                                                                ShowingFailureToFindUserError = false
                                                             } else {
-                                                                if response.result == "Incorrect Password"{
+                                                                if error!.localizedDescription == "The email address is badly formatted."{
                                                                     notLoadingPassword = true
-                                                                    ShowingIncorrectPasswordError = true
-                                                                    ShowingFailureToFindUserError = false
+                                                                    ShowingErrorMessage = true
+                                                                    ErrorMessage = "Invalid Parameters"
                                                                 } else {
-                                                                    if response.result == "Failure to find user"{
+                                                                    if error!.localizedDescription == "There is no user record corresponding to this identifier. The user may have been deleted."{
                                                                         notLoadingPassword = true
                                                                         ShowingFailureToFindUserError = true
                                                                         ShowingIncorrectPasswordError = false
                                                                     } else {
-                                                                        print(response)
+                                                                        notLoadingPassword = true
+                                                                        ShowingErrorMessage = true
+                                                                        ErrorMessage = "Invalid Parameters"
+                                                                        print(error?.localizedDescription)
                                                                     }
                                                                 }
                                                             }
                                                         }
-                                                    } catch {
-                                                        notLoadingPassword = true
                                                     }
                                                 }
-                                            } else {
-                                                //BYPASS REMOVE ON RELASE
-                                                GradeIn = 11
-                                                UsernameIn = "Andrew"
-                                                WindowMode.SelectedWindowMode = .HomePage
-                                                //BYPASS REMOVE ON RELASE END
                                             }
                                         }
                                     }
@@ -837,44 +983,40 @@ struct PasswordView: View{
                             if notLoadingPassword{
                                 if Username != "" && Password != ""{
                                     notLoadingPassword = false
-                                    Task{
-                                        do{
-                                            let response = try await Functions().loadData(extensionvar: "Authenticate/\(Username)/\(Password)")
-                                            if response.result == "Success"{
-                                                GradeIn = response.Grade ?? 8
-                                                UsernameIn = Username
-                                                WindowMode.SelectedWindowMode = .HomePage
-                                            } else {
-                                                if response.result == "Invalid Parameter"{
+                                    print(Username)
+                                    Auth.auth().signIn(withEmail: Username, password: Password) { authResult, error in
+                                        guard self != nil else { return }
+                                        if authResult?.user != nil{
+                                            GradeIn = 11
+                                            UsernameIn = "Andrew"
+                                            WindowMode.SelectedWindowMode = .HomePage
+                                        } else {
+                                            if error != nil{
+                                                if error!.localizedDescription == "The password is invalid or the user does not have a password."{
                                                     notLoadingPassword = true
-                                                    ShowingErrorMessage = true
-                                                    ErrorMessage = "Invalid Parameters"
+                                                    ShowingIncorrectPasswordError = true
+                                                    ShowingFailureToFindUserError = false
                                                 } else {
-                                                    if response.result == "Incorrect Password"{
+                                                    if error!.localizedDescription == "The email address is badly formatted."{
                                                         notLoadingPassword = true
-                                                        ShowingIncorrectPasswordError = true
-                                                        ShowingFailureToFindUserError = false
+                                                        ShowingErrorMessage = true
+                                                        ErrorMessage = "Invalid Parameters"
                                                     } else {
-                                                        if response.result == "Failure to find user"{
+                                                        if error!.localizedDescription == "There is no user record corresponding to this identifier. The user may have been deleted."{
                                                             notLoadingPassword = true
                                                             ShowingFailureToFindUserError = true
                                                             ShowingIncorrectPasswordError = false
                                                         } else {
-                                                            print(response)
+                                                            notLoadingPassword = true
+                                                            ShowingErrorMessage = true
+                                                            ErrorMessage = "Invalid Parameters"
+                                                            print(error?.localizedDescription)
                                                         }
                                                     }
                                                 }
                                             }
-                                        } catch {
-                                            notLoadingPassword = true
                                         }
                                     }
-                                } else {
-                                    //BYPASS REMOVE ON RELASE
-                                    GradeIn = 11
-                                    UsernameIn = "Andrew"
-                                    WindowMode.SelectedWindowMode = .HomePage
-                                    //BYPASS REMOVE ON RELASE END
                                 }
                             }
                         } label: {
