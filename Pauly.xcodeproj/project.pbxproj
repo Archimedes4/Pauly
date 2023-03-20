@@ -19,6 +19,7 @@
 		C65EF9F029C266EC00F886FD /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C65EF9EF29C266EC00F886FD /* FirebaseFirestoreSwift */; };
 		C65EF9F229C266EC00F886FD /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C65EF9F129C266EC00F886FD /* FirebaseMessaging */; };
 		C65EFA0129C33A6D00F886FD /* FireBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65EFA0029C33A6D00F886FD /* FireBase.swift */; };
+		C6858FE329C6621E00269A56 /* Messaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6858FE229C6621E00269A56 /* Messaging.swift */; };
 		C695C01229A7E4F200D983E7 /* PaulyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695C01129A7E4F200D983E7 /* PaulyApp.swift */; };
 		C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C695C01329A7E4F200D983E7 /* ContentView.swift */; };
 		C695C01629A7E4F600D983E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01529A7E4F600D983E7 /* Assets.xcassets */; };
@@ -27,8 +28,9 @@
 		C6E229C429BC0A15008DB772 /* MSAL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229C329BC0A15008DB772 /* MSAL.swift */; };
 		C6E229C829BCDBF1008DB772 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229C729BCDBF1008DB772 /* ProfileView.swift */; };
 		C6E229CA29C0B134008DB772 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C6E229C929C0B133008DB772 /* GoogleService-Info.plist */; };
-		C6E229E329C215EC008DB772 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229E229C215EC008DB772 /* Notifications.swift */; };
 		C6FB8CB529C39DA400672E70 /* SportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FB8CB429C39DA400672E70 /* SportsView.swift */; };
+		C6FB8CC429C60EA200672E70 /* CreateNewUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FB8CC329C60EA100672E70 /* CreateNewUserView.swift */; };
+		C6FB8CC629C611CB00672E70 /* PassswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FB8CC529C611CB00672E70 /* PassswordView.swift */; };
 		C6FC4D3D29AA402A00F6ED3E /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FC4D3C29AA402A00F6ED3E /* Functions.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +44,7 @@
 		C640C4B529B433A8009668BF /* Pauly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pauly.entitlements; sourceTree = "<group>"; };
 		C640C4B729B45C52009668BF /* ChatHomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatHomePage.swift; sourceTree = "<group>"; };
 		C65EFA0029C33A6D00F886FD /* FireBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBase.swift; sourceTree = "<group>"; };
+		C6858FE229C6621E00269A56 /* Messaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messaging.swift; sourceTree = "<group>"; };
 		C692640329B011BF000F96B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C695C00E29A7E4F200D983E7 /* Pauly.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pauly.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C695C01129A7E4F200D983E7 /* PaulyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaulyApp.swift; sourceTree = "<group>"; };
@@ -51,8 +54,9 @@
 		C6E229C329BC0A15008DB772 /* MSAL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSAL.swift; sourceTree = "<group>"; };
 		C6E229C729BCDBF1008DB772 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C6E229C929C0B133008DB772 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		C6E229E229C215EC008DB772 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		C6FB8CB429C39DA400672E70 /* SportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsView.swift; sourceTree = "<group>"; };
+		C6FB8CC329C60EA100672E70 /* CreateNewUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewUserView.swift; sourceTree = "<group>"; };
+		C6FB8CC529C611CB00672E70 /* PassswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassswordView.swift; sourceTree = "<group>"; };
 		C6FC4D3C29AA402A00F6ED3E /* Functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +88,7 @@
 		C695C00529A7E4F200D983E7 = {
 			isa = PBXGroup;
 			children = (
+				C6858FE229C6621E00269A56 /* Messaging.swift */,
 				C695C01029A7E4F200D983E7 /* Pauly */,
 				C695C00F29A7E4F200D983E7 /* Products */,
 				C620B5CF29B8BAA4007DB698 /* Frameworks */,
@@ -103,8 +108,9 @@
 			children = (
 				C640C4B529B433A8009668BF /* Pauly.entitlements */,
 				C620B5CD29B81235007DB698 /* Security.swift */,
-				C6E229E229C215EC008DB772 /* Notifications.swift */,
 				C6E229C729BCDBF1008DB772 /* ProfileView.swift */,
+				C6FB8CC329C60EA100672E70 /* CreateNewUserView.swift */,
+				C6FB8CC529C611CB00672E70 /* PassswordView.swift */,
 				C6E229C329BC0A15008DB772 /* MSAL.swift */,
 				C692640329B011BF000F96B9 /* Info.plist */,
 				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
@@ -223,11 +229,13 @@
 				C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */,
 				C695C01229A7E4F200D983E7 /* PaulyApp.swift in Sources */,
 				C65EFA0129C33A6D00F886FD /* FireBase.swift in Sources */,
-				C6E229E329C215EC008DB772 /* Notifications.swift in Sources */,
+				C6FB8CC429C60EA200672E70 /* CreateNewUserView.swift in Sources */,
 				C620B5CE29B81235007DB698 /* Security.swift in Sources */,
 				C6FC4D3D29AA402A00F6ED3E /* Functions.swift in Sources */,
 				C640C4B029B29035009668BF /* LectureView.swift in Sources */,
 				C620B5D329B8BC09007DB698 /* PDFview.swift in Sources */,
+				C6858FE329C6621E00269A56 /* Messaging.swift in Sources */,
+				C6FB8CC629C611CB00672E70 /* PassswordView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

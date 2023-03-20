@@ -23,6 +23,8 @@ struct PaulyApp: App {
     
     @State private var counter = 0;
     
+    @State var Token: String = ""
+    
     init() {
             FirebaseApp.configure()
         }
@@ -69,7 +71,9 @@ extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
 
       let deviceToken:[String: String] = ["token": fcmToken ?? ""]
+        
         print("Device token: ", deviceToken) // This token can be used for testing notifications on FCM
+        UserDefaults.standard.set(fcmToken, forKey: "DeviceToken")
     }
 }
 
@@ -150,41 +154,3 @@ class GetClassData: ObservableObject{
         }
     }
 }
-
-//func createRestaurant(restaurantName: String, docData: [String: Any], Grade: Int) {
-//    let db = Firestore.firestore()
-//
-//    let docRef = db.collection("Courses").document("Grade\(Grade)").collection(restaurantName).document("Info")
-//
-//    docRef.setData(docData) { error in
-//        if let error = error {
-//            print("Error writing document: \(error)")
-//        } else {
-//            print("Document successfully written!")
-//        }
-//    }
-//}
-//func createGroup(Username: String, docData: [String: Any], NewNum: Int) {
-//    let db = Firestore.firestore()
-//
-//
-//    let docRef = db.collection("Messaging").document("Groups").collection("Group\(NewNum)").document("Info")
-//
-//    docRef.setData(docData) { error in
-//        if let error = error {
-//            print("Error writing document: \(error)")
-//        } else {
-//            print("Document successfully written!")
-//        }
-//    }
-//
-//    let docRef1 = db.collection("Messaging").document("Groups")
-//
-//    docRef1.setData(["GroupsCount":NewNum]) { error in
-//        if let error = error {
-//            print("Error writing document: \(error)")
-//        } else {
-//            print("Document successfully written!")
-//        }
-//    }
-//}

@@ -33,7 +33,8 @@ struct Course {
     let Teacher: [String]
 }
 
-struct CardType: Hashable, Identifiable {
+struct CardType: Identifiable {
+    
     let id = UUID()
     //Card Face
     let Title: String
@@ -41,8 +42,7 @@ struct CardType: Hashable, Identifiable {
     
     //Card Destintation
     let Destination: Int
-    let CardData: [String]
-    let CardDataName: [String]
+    let CardData: [DataIdType]
 }
 //Defineing Cutom types end
 struct AnErrorHasOcurredView: View{
@@ -243,18 +243,19 @@ struct CourseBackground: View{
 //The default card
 struct Card: View{
     @Binding var SelectedMode: SelectedModeCalculusEnum
+    @Binding var Vidoes: [DataIdType]
     let Title: String
     let Caption: String
     let TextColor: Color
     let Destination: Int
-    let CardData: [String]
-    let CardDataName: [String]
+    let CardData: [DataIdType]?
     var body: some View{
         Button{
             if Destination == 0{
                 SelectedMode = .FactoringBinomials
             } else {
                 if Destination == 1{
+                    Vidoes = CardData!
                     SelectedMode = .YouTube
                 } else {
                     if Destination == 2{
@@ -287,6 +288,7 @@ struct ClassHomePageView: View{
     @Binding var SelectedCourse: String
     @Binding var SelectedMode: SelectedModeCalculusEnum
     @Binding var GradeIn: Int
+    @Binding var Vidoes: [DataIdType]
     @State var Teacher = ""
     @State var AvaliableCards: [CardType] = []
     @State var BackgroundType: Int = 2
@@ -309,7 +311,7 @@ struct ClassHomePageView: View{
                         Spacer()
                     }
                     ForEach(AvaliableCards, id: \.id) { card in
-                        Card(SelectedMode: $SelectedMode, Title: card.Title, Caption: card.Caption, TextColor: Color.black, Destination: card.Destination, CardData: card.CardData, CardDataName: card.CardDataName)
+                        Card(SelectedMode: $SelectedMode, Vidoes: $Vidoes, Title: card.Title, Caption: card.Caption, TextColor: Color.black, Destination: card.Destination, CardData: card.CardData)
                             .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
                             .cornerRadius(25)
                     }
@@ -362,7 +364,11 @@ struct ClassHomePageView: View{
                                                     let captionFire = data["Caption"] as! String
                                                     let cardDataValueFire = data["CardData"] as! [String]
                                                     let cardDataNameFire = data["CardDataName"] as! [String]
-                                                    AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, Destination: destinationFire, CardData: cardDataValueFire, CardDataName: cardDataNameFire))
+                                                    var CardDataIn: [DataIdType] = []
+                                                    for y in 0..<cardDataNameFire.count{
+                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y]))
+                                                    }
+                                                    AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, Destination: destinationFire, CardData: CardDataIn))
                                                 }
                                             }
                                         }
@@ -385,9 +391,10 @@ struct CourseView: View{
     @Binding var SelectedCourse: String
     @Binding var GradeIn: Int
     @State var SelectedMode: SelectedModeCalculusEnum = .Home
+    @State var Vidoes: [DataIdType] = []
     var body: some View{
         if SelectedMode == .Home{
-            ClassHomePageView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse, SelectedMode: $SelectedMode, GradeIn: $GradeIn)
+            ClassHomePageView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse, SelectedMode: $SelectedMode, GradeIn: $GradeIn, Vidoes: $Vidoes)
         } else {
             if SelectedMode == .FactoringBinomials{
                 FactoringBinomials(SelectedMode: $SelectedMode)
@@ -396,7 +403,7 @@ struct CourseView: View{
                     PDFSelectionView(SelectedMode: $SelectedMode)
                 } else {
                     if SelectedMode == .YouTube{
-                        YouTubeView(videoId: "g0amdIcZt5I")
+                        LetureHomePage(SelectedMode: $SelectedMode, Vidoes: $Vidoes)
                     }
                 }
             }

@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftUI
+import FirebaseCore
+import FirebaseAuth
 
 enum profileViewEnum {
     case Home
@@ -34,6 +36,7 @@ struct ProfileViewMain: View{
                 } else {
                     if selectedProfileView == .Pauly{
                         ProfileViewPauly(selectedProfileView: $selectedProfileView)
+                            .environmentObject(WindowMode)
                     } else {
                         if selectedProfileView == .Microsoft{
                             ProfileViewMicosoft(selectedProfileView: $selectedProfileView)
@@ -55,38 +58,41 @@ struct ProfileViewHome: View{
     @Binding var selectedProfileView: profileViewEnum
     
     var body: some View{
-        HStack{
+        VStack{
+            HStack{
+                Button(){
+                    WindowMode.SelectedWindowMode = .HomePage
+                } label: {
+                    HStack{
+                        Image(systemName: "chevron.backward")
+                        Text("Back")
+                    }
+                }.padding()
+                Spacer()
+            }
+            
+            Text("Profile")
+                .font(.custom("Chalkboard SE", size: 60.0))
             Button(){
-                WindowMode.SelectedWindowMode = .HomePage
+                selectedProfileView = .Microsoft
             } label: {
-                HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
-                }
-            }.padding()
-            Spacer()
-        }
-        
-        Text("Home view")
-        Button(){
-            selectedProfileView = .Microsoft
-        } label: {
-            Text("Microsoft")
-        }
-        Button(){
-            selectedProfileView = .Pauly
-        } label: {
-            Text("Pauly")
-        }
-        Button(){
-            selectedProfileView = .Leaderboard
-        } label: {
-            Text("Leaderboard")
-        }
-        Button(){
-            selectedProfileView = .Committions
-        } label: {
-            Text("Committions")
+                Text("Microsoft")
+            }
+            Button(){
+                selectedProfileView = .Pauly
+            } label: {
+                Text("Pauly")
+            }
+            Button(){
+                selectedProfileView = .Leaderboard
+            } label: {
+                Text("Leaderboard")
+            }
+            Button(){
+                selectedProfileView = .Committions
+            } label: {
+                Text("Committions")
+            }
         }
     }
 }
@@ -110,6 +116,7 @@ struct ProfileViewMicosoft: View{
 }
 
 struct ProfileViewPauly: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var selectedProfileView: profileViewEnum
     var body: some View{
         HStack{
@@ -128,6 +135,17 @@ struct ProfileViewPauly: View{
             
         } label: {
             Text("Update Password")
+        }
+        Button(){
+            let firebaseAuth = Auth.auth()
+            do {
+                try firebaseAuth.signOut()
+                WindowMode.SelectedWindowMode = .PasswordWindow
+            } catch let signOutError as NSError {
+              print("Error signing out: %@", signOutError)
+            }
+        } label: {
+            Text("Sign Out")
         }
     }
 }

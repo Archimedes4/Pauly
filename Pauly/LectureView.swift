@@ -9,6 +9,16 @@ import Foundation
 import SwiftUI
 import WebKit
 
+enum LectureMode{
+    case YoutubeView
+    case SelectionView
+}
+
+struct DataIdType{
+    let Name: String
+    let Id: String
+}
+
 struct YouTubeView: UIViewRepresentable {
     let videoId: String
     func makeUIView(context: Context) ->  WKWebView {
@@ -22,13 +32,13 @@ struct YouTubeView: UIViewRepresentable {
 }
 
 struct LetureHomePage: View{
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    
+    @Binding var SelectedMode: SelectedModeCalculusEnum
+    @Binding var Vidoes: [DataIdType]
     @State var SelectedLectureMode: LectureMode = .SelectionView
     @State var SelectedVideoID: String = "dQw4w9WgXcQ"
     var body: some View{
         if SelectedLectureMode == .SelectionView{
-            LecutureSelectionView(SelectedVideoID: $SelectedVideoID, SelectedLectureMode: $SelectedLectureMode)
+            LecutureSelectionView(SelectedMode: $SelectedMode, SelectedVideoID: $SelectedVideoID, SelectedLectureMode: $SelectedLectureMode, Vidoes: $Vidoes)
         } else {
             if SelectedLectureMode == .YoutubeView{
                 Button("Back"){
@@ -40,11 +50,6 @@ struct LetureHomePage: View{
     }
 }
 
-enum LectureMode{
-    case YoutubeView
-    case SelectionView
-}
-
 struct VideoView: View {
     let VideoID: String
     var body: some View{
@@ -53,33 +58,48 @@ struct VideoView: View {
 }
 
 struct LecutureSelectionView: View {
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    
+    @Binding var SelectedMode: SelectedModeCalculusEnum
     @Binding var SelectedVideoID: String
     @Binding var SelectedLectureMode: LectureMode
-    var ids = ["Akwm2UZJ34o", "kc29axOAzRs", "WMRip0eRER8", "dQw4w9WgXcQ"]
+    @Binding var Vidoes: [DataIdType]
+//    [DataIdType(Name: "Hot Food", Id: "Akwm2UZJ34o"), DataIdType(Name: "Why Europ is Building", Id: "kc29axOAzRs"), DataIdType(Name: "Why the world most", Id: "WMRip0eRER8"), DataIdType(Name: "Moll", Id: "dQw4w9WgXcQ")]
+    @State private var searchText = ""
     var body: some View {
         ZStack {
-            Image("cover")
-                .resizable().opacity(0.2)
-            ScrollView(showsIndicators: false) {
-                VStack {
-                    HStack{
-                        Button("Back"){
-                            WindowMode.SelectedWindowMode = .HomePage
+            Rectangle()
+                .fill(Color.marron)
+                .edgesIgnoringSafeArea(.all)
+            VStack{
+                HStack{
+                    Button{
+                        SelectedMode = .Home
+                    } label: {
+                        HStack{
+                            Image(systemName: "chevron.backward")
+                            Text("Back")
                         }
-                        Spacer()
-                        Text("lectureHomePage")
-                        Spacer()
                     }
-                    ForEach(ids, id:\.self) {idData in
-                        Button(idData){
-                            SelectedVideoID = idData
+                    Text("lectureHomePage")
+                        .padding(.leading)
+                    Spacer()
+                }
+                TextField("Search", text: $searchText)
+                List {
+                    ForEach(searchResults, id:\.Name) {idData in
+                        Button(idData.Name){
+                            SelectedVideoID = idData.Id
                             SelectedLectureMode = .YoutubeView
                         }
                     }
-                }
+                }.searchable(text: $searchText)
             }
         }
     }
+    var searchResults: [DataIdType] {
+            if searchText.isEmpty {
+                return Vidoes
+            } else {
+                return Vidoes.filter { $0.Name.contains(searchText) }
+            }
+        }
 }

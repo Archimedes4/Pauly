@@ -12,131 +12,131 @@ import Foundation
 //
 //   let grade11Response = try? JSONDecoder().decode(Grade11Response.self, from: jsonData)
 
-// MARK: - Grade11Response
-struct Grade11Response: Codable {
-    let result, grade: String
-    let classes: [Class]
-
-    enum CodingKeys: String, CodingKey {
-        case result = "Result"
-        case grade = "Grade"
-        case classes = "Classes"
-    }
-}
-
-// MARK: - Class
-struct Class: Codable {
-    let name: String
-    let teachers: [String]
-
-    enum CodingKeys: String, CodingKey {
-        case name = "Name"
-        case teachers
-    }
-}
-
-struct CallingResult: Codable {
-    let result: String
-    let Grade: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case result = "Result"
-        case Grade = "Grade"
-    }
-}
-
-// MARK: - CalendarResopnse
-struct CalendarResopnse: Codable {
-    let result, year: String
-    let data: [Datum]
-
-    enum CodingKeys: String, CodingKey {
-        case result = "Result"
-        case year = "Year"
-        case data = "Data"
-    }
-}
-
-// MARK: - Datum
-struct Datum: Codable {
-    let month, date, value: Int
-
-    enum CodingKeys: String, CodingKey {
-        case month = "Month"
-        case date = "Date"
-        case value = "Value"
-    }
-}
-
-// MARK: - UserListResopnce
-struct UserListResopnce: Codable {
-    let result: String
-    let users: [String]
-
-    enum CodingKeys: String, CodingKey {
-        case result = "Result"
-        case users = "Users"
-    }
-}
-
-// MARK: - ChatListResponce
-struct ChatListResponce: Codable {
-    let result: String
-    let data: [Datum1]
-
-    enum CodingKeys: String, CodingKey {
-        case result = "Result"
-        case data = "Data"
-    }
-}
-
-// MARK: - Datum
-struct Datum1: Codable {
-    let users: [String]
-    let chatID: Int
-
-    enum CodingKeys: String, CodingKey {
-        case users = "Users"
-        case chatID = "ChatId"
-    }
-}
-
-// MARK: - MessageResponce
-struct MessageResponce: Codable {
-    let result: String
-    let data: [Datum2]
-
-    enum CodingKeys: String, CodingKey {
-        case result = "Result"
-        case data = "Data"
-    }
-}
-
-// MARK: - Datum
-struct Datum2: Codable {
-    let sender, message, time: String
-    var ErrorType: String?
-    let ErrorID: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case sender = "Sender"
-        case message = "Message"
-        case time = "Time"
-        case ErrorType = "Error"
-        case ErrorID = "ErrorID"
-    }
-}
-
-// MARK: - MessageResponce
-struct NotificationResonpce: Codable {
-    let result: String
-    let data: [Int]
-
-    enum CodingKeys: String, CodingKey {
-        case result = "Result"
-        case data = "Data"
-    }
-}
+//// MARK: - Grade11Response
+//struct Grade11Response: Codable {
+//    let result, grade: String
+//    let classes: [Class]
+//
+//    enum CodingKeys: String, CodingKey {
+//        case result = "Result"
+//        case grade = "Grade"
+//        case classes = "Classes"
+//    }
+//}
+//
+//// MARK: - Class
+//struct Class: Codable {
+//    let name: String
+//    let teachers: [String]
+//
+//    enum CodingKeys: String, CodingKey {
+//        case name = "Name"
+//        case teachers
+//    }
+//}
+//
+//struct CallingResult: Codable {
+//    let result: String
+//    let Grade: Int?
+//
+//    enum CodingKeys: String, CodingKey {
+//        case result = "Result"
+//        case Grade = "Grade"
+//    }
+//}
+//
+//// MARK: - CalendarResopnse
+//struct CalendarResopnse: Codable {
+//    let result, year: String
+//    let data: [Datum]
+//
+//    enum CodingKeys: String, CodingKey {
+//        case result = "Result"
+//        case year = "Year"
+//        case data = "Data"
+//    }
+//}
+//
+//// MARK: - Datum
+//struct Datum: Codable {
+//    let month, date, value: Int
+//
+//    enum CodingKeys: String, CodingKey {
+//        case month = "Month"
+//        case date = "Date"
+//        case value = "Value"
+//    }
+//}
+//
+//// MARK: - UserListResopnce
+//struct UserListResopnce: Codable {
+//    let result: String
+//    let users: [String]
+//
+//    enum CodingKeys: String, CodingKey {
+//        case result = "Result"
+//        case users = "Users"
+//    }
+//}
+//
+//// MARK: - ChatListResponce
+//struct ChatListResponce: Codable {
+//    let result: String
+//    let data: [Datum1]
+//
+//    enum CodingKeys: String, CodingKey {
+//        case result = "Result"
+//        case data = "Data"
+//    }
+//}
+//
+//// MARK: - Datum
+//struct Datum1: Codable {
+//    let users: [String]
+//    let chatID: Int
+//
+//    enum CodingKeys: String, CodingKey {
+//        case users = "Users"
+//        case chatID = "ChatId"
+//    }
+//}
+//
+//// MARK: - MessageResponce
+//struct MessageResponce: Codable {
+//    let result: String
+//    let data: [Datum2]
+//
+//    enum CodingKeys: String, CodingKey {
+//        case result = "Result"
+//        case data = "Data"
+//    }
+//}
+//
+//// MARK: - Datum
+//struct Datum2: Codable {
+//    let sender, message, time: String
+//    var ErrorType: String?
+//    let ErrorID: Int?
+//
+//    enum CodingKeys: String, CodingKey {
+//        case sender = "Sender"
+//        case message = "Message"
+//        case time = "Time"
+//        case ErrorType = "Error"
+//        case ErrorID = "ErrorID"
+//    }
+//}
+//
+//// MARK: - MessageResponce
+//struct NotificationResonpce: Codable {
+//    let result: String
+//    let data: [Int]
+//
+//    enum CodingKeys: String, CodingKey {
+//        case result = "Result"
+//        case data = "Data"
+//    }
+//}
 
 class Functions {
     func getDaysInMonth(Input: Date) -> Int{
@@ -167,147 +167,4 @@ class Functions {
         let result: Int = ((value - startdate) + 2) + offset
         return result
     }
-    enum APICallingError: Error{
-        case Fatal
-        case InvalidURL
-    }
-
-    public func loadData(extensionvar: String) async throws -> CallingResult {
-        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
-            print("Invalid url...")
-            throw APICallingError.InvalidURL
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("123456", forHTTPHeaderField: "ngrok-skip-browser-warning")
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let decodedResponse = try? JSONDecoder().decode(CallingResult.self, from: data) {
-                return decodedResponse
-            }
-        } catch {
-            print(String(describing: error))
-            throw APICallingError.Fatal
-        }
-        throw APICallingError.Fatal
-    }
-    public func LoadDataJsonEcoder(extensionvar: String) async throws -> Grade11Response {
-        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
-            print("Invalid url...")
-            throw APICallingError.InvalidURL
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("123456", forHTTPHeaderField: "ngrok-skip-browser-warning")
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let decodedResponse = try? JSONDecoder().decode(Grade11Response.self, from: data) {
-                return decodedResponse
-            }
-        } catch {
-            print(String(describing: error))
-            throw APICallingError.Fatal
-        }
-        throw APICallingError.Fatal
-    }
-    public func LoadDataCalendar(extensionvar: String) async throws -> CalendarResopnse {
-        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
-            print("Invalid url...")
-            throw APICallingError.InvalidURL
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("123456", forHTTPHeaderField: "ngrok-skip-browser-warning")
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let decodedResponse = try? JSONDecoder().decode(CalendarResopnse.self, from: data) {
-                return decodedResponse
-            }
-        } catch {
-            print(String(describing: error))
-            throw APICallingError.Fatal
-        }
-        throw APICallingError.Fatal
-    }
-    public func LoadDataUsers(extensionvar: String) async throws -> UserListResopnce {
-        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
-            print("Invalid url...")
-            throw APICallingError.InvalidURL
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("123456", forHTTPHeaderField: "ngrok-skip-browser-warning")
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let decodedResponse = try? JSONDecoder().decode(UserListResopnce.self, from: data) {
-                return decodedResponse
-            }
-        } catch {
-            print(String(describing: error))
-            throw APICallingError.Fatal
-        }
-        throw APICallingError.Fatal
-    }
-    public func LoadDataChatID(extensionvar: String) async throws -> ChatListResponce {
-        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
-            print("Invalid url...")
-            throw APICallingError.InvalidURL
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("123456", forHTTPHeaderField: "ngrok-skip-browser-warning")
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let decodedResponse = try? JSONDecoder().decode(ChatListResponce.self, from: data) {
-                return decodedResponse
-            }
-        } catch {
-            print(String(describing: error))
-            throw APICallingError.Fatal
-        }
-        throw APICallingError.Fatal
-    }
-    public func LoadDataMessage(extensionvar: String) async throws -> MessageResponce {
-        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
-            print("Invalid url...")
-            throw APICallingError.InvalidURL
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("123456", forHTTPHeaderField: "ngrok-skip-browser-warning")
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let decodedResponse = try? JSONDecoder().decode(MessageResponce.self, from: data) {
-                return decodedResponse
-            }
-        } catch {
-            print(String(describing: error))
-            throw APICallingError.Fatal
-        }
-        throw APICallingError.Fatal
-    }
-    public func LoadDataNotifications(extensionvar: String) async throws -> NotificationResonpce {
-        guard let url = URL(string: "https://2b2c95de5c0a93816f7508cde68fdcd5.loophole.site/\(extensionvar)") else {
-            print("Invalid url...")
-            throw APICallingError.InvalidURL
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("123456", forHTTPHeaderField: "ngrok-skip-browser-warning")
-        do {
-            let (data, _) = try await URLSession.shared.data(for: request)
-            if let decodedResponse = try? JSONDecoder().decode(NotificationResonpce .self, from: data) {
-                return decodedResponse
-            }
-        } catch {
-            print(String(describing: error))
-            throw APICallingError.Fatal
-        }
-        throw APICallingError.Fatal
-    }
-}
-
-class GlobalObservable: ObservableObject{
-    @Published var Username: String = ""
-    @Published var Grade: Int = 8
 }
