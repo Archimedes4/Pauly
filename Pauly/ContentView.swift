@@ -24,10 +24,15 @@ public enum WindowSrceens{
 
 struct DateProperty: Codable{
     let Date: Int
-    let ColorName: String
+    let ColorName: String?
+    let SchoolDay: String?
+    let Value: Int?
 }
 
 struct MonthView: View{
+    @Binding var ScrollMessage: String
+    @Binding var AnimationSpeed: Double
+    
     let date: Date
     let dateFormatter: DateFormatter
     let columns = [
@@ -39,7 +44,9 @@ struct MonthView: View{
     ]
     @State var SelectedDates: [DateProperty] = []
     
-    init() {
+    init(ScrollMessageIn: Binding<String>, AnimationSpeedIn: Binding<Double>) {
+        self._ScrollMessage = ScrollMessageIn
+        self._AnimationSpeed = AnimationSpeedIn
         date = Date()
         dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM yyyy"
@@ -76,45 +83,87 @@ struct MonthView: View{
                 ForEach(0..<30){ value in
                     ZStack{
                         if value >= (StartDate - 1) && value <= daySelected {
-                            let textval: Int = Functions().getDay(value: value, startdate: StartDate)
-                            let date = Date()
-                            let calendar = Calendar.current
-                            let day = calendar.component(.day, from: date)
-                            if day == (textval){
-                                Rectangle()
-                                    .foregroundColor(.red)
-                                    .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
-                                    .border(Color.black)
-                            } else{
-                                if day >= (textval + 1){
+                            let textval: Int = Functions().getDay(value: value, startdate: StartDate) ?? 0
+                            if textval != 0{
+                                let date = Date()
+                                let calendar = Calendar.current
+                                let day = calendar.component(.day, from: date)
+                                if day == (textval){
                                     Rectangle()
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.red)
                                         .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                         .border(Color.black)
                                 } else{
-                                    if let index = SelectedDates.firstIndex(where: { $0.Date == textval }){
-                                        let var1: DateProperty = SelectedDates[index]
+                                    if day >= (textval + 1){
                                         Rectangle()
-                                            .foregroundColor(Color(hexString: var1.ColorName))
+                                            .foregroundColor(.gray)
                                             .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                             .border(Color.black)
                                     } else{
-                                        Rectangle()
-                                            .foregroundColor(.white)
-                                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
-                                            .border(Color.black)
+                                        if let index = SelectedDates.firstIndex(where: { $0.Date == textval }){
+                                            let var1: DateProperty = SelectedDates[index]
+                                            if var1.ColorName != nil{
+                                                Rectangle()
+                                                    .foregroundColor(Color(hexString: var1.ColorName!))
+                                                    .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
+                                                    .border(Color.black)
+                                            } else {
+                                                Rectangle()
+                                                    .foregroundColor(.white)
+                                                    .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
+                                                    .border(Color.black)
+                                            }
+                                        } else{
+                                            Rectangle()
+                                                .foregroundColor(.white)
+                                                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
+                                                .border(Color.black)
+                                        }
                                     }
                                 }
-                            }
-                            VStack{
-                                Spacer()
-                                HStack{
-                                    Spacer()
-                                    Text("\(textval)")
-                                        .foregroundColor(Color.black)
-                                    Spacer()
+                                VStack(spacing: 0){
+                                    if let index = SelectedDates.firstIndex(where: { $0.Date == textval }){
+                                        let var1: DateProperty = SelectedDates[index]
+                                        if var1.SchoolDay != nil{
+                                            HStack(alignment: .top){
+                                                Spacer()
+                                                Text(var1.SchoolDay ?? "Error")
+                                                    .frame(height: geometry1.size.height * 0.03)
+                                                    .offset(x: -geometry1.size.width * 0.005, y: (geometry1.size.height * 0.03))
+                                            }
+                                            HStack{
+                                                Spacer()
+                                                Text("\(textval)")
+                                                    .foregroundColor(Color.black)
+                                                Spacer()
+                                            }
+                                            Spacer()
+                                        } else {
+                                            Spacer()
+                                            HStack{
+                                                Spacer()
+                                                Text("\(textval)")
+                                                    .foregroundColor(Color.black)
+                                                Spacer()
+                                            }
+                                            Spacer()
+                                        }
+                                    } else {
+                                        Spacer()
+                                        HStack{
+                                            Spacer()
+                                            Text("\(textval)")
+                                                .foregroundColor(Color.black)
+                                            Spacer()
+                                        }
+                                        Spacer()
+                                    }
                                 }
-                                Spacer()
+                            } else {
+                                Rectangle()
+                                    .foregroundColor(.white)
+                                    .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
+                                    .border(Color.black)
                             }
                         } else {
                             Rectangle()
@@ -128,7 +177,12 @@ struct MonthView: View{
             .onAppear(){
                 let output = UserDefaults.standard.data(forKey: "SelectedDatePauly")
                 if output != nil{
-                    SelectedDates = try! JSONDecoder().decode([DateProperty].self, from: output!)
+                    do{
+                        SelectedDates = try JSONDecoder().decode([DateProperty].self, from: output!)
+                    } catch {
+                        print("Could Decoder User Defaults")
+                        UserDefaults.standard.set([], forKey: "SelectedDatePauly")
+                    }
                 } else {
                     UserDefaults.standard.set([], forKey: "SelectedDatePauly")
                 }
@@ -146,46 +200,65 @@ struct MonthView: View{
                              //handle error
                              return
                            }
-                           print("Number of documents: \(snapshot.documents.count ?? -1)")
+
                            snapshot.documents.forEach({ (documentSnapshot) in
                                 let documentData = documentSnapshot.data()
-                                let day = documentData["Day"] as? Int ?? 0
-                                let value = documentData["value"] as? Int
-                                if value == 1{
-                                   NewSelectedDate.append(DateProperty(Date: day, ColorName: "#ce0909"))
-                                } else {
-                                   if value == 2{
-                                       NewSelectedDate.append(DateProperty(Date: day, ColorName: "#762e05"))
-                                   } else {
-                                       if value == 3{
-                                           NewSelectedDate.append(DateProperty(Date: day, ColorName: "#9309ce"))
-                                       } else {
-                                           if value == 4{
-                                               NewSelectedDate.append(DateProperty(Date: day, ColorName: "#05760e"))
+                                let day = documentData["Day"] as? Int
+                                if day != nil{
+                                    let value = documentData["value"] as? Int
+                                    let SchoolDay = documentData["SchoolDay"] as? String
+                                    if value != nil{
+                                        if value == 1{
+                                            NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#ce0909", SchoolDay: SchoolDay, Value: 1))
+                                          
+                                        } else {
+                                           if value == 2{
+                                               NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#762e05", SchoolDay: SchoolDay, Value: 2))
+                                             
                                            } else {
-                                               if value == 5{
-                                                   NewSelectedDate.append(DateProperty(Date: day, ColorName: "#f6c72c"))
+                                               if value == 3{
+                                                   NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#9309ce", SchoolDay: SchoolDay, Value: 3))
+                                                  
                                                } else {
-                                                   if value == 6{
-                                                       NewSelectedDate.append(DateProperty(Date: day, ColorName: "#2c47f6"))
+                                                   if value == 4{
+                                                       NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#05760e", SchoolDay: SchoolDay, Value: 4))
+                                                       
                                                    } else {
-                                                       if value == 7{
-                                                           NewSelectedDate.append(DateProperty(Date: day, ColorName: "#f62cce"))
+                                                       if value == 5{
+                                                           NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#f6c72c", SchoolDay: SchoolDay, Value: 5))
+                                                           
+                                                       } else {
+                                                           if value == 6{
+                                                               NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#2c47f6", SchoolDay: SchoolDay, Value: 6))
+                                                              
+                                                           } else {
+                                                               if value == 7{
+                                                                   NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#f62cce", SchoolDay: SchoolDay, Value: 7))
+                                                                 
+                                                               }
+                                                           }
                                                        }
                                                    }
                                                }
                                            }
-                                       }
-                                   }
+                                        }
+                                    } else {
+                                        let SchoolDay = documentData["SchoolDay"] as? String
+                                        NewSelectedDate.append(DateProperty(Date: day!, ColorName: nil, SchoolDay: SchoolDay, Value: nil))
+                                    }
+                                   
+                                } else {
+                                    ScrollMessage = documentData["Message"] as? String ?? ""
+                                    AnimationSpeed = documentData["AnimationSpeed"] as? Double ?? 10.0
                                 }
-                               SelectedDates = NewSelectedDate
-                               do{
-                                   let saving = try JSONEncoder().encode(NewSelectedDate)
-                                   UserDefaults.standard.set(saving, forKey: "SelectedDatePauly")
-                               } catch {
-                                   print("OH NO AN ERROR Look at month view userdefaults")
-                               }
                            })
+                            SelectedDates = NewSelectedDate
+                            do{
+                                let saving = try JSONEncoder().encode(NewSelectedDate)
+                                UserDefaults.standard.set(saving, forKey: "SelectedDatePauly")
+                            } catch {
+                                print("OH NO AN ERROR Look at month view userdefaults")
+                            }
                         }
                     } catch {
                         print("Error")
@@ -195,6 +268,14 @@ struct MonthView: View{
         }
     }
 }
+
+#if DEBUG
+struct MonthViewHomePreview: PreviewProvider {
+    static var previews: some View {
+        MonthView(ScrollMessageIn: .constant("Testing"), AnimationSpeedIn: .constant(10))
+    }
+}
+#endif
 
 //https://stackoverflow.com/questions/36341358/how-to-convert-uicolor-to-string-and-string-to-uicolor-using-swift#answer-62192394 Start
 extension Color {
@@ -261,10 +342,11 @@ private func getrgbaData(hexString: String) -> (r: CGFloat, g: CGFloat, b: CGFlo
 
 struct InfiniteScroller<Content: View>: View {
     var contentWidth: CGFloat
-    var content: (() -> Content)
+    @Binding var AnimationDuration: Double
     
-    @State
-    var xOffset: CGFloat = 0
+    @State var xOffset: CGFloat = 0
+    
+    var content: (() -> Content)
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -276,8 +358,8 @@ struct InfiniteScroller<Content: View>: View {
         }
         .disabled(true)
         .onAppear {
-            withAnimation(.linear(duration: 10).repeatForever(autoreverses: false)) {
-                xOffset = -contentWidth
+            withAnimation(.linear(duration: AnimationDuration).repeatForever(autoreverses: false)) {
+                self.xOffset = -contentWidth
             }
         }
     }
@@ -339,26 +421,32 @@ extension View {
 struct HomePage: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     
-    @State private var animationAmount = 1.0
+    @State private var AnimationDuration = 10.0
     @State var width: CGSize = CGSize(width: 0.0, height: 0.0)
-    @State var ScrollText: String = "In Loving Memory of Yash Varma "
+    @State var ScrollText: String = ""
+    
     var body: some View{
         GeometryReader{ geometry in
             VStack(alignment: .leading, spacing: 0){
                 if width.width == 0.0 {
-                    ScrollView(.horizontal){
-                        Text(ScrollText)
-                            .font(.custom("Chalkboard SE", size: 65))
-                            .fixedSize(horizontal: true, vertical: true)
-                            .foregroundColor(.white)
-                            .saveSize(in: $width)
-                    }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
+                    if ScrollText != ""{
+                        ScrollView(.horizontal){
+                            Text(ScrollText)
+                                .font(.custom("Chalkboard SE", size: 65, relativeTo: .title))
+                                .fixedSize(horizontal: true, vertical: true)
+                                .foregroundColor(.white)
+                                .saveSize(in: $width)
+                        }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
+                    } else {
+                        ProgressView()
+                            .frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
+                    }
                 } else {
                     Button{
                         print(width)
                     } label: {
                         let size = geometry.size.width
-                        InfiniteScroller(contentWidth: width.width * 2) {
+                        InfiniteScroller(contentWidth: width.width * 2, AnimationDuration: $AnimationDuration) {
                             HStack(spacing: 0) {
                                 SildingTileView(size: size, text: ScrollText, Width: $width.width)
                                 SildingTileView(size: size, text: ScrollText, Width: $width.width)
@@ -376,7 +464,7 @@ struct HomePage: View{
                             .background(Color.marron)
                             .border(.black)
                             .aspectRatio(contentMode: .fit)
-                        MonthView()
+                        MonthView(ScrollMessageIn: $ScrollText, AnimationSpeedIn: $AnimationDuration)
                             .frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.3)
                             .background(Color.marron)
                             .border(.black)
@@ -386,6 +474,9 @@ struct HomePage: View{
                 .edgesIgnoringSafeArea(.all)
                 .buttonStyle(.plain)
                 .background(Color.white)
+                .onChange(of: ScrollText){ NewText in
+                    width.width = 0.0
+                }
                 HStack(spacing: 0){
                     Button(){
                         WindowMode.SelectedWindowMode = .QuizHomePage
@@ -401,7 +492,7 @@ struct HomePage: View{
                         }
                     }
                     .buttonStyle(.plain)
-                    .border(.black)
+                    .border(width: 1.0, edges: [.top], color: .black)
                     .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                     Button(){
                         WindowMode.SelectedWindowMode = .Sports
@@ -417,48 +508,97 @@ struct HomePage: View{
                         }
                     }
                     .buttonStyle(.plain)
-                    .border(.black)
+                    .border(width: 1.0, edges: [.top, .leading], color: .black)
                     .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                 }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.25)
-                HStack(spacing: 0){
+                HStack(alignment: .top, spacing: 0){
                     Button(){
                         WindowMode.SelectedWindowMode = .ChatHomePage
                     } label: {
                         ZStack{
                             Rectangle()
                                 .foregroundColor(Color.marron)
-                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                             Image("MessagingIcon")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .background(Color.marron)
-                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                    
+                            
                         }
                     }
                     .buttonStyle(.plain)
-                    .border(.black)
-                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                    .border(width: 1.0, edges: [.top], color: .black)
+                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25, alignment: .top)
+                    Rectangle()
+                        .foregroundColor(.black)
+                        .frame(width: 1.0, height: geometry.size.height * 0.3)
                     Button(){
                         WindowMode.SelectedWindowMode = .Profile
                     } label: {
                         ZStack{
                             Rectangle()
                                 .foregroundColor(Color.marron)
-                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25)
                             Image(systemName: "person.crop.circle")
                                 .resizable()
-                                .padding()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
+                                .foregroundColor(.black)
+                                .padding()
+                    
                         }
                     }
                     .buttonStyle(.plain)
-                    .border(.black)
-                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.3)
-                }.frame(width: geometry.size.width * 0.999, height: geometry.size.height * 0.3)
+                    .border(width: 1.0, edges: [.top], color: .black)
+                    .frame(width: geometry.size.width * 0.5, height: geometry.size.height * 0.25, alignment: .top)
+                }
                 .edgesIgnoringSafeArea(.all)
             }.background(Color.marron)
         }
+    }
+}
+
+extension View {
+    func border(width: CGFloat, edges: [Edge], color: Color) -> some View {
+        overlay(EdgeBorder(width: width, edges: edges).foregroundColor(color))
+    }
+}
+struct EdgeBorder: Shape {
+    var width: CGFloat
+    var edges: [Edge]
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        for edge in edges {
+            var x: CGFloat {
+                switch edge {
+                case .top, .bottom, .leading: return rect.minX
+                case .trailing: return rect.maxX - width
+                }
+            }
+
+            var y: CGFloat {
+                switch edge {
+                case .top, .leading, .trailing: return rect.minY
+                case .bottom: return rect.maxY - width
+                }
+            }
+
+            var w: CGFloat {
+                switch edge {
+                case .top, .bottom: return rect.width
+                case .leading, .trailing: return width
+                }
+            }
+
+            var h: CGFloat {
+                switch edge {
+                case .top, .bottom: return width
+                case .leading, .trailing: return rect.height
+                }
+            }
+            path.addRect(CGRect(x: x, y: y, width: w, height: h))
+        }
+        return path
     }
 }
 
@@ -466,6 +606,10 @@ class SelectedWindowMode: ObservableObject{
     @Published var SelectedWindowMode: WindowSrceens = .PasswordWindow
     @Published var GradeIn: Int = 8
     @Published var UsernameIn: String = ""
+    @Published var FirstName: String = ""
+    @Published var LastName: String = ""
+    @Published var SelectedCourses: [CourseSelectedType] = []
+    @Published var TimesRecieved: Bool = false
 }
 
 struct ContentView: View {
@@ -473,18 +617,12 @@ struct ContentView: View {
     @State var accountToken: String?
     @State var MSALAccount: MSALAccount?
     
-    var body: some View {
-        if WindowMode.SelectedWindowMode == .PasswordWindow{
-            PasswordView(UsernameIn: $WindowMode.UsernameIn, GradeIn: $WindowMode.GradeIn)
-                .environment(\.colorScheme, .light)
+    var body: some View{
+        switch WindowMode.SelectedWindowMode{
+        case .Calendar:
+            CalendarHomePage()
                 .environmentObject(WindowMode)
-        }
-        if WindowMode.SelectedWindowMode == .NewUser{
-            CreateNewUserView(UsernameIn: $WindowMode.UsernameIn, GradeIn: $WindowMode.GradeIn)
-                .environment(\.colorScheme, .light)
-                .environmentObject(WindowMode)
-        }
-        if WindowMode.SelectedWindowMode == .HomePage{
+        case .HomePage:
             HomePage()
                 .environmentObject(WindowMode)
                 .onAppear(){
@@ -496,34 +634,30 @@ struct ContentView: View {
                         "NotificationToken":UserDefaults.standard.string(forKey: "DeviceToken") ?? "Oh No"
                     ]
                     
-                    docRef.setData(inputData, merge: true) { error in
+                    docRef.updateData(inputData) { error in
                         if let error = error {
                             print("Error writing document: \(error)")
-                        } else {
-                            WindowMode.SelectedWindowMode = .HomePage
-                            print("Document successfully written!")
                         }
                     }
                 }
-        }
-        if WindowMode.SelectedWindowMode == .QuizHomePage{
-            QuizView(accessToken: $accountToken, MSALAccount: $MSALAccount)
-                .environmentObject(WindowMode)
-            
-        }
-        if WindowMode.SelectedWindowMode == .Calendar{
-            CalendarHomePage()
-                .environmentObject(WindowMode)
-        }
-        if WindowMode.SelectedWindowMode == .ChatHomePage{
+        case .ChatHomePage:
             ChatOverView(accessToken: $accountToken, MSALAccount: $MSALAccount)
                 .environmentObject(WindowMode)
-        }
-        if WindowMode.SelectedWindowMode == .Profile{
-            ProfileViewMain()
+        case .NewUser:
+            CreateNewUserView(GradeIn: $WindowMode.GradeIn)
+                .environment(\.colorScheme, .light)
                 .environmentObject(WindowMode)
-        }
-        if WindowMode.SelectedWindowMode == .Sports{
+        case .PasswordWindow:
+            PasswordView(accessToken: $accountToken, GradeIn: $WindowMode.GradeIn)
+                .environment(\.colorScheme, .light)
+                .environmentObject(WindowMode)
+        case .QuizHomePage:
+            QuizView(accessToken: $accountToken, MSALAccount: $MSALAccount)
+                .environmentObject(WindowMode)
+        case .Profile:
+            ProfileViewMain(AccessToken: $accountToken)
+                .environmentObject(WindowMode)
+        case .Sports:
             SportsView()
                 .environmentObject(WindowMode)
         }

@@ -23,52 +23,181 @@ public enum ChatMode: String, CaseIterable{
 }
 
 struct GymBroPage: View{
-    @Binding var SelectedChatMode: ChatMode
-    @Binding var AccessToken: String
-    @State var ChatData: GraphMailPost?
-    @State var Subject: String = ""
-    @State var Content: String = ""
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     
+    @Binding var SelectedChatMode: ChatMode
+    @Binding var AccessToken: String?
+    
+    @State var ChatData: GraphMailPost?
+    @State var WhenMeeting: String = ""
+    @State var SelectedGymBroService: String = "Diet"
+    @State var SelectedTime: String = "3"
+    
+    let GymBroServices: [String] = ["Diet", "Arm Strenght", "Leg Strength", "Endurance"]
+    let Times: [String] = ["1", "2", "3", "4", "5", "6"]
     
     var body: some View{
-        HStack{
-            Button(){
-                SelectedChatMode = .Home
-            } label: {
-                HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
-                    Spacer()
-                }
-            }.padding()
-        }
-        Button("Add Data"){
-            ChatData = GraphMailPost(message: GraphMailPost.Message(subject: Subject, body: GraphMailPost.Message.Body(contentType: "HTML", content: Content), toRecipients: [GraphMailPost.Message.ToRecipient(emailAddress: GraphMailPost.Message.ToRecipient.EmailAddress(address: "andrewmainella@icloud.com"))], internetMessageHeaders: nil))
-        }
-        Button("Send Message"){
-            if ChatData != nil{
-                MSALTools().callMailApi(Data: ChatData!, AccessToken: AccessToken)
+        VStack{
+            HStack{
+                Button(){
+                    SelectedChatMode = .Home
+                } label: {
+                    HStack{
+                        Image(systemName: "chevron.backward")
+                        Text("Back")
+                        Spacer()
+                    }
+                }.padding()
             }
-        }
-        Text("Gym Bro Page")
+            Image("GymBroRequest")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+            HStack{
+                Text("Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName),")
+                    .padding()
+                Spacer()
+            }
+            HStack{
+                Text("I would like help with")
+                    .padding([.top, .leading, .bottom])
+                Picker("", selection: $SelectedGymBroService){
+                    ForEach(GymBroServices, id: \.self){
+                        Text($0)
+                    }
+                }
+                Text(".")
+                Spacer()
+            }
+            HStack{
+                Text("I would like to meet")
+                    .padding([.top, .leading, .bottom])
+                Picker("", selection: $SelectedTime){
+                    ForEach(Times, id: \.self){
+                        Text($0)
+                    }
+                }
+                Text("Time(s) per week.")
+                Spacer()
+            }
+            TextField("When You would like to meet", text: $WhenMeeting)
+                .padding(.leading)
+            Text("Thank You!")
+            Button(){
+                let Content: String = "Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName), \n I would like help with \(SelectedGymBroService). \n I would like to meet \(SelectedTime) times per week. \n \(WhenMeeting) \n Thank You!"
+                
+                ChatData = GraphMailPost(message: GraphMailPost.Message(subject: "GYM BRO REQUEST", body: GraphMailPost.Message.Body(contentType: "HTML", content: Content), toRecipients: [GraphMailPost.Message.ToRecipient(emailAddress: GraphMailPost.Message.ToRecipient.EmailAddress(address: "andrewmainella@icloud.com"))], internetMessageHeaders: nil))
+                if ChatData != nil{
+                    MSALTools().callMailApi(Data: ChatData!, AccessToken: AccessToken!)
+                }
+            } label: {
+                Text("Send")
+                    .font(.system(size: 17))
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding()
+            }
+            Spacer()
+        }.background(Color.marron)
     }
 }
 
 struct MessageLEGO: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
+    
+    @Environment(\.colorScheme) var colorScheme
+    
     @Binding var SelectedChatMode: ChatMode
+    @Binding var AccessToken: String?
+    
+    @State var Content: String = ""
+    @State var ChatData: GraphMailPost?
+    
     var body: some View{
-        HStack{
-            Button(){
-                SelectedChatMode = .Home
-            } label: {
+        GeometryReader{ geo in
+            VStack(alignment: .center){
                 HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
+                    Button(){
+                        SelectedChatMode = .Home
+                    } label: {
+                        HStack{
+                            Image(systemName: "chevron.backward")
+                            Text("Back")
+                        }.background(colorScheme == .light ? Color.white.opacity(0.4):Color.black.opacity(0.4))
+                            .cornerRadius(25)
+                    }.padding()
+                        .foregroundColor(.black)
                     Spacer()
                 }
-            }.padding()
+                Image("MessageLego")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: geo.size.width * 0.9, height: geo.size.height * 0.3)
+                    .padding(-geo.size.height * 0.125)
+                VStack{
+                    HStack{
+                        Text("Hello Papa,")
+                            .padding([.leading, .top])
+                            .padding(.leading, -geo.size.width * 0.02)
+                        Spacer()
+                    }
+                    TextEditor(text: $Content)
+                        .scrollContentBackground(.hidden)
+                        .frame(width: geo.size.width * 0.9, height: geo.size.height * 0.6, alignment: .trailing)
+        
+                        
+                    HStack{
+                        Text("Thank you,")
+                            .padding(.leading)
+                        Spacer()
+                    }
+                    HStack{
+                        Text("\(WindowMode.FirstName), \(WindowMode.LastName)")
+                            .padding([.leading, .bottom])
+                        Spacer()
+                    }
+                }
+                .background(colorScheme == .light ? Color.white.opacity(0.4):Color.black.opacity(0.4)).cornerRadius(20)
+                .overlay(
+                           RoundedRectangle(cornerRadius: 20)
+                               .stroke(Color.black, lineWidth: 3)
+                       )
+                .padding([.leading, .trailing])
+                .padding(.top)
+                Button(){
+                    ChatData = GraphMailPost(message: GraphMailPost.Message(subject: "LEGO MESSAGE", body: GraphMailPost.Message.Body(contentType: "HTML", content: Content), toRecipients: [GraphMailPost.Message.ToRecipient(emailAddress: GraphMailPost.Message.ToRecipient.EmailAddress(address: "andrewmainella@icloud.com"))], internetMessageHeaders: nil))
+                    if ChatData != nil{
+                        MSALTools().callMailApi(Data: ChatData!, AccessToken: AccessToken!)
+                    }
+                } label: {
+                    Text("SEND")
+                        .font(.system(size: 17))
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                }
+            }.background(
+                Image("LegoWallpaper")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .scaledToFill()
+                    .edgesIgnoringSafeArea(.all)
+            )
         }
-        Text("Message Lego")
     }
 }
 
@@ -81,82 +210,130 @@ enum TutoringMode{
 struct TutoringHomePage: View{
     @Binding var TutoringModeSelected: TutoringMode
     @Binding var SelectedChatMode: ChatMode
+    
+    
     var body: some View{
-        Text("Tutoring Home Page")
-        HStack{
-            Button(){
-                SelectedChatMode = .Home
-            } label: {
-                HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
+        GeometryReader{ geo in
+            ZStack{
+                Rectangle()
+                    .fill(Color.marron)
+                    .edgesIgnoringSafeArea(.all)
+                VStack{
+                    HStack{
+                        Button(){
+                            SelectedChatMode = .Home
+                        } label: {
+                            HStack{
+                                Image(systemName: "chevron.backward")
+                                Text("Back")
+                                Spacer()
+                            }
+                        }.padding()
+                    }
+                    Image("TutoringText")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                    Button{
+                        TutoringModeSelected = .RequestTutorForm
+                    } label: {
+                        Text("Request a Tutor")
+                            .frame(width: geo.size.width * 0.8, height: geo.size.height * 0.2)
+                            .foregroundColor(.black)
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button{
+                        TutoringModeSelected = .RequestToBeATutor
+                    } label: {
+                        Text("Request to be a Tutor")
+                            .frame(width: geo.size.width * 0.8, height: geo.size.height * 0.2)
+                            .foregroundColor(.black)
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
+                    }
+                    .buttonStyle(.plain)
                     Spacer()
-                }
-            }.padding()
-        }
-        Text("Tutoring Page")
-        Button{
-            TutoringModeSelected = .RequestTutorForm
-        } label: {
-            Text("Request a Tutor")
-        }
-        Button{
-            TutoringModeSelected = .RequestToBeATutor
-        } label: {
-            Text("Request to be a Tutor")
+                }.background(Color.marron)
+            }
         }
     }
 }
 
 struct RequestATutor: View{
-    @State var isShowingMailView = false
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var TutoringModeSelected: TutoringMode
     var body: some View{
-        HStack{
-            Button(){
-                TutoringModeSelected = .Home
-            } label: {
-                HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
-                    Spacer()
-                }
-            }.padding()
-        }
-        Text("Request a Tutor")
+        VStack{
+            HStack{
+                Button(){
+                    TutoringModeSelected = .Home
+                } label: {
+                    HStack{
+                        Image(systemName: "chevron.backward")
+                        Text("Back")
+                        Spacer()
+                    }
+                }.padding()
+            }
+            Text("Request a Tutor")
+            Text("Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName),")
+            Text("I would like help with with")
+            Spacer()
+        }.background(Color.marron)
     }
 }
 
 struct RequestToBeATutor: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var TutoringModeSelected: TutoringMode
+    @State var Content: String = ""
     var body: some View{
-        HStack{
-            Button(){
-                TutoringModeSelected = .Home
-            } label: {
-                HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
-                    Spacer()
-                }
-            }.padding()
-        }
-        Text("Request To Be a Tutor")
+        VStack{
+            HStack{
+                Button(){
+                    TutoringModeSelected = .Home
+                } label: {
+                    HStack{
+                        Image(systemName: "chevron.backward")
+                        Text("Back")
+                        Spacer()
+                    }
+                }.padding()
+            }
+            Text("Request To Be a Tutor")
+                .foregroundColor(.black)
+            
+            Spacer()
+        }.background(Color.marron)
     }
 }
 
 struct TutoringPage: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var SelectedChatMode: ChatMode
     @State var TutoringModeSelected: TutoringMode = .Home
     var body: some View{
         if TutoringModeSelected == .Home{
             TutoringHomePage(TutoringModeSelected: $TutoringModeSelected, SelectedChatMode: $SelectedChatMode)
+            
         } else {
             if TutoringModeSelected == .RequestToBeATutor{
                 RequestToBeATutor(TutoringModeSelected: $TutoringModeSelected)
+                    .environmentObject(WindowMode)
             } else {
                 if TutoringModeSelected == .RequestTutorForm{
                     RequestATutor(TutoringModeSelected: $TutoringModeSelected)
+                        .environmentObject(WindowMode)
                 }
             }
         }
@@ -164,9 +341,10 @@ struct TutoringPage: View{
 }
 
 struct BugReport: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    @Binding var AccessToken: String?
     @Binding var SelectedChatMode: ChatMode
-    var BugTypes: [String] = ["Can't Find something", "App doen't look right"]
-    @State var SelectedBugType: String = "Can't Find something"
+    @State var BugDiscription: String = ""
     var body: some View{
         VStack{
             HStack{
@@ -181,21 +359,33 @@ struct BugReport: View{
                 }.padding()
             }
             Text("Report a Bug")
-            Picker("Type", selection: $SelectedBugType){
-                ForEach(BugTypes, id: \.self){
-                    Text($0)
-                }
+            HStack{
+                Text("Please describe the bug. Make sure to give details of what you were doing when in the app when it crashed.")
+                Spacer()
             }
+            TextEditor(text: $BugDiscription)
+            Text("Thank you, \(WindowMode.FirstName) \(WindowMode.LastName)")
             Button{
-                
+                let Content = "Bug Report Submitted: \(Date.now) \n FirstName: \(WindowMode.FirstName) Last Name: \(WindowMode.LastName) User: \(WindowMode.UsernameIn) \n \(BugDiscription)"
+                let ChatData = GraphMailPost(message: GraphMailPost.Message(subject: "BUG REPORT", body: GraphMailPost.Message.Body(contentType: "Text", content: Content), toRecipients: [GraphMailPost.Message.ToRecipient(emailAddress: GraphMailPost.Message.ToRecipient.EmailAddress(address: "andrewmainella@icloud.com"))], internetMessageHeaders: nil))
+                if ChatData != nil{
+                    MSALTools().callMailApi(Data: ChatData, AccessToken: AccessToken!)
+                }
             } label: {
-                Text("Submit")
-            }.background(
-                RoundedRectangle(cornerRadius: 25)
-                    .fill(Color.white)
-                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
-            )
-        }
+                Text("SUBMIT")
+                    .font(.system(size: 17))
+                    .fontWeight(.bold)
+                    .foregroundColor(.black)
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding()
+            }
+        }.background(Color.marron)
     }
 }
 
@@ -218,9 +408,9 @@ struct ChatHomePage: View{
                             }
                         }.padding()
                     }
-                    Text("Messaging")
-                        .font(.custom("Chalkboard SE", size: 60.0))
-                        .padding()
+                    Image("MessagingText")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
                     ForEach(ChatMode.allCases, id: \.rawValue){ Selectmode in
                         if Selectmode != .Home{
                             Button{
@@ -228,14 +418,14 @@ struct ChatHomePage: View{
                             } label: {
                                 Text(Selectmode.rawValue)
                                     .foregroundColor(.black)
+                                    .frame(width: geo.size.width * 0.8, height: geo.size.height * 0.2)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 25)
+                                            .fill(Color.white)
+                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                    )
+                                    .padding()
                             }
-                            .frame(width: geo.size.width * 0.8, height: geo.size.height * 0.2)
-                            .background(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .fill(Color.white)
-                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                            )
-                            .padding()
                         }
                         Spacer()
                     }
@@ -279,14 +469,46 @@ struct ChatOverView: View{
     @State var SelectedChatMode: ChatMode = .Home
     var body: some View{
         if MSALAccount == nil{
-            MSALView()
-                .environmentObject(WindowMode)
+            if accessToken == nil{
+                MSALView()
+                    .environmentObject(WindowMode)
+            } else {
+                if SelectedChatMode == .Home{
+                    ChatHomePage(SelectedChatMode: $SelectedChatMode)
+                        .environmentObject(WindowMode)
+                } else {
+                    if SelectedChatMode == .GymBro{
+                        GymBroPage(SelectedChatMode: $SelectedChatMode, AccessToken: $accessToken)
+                            .environmentObject(WindowMode)
+                    } else {
+                        if SelectedChatMode == .MessageLEGO{
+                            MessageLEGO(SelectedChatMode: $SelectedChatMode, AccessToken: $accessToken)
+                                .environmentObject(WindowMode)
+                        } else {
+                            if SelectedChatMode == .ReportBug{
+                                BugReport(AccessToken: $accessToken, SelectedChatMode: $SelectedChatMode)
+                                    .environmentObject(WindowMode)
+                            } else {
+                                if SelectedChatMode == .TutorHomePage{
+                                    TutoringPage(SelectedChatMode: $SelectedChatMode)
+                                        .environmentObject(WindowMode)
+                                } else {
+                                    if SelectedChatMode == .Message{
+                                        MessagingPage(SelectedChatMode: $SelectedChatMode, Username: $WindowMode.UsernameIn, accessToken: $accessToken)
+                                            .environmentObject(WindowMode)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } else {
             if accessToken == nil{
                 Text("Please Wait One moment well Pauly gets everything ready")
                     .onAppear(){
                         if accessToken?.count ?? 0 <= 10{
-                            msalModel.acquireTokenSilently(MSALAccount!, AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn)
+                            msalModel.acquireTokenSilently(MSALAccount!, AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn, FirstName: WindowMode.FirstName, LastName: WindowMode.LastName, SelectedCourses: WindowMode.SelectedCourses)
                         }
                     }
                 MSALScreenView_UI(viewModel: msalModel, AccountValue: $MSALAccount)
@@ -297,19 +519,22 @@ struct ChatOverView: View{
                         .environmentObject(WindowMode)
                 } else {
                     if SelectedChatMode == .GymBro{
-                        GymBroPage(SelectedChatMode: $SelectedChatMode, AccessToken: $accessToken as! Binding<String>)
+                        GymBroPage(SelectedChatMode: $SelectedChatMode, AccessToken: $accessToken)
+                            .environmentObject(WindowMode)
                     } else {
                         if SelectedChatMode == .MessageLEGO{
-                            MessageLEGO(SelectedChatMode: $SelectedChatMode)
+                            MessageLEGO(SelectedChatMode: $SelectedChatMode, AccessToken: $accessToken)
+                                .environmentObject(WindowMode)
                         } else {
                             if SelectedChatMode == .ReportBug{
-                                BugReport(SelectedChatMode: $SelectedChatMode)
+                                BugReport(AccessToken: $accessToken, SelectedChatMode: $SelectedChatMode)
+                                    .environmentObject(WindowMode)
                             } else {
                                 if SelectedChatMode == .TutorHomePage{
                                     TutoringPage(SelectedChatMode: $SelectedChatMode)
                                 } else {
                                     if SelectedChatMode == .Message{
-                                        MessagingPage(SelectedChatMode: $SelectedChatMode, Username: $WindowMode.UsernameIn)
+                                        MessagingPage(SelectedChatMode: $SelectedChatMode, Username: $WindowMode.UsernameIn, accessToken: $accessToken)
                                     }
                                 }
                             }

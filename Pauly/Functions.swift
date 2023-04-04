@@ -158,13 +158,28 @@ class Functions {
         weekDay = weekDay - 1
         return weekDay
     }
-    func getDay(value: Int, startdate: Int) -> Int{
+    func getDay(value: Int, startdate: Int) -> Int?{
         var offset: Int = 0
         let var1: Double = Double(value)/5.0
         let var2: Int = Int(floor(var1))
         let var4: Int = var2 * 2
         offset += var4
         let result: Int = ((value - startdate) + 2) + offset
+        let DayInt = Calendar.current.dateComponents([.day], from: Date().endOfMonth()).day
+        if result >= (DayInt! + 1) {
+            return nil
+        }
         return result
     }
 }
+
+extension Date {
+    func startOfMonth() -> Date {
+        return Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Calendar.current.startOfDay(for: self)))!
+    }
+    
+    func endOfMonth() -> Date {
+        return Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: self.startOfMonth())!
+    }
+}
+

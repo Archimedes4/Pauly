@@ -10,6 +10,7 @@ import SwiftUI
 import PDFKit
 import MSAL
 import FirebaseFirestore
+import FirebaseStorage
 
 // Defining Custom Types
 enum GradesEnum: String, CaseIterable{
@@ -37,8 +38,14 @@ struct CardType: Identifiable {
     
     let id = UUID()
     //Card Face
-    let Title: String
-    let Caption: String
+    let Title: String?
+    let Caption: String?
+    let ColorType: String?
+    let ImageRef: String?
+    let LongText: String?
+    let BackgroundStyle: Int
+    
+    let Opacity: Double
     
     //Card Destintation
     let Destination: Int
@@ -51,26 +58,42 @@ struct AnErrorHasOcurredView: View{
     }
 }
 
-//Factori
+//Factoring
 struct FactoringBinomials: View{
-    @Binding var SelectedMode: SelectedModeCalculusEnum
+    @Binding var SelectedMode: SelectedModeCalculusEnum?
     @State var FactorDisplay: AttributedString = AttributedString("")
     @State var ShowAns: Bool = false
     @State var Soloution: String = ""
+    
+    @State var DarkMode: Bool = false
     
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View{
         VStack{
-            Button("Back"){
-                SelectedMode = .Home
+            HStack{
+                Button(){
+                    SelectedMode = .Home
+                } label: {
+                    HStack {
+                        Image(systemName: "chevron.backward")
+                            .padding(.leading)
+                        Text("Back")
+                    }
+                }
+                Spacer()
             }
             Text(FactorDisplay)
-                .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+                .foregroundColor(DarkMode ? Color.white : Color.black)
                 .onAppear(){
                     let NewResult = BinomialFactoring()
                     FactorDisplay = AttributedString(NewResult.0)
                     Soloution = NewResult.1
+                    if colorScheme == .dark{
+                        DarkMode = true
+                    } else {
+                        DarkMode = false
+                    }
                 }
             Button("Make New Equation"){
                 let NewResult = BinomialFactoring()
@@ -89,7 +112,7 @@ struct FactoringBinomials: View{
             }
             if ShowAns{
                 Text(Soloution)
-                    .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+                    .foregroundColor(DarkMode ? Color.white : Color.black)
             }
         }
     }
@@ -162,10 +185,12 @@ struct FactoringBinomials: View{
 }
 
 struct PDFSelectionView: View{
-    @Binding var SelectedMode: SelectedModeCalculusEnum
-    let PDFLinks: [String] = ["https://gocrusadersca-my.sharepoint.com/personal/maina24_gocrusaders_ca/Documents/This%20is%20a%20Test%20For%20OneDrive.pdf", "https://www.africau.edu/images/default/sample.pdf", "https://gocrusadersca-my.sharepoint.com/personal/maina24_gocrusaders_ca/_layouts/15/download.aspx?UniqueId=7ecfcae2-44f1-462c-b3a0-be8c0b54ba66&Translate=false&tempauth=eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJhdWQiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAvZ29jcnVzYWRlcnNjYS1teS5zaGFyZXBvaW50LmNvbUBkOWFkM2M4OS02YWVkLTQ3ODMtOTNjZS0yMTJiNzFlZTk4ZjMiLCJpc3MiOiIwMDAwMDAwMy0wMDAwLTBmZjEtY2UwMC0wMDAwMDAwMDAwMDAiLCJuYmYiOiIxNjc4NjM5ODQ0IiwiZXhwIjoiMTY3ODY0MzQ0NCIsImVuZHBvaW50dXJsIjoiVzk1STlRYmhZZlRiRkx4Y2F3bUpRcVgrSzhiMUhiWmJ1Yksxa0I4UnVQdz0iLCJlbmRwb2ludHVybExlbmd0aCI6IjE1OSIsImlzbG9vcGJhY2siOiJUcnVlIiwiY2lkIjoiTlRWbE5UTTFNVGd0WkdNellpMDBabUZrTFdFek5EUXRZV1kxT1RSbE5tSTBOVEF4IiwidmVyIjoiaGFzaGVkcHJvb2Z0b2tlbiIsInNpdGVpZCI6Ik9HWTJZV1F6WkRndE56STRaQzAwWWpVNExUazJNREl0TkRjMU4yTmxZak5rWkRCaSIsImFwcF9kaXNwbGF5bmFtZSI6IlBhdWx5IiwiZ2l2ZW5fbmFtZSI6IkFuZHJldyIsImZhbWlseV9uYW1lIjoiTWFpbmVsbGEiLCJzaWduaW5fc3RhdGUiOiJbXCJrbXNpXCJdIiwiYXBwaWQiOiI4MmY1MmJhZS04ZDExLTRlZDAtYjFkMS04M2Q3NmQyZTYwNWMiLCJ0aWQiOiJkOWFkM2M4OS02YWVkLTQ3ODMtOTNjZS0yMTJiNzFlZTk4ZjMiLCJ1cG4iOiJtYWluYTI0QGdvY3J1c2FkZXJzLmNhIiwicHVpZCI6IjEwMDMyMDAwRDA2MkMyMzgiLCJjYWNoZWtleSI6IjBoLmZ8bWVtYmVyc2hpcHwxMDAzMjAwMGQwNjJjMjM4QGxpdmUuY29tIiwic2NwIjoiYWxsZmlsZXMucmVhZCBhbGxwcm9maWxlcy5yZWFkIiwidHQiOiIyIiwidXNlUGVyc2lzdGVudENvb2tpZSI6bnVsbCwiaXBhZGRyIjoiMjAuMTkwLjEzOS4xNzEifQ.VmpqRjFIVHlEZlNJMFNuRit6RDY5NzVEaW5BQ0ttbDFaSUc4M0hMaTJIQT0&ApiVersion=2.0"]
+    @Binding var SelectedMode: SelectedModeCalculusEnum?
+    @Binding var PDFs: [DataIdType]?
     @State var LetSelectedPDF: String = "https://www.africau.edu/images/default/sample.pdf"
     @State var DataInput: Data?
+    @Binding var AccessToken: String?
+    
     var body: some View{
         if DataInput == nil{
             HStack{
@@ -183,12 +208,12 @@ struct PDFSelectionView: View{
             Text("PDF View")
 
             List(){
-                ForEach(PDFLinks, id: \.self) { value in
+                ForEach(PDFs!, id: \.Id) { value in
                     Button{
-                        LetSelectedPDF = value
+                        LetSelectedPDF = value.Id
                         Task{
                             do{
-                                DataInput = try await PDFKitFunction().CallData(URLInputString: LetSelectedPDF)
+                                DataInput = try await PDFKitFunction().CallData(ItemId: value.Id, accessToken: AccessToken!)
                                 print(DataInput)
                             } catch {
                                 print("Oh No an error")
@@ -196,7 +221,7 @@ struct PDFSelectionView: View{
                             }
                         }
                     } label: {
-                        Text(value)
+                        Text(value.Name)
                     }
                 }
             }
@@ -240,58 +265,19 @@ struct CourseBackground: View{
     }
 }
 
-//The default card
-struct Card: View{
-    @Binding var SelectedMode: SelectedModeCalculusEnum
-    @Binding var Vidoes: [DataIdType]
-    let Title: String
-    let Caption: String
-    let TextColor: Color
-    let Destination: Int
-    let CardData: [DataIdType]?
-    var body: some View{
-        Button{
-            if Destination == 0{
-                SelectedMode = .FactoringBinomials
-            } else {
-                if Destination == 1{
-                    Vidoes = CardData!
-                    SelectedMode = .YouTube
-                } else {
-                    if Destination == 2{
-                        SelectedMode = .PDFView
-                    }
-                }
-            }
-        } label: {
-            ZStack{
-                Rectangle()
-                    .foregroundColor(.green)
-                VStack{
-                    Text(Title)
-                        .font(.title)
-                        .foregroundColor(TextColor)
-                    Text(Caption)
-                        .font(.caption2)
-                        .foregroundColor(TextColor)
-                }
-            }
-        }.padding()
-            .cornerRadius(25)
-    }
-}
-
 
 //the home page of the selected course
 struct ClassHomePageView: View{
-    @Binding var ShowingSelectClassView: Bool
-    @Binding var SelectedCourse: String
-    @Binding var SelectedMode: SelectedModeCalculusEnum
+    @Binding var SelectedQuizViewMode: QuizViewMode
+    @Binding var SelectedCourse: CourseSelectedType
+    
+    @Binding var SelectedMode: SelectedModeCalculusEnum?
     @Binding var GradeIn: Int
-    @Binding var Vidoes: [DataIdType]
+    @Binding var Vidoes: [DataIdType]?
     @State var Teacher = ""
     @State var AvaliableCards: [CardType] = []
     @State var BackgroundType: Int = 2
+    @State var CardIds: [Int] = []
     var body: some View{
         GeometryReader{ value in
             ZStack(alignment: .leading){
@@ -300,7 +286,7 @@ struct ClassHomePageView: View{
                 VStack(){
                     HStack{
                         Button(){
-                            ShowingSelectClassView = true
+                            SelectedQuizViewMode = .SelectedGrade
                         } label: {
                             HStack {
                                 Image(systemName: "chevron.backward")
@@ -311,7 +297,8 @@ struct ClassHomePageView: View{
                         Spacer()
                     }
                     ForEach(AvaliableCards, id: \.id) { card in
-                        Card(SelectedMode: $SelectedMode, Vidoes: $Vidoes, Title: card.Title, Caption: card.Caption, TextColor: Color.black, Destination: card.Destination, CardData: card.CardData)
+                        
+                        Card(SelectedMode: $SelectedMode, SelectedCardMode: .Quizes, Vidoes: $Vidoes, TextColor: Color.black, SelectedCard: card)
                             .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
                             .cornerRadius(25)
                     }
@@ -322,21 +309,15 @@ struct ClassHomePageView: View{
                     do{
                         let db = Firestore.firestore()
                         
-                        var docRef = db.collection("Courses").document("Grade\(GradeIn)").collection("\(SelectedCourse)-1-2023").document("Info")
-                        docRef.getDocument { (document, error) in
-                            guard error == nil else {
-                                print("error", error ?? "")
-                                return
-                            }
-                            
-                            if let document = document, document.exists {
-                                let data = document.data()
-                                if let data = data {
-                                    Teacher = data["Teacher"] as! String
-                                }
-                            }
+                        var SectionID: String = ""
+                        
+                        if SelectedCourse.Section == 0{
+                            SectionID = "0"
+                        } else {
+                            SectionID = "\(SelectedCourse.Section)-\(SelectedCourse.Year)"
                         }
-                        docRef = db.collection("Courses").document("Grade\(GradeIn)").collection("\(SelectedCourse)-1-2023").document("Page Info")
+                        
+                        var docRef = db.collection("Grade\(GradeIn)Courses").document("\(SelectedCourse.Name)").collection("Sections").document(SectionID)
                         docRef.getDocument { (document, error) in
                             guard error == nil else {
                                 print("error", error ?? "")
@@ -347,9 +328,10 @@ struct ClassHomePageView: View{
                                 let data = document.data()
                                 if let data = data {
                                     let NumberOfCards = data["NumberOfPages"] as! Int
-                                    print("Number of Cards \(NumberOfCards)")
-                                    for x in 0..<NumberOfCards{
-                                        let docRef = db.collection("Courses").document("Grade\(GradeIn)").collection("\(SelectedCourse)-1-2023").document("Page Info").collection("Card\(x + 1)").document("Info")
+                                    Teacher = data["Teacher"] as! String
+                                    CardIds = data["Page Info"] as! NSArray as! [Int]
+                                    for x in CardIds{
+                                        let docRef = db.collection("Cards").document("\(x)")
                                         docRef.getDocument { (document, error) in
                                             guard error == nil else {
                                                 print("error", error ?? "")
@@ -359,16 +341,68 @@ struct ClassHomePageView: View{
                                             if let document = document, document.exists {
                                                 let data = document.data()
                                                 if let data = data {
-                                                    let titleFire = data["Title"] as! String
                                                     let destinationFire = data["Destination"] as! Int
-                                                    let captionFire = data["Caption"] as! String
                                                     let cardDataValueFire = data["CardData"] as! [String]
                                                     let cardDataNameFire = data["CardDataName"] as! [String]
-                                                    var CardDataIn: [DataIdType] = []
-                                                    for y in 0..<cardDataNameFire.count{
-                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y]))
+                                                    let BackgroundStyle = data["BackgroundStyle"] as! Int
+                                                    let Opacity = data["Opacity"] as! String
+                                                    let cardDataTypeFire: [String] = data["CardDataType"] as? NSArray as? [String] ?? []
+                                                    if BackgroundStyle == 0{
+                                                        let captionFire = data["Caption"] as! String
+                                                        let titleFire = data["Title"] as! String
+                                                        let ColorFire = data["Color"] as! String
+                                                        var CardDataIn: [DataIdType] = []
+                                                        for y in 0..<cardDataNameFire.count{
+                                                            if cardDataTypeFire.count != 0{
+                                                                CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
+                                                            } else {
+                                                                CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
+                                                            }
+                                                        }
+                                                        AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
+                                                    } else {
+                                                        if BackgroundStyle == 1{
+                                                            let ImageRefFire = data["ImageRef"] as! String
+                                                            var CardDataIn: [DataIdType] = []
+                                                            for y in 0..<cardDataNameFire.count{
+                                                                if cardDataTypeFire.count != 0{
+                                                                    CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
+                                                                } else {
+                                                                    CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
+                                                                }
+                                                            }
+                                                            AvaliableCards.append(CardType(Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
+                                                        } else {
+                                                            if BackgroundStyle == 2{
+                                                                let captionFire = data["Caption"] as! String
+                                                                let titleFire = data["Title"] as! String
+                                                                let ImageRefFire = data["ImageRef"] as! String
+                                                                var CardDataIn: [DataIdType] = []
+                                                                for y in 0..<cardDataNameFire.count{
+                                                                    if cardDataTypeFire.count != 0{
+                                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
+                                                                    } else {
+                                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
+                                                                    }
+                                                                }
+                                                                AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
+                                                            } else {
+                                                                if BackgroundStyle == 3{
+                                                                    let ColorFire = data["Color"] as! String
+                                                                    let LongTextFire = data["Text"] as! String
+                                                                    var CardDataIn: [DataIdType] = []
+                                                                    for y in 0..<cardDataNameFire.count{
+                                                                        if cardDataTypeFire.count != 0{
+                                                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
+                                                                        } else {
+                                                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
+                                                                        }
+                                                                    }
+                                                                    AvaliableCards.append(CardType(Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
+                                                                }
+                                                            }
+                                                        }
                                                     }
-                                                    AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, Destination: destinationFire, CardData: CardDataIn))
                                                 }
                                             }
                                         }
@@ -380,34 +414,96 @@ struct ClassHomePageView: View{
                         print("Error")
                     }
                 }
-            }
+            }//Mark
         }
     }
 }
 
 //The view controller for the the selected course
 struct CourseView: View{
-    @Binding var ShowingSelectClassView: Bool
-    @Binding var SelectedCourse: String
+
+    @Binding var SelectedQuizViewMode: QuizViewMode
+    
+    @Binding var SelectedCourse: CourseSelectedType
     @Binding var GradeIn: Int
-    @State var SelectedMode: SelectedModeCalculusEnum = .Home
-    @State var Vidoes: [DataIdType] = []
+    
+    @Binding var AccessToken: String?
+    
+    @State var SelectedMode: SelectedModeCalculusEnum? = .Home
+    @State var InputData: [DataIdType]? = []
     var body: some View{
         if SelectedMode == .Home{
-            ClassHomePageView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse, SelectedMode: $SelectedMode, GradeIn: $GradeIn, Vidoes: $Vidoes)
+            ClassHomePageView(SelectedQuizViewMode: $SelectedQuizViewMode, SelectedCourse: $SelectedCourse, SelectedMode: $SelectedMode, GradeIn: $GradeIn, Vidoes: $InputData)
         } else {
             if SelectedMode == .FactoringBinomials{
                 FactoringBinomials(SelectedMode: $SelectedMode)
             } else {
                 if SelectedMode == .PDFView{
-                    PDFSelectionView(SelectedMode: $SelectedMode)
+                    PDFSelectionView(SelectedMode: $SelectedMode, PDFs: $InputData, AccessToken: $AccessToken)
                 } else {
                     if SelectedMode == .YouTube{
-                        LetureHomePage(SelectedMode: $SelectedMode, Vidoes: $Vidoes)
+                        LetureHomePage(SelectedMode: $SelectedMode, Vidoes: $InputData)
                     }
                 }
             }
         }
+    }
+}
+
+struct CoursePersonalOverviewView: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    @Environment(\.colorScheme) var colorScheme
+    @Binding var OverrideSelectionView: Bool
+    
+    @Binding var SelectedCourse: CourseSelectedType
+    @Binding var SelectedQuizViewMode: QuizViewMode
+    @Binding var OverrideCourseView: Bool
+    
+    
+    var body: some View{
+        VStack{
+            HStack(){
+                Button{
+                    WindowMode.SelectedWindowMode = .HomePage
+                } label: {
+                    HStack{
+                        Image(systemName: "chevron.backward")
+                        Text("Back")
+                    }
+                }.padding(.leading)
+                Spacer()
+            }
+            Text("Welcome, \(WindowMode.FirstName) \(WindowMode.LastName)")
+                .font(.largeTitle)
+                .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+            List(){
+                Section{
+                    ForEach(WindowMode.SelectedCourses, id: \.id){ course in
+                        Button(){
+                            SelectedCourse = course
+                            SelectedQuizViewMode = .CourseView
+                        } label: {
+                            Text(course.Name)
+                        }
+                    }
+                }
+                Section{
+                    Button(){
+                        OverrideCourseView = false
+                        SelectedQuizViewMode = .CourseOverview
+                    } label: {
+                        Text("Choose a different \(WindowMode.GradeIn) course")
+                    }
+                    Button(){
+                        OverrideSelectionView = false
+                        SelectedQuizViewMode = .SelectedGrade
+                    } label: {
+                        Text("See other courses in a different grade")
+                    }
+                }
+            }.background(Color.marron)
+            .scrollContentBackground(.hidden)
+        }.background(Color.marron)
     }
 }
 
@@ -415,84 +511,80 @@ struct CourseView: View{
 struct CourseSelectionView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     
+    @Binding var SelectedCourse: CourseSelectedType
+    @Binding var SelectedQuizViewMode: QuizViewMode
     @Binding var ShowingSelectionView: Bool
     @Binding var OverrideSelectionView: Bool
     @State var AvaliableCourses: [String] = []
-    @State var ShowingSelectClassView: Bool = true
     @State var ShowingErrorMessage: Bool = false
     @State var ErrorMessage = ""
     @State var SelectedClass: GradesEnum
-    @State var SelectedCourse: String = ""
     @Environment(\.colorScheme) var colorScheme
 
     var body: some View{
-        if ShowingSelectClassView{
-            if AvaliableCourses.count == 0{
-                ProgressView()
-                    .onAppear(){
-                        Task{
-                            do{
-                                let db = Firestore.firestore()
-                                
-                                let docRef = db.collection("Courses").document("Grade\(WindowMode.GradeIn)")
-                                docRef.getDocument { (document, error) in
-                                    guard error == nil else {
-                                        print("error", error ?? "")
-                                        return
-                                    }
-                                    
-                                    if let document = document, document.exists {
-                                        let data = document.data()
-                                        if let data = data {
-                                            let results = data["Courses"] as! NSArray as? [String] ?? []
-                                            AvaliableCourses = results
-                                        }
-                                    }
-                                }
-                            } catch {
-                                print("Error")
-                            }
+        if AvaliableCourses.count == 0{
+            ProgressView()
+                .onAppear(){
+                    Task{
+                        do{
+                            let db = Firestore.firestore()
+                            
+                            let docRef = db.collection("Grade\(WindowMode.GradeIn)Courses")
+                            docRef.getDocuments { (snapshot, error) in
+                                guard let snapshot = snapshot, error == nil else {
+                                 //handle error
+                                 return
+                               }
+                               snapshot.documents.forEach({ (documentSnapshot) in
+                                   let documentData = documentSnapshot.data()
+                                   let CourseNameNewUser = documentData["CourseName"] as? String
+                                   AvaliableCourses.append(CourseNameNewUser ?? "Error")
+                               })
+                             }
+                        } catch {
+                            print("Error")
                         }
                     }
-            } else {
-                GeometryReader{ geo in
-                    VStack{
-                        HStack(){
+                }
+        } else {
+            GeometryReader{ geo in
+                VStack{
+                    HStack(){
+                        Button{
+                            WindowMode.SelectedWindowMode = .HomePage
+                        } label: {
+                            HStack{
+                                Image(systemName: "chevron.backward")
+                                Text("Back")
+                            }
+                        }.padding(.leading)
+                        Spacer()
+                        Text("Select \(SelectedClass.rawValue) Class")
+                            .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+                        Spacer()
+                        Button{
+                            OverrideSelectionView = false
+                            ShowingSelectionView = true
+                        } label: {
+                            HStack{
+                                Image(systemName: "chevron.backward")
+                                Text("Choose Grade")
+                            }
+                        }.padding(.trailing)
+                    }
+                    List{
+                        ForEach(AvaliableCourses, id: \.self) {  course in
                             Button{
-                                WindowMode.SelectedWindowMode = .HomePage
-                            } label: {
-                                HStack{
-                                    Image(systemName: "chevron.backward")
-                                    Text("Back")
-                                }
-                            }.padding(.leading)
-                            Spacer()
-                            Text("Select \(SelectedClass.rawValue) Class")
-                                .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
-                            Spacer()
-                            Button{
-                                OverrideSelectionView = false
-                                ShowingSelectionView = true
-                            } label: {
-                                HStack{
-                                    Image(systemName: "chevron.backward")
-                                    Text("Choose Grade")
-                                }
-                            }.padding(.trailing)
-                        }
-                        List(AvaliableCourses, id: \.self) { course in
-                            Button{
-                                ShowingSelectClassView = false
-                                SelectedCourse = course
+                                SelectedQuizViewMode = .CourseView
+                                SelectedCourse = CourseSelectedType(Name: course, Section: 0, Year: 0)
                             } label: {
                                 Text(course)
                             }.buttonStyle(.plain)
-                        }.background(Color.marron)
+                        }
                     }.background(Color.marron)
-                }
+                    .scrollContentBackground(.hidden)
+                }.background(Color.marron)
             }
-        } else {
-            CourseView(ShowingSelectClassView: $ShowingSelectClassView, SelectedCourse: $SelectedCourse, GradeIn: $WindowMode.GradeIn)
         }
     }
 }
@@ -551,6 +643,13 @@ struct GradeSelectionView: View{
     }
 }
 
+enum QuizViewMode{
+    case SelectedGrade
+    case CourseOverview
+    case PersonalizedOverview
+    case CourseView
+}
+
 //Handeler for MSAL
 //Checks if grade selected
 //Sends to course selector view
@@ -560,26 +659,24 @@ struct QuizView: View{
     @State var SelectedUserGrade: GradesEnum = .Grade_9
     @State var ShowingSelectionView: Bool = true
     @State var OverrideSelectionView: Bool = true
+    @State var OverrideCourseView: Bool = true
+    @State var isTheirSelectedClasess: Bool = false
+    @State var SelectedCourse: CourseSelectedType = CourseSelectedType(Name: "Error", Section: 0, Year: 0)
+    
     @Binding var accessToken: String?
     @Binding var MSALAccount: MSALAccount?
     @StateObject var msalModel: MSALScreenViewModel = MSALScreenViewModel()
     
+    @State var SelectedQuizViewMode: QuizViewMode = .SelectedGrade
+    
     var body: some View{
         if MSALAccount == nil{
-            MSALView()
-                .environmentObject(WindowMode)
-        } else {
             if accessToken == nil{
-                Text("Please Wait One moment well Pauly gets everything ready")
-                    .onAppear(){
-                        if accessToken?.count ?? 0 <= 10{
-                            msalModel.acquireTokenSilently(MSALAccount!, AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn)
-                        }
-                    }
-                MSALScreenView_UI(viewModel: msalModel, AccountValue: $MSALAccount)
-                    .frame(width: 1, height: 1, alignment: .bottom)
+                MSALView()
+                    .environmentObject(WindowMode)
             } else {
-                if ShowingSelectionView{
+                switch SelectedQuizViewMode {
+                case .SelectedGrade:
                     GradeSelectionView(SelectedUserGrade: $SelectedUserGrade, ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView).onAppear(){
                         if OverrideSelectionView{
                             if WindowMode.GradeIn >= 9{
@@ -598,15 +695,81 @@ struct QuizView: View{
                                         }
                                     }
                                 }
-                                print("Here")
-                                ShowingSelectionView = false
+                                SelectedQuizViewMode = .CourseOverview
                             }
                         }
                     }
                     .environmentObject(WindowMode)
-                } else {
-                    CourseSelectionView(ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView, SelectedClass: SelectedUserGrade)
+                case .CourseOverview:
+                    CourseSelectionView(SelectedCourse: $SelectedCourse, SelectedQuizViewMode: $SelectedQuizViewMode, ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView, SelectedClass: SelectedUserGrade)
                         .environmentObject(WindowMode)
+                        .onAppear(){
+                            if OverrideCourseView{
+                                print(WindowMode.SelectedCourses)
+                                if WindowMode.SelectedCourses.count >= 1{
+                                    SelectedQuizViewMode = .PersonalizedOverview
+                                }
+                            }
+                        }
+                case .PersonalizedOverview:
+                    CoursePersonalOverviewView(OverrideSelectionView: $OverrideSelectionView, SelectedCourse: $SelectedCourse, SelectedQuizViewMode: $SelectedQuizViewMode, OverrideCourseView: $OverrideCourseView)
+                        .environmentObject(WindowMode)
+                case .CourseView:
+                    CourseView(SelectedQuizViewMode: $SelectedQuizViewMode, SelectedCourse: $SelectedCourse, GradeIn: $WindowMode.GradeIn, AccessToken: $accessToken)
+                }
+            }
+        } else {
+            if accessToken == nil{
+                Text("Please Wait One moment well Pauly gets everything ready")
+                    .onAppear(){
+                        if accessToken?.count ?? 0 <= 10{
+                            msalModel.acquireTokenSilently(MSALAccount!, AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn, FirstName: WindowMode.FirstName, LastName: WindowMode.LastName, SelectedCourses: WindowMode.SelectedCourses)
+                        }
+                    }
+                MSALScreenView_UI(viewModel: msalModel, AccountValue: $MSALAccount)
+                    .frame(width: 1, height: 1, alignment: .bottom)
+            } else {
+                switch SelectedQuizViewMode {
+                case .SelectedGrade:
+                    GradeSelectionView(SelectedUserGrade: $SelectedUserGrade, ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView).onAppear(){
+                        if OverrideSelectionView{
+                            if WindowMode.GradeIn >= 9{
+                                if WindowMode.GradeIn == 9{
+                                    SelectedUserGrade = .Grade_9
+                                } else {
+                                    if WindowMode.GradeIn == 10{
+                                        SelectedUserGrade = .Grade_10
+                                    } else {
+                                        if WindowMode.GradeIn == 11{
+                                            SelectedUserGrade = .Grade_11
+                                        } else {
+                                            if WindowMode.GradeIn == 12{
+                                                SelectedUserGrade = .Grade_12
+                                            }
+                                        }
+                                    }
+                                }
+                                SelectedQuizViewMode = .CourseOverview
+                            }
+                        }
+                    }
+                    .environmentObject(WindowMode)
+                case .CourseOverview:
+                    CourseSelectionView(SelectedCourse: $SelectedCourse, SelectedQuizViewMode: $SelectedQuizViewMode, ShowingSelectionView: $ShowingSelectionView, OverrideSelectionView: $OverrideSelectionView, SelectedClass: SelectedUserGrade)
+                        .environmentObject(WindowMode)
+                        .onAppear(){
+                            if OverrideCourseView{
+                                print(WindowMode.SelectedCourses)
+                                if WindowMode.SelectedCourses.count >= 1{
+                                    SelectedQuizViewMode = .PersonalizedOverview
+                                }
+                            }
+                        }
+                case .PersonalizedOverview:
+                    CoursePersonalOverviewView(OverrideSelectionView: $OverrideSelectionView, SelectedCourse: $SelectedCourse, SelectedQuizViewMode: $SelectedQuizViewMode, OverrideCourseView: $OverrideCourseView)
+                        .environmentObject(WindowMode)
+                case .CourseView:
+                    CourseView(SelectedQuizViewMode: $SelectedQuizViewMode, SelectedCourse: $SelectedCourse, GradeIn: $WindowMode.GradeIn, AccessToken: $accessToken)
                 }
             }
         }

@@ -47,19 +47,41 @@ class PDFKitFunction : ObservableObject{
     }
     
     
-    public func CallData(URLInputString: String) async throws -> Data {
-        guard let url = URL(string: URLInputString) else {
-            print("Invalid url...")
-            throw APICallingError.InvalidURL
-        }
-        var request = URLRequest(url: url)
-        do {
+    public func CallData(ItemId: String, accessToken: String) async throws -> Data {
+        let url = URL(string: "https://graph.microsoft.com/v1.0/sites/gocrusadersca.sharepoint.com/drive/items/\(ItemId)")
+        var request = URLRequest(url: url!)
+        // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        do{
             let (data, _) = try await URLSession.shared.data(for: request)
+            do {
+                // make sure this JSON is in the format we expect
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    
+                    let Results = (json["@microsoft.graph.downloadUrl"] as? String)!
+                    
+                    guard let url = URL(string: Results) else {
+                        print("Invalid url...")
+                        throw APICallingError.InvalidURL
+                    }
+                    var request = URLRequest(url: url)
+                    do {
+                        let (data, _) = try await URLSession.shared.data(for: request)
+                        return data
+                    } catch {
+                        print(String(describing: error))
+                        throw APICallingError.Fatal
+                    }
+                    throw APICallingError.Fatal
+                }
+            } catch let error as NSError {
+                print("Failed to load: \(error.localizedDescription)")
+            }
             return data
-        } catch {
-            print(String(describing: error))
-            throw APICallingError.Fatal
+        } catch{
+            throw GraphCallingErrors.APICallFailed
         }
-        throw APICallingError.Fatal
     }
 }

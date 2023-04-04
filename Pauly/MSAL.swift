@@ -10,10 +10,11 @@ import MSAL
 import SwiftUI
 import UIKit
 
+
 // MARK: - GraphResponce
 struct GraphResponce: Codable {
     let odataContext: String?
-    let businessPhones: [String]
+    let businessPhones: [String]?
     let displayName, givenName: String?
     let jobTitle: String?
     let mail: String?
@@ -75,14 +76,15 @@ struct MSALViewLogin: View {
             }
             Image("SaintPaulLogo")
                 .resizable()
+                .aspectRatio(contentMode: .fit)
             Text("👋 Please Enter Your Login Details")
                 .font(.largeTitle)
                 .padding()
             Button("Login with MSAL") {
-                msalModel.loadMSALScreen(AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn)
+                msalModel.loadMSALScreen(AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn, FirstName: WindowMode.FirstName, LastName: WindowMode.LastName, SelectedCourses: WindowMode.SelectedCourses)
             }
             .onAppear(){
-                msalModel.loadMSALScreen(AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn)
+                msalModel.loadMSALScreen(AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn, FirstName: WindowMode.FirstName, LastName: WindowMode.LastName, SelectedCourses: WindowMode.SelectedCourses)
             }
             Spacer()
         }.background(Color.marron)
@@ -115,12 +117,12 @@ class MSALScreenViewModel: ObservableObject, MSALScreenViewModelProtocol{
 
 
     //MARK: MyAdsViewControllerProtocol
-    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String) {
-        uiViewController?.loadMSALScreen(AccountMode: AccountMode, Grade: Grade, UsernameIn: UsernameIn)
+    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType]) {
+        uiViewController?.loadMSALScreen(AccountMode: AccountMode, Grade: Grade, UsernameIn: UsernameIn, FirstName: FirstName, LastName: LastName, SelectedCourses: SelectedCourses)
     }
     
-    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String) {
-        uiViewController?.acquireTokenSilently(account, AccountMode: AccountMode, Grade: Grade, UsernameIn: UsernameIn)
+    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType]) {
+        uiViewController?.acquireTokenSilently(account, AccountMode: AccountMode, Grade: Grade, UsernameIn: UsernameIn, FirstName: FirstName, LastName: LastName, SelectedCourses: SelectedCourses)
     }
     
 
@@ -152,7 +154,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
     let kGraphEndpoint = "https://graph.microsoft.com/" // the Microsoft Graph endpoint
     let kAuthority = "https://login.microsoftonline.com/common" // this authority allows a personal Microsoft account and a work or school account in any organization's Azure AD tenant to sign in
 
-    let kScopes: [String] = ["user.read", "Files.Read.All", "Mail.Send"] // request permission to read the profile of the signed-in user
+    let kScopes: [String] = ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite"] // request permission to read the profile of the signed-in user
 
     var accessToken = String()
     var applicationContext : MSALPublicClientApplication?
@@ -185,7 +187,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
         fatalError("init(coder:) has not been implemented")
     }
 
-    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String) {
+    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType]) {
         do {
             let authority = try MSALB2CAuthority(url: URL(string: "https://login.microsoftonline.com/common")!)
             let pcaConfig = MSALPublicClientApplicationConfig(clientId: "82f52bae-8d11-4ed0-b1d1-83d76d2e605c", redirectUri: "msauth.Archimedes4.Pauly://auth", authority: authority)
@@ -206,6 +208,9 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                     newselectedWindowMode.SelectedWindowMode = AccountMode
                     newselectedWindowMode.UsernameIn = UsernameIn
                     newselectedWindowMode.GradeIn = Grade
+                    newselectedWindowMode.FirstName = FirstName
+                    newselectedWindowMode.LastName = LastName
+                    newselectedWindowMode.SelectedCourses = SelectedCourses
                     UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(WindowMode: newselectedWindowMode, MSALAccount: result.account))
                 }
             }
@@ -245,7 +250,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
             self.getContentWithToken()
         }
     }
-    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String) {
+    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType]) {
         do{
             let authority1 = try MSALB2CAuthority(url: URL(string: "https://login.microsoftonline.com/common")!)
             let pcaConfig1 = MSALPublicClientApplicationConfig(clientId: "82f52bae-8d11-4ed0-b1d1-83d76d2e605c", redirectUri: "msauth.Archimedes4.Pauly://auth", authority: authority1)
@@ -302,6 +307,9 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                     newselectedWindowMode.SelectedWindowMode = AccountMode
                     newselectedWindowMode.UsernameIn = UsernameIn
                     newselectedWindowMode.GradeIn = Grade
+                    newselectedWindowMode.FirstName = FirstName
+                    newselectedWindowMode.LastName = LastName
+                    newselectedWindowMode.SelectedCourses = SelectedCourses
                     UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(WindowMode: newselectedWindowMode, accountToken: result.accessToken, MSALAccount: account))
                 }
         } catch {
@@ -382,17 +390,23 @@ protocol MSALScreenViewModelProtocol{
     var uiViewController: MSALScreenViewControllerProtocol? { get set }
 
     ///Tells the viewController to load MSAL screen
-    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String)
+    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType])
     func getAccountName() -> String
-    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String)
+    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType])
 }
 
 protocol MSALScreenViewControllerProtocol: UIViewController{
     ///Reference to the SwiftUI ViewModel
     var viewModel: MSALScreenViewModelProtocol { get set }
 
-    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String)
-    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String)
+    func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType])
+    func acquireTokenSilently(_ account : MSALAccount!, AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType])
+}
+
+enum GraphCallingErrors: Error{
+    case APICallFailed
+    case CouldNotDecodeAPI
+    case ClientIDNotFound
 }
 
 class MSALTools{
@@ -417,6 +431,31 @@ class MSALTools{
             } catch {
                 print("Checkout failed.")
             }
+        }
+    }
+    func callMicrosoftGraphForFile(accessToken: String) async throws -> Data{
+        let uri: String = "https://graph.microsoft.com/v1.0/sites/gocrusadersca.sharepoint.com/drives/b!zIcLAzhGl06gRGJixzLOqTlvR0kRrEdOqJon3lE-eoNdeOIH9vqcQpTtFQdPx2X3/items/01DNRXO756Y2GOVW7725BZO354PWSELRRZ/children"
+        let url = URL(string: uri)
+        var request = URLRequest(url: url!)
+        // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        
+        do{
+            let (data, _) = try await URLSession.shared.data(for: request)
+            do {
+                // make sure this JSON is in the format we expect
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    // try to read out a string array
+                    print(json)
+                }
+            } catch let error as NSError {
+                print("Failed to load: \(error.localizedDescription)")
+            }
+            return data
+        } catch{
+            throw GraphCallingErrors.APICallFailed
         }
     }
 }

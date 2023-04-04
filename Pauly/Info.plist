@@ -12,6 +12,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>msauth.Archimedes4.Pauly</string>
+				<string>com.googleusercontent.apps.371990511274-r492drmha27qatbss3kl6unkpqogc9at</string>
 			</array>
 		</dict>
 	</array>
@@ -35,10 +36,5 @@
 		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIImageName</key>
-		<string>PaulyLoadingScreen</string>
-	</dict>
 </dict>
 </plist>

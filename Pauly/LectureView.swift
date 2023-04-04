@@ -17,6 +17,7 @@ enum LectureMode{
 struct DataIdType{
     let Name: String
     let Id: String
+    let FileType: String?
 }
 
 struct YouTubeView: UIViewRepresentable {
@@ -32,8 +33,8 @@ struct YouTubeView: UIViewRepresentable {
 }
 
 struct LetureHomePage: View{
-    @Binding var SelectedMode: SelectedModeCalculusEnum
-    @Binding var Vidoes: [DataIdType]
+    @Binding var SelectedMode: SelectedModeCalculusEnum?
+    @Binding var Vidoes: [DataIdType]?
     @State var SelectedLectureMode: LectureMode = .SelectionView
     @State var SelectedVideoID: String = "dQw4w9WgXcQ"
     var body: some View{
@@ -58,10 +59,10 @@ struct VideoView: View {
 }
 
 struct LecutureSelectionView: View {
-    @Binding var SelectedMode: SelectedModeCalculusEnum
+    @Binding var SelectedMode: SelectedModeCalculusEnum?
     @Binding var SelectedVideoID: String
     @Binding var SelectedLectureMode: LectureMode
-    @Binding var Vidoes: [DataIdType]
+    @Binding var Vidoes: [DataIdType]?
 //    [DataIdType(Name: "Hot Food", Id: "Akwm2UZJ34o"), DataIdType(Name: "Why Europ is Building", Id: "kc29axOAzRs"), DataIdType(Name: "Why the world most", Id: "WMRip0eRER8"), DataIdType(Name: "Moll", Id: "dQw4w9WgXcQ")]
     @State private var searchText = ""
     var body: some View {
@@ -97,9 +98,9 @@ struct LecutureSelectionView: View {
     }
     var searchResults: [DataIdType] {
             if searchText.isEmpty {
-                return Vidoes
+                return Vidoes!
             } else {
-                return Vidoes.filter { $0.Name.contains(searchText) }
+                return Vidoes!.filter { $0.Name.contains(searchText) }
             }
         }
 }

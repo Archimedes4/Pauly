@@ -11,12 +11,156 @@ import MSAL
 import FirebaseCore
 import FirebaseAuth
 import FirebaseFirestore
+import Firebase
+
+
+struct InitializeMicrosoft: View {
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    @Binding var GradeIn: Int
+    @Binding var accessToken: String?
+    
+    @State var TextSize: CGSize = CGSize(width: 0.0, height: 0.0)
+    @State var showingAlert = false
+    @State var alertMessage = ""
+    
+    @State var MicrosoftLoading: Bool = false
+    
+    var microsoftProvider : OAuthProvider?
+    
+    init(GradeIn: Binding<Int>, accessToken: Binding<String?>){
+        self.microsoftProvider = OAuthProvider(providerID: "microsoft.com")
+        self._GradeIn = GradeIn
+        self._accessToken = accessToken
+    }
+    
+    var body: some View{
+        Button(){
+            MicrosoftLoading = true
+            signIn()
+        } label: {
+            if MicrosoftLoading{
+                ProgressView()
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding()
+            } else {
+                HStack{
+                    Image("MicrosoftLogo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: TextSize.height)
+                    
+                    Text("SIGN IN WITH MICROSOFT")
+                        .font(.system(size: 17))
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .saveSize(in: $TextSize)
+                }.frame(minWidth: 0, maxWidth: .infinity)
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 25)
+                        .fill(Color.white)
+                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                )
+                .padding()
+            }
+        }
+        .alert(isPresented: $showingAlert) {
+            Alert(title: Text("Error"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+        }
+    }
+    
+    func signIn () {
+        microsoftProvider?.scopes = ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite", "User.ReadBasic.All"]
+        self.microsoftProvider?.getCredentialWith(_: nil){credential, error in
+                   if error != nil {
+                       let castedError = error! as NSError
+                       print(castedError)
+                       MicrosoftLoading = false
+                       // Handle error.
+
+                   }
+                   if let credential = credential {
+                       Auth.auth().signIn(with: credential) { (authResult, error) in
+                           if error != nil {
+                               let castedError = error! as NSError
+                               print(castedError)
+                               MicrosoftLoading = false
+                               // Handle error.
+                           }
+
+                           guard let authResult = authResult else {
+                               print("Couldn't get graph authResult")
+                               MicrosoftLoading = false
+                               return
+                           }
+
+                           // get credential and token when login successfully
+                           let microCredential = authResult.credential as! OAuthCredential
+                           accessToken = microCredential.accessToken!
+
+                           let user = Auth.auth().currentUser
+                           if let user = user {
+                               // The user's ID, unique to the Firebase project.
+                               // Do NOT use this value to authenticate with your backend server,
+                               // if you have one. Use getTokenWithCompletion:completion: instead.
+                               let uid = user.uid
+                               let db = Firestore.firestore()
+                               let docRef = db.collection("Users").document(uid)
+                               docRef.getDocument { (document, error) in
+                                   guard error == nil else {
+                                       print("error", error ?? "")
+                                       MicrosoftLoading = false
+                                       return
+                                   }
+       
+                                   if let document = document, document.exists {
+                                       let data = document.data()
+                                       if let data = data {
+                                           GradeIn = data["Grade"] as? Int ?? 8
+                                           let GroupPassword = data["Groups"] as! NSArray as? [Int] ?? []
+                                           let FirstNamePassword = data["First Name"] as! String
+                                           let LastNamePassword = data["Last Name"] as! String
+                                           let ClassesPassword = data["Classes"] as! NSArray as! [String]
+                                           let GradePassword = data["Grade"] as! Int
+                                           if let error = error {
+                                               print("Error writing document: \(error)")
+                                               MicrosoftLoading = false
+                                           } else {
+                                               WindowMode.UsernameIn = uid
+                                               WindowMode.FirstName = FirstNamePassword
+                                               WindowMode.LastName = LastNamePassword
+                                               var OutputCorses: [CourseSelectedType] = []
+                                               for k in ClassesPassword{
+                                                   let outputarray = k.split(separator: "-")
+                                                   OutputCorses.append(CourseSelectedType(Name: String(outputarray[0]), Section: Int(outputarray[1])!, Year: Int(outputarray[2])!))
+                                               }
+                                               WindowMode.SelectedCourses = OutputCorses
+                                               WindowMode.SelectedWindowMode = .HomePage
+                                               
+                                           }
+                                       }
+                                   }
+                               }
+                           }
+                          
+                       }
+                   }
+               }
+    }
+}
 
 struct PasswordView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     
-    @Binding var UsernameIn: String
+    @Binding var accessToken: String?
     @Binding var GradeIn: Int
+    
     @State var Username: String = ""
     @State var Password: String = ""
     @State var ShowingErrorMessage: Bool = false
@@ -58,29 +202,28 @@ struct PasswordView: View{
                         Button(){
                             focusedField = .username
                         } label: {
-                            ZStack{
-                                TextField("", text: $Username)
-                                    .multilineTextAlignment(.leading)
-                                    .textContentType(.username)
-                                    .keyboardType(.default)
-                                    .placeholder(when: Username.isEmpty) {
-                                        Text("Email").foregroundColor(.black)
-                                    }
-                                    .autocapitalization(.none)
-                                    .background(Color.white)
-                                    .frame(width: value.size.width * 0.6, height: value.size.height * 0.15, alignment: .leading)
-                                    .cornerRadius(15)
-                                    .padding()
-                                    .focused($focusedField, equals: .username)
-                            }.padding()
-                        }
-                        .frame(width: value.size.width * 0.92, height: value.size.height * 0.15, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .fill(Color.white)
-                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                        )
-                        .padding(.bottom)
+                            TextField("", text: $Username)
+                                .multilineTextAlignment(.leading)
+                                .textContentType(.username)
+                                .keyboardType(.emailAddress)
+                                .placeholder(when: Username.isEmpty) {
+                                    Text("Email").foregroundColor(.black)
+                                }
+                                .padding()
+                                .focused($focusedField, equals: .username)
+                                .padding(.leading, value.size.width * 0.05)
+                                .autocapitalization(.none)
+                                .frame(width: value.size.width * 0.92, height: value.size.height * 0.15, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .onSubmit{
+                                    focusedField = .password
+                                }
+
+                        }.padding(.bottom)
                         
                         if ShowingFailureToFindUserError{
                             HStack{
@@ -96,91 +239,27 @@ struct PasswordView: View{
                         Button(){
                             focusedField = .password
                         } label: {
-                            ZStack{
-                                SecureField("", text: $Password)
-                                    .multilineTextAlignment(.leading)
-                                    .textContentType(.password)
-                                    .placeholder(when: Password.isEmpty) {
-                                        Text("Password").foregroundColor(.black)
-                                    }
-                                    .autocapitalization(.none)
-                                    .background(Color.white)
-                                    .frame(width: value.size.width * 0.6, height: value.size.height * 0.15, alignment: .leading)
-                                    .cornerRadius(15)
-                                    .padding()
-                                    .onSubmit {
-                                        if notLoadingPassword{
-                                            if Username != "" && Password != ""{
-                                                notLoadingPassword = false
-                                                print(Username)
-                                                Auth.auth().signIn(withEmail: Username, password: Password) { authResult, error in
-                                                    guard self != nil else { return }
-                                                    if authResult?.user != nil{
-                                                        let user = Auth.auth().currentUser
-                                                        if let user = user {
-                                                            // The user's ID, unique to the Firebase project.
-                                                            // Do NOT use this value to authenticate with your backend server,
-                                                            // if you have one. Use getTokenWithCompletion:completion: instead.
-                                                            let uid = user.uid
-                                                            let db = Firestore.firestore()
-                                                            let docRef = db.collection("Users").document(uid)
-                                                            docRef.getDocument { (document, error) in
-                                                                guard error == nil else {
-                                                                    print("error", error ?? "")
-                                                                    return
-                                                                }
-                                    
-                                                                if let document = document, document.exists {
-                                                                    let data = document.data()
-                                                                    if let data = data {
-                                                                        GradeIn = data["Grade"] as? Int ?? 8
-                                                                        UsernameIn = uid
-                                                                        WindowMode.SelectedWindowMode = .HomePage
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    } else {
-                                                        if error != nil{
-                                                            if error!.localizedDescription == "The password is invalid or the user does not have a password."{
-                                                                notLoadingPassword = true
-                                                                ShowingIncorrectPasswordError = true
-                                                                ShowingFailureToFindUserError = false
-                                                            } else {
-                                                                if error!.localizedDescription == "The email address is badly formatted."{
-                                                                    notLoadingPassword = true
-                                                                    ShowingErrorMessage = true
-                                                                    ErrorMessage = "Invalid Parameters"
-                                                                } else {
-                                                                    if error!.localizedDescription == "There is no user record corresponding to this identifier. The user may have been deleted."{
-                                                                        notLoadingPassword = true
-                                                                        ShowingFailureToFindUserError = true
-                                                                        ShowingIncorrectPasswordError = false
-                                                                    } else {
-                                                                        notLoadingPassword = true
-                                                                        ShowingErrorMessage = true
-                                                                        ErrorMessage = "Invalid Parameters"
-                                                                        print(error?.localizedDescription)
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .focused($focusedField, equals: .password)
-                            }.padding()
-                        }
-                        .frame(width: value.size.width * 0.92, height: value.size.height * 0.15, alignment: .leading)
-                        .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .fill(Color.white)
-                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                        )
-                        .padding(.bottom)
-                        .padding(.top)
+                            SecureField("", text: $Password)
+                                .multilineTextAlignment(.leading)
+                                .textContentType(.password)
+                                .keyboardType(.default)
+                                .placeholder(when: Password.isEmpty) {
+                                    Text("Password").foregroundColor(.black)
+                                }
+                                .autocapitalization(.none)
+                                .padding()
+                                .padding(.leading, value.size.width * 0.05)
+                                .focused($focusedField, equals: .password)
+                                .frame(width: value.size.width * 0.92, height: value.size.height * 0.15, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .onSubmit {
+                                    SignIn()
+                                }
+                        }.padding()
                         
                         if ShowingIncorrectPasswordError{
                             HStack{
@@ -194,89 +273,7 @@ struct PasswordView: View{
                         }
                         
                         Button(){
-                            if notLoadingPassword{
-                                if Username != "" && Password != ""{
-                                    notLoadingPassword = false
-                                    print(Username)
-                                    Auth.auth().signIn(withEmail: Username, password: Password) { authResult, error in
-                                        guard self != nil else { return }
-                                        if authResult?.user != nil{
-                                            let user = Auth.auth().currentUser
-                                            if let user = user {
-                                                // The user's ID, unique to the Firebase project.
-                                                // Do NOT use this value to authenticate with your backend server,
-                                                // if you have one. Use getTokenWithCompletion:completion: instead.
-                                                let uid = user.uid
-                                                let db = Firestore.firestore()
-                                                let docRef = db.collection("Users").document(uid)
-                                                docRef.getDocument { (document, error) in
-                                                    guard error == nil else {
-                                                        print("error", error ?? "")
-                                                        return
-                                                    }
-                        
-                                                    if let document = document, document.exists {
-                                                        let data = document.data()
-                                                        if let data = data {
-                                                            GradeIn = data["Grade"] as? Int ?? 8
-                                                            let GroupPassword = data["Groups"] as! NSArray as? [Int] ?? []
-                                                            let FirstNamePassword = data["First Name"] as! String
-                                                            let LastNamePassword = data["Last Name"] as! String
-                                                            let ClassesPassword = data["Classes"] as! NSArray as! [String]
-                                                            let GradePassword = data["Grade"] as! Int
-                                                            let EmailPassword = data["Email"] as! String
-                                                            let uidPassword  = data["uid"] as! String
-                                                            let outputData: [String:Any] = [
-                                                                "First Name":FirstNamePassword,
-                                                                "Last Name": LastNamePassword,
-                                                                "Classes":ClassesPassword,
-                                                                "Grade":GradePassword,
-                                                                "Email":EmailPassword,
-                                                                "uid":uidPassword,
-                                                                "Groups":GroupPassword,
-                                                                "Token":"Test"
-                                                            ]
-                                                            docRef.setData(outputData) { error in
-                                                                if let error = error {
-                                                                    print("Error writing document: \(error)")
-                                                                } else {
-                                                                    UsernameIn = uid
-                                                                    WindowMode.SelectedWindowMode = .HomePage
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            if error != nil{
-                                                if error!.localizedDescription == "The password is invalid or the user does not have a password."{
-                                                    notLoadingPassword = true
-                                                    ShowingIncorrectPasswordError = true
-                                                    ShowingFailureToFindUserError = false
-                                                } else {
-                                                    if error!.localizedDescription == "The email address is badly formatted."{
-                                                        notLoadingPassword = true
-                                                        ShowingErrorMessage = true
-                                                        ErrorMessage = "Invalid Parameters"
-                                                    } else {
-                                                        if error!.localizedDescription == "There is no user record corresponding to this identifier. The user may have been deleted."{
-                                                            notLoadingPassword = true
-                                                            ShowingFailureToFindUserError = true
-                                                            ShowingIncorrectPasswordError = false
-                                                        } else {
-                                                            notLoadingPassword = true
-                                                            ShowingErrorMessage = true
-                                                            ErrorMessage = "Invalid Parameters"
-                                                            print(error?.localizedDescription)
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            SignIn()
                         } label: {
                             if notLoadingPassword{
                                 Text("SIGN IN")
@@ -319,6 +316,8 @@ struct PasswordView: View{
                                 )
                                 .padding()
                         }
+                        InitializeMicrosoft(GradeIn: $GradeIn, accessToken: $accessToken)
+                            .environmentObject(WindowMode)
                     }.frame(maxHeight: .infinity)
                 }
                 if ShowingErrorMessage {
@@ -335,6 +334,98 @@ struct PasswordView: View{
                     }
                 }
             }.edgesIgnoringSafeArea(.all)
+        }
+    }
+    func SignIn(){
+        if notLoadingPassword{
+            if Username != "" && Password != ""{
+                notLoadingPassword = false
+                Auth.auth().signIn(withEmail: Username, password: Password) { authResult, error in
+                    guard self != nil else { return }
+                    if authResult?.user != nil{
+                        let user = Auth.auth().currentUser
+                        if let user = user {
+                            // The user's ID, unique to the Firebase project.
+                            // Do NOT use this value to authenticate with your backend server,
+                            // if you have one. Use getTokenWithCompletion:completion: instead.
+                            let uid = user.uid
+                            let db = Firestore.firestore()
+                            let docRef = db.collection("Users").document(uid)
+                            docRef.getDocument { (document, error) in
+                                guard error == nil else {
+                                    print("error", error ?? "")
+                                    return
+                                }
+    
+                                if let document = document, document.exists {
+                                    let data = document.data()
+                                    if let data = data {
+                                        GradeIn = data["Grade"] as? Int ?? 8
+                                        let GroupPassword = data["Groups"] as! NSArray as? [Int] ?? []
+                                        let FirstNamePassword = data["First Name"] as! String
+                                        let LastNamePassword = data["Last Name"] as! String
+                                        let ClassesPassword = data["Classes"] as! NSArray as! [String]
+                                        let GradePassword = data["Grade"] as! Int
+                                        let EmailPassword = data["Email"] as! String
+                                        let uidPassword  = data["uid"] as! String
+                                        let outputData: [String:Any] = [
+                                            "First Name":FirstNamePassword,
+                                            "Last Name": LastNamePassword,
+                                            "Classes":ClassesPassword,
+                                            "Grade":GradePassword,
+                                            "Email":EmailPassword,
+                                            "uid":uidPassword,
+                                            "Groups":GroupPassword,
+                                            "Token":"Test"
+                                        ]
+                                        docRef.setData(outputData) { error in
+                                            if let error = error {
+                                                print("Error writing document: \(error)")
+                                            } else {
+                                                WindowMode.UsernameIn = uid
+                                                WindowMode.FirstName = FirstNamePassword
+                                                WindowMode.LastName = LastNamePassword
+                                                var OutputCorses: [CourseSelectedType] = []
+                                                for k in ClassesPassword{
+                                                    let outputarray = k.split(separator: "-")
+                                                    OutputCorses.append(CourseSelectedType(Name: String(outputarray[0]), Section: Int(outputarray[1])!, Year: Int(outputarray[2])!))
+                                                }
+                                                WindowMode.SelectedCourses = OutputCorses
+                                                WindowMode.SelectedWindowMode = .HomePage
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        if error != nil{
+                            if error!.localizedDescription == "The password is invalid or the user does not have a password."{
+                                notLoadingPassword = true
+                                ShowingIncorrectPasswordError = true
+                                ShowingFailureToFindUserError = false
+                            } else {
+                                if error!.localizedDescription == "The email address is badly formatted."{
+                                    notLoadingPassword = true
+                                    ShowingErrorMessage = true
+                                    ErrorMessage = "Invalid Parameters"
+                                } else {
+                                    if error!.localizedDescription == "There is no user record corresponding to this identifier. The user may have been deleted."{
+                                        notLoadingPassword = true
+                                        ShowingFailureToFindUserError = true
+                                        ShowingIncorrectPasswordError = false
+                                    } else {
+                                        notLoadingPassword = true
+                                        ShowingErrorMessage = true
+                                        ErrorMessage = "Invalid Parameters"
+                                        print(error?.localizedDescription)
+                                    }
+                                }
+                            }//TO DO FIX THIS START UP CRAP
+                        }
+                    }
+                }
+            }
         }
     }
 }
