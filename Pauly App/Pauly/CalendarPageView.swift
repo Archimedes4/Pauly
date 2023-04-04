@@ -115,7 +115,7 @@ struct CalendarHomePage: View{
                                 let DayB = data["DayB"] as? Int
                                 let DayC = data["DayC"] as? Int
                                 let DayD = data["DayD"] as? Int
-                                let NoClass = data["NoClass"] as! NSArray as? [String]
+                                let NoClass = data["NoClass"] as! NSArray as? [String] 
                                 var NoClassesOutArray: [NoClassType] = []
                                 if NoClass != nil{
                                     for l in NoClass!{

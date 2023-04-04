@@ -17,6 +17,7 @@
 		C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AD29B26FF1009668BF /* CalendarPageView.swift */; };
 		C640C4B029B29035009668BF /* LectureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AF29B29035009668BF /* LectureView.swift */; };
 		C640C4B829B45C52009668BF /* ChatHomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4B729B45C52009668BF /* ChatHomePage.swift */; };
+		C64A91AE29DCA4A50049DDE9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C64A91AD29DCA4A50049DDE9 /* GoogleService-Info.plist */; };
 		C64C7A0129D1DC0500E966CF /* Backgrounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64C7A0029D1DC0400E966CF /* Backgrounds.swift */; };
 		C657D0EA29DB8EB4001A368B /* HTMLTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C657D0E929DB8EB4001A368B /* HTMLTextView.swift */; };
 		C6858FE329C6621E00269A56 /* Messaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6858FE229C6621E00269A56 /* Messaging.swift */; };
@@ -38,7 +39,6 @@
 		C6E229C229BBEE15008DB772 /* MSAL in Frameworks */ = {isa = PBXBuildFile; productRef = C6E229C129BBEE15008DB772 /* MSAL */; };
 		C6E229C429BC0A15008DB772 /* MSAL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229C329BC0A15008DB772 /* MSAL.swift */; };
 		C6E229C829BCDBF1008DB772 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229C729BCDBF1008DB772 /* ProfileView.swift */; };
-		C6E229CA29C0B134008DB772 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C6E229C929C0B133008DB772 /* GoogleService-Info.plist */; };
 		C6F2B18B29CCA86E00149F20 /* Leaderboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F2B18A29CCA86E00149F20 /* Leaderboard.swift */; };
 		C6FB8CB529C39DA400672E70 /* SportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FB8CB429C39DA400672E70 /* SportsView.swift */; };
 		C6FB8CC429C60EA200672E70 /* CreateNewUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FB8CC329C60EA100672E70 /* CreateNewUserView.swift */; };
@@ -58,6 +58,7 @@
 		C640C4AF29B29035009668BF /* LectureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureView.swift; sourceTree = "<group>"; };
 		C640C4B529B433A8009668BF /* Pauly.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Pauly.entitlements; sourceTree = "<group>"; };
 		C640C4B729B45C52009668BF /* ChatHomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatHomePage.swift; sourceTree = "<group>"; };
+		C64A91AD29DCA4A50049DDE9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C64C7A0029D1DC0400E966CF /* Backgrounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backgrounds.swift; sourceTree = "<group>"; };
 		C657D0E929DB8EB4001A368B /* HTMLTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTextView.swift; sourceTree = "<group>"; };
 		C6858FE229C6621E00269A56 /* Messaging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Messaging.swift; sourceTree = "<group>"; };
@@ -71,7 +72,6 @@
 		C6CB35A029D28762007EC7A8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C6E229C329BC0A15008DB772 /* MSAL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSAL.swift; sourceTree = "<group>"; };
 		C6E229C729BCDBF1008DB772 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
-		C6E229C929C0B133008DB772 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C6F2B18A29CCA86E00149F20 /* Leaderboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leaderboard.swift; sourceTree = "<group>"; };
 		C6FB8CB429C39DA400672E70 /* SportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportsView.swift; sourceTree = "<group>"; };
 		C6FB8CC329C60EA100672E70 /* CreateNewUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewUserView.swift; sourceTree = "<group>"; };
@@ -146,7 +146,7 @@
 				C692640329B011BF000F96B9 /* Info.plist */,
 				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
 				C620B5D229B8BC09007DB698 /* PDFview.swift */,
-				C6E229C929C0B133008DB772 /* GoogleService-Info.plist */,
+				C64A91AD29DCA4A50049DDE9 /* GoogleService-Info.plist */,
 				C695C01129A7E4F200D983E7 /* PaulyApp.swift */,
 				C640C4B729B45C52009668BF /* ChatHomePage.swift */,
 				C640C4AF29B29035009668BF /* LectureView.swift */,
@@ -245,8 +245,8 @@
 			files = (
 				C695C01929A7E4F600D983E7 /* Preview Assets.xcassets in Resources */,
 				C6CB35A129D28762007EC7A8 /* LaunchScreen.storyboard in Resources */,
+				C64A91AE29DCA4A50049DDE9 /* GoogleService-Info.plist in Resources */,
 				C695C01629A7E4F600D983E7 /* Assets.xcassets in Resources */,
-				C6E229CA29C0B134008DB772 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,6 +404,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Pauly/Pauly.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -437,6 +438,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = Pauly/Pauly.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

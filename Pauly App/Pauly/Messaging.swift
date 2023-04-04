@@ -508,48 +508,53 @@ struct ConversationTeams: View{
     @State var TeamsMesages: [TeamsMessageType] = []
     @Environment(\.colorScheme) var colorScheme
     var body: some View{
-        ScrollView{
-            VStack{
-                HStack{
-                    Button(){
-                        SelectMessagingMode = .Home
-                    } label: {
-                        HStack{
-                            Image(systemName: "chevron.backward")
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                            Text("Back")
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                        }
-                    }.padding()
-                    Spacer()
-                }
-                Text("Conversation")
+        GeometryReader{ geo in
+            ScrollView{
+                VStack{
+                    HStack{
+                        Button(){
+                            SelectMessagingMode = .Home
+                        } label: {
+                            HStack{
+                                Image(systemName: "chevron.backward")
+                                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                                Text("Back")
+                                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                            }
+                        }.padding()
+                        Spacer()
+                    }
+                    Text("Conversation")
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    Toggle("Show Time Stamp", isOn: $ShowingTimeStamps)
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    Button("Refresh"){
+                    }
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                Toggle("Show Time Stamp", isOn: $ShowingTimeStamps)
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                Button("Refresh"){
-                }
-                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                .onAppear(){
-                    Task{
-                        do{
-                            try await GetConversationTeams()
-                        } catch {
-                            print(error)
+                    .onAppear(){
+                        Task{
+                            do{
+                                try await GetConversationTeams()
+                            } catch {
+                                print(error)
+                            }
                         }
                     }
-                }
-                ForEach(TeamsMesages, id: \.Id) { mesage in
-                    VStack{
-                        Text(mesage.Sender)
-                        Text(mesage.Content)
-                        HTMLStringView(htmlContent: mesage.Content)
-                    }.background(
-                        Rectangle()
-                            .fill(Color.white)
-                    )
-                }
-            }.background(Color.marron)
+                    ForEach(TeamsMesages, id: \.Id) { mesage in
+                        VStack{
+                            Text(mesage.Sender)
+                            Text(mesage.Content)
+                            HTMLStringView(htmlContent: "<meta name='viewport' content='width=device-width, shrink-to-fit=YES'>\(mesage.Content)")
+                                .border(Color.yellow)
+                                .padding([.leading, .bottom, .trailing])
+                                .frame(height: geo.size.height * 0.15)
+                        }.background(
+                            Rectangle()
+                                .fill(Color.white)
+                        )
+                    }
+                }.background(Color.marron)
+            }
         }
     }
     func GetConversationTeams() async throws {
