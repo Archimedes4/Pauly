@@ -15,9 +15,8 @@ import Firebase
 
 
 struct InitializeMicrosoft: View {
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    @Binding var GradeIn: Int
     @Binding var accessToken: String?
+    @Binding var SelectedBackendMode: SelectedBackendModeEnum
     
     @State var TextSize: CGSize = CGSize(width: 0.0, height: 0.0)
     @State var showingAlert = false
@@ -27,10 +26,10 @@ struct InitializeMicrosoft: View {
     
     var microsoftProvider : OAuthProvider?
     
-    init(GradeIn: Binding<Int>, accessToken: Binding<String?>){
+    init(accessToken: Binding<String?>, SelectedBackendMode: Binding<SelectedBackendModeEnum>){
         self.microsoftProvider = OAuthProvider(providerID: "microsoft.com")
-        self._GradeIn = GradeIn
         self._accessToken = accessToken
+        self._SelectedBackendMode = SelectedBackendMode
     }
     
     var body: some View{
@@ -103,51 +102,7 @@ struct InitializeMicrosoft: View {
                            // get credential and token when login successfully
                            let microCredential = authResult.credential as! OAuthCredential
                            accessToken = microCredential.accessToken!
-
-                           let user = Auth.auth().currentUser
-                           if let user = user {
-                               // The user's ID, unique to the Firebase project.
-                               // Do NOT use this value to authenticate with your backend server,
-                               // if you have one. Use getTokenWithCompletion:completion: instead.
-                               let uid = user.uid
-                               let db = Firestore.firestore()
-                               let docRef = db.collection("Users").document(uid)
-                               docRef.getDocument { (document, error) in
-                                   guard error == nil else {
-                                       print("error", error ?? "")
-                                       MicrosoftLoading = false
-                                       return
-                                   }
-       
-                                   if let document = document, document.exists {
-                                       let data = document.data()
-                                       if let data = data {
-                                           GradeIn = data["Grade"] as? Int ?? 8
-                                           let GroupPassword = data["Groups"] as! NSArray as? [Int] ?? []
-                                           let FirstNamePassword = data["First Name"] as! String
-                                           let LastNamePassword = data["Last Name"] as! String
-                                           let ClassesPassword = data["Classes"] as! NSArray as! [String]
-                                           let GradePassword = data["Grade"] as! Int
-                                           if let error = error {
-                                               print("Error writing document: \(error)")
-                                               MicrosoftLoading = false
-                                           } else {
-                                               WindowMode.UsernameIn = uid
-                                               WindowMode.FirstName = FirstNamePassword
-                                               WindowMode.LastName = LastNamePassword
-                                               var OutputCorses: [CourseSelectedType] = []
-                                               for k in ClassesPassword{
-                                                   let outputarray = k.split(separator: "-")
-                                                   OutputCorses.append(CourseSelectedType(Name: String(outputarray[0]), Section: Int(outputarray[1])!, Year: Int(outputarray[2])!))
-                                               }
-                                               WindowMode.SelectedCourses = OutputCorses
-                                               WindowMode.SelectedWindowMode = .HomePage
-                                               
-                                           }
-                                       }
-                                   }
-                               }
-                           }
+                           SelectedBackendMode = .Home
                           
                        }
                    }
@@ -156,10 +111,8 @@ struct InitializeMicrosoft: View {
 }
 
 struct PasswordView: View{
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    
     @Binding var accessToken: String?
-    @Binding var GradeIn: Int
+    @Binding var SelectedBackendMode: SelectedBackendModeEnum
     
     @State var Username: String = ""
     @State var Password: String = ""
@@ -189,13 +142,12 @@ struct PasswordView: View{
                             Spacer()
                             HStack{
                                 Spacer()
-                                Image("PaulyText")
+                                Image("PaulyAdmin")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .scaledToFit()
                                     .padding()
                                     .frame(alignment: .leading)
-                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
                                 Spacer()
                             }
                         }.frame(width: value.size.width * 1.0, height: value.size.height * 0.3, alignment: .leading)
@@ -300,24 +252,7 @@ struct PasswordView: View{
                                     .padding()
                             }
                         }
-                        Button(){
-                            WindowMode.SelectedWindowMode = .NewUser
-                        } label: {
-                            Text("CREATE NEW USER")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .padding()
-                        }
-                        InitializeMicrosoft(GradeIn: $GradeIn, accessToken: $accessToken)
-                            .environmentObject(WindowMode)
+                        InitializeMicrosoft(accessToken: $accessToken, SelectedBackendMode: $SelectedBackendMode)
                     }.frame(maxHeight: .infinity)
                 }
                 if ShowingErrorMessage {
@@ -343,61 +278,7 @@ struct PasswordView: View{
                 Auth.auth().signIn(withEmail: Username, password: Password) { authResult, error in
                     guard self != nil else { return }
                     if authResult?.user != nil{
-                        let user = Auth.auth().currentUser
-                        if let user = user {
-                            // The user's ID, unique to the Firebase project.
-                            // Do NOT use this value to authenticate with your backend server,
-                            // if you have one. Use getTokenWithCompletion:completion: instead.
-                            let uid = user.uid
-                            let db = Firestore.firestore()
-                            let docRef = db.collection("Users").document(uid)
-                            docRef.getDocument { (document, error) in
-                                guard error == nil else {
-                                    print("error", error ?? "")
-                                    return
-                                }
-    
-                                if let document = document, document.exists {
-                                    let data = document.data()
-                                    if let data = data {
-                                        GradeIn = data["Grade"] as? Int ?? 8
-                                        let GroupPassword = data["Groups"] as! NSArray as? [Int] ?? []
-                                        let FirstNamePassword = data["First Name"] as! String
-                                        let LastNamePassword = data["Last Name"] as! String
-                                        let ClassesPassword = data["Classes"] as! NSArray as! [String]
-                                        let GradePassword = data["Grade"] as! Int
-                                        let EmailPassword = data["Email"] as! String
-                                        let uidPassword  = data["uid"] as! String
-                                        let outputData: [String:Any] = [
-                                            "First Name":FirstNamePassword,
-                                            "Last Name": LastNamePassword,
-                                            "Classes":ClassesPassword,
-                                            "Grade":GradePassword,
-                                            "Email":EmailPassword,
-                                            "uid":uidPassword,
-                                            "Groups":GroupPassword,
-                                            "Token":"Test"
-                                        ]
-                                        docRef.setData(outputData) { error in
-                                            if let error = error {
-                                                print("Error writing document: \(error)")
-                                            } else {
-                                                WindowMode.UsernameIn = uid
-                                                WindowMode.FirstName = FirstNamePassword
-                                                WindowMode.LastName = LastNamePassword
-                                                var OutputCorses: [CourseSelectedType] = []
-                                                for k in ClassesPassword{
-                                                    let outputarray = k.split(separator: "-")
-                                                    OutputCorses.append(CourseSelectedType(Name: String(outputarray[0]), Section: Int(outputarray[1])!, Year: Int(outputarray[2])!))
-                                                }
-                                                WindowMode.SelectedCourses = OutputCorses
-                                                WindowMode.SelectedWindowMode = .HomePage
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        SelectedBackendMode = .Home
                     } else {
                         if error != nil{
                             if error!.localizedDescription == "The password is invalid or the user does not have a password."{

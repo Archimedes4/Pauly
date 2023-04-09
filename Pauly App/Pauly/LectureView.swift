@@ -9,15 +9,11 @@ import Foundation
 import SwiftUI
 import WebKit
 
-enum LectureMode{
-    case YoutubeView
-    case SelectionView
-}
-
 struct DataIdType{
-    let Name: String
-    let Id: String
-    let FileType: String?
+    let id: UUID = UUID()
+    var Name: String
+    var Id: String
+    var FileType: String
 }
 
 struct YouTubeView: UIViewRepresentable {
@@ -33,74 +29,47 @@ struct YouTubeView: UIViewRepresentable {
 }
 
 struct LetureHomePage: View{
-    @Binding var SelectedMode: SelectedModeCalculusEnum?
-    @Binding var Vidoes: [DataIdType]?
-    @State var SelectedLectureMode: LectureMode = .SelectionView
-    @State var SelectedVideoID: String = "dQw4w9WgXcQ"
+    @State var Vidoe: DataIdType
     var body: some View{
-        if SelectedLectureMode == .SelectionView{
-            LecutureSelectionView(SelectedMode: $SelectedMode, SelectedVideoID: $SelectedVideoID, SelectedLectureMode: $SelectedLectureMode, Vidoes: $Vidoes)
-        } else {
-            if SelectedLectureMode == .YoutubeView{
-                Button("Back"){
-                    SelectedLectureMode = .SelectionView
-                }
-                YouTubeView(videoId: SelectedVideoID)
-            }
-        }
+        YouTubeView(videoId: Vidoe.Id)
     }
 }
 
-struct VideoView: View {
-    let VideoID: String
-    var body: some View{
-        YouTubeView(videoId: VideoID)
-    }
-}
-
-struct LecutureSelectionView: View {
-    @Binding var SelectedMode: SelectedModeCalculusEnum?
-    @Binding var SelectedVideoID: String
-    @Binding var SelectedLectureMode: LectureMode
-    @Binding var Vidoes: [DataIdType]?
-//    [DataIdType(Name: "Hot Food", Id: "Akwm2UZJ34o"), DataIdType(Name: "Why Europ is Building", Id: "kc29axOAzRs"), DataIdType(Name: "Why the world most", Id: "WMRip0eRER8"), DataIdType(Name: "Moll", Id: "dQw4w9WgXcQ")]
-    @State private var searchText = ""
-    var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color.marron)
-                .edgesIgnoringSafeArea(.all)
-            VStack{
-                HStack{
-                    Button{
-                        SelectedMode = .Home
-                    } label: {
-                        HStack{
-                            Image(systemName: "chevron.backward")
-                            Text("Back")
-                        }
-                    }
-                    Text("lectureHomePage")
-                        .padding(.leading)
-                    Spacer()
-                }
-                TextField("Search", text: $searchText)
-                List {
-                    ForEach(searchResults, id:\.Name) {idData in
-                        Button(idData.Name){
-                            SelectedVideoID = idData.Id
-                            SelectedLectureMode = .YoutubeView
-                        }
-                    }
-                }.searchable(text: $searchText)
-            }
-        }
-    }
-    var searchResults: [DataIdType] {
-            if searchText.isEmpty {
-                return Vidoes!
-            } else {
-                return Vidoes!.filter { $0.Name.contains(searchText) }
-            }
-        }
-}
+//struct LecutureSelectionView: View {
+//    @Binding var SelectedVideoID: String
+//    @Binding var SelectedLectureMode: LectureMode
+//    @Binding var Vidoes: [DataIdType]?
+////    [DataIdType(Name: "Hot Food", Id: "Akwm2UZJ34o"), DataIdType(Name: "Why Europ is Building", Id: "kc29axOAzRs"), DataIdType(Name: "Why the world most", Id: "WMRip0eRER8"), DataIdType(Name: "Moll", Id: "dQw4w9WgXcQ")]
+//    @State private var searchText = ""
+//    var body: some View {
+//        ZStack {
+//            Rectangle()
+//                .fill(Color.marron)
+//                .edgesIgnoringSafeArea(.all)
+//            VStack{
+//                HStack{
+//                    Spacer()
+//                    Text("lectureHomePage")
+//                        .padding(.leading)
+//                    Spacer()
+//                }
+//                TextField("Search", text: $searchText)
+//                List {
+//                    ForEach(searchResults, id:\.Name) {idData in
+//                        Button(idData.Name){
+//                            SelectedVideoID = idData.Id
+//                            SelectedLectureMode = .YoutubeView
+//                        }
+//                    }
+//                }.searchable(text: $searchText)
+//            }
+//        }
+//    }
+//    var searchResults: [DataIdType] {
+//            if searchText.isEmpty {
+//                return Vidoes!
+//            } else {
+//                return Vidoes!.filter { $0.Name.contains(searchText) }
+//            }
+//        }
+//}

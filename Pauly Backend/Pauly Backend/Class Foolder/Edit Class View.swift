@@ -92,7 +92,7 @@ struct EditClassViewPageThree: View{
                                         }
                                     }
                                 } label: {
-                                    Text(ButtonCard.Title)
+                                    Text(ButtonCard.Title ?? "No title")
                                     Text(ButtonCard.Use)
                                 }
                             } else {
@@ -290,8 +290,11 @@ struct EditClassViewPageThree: View{
                    let CardDestination = documentData["Destination"] as? Int ?? 0
                    let CardCardData = documentData["CardData"] as? [String] ?? []
                    let CardCardDataName = documentData["CardDataName"] as? [String] ?? []
+                   let CardCardDataType = documentData["CardDataType"] as? [String] ?? []
+                   let CardBackgroundStyle = documentData["BackgroundStyle"] as? Int ?? 0
+                   let CardOpacity = documentData["Opacity"] as? String ?? "Error"
                    if CardID != 0{
-                       NotSelectedCards.append(CardType(FirebaseID: CardID, Use: CardUse, Title: CardTitle, Caption: CardCaption, Destination: CardDestination, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: nil))
+                       NotSelectedCards.append(CardType(FirebaseID: CardID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: CardTitle, Caption: CardCaption, ImageRef: nil, SelectedColor: nil, LongText: nil, CardData: CardCardDataType, CardDataName: CardCardDataName, CardDataType: CardCardDataType))
                    }
                })
                 var SectionID: String = ""

@@ -20,15 +20,6 @@ enum GradesEnum: String, CaseIterable{
     case Grade_12 = "Grade 12"
 }
 
-enum SelectedModeCalculusEnum{
-    case Home
-    case FactoringBinomials
-    case PDFView
-    case MSLFView
-    case YouTube
-    case Else
-}
-
 struct Course {
     let CourseName: String
     let Teacher: [String]
@@ -37,211 +28,26 @@ struct Course {
 struct CardType: Identifiable {
     
     let id = UUID()
-    //Card Face
-    let Title: String?
-    let Caption: String?
-    let ColorType: String?
-    let ImageRef: String?
-    let LongText: String?
-    let BackgroundStyle: Int
     
-    let Opacity: Double
+    var Use: String
+    //Card Face
+    var Title: String?
+    var Caption: String?
+    var ColorType: String?
+    var ImageRef: String?
+    var LongText: String?
+    var BackgroundStyle: Int
+    let FirebaseID: Int
+    
+    var Opacity: Double
     
     //Card Destintation
-    let Destination: Int
-    let CardData: [DataIdType]
+    var CardData: [DataIdType]
 }
 //Defineing Cutom types end
 struct AnErrorHasOcurredView: View{
     var body: some View{
         Text("An Error has Occured")
-    }
-}
-
-//Factoring
-struct FactoringBinomials: View{
-    @Binding var SelectedMode: SelectedModeCalculusEnum?
-    @State var FactorDisplay: AttributedString = AttributedString("")
-    @State var ShowAns: Bool = false
-    @State var Soloution: String = ""
-    
-    @State var DarkMode: Bool = false
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    var body: some View{
-        VStack{
-            HStack{
-                Button(){
-                    SelectedMode = .Home
-                } label: {
-                    HStack {
-                        Image(systemName: "chevron.backward")
-                            .padding(.leading)
-                        Text("Back")
-                    }
-                }
-                Spacer()
-            }
-            Text(FactorDisplay)
-                .foregroundColor(DarkMode ? Color.white : Color.black)
-                .onAppear(){
-                    let NewResult = BinomialFactoring()
-                    FactorDisplay = AttributedString(NewResult.0)
-                    Soloution = NewResult.1
-                    if colorScheme == .dark{
-                        DarkMode = true
-                    } else {
-                        DarkMode = false
-                    }
-                }
-            Button("Make New Equation"){
-                let NewResult = BinomialFactoring()
-                FactorDisplay = AttributedString(NewResult.0)
-                Soloution = NewResult.1
-                ShowAns = false
-            }
-            Button(){
-                ShowAns.toggle()
-            } label: {
-                if ShowAns {
-                    Text("Hide Solution")
-                } else {
-                    Text("Show Solution")
-                }
-            }
-            if ShowAns{
-                Text(Soloution)
-                    .foregroundColor(DarkMode ? Color.white : Color.black)
-            }
-        }
-    }
-    func BinomialFactoring() -> (NSAttributedString, String){
-        let A1: Int = Int.random(in: 1..<5)
-        let A2: Int = Int.random(in: 1..<5)
-        let rnd1: Bool = Bool.random()
-        let B1: Int = Int.random(in: 1..<5)
-        let B2: Int = Int.random(in: 1..<5)
-        let rnd2: Bool = Bool.random()
-        
-        var S1: Int = 0
-        var S2: Int = 0
-        if rnd1{
-            S1 = 1
-        } else {
-            S1 = -1
-        }
-        if rnd2{
-            S2 = 1
-        } else {
-            S2 = -1
-        }
-        if ((A1 + (S2 * B2)) + (B1 + (S1 * A2))) >= 0{
-            if ((S1*A2)*(S2*B2)) >= 0{
-                var result = NSMutableAttributedString()
-                result.append(NSAttributedString(string: "\(A1 * B1)x"))
-                result.append(NSAttributedString(string: "2", attributes: [NSAttributedString.Key.baselineOffset: 5]))
-                result.append(NSAttributedString(string: "+\((A1 * (S2 * B2)) + (B1 * (S1 * A2)))x+\((S1*A2)*(S2*B2))"))
-                if (S1 * A2) >= 0{
-                    return (result, "(\(A1)x+\(S1 * A2))(\(B1)x+\(S2 * B2))")
-                } else {
-                    return (result, "(\(A1)x\(S1 * A2))(\(B1)x+\(S2 * B2))")
-                }
-            } else{
-                var result = NSMutableAttributedString()
-                result.append(NSAttributedString(string: "\(A1 * B1)x"))
-                result.append(NSAttributedString(string: "2", attributes: [NSAttributedString.Key.baselineOffset: 5]))
-                result.append(NSAttributedString(string: "+\((A1 * (S2 * B2)) + (B1 * (S1 * A2)))x\((S1*A2)*(S2*B2))"))
-                if (S1 * A2) >= 0{
-                    return (result, "(\(A1)x+\(S1 * A2))(\(B1)x+\(S2 * B2))")
-                } else {
-                    return (result, "(\(A1)x\(S1 * A2))(\(B1)x+\(S2 * B2))")
-                }
-            }
-        } else {
-            if ((S1*A2)*(S2*B2)) >= 0{
-                var result = NSMutableAttributedString()
-                result.append(NSAttributedString(string: "\(A1 * B1)x"))
-                result.append(NSAttributedString(string: "2", attributes: [NSAttributedString.Key.baselineOffset: 5]))
-                result.append(NSAttributedString(string: "\((A1 * (S2 * B2)) + (B1 * (S1 * A2)))x+\((S1*A2)*(S2*B2))"))
-                if (S1 * A2) >= 0{
-                    return (result, "(\(A1)x+\(S1 * A2))(\(B1)x+\(S2 * B2))")
-                } else {
-                    return (result, "(\(A1)x\(S1 * A2))(\(B1)x+\(S2 * B2))")
-                }
-            } else{
-                var result = NSMutableAttributedString()
-                result.append(NSAttributedString(string: "\(A1 * B1)x"))
-                result.append(NSAttributedString(string: "2", attributes: [NSAttributedString.Key.baselineOffset: 5]))
-                result.append(NSAttributedString(string: "\((A1 * (S2 * B2)) + (B1 * (S1 * A2)))x\((S1*A2)*(S2*B2))"))
-                if (S1 * A2) >= 0{
-                    return (result, "(\(A1)x+\(S1 * A2))(\(B1)x+\(S2 * B2))")
-                } else {
-                    return (result, "(\(A1)x\(S1 * A2))(\(B1)x+\(S2 * B2))")
-                }
-            }
-        }
-    }
-}
-
-struct PDFSelectionView: View{
-    @Binding var SelectedMode: SelectedModeCalculusEnum?
-    @Binding var PDFs: [DataIdType]?
-    @State var LetSelectedPDF: String = "https://www.africau.edu/images/default/sample.pdf"
-    @State var DataInput: Data?
-    @Binding var AccessToken: String?
-    
-    var body: some View{
-        if DataInput == nil{
-            HStack{
-                Button(){
-                    SelectedMode = .Home
-                } label: {
-                    HStack {
-                        Image(systemName: "chevron.backward")
-                            .padding(.leading)
-                        Text("Back")
-                    }
-                }
-                Spacer()
-            }
-            Text("PDF View")
-
-            List(){
-                ForEach(PDFs!, id: \.Id) { value in
-                    Button{
-                        LetSelectedPDF = value.Id
-                        Task{
-                            do{
-                                DataInput = try await PDFKitFunction().CallData(ItemId: value.Id, accessToken: AccessToken!)
-                                print(DataInput)
-                            } catch {
-                                print("Oh No an error")
-                                //TO DO HANDEL ERROR
-                            }
-                        }
-                    } label: {
-                        Text(value.Name)
-                    }
-                }
-            }
-        } else {
-            if DataInput != nil {
-                HStack{
-                    Button(){
-                        DataInput = nil
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.backward")
-                                .padding(.leading)
-                            Text("Back")
-                        }
-                    }
-                    Spacer()
-                }
-                PDFKitRepresentedView(DataInput!)
-            }
-        }
     }
 }
 
@@ -270,181 +76,124 @@ struct CourseBackground: View{
 struct ClassHomePageView: View{
     @Binding var SelectedQuizViewMode: QuizViewMode
     @Binding var SelectedCourse: CourseSelectedType
-    
-    @Binding var SelectedMode: SelectedModeCalculusEnum?
+    @Binding var accessToken: String?
     @Binding var GradeIn: Int
-    @Binding var Vidoes: [DataIdType]?
     @State var Teacher = ""
     @State var AvaliableCards: [CardType] = []
     @State var BackgroundType: Int = 2
     @State var CardIds: [Int] = []
     var body: some View{
         GeometryReader{ value in
-            ZStack(alignment: .leading){
-                CourseBackground(BackgroundType: BackgroundType)
-                    .edgesIgnoringSafeArea(.all)
-                VStack(){
-                    HStack{
-                        Button(){
-                            SelectedQuizViewMode = .SelectedGrade
-                        } label: {
-                            HStack {
-                                Image(systemName: "chevron.backward")
-                                    .padding(.leading)
-                                Text("Back")
+            NavigationView(){
+                ZStack(alignment: .leading){
+                    CourseBackground(BackgroundType: BackgroundType)
+                        .edgesIgnoringSafeArea(.all)
+                    VStack(){
+                        HStack{
+                            Button(){
+                                SelectedQuizViewMode = .SelectedGrade
+                            } label: {
+                                HStack {
+                                    Image(systemName: "chevron.backward")
+                                        .padding(.leading)
+                                    Text("Back")
+                                }
                             }
+                            Spacer()
+                        }
+                        ForEach(AvaliableCards, id: \.id) { card in
+                            
+                            Card(TextColor: Color.black, accessToken: $accessToken, SelectedCard: card)
+                                .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
+                                .cornerRadius(25)
                         }
                         Spacer()
                     }
-                    ForEach(AvaliableCards, id: \.id) { card in
-                        
-                        Card(SelectedMode: $SelectedMode, SelectedCardMode: .Quizes, Vidoes: $Vidoes, TextColor: Color.black, SelectedCard: card)
-                            .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
-                            .cornerRadius(25)
-                    }
-                    Spacer()
-            }
-            }.onAppear(){
-                Task{
-                    do{
-                        let db = Firestore.firestore()
-                        
-                        var SectionID: String = ""
-                        
-                        if SelectedCourse.Section == 0{
-                            SectionID = "0"
-                        } else {
-                            SectionID = "\(SelectedCourse.Section)-\(SelectedCourse.Year)"
-                        }
-                        
-                        var docRef = db.collection("Grade\(GradeIn)Courses").document("\(SelectedCourse.Name)").collection("Sections").document(SectionID)
-                        docRef.getDocument { (document, error) in
-                            guard error == nil else {
-                                print("error", error ?? "")
-                                return
+                }.onAppear(){
+                    Task{
+                        do{
+                            AvaliableCards = []
+                            
+                            let db = Firestore.firestore()
+                            
+                            var SectionID: String = ""
+                            
+                            if SelectedCourse.Section == 0{
+                                SectionID = "0"
+                            } else {
+                                SectionID = "\(SelectedCourse.Section)-\(SelectedCourse.Year)"
                             }
                             
-                            if let document = document, document.exists {
-                                let data = document.data()
-                                if let data = data {
-                                    let NumberOfCards = data["NumberOfPages"] as! Int
-                                    Teacher = data["Teacher"] as! String
-                                    CardIds = data["Page Info"] as! NSArray as! [Int]
-                                    for x in CardIds{
-                                        let docRef = db.collection("Cards").document("\(x)")
-                                        docRef.getDocument { (document, error) in
-                                            guard error == nil else {
-                                                print("error", error ?? "")
-                                                return
-                                            }
-                                            
-                                            if let document = document, document.exists {
-                                                let data = document.data()
-                                                if let data = data {
-                                                    let destinationFire = data["Destination"] as! Int
-                                                    let cardDataValueFire = data["CardData"] as! [String]
-                                                    let cardDataNameFire = data["CardDataName"] as! [String]
-                                                    let BackgroundStyle = data["BackgroundStyle"] as! Int
-                                                    let Opacity = data["Opacity"] as! String
-                                                    let cardDataTypeFire: [String] = data["CardDataType"] as? NSArray as? [String] ?? []
-                                                    if BackgroundStyle == 0{
-                                                        let captionFire = data["Caption"] as! String
-                                                        let titleFire = data["Title"] as! String
-                                                        let ColorFire = data["Color"] as! String
+                            var docRef = db.collection("Grade\(GradeIn)Courses").document("\(SelectedCourse.Name)").collection("Sections").document(SectionID)
+                            docRef.getDocument { (document, error) in
+                                guard error == nil else {
+                                    print("error", error ?? "")
+                                    return
+                                }
+                                
+                                if let document = document, document.exists {
+                                    let data = document.data()
+                                    if let data = data {
+                                        let NumberOfCards = data["NumberOfPages"] as! Int
+                                        Teacher = data["Teacher"] as! String
+                                        CardIds = data["Page Info"] as! NSArray as! [Int]
+                                        for x in CardIds{
+                                            let docRef = db.collection("Cards").document("\(x)")
+                                            docRef.getDocument { (document, error) in
+                                                guard error == nil else {
+                                                    print("error", error ?? "")
+                                                    return
+                                                }
+                                                
+                                                if let document = document, document.exists {
+                                                    let data = document.data()
+                                                    if let data = data {
+                                                        let cardDataValueFire = data["CardData"] as! [String]
+                                                        let cardDataNameFire = data["CardDataName"] as! [String]
+                                                        let BackgroundStyle = data["BackgroundStyle"] as! Int
+                                                        let Opacity = data["Opacity"] as! String
+                                                        let cardDataTypeFire: [String] = data["CardDataType"] as? NSArray as? [String] ?? []
+                                                        let Use = data["Use"] as! String
                                                         var CardDataIn: [DataIdType] = []
                                                         for y in 0..<cardDataNameFire.count{
-                                                            if cardDataTypeFire.count != 0{
-                                                                CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                                            } else {
-                                                                CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                                            }
+                                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
                                                         }
-                                                        AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                                    } else {
-                                                        if BackgroundStyle == 1{
-                                                            let ImageRefFire = data["ImageRef"] as! String
-                                                            var CardDataIn: [DataIdType] = []
-                                                            for y in 0..<cardDataNameFire.count{
-                                                                if cardDataTypeFire.count != 0{
-                                                                    CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                                                } else {
-                                                                    CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                                                }
-                                                            }
-                                                            AvaliableCards.append(CardType(Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
+                                                        if BackgroundStyle == 0{
+                                                            let captionFire = data["Caption"] as! String
+                                                            let titleFire = data["Title"] as! String
+                                                            let ColorFire = data["Color"] as! String
+                                                            AvaliableCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
                                                         } else {
-                                                            if BackgroundStyle == 2{
-                                                                let captionFire = data["Caption"] as! String
-                                                                let titleFire = data["Title"] as! String
+                                                            if BackgroundStyle == 1{
                                                                 let ImageRefFire = data["ImageRef"] as! String
-                                                                var CardDataIn: [DataIdType] = []
-                                                                for y in 0..<cardDataNameFire.count{
-                                                                    if cardDataTypeFire.count != 0{
-                                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                                                    } else {
-                                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                                                    }
-                                                                }
-                                                                AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
+                                                                AvaliableCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
                                                             } else {
-                                                                if BackgroundStyle == 3{
-                                                                    let ColorFire = data["Color"] as! String
-                                                                    let LongTextFire = data["Text"] as! String
-                                                                    var CardDataIn: [DataIdType] = []
-                                                                    for y in 0..<cardDataNameFire.count{
-                                                                        if cardDataTypeFire.count != 0{
-                                                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                                                        } else {
-                                                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                                                        }
+                                                                if BackgroundStyle == 2{
+                                                                    let captionFire = data["Caption"] as! String
+                                                                    let titleFire = data["Title"] as! String
+                                                                    let ImageRefFire = data["ImageRef"] as! String
+                                                                    AvaliableCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                                                } else {
+                                                                    if BackgroundStyle == 3{
+                                                                        let ColorFire = data["Color"] as! String
+                                                                        let LongTextFire = data["Text"] as! String
+                                                                        AvaliableCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
                                                                     }
-                                                                    AvaliableCards.append(CardType(Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
+                                        }//mark
                                     }
                                 }
                             }
+                        } catch {
+                            print("Error")
                         }
-                    } catch {
-                        print("Error")
                     }
-                }
-            }//Mark
-        }
-    }
-}
-
-//The view controller for the the selected course
-struct CourseView: View{
-
-    @Binding var SelectedQuizViewMode: QuizViewMode
-    
-    @Binding var SelectedCourse: CourseSelectedType
-    @Binding var GradeIn: Int
-    
-    @Binding var AccessToken: String?
-    
-    @State var SelectedMode: SelectedModeCalculusEnum? = .Home
-    @State var InputData: [DataIdType]? = []
-    var body: some View{
-        if SelectedMode == .Home{
-            ClassHomePageView(SelectedQuizViewMode: $SelectedQuizViewMode, SelectedCourse: $SelectedCourse, SelectedMode: $SelectedMode, GradeIn: $GradeIn, Vidoes: $InputData)
-        } else {
-            if SelectedMode == .FactoringBinomials{
-                FactoringBinomials(SelectedMode: $SelectedMode)
-            } else {
-                if SelectedMode == .PDFView{
-                    PDFSelectionView(SelectedMode: $SelectedMode, PDFs: $InputData, AccessToken: $AccessToken)
-                } else {
-                    if SelectedMode == .YouTube{
-                        LetureHomePage(SelectedMode: $SelectedMode, Vidoes: $InputData)
-                    }
-                }
+                }//Mark
             }
         }
     }
@@ -715,7 +464,7 @@ struct QuizView: View{
                     CoursePersonalOverviewView(OverrideSelectionView: $OverrideSelectionView, SelectedCourse: $SelectedCourse, SelectedQuizViewMode: $SelectedQuizViewMode, OverrideCourseView: $OverrideCourseView)
                         .environmentObject(WindowMode)
                 case .CourseView:
-                    CourseView(SelectedQuizViewMode: $SelectedQuizViewMode, SelectedCourse: $SelectedCourse, GradeIn: $WindowMode.GradeIn, AccessToken: $accessToken)
+                    ClassHomePageView(SelectedQuizViewMode: $SelectedQuizViewMode, SelectedCourse: $SelectedCourse, accessToken: $accessToken, GradeIn: $WindowMode.GradeIn)
                 }
             }
         } else {
@@ -769,7 +518,7 @@ struct QuizView: View{
                     CoursePersonalOverviewView(OverrideSelectionView: $OverrideSelectionView, SelectedCourse: $SelectedCourse, SelectedQuizViewMode: $SelectedQuizViewMode, OverrideCourseView: $OverrideCourseView)
                         .environmentObject(WindowMode)
                 case .CourseView:
-                    CourseView(SelectedQuizViewMode: $SelectedQuizViewMode, SelectedCourse: $SelectedCourse, GradeIn: $WindowMode.GradeIn, AccessToken: $accessToken)
+                    ClassHomePageView(SelectedQuizViewMode: $SelectedQuizViewMode, SelectedCourse: $SelectedCourse, accessToken: $accessToken, GradeIn: $WindowMode.GradeIn)
                 }
             }
         }

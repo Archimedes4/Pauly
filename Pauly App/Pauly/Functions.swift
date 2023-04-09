@@ -6,137 +6,7 @@
 //
 
 import Foundation
-
-// This file was generated from JSON Schema using quicktype, do not modify it directly.
-// To parse the JSON, add this file to your project and do:
-//
-//   let grade11Response = try? JSONDecoder().decode(Grade11Response.self, from: jsonData)
-
-//// MARK: - Grade11Response
-//struct Grade11Response: Codable {
-//    let result, grade: String
-//    let classes: [Class]
-//
-//    enum CodingKeys: String, CodingKey {
-//        case result = "Result"
-//        case grade = "Grade"
-//        case classes = "Classes"
-//    }
-//}
-//
-//// MARK: - Class
-//struct Class: Codable {
-//    let name: String
-//    let teachers: [String]
-//
-//    enum CodingKeys: String, CodingKey {
-//        case name = "Name"
-//        case teachers
-//    }
-//}
-//
-//struct CallingResult: Codable {
-//    let result: String
-//    let Grade: Int?
-//
-//    enum CodingKeys: String, CodingKey {
-//        case result = "Result"
-//        case Grade = "Grade"
-//    }
-//}
-//
-//// MARK: - CalendarResopnse
-//struct CalendarResopnse: Codable {
-//    let result, year: String
-//    let data: [Datum]
-//
-//    enum CodingKeys: String, CodingKey {
-//        case result = "Result"
-//        case year = "Year"
-//        case data = "Data"
-//    }
-//}
-//
-//// MARK: - Datum
-//struct Datum: Codable {
-//    let month, date, value: Int
-//
-//    enum CodingKeys: String, CodingKey {
-//        case month = "Month"
-//        case date = "Date"
-//        case value = "Value"
-//    }
-//}
-//
-//// MARK: - UserListResopnce
-//struct UserListResopnce: Codable {
-//    let result: String
-//    let users: [String]
-//
-//    enum CodingKeys: String, CodingKey {
-//        case result = "Result"
-//        case users = "Users"
-//    }
-//}
-//
-//// MARK: - ChatListResponce
-//struct ChatListResponce: Codable {
-//    let result: String
-//    let data: [Datum1]
-//
-//    enum CodingKeys: String, CodingKey {
-//        case result = "Result"
-//        case data = "Data"
-//    }
-//}
-//
-//// MARK: - Datum
-//struct Datum1: Codable {
-//    let users: [String]
-//    let chatID: Int
-//
-//    enum CodingKeys: String, CodingKey {
-//        case users = "Users"
-//        case chatID = "ChatId"
-//    }
-//}
-//
-//// MARK: - MessageResponce
-//struct MessageResponce: Codable {
-//    let result: String
-//    let data: [Datum2]
-//
-//    enum CodingKeys: String, CodingKey {
-//        case result = "Result"
-//        case data = "Data"
-//    }
-//}
-//
-//// MARK: - Datum
-//struct Datum2: Codable {
-//    let sender, message, time: String
-//    var ErrorType: String?
-//    let ErrorID: Int?
-//
-//    enum CodingKeys: String, CodingKey {
-//        case sender = "Sender"
-//        case message = "Message"
-//        case time = "Time"
-//        case ErrorType = "Error"
-//        case ErrorID = "ErrorID"
-//    }
-//}
-//
-//// MARK: - MessageResponce
-//struct NotificationResonpce: Codable {
-//    let result: String
-//    let data: [Int]
-//
-//    enum CodingKeys: String, CodingKey {
-//        case result = "Result"
-//        case data = "Data"
-//    }
-//}
+import FirebaseFirestore
 
 class Functions {
     func getDaysInMonth(Input: Date) -> Int{
@@ -170,6 +40,62 @@ class Functions {
             return nil
         }
         return result
+    }
+    func GetCardData(CardIds: [Int], completion: @escaping([CardType])->()) {
+        var outputCards: [CardType] = []
+        
+        let db = Firestore.firestore()
+        
+        for x in CardIds{
+            let docRef = db.collection("Cards").document("\(x)")
+            docRef.getDocument { (document, error) in
+                guard error == nil else {
+                    print("error", error ?? "")
+                    return
+                }
+                
+                if let document = document, document.exists {
+                    let data = document.data()
+                    if let data = data {
+                        let cardDataValueFire = data["CardData"] as! [String]
+                        let cardDataNameFire = data["CardDataName"] as! [String]
+                        let BackgroundStyle = data["BackgroundStyle"] as! Int
+                        let Opacity = data["Opacity"] as! String
+                        let cardDataTypeFire: [String] = data["CardDataType"] as? NSArray as? [String] ?? []
+                        var CardDataIn: [DataIdType] = []
+                        let Use = data["Use"] as! String
+                        for y in 0..<cardDataNameFire.count{
+                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
+                        }
+                        if BackgroundStyle == 0{
+                            let captionFire = data["Caption"] as! String
+                            let titleFire = data["Title"] as! String
+                            let ColorFire = data["Color"] as! String
+                            outputCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                        } else {
+                            if BackgroundStyle == 1{
+                                let ImageRefFire = data["ImageRef"] as! String
+                                outputCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                            } else {
+                                if BackgroundStyle == 2{
+                                    let captionFire = data["Caption"] as! String
+                                    let titleFire = data["Title"] as! String
+                                    let ImageRefFire = data["ImageRef"] as! String
+                                    outputCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                } else {
+                                    if BackgroundStyle == 3{
+                                        let ColorFire = data["Color"] as! String
+                                        let LongTextFire = data["Text"] as! String
+                                        outputCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                completion(outputCards)
+            }
+        }//mark
     }
 }
 

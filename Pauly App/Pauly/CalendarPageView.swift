@@ -29,6 +29,7 @@ struct CalendarCourseType{
     let DayC: Int
     let DayD: Int
     let NoClass: [NoClassType]
+    let Year: Int
 }
 
 struct EventType{
@@ -115,7 +116,8 @@ struct CalendarHomePage: View{
                                 let DayB = data["DayB"] as? Int
                                 let DayC = data["DayC"] as? Int
                                 let DayD = data["DayD"] as? Int
-                                let NoClass = data["NoClass"] as! NSArray as? [String] 
+                                let NoClass = data["NoClass"] as! NSArray as? [String]
+                                let Year = data["School Year"] as? Int ?? 2020
                                 var NoClassesOutArray: [NoClassType] = []
                                 if NoClass != nil{
                                     for l in NoClass!{
@@ -123,7 +125,7 @@ struct CalendarHomePage: View{
                                         NoClassesOutArray.append(NoClassType(Day: Int(Output[0])!, Month: Int(Output[1])!, Year: Int(Output[2])!))
                                     }
                                 }
-                                CalendarClasses.append(CalendarCourseType(Name: x.Name, Semester: Semester!, DayA: DayA!, DayB: DayB!, DayC: DayC!, DayD: DayD!, NoClass: NoClassesOutArray))
+                                CalendarClasses.append(CalendarCourseType(Name: x.Name, Semester: Semester!, DayA: DayA!, DayB: DayB!, DayC: DayC!, DayD: DayD!, NoClass: NoClassesOutArray, Year: Year))
                             }
                         }
                     }
@@ -155,6 +157,7 @@ struct DayView: View{
     @State var ScrollPosition: Int = 0
     @State var CurrentMinuiteInt: Int = 0
     @State var CurrentTime: String = "8:30"
+    @State var DateIntFetched: Bool = false
     let HoursIN: [String] = ["12PM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12AM", "1PM", "2BM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM",
     "10PM", "11PM"]
     var body: some View{
@@ -324,11 +327,56 @@ struct DayView: View{
             }
             if HourInt == ValueInt{
                 if MinuiteInt! <= 20{
+                    if ValueArray.count == 4{
+                        print("In four")
+                        if ValueArray[2] == "A"{
+                            print("THis is in a1t")
+                            print("This is hour: \(HourInt)")
+                            if HourInt ?? 13 >= 13{
+                                return true
+                            }
+                        } else {
+                            if HourInt ?? 12 <= 12{
+                                return true
+                            }
+                        }
+                    } else {
+                        if ValueArray[1] == "A"{
+                            if HourInt ?? 13 >= 13{
+                                return true
+                            }
+                        } else {
+                            if HourInt ?? 12 <= 12{
+                                return true
+                            }
+                        }
+                    }
                     return false
                 }
             } else {
                 if HourInt == ValueIntDown{
                     if MinuiteInt! >= 40{
+                        if ValueArray.count == 4{
+                            if ValueArray[2] == "A"{
+                                if HourInt ?? 13 >= 13{
+                                    return true
+                                }
+                            } else {
+                                if HourInt ?? 12 <= 12{
+                                    return true
+                                }
+                            }
+                        } else {
+                            if ValueArray[1] == "A"{
+                                if HourInt ?? 13 >= 13{
+                                    return true
+                                }
+                            } else {
+                                if HourInt ?? 12 <= 12{
+                                    return true
+                                }
+                            }
+                        }
                         return false
                     }
                 }
@@ -341,10 +389,6 @@ struct DayView: View{
         let MinutieWidth = Height / 1440
         let HourInt = Calendar.current.dateComponents([.hour], from: Time).hour
         let MinuiteInt = Calendar.current.dateComponents([.minute], from: Time).minute
-        print(HourWidth)
-        print(Double(HourInt!))
-        print("Miniure in\(Double(MinuiteInt!))")
-        print("Minute Width \(MinutieWidth)")
         let ReturnOffset = (Double(HourWidth) * Double(HourInt!)) + (Double(MinutieWidth) * Double(MinuiteInt!)) + (HourWidth / 2)
         return ReturnOffset
     }
@@ -463,20 +507,101 @@ struct DayView: View{
         return PeriodInt
     }
     func FindDateProperty(Time: Date){
-        CurrentEvents = []
-        let DayInt = Calendar.current.dateComponents([.day], from: Time).day
-        if let CurrentDayProperty = SelectedDates.first(where: { $0.Date == DayInt }){
-            if CurrentDayProperty.SchoolDay != nil{
-                for o in CalendarClasses{
-                    let PeriodInt = FindPeriod(Class: o, Day: CurrentDayProperty.SchoolDay!)
-                    let OutputIntTimes = FindStartHourMinute(PeriodInt: PeriodInt, Schedual: CurrentDayProperty.Value)
-                    let StartDate = GetDate(Hour: OutputIntTimes.0, Minute: OutputIntTimes.1, Time: Time)
-                    let EndDate = GetDate(Hour: OutputIntTimes.2, Minute: OutputIntTimes.3, Time: Time)
+        let YearInt = Calendar.current.dateComponents([.year], from: Time).year
+        let monthInt = Calendar.current.dateComponents([.month], from: Time).month
+        do{
+            let db = FirebaseFirestore.Firestore.firestore()
+            
+            var NewSelectedDate: [DateProperty] = []
+            
+            let docRef = db.collection("Calendar").document("\(YearInt)").collection("\(monthInt!)")
+            docRef.getDocuments { (snapshot, error) in
+                guard let snapshot = snapshot, error == nil else {
+                 //handle error
+                 return
+               }
 
-                    CurrentEvents.append(EventType(Name: o.Name, StartTime: StartDate, EndTime: EndDate))
+               snapshot.documents.forEach({ (documentSnapshot) in
+                    let documentData = documentSnapshot.data()
+                    let day = documentData["Day"] as? Int
+                    if day != nil{
+                        let value = documentData["value"] as? Int
+                        let SchoolDay = documentData["SchoolDay"] as? String
+                        if value != nil{
+                            if value == 1{
+                                NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#ce0909", SchoolDay: SchoolDay, Value: 1))
+                              
+                            } else {
+                               if value == 2{
+                                   NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#762e05", SchoolDay: SchoolDay, Value: 2))
+                                 
+                               } else {
+                                   if value == 3{
+                                       NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#9309ce", SchoolDay: SchoolDay, Value: 3))
+                                      
+                                   } else {
+                                       if value == 4{
+                                           NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#05760e", SchoolDay: SchoolDay, Value: 4))
+                                           
+                                       } else {
+                                           if value == 5{
+                                               NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#f6c72c", SchoolDay: SchoolDay, Value: 5))
+                                               
+                                           } else {
+                                               if value == 6{
+                                                   NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#2c47f6", SchoolDay: SchoolDay, Value: 6))
+                                                  
+                                               } else {
+                                                   if value == 7{
+                                                       NewSelectedDate.append(DateProperty(Date: day!, ColorName: "#f62cce", SchoolDay: SchoolDay, Value: 7))
+                                                     
+                                                   }
+                                               }
+                                           }
+                                       }
+                                   }
+                               }
+                            }
+                        } else {
+                            let SchoolDay = documentData["SchoolDay"] as? String
+                            NewSelectedDate.append(DateProperty(Date: day!, ColorName: nil, SchoolDay: SchoolDay, Value: nil))
+                        }
+                       
+                    }
+               })
+                CurrentEvents = []
+                let DayInt = Calendar.current.dateComponents([.day], from: Time).day
+                if let CurrentDayProperty = NewSelectedDate.first(where: { $0.Date == DayInt }){
+                    if CurrentDayProperty.SchoolDay != nil{
+                        for o in CalendarClasses{
+                            if o.Year == YearInt{
+                                if monthInt! >= 2 && monthInt! <= 8{
+                                    if o.Semester == 2{
+                                        let PeriodInt = FindPeriod(Class: o, Day: CurrentDayProperty.SchoolDay!)
+                                        let OutputIntTimes = FindStartHourMinute(PeriodInt: PeriodInt, Schedual: CurrentDayProperty.Value)
+                                        let StartDate = GetDate(Hour: OutputIntTimes.0, Minute: OutputIntTimes.1, Time: Time)
+                                        let EndDate = GetDate(Hour: OutputIntTimes.2, Minute: OutputIntTimes.3, Time: Time)
+
+                                        CurrentEvents.append(EventType(Name: o.Name, StartTime: StartDate, EndTime: EndDate))
+                                    }
+                                } else {
+                                    if o.Semester == 1{
+                                        let PeriodInt = FindPeriod(Class: o, Day: CurrentDayProperty.SchoolDay!)
+                                        let OutputIntTimes = FindStartHourMinute(PeriodInt: PeriodInt, Schedual: CurrentDayProperty.Value)
+                                        let StartDate = GetDate(Hour: OutputIntTimes.0, Minute: OutputIntTimes.1, Time: Time)
+                                        let EndDate = GetDate(Hour: OutputIntTimes.2, Minute: OutputIntTimes.3, Time: Time)
+
+                                        CurrentEvents.append(EventType(Name: o.Name, StartTime: StartDate, EndTime: EndDate))
+                                    }
+                                }
+                            }
+                        }
+                        print(CurrentEvents)
+                    }
                 }
-                print(CurrentEvents)
             }
+        } catch {
+            print("Error")
         }
     }
     func computeNewDate(from fromDate: Date, to toDate: Date) -> Double  {
@@ -531,14 +656,6 @@ extension String {
   }
 }
 //Debug
-
-#if DEBUG
-struct DayPreview: PreviewProvider {
-    static var previews: some View {
-        DayView(CalendarClasses: .constant([CalendarCourseType(Name: "History of Canada 30S", Semester: 2, DayA: 5, DayB: 1, DayC: 3, DayD: 4, NoClass: []), CalendarCourseType(Name: "MAthamtiq", Semester: 2, DayA: 3, DayB: 3, DayC: 3, DayD: 4, NoClass: [])]), SelectedDates: .constant([DateProperty(Date: 17, ColorName: nil, SchoolDay: "A", Value: nil), DateProperty(Date: 30, ColorName: nil, SchoolDay: "B", Value: nil)]))
-    }
-}
-#endif
 
 
 struct WeekDayView: View{

@@ -65,7 +65,7 @@ struct AddRootClassView: View {
                                     Button(){
 
                                     } label: {
-                                        Text(ButtonCard.Title)
+                                        Text(ButtonCard.Title ?? "Title")
                                         Text(ButtonCard.Use)
                                     }.onAppear(){
                                         if let newindex = NotSelectedCards.firstIndex(where: {$0.FirebaseID  == card}){
@@ -171,9 +171,12 @@ struct AddRootClassView: View {
                        let CardDestination = documentData["Destination"] as? Int ?? 0
                        let CardCardData = documentData["CardData"] as? [String] ?? []
                        let CardCardDataName = documentData["CardDataName"] as? [String] ?? []
+                       let CardCardDataType = documentData["CardDataType"] as? [String] ?? []
+                       let CardBackgroundStyle = documentData["BackgroundStyle"] as? Int ?? 0
+                       let CardOpacity = documentData["Opacity"] as? String ?? "Error"
                        if CardID != 0{
-                           AvaliableCards.append(CardType(FirebaseID: CardID, Use: CardUse, Title: CardTitle, Caption: CardCaption, Destination: CardDestination, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: nil))
-                           NotSelectedCards.append(CardType(FirebaseID: CardID, Use: CardUse, Title: CardTitle, Caption: CardCaption, Destination: CardDestination, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: nil))
+                           AvaliableCards.append(CardType(FirebaseID: CardID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: CardTitle, Caption: CardCaption, ImageRef: nil, SelectedColor: nil, LongText: nil, CardData: CardCardDataType, CardDataName: CardCardDataName, CardDataType: CardCardDataType))
+                           NotSelectedCards.append(CardType(FirebaseID: CardID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: CardTitle, Caption: CardCaption, ImageRef: nil, SelectedColor: nil, LongText: nil, CardData: CardCardDataType, CardDataName: CardCardDataName, CardDataType: CardCardDataType))
                        }
                    })
                  }

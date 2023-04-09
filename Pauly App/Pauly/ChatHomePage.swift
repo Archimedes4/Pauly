@@ -270,8 +270,10 @@ struct TutoringHomePage: View{
 }
 
 struct RequestATutor: View{
+    @Binding var AccessToken: String?
     @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var TutoringModeSelected: TutoringMode
+    @State var TutorHelpText: String = ""
     var body: some View{
         VStack{
             HStack{
@@ -285,15 +287,19 @@ struct RequestATutor: View{
                     }
                 }.padding()
             }
-            Text("Request a Tutor")
+            Image("RequestATutor")
+                .resizable()
             Text("Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName),")
             Text("I would like help with with")
+            TextField("What would you like a tutor for.", text: $TutorHelpText)
+            Text("Thank you")
             Spacer()
         }.background(Color.marron)
     }
 }
 
 struct RequestToBeATutor: View{
+    @Binding var AccessToken: String?
     @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var TutoringModeSelected: TutoringMode
     @State var Content: String = ""
@@ -310,15 +316,16 @@ struct RequestToBeATutor: View{
                     }
                 }.padding()
             }
-            Text("Request To Be a Tutor")
-                .foregroundColor(.black)
             
+            Image("RequestToBeATutor")
+                .resizable()
             Spacer()
         }.background(Color.marron)
     }
 }
 
 struct TutoringPage: View{
+    @Binding var AccessToken: String?
     @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var SelectedChatMode: ChatMode
     @State var TutoringModeSelected: TutoringMode = .Home
@@ -328,11 +335,11 @@ struct TutoringPage: View{
             
         } else {
             if TutoringModeSelected == .RequestToBeATutor{
-                RequestToBeATutor(TutoringModeSelected: $TutoringModeSelected)
+                RequestToBeATutor(AccessToken: $AccessToken, TutoringModeSelected: $TutoringModeSelected)
                     .environmentObject(WindowMode)
             } else {
                 if TutoringModeSelected == .RequestTutorForm{
-                    RequestATutor(TutoringModeSelected: $TutoringModeSelected)
+                    RequestATutor(AccessToken: $AccessToken, TutoringModeSelected: $TutoringModeSelected)
                         .environmentObject(WindowMode)
                 }
             }
@@ -490,7 +497,7 @@ struct ChatOverView: View{
                                     .environmentObject(WindowMode)
                             } else {
                                 if SelectedChatMode == .TutorHomePage{
-                                    TutoringPage(SelectedChatMode: $SelectedChatMode)
+                                    TutoringPage(AccessToken: $accessToken, SelectedChatMode: $SelectedChatMode)
                                         .environmentObject(WindowMode)
                                 } else {
                                     if SelectedChatMode == .Message{
@@ -531,7 +538,7 @@ struct ChatOverView: View{
                                     .environmentObject(WindowMode)
                             } else {
                                 if SelectedChatMode == .TutorHomePage{
-                                    TutoringPage(SelectedChatMode: $SelectedChatMode)
+                                    TutoringPage(AccessToken: $accessToken, SelectedChatMode: $SelectedChatMode)
                                 } else {
                                     if SelectedChatMode == .Message{
                                         MessagingPage(SelectedChatMode: $SelectedChatMode, Username: $WindowMode.UsernameIn, accessToken: $accessToken)

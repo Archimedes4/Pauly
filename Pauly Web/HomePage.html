@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Microsoft Login with Firebase</title>
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+        <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8",
+            authDomain: "pauly-9dcfc.firebaseapp.com",
+            projectId: "pauly-9dcfc",
+            storageBucket: "pauly-9dcfc.appspot.com",
+            messagingSenderId: "371990511274",
+            appId: "1:371990511274:web:57b145f410bc9489e45ad3",
+            measurementId: "G-8GDB6VSPKE"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        </script>
+    </head>
+    <body>
+        <p> You have sucessfully logged in!</p>
+    </body>
+</html>

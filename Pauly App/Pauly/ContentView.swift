@@ -247,9 +247,6 @@ struct MonthView: View{
                                         NewSelectedDate.append(DateProperty(Date: day!, ColorName: nil, SchoolDay: SchoolDay, Value: nil))
                                     }
                                    
-                                } else {
-                                    ScrollMessage = documentData["Message"] as? String ?? ""
-                                    AnimationSpeed = documentData["AnimationSpeed"] as? Double ?? 10.0
                                 }
                            })
                             SelectedDates = NewSelectedDate
@@ -553,6 +550,26 @@ struct HomePage: View{
                 }
                 .edgesIgnoringSafeArea(.all)
             }.background(Color.marron)
+            .onAppear(){
+                let db = Firestore.firestore()
+                
+                let docRef = db.collection("PaulyInfo").document("Info")
+                
+                docRef.getDocument(){ (document, error) in
+                    guard error == nil else {
+                        print("error", error ?? "")
+                        return
+                    }
+                    
+                    if let document = document, document.exists {
+                        let data = document.data()
+                        if let data = data {
+                            ScrollText  = data["Message"] as? String ?? ""
+                            AnimationDuration = (data["AnimationSpeed"] as? Double)!
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -658,7 +675,7 @@ struct ContentView: View {
             ProfileViewMain(AccessToken: $accountToken)
                 .environmentObject(WindowMode)
         case .Sports:
-            SportsView()
+            SportsView(accessToken: $accountToken)
                 .environmentObject(WindowMode)
         }
     }

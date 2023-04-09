@@ -148,6 +148,23 @@ struct Overview: View {
                             }
                         }.buttonStyle(.plain)
                         Button(){
+                            AddingEmumSelcted = .Permissions
+                        } label: {
+                            HStack{
+                                Image(systemName: "hand.raised")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: geo.size.width * 0.02, height: geo.size.height * 0.02)
+                                Text("Permissions")
+                                Spacer()
+                                if AddingEmumSelcted == .Permissions{
+                                    Rectangle()
+                                        .frame(width: 2, height: geo.size.height * 0.03)
+                                        .foregroundColor(.orange)
+                                }
+                            }
+                        }.buttonStyle(.plain)
+                        Button(){
                             
                         } label: {
                             HStack{
@@ -186,6 +203,7 @@ enum AddingEnum{
     case Files
     case Card
     case Account
+    case Permissions
 }
 
 struct AddingView: View{
@@ -213,6 +231,8 @@ struct AddingView: View{
             CardView(EditClassPageSelected: .constant(.PageOne), LastPageSelected: .constant(.PageOne), AccessToken: $AccessToken)
         case .Account:
             Text("Placehodler")
+        case .Permissions:
+            PermissionsManager()
         }
     }
 }

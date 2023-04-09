@@ -55,8 +55,6 @@ class LocationDataManager : NSObject, ObservableObject, CLLocationManagerDelegat
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("error: \(error.localizedDescription)")
     }
-    
-    
 }
 
 struct LocationServices: View {
@@ -113,6 +111,11 @@ struct LocationServices: View {
                         .onAppear(){
                             print(distanceInMeters)
                         }
+                    Button(){
+                        SheetPresented = false
+                    } label: {
+                        Text("OK")
+                    }
                 }
             case .restricted, .denied:  // Location services currently unavailable.
                 // Insert code here of what should happen when Location services are NOT authorized

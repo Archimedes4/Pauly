@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 import Firebase
 
 @main

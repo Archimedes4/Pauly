@@ -67,27 +67,36 @@
         </script>
     </body>
 </html> -->
-
+<!-- 
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Microsoft Login with Firebase</title>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
-    <script>
-      // Initialize Firebase
-      var firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.19.1/firebase-analytics.js";
+      import { getAuth, getRedirectResult, OAuthProvider, signInWithRedirect } from "firebase/auth";;
+      // TODO: Add SDKs for Firebase products that you want to use
+      // https://firebase.google.com/docs/web/setup#available-libraries
+    
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+        apiKey: "AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8",
+        authDomain: "pauly-9dcfc.firebaseapp.com",
+        projectId: "pauly-9dcfc",
+        storageBucket: "pauly-9dcfc.appspot.com",
+        messagingSenderId: "371990511274",
+        appId: "1:371990511274:web:57b145f410bc9489e45ad3",
+        measurementId: "G-8GDB6VSPKE"
       };
-      firebase.initializeApp(firebaseConfig);
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
     </script>
   </head>
   <body>
@@ -95,21 +104,135 @@
     <button onclick="signInWithMicrosoft()">Sign in with Microsoft</button>
     <script>
       function signInWithMicrosoft() {
-        var provider = new firebase.auth.OAuthProvider('microsoft.com');
-        firebase.auth().signInWithPopup(provider)
-          .then(function(result) {
+        const provider = new OAuthProvider('microsoft.com');
+        provider.addScope("user.read");
+        const auth = getAuth();
+        signInWithRedirect(auth, provider);
+        getRedirectResult(auth)
+          .then((result) => {
             // User is signed in.
-            var user = result.user;
-            console.log(user);
-            
+            // IdP data available in result.additionalUserInfo.profile.
+
+            // Get the OAuth access token and ID Token
+            const credential = OAuthProvider.credentialFromResult(result);
+            const accessToken = credential.accessToken;
+            const idToken = credential.idToken;
           })
-          .catch(function(error) {
+          .catch((error) => {
             // Handle error.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log(errorCode, errorMessage);
           });
       }
     </script>
   </body>
+</html> -->
+
+<!-- <!DOCTYPE html>
+<html>
+  <head>
+    <title>Firebase Microsoft Authentication</title>
+     Firebase and Microsoft Authentication SDKs
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-auth.js"></script>
+    <script src="https://alcdn.msauth.net/browser/2.16.0/js/msal-browser.min.js"></script>
+     Firebase configuration
+    <script>
+      const firebaseConfig = {
+        // Your Firebase project configuration
+        apiKey: "AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8",
+        authDomain: "pauly-9dcfc.firebaseapp.com",
+        projectId: "pauly-9dcfc",
+        storageBucket: "pauly-9dcfc.appspot.com",
+        messagingSenderId: "371990511274",
+        appId: "1:371990511274:web:57b145f410bc9489e45ad3",
+        measurementId: "G-8GDB6VSPKE"
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+  </head>
+  <body>
+    <h1>Firebase Microsoft Authentication</h1>
+    <form>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required><br><br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required><br><br>
+      <button type="button" onclick="signInWithMicrosoft()">Sign in with Microsoft</button>
+    </form>
+    <script>
+      const microsoftConfig = {
+        // Your Microsoft client ID and other configuration
+        auth: {
+          clientId: 'your_client_id', // Your Azure AD application client ID
+          authority: 'https://login.microsoftonline.com/your_tenant_id', // Your Azure AD tenant ID
+          redirectUri: 'https://your_app.com/auth/callback', // Your application's redirect URI after authentication
+        },
+        cache: {
+          cacheLocation: 'localStorage', // Cache location for tokens
+          storeAuthStateInCookie: false, // Whether to store auth state in cookies
+        }
+      };
+      const msalInstance = new msal.PublicClientApplication(microsoftConfig);
+
+      async function signInWithMicrosoft() {
+        try {
+          // Sign in with Microsoft using MSAL.js
+          const result = await msalInstance.loginPopup();
+          // Get the Firebase credential from the Microsoft access token
+          const credential = firebase.auth.OAuthProvider('microsoft.com').credential({accessToken: result.accessToken});
+          // Sign in with Firebase using the Microsoft credential
+          await firebase.auth().signInWithCredential(credential);
+          // Redirect to the home page or display a welcome message
+        } catch (error) {
+          console.error(error);
+          // Handle errors
+        }
+      }
+    </script>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login Page</title>
+	<!-- Import Firebase JS SDK and Firebase Authentication module -->
+	<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth.js"></script>
+	<!-- Firebase configuration -->
+	<script>
+		var firebaseConfig = {
+      apiKey: "AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8",
+      authDomain: "pauly-9dcfc.firebaseapp.com",
+      projectId: "pauly-9dcfc",
+      storageBucket: "pauly-9dcfc.appspot.com",
+      messagingSenderId: "371990511274",
+      appId: "1:371990511274:web:57b145f410bc9489e45ad3",
+      measurementId: "G-8GDB6VSPKE"
+		};
+		// Initialize Firebase
+		firebase.initializeApp(firebaseConfig);
+	</script>
+</head>
+<body>
+	<h1>Login Page</h1>
+	<button onclick="signInWithMicrosoft()">Sign in with Microsoft</button>
+	<script>
+		function signInWithMicrosoft() {
+			// Create a Microsoft provider instance
+			var microsoftProvider = new firebase.auth.OAuthProvider('microsoft.com');
+			microsoftProvider.setCustomParameters({
+				// Prompt user to select account to sign in with
+				prompt: 'select_account'
+			});
+			// Sign in with Microsoft using a popup window
+			firebase.auth().signInWithPopup(microsoftProvider).then(function(result) {
+				// Microsoft authentication succeeded, redirect to home page
+				window.location = "HomePage.html";
+			}).catch(function(error) {
+				// Microsoft authentication failed
+				console.error(error);
+			});
+		}
+	</script>
+</body>
 </html>

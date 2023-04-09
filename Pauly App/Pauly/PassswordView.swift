@@ -11,7 +11,6 @@ import MSAL
 import FirebaseCore
 import FirebaseAuth
 import FirebaseFirestore
-import Firebase
 
 
 struct InitializeMicrosoft: View {

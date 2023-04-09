@@ -9,9 +9,8 @@ import SwiftUI
 import BackgroundTasks
 import FirebaseCore
 import FirebaseMessaging
-import Firebase
 import FirebaseFirestore
-
+import FirebaseAuth
 
 
 
@@ -27,7 +26,19 @@ struct PaulyApp: App {
     
     init() {
             FirebaseApp.configure()
+        do{
+            try Auth.auth().useUserAccessGroup("SYV2CK2N9N.com.Archimedes4.Pauly")
+        } catch let error as NSError {
+            print("Error changing user access group: %@", error)
         }
+        let User = Auth.auth().currentUser
+        if let User = User {
+            print("YESSsssssssssssssssssssss this does work. < --- -- - - -- - -- - -- -- - - - -- - - - -- - - - -- - - - - -- - - - - -- - - -- - - - -- - - - - -- - - -- - -")
+            print(User.getIDToken())
+        } else {
+            print("NOPE THIS DOES NOT WORK")
+        }
+    }
     
     var body: some Scene {
         WindowGroup {

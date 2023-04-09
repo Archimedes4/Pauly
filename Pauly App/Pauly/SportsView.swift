@@ -60,6 +60,8 @@ struct InSportView: View{
     
     @State var AvaliableCards: [CardType] = []
     
+    @Binding var accessToken: String?
+    
     var body: some View{
         GeometryReader{ geo in
             VStack{
@@ -72,7 +74,7 @@ struct InSportView: View{
                     ScrollView{
                         VStack{
                             ForEach(AvaliableCards, id: \.id) { card in
-                                Card(SelectedMode: .constant(.Home), SelectedCardMode: .Sports, Vidoes: .constant([]), TextColor: Color.black, SelectedCard: card)
+                                Card(TextColor: Color.black, accessToken: $accessToken, SelectedCard: card)
                                     .frame(width: geo.size.width * 0.9, height: geo.size.height * 0.3)
                                     .cornerRadius(25)
                             }
@@ -138,7 +140,9 @@ struct InSportView: View{
             .onChange(of: SelectedTeam){ value in
                 FindGames()
                 FindRoster()
-                FetchCards()
+                Functions().GetCardData(CardIds: SelectedTeam.PageInfo) { (cards) in
+                    AvaliableCards = cards
+                }
             }
         }
     }
@@ -250,109 +254,28 @@ struct InSportView: View{
             }
         }
     }
-    func FetchCards() {
-        Task{
-            do{
-                let db = Firestore.firestore()
-                
-                for x in SelectedTeam.PageInfo {
-                    let docRef = db.collection("Cards").document("\(x)")
-                    docRef.getDocument { (document, error) in
-                        guard error == nil else {
-                            print("error", error ?? "")
-                            return
-                        }
-                        
-                        if let document = document, document.exists {
-                            let data = document.data()
-                            if let data = data {
-                                let destinationFire = data["Destination"] as! Int
-                                let cardDataValueFire = data["CardData"] as! [String]
-                                let cardDataNameFire = data["CardDataName"] as! [String]
-                                let BackgroundStyle = data["BackgroundStyle"] as! Int
-                                let Opacity = data["Opacity"] as! String
-                                let cardDataTypeFire: [String] = data["CardDataType"] as? NSArray as? [String] ?? []
-                                if BackgroundStyle == 0{
-                                    let captionFire = data["Caption"] as! String
-                                    let titleFire = data["Title"] as! String
-                                    let ColorFire = data["Color"] as! String
-                                    var CardDataIn: [DataIdType] = []
-                                    for y in 0..<cardDataNameFire.count{
-                                        if cardDataTypeFire.count != 0{
-                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                        } else {
-                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                        }
-                                    }
-                                    AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                } else {
-                                    if BackgroundStyle == 1{
-                                        let ImageRefFire = data["ImageRef"] as! String
-                                        var CardDataIn: [DataIdType] = []
-                                        for y in 0..<cardDataNameFire.count{
-                                            if cardDataTypeFire.count != 0{
-                                                CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                            } else {
-                                                CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                            }
-                                        }
-                                        AvaliableCards.append(CardType(Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                    } else {
-                                        if BackgroundStyle == 2{
-                                            let captionFire = data["Caption"] as! String
-                                            let titleFire = data["Title"] as! String
-                                            let ImageRefFire = data["ImageRef"] as! String
-                                            var CardDataIn: [DataIdType] = []
-                                            for y in 0..<cardDataNameFire.count{
-                                                if cardDataTypeFire.count != 0{
-                                                    CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                                } else {
-                                                    CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                                }
-                                            }
-                                            AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                        } else {
-                                            if BackgroundStyle == 3{
-                                                let ColorFire = data["Color"] as! String
-                                                let LongTextFire = data["Text"] as! String
-                                                var CardDataIn: [DataIdType] = []
-                                                for y in 0..<cardDataNameFire.count{
-                                                    if cardDataTypeFire.count != 0{
-                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                                    } else {
-                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                                    }
-                                                }
-                                                AvaliableCards.append(CardType(Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } //mark
-            } catch {
-                print("Error")
-            }
-        }
-    }
 }
 
 struct HighlightView: View{
 
+    @Binding var accessToken: String?
+    
     @State var Cards: [Int] = []
     @State var AvaliableCards: [CardType] = []
     
     var body: some View{
         GeometryReader{ geo in
             ScrollView{
-                VStack{
+                VStack(alignment: .center){
                     ForEach(AvaliableCards, id: \.id) { card in
-                        Card(SelectedMode: .constant(.Home), SelectedCardMode: .Sports, Vidoes: .constant([]), TextColor: Color.black, SelectedCard: card)
-                            .frame(width: geo.size.width * 0.9, height: geo.size.height * 0.3)
-                            .cornerRadius(25)
-                    }.padding()
+                        HStack{
+                            Spacer()
+                            Card(TextColor: Color.black, accessToken: $accessToken, SelectedCard: card)
+                                .frame(width: geo.size.width * 0.9, height: geo.size.height * 0.3, alignment: .center)
+                                .cornerRadius(25)
+                            Spacer()
+                        }
+                    }
                 }
             }.onAppear(){
                 FetchCardIDs()
@@ -378,97 +301,12 @@ struct HighlightView: View{
                                 return
                             }
                             Cards = CardIds as? [Int] ?? []
-                            FetchCards()
-                        }
-                    }
-                }
-            } catch {
-                print("Error")
-            }
-        }
-    }
-    func FetchCards() {
-        Task{
-            do{
-                let db = Firestore.firestore()
-                
-                for x in Cards {
-                    let docRef = db.collection("Cards").document("\(x)")
-                    docRef.getDocument { (document, error) in
-                        guard error == nil else {
-                            print("error", error ?? "")
-                            return
-                        }
-                        
-                        if let document = document, document.exists {
-                            let data = document.data()
-                            if let data = data {
-                                let destinationFire = data["Destination"] as! Int
-                                let cardDataValueFire = data["CardData"] as! [String]
-                                let cardDataNameFire = data["CardDataName"] as! [String]
-                                let BackgroundStyle = data["BackgroundStyle"] as! Int
-                                let Opacity = data["Opacity"] as! String
-                                let cardDataTypeFire: [String] = data["CardDataType"] as? NSArray as? [String] ?? []
-                                if BackgroundStyle == 0{
-                                    let captionFire = data["Caption"] as! String
-                                    let titleFire = data["Title"] as! String
-                                    let ColorFire = data["Color"] as! String
-                                    var CardDataIn: [DataIdType] = []
-                                    for y in 0..<cardDataNameFire.count{
-                                        if cardDataTypeFire.count != 0{
-                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                        } else {
-                                            CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                        }
-                                    }
-                                    AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                } else {
-                                    if BackgroundStyle == 1{
-                                        let ImageRefFire = data["ImageRef"] as! String
-                                        var CardDataIn: [DataIdType] = []
-                                        for y in 0..<cardDataNameFire.count{
-                                            if cardDataTypeFire.count != 0{
-                                                CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                            } else {
-                                                CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                            }
-                                        }
-                                        AvaliableCards.append(CardType(Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                    } else {
-                                        if BackgroundStyle == 2{
-                                            let captionFire = data["Caption"] as! String
-                                            let titleFire = data["Title"] as! String
-                                            let ImageRefFire = data["ImageRef"] as! String
-                                            var CardDataIn: [DataIdType] = []
-                                            for y in 0..<cardDataNameFire.count{
-                                                if cardDataTypeFire.count != 0{
-                                                    CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                                } else {
-                                                    CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                                }
-                                            }
-                                            AvaliableCards.append(CardType(Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                        } else {
-                                            if BackgroundStyle == 3{
-                                                let ColorFire = data["Color"] as! String
-                                                let LongTextFire = data["Text"] as! String
-                                                var CardDataIn: [DataIdType] = []
-                                                for y in 0..<cardDataNameFire.count{
-                                                    if cardDataTypeFire.count != 0{
-                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
-                                                    } else {
-                                                        CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: nil))
-                                                    }
-                                                }
-                                                AvaliableCards.append(CardType(Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, Opacity: Double(Opacity)!, Destination: destinationFire, CardData: CardDataIn))
-                                            }
-                                        }
-                                    }
-                                }
+                            Functions().GetCardData(CardIds: Cards) { (cards) in
+                                AvaliableCards = cards
                             }
                         }
                     }
-                } //mark
+                }
             } catch {
                 print("Error")
             }
@@ -501,6 +339,7 @@ struct SportsView: View{
     let Sports: [String] = ["Highlights", "Badminton", "Basketball", "Beach Volleyball", "Cross Country", "Curling", "Football", "Golf", "Hockey", "Rugby", "Soccer", "Track & Field", "Ultimate Frisbee", "Volleyball", "Wrestling"]
     @State var SelectedSport: String = "Highlights"
     @State var ShowingTitle: Bool = true
+    @Binding var accessToken: String?
     var body: some View{
         GeometryReader{ geo in
             ZStack{
@@ -586,9 +425,9 @@ struct SportsView: View{
                         }
                         )
                     if SelectedSport == "Highlights"{
-                        HighlightView()
+                        HighlightView(accessToken: $accessToken)
                     } else {
-                        InSportView(SelectedSport: $SelectedSport)
+                        InSportView(SelectedSport: $SelectedSport, accessToken: $accessToken)
                     }
                     Spacer()
                 }
@@ -600,7 +439,7 @@ struct SportsView: View{
 #if DEBUG
 struct ReminderRowPreview: PreviewProvider {
     static var previews: some View {
-        SportsView()
+        SportsView(accessToken: .constant("Stop"))
     }
 }
 #endif

@@ -13,16 +13,24 @@ import FirebaseFirestore
 struct CardType: Hashable {
     let FirebaseID: Int
     let Use: String
+    let BackgroundStyle: Int
+    let Opacity: String
     
     //Card Face
-    let Title: String
-    let Caption: String
+    let Title: String?
+    let Caption: String?
+    let ImageRef: String?
+    let SelectedColor: String?
+    let LongText: String?
     
     //Card Destintation
-    let Destination: Int
     let CardData: [String]
     let CardDataName: [String]
-    let CardDataType: [String]?
+    let CardDataType: [String]
+    
+    let Permissions: [String]
+    let Hidden: Bool
+    
 }
 
 //struct AddClassViewList: View{
@@ -180,8 +188,13 @@ struct AddClassViewAvaliableCoursesView: View{
                            let CardDestination = documentData["Destination"] as? Int ?? 0
                            let CardCardData = documentData["CardData"] as? [String] ?? []
                            let CardCardDataName = documentData["CardDataName"] as? [String] ?? []
+                           let CardCardDataType = documentData["CardDataType"] as? [String] ?? []
+                           let CardBackgroundStyle = documentData["BackgroundStyle"] as? Int ?? 0
+                           let CardOpacity = documentData["Opacity"] as? String ?? "Error"
+                           let Permissions = documentData["Permissions"] as? NSArray as? [String]
+                           let Hidden = documentData["Hidden"] as? Bool
                            if CardID != 0 {
-                               UnSelectedCard.append(CardType(FirebaseID: CardID, Use: CardUse, Title: CardTitle, Caption: CardCaption, Destination: CardDestination, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: nil))
+                               UnSelectedCard.append(CardType(FirebaseID: CardID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: CardTitle, Caption: CardCaption, ImageRef: nil, SelectedColor: nil, LongText: nil, CardData: CardCardDataType, CardDataName: CardCardDataName, CardDataType: CardCardDataType, Permissions: Permissions!, Hidden: Hidden!))
                            }
                            
                        })

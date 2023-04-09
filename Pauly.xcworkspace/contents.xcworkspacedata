@@ -2,9 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Pauly Backend">
+      location = "group:Pauly Backend/../Pauly App/Pauly.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Pauly App">
+      location = "group:Pauly Backend/Pauly Backend.xcodeproj">
    </FileRef>
 </Workspace>

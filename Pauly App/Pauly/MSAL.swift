@@ -407,6 +407,7 @@ enum GraphCallingErrors: Error{
     case APICallFailed
     case CouldNotDecodeAPI
     case ClientIDNotFound
+    case ConnotFindAPIInfo
 }
 
 class MSALTools{
