@@ -7,21 +7,21 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
+enum SelectedBackendModeEnum{
+    case Home
+    case Password
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+struct ContentView: View {
+    @State var SelectedBackendMode: SelectedBackendModeEnum = .Password
+    @State var accessToken: String?
+    var body: some View {
+        switch SelectedBackendMode {
+        case .Home:
+            HomePageView()
+        case .Password:
+            PasswordView(accessToken: $accessToken, SelectedBackendMode: $SelectedBackendMode)
+        }
     }
 }
 

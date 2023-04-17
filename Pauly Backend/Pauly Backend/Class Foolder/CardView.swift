@@ -114,27 +114,33 @@ struct CardViewOverview: View{
                            let CardCardDataType = documentData["CardDataType"] as! NSArray as? [String] ?? []
                            let CardBackgroundStyle = documentData["BackgroundStyle"] as? Int ?? 0
                            let CardOpacity = documentData["Opacity"] as? String ?? "Error"
+                           guard let CardPermissions = documentData["Permissions"] as? NSArray as? [String] else {
+                               return
+                           }
+                           guard let CardHidden = documentData["Hidden"] as? Bool else {
+                               return
+                           }
                            
                            if CardBackgroundStyle  == 0{
                                let CardTitle = documentData["Title"] as? String ?? "Error"
                                let CardCaption = documentData["Caption"] as? String ?? "Error"
                                let CardColor = documentData["Color"] as? String ?? "Error"
-                               AvaliableCards.append(CardType(FirebaseID: CardFirebaseID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: CardTitle, Caption: CardCaption, ImageRef: nil, SelectedColor: CardColor, LongText: nil, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: CardCardDataType))
+                               AvaliableCards.append(CardType(FirebaseID: CardFirebaseID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: CardTitle, Caption: CardCaption, ImageRef: nil, SelectedColor: CardColor, LongText: nil, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: CardCardDataType, Permissions: CardPermissions, Hidden: CardHidden))
                            } else {
                                if CardBackgroundStyle == 1{
                                    let CardImageRef = documentData["ImageRef"] as? String ?? "Error"
-                                   AvaliableCards.append(CardType(FirebaseID: CardFirebaseID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: nil, Caption: nil, ImageRef: CardImageRef, SelectedColor: nil, LongText: nil, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: CardCardDataType))
+                                   AvaliableCards.append(CardType(FirebaseID: CardFirebaseID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: nil, Caption: nil, ImageRef: CardImageRef, SelectedColor: nil, LongText: nil, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: CardCardDataType, Permissions: CardPermissions, Hidden: CardHidden))
                                } else {
                                    if  CardBackgroundStyle == 2{
                                        let CardTitle = documentData["Title"] as? String ?? "Error"
                                        let CardCaption = documentData["Caption"] as? String ?? "Error"
                                        let CardImageRef = documentData["ImageRef"] as? String ?? "Error"
-                                       AvaliableCards.append(CardType(FirebaseID: CardFirebaseID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: CardTitle, Caption: CardCaption, ImageRef: CardImageRef, SelectedColor: nil, LongText: nil, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: CardCardDataType))
+                                       AvaliableCards.append(CardType(FirebaseID: CardFirebaseID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: CardTitle, Caption: CardCaption, ImageRef: CardImageRef, SelectedColor: nil, LongText: nil, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: CardCardDataType, Permissions: CardPermissions, Hidden: CardHidden))
                                    } else {
                                        if CardBackgroundStyle == 3{
                                            let CardLongText = documentData["Text"] as? String ?? "Error"
                                            let CardColor = documentData["Color"] as? String ?? "Error"
-                                           AvaliableCards.append(CardType(FirebaseID: CardFirebaseID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: nil, Caption: nil, ImageRef: nil, SelectedColor: CardColor, LongText: CardLongText, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: CardCardDataType))
+                                           AvaliableCards.append(CardType(FirebaseID: CardFirebaseID, Use: CardUse, BackgroundStyle: CardBackgroundStyle, Opacity: CardOpacity, Title: nil, Caption: nil, ImageRef: nil, SelectedColor: CardColor, LongText: CardLongText, CardData: CardCardData, CardDataName: CardCardDataName, CardDataType: CardCardDataType, Permissions: CardPermissions, Hidden: CardHidden))
                                        }
                                    }
                                }

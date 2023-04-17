@@ -89,7 +89,7 @@ struct PermissionsManagerHome: View{
 struct PermissionsManagerUser: View{
     @Binding var SelectedUser: UserPermissionsType?
     @Binding var SelectedPermissionsManagerViewMode: PermissionsManagerViewMode
-    let AvaliablePermissions: [Int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    let AvaliablePermissions: [Int] = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
     @State var SelectedPermission: Int = 0
     @State var Classes: [String] = []
     @State var Teams: [String] = []
@@ -111,347 +111,373 @@ struct PermissionsManagerUser: View{
     @State var PermissionsChanged: Bool = false
     @State var TeamsPermissions: [String] = []
     @State var ClassPermissions: [String] = []
+    @State var ShowingPermissionsView: Bool = false
     var body: some View{
-        VStack{
-            Button(){
-                SelectedPermissionsManagerViewMode = .Home
-            } label: {
-                Text("back")
-            }
-            Text("User \(SelectedUser!.Name)")
-                .onAppear(){
-                    if SelectedUser!.Permissions.contains(15){
-                        let db = Firestore.firestore()
-                        
-                        let docRef = db.collection("Users").document(SelectedUser!.UserID)
-                        
-                        docRef.getDocument { (document, error) in
-                            guard error == nil else {
-                                print("error", error ?? "")
-                                return
-                            }
-                            
-                            if let document = document, document.exists {
-                                let data = document.data()
-                                if let data = data {
-                                    SelectedSportsPermissionState = data["SportsMode"] as! Int
-                                    if SelectedSportsPermissionState == 0{
-                                        TeamsPermissions = data["SportPerms"] as! NSArray as? [String] ?? []
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if SelectedUser!.Permissions.contains(16){
-                        let db = Firestore.firestore()
-                        
-                        let docRef = db.collection("Users").document(SelectedUser!.UserID)
-                        
-                        docRef.getDocument { (document, error) in
-                            guard error == nil else {
-                                print("error", error ?? "")
-                                return
-                            }
-                            
-                            if let document = document, document.exists {
-                                let data = document.data()
-                                if let data = data {
-                                    SelectedCardPermissionState = data["CardMode"] as! Int
-                                }
-                            }
-                        }
-                    }
-                    if SelectedUser!.Permissions.contains(19){
-                        let db = Firestore.firestore()
-                        
-                        let docRef = db.collection("Users").document(SelectedUser!.UserID)
-                        
-                        docRef.getDocument { (document, error) in
-                            guard error == nil else {
-                                print("error", error ?? "")
-                                return
-                            }
-                            
-                            if let document = document, document.exists {
-                                let data = document.data()
-                                if let data = data {
-                                    SelectedClassPermissionState = data["ClassMode"] as! Int
-                                    if SelectedClassPermissionState == 0{
-                                        ClassPermissions = data["ClassPerms"] as! NSArray as? [String] ?? []
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            List(){
-                ForEach(SelectedUser!.Permissions, id: \.self){ Perm in
-                    HStack{
-                        Text("\(Perm)")
-                        Button(){
-                            if let Index = SelectedUser!.Permissions.firstIndex(where: { $0 == Perm }){
-                                SelectedUser!.Permissions.remove(at: Index)
-                            }
-                        } label: {
-                            Text("Remove")
-                        }
-                    }
-                }
-            }
-            Picker("Selected Permission", selection: $SelectedPermission){
-                ForEach(AvaliablePermissions, id: \.self){ permission in
-                    Text("\(permission)")
-                }
-            }
-            if SelectedPermission != 0{
-                if SelectedPermission == 15{
-                    Picker("Sports Permission", selection: $SelectedSportsPermissionState){
-                        Text("Sport").tag(0)
-                        Text("Absolute").tag(1)
-                    }
-                    if SelectedSportsPermissionState == 0{
-                        VStack{
-                            Text(TeamsPermissions.description)
-                            HStack{
-                                Picker("Selected Sport", selection: $SelectedSport){
-                                    ForEach(AvaliableSports, id: \.self){ sport in
-                                        Text(sport)
-                                    }
-                                }
-                                Picker("Selected Season", selection: $SelectedSeason){
-                                    ForEach(AvaliableSeason, id: \.self){ sport in
-                                        Text("\(sport)")
-                                    }
-                                }
-                                Picker("Selected Team", selection: $SelectedTeam){
-                                    ForEach(AvaliableTeams, id: \.self){ sport in
-                                        Text(sport)
-                                    }
-                                }
-                                Button("Confirm"){
-                                    if SelectedSport == "Highlights"{
-                                        TeamsPermissions.append("Highlights")
-                                        PermissionsChanged = true
-                                    } else {
-                                        if SelectedSport != "" && SelectedSeason != 0 && SelectedTeam != ""{
-                                            TeamsPermissions.append("\(SelectedSport)-\(SelectedSeason)-\(SelectedTeam)")
-                                            PermissionsChanged = true
-                                        }
-                                    }
-                                }
-                            }.onAppear() {
-                                AvaliableSports = []
-                                
-                                let db = FirebaseFirestore.Firestore.firestore()
-                                
-                                let docRef = db.collection("Sports")
-                                
-                                docRef.getDocuments { (snapshot, error) in
-                                     guard let snapshot = snapshot, error == nil else {
-                                      //handle error
-                                      return
-                                    }
-                                    snapshot.documents.forEach({ (documentSnapshot) in
-                                      let documentData = documentSnapshot.data()
-                                      let name = documentData["Name"] as? String
-                                        AvaliableSports.append(name ?? "Error")
-                                    })
-                                  }
-                            }
-                            .onChange(of: SelectedSport){ sport in
-                                if SelectedSport == "Highlights"{
-                                    SelectedSeason = 0
-                                    SelectedTeam = "N/A"
-                                } else {
-                                    let db = FirebaseFirestore.Firestore.firestore()
-                                    
-                                    let docRef = db.collection("Sports").document(SelectedSport).collection("Seasons")
-                                    
-                                    docRef.getDocuments { (snapshot, error) in
-                                         guard let snapshot = snapshot, error == nil else {
-                                          //handle error
-                                          return
-                                        }
-                                        snapshot.documents.forEach({ (documentSnapshot) in
-                                          let documentData = documentSnapshot.data()
-                                          let name = documentData["Season"] as? Int
-                                            AvaliableSeason.append(name!)
-                                        })
-                                      }
-                                }
-                            }
-                            .onChange(of: SelectedSeason){ sport in
-                                let db = FirebaseFirestore.Firestore.firestore()
-                                
-                                let docRef = db.collection("Sports").document(SelectedSport).collection("Seasons").document("\(SelectedSeason)").collection("Teams")
-                                
-                                docRef.getDocuments { (snapshot, error) in
-                                     guard let snapshot = snapshot, error == nil else {
-                                      //handle error
-                                      return
-                                    }
-                                    snapshot.documents.forEach({ (documentSnapshot) in
-                                      let documentData = documentSnapshot.data()
-                                      let name = documentData["TeamName"] as? String
-                                        AvaliableTeams.append(name!)
-                                    })
-                                  }
-                            }
-                        }
-                        
-                    }
-                } else {
-                    if SelectedPermission == 16{
-                        Picker("Card Permission", selection: $SelectedCardPermissionState){
-                            Text("User").tag(0)
-                            Text("Absolute").tag(1)
-                        }
-                    } else {
-                        if SelectedPermission == 19{
-                            Picker("Class Permission", selection: $SelectedClassPermissionState){
-                                Text("Class").tag(0)
-                                Text("Absolute").tag(1)
-                            }
-                            if SelectedClassPermissionState == 0{
-                                VStack{
-                                    Text(ClassPermissions.description)
-                                    HStack{
-                                        Picker("SelectedGrade", selection: $ClassSelectedGrade){
-                                            ForEach(AvaliableGrade, id: \.self){ grade in
-                                                Text("\(grade)")
-                                            }
-                                        }
-                                        Picker("SelectedCourse", selection: $ClassSelectedCourse){
-                                            ForEach(AvaliableCoursesForGrade, id: \.self){ grade in
-                                                Text("\(grade)")
-                                            }
-                                        }
-                                        Picker("SelectedSection", selection: $ClassSelectedSection){
-                                            ForEach(AvaliableSectionsForCourse, id: \.self){ grade in
-                                                Text("\(grade)")
-                                            }
-                                        }
-                                        Button("Confirm"){
-                                            if ClassSelectedGrade != 0 && ClassSelectedCourse != "" && ClassSelectedSection != ""{
-                                                ClassPermissions.append("\(ClassSelectedGrade)-\(ClassSelectedCourse)-\(ClassSelectedSection)")
-                                                PermissionsChanged = true
-                                            }
-                                        }
-                                    }.onAppear(){
-                                        let db = FirebaseFirestore.Firestore.firestore()
-                                        
-                                        let docRef = db.collection("Grade\(ClassSelectedGrade)Courses")
-                                        
-                                        docRef.getDocuments { (snapshot, error) in
-                                             guard let snapshot = snapshot, error == nil else {
-                                              //handle error
-                                              return
-                                            }
-                                            snapshot.documents.forEach({ (documentSnapshot) in
-                                              let documentData = documentSnapshot.data()
-                                              let name = documentData["CourseName"] as? String
-                                                AvaliableCoursesForGrade.append(name ?? "Error")
-                                            })
-                                          }
-                                    }
-                                    .onChange(of: ClassSelectedGrade){ newvalue in
-                                        AvaliableCoursesForGrade = []
-                                        let db = FirebaseFirestore.Firestore.firestore()
-                                        
-                                        let docRef = db.collection("Grade\(ClassSelectedGrade)Courses")
-                                        
-                                        docRef.getDocuments { (snapshot, error) in
-                                             guard let snapshot = snapshot, error == nil else {
-                                              //handle error
-                                              return
-                                            }
-                                            snapshot.documents.forEach({ (documentSnapshot) in
-                                              let documentData = documentSnapshot.data()
-                                              let name = documentData["CourseName"] as? String
-                                                AvaliableCoursesForGrade.append(name ?? "Error")
-                                            })
-                                          }
-                                    }
-                                    .onChange(of: ClassSelectedCourse){ course in
-                                        let db = FirebaseFirestore.Firestore.firestore()
-                                        
-                                        let docRef = db.collection("Grade\(ClassSelectedGrade)Courses").document(ClassSelectedCourse).collection("Sections")
-                                        
-                                        docRef.getDocuments { (snapshot, error) in
-                                             guard let snapshot = snapshot, error == nil else {
-                                              //handle error
-                                              return
-                                            }
-                                            snapshot.documents.forEach({ (documentSnapshot) in
-                                              let documentData = documentSnapshot.data()
-                                              let name = documentData["Section"] as? Int
-                                                if name != 0{
-                                                    let Year = documentData["School Year"] as? Int
-                                                    AvaliableSectionsForCourse.append("\(name!)-\(Year!)")
-                                                } else {
-                                                    AvaliableSectionsForCourse.append("\(name!)")
-                                                }
-                                            })
-                                          }
-                                        
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                HStack{
-                    Button(){
-                        if SelectedUser!.Permissions.contains(SelectedPermission){
-                            
-                        } else {
-                            SelectedUser!.Permissions.append(SelectedPermission)
-                            PermissionsChanged = true
-                        }
-                    } label: {
-                        Text("Add Permission")
-                    }
-                    Button(){
-                        if PermissionsChanged{
-                            let db = Firestore.firestore()
-                            
-                            let docRef = db.collection("Users").document(SelectedUser!.UserID)
-                            
-                            var InputData: [String: Any] = [
-                                "Permissions":SelectedUser!.Permissions
-                            ]
-                            if SelectedUser!.Permissions.contains(15){
-                                InputData["SportsMode"] = SelectedSportsPermissionState
-                                InputData["SportPerms"] = TeamsPermissions
-                            }
-                            if SelectedUser!.Permissions.contains(19){
-                                InputData["ClassPerms"] = ClassPermissions
-                                InputData["ClassMode"] = SelectedClassPermissionState
-                            }
-                            if SelectedUser!.Permissions.contains(16){
-                                InputData["CardMode"] = SelectedCardPermissionState
-                            }
-                            docRef.setData(InputData, merge: true){ error in
-                                if let error = error {
-                                    print("Error writing document: \(error)")
-                                } else {
-                                    print("Document successfully written!")
-                                }
-                            }
-                        }
-                    } label: {
-                        Text("Confirm")
-                    }
+        GeometryReader{ geo in
+            ZStack{
+                VStack{
                     Button(){
                         SelectedPermissionsManagerViewMode = .Home
                     } label: {
-                        Text("Back")
+                        Text("back")
                     }
+                    Text("User \(SelectedUser!.Name)")
+                        .onAppear(){
+                            if SelectedUser!.Permissions.contains(15){
+                                let db = Firestore.firestore()
+                                
+                                let docRef = db.collection("Users").document(SelectedUser!.UserID)
+                                
+                                docRef.getDocument { (document, error) in
+                                    guard error == nil else {
+                                        print("error", error ?? "")
+                                        return
+                                    }
+                                    
+                                    if let document = document, document.exists {
+                                        let data = document.data()
+                                        if let data = data {
+                                            SelectedSportsPermissionState = data["SportsMode"] as! Int
+                                            if SelectedSportsPermissionState == 0{
+                                                TeamsPermissions = data["SportPerms"] as! NSArray as? [String] ?? []
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if SelectedUser!.Permissions.contains(16){
+                                let db = Firestore.firestore()
+                                
+                                let docRef = db.collection("Users").document(SelectedUser!.UserID)
+                                
+                                docRef.getDocument { (document, error) in
+                                    guard error == nil else {
+                                        print("error", error ?? "")
+                                        return
+                                    }
+                                    
+                                    if let document = document, document.exists {
+                                        let data = document.data()
+                                        if let data = data {
+                                            SelectedCardPermissionState = data["CardMode"] as! Int
+                                        }
+                                    }
+                                }
+                            }
+                            if SelectedUser!.Permissions.contains(19){
+                                let db = Firestore.firestore()
+                                
+                                let docRef = db.collection("Users").document(SelectedUser!.UserID)
+                                
+                                docRef.getDocument { (document, error) in
+                                    guard error == nil else {
+                                        print("error", error ?? "")
+                                        return
+                                    }
+                                    
+                                    if let document = document, document.exists {
+                                        let data = document.data()
+                                        if let data = data {
+                                            SelectedClassPermissionState = data["ClassMode"] as! Int
+                                            if SelectedClassPermissionState == 0{
+                                                ClassPermissions = data["ClassPerms"] as! NSArray as? [String] ?? []
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    List(){
+                        ForEach(SelectedUser!.Permissions, id: \.self){ Perm in
+                            HStack{
+                                Text("\(Perm)")
+                                Button(){
+                                    if let Index = SelectedUser!.Permissions.firstIndex(where: { $0 == Perm }){
+                                        SelectedUser!.Permissions.remove(at: Index)
+                                    }
+                                } label: {
+                                    Text("Remove")
+                                }
+                            }
+                        }
+                    }
+                    Button(){
+                        ShowingPermissionsView = true
+                    } label: {
+                        Text("Add Permissions")
+                    }
+                }
+                if ShowingPermissionsView{
+                    ZStack{
+                        Rectangle()
+                            .border(.black)
+                            .foregroundColor(.white)
+                            .scaledToFill()
+                        VStack{
+                            Button(){
+                                ShowingPermissionsView = false
+                            } label: {
+                                Text("Back")
+                            }
+                            List(){
+                                ForEach(AvaliablePermissions, id: \.self){ permission in
+                                    Button{
+                                        SelectedPermission = permission
+                                    } label: {
+                                        Text("\(permission)")
+                                    }
+                                }
+                            }
+                            if SelectedPermission != 0{
+                                if SelectedPermission == 15{
+                                    Picker("Sports Permission", selection: $SelectedSportsPermissionState){
+                                        Text("Sport").tag(0)
+                                        Text("Absolute").tag(1)
+                                    }
+                                    if SelectedSportsPermissionState == 0{
+                                        VStack{
+                                            Text(TeamsPermissions.description)
+                                            HStack{
+                                                Picker("Selected Sport", selection: $SelectedSport){
+                                                    ForEach(AvaliableSports, id: \.self){ sport in
+                                                        Text(sport)
+                                                    }
+                                                }
+                                                Picker("Selected Season", selection: $SelectedSeason){
+                                                    ForEach(AvaliableSeason, id: \.self){ sport in
+                                                        Text("\(sport)")
+                                                    }
+                                                }
+                                                Picker("Selected Team", selection: $SelectedTeam){
+                                                    ForEach(AvaliableTeams, id: \.self){ sport in
+                                                        Text(sport)
+                                                    }
+                                                }
+                                                Button("Confirm"){
+                                                    if SelectedSport == "Highlights"{
+                                                        TeamsPermissions.append("Highlights")
+                                                        PermissionsChanged = true
+                                                    } else {
+                                                        if SelectedSport != "" && SelectedSeason != 0 && SelectedTeam != ""{
+                                                            TeamsPermissions.append("\(SelectedSport)-\(SelectedSeason)-\(SelectedTeam)")
+                                                            PermissionsChanged = true
+                                                        }
+                                                    }
+                                                }
+                                            }.onAppear() {
+                                                AvaliableSports = []
+                                                
+                                                let db = FirebaseFirestore.Firestore.firestore()
+                                                
+                                                let docRef = db.collection("Sports")
+                                                
+                                                docRef.getDocuments { (snapshot, error) in
+                                                     guard let snapshot = snapshot, error == nil else {
+                                                      //handle error
+                                                      return
+                                                    }
+                                                    snapshot.documents.forEach({ (documentSnapshot) in
+                                                      let documentData = documentSnapshot.data()
+                                                      let name = documentData["Name"] as? String
+                                                        AvaliableSports.append(name ?? "Error")
+                                                    })
+                                                  }
+                                            }
+                                            .onChange(of: SelectedSport){ sport in
+                                                if SelectedSport == "Highlights"{
+                                                    SelectedSeason = 0
+                                                    SelectedTeam = "N/A"
+                                                } else {
+                                                    let db = FirebaseFirestore.Firestore.firestore()
+                                                    
+                                                    let docRef = db.collection("Sports").document(SelectedSport).collection("Seasons")
+                                                    
+                                                    docRef.getDocuments { (snapshot, error) in
+                                                         guard let snapshot = snapshot, error == nil else {
+                                                          //handle error
+                                                          return
+                                                        }
+                                                        snapshot.documents.forEach({ (documentSnapshot) in
+                                                          let documentData = documentSnapshot.data()
+                                                          let name = documentData["Season"] as? Int
+                                                            AvaliableSeason.append(name!)
+                                                        })
+                                                      }
+                                                }
+                                            }
+                                            .onChange(of: SelectedSeason){ sport in
+                                                let db = FirebaseFirestore.Firestore.firestore()
+                                                
+                                                let docRef = db.collection("Sports").document(SelectedSport).collection("Seasons").document("\(SelectedSeason)").collection("Teams")
+                                                
+                                                docRef.getDocuments { (snapshot, error) in
+                                                     guard let snapshot = snapshot, error == nil else {
+                                                      //handle error
+                                                      return
+                                                    }
+                                                    snapshot.documents.forEach({ (documentSnapshot) in
+                                                      let documentData = documentSnapshot.data()
+                                                      let name = documentData["TeamName"] as? String
+                                                        AvaliableTeams.append(name!)
+                                                    })
+                                                  }
+                                            }
+                                        }
+                                        
+                                    }
+                                } else {
+                                    if SelectedPermission == 16{
+                                        Picker("Card Permission", selection: $SelectedCardPermissionState){
+                                            Text("User").tag(0)
+                                            Text("Absolute").tag(1)
+                                        }
+                                    } else {
+                                        if SelectedPermission == 19{
+                                            Picker("Class Permission", selection: $SelectedClassPermissionState){
+                                                Text("Class").tag(0)
+                                                Text("Absolute").tag(1)
+                                            }
+                                            if SelectedClassPermissionState == 0{
+                                                VStack{
+                                                    Text(ClassPermissions.description)
+                                                    HStack{
+                                                        Picker("SelectedGrade", selection: $ClassSelectedGrade){
+                                                            ForEach(AvaliableGrade, id: \.self){ grade in
+                                                                Text("\(grade)")
+                                                            }
+                                                        }
+                                                        Picker("SelectedCourse", selection: $ClassSelectedCourse){
+                                                            ForEach(AvaliableCoursesForGrade, id: \.self){ grade in
+                                                                Text("\(grade)")
+                                                            }
+                                                        }
+                                                        Picker("SelectedSection", selection: $ClassSelectedSection){
+                                                            ForEach(AvaliableSectionsForCourse, id: \.self){ grade in
+                                                                Text("\(grade)")
+                                                            }
+                                                        }
+                                                        Button("Confirm"){
+                                                            if ClassSelectedGrade != 0 && ClassSelectedCourse != "" && ClassSelectedSection != ""{
+                                                                ClassPermissions.append("\(ClassSelectedGrade)-\(ClassSelectedCourse)-\(ClassSelectedSection)")
+                                                                PermissionsChanged = true
+                                                            }
+                                                        }
+                                                    }.onAppear(){
+                                                        let db = FirebaseFirestore.Firestore.firestore()
+                                                        
+                                                        let docRef = db.collection("Grade\(ClassSelectedGrade)Courses")
+                                                        
+                                                        docRef.getDocuments { (snapshot, error) in
+                                                             guard let snapshot = snapshot, error == nil else {
+                                                              //handle error
+                                                              return
+                                                            }
+                                                            snapshot.documents.forEach({ (documentSnapshot) in
+                                                              let documentData = documentSnapshot.data()
+                                                              let name = documentData["CourseName"] as? String
+                                                                AvaliableCoursesForGrade.append(name ?? "Error")
+                                                            })
+                                                          }
+                                                    }
+                                                    .onChange(of: ClassSelectedGrade){ newvalue in
+                                                        AvaliableCoursesForGrade = []
+                                                        let db = FirebaseFirestore.Firestore.firestore()
+                                                        
+                                                        let docRef = db.collection("Grade\(ClassSelectedGrade)Courses")
+                                                        
+                                                        docRef.getDocuments { (snapshot, error) in
+                                                             guard let snapshot = snapshot, error == nil else {
+                                                              //handle error
+                                                              return
+                                                            }
+                                                            snapshot.documents.forEach({ (documentSnapshot) in
+                                                              let documentData = documentSnapshot.data()
+                                                              let name = documentData["CourseName"] as? String
+                                                                AvaliableCoursesForGrade.append(name ?? "Error")
+                                                            })
+                                                          }
+                                                    }
+                                                    .onChange(of: ClassSelectedCourse){ course in
+                                                        let db = FirebaseFirestore.Firestore.firestore()
+                                                        
+                                                        let docRef = db.collection("Grade\(ClassSelectedGrade)Courses").document(ClassSelectedCourse).collection("Sections")
+                                                        
+                                                        docRef.getDocuments { (snapshot, error) in
+                                                             guard let snapshot = snapshot, error == nil else {
+                                                              //handle error
+                                                              return
+                                                            }
+                                                            snapshot.documents.forEach({ (documentSnapshot) in
+                                                              let documentData = documentSnapshot.data()
+                                                              let name = documentData["Section"] as? Int
+                                                                if name != 0{
+                                                                    let Year = documentData["School Year"] as? Int
+                                                                    AvaliableSectionsForCourse.append("\(name!)-\(Year!)")
+                                                                } else {
+                                                                    AvaliableSectionsForCourse.append("\(name!)")
+                                                                }
+                                                            })
+                                                          }
+                                                        
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                HStack{
+                                    Button(){
+                                        if SelectedUser!.Permissions.contains(SelectedPermission){
+                                            
+                                        } else {
+                                            SelectedUser!.Permissions.append(SelectedPermission)
+                                            PermissionsChanged = true
+                                        }
+                                    } label: {
+                                        Text("Add Permission")
+                                    }
+                                    Button(){
+                                        if PermissionsChanged{
+                                            let db = Firestore.firestore()
+                                            
+                                            let docRef = db.collection("Users").document(SelectedUser!.UserID)
+                                            
+                                            var InputData: [String: Any] = [
+                                                "Permissions":SelectedUser!.Permissions
+                                            ]
+                                            if SelectedUser!.Permissions.contains(15){
+                                                InputData["SportsMode"] = SelectedSportsPermissionState
+                                                InputData["SportPerms"] = TeamsPermissions
+                                            }
+                                            if SelectedUser!.Permissions.contains(19){
+                                                InputData["ClassPerms"] = ClassPermissions
+                                                InputData["ClassMode"] = SelectedClassPermissionState
+                                            }
+                                            if SelectedUser!.Permissions.contains(16){
+                                                InputData["CardMode"] = SelectedCardPermissionState
+                                            }
+                                            docRef.setData(InputData, merge: true){ error in
+                                                if let error = error {
+                                                    print("Error writing document: \(error)")
+                                                } else {
+                                                    print("Document successfully written!")
+                                                }
+                                            }
+                                        }
+                                    } label: {
+                                        Text("Confirm")
+                                    }
+                                    Button(){
+                                        SelectedPermissionsManagerViewMode = .Home
+                                    } label: {
+                                        Text("Back")
+                                    }
+                                }
+                            }
+                        }//mark
+                    }.frame(width: geo.size.width * 0.6, height: geo.size.height * 0.8)
                 }
             }
         }
-    }
-    func FetchGradeCourses() {
-        
     }
 }

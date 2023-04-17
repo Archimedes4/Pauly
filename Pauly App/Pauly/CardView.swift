@@ -8,11 +8,16 @@
 import SwiftUI
 import FirebaseFirestore
 import FirebaseStorage
+import SDWebImageSwiftUI
 
 struct CardBackground: View{
     let TextColor: Color
-    @State var SelectedCard: CardType
+    @Binding var SelectedCard: CardType
     @State var SelectedImage: UIImage?
+    @State var GifMode: Bool = false
+    @State var GifData: Data?
+    @State var TextSize: CGSize = CGSize(width: 0, height: 0)
+    @State var ErrorOcurred: Bool = false
     var body: some View{
         if SelectedCard.BackgroundStyle == 0{
             ZStack{
@@ -31,31 +36,124 @@ struct CardBackground: View{
         } else {
             if SelectedCard.BackgroundStyle == 1{
                 ZStack{
-                    if SelectedImage != nil{
-                        Image(uiImage: SelectedImage!)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    } else {
-                        Rectangle()
-                            .foregroundColor(.white)
-                            .onAppear(){
-                                GetImage(Ref: SelectedCard.ImageRef!)
+                    if SelectedImage != nil || GifData != nil{
+                        if GifMode{
+                            ZStack{
+                                Rectangle()
+                                    .foregroundColor(.white)
+                                    .cornerRadius(20)
+                                    .saveSize(in: $TextSize)
+                                Group{
+                                    AnimatedImage(data: GifData!)
+                                        .resizable()
+                                        .cornerRadius(20)
+                                        .frame(height: TextSize.height)
+                                        
+                                }
                             }
+                        } else {
+                            Image(uiImage: SelectedImage!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
+                    } else {
+                        if ErrorOcurred {
+                            ZStack{
+                                Rectangle()
+                                    .foregroundColor(.white)
+                                    .cornerRadius(20)
+                                    .onAppear(){
+                                        GetImage(Ref: SelectedCard.ImageRef!)
+                                    }
+                                VStack{
+                                    Spacer()
+                                    HStack{
+                                        Spacer()
+                                        Image(systemName: "wifi.exclamationmark")
+                                        Spacer()
+                                    }
+                                    Spacer()
+                                }
+                            }
+                        } else {
+                            ZStack{
+                                Rectangle()
+                                    .foregroundColor(.white)
+                                    .cornerRadius(20)
+                                    .onAppear(){
+                                        GetImage(Ref: SelectedCard.ImageRef!)
+                                    }
+                                VStack{
+                                    Spacer()
+                                    HStack{
+                                        Spacer()
+                                        ProgressView()
+                                        Spacer()
+                                    }
+                                    Spacer()
+                                }
+                            }
+                        }
                     }
                 }
             } else {
                 if SelectedCard.BackgroundStyle == 2{
                     ZStack{
-                        if SelectedImage != nil{
-                            Image(uiImage: SelectedImage!)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        } else {
-                            Rectangle()
-                                .foregroundColor(.white)
-                                .onAppear(){
-                                    GetImage(Ref: SelectedCard.ImageRef!)
+                        if SelectedImage != nil || GifData != nil{
+                            if GifMode{
+                                ZStack{
+                                    Rectangle()
+                                        .foregroundColor(.white)
+                                        .cornerRadius(20)
+                                        .saveSize(in: $TextSize)
+                                    AnimatedImage(data: GifData!)
+                                        .resizable()
+                                        .cornerRadius(20)
+                                        .frame(height: TextSize.height)
                                 }
+                            } else {
+                                Image(uiImage: SelectedImage!)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                            }
+                        } else {
+                            if ErrorOcurred {
+                                ZStack{
+                                    Rectangle()
+                                        .foregroundColor(.white)
+                                        .cornerRadius(20)
+                                        .onAppear(){
+                                            GetImage(Ref: SelectedCard.ImageRef!)
+                                        }
+                                    VStack{
+                                        Spacer()
+                                        HStack{
+                                            Spacer()
+                                            Image(systemName: "wifi.exclamationmark")
+                                            Spacer()
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                            } else {
+                                ZStack{
+                                    Rectangle()
+                                        .foregroundColor(.white)
+                                        .cornerRadius(20)
+                                        .onAppear(){
+                                            GetImage(Ref: SelectedCard.ImageRef!)
+                                        }
+                                    VStack{
+                                        Spacer()
+                                        HStack{
+                                            Spacer()
+                                            ProgressView()
+                                            Spacer()
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                            }
                         }
                         VStack{
                             Text(SelectedCard.Title!)
@@ -83,14 +181,40 @@ struct CardBackground: View{
         }
     }
     func GetImage(Ref: String){
+//        let Ref = Storage.storage().reference(forURL: "gs://pauly-9dcfc.appspot.com/\(Ref)")
         let Ref = Storage.storage().reference(forURL: "gs://pauly-9dcfc.appspot.com/\(Ref)")
-        Ref.getData(maxSize: 1 * 1024 * 1024) { data, error in
-            if error != nil {
-
-            } else {
-                SelectedImage = UIImage(data: data!)
-                print("Done")
-            }
+        Ref.getMetadata { metadata, error in
+          if let error = error {
+            // Uh-oh, an error occurred!
+              print(error)
+              ErrorOcurred = true
+          } else {
+              if metadata?.contentType == "image/jpeg"{
+                  Ref.getData(maxSize: 1 * 1024 * 1024) { data, error in
+                      if error != nil {
+                          ErrorOcurred = true
+                      } else {
+                          GifMode = false
+                          SelectedImage = UIImage(data: data!)
+                          print("Done")
+                      }
+                  }
+              } else {
+                  if metadata?.contentType == "image/gif"{
+                      Ref.getData(maxSize: 30 * 1024 * 1024) { data, error in
+                          if error != nil {
+                              print(error)
+                              ErrorOcurred = true
+                          } else {
+                              GifData = data
+                              GifMode = true
+                              print("Done")
+                          }
+                      }
+                  }
+              }
+            // Metadata now contains the metadata for 'images/forest.jpg'
+          }
         }
     }
 }
@@ -99,39 +223,48 @@ struct CardBackground: View{
 struct Card: View{
     let TextColor: Color
     @Binding var accessToken: String?
-    @State var SelectedCard: CardType
+    @Binding var SelectedCard: CardType
     
     var body: some View{
         if SelectedCard.CardData.count == 1{
             if SelectedCard.CardData[0].FileType == "pdf"{
                 NavigationLink(destination: PDFSelectionView(PDFs: SelectedCard.CardData[0], AccessToken: $accessToken)){
-                        CardBackground(TextColor: TextColor, SelectedCard: SelectedCard)
+                        CardBackground(TextColor: TextColor, SelectedCard: $SelectedCard)
                             .padding()
                             .cornerRadius(25)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
                     }
             } else {
                 if SelectedCard.CardData[0].FileType == "YT"{
-                    NavigationLink(destination:  LetureHomePage(Vidoe: SelectedCard.CardData[0])){
-                            CardBackground(TextColor: TextColor, SelectedCard: SelectedCard)
+                    NavigationLink(destination: LetureHomePage(Vidoe: SelectedCard.CardData[0])){
+                            CardBackground(TextColor: TextColor, SelectedCard: $SelectedCard)
                                 .padding()
                                 .cornerRadius(25)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
                         }
                 } else {
                     if SelectedCard.CardData[0].FileType == "Paul"{
-                        NavigationLink(destination:                                     FactoringBinomials()){
-                                CardBackground(TextColor: TextColor, SelectedCard: SelectedCard)
+                        NavigationLink(destination: FactoringBinomials()){
+                                CardBackground(TextColor: TextColor, SelectedCard: $SelectedCard)
                                     .padding()
                                     .cornerRadius(25)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
                             }
                     }
                 }
             }
         } else {
-            NavigationLink(destination: CardPageTwo(SelectedCard: SelectedCard, accessToken: $accessToken)){
-                    CardBackground(TextColor: TextColor, SelectedCard: SelectedCard)
-                        .padding()
-                        .cornerRadius(25)
-                }
+            if SelectedCard.CardData.count == 0{
+                CardBackground(TextColor: TextColor, SelectedCard: $SelectedCard)
+                    .padding()
+                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+            } else {
+                NavigationLink(destination: CardPageTwo(SelectedCard: SelectedCard, accessToken: $accessToken)){
+                        CardBackground(TextColor: TextColor, SelectedCard: $SelectedCard)
+                            .padding()
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    }
+            }
         }
     }
 }
@@ -185,49 +318,103 @@ struct FactoringBinomials: View{
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View{
-        VStack{
-            HStack{
-                Button(){
-//                    SelectedMode = .Home
-                } label: {
-                    HStack {
-                        Image(systemName: "chevron.backward")
-                            .padding(.leading)
-                        Text("Back")
-                    }
+        ZStack{
+            Rectangle()
+                .foregroundColor(Color.marron)
+                .ignoresSafeArea()
+            VStack{
+                HStack{
+                    Spacer()
+                    Text("Factor Binomials")
+                    Spacer()
                 }
-                Spacer()
-            }
-            Text(FactorDisplay)
-                .foregroundColor(DarkMode ? Color.white : Color.black)
-                .onAppear(){
+                if ShowAns{
+                    Text("\(FactorDisplay) = \(Soloution)")
+                        .foregroundColor(Color.black)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                } else {
+                    Text(FactorDisplay)
+                        .foregroundColor(Color.black)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                }
+                Button(){
                     let NewResult = BinomialFactoring()
                     FactorDisplay = AttributedString(NewResult.0)
                     Soloution = NewResult.1
-                    if colorScheme == .dark{
-                        DarkMode = true
-                    } else {
-                        DarkMode = false
+                    ShowAns = false
+                } label: {
+                    HStack{
+                        Text("Make New Equation")
+                            .foregroundColor(Color.black)
+                        Spacer()
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding([.top, .bottom])
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding()
+                    .onAppear(){
+                        let NewResult = BinomialFactoring()
+                        FactorDisplay = AttributedString(NewResult.0)
+                        Soloution = NewResult.1
                     }
                 }
-            Button("Make New Equation"){
-                let NewResult = BinomialFactoring()
-                FactorDisplay = AttributedString(NewResult.0)
-                Soloution = NewResult.1
-                ShowAns = false
-            }
-            Button(){
-                ShowAns.toggle()
-            } label: {
-                if ShowAns {
-                    Text("Hide Solution")
-                } else {
-                    Text("Show Solution")
+                Button(){
+                    ShowAns.toggle()
+                } label: {
+                    if ShowAns {
+                        HStack{
+                            Text("Hide Solution")
+                                .foregroundColor(Color.black)
+                            Spacer()
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                    } else {
+                        HStack{
+                            Text("Show Solution")
+                                .foregroundColor(Color.black)
+                            Spacer()
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                    }
                 }
-            }
-            if ShowAns{
-                Text(Soloution)
-                    .foregroundColor(DarkMode ? Color.white : Color.black)
+                Spacer()
             }
         }
     }

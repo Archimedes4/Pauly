@@ -64,7 +64,7 @@ struct GovernmentHomeView: View{
     @Binding var selectedProfileView: profileViewEnum
     @Binding var SelectedGovernmentViewMode: GovernmentViewModes
     @State var TextSize: CGSize = CGSize(width: 0, height: 0)
-    let GovernmentButtons: [GovernmentButtonType] = [GovernmentButtonType(Name: "Presedent", Image: "crown", Permission: 12, Destination: .President), GovernmentButtonType(Name: "Calendar", Image: "calendar", Permission: 13, Destination: .Calendar), GovernmentButtonType(Name: "Elections", Image: "checkmark", Permission: 14, Destination: .Election), GovernmentButtonType(Name: "Sports", Image: "football.fill", Permission: 15, Destination: .Sports), GovernmentButtonType(Name: "Cards", Image: "menucard", Permission: 16, Destination: .Cards), GovernmentButtonType(Name: "Resources", Image: "filemenu.and.selection", Permission: 17, Destination: .Resources), GovernmentButtonType(Name: "Commissions", Image: "star", Permission: 18, Destination: .Commissions), GovernmentButtonType(Name: "Class", Image: "graduationcap", Permission: 19, Destination: .ClassView)]
+    let GovernmentButtons: [GovernmentButtonType] = [GovernmentButtonType(Name: "President", Image: "crown", Permission: 12, Destination: .President), GovernmentButtonType(Name: "Calendar", Image: "calendar", Permission: 13, Destination: .Calendar), GovernmentButtonType(Name: "Elections", Image: "checkmark", Permission: 14, Destination: .Election), GovernmentButtonType(Name: "Sports", Image: "football.fill", Permission: 15, Destination: .Sports), GovernmentButtonType(Name: "Cards", Image: "menucard", Permission: 16, Destination: .Cards), GovernmentButtonType(Name: "Resources", Image: "filemenu.and.selection", Permission: 17, Destination: .Resources), GovernmentButtonType(Name: "Commissions", Image: "star", Permission: 18, Destination: .Commissions), GovernmentButtonType(Name: "Class", Image: "graduationcap", Permission: 19, Destination: .ClassView)]
     @State var UserPermissions: [Int] = []
     var body: some View{
         ZStack{
@@ -168,8 +168,7 @@ struct GovernmentPresedentView: View{
                 }
                 Spacer()
             }.padding(.top)
-            .padding(.top)
-            Text("Presedent")
+            Text("President")
                 .font(.largeTitle)
             Text("Animation Speed: \(AnimationSpeed)")
             Slider(value: $AnimationSpeed, in: 0...100)
@@ -206,8 +205,7 @@ struct GovernmentPresedentView: View{
                 Text("Confirm")
             }
             Spacer()
-        }.background(Color.marron)
-        .ignoresSafeArea()
+        }.background(Color.marron, ignoresSafeAreaEdges: .all)
     }
 }
 
@@ -395,111 +393,112 @@ struct GovernmentElectionsView: View{
     }
 }
 
-struct GovernmentSportsView: View{
-    @Binding var SelectedGovernmentViewMode: GovernmentViewModes
-    var body: some View{
-        VStack{
-            HStack{
-                Button(){
-                    SelectedGovernmentViewMode = .Home
-                } label: {
-                    HStack {
-                        Image(systemName: "chevron.backward")
-                            .padding(.leading)
-                        Text("Back")
-                    }
-                }
-                Spacer()
-            }
-            Text("Sports")
-                .font(.title)
-            Spacer()
-        }
-    }
-}
-
 struct GovernmentResourcesView: View{
     @Binding var SelectedGovernmentViewMode: GovernmentViewModes
     @State var Cards: [Int] = []
+    @State var PageLoading: Bool = true
     var body: some View{
         NavigationView(){
-            VStack{
-                HStack{
-                    Button(){
-                        SelectedGovernmentViewMode = .Home
-                    } label: {
-                        HStack {
-                            Image(systemName: "chevron.backward")
-                                .padding(.leading)
-                            Text("Back")
+            if PageLoading{
+                Spacer()
+                ProgressView()
+                    .onAppear(){
+                        let db = Firestore.firestore()
+                        
+                        let docRef = db.collection("PaulyInfo").document("Info")
+                        
+                        docRef.getDocument(){ (document, err) in
+                            guard let document = document, document.exists else {
+                                //TO DO HANDEL ERROR
+                                return
+                            }
+                            let data = document.data()
+                            
+                            Cards = data!["ResourcesCards"] as! NSArray as! [Int]
+                            
+                            PageLoading = false
                         }
                     }
-                    Spacer()
-                }
-                Text("Resources")
-                    .font(.title)
-                NavigationLink(destination: GovernmentSelectedCardsView(Cards: $Cards)){
-                    HStack{
-                        Text("Change Selected Cards")
-                            .font(.system(size: 17))
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .padding([.top, .bottom])
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.white)
-                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    )
-                    .padding()
-                }
-                NavigationLink(destination: GovernmentAddCardsView(Cards: $Cards)){
-                    HStack{
-                        Text("Add Cards")
-                            .font(.system(size: 17))
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .padding([.top, .bottom])
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.white)
-                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    )
-                    .padding()
-                }
-                Button(){
-                    let db = Firestore.firestore()
-                    
-                    let docRef = db.collection("PaulyInfo").document("Info")
-                    
-                    docRef.updateData(["ResourcesCards":Cards])
-                } label: {
-                    HStack{
-                        Text("Confirm")
-                            .font(.system(size: 17))
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                        Spacer()
-                    }
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .padding([.top, .bottom])
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: 25)
-                            .fill(Color.white)
-                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                    )
-                    .padding()
-                }
                 Spacer()
-            }.background(Color.marron)
+            } else {
+                VStack{
+                    HStack{
+                        Button(){
+                            SelectedGovernmentViewMode = .Home
+                        } label: {
+                            HStack {
+                                Image(systemName: "chevron.backward")
+                                    .padding(.leading)
+                                Text("Back")
+                            }
+                        }
+                        Spacer()
+                    }
+                    Text("Resources")
+                        .font(.title)
+                    NavigationLink(destination: GovernmentSelectedCardsView(Cards: $Cards)){
+                        HStack{
+                            Text("Change Selected Cards")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                            Spacer()
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                    }
+                    NavigationLink(destination: GovernmentAddCardsView(Cards: $Cards)){
+                        HStack{
+                            Text("Add Cards")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                            Spacer()
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                    }
+                    Button(){
+                        let db = Firestore.firestore()
+                        
+                        let docRef = db.collection("PaulyInfo").document("Info")
+                        
+                        docRef.updateData(["ResourcesCards":Cards])
+                    } label: {
+                        HStack{
+                            Text("Confirm")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                            Spacer()
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                    }
+                    Spacer()
+                }.background(Color.marron)
+            }
         }
     }
 }

@@ -76,6 +76,9 @@ struct ImageView: View{
                                 ImageSubmission = false
                             }
                         }
+                        
+                        let CommissionRef = db.collection("Commissions").document("\(CommissionID)").collection("Submissions").document(Uid)
+                        CommissionRef.setData(["User":Uid, "SubmissionType":3,"Image":"\(CommissionID)-\(Uid)"])
                     } label: {
                         if CommissionProcessStarted{
                             ProgressView()

@@ -9,6 +9,7 @@ import WidgetKit
 import SwiftUI
 import FirebaseAuth
 import Firebase
+import FirebaseFirestore
 
 @main
 struct PaulyWidgetBundle: WidgetBundle {

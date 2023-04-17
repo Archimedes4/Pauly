@@ -57,13 +57,34 @@ class Functions {
                 if let document = document, document.exists {
                     let data = document.data()
                     if let data = data {
-                        let cardDataValueFire = data["CardData"] as! [String]
-                        let cardDataNameFire = data["CardDataName"] as! [String]
-                        let BackgroundStyle = data["BackgroundStyle"] as! Int
-                        let Opacity = data["Opacity"] as! String
-                        let cardDataTypeFire: [String] = data["CardDataType"] as? NSArray as? [String] ?? []
+                        guard let cardDataValueFire = data["CardData"] as? NSArray as? [String] else {
+                            return
+                        }
+                        guard let cardDataNameFire = data["CardDataName"] as? NSArray as? [String] else {
+                            return
+                        }
+                        guard let BackgroundStyle = data["BackgroundStyle"] as? Int else {
+                            return
+                        }
+                        guard let Opacity = data["Opacity"] as? String else {
+                            return
+                        }
+                        guard let cardDataTypeFire: [String] = data["CardDataType"] as? NSArray as? [String] else {
+                            return
+                        }
                         var CardDataIn: [DataIdType] = []
-                        let Use = data["Use"] as! String
+                        guard let Use = data["Use"] as? String else {
+                            return
+                        }
+                        guard let Hidden = data["Hidden"] as? Bool else {
+                            return
+                        }
+                        guard let Permissions = data["Permissions"] as? NSArray as? [String] else {
+                            return
+                        }
+                        guard let Owners = data["Owners"] as? NSArray as? [String] else {
+                            return
+                        }
                         for y in 0..<cardDataNameFire.count{
                             CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
                         }
@@ -71,22 +92,22 @@ class Functions {
                             let captionFire = data["Caption"] as! String
                             let titleFire = data["Title"] as! String
                             let ColorFire = data["Color"] as! String
-                            outputCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                            outputCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn, Hidden: Hidden, Contributers: Permissions, Owners: Owners))
                         } else {
                             if BackgroundStyle == 1{
                                 let ImageRefFire = data["ImageRef"] as! String
-                                outputCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                outputCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn, Hidden: Hidden, Contributers: Permissions, Owners: Owners))
                             } else {
                                 if BackgroundStyle == 2{
                                     let captionFire = data["Caption"] as! String
                                     let titleFire = data["Title"] as! String
                                     let ImageRefFire = data["ImageRef"] as! String
-                                    outputCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                    outputCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn, Hidden: Hidden, Contributers: Permissions, Owners: Owners))
                                 } else {
                                     if BackgroundStyle == 3{
                                         let ColorFire = data["Color"] as! String
                                         let LongTextFire = data["Text"] as! String
-                                        outputCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                        outputCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn, Hidden: Hidden, Contributers: Permissions, Owners: Owners))
                                     }
                                 }
                             }

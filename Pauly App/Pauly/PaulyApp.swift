@@ -24,26 +24,118 @@ struct PaulyApp: App {
     
     @State var Token: String = ""
     
+    @StateObject var WindowMode: SelectedWindowMode = SelectedWindowMode()
+    @State var AccessToken: String = ""
+    var microsoftProvider: OAuthProvider?
     init() {
             FirebaseApp.configure()
         do{
             try Auth.auth().useUserAccessGroup("SYV2CK2N9N.com.Archimedes4.Pauly")
+            let User = Auth.auth().currentUser
+            
+            if let User = User {
+                microsoftProvider = OAuthProvider(providerID: "microsoft.com")
+            } else {
+                print("NOPE THIS DOES NOT WORK")
+            }
         } catch let error as NSError {
             print("Error changing user access group: %@", error)
-        }
-        let User = Auth.auth().currentUser
-        if let User = User {
-            print("YESSsssssssssssssssssssss this does work. < --- -- - - -- - -- - -- -- - - - -- - - - -- - - - -- - - - - -- - - - - -- - - -- - - - -- - - - - -- - - -- - -")
-            print(User.getIDToken())
-        } else {
-            print("NOPE THIS DOES NOT WORK")
         }
     }
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(accountToken: AccessToken)
+                .environmentObject(WindowMode)
+                .onAppear(){
+                    let User = Auth.auth().currentUser
+                    
+                    if User != nil {
+                        let firebaseAuth = Auth.auth()
+                        do {
+                            try firebaseAuth.signOut()
+//                            signIn()
+                        } catch let signOutError as NSError {
+                          print("Error signing out: %@", signOutError)
+                        }
+                    } else {
+                        print("Not Signed In")
+                    }
+                }
         }
+    }
+    func signIn () {
+        microsoftProvider?.scopes = ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite", "User.ReadBasic.All"]
+        self.microsoftProvider?.getCredentialWith(_: nil){credential, error in
+                   if error != nil {
+                       let castedError = error! as NSError
+                       print(castedError)
+                       // Handle error.
+
+                   }
+                   if let credential = credential {
+                       Auth.auth().signIn(with: credential) { (authResult, error) in
+                           if error != nil {
+                               let castedError = error! as NSError
+                               print(castedError)
+                               // Handle error.
+                           }
+
+                           guard let authResult = authResult else {
+                               print("Couldn't get graph authResult")
+                               return
+                           }
+
+                           // get credential and token when login successfully
+                           let microCredential = authResult.credential as! OAuthCredential
+                           AccessToken = microCredential.accessToken!
+
+                           let user = Auth.auth().currentUser
+                           if let user = user {
+                               // The user's ID, unique to the Firebase project.
+                               // Do NOT use this value to authenticate with your backend server,
+                               // if you have one. Use getTokenWithCompletion:completion: instead.
+                               let uid = user.uid
+                               let db = Firestore.firestore()
+                               let docRef = db.collection("Users").document(uid)
+                               docRef.getDocument { (document, error) in
+                                   guard error == nil else {
+                                       print("error", error ?? "")
+                                       return
+                                   }
+       
+                                   if let document = document, document.exists {
+                                       let data = document.data()
+                                       if let data = data {
+                                           WindowMode.GradeIn = data["Grade"] as? Int ?? 8
+                                           let GroupPassword = data["Groups"] as! NSArray as? [Int] ?? []
+                                           let FirstNamePassword = data["First Name"] as! String
+                                           let LastNamePassword = data["Last Name"] as! String
+                                           let ClassesPassword = data["Classes"] as! NSArray as! [String]
+                                           let GradePassword = data["Grade"] as! Int
+                                           if let error = error {
+                                               print("Error writing document: \(error)")
+                                           } else {
+                                               WindowMode.UsernameIn = uid
+                                               WindowMode.FirstName = FirstNamePassword
+                                               WindowMode.LastName = LastNamePassword
+                                               var OutputCorses: [CourseSelectedType] = []
+                                               for k in ClassesPassword{
+                                                   let outputarray = k.split(separator: "-")
+                                                   OutputCorses.append(CourseSelectedType(Name: String(outputarray[1]), Section: Int(outputarray[2])!, Year: Int(outputarray[3])!, Grade: Int(outputarray[0])!))
+                                               }
+                                               WindowMode.SelectedCourses = OutputCorses
+                                               WindowMode.SelectedWindowMode = .HomePage
+                                               
+                                           }
+                                       }
+                                   }
+                               }
+                           }
+                          
+                       }
+                   }
+               }
     }
 }
 

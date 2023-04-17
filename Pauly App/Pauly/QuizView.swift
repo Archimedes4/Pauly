@@ -38,11 +38,13 @@ struct CardType: Identifiable {
     var LongText: String?
     var BackgroundStyle: Int
     let FirebaseID: Int
-    
     var Opacity: Double
     
     //Card Destintation
     var CardData: [DataIdType]
+    var Hidden: Bool
+    var Contributers: [String]
+    var Owners: [String]
 }
 //Defineing Cutom types end
 struct AnErrorHasOcurredView: View{
@@ -101,8 +103,7 @@ struct ClassHomePageView: View{
                             }
                             Spacer()
                         }
-                        ForEach(AvaliableCards, id: \.id) { card in
-                            
+                        ForEach($AvaliableCards, id: \.id) { card in
                             Card(TextColor: Color.black, accessToken: $accessToken, SelectedCard: card)
                                 .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
                                 .cornerRadius(25)
@@ -158,26 +159,35 @@ struct ClassHomePageView: View{
                                                         for y in 0..<cardDataNameFire.count{
                                                             CardDataIn.append(DataIdType(Name: cardDataNameFire[y], Id: cardDataValueFire[y], FileType: cardDataTypeFire[y]))
                                                         }
+                                                        guard let Hidden = data["Hidden"] as? Bool else {
+                                                            return
+                                                        }
+                                                        guard let Permissions = data["Permissions"] as? NSArray as? [String] else {
+                                                            return
+                                                        }
+                                                        guard let Owners = data["Owners"] as? NSArray as? [String] else {
+                                                            return
+                                                        }
                                                         if BackgroundStyle == 0{
                                                             let captionFire = data["Caption"] as! String
                                                             let titleFire = data["Title"] as! String
                                                             let ColorFire = data["Color"] as! String
-                                                            AvaliableCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                                            AvaliableCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: ColorFire, ImageRef: nil, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn, Hidden: Hidden, Contributers: Permissions, Owners: Owners))
                                                         } else {
                                                             if BackgroundStyle == 1{
                                                                 let ImageRefFire = data["ImageRef"] as! String
-                                                                AvaliableCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                                                AvaliableCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn, Hidden: Hidden, Contributers: Permissions, Owners: Owners))
                                                             } else {
                                                                 if BackgroundStyle == 2{
                                                                     let captionFire = data["Caption"] as! String
                                                                     let titleFire = data["Title"] as! String
                                                                     let ImageRefFire = data["ImageRef"] as! String
-                                                                    AvaliableCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                                                    AvaliableCards.append(CardType(Use: Use, Title: titleFire, Caption: captionFire, ColorType: nil, ImageRef: ImageRefFire, LongText: nil, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn, Hidden: Hidden, Contributers: Permissions, Owners: Owners))
                                                                 } else {
                                                                     if BackgroundStyle == 3{
                                                                         let ColorFire = data["Color"] as! String
                                                                         let LongTextFire = data["Text"] as! String
-                                                                        AvaliableCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn))
+                                                                        AvaliableCards.append(CardType(Use: Use, Title: nil, Caption: nil, ColorType: ColorFire, ImageRef: nil, LongText: LongTextFire, BackgroundStyle: BackgroundStyle, FirebaseID: x, Opacity: Double(Opacity)!, CardData: CardDataIn, Hidden: Hidden, Contributers: Permissions, Owners: Owners))
                                                                     }
                                                                 }
                                                             }
@@ -199,6 +209,19 @@ struct ClassHomePageView: View{
     }
 }
 
+struct AssignmentTypeQuiz{
+    let id: UUID = UUID()
+    let Title: String
+    let Description: String
+    let DueDate: Date?
+    let AssignmentEnum: Int
+    let DocumentRef:String
+    let Class: CourseSelectedType
+    let AssignmentDuringClass: Bool
+    let SelectedMonth: Int?
+    let SelectedDay: Int?
+}
+
 struct CoursePersonalOverviewView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     @Environment(\.colorScheme) var colorScheme
@@ -208,6 +231,9 @@ struct CoursePersonalOverviewView: View{
     @Binding var SelectedQuizViewMode: QuizViewMode
     @Binding var OverrideCourseView: Bool
     
+    @State var StudentAssignments: [AssignmentTypeQuiz] = []
+    
+    @State var AssignmentsLoading: Bool = true
     
     var body: some View{
         VStack{
@@ -250,9 +276,75 @@ struct CoursePersonalOverviewView: View{
                         Text("See other courses in a different grade")
                     }
                 }
+                
+                Section{
+                    if AssignmentsLoading{
+                        ProgressView()
+                            .onAppear(){
+                                GetAssignments()
+                            }
+                    } else {
+                        ForEach(StudentAssignments, id: \.id) { assignmentValue in
+                            Text(assignmentValue.Title)
+                        }
+                    }
+                }
             }.background(Color.marron)
             .scrollContentBackground(.hidden)
         }.background(Color.marron)
+    }
+    func GetAssignments() {
+        let db = Firestore.firestore()
+        
+        var Index = 0
+        for x in WindowMode.SelectedCourses{
+            print(x)
+            let docRef = db.collection("Grade\(x.Grade)Courses").document("\(x.Name)").collection("Sections").document("\(x.Section)-\(x.Year)").collection("Assignment")
+            docRef.getDocuments { (snapshot, error) in
+                guard let snapshot = snapshot, error == nil else {
+                 //handle error
+                 return
+               }
+               snapshot.documents.forEach({ (documentSnapshot) in
+                   let documentData = documentSnapshot.data()
+                   let documentID = documentSnapshot.documentID
+                   
+                   guard let AssignmentEnum = documentData["AssignmentType"] as? Int else {
+                       return
+                   }
+                   guard let AssignmentDescription = documentData["Description"] as? String else {
+                       return
+                   }
+                   guard let AssignmentTitle = documentData["Title"] as? String else {
+                       return
+                   }
+                   guard let AssignmentDuringClass = documentData["AssignmentDuringClass"] as? Bool else {
+                       return
+                   }
+                   
+                   if AssignmentDuringClass{
+                       guard let AssignmentMonth = documentData["Month"] as? Int else {
+                           return
+                       }
+                       guard let AssignmentDay = documentData["Day"] as? Int else {
+                           return
+                       }
+                    
+                       StudentAssignments.append(AssignmentTypeQuiz(Title: AssignmentTitle, Description: AssignmentDescription, DueDate: nil, AssignmentEnum: AssignmentEnum, DocumentRef: documentID, Class: x, AssignmentDuringClass: AssignmentDuringClass, SelectedMonth: AssignmentMonth, SelectedDay: AssignmentDay))
+                   } else {
+                       guard let AssignmentDueDateTime = documentData["DueDate"] as? Timestamp else {
+                           return
+                       }
+                       let AssignmentDueDate = AssignmentDueDateTime.dateValue()
+                       StudentAssignments.append(AssignmentTypeQuiz(Title: AssignmentTitle, Description: AssignmentDescription, DueDate: AssignmentDueDate, AssignmentEnum: AssignmentEnum, DocumentRef: documentID, Class: x, AssignmentDuringClass: AssignmentDuringClass, SelectedMonth: nil, SelectedDay: nil))
+                   }
+               })
+                Index += 1
+                if Index == WindowMode.SelectedCourses.count{
+                    AssignmentsLoading = false
+                }
+             }
+        }
     }
 }
 
@@ -325,7 +417,7 @@ struct CourseSelectionView: View{
                         ForEach(AvaliableCourses, id: \.self) {  course in
                             Button{
                                 SelectedQuizViewMode = .CourseView
-                                SelectedCourse = CourseSelectedType(Name: course, Section: 0, Year: 0)
+                                SelectedCourse = CourseSelectedType(Name: course, Section: 0, Year: 0, Grade: 0)
                             } label: {
                                 Text(course)
                             }.buttonStyle(.plain)
@@ -410,7 +502,7 @@ struct QuizView: View{
     @State var OverrideSelectionView: Bool = true
     @State var OverrideCourseView: Bool = true
     @State var isTheirSelectedClasess: Bool = false
-    @State var SelectedCourse: CourseSelectedType = CourseSelectedType(Name: "Error", Section: 0, Year: 0)
+    @State var SelectedCourse: CourseSelectedType = CourseSelectedType(Name: "Error", Section: 0, Year: 0, Grade: 0)
     
     @Binding var accessToken: String?
     @Binding var MSALAccount: MSALAccount?

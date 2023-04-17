@@ -85,6 +85,7 @@ struct InitializeMicrosoft: View {
 
                    }
                    if let credential = credential {
+                       print("At Sign In")
                        Auth.auth().signIn(with: credential) { (authResult, error) in
                            if error != nil {
                                let castedError = error! as NSError
@@ -103,7 +104,6 @@ struct InitializeMicrosoft: View {
                            let microCredential = authResult.credential as! OAuthCredential
                            accessToken = microCredential.accessToken!
                            SelectedBackendMode = .Home
-                          
                        }
                    }
                }

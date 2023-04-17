@@ -16,8 +16,6 @@ enum profileViewEnum {
     case Pauly
     case Leaderboard
     case Commissions
-    case Microsoft
-    case UpdatePassword
     case Resourses
     case GovernmentView
 }
@@ -33,17 +31,13 @@ struct ProfileViewMain: View{
             ProfileViewHome(selectedProfileView: $selectedProfileView)
                 .environmentObject(WindowMode)
         case .Pauly:
-            ProfileViewPauly(selectedProfileView: $selectedProfileView)
+            ProfileViewPauly(selectedProfileView: $selectedProfileView, accessToken: $AccessToken)
                 .environmentObject(WindowMode)
         case .Leaderboard:
             ProfileViewLeaderboard(selectedProfileView: $selectedProfileView)
         case .Commissions:
             ProfileViewCommissions(accessToken: $AccessToken, selectedProfileView: $selectedProfileView)
                 .environmentObject(WindowMode)
-        case .Microsoft:
-            ProfileViewMicosoft(selectedProfileView: $selectedProfileView)
-        case .UpdatePassword:
-            ProfileViewUpdatePassword(selectedProfileView: $selectedProfileView)
         case .Resourses:
             Resources(selectedProfileView: $selectedProfileView, AccessToken: $AccessToken)
         case .GovernmentView:
@@ -251,118 +245,455 @@ struct ProfileViewHome: View{
     }
 }
 
-struct ProfileViewMicosoft: View{
-    @Binding var selectedProfileView: profileViewEnum
+struct ProfileViewMangeSection: View{
+    @State var AvaliableSections: [Int] = []
+    
+    @Binding var SelectedCourses: [CourseSelectedType]
+    @State var Grade: Int
+    @State var CourseName: String
+    
     var body: some View{
-        HStack{
-            Button(){
-                selectedProfileView = .Pauly
-            } label: {
+        ZStack{
+            Rectangle()
+                .fill(Color.marron)
+                .edgesIgnoringSafeArea(.all)
+            VStack{
                 HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
+                    Spacer()
+                    Text("Please Choose a Section")
+                    Spacer()
                 }
-            }.padding()
-            Spacer()
+                if AvaliableSections.count != 0{
+                    List{
+                        ForEach(AvaliableSections, id: \.self){ section in
+                            Button(){
+                                SelectedCourses.append(CourseSelectedType(Name: CourseName, Section: section, Year: 2023, Grade: Grade))   //TO DO ADD YEAR
+                            } label: {
+                                Text("\(section)")
+                            }
+                        }
+                    }.background(Color.marron)
+                    .scrollContentBackground(.hidden)
+                } else {
+                    VStack{
+                        Spacer()
+                        ProgressView()
+                        Text("If loading is taking a long time there are no sections")
+                        Spacer()
+                    }
+                    
+                }
+            }.onAppear(){
+                Task{
+                    do{
+                        let db = Firestore.firestore()
+                        let docRef = db.collection("Grade\(Grade)Courses").document(CourseName).collection("Sections")
+                        docRef.getDocuments { (snapshot, error) in
+                            guard let snapshot = snapshot, error == nil else {
+                             //handle error
+                             return
+                           }
+                           snapshot.documents.forEach({ (documentSnapshot) in
+                               let documentData = documentSnapshot.data()
+                               let CoureseSectionNewUser = documentData["Section"] as? Int ?? 0
+                               if CoureseSectionNewUser != 0 {
+                                   AvaliableSections.append(CoureseSectionNewUser)
+                               }
+                           })
+                         }
+                    } catch {
+                        print("Error")
+                    }
+                }
+            }
         }
+    }
+}
+
+struct ProfileViewManageCourses: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    @State var CoursesSelected: [CourseSelectedType] = []
+    @State var AvaliableCourses: [String] = []
+    
+    @State var CurrentSchoolYear: Int = 2023
+    @State var ErrorMessage: String = ""
+    @State var ShowingErrorMessage: Bool = false
+    let Sections: [Int] = [1,2,3,4,5,6,7]
+    
+    @State var PageLoading: Bool = true
+    
+    var body: some View{
+        VStack{
+            if PageLoading {
+                ProgressView()
+                    .onAppear(){
+                        let db = Firestore.firestore()
+                        let docRef = db.collection("Grade\(WindowMode.GradeIn)Courses")
+                        docRef.getDocuments { (snapshot, error) in
+                            guard let snapshot = snapshot, error == nil else {
+                             //handle error
+                             return
+                           }
+                           snapshot.documents.forEach({ (documentSnapshot) in
+                               let documentData = documentSnapshot.data()
+                               let CourseNameNewUser = documentData["CourseName"] as? String
+                               AvaliableCourses.append(CourseNameNewUser ?? "Error")
+                           })
+                            CoursesSelected = WindowMode.SelectedCourses
+                            PageLoading = false
+                         }
+                    }
+            } else {
+                GeometryReader{ geo in
+                    VStack{
+                        HStack(){
+                            Spacer()
+                            Text("Select Grade \(WindowMode.GradeIn ) Class")
+                                .foregroundColor(colorScheme == .dark ? Color.black : Color.white)
+                            Spacer()
+                        }
+                        List{
+                            Section{
+                                ForEach(CoursesSelected, id: \.id){ course in
+                                    HStack{
+                                        Text("\(course.Name)    Section:\(course.Section)")
+                                        Spacer()
+                                        Button{
+                                            if let Index = CoursesSelected.firstIndex(where: { $0.id == course.id }){
+                                                CoursesSelected.remove(at: Index)
+                                                AvaliableCourses.append(course.Name)
+                                            }
+                                        } label: {
+                                            Image(systemName: "minus.circle")
+                                                .foregroundColor(.red)
+                                        }.buttonStyle(.plain)
+                                        
+                                    }
+                                }
+                            }
+                            //.shadow(color: .gray, radius: 2, x: 0, y: 2) //To DO add shadow to section
+        
+                            Section{
+                                ForEach(AvaliableCourses, id: \.self){ course in
+                                    NavigationLink(destination: ProfileViewMangeSection(SelectedCourses: $CoursesSelected, Grade: WindowMode.GradeIn, CourseName: course)) {
+                                        Text(course)
+                                    }
+                                }
+                            }
+                        //.shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        }.background(Color.marron)
+                        .scrollContentBackground(.hidden)
+                        Button(){
+                            let db = Firestore.firestore()
+                            
+                            let docRef = db.collection("Users").document(WindowMode.UsernameIn)
+                            
+                            var InputCourses: [String] = []
+                            
+                            for x in CoursesSelected{
+                                InputCourses.append("\(x.Grade)-\(x.Name)-\(x.Section)-\(x.Year)")
+                                WindowMode.SelectedCourses = CoursesSelected
+                            }
+                            
+                            docRef.updateData(["Classes":InputCourses])
+                        } label: {
+                            Text("CONFIRM")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .padding()
+                        }
+                        Button(){
+      
+                        } label: {
+                            Text("BACK")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .padding()
+                        }
+                    }
+                }
+            }
+        }.background(Color.marron, ignoresSafeAreaEdges: .all)
+    }
+}
+
+struct ProfileViewMicosoft: View{
+    @Binding var accessToken: String?
+    var microsoftProvider : OAuthProvider?
+    
+    init(accessToken: Binding<String?>){
+        self.microsoftProvider = OAuthProvider(providerID: "microsoft.com")
+        self._accessToken = accessToken
+    }
+    
+    var body: some View{
         Text("Microsoft")
+        Button("Link Account To Microsoft"){
+            
+            microsoftProvider?.scopes = ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite", "User.ReadBasic.All"]
+            
+            self.microsoftProvider?.getCredentialWith(_: nil){credential, error in
+                if error != nil {
+                    let castedError = error! as NSError
+                    print(castedError)
+                    // Handle error.
+                    
+                }
+                if let credential = credential {
+                    
+                    
+                    
+                    Auth.auth().signIn(with: credential) { (authResult, error) in
+                        if error != nil {
+                            let castedError = error! as NSError
+                            print(castedError)
+                            // Handle error.
+                        }
+                        
+                        guard let authResult = authResult else {
+                            print("Couldn't get graph authResult")
+                            return
+                        }
+                        
+                        // get credential and token when login successfully
+                        let microCredential = authResult.credential as! OAuthCredential
+                        accessToken = microCredential.accessToken!
+                        
+                        let credential = EmailAuthProvider.credential(withEmail: "andrewmainella@icloud.com", password: "Testing")
+                        
+                        Auth.auth().currentUser?.link(with: credential) { authResult, Error in
+                            if Error != nil{
+                                print(Error)
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
     }
 }
 
 struct ProfileViewPauly: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var selectedProfileView: profileViewEnum
+    @Binding var accessToken: String?
     @State var presentAlert: Bool = false
     @State var TextSize: CGSize = CGSize(width: 0.0, height: 0.0)
+    @State var UserMicrosoft: Bool = false
+    @State var UserEmail: Bool = false
+    @State var ShowingEmailAlert: Bool = false
+    @State var AlertMessage: String = ""
+    @State var AlertTitle: String = ""
     var body: some View{
-        VStack{
-            HStack{
+        NavigationView(){
+            VStack{
+                HStack{
+                    Button(){
+                        selectedProfileView = .Home
+                    } label: {
+                        HStack{
+                            Image(systemName: "chevron.backward")
+                            Text("Back")
+                        }
+                    }.padding()
+                    Spacer()
+                }
+                Image("Settings")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                NavigationLink(destination: ProfileViewManageCourses()){
+                    HStack{
+                        Text("Courses")
+                            .font(.system(size: 17))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                        Spacer()
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding([.top, .bottom])
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding()
+                }
+                if UserMicrosoft{
+                    NavigationLink(destination: ProfileViewMicosoft(accessToken: $accessToken).environmentObject(WindowMode)){
+                        HStack{
+                            Image("MicrosoftLogo")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: TextSize.height)
+                            Text("Mircosoft")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .saveSize(in: $TextSize)
+                            Spacer()
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                    }
+                }
+                if UserEmail{
+                    Button(){
+                        let providerData = Auth.auth().currentUser!.providerData
+                        for x in providerData{
+                            if x.providerID == "password"{
+                                Auth.auth().sendPasswordReset(withEmail: x.email!) { (error) in
+                                    if error == nil{
+                                        AlertMessage = "\(error)"
+                                        AlertTitle = "Error"
+                                        ShowingEmailAlert = true
+                                    } else {
+                                        AlertMessage = "An Email has been sent to  \(x.email!)"
+                                        AlertTitle = "Success"
+                                        ShowingEmailAlert = true
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        HStack{
+                            Text("Send Update Password Email")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                            Spacer()
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                    }.alert("Success", isPresented: $ShowingEmailAlert, actions: {
+                        // 1
+                        Button("Cancel", role: .cancel, action: {})
+                    }, message: {
+                        Text(AlertMessage)
+                    })
+                }
                 Button(){
-                    selectedProfileView = .Home
+                    let firebaseAuth = Auth.auth()
+                    do {
+                        try firebaseAuth.signOut()
+                        WindowMode.SelectedWindowMode = .PasswordWindow
+                        UserMicrosoft = false
+                        UserEmail = false
+                    } catch let signOutError as NSError {
+                        print("Error signing out: %@", signOutError)
+                    }
+                } label: {
+                    Text("Sign Out")
+                        .foregroundColor(.black)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(Color.white)
+                        )
+                        .padding()
+                }
+                Button(){
+                    presentAlert = true
                 } label: {
                     HStack{
-                        Image(systemName: "chevron.backward")
-                        Text("Back")
+                        Image(systemName: "trash")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.white)
+                            .frame(height: TextSize.height)
+                        Text("DELETE ACCOUNT")
+                            .foregroundColor(.white)
+                            .saveSize(in: $TextSize)
                     }
-                }.padding()
-                Spacer()
-            }
-            Image("Settings")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-            Button(){
-                selectedProfileView = .Microsoft
-            } label: {
-                Text("Microsoft")
-            }
-            Button(){
-                
-            } label: {
-                Text("Update Password")
-            }
-            Button(){
-                let firebaseAuth = Auth.auth()
-                do {
-                    try firebaseAuth.signOut()
-                    WindowMode.SelectedWindowMode = .PasswordWindow
-                } catch let signOutError as NSError {
-                  print("Error signing out: %@", signOutError)
-                }
-            } label: {
-                Text("Sign Out")
+                    .frame(minWidth: 0, maxWidth: .infinity)
                     .padding()
                     .background(
                         RoundedRectangle(cornerRadius: 15)
                             .fill(Color.red)
-                           )
-            }
-            Button(){
-                presentAlert = true
-            } label: {
-                HStack{
-                    Image(systemName: "trash")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .foregroundColor(.white)
-                        .frame(height: TextSize.height)
-                    Text("DELETE ACCOUNT")
-                        .foregroundColor(.white)
-                        .saveSize(in: $TextSize)
-                }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 15)
-                        .fill(Color.red)
-                       )
-            }.alert("Are you sure?", isPresented: $presentAlert, actions: {
-                // 1
-                  Button("Cancel", role: .cancel, action: {})
-
-                  Button("PERMANATLY DELETE ACCOUNT", role: .destructive, action: {
-                      let user = Auth.auth().currentUser
-                      let userUid = Auth.auth().currentUser?.uid
-                      
-                      let db = Firestore.firestore()
-                      
-                      db.collection("Users").document(userUid!).delete() { err in
-                          if let err = err {
-                              print("Error removing document: \(err)")
-                          } else {
-                              user?.delete { error in
-                                if let error = error {
-                                  // An error happened.
-                                } else {
-                                  // Account deleted.
-                                    WindowMode.SelectedWindowMode = .PasswordWindow
+                    )
+                    .padding()
+                }.alert("Are you sure?", isPresented: $presentAlert, actions: {
+                    // 1
+                    Button("Cancel", role: .cancel, action: {})
+                    
+                    Button("PERMANATLY DELETE ACCOUNT", role: .destructive, action: {
+                        let user = Auth.auth().currentUser
+                        let userUid = Auth.auth().currentUser?.uid
+                        
+                        let db = Firestore.firestore()
+                        
+                        db.collection("Users").document(userUid!).delete() { err in
+                            if let err = err {
+                                print("Error removing document: \(err)")
+                            } else {
+                                user?.delete { error in
+                                    if let error = error {
+                                        // An error happened.
+                                    } else {
+                                        // Account deleted.
+                                        WindowMode.SelectedWindowMode = .PasswordWindow
+                                    }
                                 }
-                              }
-                          }
-                      }
-                  })
+                            }
+                        }
+                    })
                 }, message: {
-                  Text("THIS WILL PERMANATLY DELETE YOUR ACCOUNT")
+                    Text("THIS WILL PERMANATLY DELETE YOUR ACCOUNT")
                 })
-        }.background(Color.marron)
+                .onAppear(){
+                    CheckProviderID()
+                }
+                Spacer()
+                
+            }.background(Color.marron)
+        }
+    }
+    func CheckProviderID(){
+        let UserArray = Auth.auth().currentUser!.providerData
+        for x in UserArray{
+            print(x.providerID)
+            if x.providerID == "microsoft.com"{
+                UserMicrosoft = true
+            }
+            if x.providerID == "password"{
+                UserEmail = true
+            }
+        }
     }
 }
 
@@ -406,14 +737,13 @@ struct ProfileViewCommissionInfo: View{
                 VStack{
                     ScrollView{
                         VStack{
-                            ForEach(AvaliableCards, id: \.id) { card in
+                            ForEach($AvaliableCards, id: \.id) { card in
                                 Card(TextColor: Color.black, accessToken: $accessToken, SelectedCard: card)
                                     .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
                                     .cornerRadius(25)
                             }
                         }
                     }
-         
                     Spacer()
                     HStack{
                         Spacer()
@@ -750,21 +1080,3 @@ struct ProfileViewCommissions: View{
 //    }
 //}
 //#endif
-
-struct ProfileViewUpdatePassword: View{
-    @Binding var selectedProfileView: profileViewEnum
-    var body: some View{
-        HStack{
-            Button(){
-                selectedProfileView = .Pauly
-            } label: {
-                HStack{
-                    Image(systemName: "chevron.backward")
-                    Text("Back")
-                }
-            }.padding()
-            Spacer()
-        }
-        Text("Update Password")
-    }
-}

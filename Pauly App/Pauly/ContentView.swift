@@ -33,6 +33,8 @@ struct MonthView: View{
     @Binding var ScrollMessage: String
     @Binding var AnimationSpeed: Double
     
+    @State var SquareSize: CGSize = CGSize(width: 0.0, height: 0.0)
+    
     let date: Date
     let dateFormatter: DateFormatter
     let columns = [
@@ -93,12 +95,14 @@ struct MonthView: View{
                                         .foregroundColor(.red)
                                         .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                         .border(Color.black)
+                                        .saveSize(in: $SquareSize)
                                 } else{
                                     if day >= (textval + 1){
                                         Rectangle()
                                             .foregroundColor(.gray)
                                             .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                             .border(Color.black)
+                                            .saveSize(in: $SquareSize)
                                     } else{
                                         if let index = SelectedDates.firstIndex(where: { $0.Date == textval }){
                                             let var1: DateProperty = SelectedDates[index]
@@ -107,17 +111,20 @@ struct MonthView: View{
                                                     .foregroundColor(Color(hexString: var1.ColorName!))
                                                     .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                                     .border(Color.black)
+                                                    .saveSize(in: $SquareSize)
                                             } else {
                                                 Rectangle()
                                                     .foregroundColor(.white)
                                                     .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                                     .border(Color.black)
+                                                    .saveSize(in: $SquareSize)
                                             }
                                         } else{
                                             Rectangle()
                                                 .foregroundColor(.white)
                                                 .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                                 .border(Color.black)
+                                                .saveSize(in: $SquareSize)
                                         }
                                     }
                                 }
@@ -125,11 +132,12 @@ struct MonthView: View{
                                     if let index = SelectedDates.firstIndex(where: { $0.Date == textval }){
                                         let var1: DateProperty = SelectedDates[index]
                                         if var1.SchoolDay != nil{
-                                            HStack(alignment: .top){
+                                            HStack(){
                                                 Spacer()
                                                 Text(var1.SchoolDay ?? "Error")
+                                                    .foregroundColor(.black)
                                                     .frame(height: geometry1.size.height * 0.03)
-                                                    .offset(x: -geometry1.size.width * 0.005, y: (geometry1.size.height * 0.03))
+                                                    .offset(x: -geometry1.size.width * 0.005, y: SquareSize.height * 0.4) //, y: (geometry1.size.height * 0.03)
                                             }
                                             HStack{
                                                 Spacer()
@@ -158,18 +166,20 @@ struct MonthView: View{
                                         }
                                         Spacer()
                                     }
-                                }
+                                }.frame(width: SquareSize.width, height: SquareSize.height)
                             } else {
                                 Rectangle()
                                     .foregroundColor(.white)
                                     .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                     .border(Color.black)
+                                    .saveSize(in: $SquareSize)
                             }
                         } else {
                             Rectangle()
                                 .foregroundColor(.white)
                                 .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                                 .border(Color.black)
+                                .saveSize(in: $SquareSize)
                         }
                     }.frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
                 }
@@ -379,16 +389,17 @@ struct SildingTileView: View {
     var size: CGFloat
     var text: String
     @Binding var Width: CGFloat
+    @State var Height: CGFloat
     
     var body: some View {
         VStack{
-            GeometryReader{ value in
-                Text(text)
-                    .font(.custom("Chalkboard SE", size: 65))
-                    .fixedSize(horizontal: true, vertical: true)
-                    .foregroundColor(.white)
-            }
+            Text(text)
+                .font(.custom("Chalkboard SE", size: Height * 0.08, relativeTo: .title))
+                .fixedSize(horizontal: true, vertical: true)
+                .foregroundColor(.white)
         }.frame(width: Width ,height: size/4, alignment: .leading)
+//        GeometryReader{ value in
+//        }
     }
 }
 
@@ -429,11 +440,12 @@ struct HomePage: View{
                     if ScrollText != ""{
                         ScrollView(.horizontal){
                             Text(ScrollText)
-                                .font(.custom("Chalkboard SE", size: 65, relativeTo: .title))
+                                .font(.custom("Chalkboard SE", size: geometry.size.height * 0.08, relativeTo: .title))
                                 .fixedSize(horizontal: true, vertical: true)
                                 .foregroundColor(.white)
                                 .saveSize(in: $width)
-                        }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
+                        }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.99)
+                        .padding(.bottom, 0.01)
                     } else {
                         ProgressView()
                             .frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
@@ -445,8 +457,8 @@ struct HomePage: View{
                         let size = geometry.size.width
                         InfiniteScroller(contentWidth: width.width * 2, AnimationDuration: $AnimationDuration) {
                             HStack(spacing: 0) {
-                                SildingTileView(size: size, text: ScrollText, Width: $width.width)
-                                SildingTileView(size: size, text: ScrollText, Width: $width.width)
+                                SildingTileView(size: size, text: ScrollText, Width: $width.width, Height: geometry.size.height)
+                                SildingTileView(size: size, text: ScrollText, Width: $width.width, Height: geometry.size.height)
                             }
                         }
                     }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
@@ -630,7 +642,7 @@ class SelectedWindowMode: ObservableObject{
 }
 
 struct ContentView: View {
-    @StateObject var WindowMode: SelectedWindowMode = SelectedWindowMode()
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     @State var accountToken: String?
     @State var MSALAccount: MSALAccount?
     

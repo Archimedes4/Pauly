@@ -400,8 +400,8 @@ struct CreateNewUserPageTwoMicrosoft: View{
     @State var showingAlert = false
     @State var alertMessage = ""
     
-    @State var SelectedGrade: String = "9"
-    @State var Grades: [String] = ["9", "10", "11", "12"]
+    @State var SelectedGrade: Int = 9
+    @State var Grades: [Int] = [9, 10, 11, 12]
     
     
     let AvaliableSections: [Int] = [1, 2, 3, 4, 5, 6, 7]
@@ -420,7 +420,7 @@ struct CreateNewUserPageTwoMicrosoft: View{
                     Menu{
                         Picker(selection: $SelectedGrade) {
                             ForEach(Grades, id: \.self) {
-                                Text($0)
+                                Text("\($0)")
                             }
                         } label: {
                             EmptyView()
@@ -473,7 +473,7 @@ struct CreateNewUserPageTwoMicrosoft: View{
                 
                 Button(){
                     SelectedCourseViewPage = .PageFour
-                    GradeIn = Int(SelectedGrade) ?? 8
+                    GradeIn = SelectedGrade
                 } label: {
                     Text("NEXT")
                         .font(.system(size: 17))
@@ -681,6 +681,7 @@ struct CourseSelectedType{
     let Name: String
     let Section: Int
     let Year: Int
+    let Grade: Int
 }
 
 struct CreateNewUserPageFourSectionView: View{
@@ -712,7 +713,7 @@ struct CreateNewUserPageFourSectionView: View{
                     List{
                         ForEach(AvaliableSections, id: \.self){ section in
                             Button(){
-                                SelectedCourses.append(CourseSelectedType(Name: CourseName, Section: section, Year: 2023))   //TO DO ADD YEAR
+                                SelectedCourses.append(CourseSelectedType(Name: CourseName, Section: section, Year: 2023, Grade: Grade))   //TO DO ADD YEAR
                                 SelectedCourseViewPage = .PageFour
                                 
                             } label: {
@@ -927,7 +928,7 @@ struct CreateNewUserPageFourView: View{
                                                  let SchoolYear = secdata["School Year"] as? Int
                                                  if let Index = AvaliableCourses.firstIndex(where: { $0 == CourseName }){
                                                      AvaliableCourses.remove(at: Index)
-                                                     CoursesSelected.append(CourseSelectedType(Name: CourseName!, Section: Section!, Year: SchoolYear!))
+                                                     CoursesSelected.append(CourseSelectedType(Name: CourseName!, Section: Section!, Year: SchoolYear!, Grade: GradeIn))
                                                  }
                                              }
                                          }
@@ -1085,7 +1086,7 @@ struct CreateNewUserPageFiveView: View{
             let docRef = db.collection("Users").document(uid)
             var OutputCoursesSelected: [String] = []
             for m in CoursesSelected{
-                OutputCoursesSelected.append("\(m.Name)-\(m.Section)-\(m.Year)")
+                OutputCoursesSelected.append("\(m.Grade)-\(m.Name)-\(m.Section)-\(m.Year)")
             }
             
             let inputData: [String: Any] = [
@@ -1095,13 +1096,13 @@ struct CreateNewUserPageFiveView: View{
                 "Grade":GradeIn,
                 "Email":Username,
                 "uid":uid,
-                "Groups":[],
+                "Groups":[] as [String],
                 "Score":0,
                 "Section":SelectedSection,
-                "Permissions":[],
+                "Permissions":[] as [String],
                 "Title":"Student",
-                "MemberGroups":[],
-                "CompletedCommissions":[]
+                "MemberGroups":[] as [String],
+                "CompletedCommissions":[] as [Int]
             ]
             
             docRef.setData(inputData) { error in

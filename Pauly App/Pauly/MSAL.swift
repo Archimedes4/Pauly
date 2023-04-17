@@ -211,7 +211,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                     newselectedWindowMode.FirstName = FirstName
                     newselectedWindowMode.LastName = LastName
                     newselectedWindowMode.SelectedCourses = SelectedCourses
-                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(WindowMode: newselectedWindowMode, MSALAccount: result.account))
+                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(MSALAccount: result.account).environmentObject(newselectedWindowMode))
                 }
             }
         } catch {
@@ -310,7 +310,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                     newselectedWindowMode.FirstName = FirstName
                     newselectedWindowMode.LastName = LastName
                     newselectedWindowMode.SelectedCourses = SelectedCourses
-                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(WindowMode: newselectedWindowMode, accountToken: result.accessToken, MSALAccount: account))
+                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(accountToken: result.accessToken, MSALAccount: account).environmentObject(newselectedWindowMode))
                 }
         } catch {
             print("\(#function) logging error \(error)")

@@ -8,20 +8,7 @@
 import Foundation
 import SwiftUI
 import FirebaseFirestore
-
-struct ScoresView: View{
-    @Binding var SelectedSport: String
-    var body: some View{
-        Text("Scores")
-    }
-}
-
-struct Crusaders: View{
-    @Binding var SelectedSport: String
-    var body: some View{
-        Text("Crusaders")
-    }
-}
+import FirebaseStorage
 
 struct SportsCardsType{
     var id: UUID = UUID()
@@ -36,12 +23,46 @@ struct TeamMemberType{
     let id: UUID = UUID()
     let Name:String
     let Position:String
+    let ImageRef: String
 }
 
 struct AvaliableTeamType: Hashable{
     let id: UUID = UUID()
     let Name: String
     let PageInfo: [Int]
+}
+
+
+struct RosterIconView: View{
+    @State private var selectedImage: UIImage?
+    @State var TextSize: CGFloat
+    @State var player: TeamMemberType
+    var body: some View{
+        HStack{
+            if selectedImage != nil{
+                Image(uiImage: selectedImage!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: TextSize)
+            }
+            Text(player.Name)
+            Text(player.Position)
+        }.onAppear(){
+            GetImage(Ref: player.ImageRef)
+        }
+    }
+    func GetImage(Ref: String){
+        let Ref = Storage.storage().reference(forURL: "gs://pauly-9dcfc.appspot.com/\(Ref)")
+        Ref.getData(maxSize: 1 * 1024 * 1024) { data, error in
+            if error != nil {
+                print("An Error Occurred")
+                print(error)
+            } else {
+                selectedImage = UIImage(data: data!)
+                print("Done")
+            }
+        }
+    }
 }
 
 struct InSportView: View{
@@ -73,7 +94,7 @@ struct InSportView: View{
                 if SelectedMode == "Crusaders"{
                     ScrollView{
                         VStack{
-                            ForEach(AvaliableCards, id: \.id) { card in
+                            ForEach($AvaliableCards, id: \.id) { card in
                                 Card(TextColor: Color.black, accessToken: $accessToken, SelectedCard: card)
                                     .frame(width: geo.size.width * 0.9, height: geo.size.height * 0.3)
                                     .cornerRadius(25)
@@ -99,15 +120,15 @@ struct InSportView: View{
                     } else {
                         if Roster.count != 0 {
                             List(Roster, id: \.id) { player in
-                                HStack{
-                                    Text(player.Name)
-                                    Text(player.Position)
-                                }
+                                RosterIconView(TextSize: geo.size.width * 0.1, player: player)
                             }.scrollContentBackground(.hidden)
                             .background(Color.marron)
                         } else {
                             Spacer()
                             ProgressView()
+                                .onAppear(){
+                                    FindRoster()
+                                }
                             Spacer()
                         }
                     }
@@ -147,29 +168,29 @@ struct InSportView: View{
         }
     }
     func FindRoster() {
-        Task{
-            do{
-                Roster = []
-                let db = Firestore.firestore()
-                
-                let docRef = db.collection("Sports").document(SelectedSport).collection("Seasons").document("\(SelectedSeason)").collection("Teams").document(SelectedTeam.Name).collection("Roster")
-                docRef.getDocuments { (snapshot, error) in
-                    guard let snapshot = snapshot, error == nil else {
-                     //handle error
-                     return
-                   }
-                   snapshot.documents.forEach({ (documentSnapshot) in
-                       let documentData = documentSnapshot.data()
-                       let Name = documentData["Name"] as? String ?? "Error"
-                       let Position = documentData["Position"] as? String ?? "Error"
-                       
-                       Roster.append(TeamMemberType(Name: Name, Position: Position))
-                   })
-                 }
-            } catch {
-                print("Error")
-            }
-        }
+        Roster = []
+        let db = Firestore.firestore()
+        
+        let docRef = db.collection("Sports").document(SelectedSport).collection("Seasons").document("\(SelectedSeason)").collection("Teams").document(SelectedTeam.Name).collection("Roster")
+        docRef.getDocuments { (snapshot, error) in
+            guard let snapshot = snapshot, error == nil else {
+             //handle error
+             return
+           }
+           snapshot.documents.forEach({ (documentSnapshot) in
+               let documentData = documentSnapshot.data()
+               guard let Name = documentData["Name"] as? String else {
+                   return
+               }
+               guard let Position = documentData["Position"] as? String else {
+                   return
+               }
+               guard let ImageRef = documentData["ImageRef"] as? String else{
+                   return
+               }
+               Roster.append(TeamMemberType(Name: Name, Position: Position, ImageRef: ImageRef))
+           })
+         }
     }
     func FindGames() {
         Task{
@@ -267,12 +288,11 @@ struct HighlightView: View{
         GeometryReader{ geo in
             ScrollView{
                 VStack(alignment: .center){
-                    ForEach(AvaliableCards, id: \.id) { card in
+                    ForEach($AvaliableCards, id: \.id) { card in
                         HStack{
                             Spacer()
                             Card(TextColor: Color.black, accessToken: $accessToken, SelectedCard: card)
-                                .frame(width: geo.size.width * 0.9, height: geo.size.height * 0.3, alignment: .center)
-                                .cornerRadius(25)
+                                .frame(width: geo.size.width * 0.9, height: geo.size.height * 0.5, alignment: .center)
                             Spacer()
                         }
                     }

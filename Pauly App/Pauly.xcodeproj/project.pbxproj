@@ -8,10 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		C60B567B29D8280E00E8AC5D /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = C60B567A29D8280D00E8AC5D /* Resources.swift */; };
-		C613B9E629DD064E0047E045 /* MSAL in Frameworks */ = {isa = PBXBuildFile; productRef = C613B9E529DD064E0047E045 /* MSAL */; };
-		C613B9EE29DD06F10047E045 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C613B9ED29DD06F10047E045 /* FirebaseFirestore */; };
-		C613B9F029DD07000047E045 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = C613B9EF29DD07000047E045 /* FirebaseStorage */; };
-		C613B9F229DD07860047E045 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C613B9F129DD07860047E045 /* FirebaseMessaging */; };
 		C620B5CE29B81235007DB698 /* Security.swift in Sources */ = {isa = PBXBuildFile; fileRef = C620B5CD29B81235007DB698 /* Security.swift */; };
 		C620B5D129B8BAA4007DB698 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C620B5D029B8BAA4007DB698 /* Security.framework */; };
 		C620B5D329B8BC09007DB698 /* PDFview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C620B5D229B8BC09007DB698 /* PDFview.swift */; };
@@ -32,7 +28,6 @@
 		C64D215029DDD573006D5A13 /* PaulyWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C64D214C29DDD572006D5A13 /* PaulyWidget.intentdefinition */; };
 		C64D215129DDD573006D5A13 /* PaulyWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C64D214C29DDD572006D5A13 /* PaulyWidget.intentdefinition */; };
 		C64D215429DDD573006D5A13 /* PaulyWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C64D214029DDD572006D5A13 /* PaulyWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		C64D215C29DDDF67006D5A13 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C64D215B29DDDF67006D5A13 /* FirebaseAuth */; };
 		C657D0EA29DB8EB4001A368B /* HTMLTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C657D0E929DB8EB4001A368B /* HTMLTextView.swift */; };
 		C671570F29DF3A6C00D6DD57 /* GovernmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C671570E29DF3A6C00D6DD57 /* GovernmentView.swift */; };
 		C6858FE329C6621E00269A56 /* Messaging.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6858FE229C6621E00269A56 /* Messaging.swift */; };
@@ -42,15 +37,29 @@
 		C695C01629A7E4F600D983E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01529A7E4F600D983E7 /* Assets.xcassets */; };
 		C695C01929A7E4F600D983E7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */; };
 		C6CB35A129D28762007EC7A8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6CB35A029D28762007EC7A8 /* LaunchScreen.storyboard */; };
+		C6D4679029EB035E00A7882E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4678F29EB035E00A7882E /* FirebaseAuth */; };
+		C6D4679229EB036700A7882E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4679129EB036700A7882E /* FirebaseFirestore */; };
+		C6D4679429EB038400A7882E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4679329EB038400A7882E /* FirebaseAuth */; };
+		C6D4679629EB038D00A7882E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4679529EB038D00A7882E /* FirebaseFirestore */; };
+		C6D4679829EB039300A7882E /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4679729EB039300A7882E /* FirebaseMessaging */; };
+		C6D4679A29EB039A00A7882E /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4679929EB039A00A7882E /* FirebaseStorage */; };
+		C6D4679C29EB44EF00A7882E /* MSAL in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4679B29EB44EF00A7882E /* MSAL */; };
+		C6D4679E29EB524100A7882E /* UIImageExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D4679D29EB524100A7882E /* UIImageExtension.swift */; };
+		C6D467A529EB7F2D00A7882E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C64D214329DDD572006D5A13 /* SwiftUI.framework */; };
+		C6D467AD29EC55F800A7882E /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = C6D467AC29EC55F800A7882E /* SDWebImageSwiftUI */; };
+		C6D467AF29ECC69900A7882E /* GovernmentCardAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D467AE29ECC69900A7882E /* GovernmentCardAddView.swift */; };
 		C6D5B9E029DFBC4500F47CBA /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D5B9DF29DFBC4500F47CBA /* ImageView.swift */; };
 		C6D5B9FD29E0713600F47CBA /* GovernmentViewClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D5B9FC29E0713600F47CBA /* GovernmentViewClasses.swift */; };
 		C6D5BA0029E073F200F47CBA /* GovernmentViewCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D5B9FF29E073F200F47CBA /* GovernmentViewCards.swift */; };
 		C6D5BA0229E091EE00F47CBA /* GovernmentViewCommissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D5BA0129E091EE00F47CBA /* GovernmentViewCommissions.swift */; };
+		C6D5BA0529E37B7300F47CBA /* GovernmentViewSports.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D5BA0429E37B7300F47CBA /* GovernmentViewSports.swift */; };
+		C6E2104129E6CC72000A7742 /* GovernmentClassAddClassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E2104029E6CC72000A7742 /* GovernmentClassAddClassView.swift */; };
+		C6E2104429E6CD22000A7742 /* GovernmentClassAddClassRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E2104329E6CD22000A7742 /* GovernmentClassAddClassRootView.swift */; };
+		C6E2104629E6CD4F000A7742 /* GovernmentClassEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E2104529E6CD4F000A7742 /* GovernmentClassEditView.swift */; };
+		C6E2104E29E875CF000A7742 /* CalendarPageDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E2104D29E875CF000A7742 /* CalendarPageDayView.swift */; };
 		C6E229C429BC0A15008DB772 /* MSAL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229C329BC0A15008DB772 /* MSAL.swift */; };
 		C6E229C829BCDBF1008DB772 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E229C729BCDBF1008DB772 /* ProfileView.swift */; };
-		C6E2601029DE00B6005811A1 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C6E2600F29DE00B6005811A1 /* FirebaseFirestore */; };
 		C6E2601529DE0E78005811A1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C64A91AD29DCA4A50049DDE9 /* GoogleService-Info.plist */; };
-		C6E2601829DE1772005811A1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C6E2601729DE1772005811A1 /* FirebaseAuth */; };
 		C6F2B18B29CCA86E00149F20 /* Leaderboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6F2B18A29CCA86E00149F20 /* Leaderboard.swift */; };
 		C6FB8CB529C39DA400672E70 /* SportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FB8CB429C39DA400672E70 /* SportsView.swift */; };
 		C6FB8CC429C60EA200672E70 /* CreateNewUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FB8CC329C60EA100672E70 /* CreateNewUserView.swift */; };
@@ -116,10 +125,17 @@
 		C695C01529A7E4F600D983E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C6CB35A029D28762007EC7A8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C6D4679D29EB524100A7882E /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
+		C6D467AE29ECC69900A7882E /* GovernmentCardAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentCardAddView.swift; sourceTree = "<group>"; };
 		C6D5B9DF29DFBC4500F47CBA /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		C6D5B9FC29E0713600F47CBA /* GovernmentViewClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentViewClasses.swift; sourceTree = "<group>"; };
 		C6D5B9FF29E073F200F47CBA /* GovernmentViewCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentViewCards.swift; sourceTree = "<group>"; };
 		C6D5BA0129E091EE00F47CBA /* GovernmentViewCommissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentViewCommissions.swift; sourceTree = "<group>"; };
+		C6D5BA0429E37B7300F47CBA /* GovernmentViewSports.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentViewSports.swift; sourceTree = "<group>"; };
+		C6E2104029E6CC72000A7742 /* GovernmentClassAddClassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentClassAddClassView.swift; sourceTree = "<group>"; };
+		C6E2104329E6CD22000A7742 /* GovernmentClassAddClassRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentClassAddClassRootView.swift; sourceTree = "<group>"; };
+		C6E2104529E6CD4F000A7742 /* GovernmentClassEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentClassEditView.swift; sourceTree = "<group>"; };
+		C6E2104D29E875CF000A7742 /* CalendarPageDayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarPageDayView.swift; sourceTree = "<group>"; };
 		C6E229C329BC0A15008DB772 /* MSAL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSAL.swift; sourceTree = "<group>"; };
 		C6E229C729BCDBF1008DB772 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		C6E2601629DE0F00005811A1 /* PaulyWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PaulyWidgetExtension.entitlements; path = PaulyWidget/PaulyWidgetExtension.entitlements; sourceTree = "<group>"; };
@@ -136,9 +152,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				C64D214429DDD572006D5A13 /* SwiftUI.framework in Frameworks */,
-				C6E2601029DE00B6005811A1 /* FirebaseFirestore in Frameworks */,
+				C6D4679229EB036700A7882E /* FirebaseFirestore in Frameworks */,
+				C6D4679029EB035E00A7882E /* FirebaseAuth in Frameworks */,
 				C64D214229DDD572006D5A13 /* WidgetKit.framework in Frameworks */,
-				C6E2601829DE1772005811A1 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,12 +162,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C613B9F229DD07860047E045 /* FirebaseMessaging in Frameworks */,
-				C64D215C29DDDF67006D5A13 /* FirebaseAuth in Frameworks */,
+				C6D467A529EB7F2D00A7882E /* SwiftUI.framework in Frameworks */,
+				C6D4679829EB039300A7882E /* FirebaseMessaging in Frameworks */,
+				C6D4679C29EB44EF00A7882E /* MSAL in Frameworks */,
 				C620B5D129B8BAA4007DB698 /* Security.framework in Frameworks */,
-				C613B9EE29DD06F10047E045 /* FirebaseFirestore in Frameworks */,
-				C613B9F029DD07000047E045 /* FirebaseStorage in Frameworks */,
-				C613B9E629DD064E0047E045 /* MSAL in Frameworks */,
+				C6D467AD29EC55F800A7882E /* SDWebImageSwiftUI in Frameworks */,
+				C6D4679429EB038400A7882E /* FirebaseAuth in Frameworks */,
+				C6D4679A29EB039A00A7882E /* FirebaseStorage in Frameworks */,
+				C6D4679629EB038D00A7882E /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +225,7 @@
 				C640C4B529B433A8009668BF /* Pauly.entitlements */,
 				C6CB35A029D28762007EC7A8 /* LaunchScreen.storyboard */,
 				C620B5CD29B81235007DB698 /* Security.swift */,
+				C6D4679D29EB524100A7882E /* UIImageExtension.swift */,
 				C6E229C729BCDBF1008DB772 /* ProfileView.swift */,
 				C6D5B9E129DFC55600F47CBA /* Images */,
 				C6D5B9FE29E0713B00F47CBA /* GovernmentView */,
@@ -221,14 +240,14 @@
 				C6FB8CC529C611CB00672E70 /* PassswordView.swift */,
 				C6E229C329BC0A15008DB772 /* MSAL.swift */,
 				C692640329B011BF000F96B9 /* Info.plist */,
-				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
+				C6E2104F29E875EA000A7742 /* Calendar */,
 				C620B5D229B8BC09007DB698 /* PDFview.swift */,
 				C64A91AD29DCA4A50049DDE9 /* GoogleService-Info.plist */,
 				C695C01129A7E4F200D983E7 /* PaulyApp.swift */,
 				C640C4B729B45C52009668BF /* ChatHomePage.swift */,
 				C640C4AF29B29035009668BF /* LectureView.swift */,
-				C6FB8CB429C39DA400672E70 /* SportsView.swift */,
 				C695C01329A7E4F200D983E7 /* ContentView.swift */,
+				C6FB8CB429C39DA400672E70 /* SportsView.swift */,
 				C640C4AB29B1325E009668BF /* QuizView.swift */,
 				C6248A6029D72AD7009D2765 /* CardView.swift */,
 				C6FC4D3C29AA402A00F6ED3E /* Functions.swift */,
@@ -246,6 +265,15 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		C6D467B029ECC6A400A7882E /* Government Card */ = {
+			isa = PBXGroup;
+			children = (
+				C6D5B9FF29E073F200F47CBA /* GovernmentViewCards.swift */,
+				C6D467AE29ECC69900A7882E /* GovernmentCardAddView.swift */,
+			);
+			path = "Government Card";
+			sourceTree = "<group>";
+		};
 		C6D5B9E129DFC55600F47CBA /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -258,11 +286,32 @@
 			isa = PBXGroup;
 			children = (
 				C671570E29DF3A6C00D6DD57 /* GovernmentView.swift */,
+				C6D5BA0429E37B7300F47CBA /* GovernmentViewSports.swift */,
 				C6D5BA0129E091EE00F47CBA /* GovernmentViewCommissions.swift */,
-				C6D5B9FC29E0713600F47CBA /* GovernmentViewClasses.swift */,
-				C6D5B9FF29E073F200F47CBA /* GovernmentViewCards.swift */,
+				C6D467B029ECC6A400A7882E /* Government Card */,
+				C6E2104229E6CC7B000A7742 /* Government Class */,
 			);
 			path = GovernmentView;
+			sourceTree = "<group>";
+		};
+		C6E2104229E6CC7B000A7742 /* Government Class */ = {
+			isa = PBXGroup;
+			children = (
+				C6D5B9FC29E0713600F47CBA /* GovernmentViewClasses.swift */,
+				C6E2104029E6CC72000A7742 /* GovernmentClassAddClassView.swift */,
+				C6E2104329E6CD22000A7742 /* GovernmentClassAddClassRootView.swift */,
+				C6E2104529E6CD4F000A7742 /* GovernmentClassEditView.swift */,
+			);
+			path = "Government Class";
+			sourceTree = "<group>";
+		};
+		C6E2104F29E875EA000A7742 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
+				C6E2104D29E875CF000A7742 /* CalendarPageDayView.swift */,
+			);
+			path = Calendar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -282,8 +331,8 @@
 			);
 			name = PaulyWidgetExtension;
 			packageProductDependencies = (
-				C6E2600F29DE00B6005811A1 /* FirebaseFirestore */,
-				C6E2601729DE1772005811A1 /* FirebaseAuth */,
+				C6D4678F29EB035E00A7882E /* FirebaseAuth */,
+				C6D4679129EB036700A7882E /* FirebaseFirestore */,
 			);
 			productName = PaulyWidgetExtension;
 			productReference = C64D214029DDD572006D5A13 /* PaulyWidgetExtension.appex */;
@@ -305,11 +354,12 @@
 			);
 			name = Pauly;
 			packageProductDependencies = (
-				C613B9E529DD064E0047E045 /* MSAL */,
-				C613B9ED29DD06F10047E045 /* FirebaseFirestore */,
-				C613B9EF29DD07000047E045 /* FirebaseStorage */,
-				C613B9F129DD07860047E045 /* FirebaseMessaging */,
-				C64D215B29DDDF67006D5A13 /* FirebaseAuth */,
+				C6D4679329EB038400A7882E /* FirebaseAuth */,
+				C6D4679529EB038D00A7882E /* FirebaseFirestore */,
+				C6D4679729EB039300A7882E /* FirebaseMessaging */,
+				C6D4679929EB039A00A7882E /* FirebaseStorage */,
+				C6D4679B29EB44EF00A7882E /* MSAL */,
+				C6D467AC29EC55F800A7882E /* SDWebImageSwiftUI */,
 			);
 			productName = Pauly;
 			productReference = C695C00E29A7E4F200D983E7 /* Pauly.app */;
@@ -345,6 +395,7 @@
 			packageReferences = (
 				C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C613B9E429DD064E0047E045 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */,
+				C6D467AB29EC55F800A7882E /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			productRefGroup = C695C00F29A7E4F200D983E7 /* Products */;
 			projectDirPath = "";
@@ -400,6 +451,7 @@
 				C6E229C829BCDBF1008DB772 /* ProfileView.swift in Sources */,
 				C6FB8CB529C39DA400672E70 /* SportsView.swift in Sources */,
 				C640C4B829B45C52009668BF /* ChatHomePage.swift in Sources */,
+				C6D5BA0529E37B7300F47CBA /* GovernmentViewSports.swift in Sources */,
 				C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */,
 				C64D215129DDD573006D5A13 /* PaulyWidget.intentdefinition in Sources */,
 				C6E229C429BC0A15008DB772 /* MSAL.swift in Sources */,
@@ -407,12 +459,16 @@
 				C6248A6129D72AD7009D2765 /* CardView.swift in Sources */,
 				C6F2B18B29CCA86E00149F20 /* Leaderboard.swift in Sources */,
 				C60B567B29D8280E00E8AC5D /* Resources.swift in Sources */,
+				C6E2104E29E875CF000A7742 /* CalendarPageDayView.swift in Sources */,
+				C6E2104429E6CD22000A7742 /* GovernmentClassAddClassRootView.swift in Sources */,
 				C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */,
 				C695C01229A7E4F200D983E7 /* PaulyApp.swift in Sources */,
 				C6FB8CC429C60EA200672E70 /* CreateNewUserView.swift in Sources */,
 				C620B5CE29B81235007DB698 /* Security.swift in Sources */,
+				C6D4679E29EB524100A7882E /* UIImageExtension.swift in Sources */,
 				C6D5B9FD29E0713600F47CBA /* GovernmentViewClasses.swift in Sources */,
 				C671570F29DF3A6C00D6DD57 /* GovernmentView.swift in Sources */,
+				C6E2104629E6CD4F000A7742 /* GovernmentClassEditView.swift in Sources */,
 				C657D0EA29DB8EB4001A368B /* HTMLTextView.swift in Sources */,
 				C6D5BA0029E073F200F47CBA /* GovernmentViewCards.swift in Sources */,
 				C64C7A0129D1DC0500E966CF /* Backgrounds.swift in Sources */,
@@ -422,6 +478,8 @@
 				C6858FE329C6621E00269A56 /* Messaging.swift in Sources */,
 				C6248A6329D73975009D2765 /* LocationServices.swift in Sources */,
 				C6D5BA0229E091EE00F47CBA /* GovernmentViewCommissions.swift in Sources */,
+				C6D467AF29ECC69900A7882E /* GovernmentCardAddView.swift in Sources */,
+				C6E2104129E6CC72000A7742 /* GovernmentClassAddClassView.swift in Sources */,
 				C6FB8CC629C611CB00672E70 /* PassswordView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -733,43 +791,56 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		C6D467AB29EC55F800A7882E /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C613B9E529DD064E0047E045 /* MSAL */ = {
+		C6D4678F29EB035E00A7882E /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C613B9E429DD064E0047E045 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */;
-			productName = MSAL;
+			package = C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
-		C613B9ED29DD06F10047E045 /* FirebaseFirestore */ = {
+		C6D4679129EB036700A7882E /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
 		};
-		C613B9EF29DD07000047E045 /* FirebaseStorage */ = {
+		C6D4679329EB038400A7882E /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseStorage;
+			productName = FirebaseAuth;
 		};
-		C613B9F129DD07860047E045 /* FirebaseMessaging */ = {
+		C6D4679529EB038D00A7882E /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		C6D4679729EB039300A7882E /* FirebaseMessaging */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
 		};
-		C64D215B29DDDF67006D5A13 /* FirebaseAuth */ = {
+		C6D4679929EB039A00A7882E /* FirebaseStorage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
+			productName = FirebaseStorage;
 		};
-		C6E2600F29DE00B6005811A1 /* FirebaseFirestore */ = {
+		C6D4679B29EB44EF00A7882E /* MSAL */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
+			package = C613B9E429DD064E0047E045 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */;
+			productName = MSAL;
 		};
-		C6E2601729DE1772005811A1 /* FirebaseAuth */ = {
+		C6D467AC29EC55F800A7882E /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C613B9E329DD060F0047E045 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAuth;
+			package = C6D467AB29EC55F800A7882E /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

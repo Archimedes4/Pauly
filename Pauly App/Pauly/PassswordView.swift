@@ -137,11 +137,10 @@ struct InitializeMicrosoft: View {
                                                var OutputCorses: [CourseSelectedType] = []
                                                for k in ClassesPassword{
                                                    let outputarray = k.split(separator: "-")
-                                                   OutputCorses.append(CourseSelectedType(Name: String(outputarray[0]), Section: Int(outputarray[1])!, Year: Int(outputarray[2])!))
+                                                   OutputCorses.append(CourseSelectedType(Name: String(outputarray[1]), Section: Int(outputarray[2])!, Year: Int(outputarray[3])!, Grade: Int(outputarray[0])!))
                                                }
                                                WindowMode.SelectedCourses = OutputCorses
                                                WindowMode.SelectedWindowMode = .HomePage
-                                               
                                            }
                                        }
                                    }
@@ -360,39 +359,28 @@ struct PasswordView: View{
                                     let data = document.data()
                                     if let data = data {
                                         GradeIn = data["Grade"] as? Int ?? 8
-                                        let GroupPassword = data["Groups"] as! NSArray as? [Int] ?? []
-                                        let FirstNamePassword = data["First Name"] as! String
-                                        let LastNamePassword = data["Last Name"] as! String
-                                        let ClassesPassword = data["Classes"] as! NSArray as! [String]
-                                        let GradePassword = data["Grade"] as! Int
-                                        let EmailPassword = data["Email"] as! String
-                                        let uidPassword  = data["uid"] as! String
-                                        let outputData: [String:Any] = [
-                                            "First Name":FirstNamePassword,
-                                            "Last Name": LastNamePassword,
-                                            "Classes":ClassesPassword,
-                                            "Grade":GradePassword,
-                                            "Email":EmailPassword,
-                                            "uid":uidPassword,
-                                            "Groups":GroupPassword,
-                                            "Token":"Test"
-                                        ]
-                                        docRef.setData(outputData) { error in
-                                            if let error = error {
-                                                print("Error writing document: \(error)")
-                                            } else {
-                                                WindowMode.UsernameIn = uid
-                                                WindowMode.FirstName = FirstNamePassword
-                                                WindowMode.LastName = LastNamePassword
-                                                var OutputCorses: [CourseSelectedType] = []
-                                                for k in ClassesPassword{
-                                                    let outputarray = k.split(separator: "-")
-                                                    OutputCorses.append(CourseSelectedType(Name: String(outputarray[0]), Section: Int(outputarray[1])!, Year: Int(outputarray[2])!))
-                                                }
-                                                WindowMode.SelectedCourses = OutputCorses
-                                                WindowMode.SelectedWindowMode = .HomePage
-                                            }
+                                        guard let FirstNamePassword = data["First Name"] as? String else {
+                                            notLoadingPassword = true
+                                            return
                                         }
+                                        guard let LastNamePassword = data["Last Name"] as? String else {
+                                            notLoadingPassword = true
+                                            return
+                                        }
+                                        guard let ClassesPassword = data["Classes"] as? NSArray as? [String] else {
+                                            notLoadingPassword = true
+                                            return
+                                        }
+                                        WindowMode.UsernameIn = uid
+                                        WindowMode.FirstName = FirstNamePassword
+                                        WindowMode.LastName = LastNamePassword
+                                        var OutputCorses: [CourseSelectedType] = []
+                                        for k in ClassesPassword{
+                                            let outputarray = k.split(separator: "-")
+                                            OutputCorses.append(CourseSelectedType(Name: String(outputarray[1]), Section: Int(outputarray[2])!, Year: Int(outputarray[3])!, Grade: Int(outputarray[0])!))
+                                        }
+                                        WindowMode.SelectedCourses = OutputCorses
+                                        WindowMode.SelectedWindowMode = .HomePage
                                     }
                                 }
                             }

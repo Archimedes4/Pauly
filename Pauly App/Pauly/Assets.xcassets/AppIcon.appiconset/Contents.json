@@ -1,112 +1,112 @@
 {
   "images" : [
     {
-      "filename" : "PaulyIcon-1024_Main_8_40x40 1.png",
+      "filename" : "icon_40.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "20x20"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_15_60x60 1.png",
+      "filename" : "icon_60.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "3x",
       "size" : "20x20"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_14_58x58 1.png",
+      "filename" : "icon_58.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "29x29"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_13_87x87 1.png",
+      "filename" : "icon_87.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "3x",
       "size" : "29x29"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_12_76x76 1.png",
+      "filename" : "icon_76.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "38x38"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_10_114x114 1.png",
+      "filename" : "PaulyIcon-1024 Main Real-5.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "3x",
       "size" : "38x38"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_80x80 1.png",
+      "filename" : "icon_80.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "40x40"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_1_120x120 1.png",
+      "filename" : "icon_120.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "3x",
       "size" : "40x40"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_1_120x120 2.png",
+      "filename" : "icon_120 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "60x60"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_7_180x180 1.png",
+      "filename" : "icon_180.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "3x",
       "size" : "60x60"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_2_128x128 1.png",
+      "filename" : "icon_128.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "64x64"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_3_192x192 1.png",
+      "filename" : "PaulyIcon-1024 Main Real-3.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "3x",
       "size" : "64x64"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_4_136x136 1.png",
+      "filename" : "PaulyIcon-1024 Main Real-4.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "68x68"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_6_152x152 1.png",
+      "filename" : "icon_152.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "76x76"
     },
     {
-      "filename" : "PaulyIcon-1024_Main_9_167x167 1.png",
+      "filename" : "icon_167.png",
       "idiom" : "universal",
       "platform" : "ios",
       "scale" : "2x",
       "size" : "83.5x83.5"
     },
     {
-      "filename" : "PaulyIcon-1024 Main 1.png",
+      "filename" : "icon_1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
