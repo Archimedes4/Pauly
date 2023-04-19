@@ -474,7 +474,7 @@ struct GovernmentAddCommissionsView: View{
                         }.pickerStyle(.wheel)
                         if Value == 2{
                             VStack{
-                                GovernmentLocationCommissionsView(Proximity: $Proximity)
+                                GovernmentLocationCommissionsView(Proximity: $Proximity, Location: $Location)
                             }.frame(height: geo.size.height * 0.5)
                         } else {
                             Spacer()
@@ -552,7 +552,7 @@ struct GovernmentAddCommissionsView: View{
                     
                     if Value == 2{
                         InputData["Proximity"] = Proximity
-                        InputData["Coordinate"] = Location
+                        InputData["Coordinate"] = GeoPoint(latitude: Location!.coordinate.latitude, longitude: Location!.coordinate.longitude)
                     }
                     commisionDocRef.setData(InputData)
                     docRef.updateData(["CommissionsCount": (CommissionCount + 1)])
@@ -564,7 +564,7 @@ struct GovernmentAddCommissionsView: View{
     }
 }
 
-struct Location: Identifiable {
+struct LocationType: Identifiable {
     let id = UUID()
     let name: String
     let coordinate: CLLocationCoordinate2D
@@ -583,10 +583,11 @@ struct GovernmentLocationCommissionsView: View{
     @State var SelectedPoint: CLLocationCoordinate2D = CLLocationCoordinate2D(latitude: 49.856991, longitude: -97.226865)
     @State var PointChanged: Bool = false
     
-    @State var locations = [Location(name: "SPHS", coordinate: CLLocationCoordinate2D(latitude: 49.856991, longitude: -97.226865))]
+    @State var locations = [LocationType(name: "SPHS", coordinate: CLLocationCoordinate2D(latitude: 49.856991, longitude: -97.226865))]
     
     
     @Binding var Proximity: Double
+    @Binding var Location: CLLocation?
     
     var body: some View{
         VStack {
@@ -612,6 +613,7 @@ struct GovernmentLocationCommissionsView: View{
                                     }
                                 }
                             }.onAppear(){
+                                Location = CLLocation(latitude:  SelectedPoint.latitude, longitude: SelectedPoint.longitude)
                                 region = MKCoordinateRegion(
                                     center: CLLocationCoordinate2D(
                                         latitude: Double(SelectedPoint.latitude.description)!,
@@ -621,10 +623,10 @@ struct GovernmentLocationCommissionsView: View{
                                         latitudeDelta: 0.03,
                                         longitudeDelta: 0.03)
                                     )
-                                locations = [Location(name: "Location", coordinate: CLLocationCoordinate2D(
+                                locations = [LocationType(name: "Location", coordinate: CLLocationCoordinate2D(
                                     latitude: Double(SelectedPoint.latitude.description)!,
                                     longitude: Double(SelectedPoint.longitude.description)!
-                                    )), Location(name: "Proxy", coordinate: CLLocationCoordinate2D(
+                                    )), LocationType(name: "Proxy", coordinate: CLLocationCoordinate2D(
                                         latitude: Double(SelectedPoint.latitude.description)!,
                                         longitude: Double(SelectedPoint.longitude.description)!
                                         ))]

@@ -24,7 +24,6 @@
 		C64D214729DDD572006D5A13 /* PaulyWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64D214629DDD572006D5A13 /* PaulyWidgetBundle.swift */; };
 		C64D214929DDD572006D5A13 /* PaulyWidgetLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64D214829DDD572006D5A13 /* PaulyWidgetLiveActivity.swift */; };
 		C64D214B29DDD572006D5A13 /* PaulyWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C64D214A29DDD572006D5A13 /* PaulyWidget.swift */; };
-		C64D214E29DDD573006D5A13 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C64D214D29DDD573006D5A13 /* Assets.xcassets */; };
 		C64D215029DDD573006D5A13 /* PaulyWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C64D214C29DDD572006D5A13 /* PaulyWidget.intentdefinition */; };
 		C64D215129DDD573006D5A13 /* PaulyWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C64D214C29DDD572006D5A13 /* PaulyWidget.intentdefinition */; };
 		C64D215429DDD573006D5A13 /* PaulyWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C64D214029DDD572006D5A13 /* PaulyWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -48,6 +47,9 @@
 		C6D467A529EB7F2D00A7882E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C64D214329DDD572006D5A13 /* SwiftUI.framework */; };
 		C6D467AD29EC55F800A7882E /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = C6D467AC29EC55F800A7882E /* SDWebImageSwiftUI */; };
 		C6D467AF29ECC69900A7882E /* GovernmentCardAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D467AE29ECC69900A7882E /* GovernmentCardAddView.swift */; };
+		C6D467B229EF355A00A7882E /* Assests.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C6D467B129EF355A00A7882E /* Assests.xcassets */; };
+		C6D467B329EF367C00A7882E /* Assests.xcassets in Sources */ = {isa = PBXBuildFile; fileRef = C6D467B129EF355A00A7882E /* Assests.xcassets */; };
+		C6D467B529EF779400A7882E /* CalendarEventsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D467B429EF779300A7882E /* CalendarEventsView.swift */; };
 		C6D5B9E029DFBC4500F47CBA /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D5B9DF29DFBC4500F47CBA /* ImageView.swift */; };
 		C6D5B9FD29E0713600F47CBA /* GovernmentViewClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D5B9FC29E0713600F47CBA /* GovernmentViewClasses.swift */; };
 		C6D5BA0029E073F200F47CBA /* GovernmentViewCards.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D5B9FF29E073F200F47CBA /* GovernmentViewCards.swift */; };
@@ -112,7 +114,6 @@
 		C64D214829DDD572006D5A13 /* PaulyWidgetLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaulyWidgetLiveActivity.swift; sourceTree = "<group>"; };
 		C64D214A29DDD572006D5A13 /* PaulyWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaulyWidget.swift; sourceTree = "<group>"; };
 		C64D214C29DDD572006D5A13 /* PaulyWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = PaulyWidget.intentdefinition; sourceTree = "<group>"; };
-		C64D214D29DDD573006D5A13 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C64D214F29DDD573006D5A13 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C657D0E929DB8EB4001A368B /* HTMLTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTextView.swift; sourceTree = "<group>"; };
 		C671570E29DF3A6C00D6DD57 /* GovernmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentView.swift; sourceTree = "<group>"; };
@@ -127,6 +128,8 @@
 		C6CB35A029D28762007EC7A8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C6D4679D29EB524100A7882E /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		C6D467AE29ECC69900A7882E /* GovernmentCardAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentCardAddView.swift; sourceTree = "<group>"; };
+		C6D467B129EF355A00A7882E /* Assests.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assests.xcassets; sourceTree = "<group>"; };
+		C6D467B429EF779300A7882E /* CalendarEventsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEventsView.swift; sourceTree = "<group>"; };
 		C6D5B9DF29DFBC4500F47CBA /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		C6D5B9FC29E0713600F47CBA /* GovernmentViewClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentViewClasses.swift; sourceTree = "<group>"; };
 		C6D5B9FF29E073F200F47CBA /* GovernmentViewCards.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentViewCards.swift; sourceTree = "<group>"; };
@@ -193,7 +196,7 @@
 				C64D214829DDD572006D5A13 /* PaulyWidgetLiveActivity.swift */,
 				C64D214A29DDD572006D5A13 /* PaulyWidget.swift */,
 				C64D214C29DDD572006D5A13 /* PaulyWidget.intentdefinition */,
-				C64D214D29DDD573006D5A13 /* Assets.xcassets */,
+				C6D467B129EF355A00A7882E /* Assests.xcassets */,
 				C64D214F29DDD573006D5A13 /* Info.plist */,
 			);
 			path = PaulyWidget;
@@ -309,6 +312,7 @@
 			isa = PBXGroup;
 			children = (
 				C640C4AD29B26FF1009668BF /* CalendarPageView.swift */,
+				C6D467B429EF779300A7882E /* CalendarEventsView.swift */,
 				C6E2104D29E875CF000A7742 /* CalendarPageDayView.swift */,
 			);
 			path = Calendar;
@@ -413,7 +417,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C6E2601529DE0E78005811A1 /* GoogleService-Info.plist in Resources */,
-				C64D214E29DDD573006D5A13 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -422,6 +425,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C695C01929A7E4F600D983E7 /* Preview Assets.xcassets in Resources */,
+				C6D467B229EF355A00A7882E /* Assests.xcassets in Resources */,
 				C6CB35A129D28762007EC7A8 /* LaunchScreen.storyboard in Resources */,
 				C64A91AE29DCA4A50049DDE9 /* GoogleService-Info.plist in Resources */,
 				C695C01629A7E4F600D983E7 /* Assets.xcassets in Resources */,
@@ -435,6 +439,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6D467B329EF367C00A7882E /* Assests.xcassets in Sources */,
 				C64D215029DDD573006D5A13 /* PaulyWidget.intentdefinition in Sources */,
 				C64D214929DDD572006D5A13 /* PaulyWidgetLiveActivity.swift in Sources */,
 				C64D214729DDD572006D5A13 /* PaulyWidgetBundle.swift in Sources */,
@@ -471,6 +476,7 @@
 				C6E2104629E6CD4F000A7742 /* GovernmentClassEditView.swift in Sources */,
 				C657D0EA29DB8EB4001A368B /* HTMLTextView.swift in Sources */,
 				C6D5BA0029E073F200F47CBA /* GovernmentViewCards.swift in Sources */,
+				C6D467B529EF779400A7882E /* CalendarEventsView.swift in Sources */,
 				C64C7A0129D1DC0500E966CF /* Backgrounds.swift in Sources */,
 				C6FC4D3D29AA402A00F6ED3E /* Functions.swift in Sources */,
 				C640C4B029B29035009668BF /* LectureView.swift in Sources */,

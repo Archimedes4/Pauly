@@ -17,7 +17,7 @@ public enum ChatMode: String, CaseIterable{
     case Home = "Home"
     case GymBro = "Gym Bro"
     case MessageLEGO = "Message LEGO"
-    case TutorHomePage = "Tutor Home Page"
+    case TutorHomePage = "Tutoring"
     case ReportBug = "Report Bug"
     case Message = "Message"
 }
@@ -275,26 +275,47 @@ struct RequestATutor: View{
     @Binding var TutoringModeSelected: TutoringMode
     @State var TutorHelpText: String = ""
     var body: some View{
-        VStack{
-            HStack{
-                Button(){
-                    TutoringModeSelected = .Home
+        GeometryReader{ geo in
+            VStack{
+                HStack{
+                    Button(){
+                        TutoringModeSelected = .Home
+                    } label: {
+                        HStack{
+                            Image(systemName: "chevron.backward")
+                            Text("Back")
+                            Spacer()
+                        }
+                    }.padding()
+                }
+                Image("RequestATutor")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: geo.size.height * 0.3)
+                Text("Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName),")
+                Text("I would like help with with")
+                TextField("What would you like a tutor for.", text: $TutorHelpText)
+                Text("Thank you")
+                Button{
+                    let Content = "Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName), \n I would like help with \(TutorHelpText) \n Thank you!"
+                    let ChatData = GraphMailPost(message: GraphMailPost.Message(subject: "TUTOR REQUEST", body: GraphMailPost.Message.Body(contentType: "Text", content: Content), toRecipients: [GraphMailPost.Message.ToRecipient(emailAddress: GraphMailPost.Message.ToRecipient.EmailAddress(address: "andrewmainella@icloud.com"))], internetMessageHeaders: nil))
+                    MSALTools().callMailApi(Data: ChatData, AccessToken: AccessToken!)
                 } label: {
-                    HStack{
-                        Image(systemName: "chevron.backward")
-                        Text("Back")
-                        Spacer()
-                    }
-                }.padding()
-            }
-            Image("RequestATutor")
-                .resizable()
-            Text("Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName),")
-            Text("I would like help with with")
-            TextField("What would you like a tutor for.", text: $TutorHelpText)
-            Text("Thank you")
-            Spacer()
-        }.background(Color.marron)
+                    Text("SUBMIT")
+                        .font(.system(size: 17))
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                }
+                Spacer()
+            }.background(Color.marron)
+        }
     }
 }
 
@@ -303,24 +324,53 @@ struct RequestToBeATutor: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var TutoringModeSelected: TutoringMode
     @State var Content: String = ""
+    @State var CoursesTaken: String = ""
+    @State var ToutorText: String = ""
     var body: some View{
-        VStack{
-            HStack{
-                Button(){
-                    TutoringModeSelected = .Home
+        GeometryReader{ geo in
+            VStack{
+                HStack{
+                    Button(){
+                        TutoringModeSelected = .Home
+                    } label: {
+                        HStack{
+                            Image(systemName: "chevron.backward")
+                            Text("Back")
+                            Spacer()
+                        }
+                    }.padding()
+                }
+                
+                Image("RequestToBeATutor")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: geo.size.height * 0.3)
+                Text("Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName),")
+                Text("I have taken these courses")
+                TextField("What courses have you taken", text: $CoursesTaken)
+                Text("I would like to tutor")
+                TextField("Which courses would you like to tutor", text: $ToutorText)
+                Text("Thank You")
+                Button{
+                    let Content = "Hello my name is \(WindowMode.FirstName) \(WindowMode.LastName), \n I have taken theses courses \(CoursesTaken) \n I would like to tutor \(ToutorText) \n Thank you!"
+                    let ChatData = GraphMailPost(message: GraphMailPost.Message(subject: "TUTOR REQUEST", body: GraphMailPost.Message.Body(contentType: "Text", content: Content), toRecipients: [GraphMailPost.Message.ToRecipient(emailAddress: GraphMailPost.Message.ToRecipient.EmailAddress(address: "andrewmainella@icloud.com"))], internetMessageHeaders: nil))
+                    MSALTools().callMailApi(Data: ChatData, AccessToken: AccessToken!)
                 } label: {
-                    HStack{
-                        Image(systemName: "chevron.backward")
-                        Text("Back")
-                        Spacer()
-                    }
-                }.padding()
-            }
-            
-            Image("RequestToBeATutor")
-                .resizable()
-            Spacer()
-        }.background(Color.marron)
+                    Text("SUBMIT")
+                        .font(.system(size: 17))
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                }
+                Spacer()
+            }.background(Color.marron)
+        }
     }
 }
 

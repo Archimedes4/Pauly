@@ -78,7 +78,7 @@ struct MessagingHomePage: View{
     @State var GroupsTeams: [TeamsGroupType] = []
     @Environment(\.colorScheme) var colorScheme
     @State var SelectedMessagingTypeMode: String = "Pauly"
-    let MessagingModes: [String] = ["Pauly", "Teams", "Combo"]
+    let MessagingModes: [String] = ["Pauly", "Teams"]
     @State var LoadingGroups: Bool = true
     @State var TextSize: CGSize = CGSize(width: 0.0, height: 0.0)
     @State var LoadingTeamsGroups: Bool = true
@@ -121,7 +121,7 @@ struct MessagingHomePage: View{
                                     Text(type)
                                 }
                             }
-                        }
+                        }.pickerStyle(.segmented)
                         if LoadingGroups{
                             Spacer()
                             ProgressView()
@@ -182,7 +182,6 @@ struct MessagingHomePage: View{
                                                         MessagingHomePageTeamMembersView(Members: value.Members)
                                                         Text("\(value.Sender ?? ""):")
                                                         HTMLStringView(htmlContent: "<meta name='viewport' content='width=device-width, shrink-to-fit=YES'>\(value.LastMessageContent ?? "<p>Error</p>")")
-                                                            .border(Color.yellow)
                                                             .padding([.leading, .bottom, .trailing])
                                                             .frame(height: geo.size.height * 0.15)
                                                     }.background(
@@ -497,6 +496,13 @@ struct TeamsMessageType{
     let Id: UUID = UUID()
     let Content: String
     let Sender: String
+    let Attachments: [AttachmentType]?
+}
+
+struct AttachmentType{
+    let Id: UUID = UUID()
+    let Name: String
+    let Link: String
 }
 
 struct ConversationTeams: View{
@@ -506,54 +512,103 @@ struct ConversationTeams: View{
     @Binding var SelectedMessageTeams: TeamsGroupType?
     @State var ShowingTimeStamps: Bool = false
     @State var TeamsMesages: [TeamsMessageType] = []
+    @State var Message = ""
     @Environment(\.colorScheme) var colorScheme
     var body: some View{
-        GeometryReader{ geo in
-            ScrollView{
+        ZStack{
+            Rectangle()
+                .foregroundColor(Color.marron)
+                .ignoresSafeArea()
+            GeometryReader{ geo in
                 VStack{
-                    HStack{
-                        Button(){
-                            SelectMessagingMode = .Home
-                        } label: {
+                    ScrollView{
+                        VStack{
                             HStack{
-                                Image(systemName: "chevron.backward")
-                                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                Text("Back")
-                                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                                Button(){
+                                    SelectMessagingMode = .Home
+                                } label: {
+                                    HStack{
+                                        Image(systemName: "chevron.backward")
+                                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                                        Text("Back")
+                                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                                    }
+                                }.padding()
+                                Spacer()
                             }
-                        }.padding()
-                        Spacer()
-                    }
-                    Text("Conversation")
-                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                    Toggle("Show Time Stamp", isOn: $ShowingTimeStamps)
-                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                    Button("Refresh"){
-                    }
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                    .onAppear(){
-                        Task{
-                            do{
-                                try await GetConversationTeams()
-                            } catch {
-                                print(error)
+                            Text("Conversation")
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                            Toggle("Show Time Stamp", isOn: $ShowingTimeStamps)
+                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                                .onAppear(){
+                                    Task{
+                                        do{
+                                            try await GetConversationTeams()
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+                            ForEach($TeamsMesages, id: \.Id) { mesage in
+                                VStack{
+                                    Text(mesage.wrappedValue.Sender)
+                                        .onAppear(){
+                                            print(mesage.wrappedValue.Attachments)
+                                        }
+                                    HTMLStringView(htmlContent: "<meta name='viewport' content='width=device-width, shrink-to-fit=YES'>\(mesage.wrappedValue.Content)")
+                                        .padding([.leading, .bottom, .trailing])
+                                        .frame(height: geo.size.height * 0.15)
+                                    if mesage.wrappedValue.Attachments != nil{
+                                        ScrollView(.horizontal){
+                                            ForEach(mesage.wrappedValue.Attachments!, id: \.Id){ attach in
+                                                Button(){
+                                                    
+                                                } label:{
+                                                    Text(attach.Name)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }.background(
+                                    Rectangle()
+                                        .fill(Color.white)
+                                )
                             }
+                        }.background(Color.marron)
+                    }
+                    HStack{
+                        TextField("Message", text: $Message)
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                            .cornerRadius(25)
+                            .padding()
+                            .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(.black, lineWidth: 2)
+                                )
+                            .onSubmit {
+                                if Message != ""{
+                                    Task{
+                                        do{
+                                            try await SendMessage()
+                                        } catch {
+                                            print(error)
+                                        }
+                                    }
+                                }
+                            }
+                        Button(){
+                            Task{
+                                do{
+                                    try await SendMessage()
+                                } catch{
+                                    print(error)
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "arrow.up.circle")
                         }
                     }
-                    ForEach(TeamsMesages, id: \.Id) { mesage in
-                        VStack{
-                            Text(mesage.Sender)
-                            Text(mesage.Content)
-                            HTMLStringView(htmlContent: "<meta name='viewport' content='width=device-width, shrink-to-fit=YES'>\(mesage.Content)")
-                                .border(Color.yellow)
-                                .padding([.leading, .bottom, .trailing])
-                                .frame(height: geo.size.height * 0.15)
-                        }.background(
-                            Rectangle()
-                                .fill(Color.white)
-                        )
-                    }
-                }.background(Color.marron)
+                }
             }
         }
     }
@@ -567,6 +622,7 @@ struct ConversationTeams: View{
         let (data, _) = try await URLSession.shared.data(for: requestUser)
         do{
             if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                print(json)
                 guard let MessageingArray = json["value"] as? NSArray as? [[String: Any]] else {
                     return
                 }
@@ -580,8 +636,46 @@ struct ConversationTeams: View{
                     guard let MessageDisplayName = MessageUser?["displayName"] as? String else{
                         return
                     }
-                    TeamsMesages.append(TeamsMessageType(Content: MessageContent, Sender: MessageDisplayName))
+                    let Attachement = Message["attachments"] as? NSArray as? [[String:Any]]
+                    if Attachement != nil{
+                        var AttachmentData: [AttachmentType] = []
+                        for x in Attachement!{
+                            guard let contentUrl = x["contentUrl"] as? String else{
+                                return
+                            }
+                            guard let Name = x["name"] as? String else {
+                                return
+                            }
+                            AttachmentData.append(AttachmentType(Name: Name, Link: contentUrl))
+                        }
+                        TeamsMesages.append(TeamsMessageType(Content: MessageContent, Sender: MessageDisplayName, Attachments: AttachmentData))
+                    } else {
+                        TeamsMesages.append(TeamsMessageType(Content: MessageContent, Sender: MessageDisplayName, Attachments: nil))
+                    }
                 }
+            }
+        } catch {
+            throw GraphCallingErrors.CouldNotDecodeAPI
+        }
+    }
+    func SendMessage() async throws {
+        let urlUser = URL(string: "https://graph.microsoft.com/v1.0/me/chats/\(SelectedMessageTeams!.GraphChatID)/messages")
+        var requestUser = URLRequest(url: urlUser!)
+        // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
+        requestUser.httpMethod = "POST"
+        requestUser.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        requestUser.setValue("Bearer \(accessToken!)", forHTTPHeaderField: "Authorization")
+        let MessageData: [String:Any] = [
+            "body":[
+                "content":Message
+            ]
+        ]
+        let jsonData = try JSONSerialization.data(withJSONObject: MessageData, options: .prettyPrinted)
+        requestUser.httpBody = jsonData
+        let (data, _) = try await URLSession.shared.data(for: requestUser)
+        do{
+            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                print(json)
             }
         } catch {
             throw GraphCallingErrors.CouldNotDecodeAPI

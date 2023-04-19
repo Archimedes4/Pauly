@@ -38,6 +38,7 @@ struct ProfileViewMain: View{
         case .Commissions:
             ProfileViewCommissions(accessToken: $AccessToken, selectedProfileView: $selectedProfileView)
                 .environmentObject(WindowMode)
+                .transition(.asymmetric(insertion: AnyTransition.opacity.combined(with: .slide), removal: .scale))
         case .Resourses:
             Resources(selectedProfileView: $selectedProfileView, AccessToken: $AccessToken)
         case .GovernmentView:
@@ -717,11 +718,14 @@ struct ProfileViewCommissionInfo: View{
     @State var SelectedCommission: CommitionType
     @State var AvaliableCards: [CardType] = []
     @State var SheetPresented: Bool = false
-    @State var isCommissionComplete: Bool?
+    @State var isCommissionComplete: Bool = true
     @Binding var accessToken: String?
+    @State var CheckedIfCommissionComplete: Bool = false
     @State var ImageSubmission: Bool = false
+    @State var ButtonText: String = "Error"
+    @State var ButtonColor: Color = Color.gray
     var body: some View{
-        if isCommissionComplete == nil{
+        if CheckedIfCommissionComplete == false{
             VStack{
                 Spacer()
                 ProgressView("Checking If Commission id Complete")
@@ -748,7 +752,7 @@ struct ProfileViewCommissionInfo: View{
                     HStack{
                         Spacer()
                         Button(){
-                            if isCommissionComplete == false{
+                            if isCommissionComplete == false && SelectedCommission.StartDate <= Date.now && SelectedCommission.EndDate >= Date.now{
                                 if SelectedCommission.Value == 1{
                                     
                                 } else {
@@ -770,7 +774,7 @@ struct ProfileViewCommissionInfo: View{
                                 }
                             }
                         } label: {
-                            Text(isCommissionComplete! ? "COMMISSION ALREAY CLAIMED":"CLAIM COMMISSION")
+                            Text(ButtonText)
                                 .font(.system(size: 17))
                                 .fontWeight(.bold)
                                 .foregroundColor(.black)
@@ -778,10 +782,29 @@ struct ProfileViewCommissionInfo: View{
                                 .padding([.top, .bottom])
                                 .background(
                                     RoundedRectangle(cornerRadius: 25)
-                                        .fill(isCommissionComplete! ? Color.gray:Color.white)
+                                        .fill(ButtonColor)
                                         .shadow(color: .gray, radius: 2, x: 0, y: 2)
                                 )
                                 .padding([.leading, .trailing])
+                                .onAppear(){
+                                    if isCommissionComplete{
+                                        ButtonText = "COMMISSION COMPLETE"
+                                        ButtonColor = Color.gray
+                                    } else {
+                                        if SelectedCommission.StartDate >= Date.now{
+                                            ButtonText = "COMMISSION UPCOMING"
+                                            ButtonColor = Color.gray
+                                        } else {
+                                            if SelectedCommission.EndDate <= Date.now{
+                                                ButtonText = "COMMISSION PAST"
+                                                ButtonColor = Color.gray
+                                            } else {
+                                                ButtonText = "CLAIM COMMISSION"
+                                                ButtonColor = Color.white
+                                            }
+                                        }
+                                    }
+                                }
                         }.sheet(isPresented: $SheetPresented){
                             LocationServices(SelectedCommision: $SelectedCommission, SheetPresented: $SheetPresented, isCommissionComplete: $isCommissionComplete)
                                 .environmentObject(WindowMode)
@@ -836,8 +859,10 @@ struct ProfileViewCommissionInfo: View{
                     let CommissionsComplete = data["CompletedCommissions"] as! NSArray as? [Int] ?? []
                     if CommissionsComplete.contains(CommissionID) {
                         isCommissionComplete = true
+                        CheckedIfCommissionComplete = true
                     } else {
                         isCommissionComplete = false
+                        CheckedIfCommissionComplete = true
                     }
                 }
             }
@@ -853,6 +878,87 @@ struct CommissionsInfoPreview: PreviewProvider {
 }
 #endif
 
+enum CommissionsModeTypes{
+    case Past
+    case Ongoing
+    case Upcoming
+}
+
+struct CommissionResultView: View{
+    @State var Commission: CommitionType
+    @Binding var CommissionsComplete: [Int]
+    @Binding var SelectedCommision: CommitionType?
+    @Binding var SelectedCommissionsViewMode: CommisssionsViewModes
+    @Environment(\.colorScheme) var colorScheme
+    var body: some View{
+        let CommissionResult: Bool = CheckifCompletedCommissionBackground(ID: Commission.FirebaseID)
+        if Commission.Hidden == false{
+            if CommissionResult{
+                Button(){
+                    SelectedCommision = Commission
+                    SelectedCommissionsViewMode = .Info
+                } label: {
+                    VStack{
+                        HStack{
+                            Text(Commission.Title)
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .light ? Color.black:Color.white)
+                            Spacer()
+                        }
+                        HStack{
+                            Text(Commission.Caption)
+                                .font(.caption)
+                                .foregroundColor(colorScheme == .light ? Color.black:Color.white)
+                            Spacer()
+                        }
+                    }.padding()
+                    .padding()
+                    .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .foregroundColor(Color.gray)
+                    )
+                    .padding()
+                
+                }.buttonStyle(.plain)
+            } else {
+                Button(){
+                    SelectedCommision = Commission
+                    SelectedCommissionsViewMode = .Info
+                } label: {
+                    VStack{
+                        HStack{
+                            Text(Commission.Title)
+                                .font(.headline)
+                                .foregroundColor(colorScheme == .light ? Color.black:Color.white)
+                            Spacer()
+                        }
+                        HStack{
+                            Text(Commission.Caption)
+                                .font(.caption)
+                                .foregroundColor(colorScheme == .light ? Color.black:Color.white)
+                            Spacer()
+                        }
+                    }.padding()
+                    .padding()
+                    .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .foregroundColor(colorScheme == .light ? Color.white:Color.black)
+                    )
+                    .padding()
+                
+                }.buttonStyle(.plain)
+            }
+        }
+    }
+    func CheckifCompletedCommissionBackground(ID: Int) -> Bool{
+        if CommissionsComplete.contains(ID) {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
 struct ProfileViewCommissionsHome: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var selectedProfileView: profileViewEnum
@@ -862,6 +968,7 @@ struct ProfileViewCommissionsHome: View{
     @State var ProgressViewText: String = "Loading..."
     @State var CommissionsComplete: [Int] = []
     @Environment(\.colorScheme) var colorScheme
+    @Binding var CommissionsMode: CommissionsModeTypes
     var body: some View{
         GeometryReader{ geo in
                 VStack(spacing: 0){
@@ -871,74 +978,164 @@ struct ProfileViewCommissionsHome: View{
                             .aspectRatio(contentMode: .fit)
                             .ignoresSafeArea()
                         Spacer()
-                    }
+                    }.frame(height: geo.size.height * 0.3)
                     if AvaliableCommitions.count != 0{
                         ScrollView{
                             VStack{
                                 ForEach(AvaliableCommitions, id: \.FirebaseID) { Commission in
-                                    let CommissionResult: Bool = CheckifCompletedCommissionBackground(ID: Commission.FirebaseID)
-                                    if Commission.Hidden == false{
-                                        if CommissionResult{
-                                            Button(){
-                                                SelectedCommision = Commission
-                                                SelectedCommissionsViewMode = .Info
-                                            } label: {
-                                                VStack{
-                                                    HStack{
-                                                        Text(Commission.Title)
-                                                            .font(.headline)
-                                                            .foregroundColor(colorScheme == .light ? Color.black:Color.white)
-                                                        Spacer()
-                                                    }
-                                                    HStack{
-                                                        Text(Commission.Caption)
-                                                            .font(.caption)
-                                                            .foregroundColor(colorScheme == .light ? Color.black:Color.white)
-                                                        Spacer()
-                                                    }
-                                                }.padding()
-                                                .padding()
-                                                .background(
-                                                        RoundedRectangle(cornerRadius: 25)
-                                                            .foregroundColor(Color.gray)
-                                                )
-                                                .padding()
-                                            
-                                            }.buttonStyle(.plain)
+                                    if CommissionsMode == .Ongoing{
+                                        if Commission.EndDate >= Date.now{
+                                            CommissionResultView(Commission: Commission, CommissionsComplete: $CommissionsComplete, SelectedCommision: $SelectedCommision, SelectedCommissionsViewMode: $SelectedCommissionsViewMode)
+                                        }
+                                    } else {
+                                        if CommissionsMode == .Upcoming{
+                                            if Commission.StartDate >= Date.now {
+                                                CommissionResultView(Commission: Commission, CommissionsComplete: $CommissionsComplete, SelectedCommision: $SelectedCommision, SelectedCommissionsViewMode: $SelectedCommissionsViewMode)
+                                            }
                                         } else {
-                                            Button(){
-                                                SelectedCommision = Commission
-                                                SelectedCommissionsViewMode = .Info
-                                            } label: {
-                                                VStack{
-                                                    HStack{
-                                                        Text(Commission.Title)
-                                                            .font(.headline)
-                                                            .foregroundColor(colorScheme == .light ? Color.black:Color.white)
-                                                        Spacer()
-                                                    }
-                                                    HStack{
-                                                        Text(Commission.Caption)
-                                                            .font(.caption)
-                                                            .foregroundColor(colorScheme == .light ? Color.black:Color.white)
-                                                        Spacer()
-                                                    }
-                                                }.padding()
-                                                .padding()
-                                                .background(
-                                                        RoundedRectangle(cornerRadius: 25)
-                                                            .foregroundColor(colorScheme == .light ? Color.white:Color.black)
-                                                )
-                                                .padding()
-                                            
-                                            }.buttonStyle(.plain)
+                                            if CommissionsMode == .Past{
+                                                if Commission.EndDate <= Date.now{
+                                                    CommissionResultView(Commission: Commission, CommissionsComplete: $CommissionsComplete, SelectedCommision: $SelectedCommision, SelectedCommissionsViewMode: $SelectedCommissionsViewMode)
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }.background(Color.marron)
                             .frame(maxHeight: .infinity)
                         }.frame(height: geo.size.height * 0.6)
-                    } else {
+                        HStack{
+                            Spacer()
+                            GeometryReader{ TabGeo in
+                                HStack{
+                                    Spacer()
+                                    Button(){
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)){
+                                            CommissionsMode = .Past
+                                        }
+                                    } label: {
+                                        VStack{
+                                            if CommissionsMode == .Past{
+                                                Rectangle()
+                                                    .cornerRadius(25)
+                                                    .foregroundColor(Color.blue)
+                                                    .frame(height: 2)
+                                                    .padding(.top, 2)
+                                            } else {
+                                                Rectangle()
+                                                    .cornerRadius(25)
+                                                    .foregroundColor(Color.clear)
+                                                    .frame(height: 2)
+                                                    .padding(.top, 2)
+                                            }
+                                            Image(systemName: "arrowshape.turn.up.backward.badge.clock")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .foregroundColor(.black)
+                                            Text("PAST")
+                                                .foregroundColor(.black)
+                                                .font(.system(size: 10))
+                                        }.frame(width: TabGeo.size.width * 0.15, height: geo.size.height * 0.08)
+                                    }
+                                    Spacer()
+                                    Button(){
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)){
+                                            CommissionsMode = .Ongoing
+                                        }
+                                    } label: {
+                                        VStack{
+                                            if CommissionsMode == .Ongoing{
+                                                Rectangle()
+                                                    .cornerRadius(25)
+                                                    .foregroundColor(Color.blue)
+                                                    .frame(height: 2)
+                                                    .padding(.top, 2)
+                                                    .animation(.spring())
+                                            } else {
+                                                Rectangle()
+                                                    .cornerRadius(25)
+                                                    .foregroundColor(Color.clear)
+                                                    .frame(height: 2)
+                                                    .padding(.top, 2)
+                                            }
+                                            Image(systemName: "clock")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .foregroundColor(.black)
+                                            Text("ONGOING")
+                                                .foregroundColor(.black)
+                                                .font(.system(size: 10))
+                                        }
+                                        .frame(width: TabGeo.size.width * 0.15, height: geo.size.height * 0.08)
+                                    }
+                                    Spacer()
+                                    Button(){
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)){
+                                            CommissionsMode = .Upcoming
+                                        }
+                                    } label: {
+                                        VStack{
+                                            if CommissionsMode == .Upcoming{
+                                                Rectangle()
+                                                    .cornerRadius(25)
+                                                    .foregroundColor(Color.blue)
+                                                    .frame(height: 2)
+                                                    .padding(.top, 2)
+                                            } else {
+                                                Rectangle()
+                                                    .cornerRadius(25)
+                                                    .foregroundColor(Color.clear)
+                                                    .frame(height: 2)
+                                                    .padding(.top, 2)
+                                            }
+                                            Image(systemName: "arrowshape.turn.up.backward.badge.clock.rtl")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: TabGeo.size.width * 0.15)
+                                                .foregroundColor(.black)
+                                            Text("UPCOMING")
+                                                .foregroundColor(.black)
+                                                .font(.system(size: 10))
+                                        }
+                                        .frame(width: TabGeo.size.width * 0.15, height: geo.size.height * 0.08)
+                                    }
+                                    Spacer()
+                                    Button(){
+                                        withAnimation(){
+                                            selectedProfileView = .Home
+                                        }
+                                    } label: {
+                                        VStack{
+                                            Rectangle()
+                                                .cornerRadius(25)
+                                                .foregroundColor(Color.clear)
+                                                .frame(height: 2)
+                                                .padding(.top, 2)
+                                            Image(systemName: "arrowshape.backward")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: TabGeo.size.width * 0.1)
+                                                .foregroundColor(.black)
+                                            Text("BACK")
+                                                .foregroundColor(.black)
+                                                .font(.system(size: 10))
+                                        }
+                                        .frame(width: TabGeo.size.width * 0.15, height: geo.size.height * 0.08)
+                                    }
+                                    Spacer()
+                                }.frame(minWidth: 0, maxWidth: .infinity, alignment: .bottom)
+                                .padding([.bottom], 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 30)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .padding()
+                                .padding(.top)
+                                .padding(.top)
+                            }
+                        }
+                    }else {
                         Spacer()
                         ProgressView(ProgressViewText)
                             .scaleEffect(5)
@@ -946,28 +1143,24 @@ struct ProfileViewCommissionsHome: View{
                             .font(.system(size: 2.5))
                             .tint(.white)
                         Spacer()
-                    }
-                    HStack{
-                        Spacer()
                         Button(){
                             selectedProfileView = .Home
                         } label: {
-                            Text("BACK")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding([.top, .bottom])
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .padding()
+                            VStack{
+                                Text("BACK")
+                                    .foregroundColor(.black)
+                                    .font(.system(size: 14))
+                                    .frame(minWidth: 0, maxWidth: .infinity)
+                                    .padding([.top, .bottom])
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 25)
+                                            .fill(Color.white)
+                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                    )
+                                    .padding()
+                            }
                         }
-                        Spacer()
                     }
-                    Spacer()
                 }.onAppear(){
                     FetchCommitions()
                     if AvaliableCommitions.count == 0{
@@ -976,13 +1169,6 @@ struct ProfileViewCommissionsHome: View{
                 }
                 .background(Color.marron)
                 .ignoresSafeArea()
-        }
-    }
-    func CheckifCompletedCommissionBackground(ID: Int) -> Bool{
-        if CommissionsComplete.contains(ID) {
-            return true
-        } else {
-            return false
         }
     }
     func CheckIfCompletedCommition() {
@@ -1059,10 +1245,11 @@ struct ProfileViewCommissions: View{
     @Binding var accessToken: String?
     @Binding var selectedProfileView: profileViewEnum
     @State var SelectedCommision: CommitionType?
+    @State var CommissionsMode: CommissionsModeTypes = .Ongoing
     @State var SelectedCommissionsViewMode: CommisssionsViewModes = .Home
     var body: some View{
         if SelectedCommissionsViewMode == .Home{
-            ProfileViewCommissionsHome(selectedProfileView: $selectedProfileView, SelectedCommissionsViewMode: $SelectedCommissionsViewMode, SelectedCommision: $SelectedCommision)
+            ProfileViewCommissionsHome(selectedProfileView: $selectedProfileView, SelectedCommissionsViewMode: $SelectedCommissionsViewMode, SelectedCommision: $SelectedCommision, CommissionsMode: $CommissionsMode)
                 .environmentObject(WindowMode)
         } else {
             if SelectedCommissionsViewMode == .Info{

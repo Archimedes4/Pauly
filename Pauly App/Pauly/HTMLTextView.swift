@@ -15,6 +15,7 @@ struct HTMLStringView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> WKWebView {
         let WebView = WKWebView()
+   
         WebView.frame.size = WebView.sizeThatFits(CGSize.zero)
         WebView.scrollView.isScrollEnabled = false
         WebView.scrollView.bounces = false

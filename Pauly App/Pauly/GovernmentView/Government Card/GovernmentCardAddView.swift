@@ -6,14 +6,14 @@
 //
 
 import SwiftUI
-
+import FirebaseFirestore
+import FirebaseStorage
+import UIKit
 
 struct GovernmentCardAddView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var AccessToken: String?
-    @State var Use: String = ""
-    @State var Title: String = ""
-    @State var Caption: String = ""
+    @State var NewCard = CardType(Use: "", Title: "", Caption: "", BackgroundStyle: 1, FirebaseID: 0, Opacity: 1.0, CardData: [], Hidden: false, Contributers: [], Owners: [])
     @State var SelectedType: String = ""
     @State var DataFiles: [FileType] = []
     @State var NewCardDataName: String = ""
@@ -46,14 +46,12 @@ struct GovernmentCardAddView: View{
                         } label: {
                             Image(systemName: "square.and.arrow.down")
                         }.sheet(isPresented: $ShowingImportMenu){
-                            
+                            GovernmentCardAddImportView(ShowingImportMenu: $ShowingImportMenu)
                         }
                     }
-                    TextField("", text: $Use)
-                        .background(Color.white)
-                        .placeholder(when: Use.isEmpty){
-                            Text("Use")
-                                .foregroundColor(.black)
+                    TextField("", text: $NewCard.Use)
+                        .placeholder(when: NewCard.Use.isEmpty){
+                            Text("Use").foregroundColor(.black)
                         }
                         .padding([.leading, .trailing])
                     Picker("Choose Card Background Style", selection: $SelectedBackgroundStyle){
@@ -63,46 +61,56 @@ struct GovernmentCardAddView: View{
                         Text("Color with text(as big as text)").tag(3)
                     }
                     Toggle("Hidden", isOn: $isHidden)
+                        .padding([.leading, .trailing])
                     Text("Opacity \(Opacity * 100)%")
                     Slider(value: $Opacity, in: 0...1)
                         .padding([.leading, .trailing])
                     if SelectedBackgroundStyle == 0{
-                        TextField("Title", text: $Title)
-                            .placeholder(when: Title.isEmpty) {
+                        TextField("Title", text: $NewCard.Title.toUnwrapped(defaultValue: ""))
+                            .placeholder(when: NewCard.Title!.isEmpty) {
                                 Text("Title").foregroundColor(.black)
                             }
-                        TextField("Caption", text: $Caption)
-                            .placeholder(when: Caption.isEmpty) {
+                            .padding([.leading, .trailing])
+                        TextField("Caption", text: $NewCard.Caption.toUnwrapped(defaultValue: ""))
+                            .placeholder(when: NewCard.Caption!.isEmpty) {
                                 Text("Caption").foregroundColor(.black)
                             }
+                            .padding([.leading, .trailing])
                         ColorPicker("Set the background color", selection: $SelectedColorColor)
+                            .padding([.leading, .trailing])
                     } else {
                         if SelectedBackgroundStyle == 1{
                             TextField("Image Ref", text: $ImageRef)
                                 .placeholder(when: ImageRef.isEmpty) {
                                     Text("Image Ref").foregroundColor(.black)
                                 }
+                                .padding([.leading, .trailing])
                         } else {
                             if SelectedBackgroundStyle == 2 {
-                                TextField("Title", text: $Title)
-                                    .placeholder(when: Title.isEmpty) {
+                                TextField("Title", text: $NewCard.Title.toUnwrapped(defaultValue: ""))
+                                    .placeholder(when: NewCard.Title!.isEmpty) {
                                         Text("Title").foregroundColor(.black)
                                     }
-                                TextField("Caption", text: $Caption)
-                                    .placeholder(when: Caption.isEmpty) {
+                                    .padding([.leading, .trailing])
+                                TextField("Caption", text: $NewCard.Caption.toUnwrapped(defaultValue: ""))
+                                    .placeholder(when: NewCard.Caption!.isEmpty) {
                                         Text("Caption").foregroundColor(.black)
                                     }
+                                    .padding([.leading, .trailing])
                                 TextField("ImagePath", text: $ImageRef)
                                     .placeholder(when: ImageRef.isEmpty) {
                                         Text("Image Ref").foregroundColor(.black)
                                     }
+                                    .padding([.leading, .trailing])
                             } else {
                                 if SelectedBackgroundStyle == 3{
                                     TextField("Text", text: $LongText)
                                         .placeholder(when: LongText.isEmpty) {
                                             Text("Long Text").foregroundColor(.black)
                                         }
+                                        .padding([.leading, .trailing])
                                     ColorPicker("Set the background color", selection: $SelectedColorColor)
+                                        .padding([.leading, .trailing])
                                 }
                             }
                         }
@@ -178,62 +186,64 @@ struct GovernmentCardAddView: View{
                             }
                         }
                     }
-                    Button(){
-                        DataFiles.append(FileType(Name: "", Value: "1", FileTypeValue: "Paul"))
-                    } label: {
-                        HStack{
-                            Text("Add Value")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                            Spacer()
+                    Group{
+                        Button(){
+                            DataFiles.append(FileType(Name: "", Value: "1", FileTypeValue: "Paul"))
+                        } label: {
+                            HStack{
+                                Text("Add Value")
+                                    .font(.system(size: 17))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                Spacer()
+                            }
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
                         }
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .fill(Color.white)
-                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                        )
-                        .padding()
-                    }
-                    Button(){
-                        CreateCard()
-                    } label: {
-                        HStack{
-                            Text("Create Card")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                            Spacer()
+                        Button(){
+                            CreateCard()
+                        } label: {
+                            HStack{
+                                Text("Create Card")
+                                    .font(.system(size: 17))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                Spacer()
+                            }
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
                         }
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .fill(Color.white)
-                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                        )
-                        .padding()
-                    }
-                    Button(){
-                        DataFiles = []
-                    } label: {
-                        HStack{
-                            Text("Clear Card Data")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                            Spacer()
+                        Button(){
+                            DataFiles = []
+                        } label: {
+                            HStack{
+                                Text("Clear Card Data")
+                                    .font(.system(size: 17))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                Spacer()
+                            }
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
                         }
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .fill(Color.white)
-                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                        )
-                        .padding()
                     }
                 }//mark
             }
@@ -242,7 +252,7 @@ struct GovernmentCardAddView: View{
     func CreateCard(){
         //g0amdIcZt5I
         //QACGoKb48_0
-        let db = FirebaseFirestore.Firestore.firestore()
+        let db = Firestore.firestore()
         
         let docRef = db.collection("Cards").document("CardCount")
         
@@ -265,7 +275,7 @@ struct GovernmentCardAddView: View{
                             var CardInputData: [String:Any] = [
                                 "FirebaseID":FirebaseID,
                                 "BackgroundStyle":SelectedBackgroundStyle,
-                                "Use":Use,
+                                "Use":NewCard.Use,
                                 "Opacity":String(Opacity),
                                 "Hidden":isHidden,
                                 "Permissions":[WindowMode.UsernameIn],
@@ -285,16 +295,16 @@ struct GovernmentCardAddView: View{
                             
                             
                             if SelectedBackgroundStyle == 0{
-                                CardInputData["Title"] = Title
-                                CardInputData["Caption"] = Caption
+                                CardInputData["Title"] = NewCard.Title!
+                                CardInputData["Caption"] = NewCard.Caption!
                                 CardInputData["Color"] = "#\(SelectedColorColor.toHex()!)"
                             } else {
                                 if SelectedBackgroundStyle == 1{
                                     CardInputData["ImageRef"] = ImageRef
                                 } else {
                                     if SelectedBackgroundStyle == 2{
-                                        CardInputData["Title"] = Title
-                                        CardInputData["Caption"] = Caption
+                                        CardInputData["Title"] = NewCard.Title!
+                                        CardInputData["Caption"] = NewCard.Caption!
                                         CardInputData["ImageRef"] = ImageRef
                                     } else {
                                         if SelectedBackgroundStyle == 3{
@@ -326,9 +336,7 @@ struct GovernmentCardAddView: View{
                 // make sure this JSON is in the format we expect
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                     // try to read out a string array
-                    print(json)
                     let Results = json["value"] as! NSArray as! [[String: Any]]
-                    print(Results)
                     for x in Results{
                         let Name = x["name"] as! String
                         let eTag = x["id"] as! String
@@ -345,14 +353,13 @@ struct GovernmentCardAddView: View{
     }
 }
 
-struct GovernmentCardView: View{
+struct GovernmentCardAddImportView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
-    @Binding var SelectedGovernmentViewMode: GovernmentViewModes
-    @Binding var accessToken: String?
+    @Binding var ShowingImportMenu: Bool
+//    @Binding var accessToken: String?
     @State var AvaliableCards: [CardType] = []
     @State var SearchResults: [CardType] = []
     @State var searchText: String = ""
-    @State var OnlyCardsICanEdit: Bool = false
     @State var PageLoading: Bool = true
     @FocusState private var focusedField: Bool
     
@@ -360,18 +367,6 @@ struct GovernmentCardView: View{
         NavigationView(){
             if PageLoading{
                 VStack{
-                    HStack{
-                        Button(){
-                            SelectedGovernmentViewMode = .Home
-                        } label: {
-                            HStack {
-                                Image(systemName: "chevron.backward")
-                                    .padding(.leading)
-                                Text("Back")
-                            }
-                        }
-                        Spacer()
-                    }
                     Spacer()
                     ProgressView()
                         .onAppear(){
@@ -383,7 +378,7 @@ struct GovernmentCardView: View{
                 VStack{
                     HStack(){
                         Button(){
-                            SelectedGovernmentViewMode = .Home
+                            ShowingImportMenu = false
                         } label: {
                             HStack {
                                 Image(systemName: "chevron.backward")
@@ -392,16 +387,12 @@ struct GovernmentCardView: View{
                             }
                         }
                         Spacer()
-                    }
+                    }.padding(.top)
                     HStack{
                         Text("Card")
                             .font(.title)
                             .padding()
                         Spacer()
-                        Toggle(isOn: $OnlyCardsICanEdit){
-                            Text("Only Cards I Can Edit")
-                                .padding(.trailing)
-                        }
                     }
                     Button{
                         focusedField.toggle()
@@ -436,13 +427,12 @@ struct GovernmentCardView: View{
                     .onChange(of: searchText){ value in
                         GetResults()
                     }
-                    .onChange(of: OnlyCardsICanEdit){ value in
-                        GetResults()
-                    }
                     ScrollView{
                         ForEach(SearchResults, id: \.id){ card in
-                            if card.Contributers.contains(WindowMode.UsernameIn){
-                                NavigationLink(destination: GovernmentCardEditingView(accessToken: $accessToken, SelectedCard: card)){
+                            if card.Hidden == false{
+                                Button(){
+                                    
+                                } label: {
                                     HStack{
                                         Text(card.Use)
                                             .font(.system(size: 17))
@@ -460,44 +450,8 @@ struct GovernmentCardView: View{
                                     )
                                     .padding()
                                 }
-                            } else {
-                                if card.Hidden == false{
-                                    HStack{
-                                        Text(card.Use)
-                                            .font(.system(size: 17))
-                                            .fontWeight(.bold)
-                                            .foregroundColor(.black)
-                                        Spacer()
-                                    }
-                                    .frame(minWidth: 0, maxWidth: .infinity)
-                                    .padding([.top, .bottom])
-                                    .padding()
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 25)
-                                            .fill(Color.gray)
-                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                    )
-                                    .padding()
-                                }
                             }
                         }
-                    }
-                    NavigationLink(destination: GovernmentCardAddView(AccessToken: $accessToken)){
-                        HStack{
-                            Text("Create New Card")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                            Spacer()
-                        }
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .fill(Color.white)
-                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                        )
-                        .padding()
                     }
                     Spacer()
                 }.background(Color.marron)
@@ -506,17 +460,9 @@ struct GovernmentCardView: View{
     }
     func GetResults(){
         if searchText.isEmpty {
-            if OnlyCardsICanEdit{
-                SearchResults = AvaliableCards.filter { $0.Contributers.contains(WindowMode.UsernameIn) }
-            } else {
-                SearchResults = AvaliableCards
-            }
+            SearchResults = AvaliableCards
         } else {
-            if OnlyCardsICanEdit{
-                SearchResults = AvaliableCards.filter { $0.Contributers.contains(WindowMode.UsernameIn) && $0.Use.contains(searchText) }
-            } else {
-                SearchResults = AvaliableCards.filter { $0.Use.contains(searchText) }
-            }
+            SearchResults = AvaliableCards.filter { $0.Use.contains(searchText) }
         }
     }
     func FetchCards() {
@@ -530,7 +476,7 @@ struct GovernmentCardView: View{
              //handle error
              return
            }
-           print("Number of documents: \(snapshot.documents.count ?? -1)")
+            
            snapshot.documents.forEach({ (documentSnapshot) in
                let data = documentSnapshot.data()
                let CardCount = data["CardCount"] as? Int

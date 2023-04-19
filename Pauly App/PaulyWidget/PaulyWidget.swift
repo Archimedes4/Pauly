@@ -39,11 +39,11 @@ enum APIResult{
 
 struct Provider: IntentTimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), configuration: ConfigurationIntent(), StartString: "Pauly Widget", Reuslt: .Failure)
+        SimpleEntry(date: Date(), configuration: ConfigurationIntent(), StartString: "Pauly Widget", Reuslt: .Failure, SchoolDay: "", Schedual: "", DayOfWeek: "")
     }
 
     func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), configuration: configuration, StartString: "Error", Reuslt: .Failure)
+        let entry = SimpleEntry(date: Date(), configuration: configuration, StartString: "Error", Reuslt: .Failure, SchoolDay: "", Schedual: "", DayOfWeek: "")
         completion(entry)
     }
 
@@ -53,19 +53,9 @@ struct Provider: IntentTimelineProvider {
         let nextUpdate = Calendar.current.date(byAdding: .day, value: 1, to: date)
         
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        let currentDate = Date()
         
-        print("Timeline")
-        GetStartTime { (Result, Succes) in
-            print("This is result \(Result)")
-//            for hourOffset in 0 ..< 5 {
-//                let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-//                let entry = SimpleEntry(date: entryDate, configuration: configuration, StartString: Time)
-//                entries.append(entry)
-//            }
-            
-            let timeline = Timeline(entries: [SimpleEntry(date: Date.now, configuration: configuration, StartString: Result, Reuslt: Succes)], policy: .after(nextUpdate!))
-            print("Complete")
+        GetStartTime { (Result, Succes, SchoolDay, Schdual, DayOfWeek) in
+            let timeline = Timeline(entries: [SimpleEntry(date: Date.now, configuration: configuration, StartString: Result, Reuslt: Succes, SchoolDay: SchoolDay, Schedual: Schdual, DayOfWeek: DayOfWeek)], policy: .after(nextUpdate!))
             completion(timeline)
         }
     }
@@ -135,38 +125,171 @@ struct Provider: IntentTimelineProvider {
         }
         return "An Error has Occured"
     }
-    func GetStartTime(completion: @escaping (String, APIResult)->()){
+    func GetStartTime(completion: @escaping (String, APIResult, String, String, String)->()){
         guard let _ = Auth.auth().currentUser else {
             print("No Logged In")
-            completion("Your Not Logged In", .NotLoggedIn)
+            completion("Your Not Logged In", .NotLoggedIn, "", "", "")
             return
         }
-        
-        let Nowdate = Date.now
-        let nextUpdate = Calendar.current.date(byAdding: .day, value: 4, to: Nowdate)!
-        var NewDate = nextUpdate
+
+        var NewDate = Date.now
         
         let HourInt = Calendar.current.dateComponents([.hour], from: NewDate).hour
+        
         if HourInt! >= 15{
-            let minuteInt = Calendar.current.dateComponents([.minute], from: NewDate).minute
-            if minuteInt! >= 30{
-                let currentDate = Date()
+            if HourInt! >= 16{
                 var dateComponent = DateComponents()
                 dateComponent.day = 1
-                NewDate = Calendar.current.date(byAdding: dateComponent, to: currentDate)!
+                NewDate = Calendar.current.date(byAdding: dateComponent, to: NewDate)!
+            } else {
+                let minuteInt = Calendar.current.dateComponents([.minute], from: NewDate).minute
+                if minuteInt! >= 30{
+                    var dateComponent = DateComponents()
+                    dateComponent.day = 1
+                    NewDate = Calendar.current.date(byAdding: dateComponent, to: NewDate)!
+                }
             }
         }
         
-        let YearInt = Calendar.current.dateComponents([.year], from: NewDate).year
-        let monthInt = Calendar.current.dateComponents([.month], from: NewDate).month
-        let DayInt = Calendar.current.dateComponents([.day], from: NewDate).day
+        let index = Calendar.current.component(.weekday, from: NewDate)
         
+        if index == 1{
+            var dateComponent = DateComponents()
+            dateComponent.day = 1
+            NewDate = Calendar.current.date(byAdding: dateComponent, to: NewDate)!
+        }
+        if index == 7{
+            var dateComponent = DateComponents()
+            dateComponent.day = 2
+            NewDate = Calendar.current.date(byAdding: dateComponent, to: NewDate)!
+        }
+
+        let DayInt = Calendar.current.dateComponents([.day], from: NewDate).day
+        let monthInt = Calendar.current.dateComponents([.month], from: NewDate).month
+        let YearInt = Calendar.current.dateComponents([.year], from: NewDate).year
+        
+        CheckIfSchoolDay(YearInt: YearInt!, MonthInt: monthInt!, DayInt: DayInt!){ DayResult in
+            if DayResult{
+                let diffs = Calendar.current.dateComponents([.day], from: Date.now, to: NewDate)
+                var DayOfWeekVar: String = "Today"
+                if diffs.day! >= 1{
+                    let index = Calendar.current.component(.weekday, from: NewDate)
+                    if index == 1{
+                        completion("An error has occurred", .Failure, "", "", "")
+                    } else if index == 2 {
+                        DayOfWeekVar = "Monday"
+                    } else if index == 3{
+                        DayOfWeekVar = "Tuesday"
+                    } else if index == 4{
+                        DayOfWeekVar = "Wensday"
+                    } else if index == 5{
+                        DayOfWeekVar = "Thursday"
+                    } else if index == 6{
+                        DayOfWeekVar = "Friday"
+                    } else {
+                        completion("An error has occurred", .Failure, "", "", "")
+                    }
+                } else {
+                    if Calendar.current.isDateInTomorrow(NewDate){
+                        DayOfWeekVar = "Tomorrow"
+                    }
+                }
+                GetStartTimePerDay(DayInt: DayInt!, MonthInt: monthInt!, YeatInt: YearInt!){ (Result, Succes, SchoolDay, Schdual, DayOfWeek) in
+                    completion(Result, Succes, SchoolDay, Schdual, DayOfWeekVar)
+                }
+            } else {
+                var dateComponent = DateComponents()
+                dateComponent.day = 1
+                NewDate = Calendar.current.date(byAdding: dateComponent, to: NewDate)!
+                let index = Calendar.current.component(.weekday, from: NewDate)
+                
+                if index == 1{
+                    var dateComponent = DateComponents()
+                    dateComponent.day = 1
+                    NewDate = Calendar.current.date(byAdding: dateComponent, to: NewDate)!
+                }
+                if index == 7{
+                    var dateComponent = DateComponents()
+                    dateComponent.day = 2
+                    NewDate = Calendar.current.date(byAdding: dateComponent, to: NewDate)!
+                }
+
+                let DayIntNew = Calendar.current.dateComponents([.day], from: NewDate).day
+                let monthIntNew = Calendar.current.dateComponents([.month], from: NewDate).month
+                let YearIntNew = Calendar.current.dateComponents([.year], from: NewDate).year
+                CheckIfSchoolDay(YearInt: YearIntNew!, MonthInt: monthIntNew!, DayInt: DayIntNew!){ DayResult in
+                    if DayResult{
+                        let diffs = Calendar.current.dateComponents([.day], from: Date.now, to: NewDate)
+                        var DayOfWeekVar: String = "Today"
+                        if diffs.day! >= 2{
+                            let index = Calendar.current.component(.weekday, from: NewDate)
+                            if index == 1{
+                                completion("An error has occurred", .Failure, "", "", "")
+                            } else if index == 2 {
+                                DayOfWeekVar = "Monday"
+                            } else if index == 3{
+                                DayOfWeekVar = "Tuesday"
+                            } else if index == 4{
+                                DayOfWeekVar = "Wensday"
+                            } else if index == 5{
+                                DayOfWeekVar = "Thursday"
+                            } else if index == 6{
+                                DayOfWeekVar = "Friday"
+                            } else {
+                                completion("An error has occurred", .Failure, "", "", "")
+                            }
+                        } else {
+                            if diffs.day! == 1{
+                                DayOfWeekVar = "Tomorrow"
+                            }
+                        }
+                        GetStartTimePerDay(DayInt: DayInt!, MonthInt: monthInt!, YeatInt: YearInt!){ (Result, Succes, SchoolDay, Schdual, DayOfWeek) in
+                            completion(Result, Succes, SchoolDay, Schdual, DayOfWeekVar)
+                        }
+                    } else {
+                        completion("Holiday", .Success, "", "Holiday", "")
+                    }
+                }
+            }
+        }
+    }
+    
+    func CheckIfSchoolDay(YearInt: Int, MonthInt: Int, DayInt: Int, Completion: @escaping (Bool) -> ()) {
+        let db = Firestore.firestore()
+        
+        let docRef = db.collection("Calendar").document("\(YearInt)").collection("\(MonthInt)").document("\(DayInt)")
+        
+        docRef.getDocument { (document, error) in
+            guard error == nil else {
+                print("error", error ?? "")
+                return
+            }
+            
+            if let document = document, document.exists {
+                let data = document.data()
+                if let data = data{
+                    let value = data["value"] as? Int
+                    if value == nil{
+                        Completion(true)
+                    } else {
+                        if value == 1 || value == 2{
+                            Completion(false)
+                        } else {
+                            Completion(true)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func GetStartTimePerDay(DayInt: Int, MonthInt: Int, YeatInt: Int, completion: @escaping (String, APIResult, String, String, String) -> ()){
         let db = Firestore.firestore()
 
         
         guard let Useruid = Auth.auth().currentUser?.uid else {
             print("No Logged In")
-            completion("Your Not Logged In", .NotLoggedIn)
+            completion("Your Not Logged In", .NotLoggedIn, "", "", "")
             return
         }
         
@@ -182,11 +305,11 @@ struct Provider: IntentTimelineProvider {
                 if let data = data {
                     
                     guard let Classes = data["Classes"] as? NSArray as? [String] else {
-                        completion("You Don't have any classes", .NoClasses)
+                        completion("You Don't have any classes", .NoClasses, "", "", "")
                         return
                     }
                     guard let Grade = data["Grade"] as? Int else {
-                        completion("An error has occured. Pauly can't find which grade your in.", .Failure)
+                        completion("An error has occured. Pauly can't find which grade your in.", .Failure, "", "", "")
                         return
                     }
                     var CalendarClasses: [CalendarCourseType] = []
@@ -194,8 +317,6 @@ struct Provider: IntentTimelineProvider {
                     var Index: Int = 0
                     for x in Classes{
                         let ClassArray = x.split(separator: "-")
-                        
-                        print(ClassArray)
                         
                         let docRef = db.collection("Grade\(ClassArray[0])Courses").document("\(ClassArray[1])").collection("Sections").document("\(ClassArray[2])-\(ClassArray[3])")
                         docRef.getDocument { (document, error) in
@@ -224,7 +345,8 @@ struct Provider: IntentTimelineProvider {
                                     CalendarClasses.append(CalendarCourseType(Name: "\(ClassArray[0])", Semester: Semester!, DayA: DayA!, DayB: DayB!, DayC: DayC!, DayD: DayD!, NoClass: NoClassesOutArray, Year: Year))
                                     Index += 1
                                     if Index == Classes.count {
-                                        let docRef = db.collection("Calendar").document("\(YearInt!)").collection("\(monthInt!)").document("\(DayInt!)")
+                                        
+                                        let docRef = db.collection("Calendar").document("\(YeatInt)").collection("\(MonthInt)").document("\(DayInt)")
                                         
                                         docRef.getDocument { (document, error) in
                                              guard error == nil else {
@@ -238,41 +360,41 @@ struct Provider: IntentTimelineProvider {
                                                      let value = data["value"] as? Int
                                                      if let value {
                                                          if value == 1{
-                                                             completion("No School", .NoSchool)
+                                                             completion("No School", .NoSchool, "", "", "")
                                                              return
                                                          } else {
                                                              if value == 2{
-                                                                 completion("No School", .NoSchool)
+                                                                 completion("No School", .NoSchool, "", "", "")
                                                                  return
                                                              } else {
                                                                  if value == 3 || value == 4{
                                                                      guard let SchoolDay = data["SchoolDay"] as? String else {
-                                                                         completion("An error has occurred", .Failure)
+                                                                         completion("An error has occurred", .Failure, "", "", "")
                                                                          return
                                                                      }
                                                                      if SchoolDay == "A"{
                                                                          let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                             return a.DayA < b.DayA
+                                                                             return a.DayA > b.DayA
                                                                          })
-                                                                         completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayA), .Success)
+                                                                         completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayA), .Success, "A", "\(value)", "")
                                                                      } else {
                                                                          if SchoolDay == "B"{
                                                                              let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                                 return a.DayB < b.DayB
+                                                                                 return a.DayB > b.DayB
                                                                              })
-                                                                             completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayB), .Success)
+                                                                             completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayB), .Success, "B", "\(value)", "")
                                                                          } else {
                                                                              if SchoolDay == "C"{
                                                                                  let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                                     return a.DayC < b.DayC
+                                                                                     return a.DayC > b.DayC
                                                                                  })
-                                                                                 completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayC), .Success)
+                                                                                 completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayC), .Success, "C", "\(value)", "")
                                                                              } else {
                                                                                  if SchoolDay == "D"{
                                                                                      let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                                         return a.DayD < b.DayD
+                                                                                         return a.DayD > b.DayD
                                                                                      })
-                                                                                     completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayD), .Success)
+                                                                                     completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayD), .Success, "D", "\(value)", "")
                                                                                  }
                                                                              }
                                                                          }
@@ -280,43 +402,47 @@ struct Provider: IntentTimelineProvider {
                                                                  } else {
                                                                      if value == 5{
                                                                          guard let SchoolDay = data["SchoolDay"] as? String else {
-                                                                             completion("An error has occurred", .Failure)
+                                                                             completion("An error has occurred", .Failure, "", "", "")
                                                                              return
                                                                          }
                                                                          if SchoolDay == "A"{
                                                                              let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                                 return a.DayA < b.DayA
+                                                                                 return a.DayA > b.DayA
                                                                              })
-                                                                             completion(GivenStartIntGetTimeSchedualLate(StartTimeInt: StartTimeInt!.DayA), .Success)
+                                                                             completion(GivenStartIntGetTimeSchedualLate(StartTimeInt: StartTimeInt!.DayA), .Success, "A", "Late Start", "")
                                                                          } else {
                                                                              if SchoolDay == "B"{
                                                                                  let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                                     return a.DayB < b.DayB
+                                                                                     return a.DayB > b.DayB
                                                                                  })
-                                                                                 completion(GivenStartIntGetTimeSchedualLate(StartTimeInt: StartTimeInt!.DayB), .Success)
+                                                                                 completion(GivenStartIntGetTimeSchedualLate(StartTimeInt: StartTimeInt!.DayB), .Success, "B", "Late Start", "")
                                                                              } else {
                                                                                  if SchoolDay == "C"{
                                                                                      let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                                         return a.DayC < b.DayC
+                                                                                         return a.DayC > b.DayC
                                                                                      })
-                                                                                     completion(GivenStartIntGetTimeSchedualLate(StartTimeInt: StartTimeInt!.DayC), .Success)
+                                                                                     completion(GivenStartIntGetTimeSchedualLate(StartTimeInt: StartTimeInt!.DayC), .Success, "C", "Late Start", "")
                                                                                  } else {
                                                                                      if SchoolDay == "D"{
                                                                                          let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                                             return a.DayD < b.DayD
+                                                                                             return a.DayD > b.DayD
                                                                                          })
-                                                                                         completion(GivenStartIntGetTimeSchedualLate(StartTimeInt: StartTimeInt!.DayD), .Success)
+                                                                                         completion(GivenStartIntGetTimeSchedualLate(StartTimeInt: StartTimeInt!.DayD), .Success, "D", "Late Start", "")
                                                                                      }
                                                                                  }
                                                                              }
                                                                          }
                                                                      } else {
                                                                          if value == 6{
-                                                                             completion("8:30", .Success)
+                                                                             guard let SchoolDay = data["SchoolDay"] as? String else {
+                                                                                 completion("An error has occurred", .Failure, "", "", "")
+                                                                                 return
+                                                                             }
+                                                                             completion("8:30", .Success, SchoolDay, "\(value)", "")
                                                                              return
                                                                          } else {
                                                                              if value == 7{
-                                                                                 completion("Exams", .ExamDay)
+                                                                                 completion("Exams", .ExamDay, "", "\(value)", "")
                                                                                  return
                                                                              }
                                                                          }
@@ -326,32 +452,32 @@ struct Provider: IntentTimelineProvider {
                                                          }
                                                      } else {
                                                          guard let SchoolDay = data["SchoolDay"] as? String else {
-                                                             completion("An error has occurred", .Failure)
+                                                             completion("An error has occurred", .Failure, "", "Schedual One", "")
                                                              return
                                                          }
                                                          if SchoolDay == "A"{
                                                              let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                 return a.DayA < b.DayA
+                                                                 return a.DayA > b.DayA
                                                              })
-                                                             completion(GivenStartIntGetTimeSchedualOne(StartTimeInt: StartTimeInt!.DayA), .Success)
+                                                             completion(GivenStartIntGetTimeSchedualOne(StartTimeInt: StartTimeInt!.DayA), .Success, "A", "Schedual One", "")
                                                          } else {
                                                              if SchoolDay == "B"{
                                                                  let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                     return a.DayB < b.DayB
+                                                                     return a.DayB > b.DayB
                                                                  })
-                                                                 completion(GivenStartIntGetTimeSchedualOne(StartTimeInt: StartTimeInt!.DayB), .Success)
+                                                                 completion(GivenStartIntGetTimeSchedualOne(StartTimeInt: StartTimeInt!.DayB), .Success, "B", "Schedual One", "")
                                                              } else {
                                                                  if SchoolDay == "C"{
                                                                      let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                         return a.DayC < b.DayC
+                                                                         return a.DayC > b.DayC
                                                                      })
-                                                                     completion(GivenStartIntGetTimeSchedualOne(StartTimeInt: StartTimeInt!.DayC), .Success)
+                                                                     completion(GivenStartIntGetTimeSchedualOne(StartTimeInt: StartTimeInt!.DayC), .Success, "C", "Schedual One", "")
                                                                  } else {
                                                                      if SchoolDay == "D"{
                                                                          let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
-                                                                             return a.DayD < b.DayD
+                                                                             return a.DayD > b.DayD
                                                                          })
-                                                                         completion(GivenStartIntGetTimeSchedualOne(StartTimeInt: StartTimeInt!.DayD), .Success)
+                                                                         completion(GivenStartIntGetTimeSchedualOne(StartTimeInt: StartTimeInt!.DayD), .Success, "D", "Schedual One", "")
                                                                      }
                                                                  }
                                                              }
@@ -359,7 +485,7 @@ struct Provider: IntentTimelineProvider {
                                                      }
                                                  }
                                              } else {
-                                                 completion("No School Today", .NoSchool)
+                                                 completion("No School Today", .NoSchool, "", "", "")
                                              }
                                          }
                                     }
@@ -378,6 +504,9 @@ struct SimpleEntry: TimelineEntry {
     let configuration: ConfigurationIntent
     let StartString: String
     let Reuslt: APIResult
+    let SchoolDay: String
+    let Schedual: String
+    let DayOfWeek: String
 }
 
 struct PaulyWidgetEntryView : View {
@@ -395,13 +524,9 @@ struct PaulyWidgetEntryView : View {
         case .NotLoggedIn:
             ZStack{
                 ContainerRelativeShape()
-                    .fill(Color.blue)
+                    .fill(Color.marron)
                 Text("Please Login")
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                    .onAppear(){
-                        print("Here")
-                        print(entry)
-                    }
             }
         case .NoSchool:
             ZStack{
@@ -415,6 +540,7 @@ struct PaulyWidgetEntryView : View {
                 ContainerRelativeShape()
                     .fill(Color.marron)
                 Text(entry.StartString)
+                    .font(Font.custom("Futura", size: 32, relativeTo: .largeTitle))
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             }
         case .NoClasses:
@@ -425,11 +551,45 @@ struct PaulyWidgetEntryView : View {
                     .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
             }
         case .Success:
-            ZStack{
-                ContainerRelativeShape()
-                    .fill(Color.marron)
-                Text(entry.StartString)
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+            GeometryReader{ geo in
+                ZStack{
+                    ContainerRelativeShape()
+                        .fill(Color.marron)
+                    VStack{
+                        Text(entry.DayOfWeek)
+                            .foregroundColor(.white)
+                            .font(Font.custom("Futura", size: 30, relativeTo: .title))
+                            .frame(height: geo.size.height * 0.2)
+                            .padding(.top)
+                        HStack{
+                            Spacer()
+                            Text(entry.Schedual)
+                                .foregroundColor(.white)
+                                .font(Font.custom("Futura", size: 20, relativeTo: .title))
+                            Spacer()
+                        }.padding([.top, .bottom])
+                        .frame(height: geo.size.height * 0.2)
+                        .background(Color.cutomGray)
+                        HStack(alignment: .top){
+                            Text(entry.SchoolDay)
+                                .font(Font.custom("Futura Bold", size: 50, relativeTo: .largeTitle))
+                                .foregroundColor(.white)
+                                .padding(.bottom)
+                            if entry.StartString.count == 4{
+                                Text(entry.StartString)
+                                    .font(Font.custom("Futura", size: 50, relativeTo: .largeTitle))
+                                    .foregroundColor(.white)
+                                    .padding(.bottom)
+                            } else {
+                                Text(entry.StartString)
+                                    .font(Font.custom("Futura", size: 40, relativeTo: .largeTitle))
+                                    .foregroundColor(.white)
+                                    .padding(.bottom)
+                                    .offset(y: geo.size.height * 0.045)
+                            }
+                        }.offset(y: -geo.size.height * 0.125)
+                    }.background(Color.marron)
+                }
             }
         }
     }
@@ -444,6 +604,7 @@ struct PaulyWidget: Widget {
         }
         .configurationDisplayName("Pauly Start")
         .description("Pauly. Gives the time when the school day starts.")
+        .supportedFamilies([.systemSmall])
     }
 }
 
@@ -456,4 +617,5 @@ struct PaulyWidget: Widget {
 
 extension Color {
     static let marron = Color("Marron")
+    static let cutomGray = Color("CustomGray")
 }

@@ -155,7 +155,7 @@ extension String {
     let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = format
     guard let date = dateFormatter.date(from: self) else {
-      preconditionFailure("Take a look to your format")
+      preconditionFailure("Take a look to format")
     }
     return date
   }
@@ -168,8 +168,8 @@ struct WeekView: View{
     @State var CurrentEvents: [EventType] = []
     @State var SelectedDay: Date = Date.now
     @State var Days: [Date] = []
-    let Modes: [String] = ["Schedual", "Events"]
-    @State var SelectedMode: String = "Schedual"
+    let Modes: [String] = ["Schedule", "Events"]
+    @State var SelectedMode: String = "Schedule"
     @State var SelectedDate: Int = 0
     var body: some View{
         GeometryReader{ geo in
@@ -244,12 +244,13 @@ struct WeekView: View{
                     }
                 }.pickerStyle(.segmented)
                 Spacer()
-                if SelectedMode == "Schedual"{
+                if SelectedMode == "Schedule"{
                     DayView(CalendarClasses: $CalendarClasses, SelectedDates: $SelectedDates, SelectedDay: $SelectedDay)
                         .environmentObject(WindowMode)
                 } else {
                     if SelectedMode == "Events"{
-                        CalendarEventsView(CurrentEvents: $CurrentEvents, SelectedDayIn: $SelectedDay)
+                        CalendarEventsView(SelectedDay: $SelectedDay)
+                            .environmentObject(WindowMode)
                     }
                 }
             }.background(Color.marron)
@@ -269,38 +270,27 @@ struct WeekView: View{
     }
 }
 
-struct CalendarEventsView: View{
-    @Binding var CurrentEvents: [EventType]
-    @Binding var SelectedDayIn: Date
-    var body: some View{
-        VStack{
-            ScrollView{
-                VStack{
-                    ForEach(CurrentEvents, id: \.id){ event in
-//                        let CurrentDay = Calendar.current.dateComponents([.day], from: SelectedDayIn)!
-//                        let EventDay = Calendar.current.dateComponents([.day], from: event.SelectedDay)!
-//                        if CurrentDay == EventDay{
-//                            Text("\(event.StartTime)")
-//                        }
-                    }
-                }
-            }
-        }
-    }
+struct MonthDataType{
+    let id: UUID = UUID()
+    let Showing: Bool
+    let DayData: String
 }
 
-//#if DEBUG
-//struct MessageLegoPreview: PreviewProvider {
-//    static var previews: some View {
-//        WeekView()
-//    }
-//}
-//#endif
-
 struct MonthViewMain: View{
-    let date: Date
-    let dateFormatter: DateFormatter
+    @State var SelectedDate: Date = Date.now
+    @State var Year: Int = 2020
+    @State var Month: String = "January"
+    @State var Day: Int = 1
+    @State var StartDate: Int = 0
+    @State var daySelected: Int = 0
+    @State var count: Int = 0
+    @State var MonthData: [MonthDataType] = []
+    
+    let DaysInWeek: [String] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
+    
     let columns = [
+        GridItem(.flexible(), spacing: 0),
+        GridItem(.flexible(), spacing: 0),
         GridItem(.flexible(), spacing: 0),
         GridItem(.flexible(), spacing: 0),
         GridItem(.flexible(), spacing: 0),
@@ -308,124 +298,233 @@ struct MonthViewMain: View{
         GridItem(.flexible(), spacing: 0)
     ]
     
-    init() {
-        date = Date()
-        dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM yyyy"
-    }
-    
     var body: some View{
-        GeometryReader{ geometry1 in
-            LazyVGrid(columns: columns, spacing: 0){
-                let Count = Functions().getDaysInMonth(Input: Date.now)
-                let StartDate = Functions().FindFirstDayinMonth()
-                ForEach(0..<5){ day in
-                    if day == 0{
-                        Text("Monday")
-                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.13)
+        ZStack{
+            Rectangle()
+                .fill(Color.marron)
+                .ignoresSafeArea()
+            GeometryReader{ geo in
+                VStack{
+                    HStack{
+                        Text(String(Year))
+                            .padding(.leading)
+                        Spacer()
                     }
-                    if day == 1{
-                        Text("Tuesday")
-                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.13)
-                    }
-                    if day == 2{
-                        Text("Wensday")
-                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.13)
-                    }
-                    if day == 3{
-                        Text("Thursday")
-                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.13)
-                    }
-                    if day == 4{
-                        Text("Friday")
-                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.13)
-                    }
-                }
-                let daySelected: Int = (((Count + StartDate) - 2) - ((Count/7) * 2))
-                ForEach(0..<30){ value in
-                    ZStack{
-                        if value >= (StartDate - 1) && value <= daySelected {
-                            let textval: Int = Functions().getDay(value: value, startdate: StartDate) ?? 0
-                            if textval != 0{
-                                let date = Date()
-                                let calendar = Calendar.current
-                                let day = calendar.component(.day, from: date)
-                                if day == (textval){
-                                    Rectangle()
-                                        .foregroundColor(.red)
-                                        .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
-                                        .border(Color.black)
-                                } else{
-                                    if day >= (textval + 1){
-                                        Rectangle()
-                                            .foregroundColor(.gray)
-                                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
-                                            .border(Color.black)
-                                    } else{
-                                        Rectangle()
-                                            .foregroundColor(.white)
-                                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
-                                            .border(Color.black)
-                                    }
-                                }
-                                VStack{
-                                    Spacer()
-                                    HStack{
-                                        Spacer()
-                                        Text("\(textval)")
-                                            .foregroundColor(Color.black)
-                                        Spacer()
-                                    }
-                                    Spacer()
-                                }
-                            } else {
-                                Rectangle()
-                                    .foregroundColor(.white)
-                                    .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
-                                    .border(Color.black)
+                    HStack{
+                        Text(Month)
+                            .padding(.leading)
+                            .font(.title)
+                        Spacer()
+                        let NowYear = Calendar.current.dateComponents([.year], from: Date.now).year
+                        let NowMonth = Calendar.current.dateComponents([.month], from: Date.now).month
+                        let CurrentMonth = Calendar.current.dateComponents([.month], from: SelectedDate).month
+                        if Year != NowYear || CurrentMonth != NowMonth{
+                            Button(){
+                                SelectedDate = Date.now
+                            } label: {
+                                Text("Today")
+                                    .foregroundColor(.black)
                             }
-                        } else {
-                            Rectangle()
-                                .foregroundColor(.white)
-                                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
-                                .border(Color.black)
                         }
-                    }.frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.145)
+                        Button(){
+                            SelectedDate = Calendar.current.date(byAdding: .month, value: -1, to: SelectedDate)!
+                        } label: {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.black)
+                        }
+                        Button(){
+                            SelectedDate = Calendar.current.date(byAdding: .month, value: 1, to: SelectedDate)!
+                        } label: {
+                            Image(systemName: "chevron.forward")
+                                .foregroundColor(.black)
+                        }.padding(.trailing)
+                    }
+                    LazyVGrid(columns: columns, spacing: 0){
+                        ForEach(DaysInWeek, id: \.self){ DOW in
+                            Text(DOW)
+                        }
+
+                        ForEach(MonthData, id: \.id){ value in
+                            Button(){
+                                if value.Showing{
+                                    // Specify date components
+                                    var dateComponents = DateComponents()
+                                    let CurrentYear = Calendar.current.dateComponents([.year], from: SelectedDate).year
+                                    let CurrentMonth = Calendar.current.dateComponents([.month], from: SelectedDate).month
+                                    dateComponents.year = CurrentYear
+                                    dateComponents.month = CurrentMonth
+                                    dateComponents.day = Int(value.DayData)
+                                    dateComponents.timeZone = TimeZone(abbreviation: "CDT") // Japan Standard Time
+                                    dateComponents.hour = 0
+                                    dateComponents.minute = 0
+
+                                    // Create date from components
+                                    let userCalendar = Calendar(identifier: .gregorian) // since the components above (like year 1980) are for Gregorian
+                                    SelectedDate = userCalendar.date(from: dateComponents)!
+                                }
+                            } label: {
+                                CalendarCardView(geo:geo.size, value: value)
+                            }
+                        }
+                    }
+                    CalendarEventsView(SelectedDay: $SelectedDate)
                 }
-            }.padding(0)
+                .onAppear(){
+                    FetchData()
+                }
+                .onChange(of: SelectedDate){ value in
+                    FetchData()
+                }
+            }
+        }
+    }
+    func FetchData() {
+        Year = Calendar.current.component(.year, from: SelectedDate)
+        let dateComponents = Calendar.current.dateComponents([.year, .month], from: SelectedDate)
+        let startOfMonth = Calendar.current.date(from: dateComponents)!
+        let myCalendar = Calendar(identifier: .gregorian)
+        let weekDay = myCalendar.component(.weekday, from: startOfMonth)
+        StartDate = weekDay
+        Day = Calendar.current.dateComponents([.day], from: SelectedDate).day!
+        count = Functions().getDaysInMonth(Input: SelectedDate)
+        if StartDate >= 1{
+            daySelected = (count + StartDate - 2)
+        } else {
+            daySelected = (count + StartDate)
+        }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "LLLL"
+        Month = dateFormatter.string(from: SelectedDate)
+        
+        MonthData = []
+        for x in 0..<42{
+            if x >= (StartDate - 1) && x <= daySelected {
+                MonthData.append(MonthDataType(Showing: true, DayData: "\(x - StartDate + 2)"))
+            } else {
+                MonthData.append(MonthDataType(Showing: false, DayData: ""))
+            }
+        }
+    }
+    @ViewBuilder
+    func CalendarCardView(geo: CGSize, value: MonthDataType) -> some View {
+        ZStack{
+            Rectangle()
+                .fill(Color.marron)
+                .frame(width: geo.width * 0.14285714285714, height: geo.width * 0.14285714285714)
+            if value.Showing{
+                if Int(value.DayData) == Day{
+                    RadialGradient(
+                              gradient: Gradient(colors: [.white, .marron]),
+                              center: .center,
+                              startRadius: 10,
+                              endRadius: 25
+                          )
+                    .opacity(0.75)
+                } else {
+                    let NowYear = Calendar.current.dateComponents([.year], from: Date.now).year
+                    let NowMonth = Calendar.current.dateComponents([.month], from: Date.now).month
+                    let CurrentMonth = Calendar.current.dateComponents([.month], from: SelectedDate).month
+                    let NowDay = Calendar.current.dateComponents([.day], from: Date.now).day
+                    if NowYear == Year && NowMonth == CurrentMonth && NowDay == Int(value.DayData){
+                        RadialGradient(
+                                  gradient: Gradient(colors: [.gray, .marron]),
+                                  center: .center,
+                                  startRadius: 10,
+                                  endRadius: 25
+                              )
+                        .opacity(0.75)
+                    }
+                }
+                Text("\(value.DayData)")
+                    .foregroundColor(.black)
+            }
         }
     }
 }
 
-struct CalendarUI: UIViewRepresentable {
-    
-    let interval: DateInterval
-    
-    func makeUIView(context: Context) -> UICalendarView {
-        let view = UICalendarView()
-        view.calendar = Calendar.current
-        view.availableDateRange = interval
-        return view
+#if DEBUG
+struct CircleImage_Previews: PreviewProvider {
+    static var previews: some View {
+        MonthViewMain()
     }
-    
-    func updateUIView(_ uiView: UICalendarView, context: Context) {
-        
-    }
-    
 }
-
-
-//Testing
-//                                    // Specify date components
-//                                    var dateComponents = DateComponents()
-//                                    dateComponents.year = 1980
-//                                    dateComponents.month = 7
-//                                    dateComponents.day = 11
-//                                    dateComponents.timeZone = TimeZone(abbreviation: "CDT") // Japan Standard Time
-//                                    dateComponents.hour = 10
-//                                    dateComponents.minute = 0
+#endif
 //
-//                                    // Create date from components
-//                                    let userCalendar = Calendar(identifier: .gregorian) // since the components above (like year 1980) are for Gregorian
-//                                    let someDateTime = userCalendar.date(from: dateComponents)
-//                                    print("Some Date Time\(someDateTime)")
+//LazyVGrid(columns: columns, spacing: 0){
+//    let Count = Functions().getDaysInMonth(Input: Date.now)
+//    let StartDate = Functions().FindFirstDayinMonth()
+//    ForEach(0..<5){ day in
+//        if day == 0{
+//            Text("Monday")
+//                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//        }
+//        if day == 1{
+//            Text("Tuesday")
+//                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//        }
+//        if day == 2{
+//            Text("Wensday")
+//                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//        }
+//        if day == 3{
+//            Text("Thursday")
+//                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//        }
+//        if day == 4{
+//            Text("Friday")
+//                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//        }
+//    }
+//    let daySelected: Int = (((Count + StartDate) - 2) - ((Count/7) * 2))
+//    ForEach(0..<30){ value in
+//        ZStack{
+//            if value >= (StartDate - 1) && value <= daySelected {
+//                let textval: Int = Functions().getDay(value: value, startdate: StartDate) ?? 0
+//                if textval != 0{
+//                    let date = Date()
+//                    let calendar = Calendar.current
+//                    let day = calendar.component(.day, from: date)
+//                    if day == (textval){
+//                        Rectangle()
+//                            .foregroundColor(.red)
+//                            .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//                            .border(Color.black)
+//                    } else{
+//                        if day >= (textval + 1){
+//                            Rectangle()
+//                                .foregroundColor(.gray)
+//                                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//                                .border(Color.black)
+//                        } else{
+//                            Rectangle()
+//                                .foregroundColor(.white)
+//                                .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//                                .border(Color.black)
+//                        }
+//                    }
+//                    VStack{
+//                        Spacer()
+//                        HStack{
+//                            Spacer()
+//                            Text("\(textval)")
+//                                .foregroundColor(Color.black)
+//                            Spacer()
+//                        }
+//                        Spacer()
+//                    }
+//                } else {
+//                    Rectangle()
+//                        .foregroundColor(.white)
+//                        .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//                        .border(Color.black)
+//                }
+//            } else {
+//                Rectangle()
+//                    .foregroundColor(.white)
+//                    .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//                    .border(Color.black)
+//            }
+//        }.frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.1)
+//    }
+//}.padding(0)
+//}

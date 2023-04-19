@@ -62,7 +62,7 @@ struct EditClassViewPageThree: View{
                     Text("Gradient 1").tag(1)
                 }
                 NavigationLink(destination: GovernmentSelectedAddCardsOverview(PageInfo: $Cards)){
-                    Text("Edit Cards)")
+                    Text("Edit Cards")
                 }
                 Group{
                     Text("Schedual")
@@ -303,7 +303,7 @@ struct EditClassViewPageOne: View{
                         }
                     }
                     Section{
-                        NavigationLink(destination: AddRootClassView()){
+                        NavigationLink(destination: AddRootClassView(Grade: Grade)){
                             Text("Add Root Class")
                         }
                         NavigationLink(destination: EditManditoryClassesView()){

@@ -58,7 +58,7 @@ struct MonthView: View{
         GeometryReader{ geometry1 in
             LazyVGrid(columns: columns, spacing: 0){
                 let Count = Functions().getDaysInMonth(Input: Date.now)
-                let StartDate = Functions().FindFirstDayinMonth()
+                let StartDate = Functions().FindFirstDayinMonth(Month: Date.now)
                 ForEach(0..<5){ day in
                     if day == 0{
                         Text("Monday")

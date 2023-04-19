@@ -1,257 +1,70 @@
 //
-//  CalendarPageDayView.swift
-//  Pauly Backend
+//  CalendarEventsView.swift
+//  Pauly
 //
-//  Created by Andrew Mainella on 2023-04-13.
+//  Created by Andrew Mainella on 2023-04-18.
 //
 
 import SwiftUI
 import FirebaseFirestore
 
-struct DayView: View{
+struct CalendarEventsView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
-    
-    @StateObject var TimerInbound: AppConfig = AppConfig()
-    
-    @Binding var CalendarClasses: [CalendarCourseType]
-    @Binding var SelectedDates: [DateProperty]
     @State var CurrentEvents: [EventType] = []
+    @State var CalendarClasses: [CalendarCourseType] = []
     @Binding var SelectedDay: Date
-    
-    @Environment(\.colorScheme) var colorScheme
-    @State var HeightOffsetTOP: Double = 0.0
-    @State var TextSize: CGSize = CGSize(width: 0, height: 0)
-    @State var Height: Double = 0.0
-    @State var ScrollPosition: Int = 0
-    @State var CurrentMinuiteInt: Int = 0
-    @State var CurrentTime: String = "8:30"
-    @State var DateIntFetched: Bool = false
-    @State var ShowingTime: Bool = true
-    let HoursIN: [String] = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM",
-    "10PM", "11PM"]
+    @State var PageLoading: Bool = true
     var body: some View{
         VStack{
-            GeometryReader{ Geovalue in
-                ScrollViewReader{ scroll in
-                    ScrollView{
-                        VStack{
-                            ZStack{
-                                VStack(spacing: 0){
-                                    if ShowingTime{
-                                        ForEach(HoursIN, id: \.self){value in
-                                            HStack{
-                                                let Result = CalculateIFSHOWING(value: value, Time: SelectedDay)
-                                                if Result{
-                                                    Text(value)
-                                                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                                        .saveSize(in: $TextSize)
-                                                } else {
-                                                    Text(value)
-                                                        .foregroundColor(Color.clear)
-                                                        .saveSize(in: $TextSize)
-                                                }
-                                                VStack{
-                                                    Divider()
-                                                        .background(.black)
-                                                }
-                                            }.padding()
-                                            .padding(.top)
-                                            .frame(maxWidth: .infinity)
-                                        }
-                                    }
-                                }.background(
-                                    GeometryReader { proxy in
-                                        Color.clear // we just want the reader to get triggered, so let's use an empty color
-                                            .onAppear {
-                                                Height = proxy.size.height
-                                                
-                                            }
-                                    }
-                                )
-                                .onAppear(){
-                                    GetStudentSchedual()
-                                    HeightOffsetTOP = FindTimeOffset(Time: Date.now)
-                                    let MinuiteInt = Calendar.current.dateComponents([.minute], from: Date.now).minute
-                                    CurrentMinuiteInt = MinuiteInt!
-                                    let HourInt = Calendar.current.dateComponents([.hour], from: Date.now).hour
-                                    if "\(MinuiteInt ?? 10)".count == 1{
-                                        CurrentTime = "\(HourInt! % 12):0\(MinuiteInt!)"
-                                    } else {
-                                        CurrentTime = "\(HourInt! % 12):\(MinuiteInt!)"
-                                    }
-                                    ScrollPosition = Int(HeightOffsetTOP)
-                                    if ScrollPosition >= Int(Height){
-                                        ScrollPosition = Int(Height)
-                                    }
-                                }
-                                .onChange(of: SelectedDay){ time in
-                                    FindDateProperty(Time: SelectedDay)
-                                }
-                                .onReceive(TimerInbound.timer){ _ in
-                                    let MinuiteInt = Calendar.current.dateComponents([.minute], from: Date.now).minute
-                                    if CurrentMinuiteInt != MinuiteInt! {
-                                        ShowingTime = false
-                                        CurrentMinuiteInt = MinuiteInt!
-                                        let HourInt = Calendar.current.dateComponents([.hour], from: Date.now).hour
-                                        if "\(MinuiteInt ?? 10)".count == 1{
-                                            CurrentTime = "\(HourInt! % 12):0\(MinuiteInt!)"
-                                        } else {
-                                            CurrentTime = "\(HourInt! % 12):\(MinuiteInt!)"
-                                        }
-                                        HeightOffsetTOP = FindTimeOffset(Time: Date.now)
-                                        ShowingTime = true
-                                    }
-                                }
-                                if Height != 0.0{
-                                    ForEach(CurrentEvents, id:\.id){ event in
-                                        let Offset = computeNewDate(from: event.StartTime, to: event.EndTime)
-                                        let StartOffset = FindTimeOffset(Time: event.StartTime)
-                                        VStack{
-                                            HStack{
-                                                ZStack{
-                                                    HStack{
-                                                        Spacer()
-                                                        Rectangle()
-                                                            .foregroundColor(event.EventColor)
-                                                            .opacity(0.6)
-                                                            .frame(width: Geovalue.size.width * 0.8,height: Offset)
-                                                            .onAppear(){
-                                                                print(CurrentEvents)
-                                                            }
-                                                    }
-                                                    Text("\(event.Name)")
-                                                }
-                                            }.frame(width: Geovalue.size.width * 0.9, height: Geovalue.size.height * 0.005, alignment: .top)
-                                                .offset(y: StartOffset + (TextSize.height / 2))
-                                        }
-                                        .offset(y: -Height/2)
-                                        
-                                    }
-                                }
-                               
-                                if SelectedDay.formatted(date: .numeric, time: .omitted) == Date.now.formatted(date: .numeric, time: .omitted){
-                                    if Height != 0.0{
-                                        VStack{
-                                            HStack{
-                                                Text(CurrentTime)
-                                                    .foregroundColor(.red)
-                                                Rectangle()
-                                                    .foregroundColor(.red)
-                                                    .onAppear(){
-                                                        print(Geovalue.size)
-                                                    }
-                                            }.frame(width: Geovalue.size.width * 0.9, height: Geovalue.size.height * 0.005, alignment: .top)
-                                                .offset(y: HeightOffsetTOP)
-                                        }
-                                        .offset(y: -Height/2)
-                                    }
-                                }
-                                if Height != 0.0{
-                                    VStack(spacing: 0){
-                                        ForEach(0..<Int(Height), id: \.self) { date in
-                                            Rectangle()
-                                                .frame(width: 10, height: 1)
-                                                .id(date)
-                                                .foregroundColor(.clear)
-                                        }
-                                    }
-                                }
-                            }
-                        }.frame(maxHeight: .infinity)
+            if PageLoading{
+                Spacer()
+                ProgressView()
+                    .onAppear(){
+                        print(CurrentEvents)
+                        GetStudentSchedual()
                     }
-                }
-            }
-        }.background(Color.marron)
-    }
-    func CalculateIFSHOWING(value: String, Time: Date) -> Bool{
-        if SelectedDay.formatted(date: .numeric, time: .omitted) == Date.now.formatted(date: .numeric, time: .omitted){
-            let HourInt = Calendar.current.dateComponents([.hour], from: Time).hour
-            let MinuiteInt = Calendar.current.dateComponents([.minute], from: Time).minute
-            let ValueArray = Array(value)
-            var ValueInt = -1
-            if ValueArray.count == 4{
-                let ValueIntString = "\(ValueArray[0])" + "\(ValueArray[1])"
-                ValueInt = Int(ValueIntString)!
-                if ValueArray[2] == "P"{
-                    ValueInt += 12
-                }
+                Spacer()
             } else {
-                ValueInt = Int("\(ValueArray[0])")!
-                if ValueArray[1] == "P"{
-                    ValueInt += 12
-                }
-            }
-            var ValueIntDown = ValueInt - 1
-            if ValueIntDown == 0{
-                ValueIntDown = 12
-            }
-            if HourInt! == ValueInt{
-                if MinuiteInt! <= 20{
-                    if ValueArray.count == 4{
-                        print("In Four")
-                        if ValueArray[2] == "A"{
-                            print("Morning")
-                            if HourInt ?? 13 >= 13{
-                                return true
+                ScrollView{
+                    VStack{
+                        ForEach(CurrentEvents, id: \.id){ event in
+                            HStack{
+                                Text("\(event.Name)")
+                                    .foregroundColor(.black)
+                                Spacer()
                             }
-                        } else {
-                            if HourInt ?? 12 <= 12{
-                                return true
-                            }
-                        }
-                    } else {
-                        if ValueArray[1] == "A"{
-                            print("Morning")
-                            if HourInt ?? 13 >= 13{
-                                return true
-                            }
-                        } else {
-                            if HourInt ?? 11 <= 11{
-                                return true
-                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 15)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
+    //                        if GetResult(SelectedEvent: event){
+    //
+    //
+    //
+    //                        }
                         }
                     }
-                    return false
-                }
-            } else {
-                if HourInt! == ValueIntDown{
-                    if MinuiteInt! >= 40{
-                        if ValueArray.count == 4{
-                            if ValueArray[2] == "A"{
-                                if HourInt ?? 13 >= 13{
-                                    return true
-                                }
-                            } else {
-                                if HourInt ?? 12 <= 12{
-                                    return true
-                                }
-                            }
-                        } else {
-                            if ValueArray[1] == "A"{
-                                if HourInt ?? 13 >= 13{
-                                    return true
-                                }
-                            } else {
-                                if HourInt ?? 12 <= 12{
-                                    return true
-                                }
-                            }
-                        }
-                        return false
+                    .onChange(of: SelectedDay){ value in
+                        CurrentEvents = []
+                        CalendarClasses = []
+                        GetStudentSchedual()
                     }
                 }
             }
         }
-        return true
     }
-    func FindTimeOffset(Time: Date) -> Double {
-        let HourWidth = Height / 24
-        let MinutieWidth = Height / 1440
-        let HourInt = Calendar.current.dateComponents([.hour], from: Time).hour
-        let MinuiteInt = Calendar.current.dateComponents([.minute], from: Time).minute
-        let ReturnOffset = (Double(HourWidth) * Double(HourInt!)) + (Double(MinutieWidth) * Double(MinuiteInt!)) + (HourWidth / 2)
-        return ReturnOffset
-    }
+//    func GetResult(SelectedEvent: EventType) -> Bool {
+//        let CurrentDay = Calendar.current.dateComponents([.day], from: SelectedDay).day
+//        let EventDay = Calendar.current.dateComponents([.day], from: SelectedEvent.StartTime).day
+//        if CurrentDay == EventDay{
+//            return true
+//        } else {
+//            return false
+//        }
+//    }
     func GetDate(Hour: Int, Minute: Int, Time: Date) -> Date {
         // Specify date components
         var dateComponents = DateComponents()
@@ -509,34 +322,6 @@ struct DayView: View{
         }
         return ColorResult
     }
-    func computeNewDate(from fromDate: Date, to toDate: Date) -> Double  {
-        
-        let fromHourInt = Calendar.current.dateComponents([.hour], from: fromDate).hour
-        let fromMinuiteInt = Calendar.current.dateComponents([.minute], from: fromDate).minute
-        
-        let ToHourInt = Calendar.current.dateComponents([.hour], from: toDate).hour
-        let ToMinuiteInt = Calendar.current.dateComponents([.minute], from: toDate).minute
-        
-        let HourWidth = Height / 24
-        let MinutieWidth = Height / 1440
-
-        let HourIntValue = ToHourInt! - fromHourInt!
-        let HourInt = abs(HourIntValue)
-        let MinuiteIntValue = ToMinuiteInt! - fromMinuiteInt!
-        let MinuiteInt = abs(MinuiteIntValue)
-        
-        let ReturnOffset = (Double(HourWidth) * Double(HourInt)) + (Double(MinutieWidth) * Double(MinuiteInt))
-        return ReturnOffset
-    }
-    func FindOffsetEvent(Time: Date) -> Double{
-        let HourWidth = Height / 24
-        let MinutieWidth = Height / 1440
-        
-        let HourInt = (Calendar.current.dateComponents([.hour], from: Time).hour!)
-        let MinuiteInt = Calendar.current.dateComponents([.minute], from: Time).minute
-        let ReturnOffset = (Double(HourWidth) * Double(HourInt)) + (Double(MinutieWidth) * Double(MinuiteInt!)) + (HourWidth / 2)
-        return ReturnOffset
-    }
     func GetStudentSchedual() {
         if WindowMode.TimesRecieved == false{
             var CurrentIndex: Int = 0
@@ -582,6 +367,7 @@ struct DayView: View{
                                 if CurrentIndex == WindowMode.SelectedCourses.count{
                                     FindDateProperty(Time: SelectedDay)
                                     print("This is date propertry \(CurrentEvents)")
+                                    PageLoading = false
                                 }
                             }
                         }

@@ -45,9 +45,15 @@ struct AddClassView: View{
         ZStack{
             Rectangle()
                 .foregroundColor(.marron)
+                .ignoresSafeArea()
             VStack{
                 Group{
                     TextField("Teacher", text: $Teacher)
+                        .padding()
+                        .placeholder(when: Teacher.isEmpty){
+                            Text("Teacher")
+                                .foregroundColor(.black)
+                        }
                     Picker("Section", selection: $Section){
                         ForEach(Sections, id: \.self) {
                             Text("\($0)")
@@ -58,7 +64,19 @@ struct AddClassView: View{
                     }
                 }
                 NavigationLink(destination: GovernmentSelectedAddCardsOverview(PageInfo: $Cards)){
-                    Text("Edit Cards)")
+                    HStack{
+                        Text("Edit Cards")
+                        Spacer()
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding([.top, .bottom])
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding()
                 }
                 Group{
                     Text("Schedual")
@@ -101,7 +119,7 @@ struct AddClassView: View{
                                     Text(day)
                                 }
                             }
-                        }
+                        }.scrollContentBackground(.hidden)
                         Group{
                             Picker("Please choose a Month", selection: $SelectedMonth) {
                                     Text("January").tag(1)
@@ -143,7 +161,19 @@ struct AddClassView: View{
                         Button(){
                             NoClass.append("\(SelectedDay)-\(SelectedMonth)-20\(SelectedYear)")
                         } label: {
-                            Text("Add")
+                            HStack{
+                                Text("Add")
+                                Spacer()
+                            }
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding([.top, .bottom])
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
                         }
                     }
                 }
@@ -184,7 +214,19 @@ struct AddClassView: View{
                     }
 
                 } label: {
-                    Text("Create")
+                    HStack{
+                        Text("Create")
+                        Spacer()
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding([.top, .bottom])
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding()
                 }
             }.onAppear(){
                 let db = FirebaseFirestore.Firestore.firestore()

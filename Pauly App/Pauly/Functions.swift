@@ -20,8 +20,8 @@ class Functions {
 
         return numDays
     }
-    func FindFirstDayinMonth() -> Int {
-        let dateComponents = Calendar.current.dateComponents([.year, .month], from: Date())
+    func FindFirstDayinMonth(Month: Date) -> Int {
+        let dateComponents = Calendar.current.dateComponents([.year, .month], from: Month)
         let startOfMonth = Calendar.current.date(from: dateComponents)!
         let myCalendar = Calendar(identifier: .gregorian)
         var weekDay = myCalendar.component(.weekday, from: startOfMonth)

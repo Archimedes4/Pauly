@@ -940,13 +940,12 @@ struct GovernmentSelectedCardsView: View {
                             Button(){
                                 Cards.remove(at: CardIndexFor)
                                 SelectedCards.remove(at: CardIndexFor)
-                                SelectedCardsLoaded = false
                             } label: {
                                 Text("Remove")
                             }
                         }
                     }
-                }
+                }.scrollContentBackground(.hidden)
             } else {
                 Spacer()
                 ProgressView()
