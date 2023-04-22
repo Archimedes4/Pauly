@@ -48,15 +48,51 @@ struct Provider: IntentTimelineProvider {
     }
 
     func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-
-        let date = Date()
-        let nextUpdate = Calendar.current.date(byAdding: .day, value: 1, to: date)
-        
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        
+        print("Starting Timeline")
         GetStartTime { (Result, Succes, SchoolDay, Schdual, DayOfWeek) in
-            let timeline = Timeline(entries: [SimpleEntry(date: Date.now, configuration: configuration, StartString: Result, Reuslt: Succes, SchoolDay: SchoolDay, Schedual: Schdual, DayOfWeek: DayOfWeek)], policy: .after(nextUpdate!))
-            completion(timeline)
+            var NewDate = Date.now
+            
+            let HourInt = Calendar.current.dateComponents([.hour], from: NewDate).hour
+            
+            if HourInt! >= 15{
+                if HourInt! >= 16{
+                    let YearInt = Calendar.current.dateComponents([.year], from: NewDate).year
+                    let MonthInt = Calendar.current.dateComponents([.month], from: NewDate).month
+                    let DayInt = Calendar.current.dateComponents([.day], from: NewDate).day
+                    var dateComponent = DateComponents()
+                    dateComponent.year = YearInt
+                    dateComponent.month = MonthInt
+                    dateComponent.day = DayInt! + 1
+                    dateComponent.hour = 0
+                    dateComponent.minute = 0
+                    let ThreeThirtyToday = Calendar.current.date(from: dateComponent)
+                    let timeline = Timeline(entries: [SimpleEntry(date: Date.now, configuration: configuration, StartString: Result, Reuslt: Succes, SchoolDay: SchoolDay, Schedual: Schdual, DayOfWeek: DayOfWeek)], policy: .after(ThreeThirtyToday!))
+                    completion(timeline)
+                } else {
+                    let minuteInt = Calendar.current.dateComponents([.minute], from: NewDate).minute
+                    if minuteInt! >= 30{
+                        let YearInt = Calendar.current.dateComponents([.year], from: NewDate).year
+                        let MonthInt = Calendar.current.dateComponents([.month], from: NewDate).month
+                        let DayInt = Calendar.current.dateComponents([.day], from: NewDate).day
+                        var dateComponent = DateComponents()
+                        dateComponent.year = YearInt
+                        dateComponent.month = MonthInt
+                        dateComponent.day = DayInt! + 1
+                        dateComponent.hour = 0
+                        dateComponent.minute = 0
+                        let ThreeThirtyToday = Calendar.current.date(from: dateComponent)
+                        let timeline = Timeline(entries: [SimpleEntry(date: Date.now, configuration: configuration, StartString: Result, Reuslt: Succes, SchoolDay: SchoolDay, Schedual: Schdual, DayOfWeek: DayOfWeek)], policy: .after(ThreeThirtyToday!))
+                        completion(timeline)
+                    }
+                }
+            } else {
+                var components = DateComponents()
+                components.hour = 3
+                components.minute = 30
+                let ThreeThirtyToday = Calendar.current.date(from: components)
+                let timeline = Timeline(entries: [SimpleEntry(date: Date.now, configuration: configuration, StartString: Result, Reuslt: Succes, SchoolDay: SchoolDay, Schedual: Schdual, DayOfWeek: DayOfWeek)], policy: .after(ThreeThirtyToday!))
+                completion(timeline)
+            }
         }
     }
     func GivenStartIntGetTimeSchedualOne(StartTimeInt: Int) -> String{
@@ -67,7 +103,7 @@ struct Provider: IntentTimelineProvider {
                 return "9:35"
             } else {
                 if StartTimeInt == 3{
-                    return "10:55"
+                    return "11:00"
                 } else {
                     if StartTimeInt == 4{
                         return "1:00"
@@ -575,14 +611,15 @@ struct PaulyWidgetEntryView : View {
                                 .font(Font.custom("Futura Bold", size: 50, relativeTo: .largeTitle))
                                 .foregroundColor(.white)
                                 .padding(.bottom)
+                                .padding(.leading, 1)
                             if entry.StartString.count == 4{
                                 Text(entry.StartString)
-                                    .font(Font.custom("Futura", size: 50, relativeTo: .largeTitle))
+                                    .font(Font.custom("Futura", size: 48, relativeTo: .largeTitle))
                                     .foregroundColor(.white)
                                     .padding(.bottom)
                             } else {
                                 Text(entry.StartString)
-                                    .font(Font.custom("Futura", size: 40, relativeTo: .largeTitle))
+                                    .font(Font.custom("Futura", size: 38, relativeTo: .largeTitle))
                                     .foregroundColor(.white)
                                     .padding(.bottom)
                                     .offset(y: geo.size.height * 0.045)

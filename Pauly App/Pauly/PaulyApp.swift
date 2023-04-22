@@ -31,8 +31,35 @@ struct PaulyApp: App {
             FirebaseApp.configure()
         do{
             try Auth.auth().useUserAccessGroup("SYV2CK2N9N.com.Archimedes4.Pauly")
+            let handle = Auth.auth().addStateDidChangeListener { auth, user in
+              // ...
+//                print(auth.currentUser?.displayName)
+//                guard let user = Auth.auth().currentUser else {
+//                               //handle error
+//                               return
+//                           }
+//               user.getIDToken() { (res, err) in
+//                   if err != nil {
+//                       print("*** TOKEN() ERROR: \(err!)")
+//                       //handle error
+//                   } else {
+//                       print("*** TOKEN() SUCCESS: \(err)")
+//                       print(res)
+//                       if res != nil{
+//                           Auth.auth().signIn(withCustomToken: (res ?? "")){ (User, Error) in
+//                               print(Error?.localizedDescription)
+//                               print(Error.debugDescription)
+//                               if User?.credential != nil{
+//                                   let microCredential = User?.credential as! OAuthCredential
+//                                   print( microCredential.accessToken)
+//                               }
+//                           }
+//                       }
+//                   }
+//               }
+            }
             let User = Auth.auth().currentUser
-            
+            print(User)
             if let User = User {
                 microsoftProvider = OAuthProvider(providerID: "microsoft.com")
             } else {

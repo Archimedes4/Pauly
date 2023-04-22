@@ -11,6 +11,7 @@ import WebKit
 import SwiftUI
 
 struct HTMLStringView: UIViewRepresentable {
+    @Binding var ContentHeight: CGFloat
     let htmlContent: String
 
     func makeUIView(context: Context) -> WKWebView {
@@ -19,14 +20,13 @@ struct HTMLStringView: UIViewRepresentable {
         WebView.frame.size = WebView.sizeThatFits(CGSize.zero)
         WebView.scrollView.isScrollEnabled = false
         WebView.scrollView.bounces = false
+        WebView.loadHTMLString(htmlContent, baseURL: nil)
         return WebView
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
         uiView.loadHTMLString(htmlContent, baseURL: nil)
         uiView.scrollView.zoomScale = 100.0
-//        uiView.frame.size.height = 1
-//        uiView.frame.size = uiView.sizeThatFits(CGSize.zero)
     }
 }
 

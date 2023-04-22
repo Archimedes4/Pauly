@@ -183,12 +183,9 @@ struct MessagingHomePage: View{
                                                         } else {
                                                             MessagingHomePageTeamMembersView(Members: value.Members)
                                                         }
-                                                        HTMLStringView(htmlContent: "<meta name='viewport' content='width=device-width, shrink-to-fit=YES'><p>\(value.Sender ?? ""):</p>\(value.LastMessageContent ?? "<p>Error</p>")")
-                                                            .padding([.leading, .bottom, .trailing])
+                                                        HTMLStringView(ContentHeight: .constant(10), htmlContent: "<meta name='viewport' content='width=device-width, shrink-to-fit=YES'><p>\(value.Sender ?? ""):</p>\(value.LastMessageContent ?? "<p>Error</p>")")
+                                                            .padding()
                                                             .frame(height: geo.size.height * 0.1)
-                                                            .onAppear(){
-                                                                print(value.TeamsChatType)
-                                                            }
                                                     }.background(
                                                         RoundedRectangle(cornerRadius: 25)
                                                             .foregroundColor(.white)
@@ -326,7 +323,6 @@ struct MessagingHomePage: View{
                                         throw GraphCallingErrors.CouldNotDecodeAPI
                                     }
                                     for jsonMessage in messasgeJsonData{
-                                        print(jsonMessage)
                                         let MessageGroupID = jsonMessage["id"] as? String
                                         if let Index = GroupsTeams.firstIndex(where: {$0.GraphChatID == MessageGroupID ?? "Error"}){
                                             let MessageGroupPreview = jsonMessage["lastMessagePreview"] as? [String: Any]
@@ -504,6 +500,7 @@ struct TeamsMessageType{
     let Sender: String
     let MicrosoftID: String
     let MicrosoftSenderID: String
+    var MessageSize: CGSize
     let Attachments: [AttachmentType]?
 }
 
@@ -511,321 +508,6 @@ struct AttachmentType{
     let Id: UUID = UUID()
     let Name: String
     let Link: String
-}
-
-struct ConversationTeams: View{
-    @Binding var accessToken: String?
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    @Binding var SelectMessagingMode: MessagingEnum
-    @Binding var SelectedMessageTeams: TeamsGroupType?
-    @State var ShowingTimeStamps: Bool = false
-    @State var TeamsMesages: [TeamsMessageType] = []
-    @State var Message = ""
-    @Environment(\.colorScheme) var colorScheme
-    @State var CurrentTime: String = ""
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State var TimerCount: Int = 0
-    @State var MicrosoftUserUID: String = ""
-    var body: some View{
-        ZStack{
-            Rectangle()
-                .foregroundColor(Color.marron)
-                .ignoresSafeArea()
-            GeometryReader{ geo in
-                VStack{
-                    ScrollView{
-                        VStack{
-                            HStack{
-                                Button(){
-                                    SelectMessagingMode = .Home
-                                } label: {
-                                    HStack{
-                                        Image(systemName: "chevron.backward")
-                                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                        Text("Back")
-                                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                    }
-                                }.padding()
-                                Spacer()
-                            }
-                            Text("Conversation Teams")
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                            Toggle("Show Time Stamp", isOn: $ShowingTimeStamps)
-                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                .onAppear(){
-                                    Task{
-                                        do{
-                                            try await GetConversationTeams()
-                                            try await FetchMicrosoftUserInfo()
-                                            print("Teams")
-                                        } catch {
-                                            print(error)
-                                        }
-                                    }
-                                    let formatter = ISO8601DateFormatter()
-                                    formatter.timeZone = TimeZone(identifier: "UTC")
-                                    CurrentTime = formatter.string(from: Date())
-                                    
-                                }
-                                .onReceive(timer){ value in
-                                    TimerCount += 1
-                                    if TimerCount >= 5{
-                                        Task{
-                                            do{
-                                                try await GetConversationTeams()
-                                            } catch{
-                                                print("error has occured")
-                                            }
-                                        }
-                                    }
-                                }
-                            ForEach($TeamsMesages.sorted(by: { $0.wrappedValue.DateSent > $1.wrappedValue.DateSent }), id: \.wrappedValue.Id) { mesage in
-                                ZStack{
-                                    if mesage.wrappedValue.MicrosoftSenderID == MicrosoftUserUID{
-                                        Rectangle()
-                                            .fill(Color.blue)
-                                    } else {
-                                        Rectangle()
-                                            .fill(Color.white)
-                                    }
-                                    VStack{
-                                        HTMLStringView(htmlContent: "<meta name='viewport' content='width=device-width, shrink-to-fit=YES'><body bgcolor=#007AFF'><p>\(mesage.wrappedValue.Sender)</p>\(mesage.wrappedValue.Content)")
-                                            .padding([.leading, .bottom, .trailing])
-                                            .frame(height: geo.size.height * 0.15)
-                                        if mesage.wrappedValue.Attachments != nil{
-                                            ScrollView(.horizontal){
-                                                ForEach(mesage.wrappedValue.Attachments!, id: \.Id){ attach in
-                                                    Button(){
-                                                        
-                                                    } label:{
-                                                        Text(attach.Name)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }.background(Color.marron)
-                    }
-                    HStack{
-                        TextField("", text: $Message)
-                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                            .cornerRadius(25)
-                            .padding()
-                            .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(.black, lineWidth: 2)
-                                )
-                            .onSubmit {
-                                if Message != ""{
-                                    Task{
-                                        do{
-                                            try await SendMessage()
-                                        } catch {
-                                            print(error)
-                                        }
-                                    }
-                                }
-                            }
-                            .placeholder(when: Message.isEmpty){
-                                Text("Message")
-                                    .padding(.leading)
-                            }
-                        Button(){
-                            Task{
-                                do{
-                                    try await SendMessage()
-                                } catch{
-                                    print(error)
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "arrow.up.circle")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: geo.size.height * 0.05)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    func FetchMicrosoftUserInfo() async throws {
-        let urlUser = URL(string: "https://graph.microsoft.com/v1.0/me")
-        var requestUser = URLRequest(url: urlUser!)
-        requestUser.httpMethod = "GET"
-        requestUser.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        requestUser.setValue("Bearer \(accessToken!)", forHTTPHeaderField: "Authorization")
-        let (data, _) = try await URLSession.shared.data(for: requestUser)
-        do{
-            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                print(json)
-                guard let UserUid = json["id"] as? String else {
-                    return
-                }
-                MicrosoftUserUID = UserUid
-            }
-        } catch {
-            throw GraphCallingErrors.CouldNotDecodeAPI
-        }
-    }
-    func GetCurrentConversationTeams() async throws {
-        let formatter = ISO8601DateFormatter()
-        formatter.timeZone = TimeZone(identifier: "UTC")
-        let nowDate = Date.now
-        guard let futureTime = Calendar.current.date(byAdding: .day, value: 1, to: nowDate) else {
-            return
-        }
-        let NowTime = formatter.string(from: futureTime)
-        let urlUser = URL(string: "https://graph.microsoft.com/v1.0/me/chats/\(SelectedMessageTeams!.GraphChatID)/messages?$filter=lastModifiedDateTime%20gt%20\(CurrentTime)%20and%20lastModifiedDateTime%20lt%20\(NowTime)")
-        var requestUser = URLRequest(url: urlUser!)
-        // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
-        requestUser.httpMethod = "GET"
-        requestUser.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        requestUser.setValue("Bearer \(accessToken!)", forHTTPHeaderField: "Authorization")
-        let (data, _) = try await URLSession.shared.data(for: requestUser)
-        do{
-            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                print(json)
-                guard let MessageingArray = json["value"] as? NSArray as? [[String: Any]] else {
-                    return
-                }
-                for Message in MessageingArray{
-                    let MessageBody = Message["body"] as? [String:Any]
-                    guard let MessageContent = MessageBody?["content"] as? String else {
-                        return
-                    }
-                    let MessageFrom = Message["from"] as? [String: Any]
-                    let MessageUser = MessageFrom?["user"] as? [String: Any]
-                    guard let MessageDisplayName = MessageUser?["displayName"] as? String else{
-                        return
-                    }
-                    guard let UserUid = MessageUser?["id"] as? String else {
-                        return
-                    }
-                    guard let SentDateTime = Message["createdDateTime"] as? String else {
-                        return
-                    }
-                    guard let MicrosoftId = Message["id"] as? String else {
-                        return
-                    }
-                    let formatter1 = ISO8601DateFormatter()
-                    formatter1.formatOptions = [.withInternetDateTime]
-                    formatter1.formatOptions.insert(.withFractionalSeconds)
-                    let SentDate = formatter1.date(from: SentDateTime)
-                    let Attachement = Message["attachments"] as? NSArray as? [[String:Any]]
-                    if Attachement != nil{
-                        var AttachmentData: [AttachmentType] = []
-                        for x in Attachement!{
-                            guard let contentUrl = x["contentUrl"] as? String else{
-                                return
-                            }
-                            guard let Name = x["name"] as? String else {
-                                return
-                            }
-                            AttachmentData.append(AttachmentType(Name: Name, Link: contentUrl))
-                        }
-                        if TeamsMesages.contains(where: { $0.MicrosoftID == MicrosoftId }) == false{
-                            TeamsMesages.append(TeamsMessageType(DateSent: SentDate!, Content: MessageContent, Sender: MessageDisplayName, MicrosoftID: MicrosoftId, MicrosoftSenderID: UserUid, Attachments: AttachmentData))
-                        }
-                    } else {
-                        if TeamsMesages.contains(where: { $0.MicrosoftID == MicrosoftId }) == false{
-                            TeamsMesages.append(TeamsMessageType(DateSent: SentDate!, Content: MessageContent, Sender: MessageDisplayName, MicrosoftID: MicrosoftId, MicrosoftSenderID: UserUid, Attachments: nil))
-                        }
-                    }
-                }
-            }
-        } catch {
-            throw GraphCallingErrors.CouldNotDecodeAPI
-        }
-    }
-    
-    func GetConversationTeams() async throws {
-        let urlUser = URL(string: "https://graph.microsoft.com/v1.0/me/chats/\(SelectedMessageTeams!.GraphChatID)/messages")
-        var requestUser = URLRequest(url: urlUser!)
-        // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
-        requestUser.httpMethod = "GET"
-        requestUser.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        requestUser.setValue("Bearer \(accessToken!)", forHTTPHeaderField: "Authorization")
-        let (data, _) = try await URLSession.shared.data(for: requestUser)
-        do{
-            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                guard let MessageingArray = json["value"] as? NSArray as? [[String: Any]] else {
-                    return
-                }
-                for Message in MessageingArray{
-                    let MessageBody = Message["body"] as? [String:Any]
-                    guard let MessageContent = MessageBody?["content"] as? String else {
-                        return
-                    }
-                    let MessageFrom = Message["from"] as? [String: Any]
-                    let MessageUser = MessageFrom?["user"] as? [String: Any]
-                    guard let MessageDisplayName = MessageUser?["displayName"] as? String else{
-                        return
-                    }
-                    guard let UserUid = MessageUser?["id"] as? String else {
-                        return
-                    }
-                    guard let SentDateTime = Message["createdDateTime"] as? String else {
-                        return
-                    }
-                    let formatter1 = ISO8601DateFormatter()
-                    formatter1.formatOptions = [.withInternetDateTime]
-                    formatter1.formatOptions.insert(.withFractionalSeconds)
-                    let SentDate = formatter1.date(from: SentDateTime)
-                    guard let MicrosoftId = Message["id"] as? String else {
-                        return
-                    }
-                    let Attachement = Message["attachments"] as? NSArray as? [[String:Any]]
-                    if Attachement != nil{
-                        var AttachmentData: [AttachmentType] = []
-                        for x in Attachement!{
-                            guard let contentUrl = x["contentUrl"] as? String else{
-                                return
-                            }
-                            guard let Name = x["name"] as? String else {
-                                return
-                            }
-                            AttachmentData.append(AttachmentType(Name: Name, Link: contentUrl))
-                        }
-                        if TeamsMesages.contains(where: { $0.MicrosoftID == MicrosoftId }) == false{
-                            TeamsMesages.append(TeamsMessageType(DateSent: SentDate!, Content: MessageContent, Sender: MessageDisplayName, MicrosoftID: MicrosoftId, MicrosoftSenderID: UserUid, Attachments: AttachmentData))
-                        }
-                    } else {
-                        if TeamsMesages.contains(where: { $0.MicrosoftID == MicrosoftId }) == false{
-                            TeamsMesages.append(TeamsMessageType(DateSent: SentDate!, Content: MessageContent, Sender: MessageDisplayName, MicrosoftID: MicrosoftId, MicrosoftSenderID: UserUid, Attachments: nil))
-                        }
-                    }
-                }
-            }
-        } catch {
-            throw GraphCallingErrors.CouldNotDecodeAPI
-        }
-    }
-    func SendMessage() async throws {
-        let urlUser = URL(string: "https://graph.microsoft.com/v1.0/me/chats/\(SelectedMessageTeams!.GraphChatID)/messages")
-        var requestUser = URLRequest(url: urlUser!)
-        // Set the Authorization header for the request. We use Bearer tokens, so we specify Bearer + the token we got from the result
-        requestUser.httpMethod = "POST"
-        requestUser.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        requestUser.setValue("Bearer \(accessToken!)", forHTTPHeaderField: "Authorization")
-        let MessageData: [String:Any] = [
-            "body":[
-                "content":Message
-            ]
-        ]
-        let jsonData = try JSONSerialization.data(withJSONObject: MessageData, options: .prettyPrinted)
-        requestUser.httpBody = jsonData
-        let (data, _) = try await URLSession.shared.data(for: requestUser)
-        do{
-            if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                try await GetCurrentConversationTeams()
-            }
-        } catch {
-            throw GraphCallingErrors.CouldNotDecodeAPI
-        }
-    }
 }
 
 struct Conversation: View{
@@ -920,8 +602,6 @@ struct Conversation: View{
                     "Time":"\(String(describing: someDateTime))"
                 ]
                 
-                print(someDateTime)
-                print("\(String(describing: someDateTime))")
                 
                 docRef.setData(MessagingOutputData) { error in
                     if let error = error {
@@ -1013,7 +693,6 @@ struct Conversation: View{
                 let Sender = documentData["Sender"] as? String ?? "Error"
                 let Contents = documentData["Message"] as? String ?? "Error"
                 let Time = documentData["Time"] as? String ?? "Error"
-                print("Sender:\(Sender), Contents:\(Contents), Time:\(Time)")
                 let OutputMessage = MessagingType(sender: Sender, message: Contents, time: Time, ErrorType: nil, ErrorID: nil)
                 outputMessageArray.append(OutputMessage)
             })
@@ -1198,7 +877,6 @@ struct CreateNewConversation: View{
                                                     }
                                                 }
                                             }
-                                            print("Document successfully written!")
                                         }
                                     }
                                 }

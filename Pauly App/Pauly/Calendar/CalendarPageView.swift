@@ -308,12 +308,14 @@ struct MonthViewMain: View{
                     HStack{
                         Text(String(Year))
                             .padding(.leading)
+                            .foregroundColor(.white)
                         Spacer()
                     }
                     HStack{
                         Text(Month)
                             .padding(.leading)
                             .font(.title)
+                            .foregroundColor(.white)
                         Spacer()
                         let NowYear = Calendar.current.dateComponents([.year], from: Date.now).year
                         let NowMonth = Calendar.current.dateComponents([.month], from: Date.now).month
@@ -323,25 +325,26 @@ struct MonthViewMain: View{
                                 SelectedDate = Date.now
                             } label: {
                                 Text("Today")
-                                    .foregroundColor(.black)
+                                    .foregroundColor(.white)
                             }
                         }
                         Button(){
                             SelectedDate = Calendar.current.date(byAdding: .month, value: -1, to: SelectedDate)!
                         } label: {
                             Image(systemName: "chevron.left")
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                         }
                         Button(){
                             SelectedDate = Calendar.current.date(byAdding: .month, value: 1, to: SelectedDate)!
                         } label: {
                             Image(systemName: "chevron.forward")
-                                .foregroundColor(.black)
+                                .foregroundColor(.white)
                         }.padding(.trailing)
                     }
                     LazyVGrid(columns: columns, spacing: 0){
                         ForEach(DaysInWeek, id: \.self){ DOW in
                             Text(DOW)
+                                .foregroundColor(.white)
                         }
 
                         ForEach(MonthData, id: \.id){ value in
@@ -414,7 +417,7 @@ struct MonthViewMain: View{
             if value.Showing{
                 if Int(value.DayData) == Day{
                     RadialGradient(
-                              gradient: Gradient(colors: [.white, .marron]),
+                        gradient: Gradient(colors: [.customGray, .marron]),
                               center: .center,
                               startRadius: 10,
                               endRadius: 25
@@ -436,7 +439,7 @@ struct MonthViewMain: View{
                     }
                 }
                 Text("\(value.DayData)")
-                    .foregroundColor(.black)
+                    .foregroundColor(.white)
             }
         }
     }

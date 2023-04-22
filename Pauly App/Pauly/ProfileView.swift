@@ -17,6 +17,7 @@ enum profileViewEnum {
     case Leaderboard
     case Commissions
     case Resourses
+    case Elections
     case GovernmentView
 }
 
@@ -41,6 +42,8 @@ struct ProfileViewMain: View{
                 .transition(.asymmetric(insertion: AnyTransition.opacity.combined(with: .slide), removal: .scale))
         case .Resourses:
             Resources(selectedProfileView: $selectedProfileView, AccessToken: $AccessToken)
+        case.Elections:
+            ElectionsView(selectedProfileView: $selectedProfileView)
         case .GovernmentView:
             GovernmentView(selectedProfileView: $selectedProfileView, accessToken: $AccessToken)
                 .environmentObject(WindowMode)
@@ -134,6 +137,32 @@ struct ProfileViewHome: View{
                             .foregroundColor(.black)
                             .frame(height: TextSize.height)
                         Text("Resources")
+                            .font(.system(size: 17))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .saveSize(in: $TextSize)
+                        Spacer()
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .padding([.top, .bottom])
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 25)
+                            .fill(Color.white)
+                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                    )
+                    .padding()
+                }
+                Button(){
+                    selectedProfileView = .Elections
+                } label: {
+                    HStack{
+                        Image(systemName: "checkmark")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .foregroundColor(.black)
+                            .frame(height: TextSize.height)
+                        Text("Elections")
                             .font(.system(size: 17))
                             .fontWeight(.bold)
                             .foregroundColor(.black)
@@ -679,6 +708,10 @@ struct ProfileViewPauly: View{
                 .onAppear(){
                     CheckProviderID()
                 }
+                Text("Pauly created by Andrew Mainella,")
+                    .foregroundColor(.white)
+                Text("Designed in Winnipeg, Manitoba.")
+                    .foregroundColor(.white)
                 Spacer()
                 
             }.background(Color.marron)
@@ -1135,7 +1168,7 @@ struct ProfileViewCommissionsHome: View{
                                 .padding(.top)
                             }
                         }
-                    }else {
+                    } else {
                         Spacer()
                         ProgressView(ProgressViewText)
                             .scaleEffect(5)

@@ -107,22 +107,38 @@ struct DayView: View{
                                         let Offset = computeNewDate(from: event.StartTime, to: event.EndTime)
                                         let StartOffset = FindTimeOffset(Time: event.StartTime)
                                         VStack{
-                                            HStack{
-                                                ZStack{
-                                                    HStack{
-                                                        Spacer()
-                                                        Rectangle()
-                                                            .foregroundColor(event.EventColor)
-                                                            .opacity(0.6)
-                                                            .frame(width: Geovalue.size.width * 0.8,height: Offset)
-                                                            .onAppear(){
-                                                                print(CurrentEvents)
-                                                            }
-                                                    }
-                                                    Text("\(event.Name)")
+                                            ZStack{
+                                                HStack{
+                                                    Spacer()
+                                                    Rectangle()
+                                                        .foregroundColor(event.EventColor)
+                                                        .opacity(0.6)
+                                                        .frame(width: Geovalue.size.width * 0.8,height: Offset)
+                                                        .onAppear(){
+                                                            print(CurrentEvents)
+                                                        }
                                                 }
-                                            }.frame(width: Geovalue.size.width * 0.9, height: Geovalue.size.height * 0.005, alignment: .top)
-                                                .offset(y: StartOffset + (TextSize.height / 2))
+                                                HStack{
+                                                    Spacer()
+                                                    HStack{
+                                                        VStack{
+                                                            HStack{
+                                                                Text("\(event.Name)")
+                                                                    .frame(alignment: .leading)
+                                                                Spacer()
+                                                            }
+                                                            HStack{
+                                                                Text("\(event.StartTime, style: .time) to \(event.EndTime, style: .time)")
+                                                                    .frame(alignment: .leading)
+                                                                Spacer()
+                                                            }
+                                                        }.padding(.leading)
+                                                        Spacer()
+                                                    }.frame(width: Geovalue.size.width * 0.8,height: Offset)
+                                                }
+                                            }
+                                            .frame(width: Geovalue.size.width * 0.9, height: Offset, alignment: .top)
+                                                .offset(y: StartOffset + (Height / 48))
                                         }
                                         .offset(y: -Height/2)
                                         
@@ -249,7 +265,7 @@ struct DayView: View{
         let MinutieWidth = Height / 1440
         let HourInt = Calendar.current.dateComponents([.hour], from: Time).hour
         let MinuiteInt = Calendar.current.dateComponents([.minute], from: Time).minute
-        let ReturnOffset = (Double(HourWidth) * Double(HourInt!)) + (Double(MinutieWidth) * Double(MinuiteInt!)) + (HourWidth / 2)
+        var ReturnOffset = (Double(HourWidth) * Double(HourInt!)) + (Double(MinutieWidth) * Double(MinuiteInt!)) + (HourWidth / 2)
         return ReturnOffset
     }
     func GetDate(Hour: Int, Minute: Int, Time: Date) -> Date {
@@ -510,22 +526,23 @@ struct DayView: View{
         return ColorResult
     }
     func computeNewDate(from fromDate: Date, to toDate: Date) -> Double  {
+        let delta = toDate - fromDate
         
-        let fromHourInt = Calendar.current.dateComponents([.hour], from: fromDate).hour
-        let fromMinuiteInt = Calendar.current.dateComponents([.minute], from: fromDate).minute
+        let deltaInt = Int(delta)
+        let deltaHours = deltaInt / 3600
+        let deltaRemaining = deltaInt % 3600
+        let deltaMinutes = deltaRemaining / 60
         
-        let ToHourInt = Calendar.current.dateComponents([.hour], from: toDate).hour
-        let ToMinuiteInt = Calendar.current.dateComponents([.minute], from: toDate).minute
+        let NewHourHeight = Height / 24
+        let NewHeight = Height - NewHourHeight
+        let HourWidth = NewHeight / 24
+        let MinutieWidth = NewHeight / 1440
         
-        let HourWidth = Height / 24
-        let MinutieWidth = Height / 1440
-
-        let HourIntValue = ToHourInt! - fromHourInt!
-        let HourInt = abs(HourIntValue)
-        let MinuiteIntValue = ToMinuiteInt! - fromMinuiteInt!
-        let MinuiteInt = abs(MinuiteIntValue)
+        print("This is delta \(delta)")
+        print("This is delta hours \(deltaHours)")
+        print("This is delta minute \(deltaMinutes)")
         
-        let ReturnOffset = (Double(HourWidth) * Double(HourInt)) + (Double(MinutieWidth) * Double(MinuiteInt))
+        let ReturnOffset = (Double(HourWidth) * Double(deltaHours)) + (Double(MinutieWidth) * Double(deltaMinutes))
         return ReturnOffset
     }
     func FindOffsetEvent(Time: Date) -> Double{
@@ -650,4 +667,12 @@ struct DayView: View{
             }
         }
     }
+}
+
+extension Date {
+
+    static func - (lhs: Date, rhs: Date) -> TimeInterval {
+        return lhs.timeIntervalSinceReferenceDate - rhs.timeIntervalSinceReferenceDate
+    }
+
 }

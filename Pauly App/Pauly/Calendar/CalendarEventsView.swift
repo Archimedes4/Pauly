@@ -28,10 +28,17 @@ struct CalendarEventsView: View{
                 ScrollView{
                     VStack{
                         ForEach(CurrentEvents, id: \.id){ event in
-                            HStack{
-                                Text("\(event.Name)")
-                                    .foregroundColor(.black)
-                                Spacer()
+                            VStack{
+                                HStack{
+                                    Text("\(event.Name)")
+                                        .foregroundColor(.black)
+                                    Spacer()
+                                }
+                                HStack{
+                                    Text("\(event.StartTime, style: .time) to \(event.EndTime, style: .time)")
+                                        .foregroundColor(.black)
+                                    Spacer()
+                                }
                             }
                             .padding()
                             .background(
@@ -40,11 +47,6 @@ struct CalendarEventsView: View{
                                     .shadow(color: .gray, radius: 2, x: 0, y: 2)
                             )
                             .padding()
-    //                        if GetResult(SelectedEvent: event){
-    //
-    //
-    //
-    //                        }
                         }
                     }
                     .onChange(of: SelectedDay){ value in

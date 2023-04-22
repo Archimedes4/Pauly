@@ -467,12 +467,16 @@ struct HomePage: View{
                     WindowMode.SelectedWindowMode = .Calendar
                 } label: {
                     VStack(spacing: 0){
-                        Image("CalendarText")
-                            .resizable()
-                            .frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
-                            .background(Color.marron)
-                            .border(.black)
-                            .aspectRatio(contentMode: .fit)
+                        HStack{
+                            Spacer()
+                            Image("CalendarText")
+                                .resizable()
+                                .background(Color.marron)
+                                .aspectRatio(contentMode: .fit)
+                            Spacer()
+                        }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
+                        .background(Color.marron)
+                        .border(.black)
                         MonthView(ScrollMessageIn: $ScrollText, AnimationSpeedIn: $AnimationDuration)
                             .frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.3)
                             .background(Color.marron)
@@ -695,6 +699,7 @@ struct ContentView: View {
 
 extension Color {
     static let marron = Color("Marron")
+    static let customGray = Color("CustomGray")
 }
 
 //https://stackoverflow.com/questions/57688242/swiftui-how-to-change-the-placeholder-color-of-the-textfield

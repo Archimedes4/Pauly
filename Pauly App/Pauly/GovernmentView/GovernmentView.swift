@@ -36,6 +36,7 @@ struct GovernmentView: View {
             GovernmentCalendarView(SelectedGovernmentViewMode:  $SelectedGovernmentViewMode)
         case .Election:
             GovernmentElectionsView(SelectedGovernmentViewMode:  $SelectedGovernmentViewMode)
+                .environmentObject(WindowMode)
         case .Sports:
             GovernmentSportsView(SelectedGovernmentViewMode:  $SelectedGovernmentViewMode)
         case .Cards:
@@ -371,25 +372,6 @@ struct GovernmentCalendarView: View{
                 }
             }
         }
-    }
-}
-
-struct GovernmentElectionsView: View{
-    @Binding var SelectedGovernmentViewMode: GovernmentViewModes
-    var body: some View{
-        HStack{
-            Button(){
-                SelectedGovernmentViewMode = .Home
-            } label: {
-                HStack {
-                    Image(systemName: "chevron.backward")
-                        .padding(.leading)
-                    Text("Back")
-                }
-            }
-            Spacer()
-        }
-        Text("Election")
     }
 }
 

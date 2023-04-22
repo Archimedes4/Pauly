@@ -148,29 +148,23 @@ struct CreateNewUserPageOneView: View{
         }
     }
     func signIn () {
+        microsoftProvider?.scopes = ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite", "User.ReadBasic.All"]
+        microsoftProvider?.customParameters = ["tenant":"d9ad3c89-6aed-4783-93ce-212b71ee98f3"]
         self.microsoftProvider?.getCredentialWith(_: nil){credential, error in
-                   if error != nil {
-                       let castedError = error! as NSError
-                       print(castedError)
-                       // Handle error.
+           if error != nil {
+               let castedError = error! as NSError
+               print(castedError)
+               // Handle error.
 
-                   }
-                   if let credential = credential {
-                       SelectedCourseViewPage = .PageTwoMicrosoft
-                       SelectedLoginMethod = .Microsoft
-                       MicrosoftCredential = credential
-                   }
-               }
+           }
+           if let credential = credential {
+               SelectedCourseViewPage = .PageTwoMicrosoft
+               SelectedLoginMethod = .Microsoft
+               MicrosoftCredential = credential
+           }
+       }
     }
 }
-
-//#if DEBUG
-//struct CreateNewUserPageOnePreview: PreviewProvider {
-//    static var previews: some View {
-//        CreateNewUserPageOneView(SelectedCourseViewPage: .constant(.PageOne), SelectedLoginMethod: .constant(.Microsoft), MicrosoftCredential: .constant(.none))
-//    }
-//}
-//#endif
 
 struct CreateNewUserPageTwoViewFirebase: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
