@@ -512,7 +512,7 @@ struct QuizView: View{
     
     var body: some View{
         if MSALAccount == nil{
-            if accessToken == nil{
+            if accessToken?.count ?? 0 <= 10{
                 MSALView()
                     .environmentObject(WindowMode)
             } else {
@@ -564,6 +564,7 @@ struct QuizView: View{
                 Text("Please Wait One moment well Pauly gets everything ready")
                     .onAppear(){
                         if accessToken?.count ?? 0 <= 10{
+                            print("Here")
                             msalModel.acquireTokenSilently(MSALAccount!, AccountMode: WindowMode.SelectedWindowMode, Grade: WindowMode.GradeIn, UsernameIn: WindowMode.UsernameIn, FirstName: WindowMode.FirstName, LastName: WindowMode.LastName, SelectedCourses: WindowMode.SelectedCourses)
                         }
                     }

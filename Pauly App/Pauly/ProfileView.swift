@@ -10,6 +10,7 @@ import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
 import CoreLocation
+import WidgetKit
 
 enum profileViewEnum {
     case Home
@@ -408,8 +409,10 @@ struct ProfileViewManageCourses: View{
         
                             Section{
                                 ForEach(AvaliableCourses, id: \.self){ course in
-                                    NavigationLink(destination: ProfileViewMangeSection(SelectedCourses: $CoursesSelected, Grade: WindowMode.GradeIn, CourseName: course)) {
-                                        Text(course)
+                                    if CoursesSelected.contains(where: { $0.Name == course }) == false{
+                                        NavigationLink(destination: ProfileViewMangeSection(SelectedCourses: $CoursesSelected, Grade: WindowMode.GradeIn, CourseName: course)) {
+                                            Text(course)
+                                        }
                                     }
                                 }
                             }
@@ -443,22 +446,6 @@ struct ProfileViewManageCourses: View{
                                 )
                                 .padding()
                         }
-                        Button(){
-      
-                        } label: {
-                            Text("BACK")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .padding()
-                        }
                     }
                 }
             }
@@ -469,6 +456,9 @@ struct ProfileViewManageCourses: View{
 struct ProfileViewMicosoft: View{
     @Binding var accessToken: String?
     var microsoftProvider : OAuthProvider?
+    @State var NewUsername: String = ""
+    @State var NewPassword: String = ""
+    @Environment(\.presentationMode) var presentationMode
     
     init(accessToken: Binding<String?>){
         self.microsoftProvider = OAuthProvider(providerID: "microsoft.com")
@@ -476,48 +466,82 @@ struct ProfileViewMicosoft: View{
     }
     
     var body: some View{
-        Text("Microsoft")
-        Button("Link Account To Microsoft"){
-            
-            microsoftProvider?.scopes = ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite", "User.ReadBasic.All"]
-            
-            self.microsoftProvider?.getCredentialWith(_: nil){credential, error in
-                if error != nil {
-                    let castedError = error! as NSError
-                    print(castedError)
-                    // Handle error.
-                    
-                }
-                if let credential = credential {
-                    
-                    
-                    
-                    Auth.auth().signIn(with: credential) { (authResult, error) in
+        ZStack{
+            Rectangle()
+                .fill(Color.marron)
+                .ignoresSafeArea()
+            VStack{
+                Text("Microsoft")
+                TextField("", text: $NewUsername)
+                    .placeholder(when: NewUsername.isEmpty){
+                        Text("Email")
+                    }
+                    .padding(.leading)
+                    .autocapitalization(.none)
+                TextField("", text: $NewPassword)
+                    .placeholder(when: NewPassword.isEmpty){
+                        Text("Password")
+                    }
+                    .padding(.leading)
+                    .autocapitalization(.none)
+                Button(){
+                    microsoftProvider?.scopes = ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite", "User.ReadBasic.All"]
+                    microsoftProvider?.customParameters = ["tenant":"d9ad3c89-6aed-4783-93ce-212b71ee98f3"]
+                    self.microsoftProvider?.getCredentialWith(_: nil){credential, error in
                         if error != nil {
                             let castedError = error! as NSError
                             print(castedError)
                             // Handle error.
+                            
                         }
-                        
-                        guard let authResult = authResult else {
-                            print("Couldn't get graph authResult")
-                            return
-                        }
-                        
-                        // get credential and token when login successfully
-                        let microCredential = authResult.credential as! OAuthCredential
-                        accessToken = microCredential.accessToken!
-                        
-                        let credential = EmailAuthProvider.credential(withEmail: "andrewmainella@icloud.com", password: "Testing")
-                        
-                        Auth.auth().currentUser?.link(with: credential) { authResult, Error in
-                            if Error != nil{
-                                print(Error)
+                        if let credential = credential {
+                            
+                            
+                            
+                            Auth.auth().signIn(with: credential) { (authResult, error) in
+                                if error != nil {
+                                    let castedError = error! as NSError
+                                    print(castedError)
+                                    // Handle error.
+                                }
+                                
+                                guard let authResult = authResult else {
+                                    print("Couldn't get graph authResult")
+                                    return
+                                }
+                                
+                                // get credential and token when login successfully
+                                let microCredential = authResult.credential as! OAuthCredential
+                                accessToken = microCredential.accessToken!
+                                
+                                let credential = EmailAuthProvider.credential(withEmail: NewUsername, password: NewPassword)
+                                
+                                Auth.auth().currentUser?.link(with: credential) { authResult, Error in
+                                    if Error != nil{
+                                        print(Error)
+                                    } else {
+                                        self.presentationMode.wrappedValue.dismiss()
+                                    }
+                                }
                             }
                         }
-                        
                     }
+                } label: {
+                    HStack{
+                        Text("Link Account To Microsoft")
+                            .font(.system(size: 17))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                        Spacer()
+                    }
+                    .padding()
+                    .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .foregroundColor(Color.white)
+                    )
+                    .padding()
                 }
+                Spacer()
             }
         }
     }
@@ -569,7 +593,7 @@ struct ProfileViewPauly: View{
                     )
                     .padding()
                 }
-                if UserMicrosoft{
+                if UserMicrosoft && UserEmail == false{
                     NavigationLink(destination: ProfileViewMicosoft(accessToken: $accessToken).environmentObject(WindowMode)){
                         HStack{
                             Image("MicrosoftLogo")
@@ -601,7 +625,7 @@ struct ProfileViewPauly: View{
                             if x.providerID == "password"{
                                 Auth.auth().sendPasswordReset(withEmail: x.email!) { (error) in
                                     if error == nil{
-                                        AlertMessage = "\(error)"
+                                        AlertMessage = "\(String(describing: error))"
                                         AlertTitle = "Error"
                                         ShowingEmailAlert = true
                                     } else {
@@ -640,6 +664,7 @@ struct ProfileViewPauly: View{
                     let firebaseAuth = Auth.auth()
                     do {
                         try firebaseAuth.signOut()
+                        WidgetCenter.shared.reloadAllTimelines()
                         WindowMode.SelectedWindowMode = .PasswordWindow
                         UserMicrosoft = false
                         UserEmail = false
@@ -696,6 +721,7 @@ struct ProfileViewPauly: View{
                                         // An error happened.
                                     } else {
                                         // Account deleted.
+                                        WidgetCenter.shared.reloadAllTimelines()
                                         WindowMode.SelectedWindowMode = .PasswordWindow
                                     }
                                 }
@@ -726,568 +752,6 @@ struct ProfileViewPauly: View{
             }
             if x.providerID == "password"{
                 UserEmail = true
-            }
-        }
-    }
-}
-
-struct CommitionType{
-    var Title: String
-    var Caption: String
-    var StartDate: Date
-    var EndDate: Date
-    var Cards: [Int]
-    var Hidden: Bool
-    let FirebaseID: Int
-    var Value: Int
-    var Score: Int
-    var Location: CLLocation?
-    var Proximity: Double?
-}
-
-struct ProfileViewCommissionInfo: View{
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    @Binding var SelectedCommissionsViewMode: CommisssionsViewModes
-    @State var SelectedCommission: CommitionType
-    @State var AvaliableCards: [CardType] = []
-    @State var SheetPresented: Bool = false
-    @State var isCommissionComplete: Bool = true
-    @Binding var accessToken: String?
-    @State var CheckedIfCommissionComplete: Bool = false
-    @State var ImageSubmission: Bool = false
-    @State var ButtonText: String = "Error"
-    @State var ButtonColor: Color = Color.gray
-    var body: some View{
-        if CheckedIfCommissionComplete == false{
-            VStack{
-                Spacer()
-                ProgressView("Checking If Commission id Complete")
-                    .scaleEffect(2)
-                    .font(.footnote)
-                    .onAppear(){
-                        CheckIfCompletedCommition(CommissionID: SelectedCommission.FirebaseID)
-                    }
-                Spacer()
-            }
-        } else {
-            GeometryReader{ value in
-                VStack{
-                    ScrollView{
-                        VStack{
-                            ForEach($AvaliableCards, id: \.id) { card in
-                                Card(TextColor: Color.black, accessToken: $accessToken, SelectedCard: card)
-                                    .frame(width: value.size.width * 0.9, height: value.size.height * 0.3)
-                                    .cornerRadius(25)
-                            }
-                        }
-                    }
-                    Spacer()
-                    HStack{
-                        Spacer()
-                        Button(){
-                            if isCommissionComplete == false && SelectedCommission.StartDate <= Date.now && SelectedCommission.EndDate >= Date.now{
-                                if SelectedCommission.Value == 1{
-                                    
-                                } else {
-                                    if SelectedCommission.Value == 2{
-                                        SheetPresented = true
-                                    } else {
-                                        if SelectedCommission.Value == 3{
-                                            ImageSubmission = true
-                                        } else {
-                                            if SelectedCommission.Value == 4{
-                                                
-                                            } else {
-                                                if SelectedCommission.Value == 5{
-                                                    
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } label: {
-                            Text(ButtonText)
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding([.top, .bottom])
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(ButtonColor)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .padding([.leading, .trailing])
-                                .onAppear(){
-                                    if isCommissionComplete{
-                                        ButtonText = "COMMISSION COMPLETE"
-                                        ButtonColor = Color.gray
-                                    } else {
-                                        if SelectedCommission.StartDate >= Date.now{
-                                            ButtonText = "COMMISSION UPCOMING"
-                                            ButtonColor = Color.gray
-                                        } else {
-                                            if SelectedCommission.EndDate <= Date.now{
-                                                ButtonText = "COMMISSION PAST"
-                                                ButtonColor = Color.gray
-                                            } else {
-                                                ButtonText = "CLAIM COMMISSION"
-                                                ButtonColor = Color.white
-                                            }
-                                        }
-                                    }
-                                }
-                        }.sheet(isPresented: $SheetPresented){
-                            LocationServices(SelectedCommision: $SelectedCommission, SheetPresented: $SheetPresented, isCommissionComplete: $isCommissionComplete)
-                                .environmentObject(WindowMode)
-                        }
-                        .sheet(isPresented: self.$ImageSubmission) {
-                            ImageView(ImageSubmission: $ImageSubmission, CommissionID: SelectedCommission.FirebaseID)
-                                .environmentObject(WindowMode)
-                        }
-                        Spacer()
-                    }
-                    HStack{
-                        Spacer()
-                        Button(){
-                            SelectedCommissionsViewMode = .Home
-                        } label: {
-                            Text("BACK")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding([.top, .bottom])
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .padding()
-                        }
-                        Spacer()
-                    }
-                }.onAppear(){
-                    Functions().GetCardData(CardIds: SelectedCommission.Cards) { (cards) in
-                        AvaliableCards = cards
-                    }
-                }
-                .background(Color.marron)
-            }
-        }
-    }
-    func CheckIfCompletedCommition(CommissionID: Int){
-        let db = Firestore.firestore()
-        let docRef = db.collection("Users").document("\(WindowMode.UsernameIn)")
-        docRef.getDocument { (document, error) in
-            guard error == nil else {
-                print("error", error ?? "")
-                return
-            }
-            
-            if let document = document, document.exists {
-                let data = document.data()
-                if let data = data{
-                    let CommissionsComplete = data["CompletedCommissions"] as! NSArray as? [Int] ?? []
-                    if CommissionsComplete.contains(CommissionID) {
-                        isCommissionComplete = true
-                        CheckedIfCommissionComplete = true
-                    } else {
-                        isCommissionComplete = false
-                        CheckedIfCommissionComplete = true
-                    }
-                }
-            }
-        }
-    }
-}
-
-#if DEBUG
-struct CommissionsInfoPreview: PreviewProvider {
-    static var previews: some View {
-        ProfileViewCommissionInfo(SelectedCommissionsViewMode: .constant(.Info), SelectedCommission: CommitionType(Title: "THis is a test", Caption: "Some caption", StartDate: Date(timeIntervalSinceNow: 100), EndDate: Date(timeIntervalSinceNow: 1000), Cards: [4], Hidden: false, FirebaseID: 2, Value: 1, Score: 100, Location: nil, Proximity: nil), accessToken: .constant("Stop"))
-    }
-}
-#endif
-
-enum CommissionsModeTypes{
-    case Past
-    case Ongoing
-    case Upcoming
-}
-
-struct CommissionResultView: View{
-    @State var Commission: CommitionType
-    @Binding var CommissionsComplete: [Int]
-    @Binding var SelectedCommision: CommitionType?
-    @Binding var SelectedCommissionsViewMode: CommisssionsViewModes
-    @Environment(\.colorScheme) var colorScheme
-    var body: some View{
-        let CommissionResult: Bool = CheckifCompletedCommissionBackground(ID: Commission.FirebaseID)
-        if Commission.Hidden == false{
-            if CommissionResult{
-                Button(){
-                    SelectedCommision = Commission
-                    SelectedCommissionsViewMode = .Info
-                } label: {
-                    VStack{
-                        HStack{
-                            Text(Commission.Title)
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .light ? Color.black:Color.white)
-                            Spacer()
-                        }
-                        HStack{
-                            Text(Commission.Caption)
-                                .font(.caption)
-                                .foregroundColor(colorScheme == .light ? Color.black:Color.white)
-                            Spacer()
-                        }
-                    }.padding()
-                    .padding()
-                    .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .foregroundColor(Color.gray)
-                    )
-                    .padding()
-                
-                }.buttonStyle(.plain)
-            } else {
-                Button(){
-                    SelectedCommision = Commission
-                    SelectedCommissionsViewMode = .Info
-                } label: {
-                    VStack{
-                        HStack{
-                            Text(Commission.Title)
-                                .font(.headline)
-                                .foregroundColor(colorScheme == .light ? Color.black:Color.white)
-                            Spacer()
-                        }
-                        HStack{
-                            Text(Commission.Caption)
-                                .font(.caption)
-                                .foregroundColor(colorScheme == .light ? Color.black:Color.white)
-                            Spacer()
-                        }
-                    }.padding()
-                    .padding()
-                    .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .foregroundColor(colorScheme == .light ? Color.white:Color.black)
-                    )
-                    .padding()
-                
-                }.buttonStyle(.plain)
-            }
-        }
-    }
-    func CheckifCompletedCommissionBackground(ID: Int) -> Bool{
-        if CommissionsComplete.contains(ID) {
-            return true
-        } else {
-            return false
-        }
-    }
-}
-
-struct ProfileViewCommissionsHome: View{
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    @Binding var selectedProfileView: profileViewEnum
-    @Binding var SelectedCommissionsViewMode: CommisssionsViewModes
-    @Binding var SelectedCommision: CommitionType?
-    @State var  AvaliableCommitions: [CommitionType] = []
-    @State var ProgressViewText: String = "Loading..."
-    @State var CommissionsComplete: [Int] = []
-    @Environment(\.colorScheme) var colorScheme
-    @Binding var CommissionsMode: CommissionsModeTypes
-    var body: some View{
-        GeometryReader{ geo in
-                VStack(spacing: 0){
-                    HStack{
-                        Image("Commissions")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .ignoresSafeArea()
-                        Spacer()
-                    }.frame(height: geo.size.height * 0.3)
-                    if AvaliableCommitions.count != 0{
-                        ScrollView{
-                            VStack{
-                                ForEach(AvaliableCommitions, id: \.FirebaseID) { Commission in
-                                    if CommissionsMode == .Ongoing{
-                                        if Commission.EndDate >= Date.now{
-                                            CommissionResultView(Commission: Commission, CommissionsComplete: $CommissionsComplete, SelectedCommision: $SelectedCommision, SelectedCommissionsViewMode: $SelectedCommissionsViewMode)
-                                        }
-                                    } else {
-                                        if CommissionsMode == .Upcoming{
-                                            if Commission.StartDate >= Date.now {
-                                                CommissionResultView(Commission: Commission, CommissionsComplete: $CommissionsComplete, SelectedCommision: $SelectedCommision, SelectedCommissionsViewMode: $SelectedCommissionsViewMode)
-                                            }
-                                        } else {
-                                            if CommissionsMode == .Past{
-                                                if Commission.EndDate <= Date.now{
-                                                    CommissionResultView(Commission: Commission, CommissionsComplete: $CommissionsComplete, SelectedCommision: $SelectedCommision, SelectedCommissionsViewMode: $SelectedCommissionsViewMode)
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }.background(Color.marron)
-                            .frame(maxHeight: .infinity)
-                        }.frame(height: geo.size.height * 0.6)
-                        HStack{
-                            Spacer()
-                            GeometryReader{ TabGeo in
-                                HStack{
-                                    Spacer()
-                                    Button(){
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)){
-                                            CommissionsMode = .Past
-                                        }
-                                    } label: {
-                                        VStack{
-                                            if CommissionsMode == .Past{
-                                                Rectangle()
-                                                    .cornerRadius(25)
-                                                    .foregroundColor(Color.blue)
-                                                    .frame(height: 2)
-                                                    .padding(.top, 2)
-                                            } else {
-                                                Rectangle()
-                                                    .cornerRadius(25)
-                                                    .foregroundColor(Color.clear)
-                                                    .frame(height: 2)
-                                                    .padding(.top, 2)
-                                            }
-                                            Image(systemName: "arrowshape.turn.up.backward.badge.clock")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .foregroundColor(.black)
-                                            Text("PAST")
-                                                .foregroundColor(.black)
-                                                .font(.system(size: 10))
-                                        }.frame(width: TabGeo.size.width * 0.15, height: geo.size.height * 0.08)
-                                    }
-                                    Spacer()
-                                    Button(){
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)){
-                                            CommissionsMode = .Ongoing
-                                        }
-                                    } label: {
-                                        VStack{
-                                            if CommissionsMode == .Ongoing{
-                                                Rectangle()
-                                                    .cornerRadius(25)
-                                                    .foregroundColor(Color.blue)
-                                                    .frame(height: 2)
-                                                    .padding(.top, 2)
-                                                    .animation(.spring())
-                                            } else {
-                                                Rectangle()
-                                                    .cornerRadius(25)
-                                                    .foregroundColor(Color.clear)
-                                                    .frame(height: 2)
-                                                    .padding(.top, 2)
-                                            }
-                                            Image(systemName: "clock")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .foregroundColor(.black)
-                                            Text("ONGOING")
-                                                .foregroundColor(.black)
-                                                .font(.system(size: 10))
-                                        }
-                                        .frame(width: TabGeo.size.width * 0.15, height: geo.size.height * 0.08)
-                                    }
-                                    Spacer()
-                                    Button(){
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)){
-                                            CommissionsMode = .Upcoming
-                                        }
-                                    } label: {
-                                        VStack{
-                                            if CommissionsMode == .Upcoming{
-                                                Rectangle()
-                                                    .cornerRadius(25)
-                                                    .foregroundColor(Color.blue)
-                                                    .frame(height: 2)
-                                                    .padding(.top, 2)
-                                            } else {
-                                                Rectangle()
-                                                    .cornerRadius(25)
-                                                    .foregroundColor(Color.clear)
-                                                    .frame(height: 2)
-                                                    .padding(.top, 2)
-                                            }
-                                            Image(systemName: "arrowshape.turn.up.backward.badge.clock.rtl")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: TabGeo.size.width * 0.15)
-                                                .foregroundColor(.black)
-                                            Text("UPCOMING")
-                                                .foregroundColor(.black)
-                                                .font(.system(size: 10))
-                                        }
-                                        .frame(width: TabGeo.size.width * 0.15, height: geo.size.height * 0.08)
-                                    }
-                                    Spacer()
-                                    Button(){
-                                        withAnimation(){
-                                            selectedProfileView = .Home
-                                        }
-                                    } label: {
-                                        VStack{
-                                            Rectangle()
-                                                .cornerRadius(25)
-                                                .foregroundColor(Color.clear)
-                                                .frame(height: 2)
-                                                .padding(.top, 2)
-                                            Image(systemName: "arrowshape.backward")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: TabGeo.size.width * 0.1)
-                                                .foregroundColor(.black)
-                                            Text("BACK")
-                                                .foregroundColor(.black)
-                                                .font(.system(size: 10))
-                                        }
-                                        .frame(width: TabGeo.size.width * 0.15, height: geo.size.height * 0.08)
-                                    }
-                                    Spacer()
-                                }.frame(minWidth: 0, maxWidth: .infinity, alignment: .bottom)
-                                .padding([.bottom], 4)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 30)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .padding()
-                                .padding(.top)
-                                .padding(.top)
-                            }
-                        }
-                    } else {
-                        Spacer()
-                        ProgressView(ProgressViewText)
-                            .scaleEffect(5)
-                            .foregroundColor(.white)
-                            .font(.system(size: 2.5))
-                            .tint(.white)
-                        Spacer()
-                        Button(){
-                            selectedProfileView = .Home
-                        } label: {
-                            VStack{
-                                Text("BACK")
-                                    .foregroundColor(.black)
-                                    .font(.system(size: 14))
-                                    .frame(minWidth: 0, maxWidth: .infinity)
-                                    .padding([.top, .bottom])
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 25)
-                                            .fill(Color.white)
-                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                    )
-                                    .padding()
-                            }
-                        }
-                    }
-                }.onAppear(){
-                    FetchCommitions()
-                    if AvaliableCommitions.count == 0{
-                        ProgressViewText = "There is either no commissions or an error occured"
-                    }
-                }
-                .background(Color.marron)
-                .ignoresSafeArea()
-        }
-    }
-    func CheckIfCompletedCommition() {
-        let db = Firestore.firestore()
-        let docRef = db.collection("Users").document("\(WindowMode.UsernameIn)")
-        docRef.getDocument { (document, error) in
-            guard error == nil else {
-                print("error", error ?? "")
-                return
-            }
-            
-            if let document = document, document.exists {
-                let data = document.data()
-                if let data = data{
-                    CommissionsComplete = data["CompletedCommissions"] as! NSArray as? [Int] ?? []
-                }
-            }
-        }
-    }
-    func FetchCommitions() {
-        Task{
-            do{
-                let db = Firestore.firestore()
-
-                let docRef = db.collection("Commissions")
-                docRef.getDocuments { (snapshot, error) in
-                    guard let snapshot = snapshot, error == nil else {
-                     //handle error
-                     return
-                   }
-                   snapshot.documents.forEach({ (documentSnapshot) in
-                       let documentData = documentSnapshot.data()
-
-                       let CardID = documentData["FirebaseID"] as? Int ?? 0
-                       
-                       if CardID != 0 {
-                           let CardStartStamp = documentData["StartDate"] as! Timestamp
-                           let CardStart = CardStartStamp.dateValue()
-                           let CardTitle = documentData["Title"] as? String ?? "Error"
-                           let CardCaption = documentData["Caption"] as? String ?? "Error"
-                           let CardEndStamp = documentData["EndDate"] as? Timestamp
-                           let CardEnd = CardEndStamp!.dateValue()
-                           let CardHidden = documentData["Hidden"] as? Bool
-                           let CardValue = documentData["Value"] as? Int
-                           let CardSelectedCards = documentData["SelectedCards"] as! NSArray as? [Int]
-                           let CardProximity = documentData["Proximity"] as? Double
-                           let CardCoordinate = documentData["Coordinate"] as? GeoPoint
-                           var CardLocation: CLLocation?
-                           if CardCoordinate != nil{
-                               CardLocation = CLLocation(latitude: CardCoordinate!.latitude, longitude: CardCoordinate!.longitude)
-                           }
-                           let CardScore = documentData["Points"] as? Int ?? 0
-
-                           AvaliableCommitions.append(CommitionType(Title: CardTitle, Caption: CardCaption, StartDate: CardStart, EndDate: CardEnd, Cards: CardSelectedCards!, Hidden: CardHidden!, FirebaseID: CardID, Value: CardValue!, Score: CardScore, Location: CardLocation, Proximity: CardProximity))
-                           CheckIfCompletedCommition()
-                       }
-                       
-                   })
-                 }
-            } catch {
-                print("Error")
-            }
-        }
-    }
-}
-
-enum CommisssionsViewModes{
-    case Home
-    case Info
-}
-
-struct ProfileViewCommissions: View{
-    @EnvironmentObject var WindowMode: SelectedWindowMode
-    @Binding var accessToken: String?
-    @Binding var selectedProfileView: profileViewEnum
-    @State var SelectedCommision: CommitionType?
-    @State var CommissionsMode: CommissionsModeTypes = .Ongoing
-    @State var SelectedCommissionsViewMode: CommisssionsViewModes = .Home
-    var body: some View{
-        if SelectedCommissionsViewMode == .Home{
-            ProfileViewCommissionsHome(selectedProfileView: $selectedProfileView, SelectedCommissionsViewMode: $SelectedCommissionsViewMode, SelectedCommision: $SelectedCommision, CommissionsMode: $CommissionsMode)
-                .environmentObject(WindowMode)
-        } else {
-            if SelectedCommissionsViewMode == .Info{
-                ProfileViewCommissionInfo(SelectedCommissionsViewMode: $SelectedCommissionsViewMode, SelectedCommission: SelectedCommision!, accessToken: $accessToken)
-                    .environmentObject(WindowMode)
             }
         }
     }

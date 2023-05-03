@@ -10,6 +10,7 @@ import FirebaseFirestore
 import CoreLocation
 import MapKit
 import UIKit
+import FirebaseStorage
 
 struct GovernmentCommissionsView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
@@ -106,15 +107,23 @@ struct GovernmentCommissionsView: View{
                        let CardID = documentData["FirebaseID"] as? Int ?? 0
                        
                        if CardID != 0 {
-                           let CardStartStamp = documentData["StartDate"] as! Timestamp
+                           guard let CardStartStamp = documentData["StartDate"] as? Timestamp else {
+                               return
+                           }
                            let CardStart = CardStartStamp.dateValue()
                            let CardTitle = documentData["Title"] as? String ?? "Error"
                            let CardCaption = documentData["Caption"] as? String ?? "Error"
                            let CardEndStamp = documentData["EndDate"] as? Timestamp
                            let CardEnd = CardEndStamp!.dateValue()
-                           let CardHidden = documentData["Hidden"] as? Bool
-                           let CardValue = documentData["Value"] as? Int
-                           let CardSelectedCards = documentData["SelectedCards"] as! NSArray as? [Int]
+                           guard let CardHidden = documentData["Hidden"] as? Bool else {
+                               return
+                           }
+                           guard let CardValue = documentData["Value"] as? Int else {
+                               return
+                           }
+                           guard let CardSelectedCards = documentData["SelectedCards"] as! NSArray as? [Int] else {
+                               return
+                           }
                            let CardProximity = documentData["Proximity"] as? Double
                            let CardCoordinate = documentData["Coordinate"] as? GeoPoint
                            var CardLocation: CLLocation?
@@ -123,7 +132,7 @@ struct GovernmentCommissionsView: View{
                            }
                            let CardScore = documentData["Points"] as? Int ?? 0
 
-                           AvaliableCommitions.append(CommitionType(Title: CardTitle, Caption: CardCaption, StartDate: CardStart, EndDate: CardEnd, Cards: CardSelectedCards!, Hidden: CardHidden!, FirebaseID: CardID, Value: CardValue!, Score: CardScore, Location: CardLocation, Proximity: CardProximity))
+                           AvaliableCommitions.append(CommitionType(Title: CardTitle, Caption: CardCaption, StartDate: CardStart, EndDate: CardEnd, Cards: CardSelectedCards, Hidden: CardHidden, FirebaseID: CardID, Value: CardValue, Score: CardScore, Location: CardLocation, Proximity: CardProximity))
                        }
                        
                    })
@@ -133,6 +142,154 @@ struct GovernmentCommissionsView: View{
                 print("Error")
             }
         }
+    }
+}
+
+struct CommissionSubmissionsType{
+    let Id = UUID()
+    let DateSubmitted: Date
+    let User: String
+    let SubmissionType: Int
+    let ImageRef: String?
+    let UsersName: String
+}
+
+struct GovernementSubmissionsCommissionsView: View{
+    @State var SelectedCommission: CommitionType
+    @State var SubmissionsLoaded: Bool = false
+    @State var AvaliableSubmissions: [CommissionSubmissionsType] = []
+    @State var SelectedImage: UIImage?
+    @State var ErrorOccured: Bool = false
+    var body: some View{
+        if SubmissionsLoaded{
+            GeometryReader{ geo in
+                VStack{
+                    Text("Submissions")
+                    ScrollView{
+                        ForEach(AvaliableSubmissions, id: \.Id){ submit in
+                            HStack{
+                                VStack{
+                                    HStack{
+                                        Text("\(submit.UsersName)")
+                                        Spacer()
+                                    }
+                                    HStack{
+                                        Text("\(submit.DateSubmitted)")
+                                        Text("Submission Type: \(submit.SubmissionType)")
+                                    }
+                                }
+                                Spacer()
+                                if submit.ImageRef != nil{
+                                    if SelectedImage != nil{
+                                        Image(uiImage: SelectedImage!)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                    } else {
+                                        if ErrorOccured{
+                                            Text("An Error has Occured Image Ref:\(submit.ImageRef!)")
+                                        } else {
+                                            ProgressView()
+                                                .onAppear(){
+                                                    GetImage(Ref: submit.ImageRef!)
+                                                }
+                                        }
+                                    }
+                                }
+                            }
+                            .frame(width: geo.size.width * 0.85, height: geo.size.height * 0.2)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
+                        }
+                    }
+                }
+            }
+        } else {
+            Spacer()
+            ProgressView()
+                .onAppear(){
+                    GetSubmissions()
+                }
+            Spacer()
+        }
+    }
+    func GetImage(Ref: String){
+        let Ref = Storage.storage().reference(forURL: "gs://pauly-9dcfc.appspot.com/\(Ref)")
+        Ref.getMetadata { metadata, error in
+          if let error = error {
+            // Uh-oh, an error occurred!
+              print(error)
+              ErrorOccured = true
+          } else {
+              if metadata?.contentType == "image/jpeg"{
+                  Ref.getData(maxSize: 1 * 1024 * 1024) { data, error in
+                      if error != nil {
+                          ErrorOccured = true
+                      } else {
+                          SelectedImage = UIImage(data: data!)
+                          print("Done")
+                      }
+                  }
+              }
+            // Metadata now contains the metadata for 'images/forest.jpg'
+          }
+        }
+    }
+    func GetSubmissions() {
+        let db = Firestore.firestore()
+        
+        let docRef = db.collection("Commissions").document("\(SelectedCommission.FirebaseID)").collection("Submissions")
+        
+        docRef.getDocuments { (snapshot, error) in
+            guard let snapshot = snapshot, error == nil else {
+             //handle error
+             return
+           }
+           snapshot.documents.forEach({ (documentSnapshot) in
+               let documentData = documentSnapshot.data()
+
+               let CardID = documentData["FirebaseID"] as? Int ?? 0
+               
+               if CardID != 0 {
+                   guard let UserUid = documentData["User"] as? String else {
+                       return
+                   }
+                   guard let DateSubmitted = documentData["Date"] as? Timestamp else {
+                       return
+                   }
+                   guard let SubmissionType = documentData["SubmissionType"] as? Int else {
+                       return
+                   }
+                   let ImageRef = documentData["Image"] as? String
+                   let UserDocRef = db.collection("Users").document(UserUid)
+                   
+                   UserDocRef.getDocument() { (document, error) in
+                       guard error == nil  else {
+                           return
+                       }
+                       
+                       if let document = document, document.exists {
+                           let data = document.data()
+                           if let data = data {
+                               guard let UserFirstName = data["First Name"] else {
+                                   return
+                               }
+                               guard let UserLastName = data["Last Name"] else {
+                                   return
+                               }
+                               AvaliableSubmissions.append(CommissionSubmissionsType(DateSubmitted: DateSubmitted.dateValue(), User: UserUid, SubmissionType: SubmissionType, ImageRef: ImageRef, UsersName: "\(UserFirstName) \(UserLastName)"))
+                           }
+                       }
+                   }
+               }
+               
+           })
+            SubmissionsLoaded = true
+         }
     }
 }
 
@@ -155,11 +312,16 @@ struct GovernmentEditCommissionsView: View{
                 .foregroundColor(Color.marron)
                 .ignoresSafeArea()
             VStack{
-                Text("Edit Commission")
-                TextField("Title", text: $SelectedCommission.Title)
-                    .padding()
-                TextField("Caption", text: $SelectedCommission.Caption)
-                    .padding()
+                Group{
+                    Text("Commission")
+                    NavigationLink(destination: GovernementSubmissionsCommissionsView(SelectedCommission: SelectedCommission)){
+                        Text("Look At Submissions")
+                    }
+                    TextField("Title", text: $SelectedCommission.Title)
+                        .padding()
+                    TextField("Caption", text: $SelectedCommission.Caption)
+                        .padding()
+                }
                 Button(){
                     ShowingStartDate = true
                 } label: {
@@ -304,7 +466,7 @@ struct GovernmentEditCommissionsView: View{
                         }
                     })
                 }, message: {
-                    Text("THIS WILL PERMANATLY DELETE YOUR ACCOUNT")
+                    Text("THIS WILL PERMANATLY DELETE COMMISSION")
                 })
                 Spacer()
             }
@@ -477,10 +639,14 @@ struct GovernmentAddCommissionsView: View{
                                 GovernmentLocationCommissionsView(Proximity: $Proximity, Location: $Location)
                             }.frame(height: geo.size.height * 0.5)
                         } else {
-                            Spacer()
+                            if Value == 5{
+                                Text("This is disabled")
+                            } else {
+                                Spacer()
+                            }
                         }
                         Button(){
-                            if Title != nil && EndDate >= StartDate{
+                            if Title != "" && EndDate >= StartDate && Value != 5 {
                                 ConfirmCommission()
                             }
                         } label: {
@@ -559,7 +725,6 @@ struct GovernmentAddCommissionsView: View{
                     CommissionLoading = false
                 }
             }
-            
         }
     }
 }

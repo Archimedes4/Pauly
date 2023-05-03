@@ -182,7 +182,7 @@ struct CreateNewUserPageTwoViewFirebase: View{
     @State var showingPasswordsDoNotMatch: Bool = false
     @State var showingPleaseEnterAEmail: Bool = false
     @State var showingPleaseEnterAPassword: Bool = false
-    
+    @State var PageDisabled: Bool = true
     enum CreateNewUserFocus{
         case Username, Password, ConfirmPassword
     }
@@ -190,179 +190,16 @@ struct CreateNewUserPageTwoViewFirebase: View{
     @FocusState private var focusedField: CreateNewUserFocus?
     
     var body: some View{
-        GeometryReader{ value in
-            ScrollView(.vertical, showsIndicators: false){
+        if PageDisabled{
+            ZStack{
+                Rectangle()
+                    .fill(Color.marron)
+                    .ignoresSafeArea()
                 VStack{
-                    Group{
-                        Spacer()
-                        Spacer()
-                        Spacer()
-                        Text("Create New User")
-                            .font(.custom("Chalkboard SE", size: 45.0, relativeTo: .largeTitle))
-                            .padding()
-                        Button{
-                            focusedField = .Username
-                        } label: {
-                            TextField("", text: $Username)
-                                .multilineTextAlignment(.leading)
-                                .textContentType(.username)
-                                .keyboardType(.default)
-                                .placeholder(when: Username.isEmpty) {
-                                        Text("Email").foregroundColor(.black)
-                                }
-                                .autocapitalization(.none)
-                                .frame(width: value.size.width * 0.83, height: value.size.height * 0.1, alignment: .leading)
-                                .cornerRadius(15)
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .onAppear(){
-                                    focusedField = .Username
-                                }
-                                .focused($focusedField, equals: .Username)
-                        }
-                    }
-                    
-                    if showingPleaseEnterAEmail{
-                        HStack{
-                            Image(systemName: "exclamationmark.circle")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .foregroundColor(.red)
-                            Text("Please Enter A Email!")
-                                .foregroundColor(.red)
-                        }.frame(height: value.size.height * 0.035)
-                    }
-                    
-                    Button{
-                        focusedField = .Password
-                    } label: {
-                        TextField("", text: $Password)
-                            .multilineTextAlignment(.leading)
-                            .textContentType(.newPassword)
-                            .keyboardType(.default)
-                            .placeholder(when: Password.isEmpty) {
-                                    Text("Password").foregroundColor(.black)
-                            }
-                            .autocapitalization(.none)
-                            .frame(width: value.size.width * 0.83, height: value.size.height * 0.1, alignment: .leading)
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .fill(Color.white)
-                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                            )
-                            .focused($focusedField, equals: .Password)
-                    }
-                    .padding(.top)
-                    
-                    if showingPleaseEnterAPassword{
-                        HStack{
-                            Image(systemName: "exclamationmark.circle")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .foregroundColor(.red)
-                            Text("Please Enter A Password!")
-                                .foregroundColor(.red)
-                        }.frame(height: value.size.height * 0.035)
-                    }
-                    
-                    Button{
-                        focusedField = .ConfirmPassword
-                    } label: {
-                        SecureField("", text: $ConfirmPassword)
-                            .multilineTextAlignment(.leading)
-                            .textContentType(.newPassword)
-                            .keyboardType(.default)
-                            .placeholder(when: ConfirmPassword.isEmpty) {
-                                    Text("Confirm Password").foregroundColor(.black)
-                            }
-                            .autocapitalization(.none)
-                            .frame(width: value.size.width * 0.83, height: value.size.height * 0.1, alignment: .leading)
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .fill(Color.white)
-                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                            )
-                            .padding(.top)
-                            .focused($focusedField, equals: .ConfirmPassword)
-                    }
-                    
-                    if showingPasswordsDoNotMatch{
-                        HStack{
-                            Image(systemName: "exclamationmark.circle")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .foregroundColor(.red)
-                            Text("Passwords Do Not Match!")
-                                .foregroundColor(.red)
-                        }.frame(height: value.size.height * 0.035)
-                    }
-                    
-                    Button{
-                        
-                    } label: {
-                        Menu{
-                            Picker(selection: $SelectedGrade) {
-                                ForEach(Grades, id: \.self) {
-                                    Text($0)
-                                }
-                            } label: {
-                                EmptyView()
-                            }.pickerStyle(.automatic)
-                        } label: {
-                            Text(SelectedGrade)
-                                .padding(.leading, value.size.width * 0.05)
-                                .frame(width: value.size.width * 0.83, height: value.size.height * 0.1, alignment: .leading)
-                                .padding()
-                                .foregroundColor(.black)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                        }
-                    }
-                    .padding(.top)
-                    
+                    Text("This feature is currently disabled")
+                        .foregroundColor(.black)
+                        .font(.largeTitle)
                     Button(){
-                        if Username != "" {
-                            showingPleaseEnterAEmail = false
-                            if Password != ""{
-                                showingPleaseEnterAPassword = false
-                                if Password == ConfirmPassword{
-                                    GradeIn = Int(SelectedGrade) ?? 8
-                                    UsernameIn = Username
-                                    SelectedCourseViewPage = .PageThree
-                                } else {
-                                    showingPasswordsDoNotMatch = true
-                                }
-                            } else {
-                                showingPleaseEnterAPassword = true
-                            }
-                        } else {
-                            showingPleaseEnterAEmail = true
-                        }
-                        //TO DO Next
-                    } label: {
-                        Text("NEXT")
-                            .font(.system(size: 17))
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .frame(minWidth: 0, maxWidth: .infinity)
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .fill(Color.white)
-                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                            )
-                            .padding()
-                    }
-                    Button{
                         SelectedCourseViewPage = .PageOne
                     } label: {
                         Text("BACK")
@@ -377,11 +214,203 @@ struct CreateNewUserPageTwoViewFirebase: View{
                                     .shadow(color: .gray, radius: 2, x: 0, y: 2)
                             )
                             .padding()
-                    }.padding(.top, -15)
+                    }
                 }
-            }.background(Color.marron)
-            .frame(width: value.size.width * 1.0)
-            .edgesIgnoringSafeArea(.all)
+            }
+        } else {
+            GeometryReader{ value in
+                ScrollView(.vertical, showsIndicators: false){
+                    VStack{
+                        Group{
+                            Spacer()
+                            Spacer()
+                            Spacer()
+                            Text("Create New User")
+                                .font(.custom("Chalkboard SE", size: 45.0, relativeTo: .largeTitle))
+                                .padding()
+                            Button{
+                                focusedField = .Username
+                            } label: {
+                                TextField("", text: $Username)
+                                    .multilineTextAlignment(.leading)
+                                    .textContentType(.username)
+                                    .keyboardType(.default)
+                                    .placeholder(when: Username.isEmpty) {
+                                            Text("Email").foregroundColor(.black)
+                                    }
+                                    .autocapitalization(.none)
+                                    .frame(width: value.size.width * 0.83, height: value.size.height * 0.1, alignment: .leading)
+                                    .cornerRadius(15)
+                                    .padding()
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 25)
+                                            .fill(Color.white)
+                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                    )
+                                    .onAppear(){
+                                        focusedField = .Username
+                                    }
+                                    .focused($focusedField, equals: .Username)
+                            }
+                        }
+                        
+                        if showingPleaseEnterAEmail{
+                            HStack{
+                                Image(systemName: "exclamationmark.circle")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundColor(.red)
+                                Text("Please Enter A Email!")
+                                    .foregroundColor(.red)
+                            }.frame(height: value.size.height * 0.035)
+                        }
+                        
+                        Button{
+                            focusedField = .Password
+                        } label: {
+                            TextField("", text: $Password)
+                                .multilineTextAlignment(.leading)
+                                .textContentType(.newPassword)
+                                .keyboardType(.default)
+                                .placeholder(when: Password.isEmpty) {
+                                        Text("Password").foregroundColor(.black)
+                                }
+                                .autocapitalization(.none)
+                                .frame(width: value.size.width * 0.83, height: value.size.height * 0.1, alignment: .leading)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .focused($focusedField, equals: .Password)
+                        }
+                        .padding(.top)
+                        
+                        if showingPleaseEnterAPassword{
+                            HStack{
+                                Image(systemName: "exclamationmark.circle")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundColor(.red)
+                                Text("Please Enter A Password!")
+                                    .foregroundColor(.red)
+                            }.frame(height: value.size.height * 0.035)
+                        }
+                        
+                        Button{
+                            focusedField = .ConfirmPassword
+                        } label: {
+                            SecureField("", text: $ConfirmPassword)
+                                .multilineTextAlignment(.leading)
+                                .textContentType(.newPassword)
+                                .keyboardType(.default)
+                                .placeholder(when: ConfirmPassword.isEmpty) {
+                                        Text("Confirm Password").foregroundColor(.black)
+                                }
+                                .autocapitalization(.none)
+                                .frame(width: value.size.width * 0.83, height: value.size.height * 0.1, alignment: .leading)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .padding(.top)
+                                .focused($focusedField, equals: .ConfirmPassword)
+                        }
+                        
+                        if showingPasswordsDoNotMatch{
+                            HStack{
+                                Image(systemName: "exclamationmark.circle")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .foregroundColor(.red)
+                                Text("Passwords Do Not Match!")
+                                    .foregroundColor(.red)
+                            }.frame(height: value.size.height * 0.035)
+                        }
+                        
+                        Button{
+                            
+                        } label: {
+                            Menu{
+                                Picker(selection: $SelectedGrade) {
+                                    ForEach(Grades, id: \.self) {
+                                        Text($0)
+                                    }
+                                } label: {
+                                    EmptyView()
+                                }.pickerStyle(.automatic)
+                            } label: {
+                                Text(SelectedGrade)
+                                    .padding(.leading, value.size.width * 0.05)
+                                    .frame(width: value.size.width * 0.83, height: value.size.height * 0.1, alignment: .leading)
+                                    .padding()
+                                    .foregroundColor(.black)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 25)
+                                            .fill(Color.white)
+                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                    )
+                            }
+                        }
+                        .padding(.top)
+                        
+                        Button(){
+                            if Username != "" {
+                                showingPleaseEnterAEmail = false
+                                if Password != ""{
+                                    showingPleaseEnterAPassword = false
+                                    if Password == ConfirmPassword{
+                                        GradeIn = Int(SelectedGrade) ?? 8
+                                        UsernameIn = Username
+                                        SelectedCourseViewPage = .PageThree
+                                    } else {
+                                        showingPasswordsDoNotMatch = true
+                                    }
+                                } else {
+                                    showingPleaseEnterAPassword = true
+                                }
+                            } else {
+                                showingPleaseEnterAEmail = true
+                            }
+                            //TO DO Next
+                        } label: {
+                            Text("NEXT")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .padding()
+                        }
+                        Button{
+                            SelectedCourseViewPage = .PageOne
+                        } label: {
+                            Text("BACK")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 25)
+                                        .fill(Color.white)
+                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                )
+                                .padding()
+                        }.padding(.top, -15)
+                    }
+                }.background(Color.marron)
+                .frame(width: value.size.width * 1.0)
+                .edgesIgnoringSafeArea(.all)
+            }
         }
     }
 }
@@ -812,32 +841,34 @@ struct CreateNewUserPageFourView: View{
                     List{
                         Section{
                             ForEach(CoursesSelected, id: \.id){ course in
-                                HStack{
-                                    Text("\(course.Name)    Section:\(course.Section)")
-                                    Spacer()
-                                    Button{
-                                        if let Index = CoursesSelected.firstIndex(where: { $0.id == course.id }){
-                                            CoursesSelected.remove(at: Index)
-                                            AvaliableCourses.append(course.Name)
-                                        }
-                                    } label: {
-                                        Image(systemName: "minus.circle")
-                                            .foregroundColor(.red)
-                                    }.buttonStyle(.plain)
-                                    
-                                }
+                                    HStack{
+                                        Text("\(course.Name)    Section:\(course.Section)")
+                                        Spacer()
+                                        Button{
+                                            if let Index = CoursesSelected.firstIndex(where: { $0.id == course.id }){
+                                                CoursesSelected.remove(at: Index)
+                                                AvaliableCourses.append(course.Name)
+                                            }
+                                        } label: {
+                                            Image(systemName: "minus.circle")
+                                                .foregroundColor(.red)
+                                        }.buttonStyle(.plain)
+                                        
+                                    }
                             }
                         }
                         //.shadow(color: .gray, radius: 2, x: 0, y: 2) //To DO add shadow to section
     
                         Section{
                             ForEach(AvaliableCourses, id: \.self){ course in
-                                Button{
-                                    CourseSelected = course
-                                    SelectedCourseViewPage = .PageFourSection
-                                } label: {
-                                    Text(course)
-                                }.buttonStyle(.plain)
+                                if CoursesSelected.contains(where: { $0.Name == course }) == false{
+                                    Button{
+                                        CourseSelected = course
+                                        SelectedCourseViewPage = .PageFourSection
+                                    } label: {
+                                        Text(course)
+                                    }.buttonStyle(.plain)
+                                }
                             }
                         }
                     //.shadow(color: .gray, radius: 2, x: 0, y: 2)
@@ -1096,7 +1127,9 @@ struct CreateNewUserPageFiveView: View{
                 "Permissions":[] as [String],
                 "Title":"Student",
                 "MemberGroups":[] as [String],
-                "CompletedCommissions":[] as [Int]
+                "CompletedCommissions":[] as [Int],
+                "SubmittedCommissions":[] as [Int],
+                "ElectionsVoted":[] as [Int]
             ]
             
             docRef.setData(inputData) { error in

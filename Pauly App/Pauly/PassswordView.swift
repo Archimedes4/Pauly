@@ -77,7 +77,7 @@ struct InitializeMicrosoft: View {
     
     func signIn () {
         microsoftProvider?.scopes = ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite", "User.ReadBasic.All"]
-        microsoftProvider?.customParameters = ["tenant":"d9ad3c89-6aed-4783-93ce-212b71ee98f3"] 
+        microsoftProvider?.customParameters = ["tenant":"d9ad3c89-6aed-4783-93ce-212b71ee98f3"]
         self.microsoftProvider?.getCredentialWith(_: nil){credential, error in
                    if error != nil {
                        let castedError = error! as NSError
@@ -90,7 +90,6 @@ struct InitializeMicrosoft: View {
                        Auth.auth().signIn(with: credential) { (authResult, error) in
                            if error != nil {
                                let castedError = error! as NSError
-                               print(castedError)
                                MicrosoftLoading = false
                                // Handle error.
                            }
@@ -104,6 +103,7 @@ struct InitializeMicrosoft: View {
                            // get credential and token when login successfully
                            let microCredential = authResult.credential as! OAuthCredential
                            accessToken = microCredential.accessToken!
+                           
 
                            let user = Auth.auth().currentUser
                            if let user = user {
@@ -339,7 +339,7 @@ struct PasswordView: View{
     }
     func SignIn(){
         if notLoadingPassword{
-            if Username != "" && Password != ""{
+            if Username != "" && Password != "" {
                 notLoadingPassword = false
                 Auth.auth().signIn(withEmail: Username, password: Password) { authResult, error in
                     guard self != nil else { return }
@@ -382,6 +382,7 @@ struct PasswordView: View{
                                             let outputarray = k.split(separator: "-")
                                             OutputCorses.append(CourseSelectedType(Name: String(outputarray[1]), Section: Int(outputarray[2])!, Year: Int(outputarray[3])!, Grade: Int(outputarray[0])!))
                                         }
+                                        accessToken = ""
                                         WindowMode.SelectedCourses = OutputCorses
                                         WindowMode.SelectedWindowMode = .HomePage
                                         WidgetCenter.shared.reloadAllTimelines()

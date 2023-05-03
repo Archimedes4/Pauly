@@ -15,6 +15,7 @@ enum ElectionsModeEnum{
 }
 
 struct ElectionsView: View {
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     @Binding var selectedProfileView: profileViewEnum
     @State var AvaliableElections: [ElectionType] = []
     @State var ElectionsLoading: Bool = true
@@ -51,75 +52,79 @@ struct ElectionsView: View {
                                 .aspectRatio(contentMode: .fit)
                             ScrollView{
                                 VStack{
-                                    ForEach(AvaliableElections, id: \.ElectionID) { election in
-                                        switch ElectionsMode{
-                                        case .Ongoing:
-                                            if election.EndDate >= Date.now{
-                                                NavigationLink(destination: ElectionsInfoView(SelectedElection: election)){
-                                                    HStack{
-                                                        Text(election.ElectionName)
-                                                            .font(.system(size: 17))
-                                                            .fontWeight(.bold)
-                                                            .foregroundColor(.black)
-                                                        Spacer()
+                                    if AvaliableElections.count >= 1{
+                                        ForEach(AvaliableElections, id: \.ElectionID) { election in
+                                            switch ElectionsMode{
+                                            case .Ongoing:
+                                                if election.EndDate >= Date.now{
+                                                    NavigationLink(destination: ElectionsInfoView(SelectedElection: election)   .environmentObject(WindowMode)){
+                                                        HStack{
+                                                            Text(election.ElectionName)
+                                                                .font(.system(size: 17))
+                                                                .fontWeight(.bold)
+                                                                .foregroundColor(.black)
+                                                            Spacer()
+                                                        }
+                                                        .frame(minWidth: 0, maxWidth: .infinity)
+                                                        .padding([.top, .bottom])
+                                                        .padding()
+                                                        .background(
+                                                            RoundedRectangle(cornerRadius: 25)
+                                                                .fill(Color.white)
+                                                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                                        )
+                                                        .padding()
                                                     }
-                                                    .frame(minWidth: 0, maxWidth: .infinity)
-                                                    .padding([.top, .bottom])
-                                                    .padding()
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: 25)
-                                                            .fill(Color.white)
-                                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                                    )
-                                                    .padding()
                                                 }
-                                            }
-                                        case .Past:
-                                            if election.EndDate <= Date.now{
-                                                NavigationLink(destination: ElectionsInfoView(SelectedElection: election)){
-                                                    HStack{
-                                                        Text(election.ElectionName)
-                                                            .font(.system(size: 17))
-                                                            .fontWeight(.bold)
-                                                            .foregroundColor(.black)
-                                                        Spacer()
+                                            case .Past:
+                                                if election.EndDate <= Date.now{
+                                                    NavigationLink(destination: ElectionsInfoView(SelectedElection: election).environmentObject(WindowMode)){
+                                                        HStack{
+                                                            Text(election.ElectionName)
+                                                                .font(.system(size: 17))
+                                                                .fontWeight(.bold)
+                                                                .foregroundColor(.black)
+                                                            Spacer()
+                                                        }
+                                                        .frame(minWidth: 0, maxWidth: .infinity)
+                                                        .padding([.top, .bottom])
+                                                        .padding()
+                                                        .background(
+                                                            RoundedRectangle(cornerRadius: 25)
+                                                                .fill(Color.white)
+                                                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                                        )
+                                                        .padding()
                                                     }
-                                                    .frame(minWidth: 0, maxWidth: .infinity)
-                                                    .padding([.top, .bottom])
-                                                    .padding()
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: 25)
-                                                            .fill(Color.white)
-                                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                                    )
-                                                    .padding()
                                                 }
-                                            }
-                                        case .Upcoming:
-                                            if election.StartDate >= Date.now {
-                                                NavigationLink(destination: ElectionsInfoView(SelectedElection: election)){
-                                                    HStack{
-                                                        Text(election.ElectionName)
-                                                            .font(.system(size: 17))
-                                                            .fontWeight(.bold)
-                                                            .foregroundColor(.black)
-                                                        Spacer()
+                                            case .Upcoming:
+                                                if election.StartDate >= Date.now {
+                                                    NavigationLink(destination: ElectionsInfoView(SelectedElection: election)){
+                                                        HStack{
+                                                            Text(election.ElectionName)
+                                                                .font(.system(size: 17))
+                                                                .fontWeight(.bold)
+                                                                .foregroundColor(.black)
+                                                            Spacer()
+                                                        }
+                                                        .frame(minWidth: 0, maxWidth: .infinity)
+                                                        .padding([.top, .bottom])
+                                                        .padding()
+                                                        .background(
+                                                            RoundedRectangle(cornerRadius: 25)
+                                                                .fill(Color.white)
+                                                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                                                        )
+                                                        .padding()
                                                     }
-                                                    .frame(minWidth: 0, maxWidth: .infinity)
-                                                    .padding([.top, .bottom])
-                                                    .padding()
-                                                    .background(
-                                                        RoundedRectangle(cornerRadius: 25)
-                                                            .fill(Color.white)
-                                                            .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                                    )
-                                                    .padding()
                                                 }
                                             }
                                         }
+                                    } else {
+                                        Text("There are currently no elections")
                                     }
                                 }.frame(maxHeight: .infinity)
-                            }.frame(height: geo.size.height * 0.7)
+                            }.frame(height: geo.size.height * 0.6)
                             HStack{
                                 Spacer()
                                 GeometryReader{ TabGeo in
@@ -311,18 +316,27 @@ struct ElectionsView: View {
                         guard let selectedGrade = documentData["SelectedGrade"] as? Int else {
                             return
                         }
-                        AvaliableElections.append(ElectionType(ElectionID: ElectionID, ElectionName: ElectionName, participantsMode: ParticipantMode, StartDate: StartDate.dateValue(), EndDate: EndDate.dateValue(), Hidden: Hidden, Canadates: SelectedCanadates, SelectedGrade: selectedGrade, SelectedUsers: nil, SelectedClass: nil))
+                        if selectedGrade == WindowMode.GradeIn{
+                            AvaliableElections.append(ElectionType(ElectionID: ElectionID, ElectionName: ElectionName, participantsMode: ParticipantMode, StartDate: StartDate.dateValue(), EndDate: EndDate.dateValue(), Hidden: Hidden, Canadates: SelectedCanadates, SelectedGrade: selectedGrade, SelectedUsers: nil, SelectedClass: nil))
+                        }
                     } else {
                         if ParticipantMode == 3{
                             guard let SelectedClass = documentData["SelectedClass"] as? String else {
                                 return
                             }
-                            AvaliableElections.append(ElectionType(ElectionID: ElectionID, ElectionName: ElectionName, participantsMode: ParticipantMode, StartDate: StartDate.dateValue(), EndDate: EndDate.dateValue(), Hidden: Hidden, Canadates: SelectedCanadates, SelectedGrade: nil, SelectedUsers: nil, SelectedClass: SelectedClass))
+                            let outputarray = SelectedClass.split(separator: "-")
+                            let OutputCorses = CourseSelectedType(Name: String(outputarray[1]), Section: Int(outputarray[2])!, Year: Int(outputarray[3])!, Grade: Int(outputarray[0])!)
+                            
+                            if WindowMode.SelectedCourses.contains(where: { $0.Grade == OutputCorses.Grade && $0.Name == OutputCorses.Name && $0.Section == OutputCorses.Section && $0.Year == OutputCorses.Year }){
+                                AvaliableElections.append(ElectionType(ElectionID: ElectionID, ElectionName: ElectionName, participantsMode: ParticipantMode, StartDate: StartDate.dateValue(), EndDate: EndDate.dateValue(), Hidden: Hidden, Canadates: SelectedCanadates, SelectedGrade: nil, SelectedUsers: nil, SelectedClass: SelectedClass))
+                            }
                         } else {
                             guard let SelectedUsers = documentData["SelectedUsers"] as? NSArray as? [String] else {
                                 return
                             }
-                            AvaliableElections.append(ElectionType(ElectionID: ElectionID, ElectionName: ElectionName, participantsMode: ParticipantMode, StartDate: StartDate.dateValue(), EndDate: EndDate.dateValue(), Hidden: Hidden, Canadates: SelectedCanadates, SelectedGrade: nil, SelectedUsers: SelectedUsers, SelectedClass: nil))
+                            if SelectedUsers.contains(WindowMode.UsernameIn){
+                                AvaliableElections.append(ElectionType(ElectionID: ElectionID, ElectionName: ElectionName, participantsMode: ParticipantMode, StartDate: StartDate.dateValue(), EndDate: EndDate.dateValue(), Hidden: Hidden, Canadates: SelectedCanadates, SelectedGrade: nil, SelectedUsers: SelectedUsers, SelectedClass: nil))
+                            }
                         }
                     }
                 }
@@ -332,31 +346,222 @@ struct ElectionsView: View {
     }
 }
 
+struct PieCanadatesType {
+    let Name: String
+    let CanadateColor: Color
+    let Votes: Int
+}
 
 struct ElectionsInfoView: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
     @State var SelectedElection: ElectionType
+    @State var Canadates: [PlottableValue] = []
+    @State private var pie = PieChart()
+    @State var UserCompletedVoting: [String] = []
+    var body: some View{
+        GeometryReader{ geo in
+            ZStack{
+                Rectangle()
+                    .foregroundColor(Color.marron)
+                    .ignoresSafeArea()
+                VStack{
+                    Image("Elections")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .onAppear(){
+                            let SortedCanadates = SelectedElection.Canadates.sorted(by: { $0.Votes.count > $1.Votes.count })
+                            var TempCanadtes: [PlottableValue] = []
+                            for x in SortedCanadates{
+                                TempCanadtes.append(PlottableValue(name: x.Name, value: Double(x.Votes.count), color: Color.random()))
+                            }
+                            Canadates = TempCanadtes
+                        }
+                    pie.chart(Canadates, legend: .trailing)
+                        .frame(width: geo.size.width * 0.8, height: geo.size.height * 0.4, alignment: .center)
+                    ScrollView{
+                        ForEach(SelectedElection.Canadates, id: \.ID) { canadate in
+                            VStack{
+                                HStack{
+                                    Text(canadate.Name)
+                                        .font(.system(size: 17))
+                                        .fontWeight(.bold)
+                                        .foregroundColor(.black)
+                                        .padding(.leading)
+                                    Spacer()
+                                }
+                                HStack{
+                                    Text("Votes: \(canadate.Votes.count)")
+                                        .padding(.leading)
+                                    Spacer()
+                                }
+                            }
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
+                        }
+                    }
+                    if UserCompletedVoting.contains(SelectedElection.ElectionID){
+                        HStack{
+                            Text("You have already voted")
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                            Spacer()
+                        }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.gray)
+                                .shadow(color: .white, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
+                    } else {
+                        NavigationLink(destination: ElectionsVoteView(SelectedElection: $SelectedElection, UserCompletedVoting: $UserCompletedVoting).environmentObject(WindowMode)){
+                            HStack{
+                                Text("VOTE")
+                                    .font(.system(size: 17))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                Spacer()
+                            }
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding([.top, .bottom])
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
+                        }
+                    }
+                }
+            }.onAppear(){
+                GetUserVoted()
+            }
+        }
+    }
+    func GetUserVoted() {
+        let db = Firestore.firestore()
+        let docRef = db.collection("Users").document("\(WindowMode.UsernameIn)")
+        docRef.getDocument { (document, error) in
+            guard error == nil else {
+                print("error", error ?? "")
+                return
+            }
+            
+            if let document = document, document.exists {
+                let data = document.data()
+                if let data = data{
+                    guard let CommissionsCompleted = data["ElectionsVoted"] as? NSArray as? [String] else {
+                        print("Retuened efhskjbdfmnjlvshbfkndiouegrhwikljoihfjvoiuhbjafjdoushbjvskdoiuhvjkoiuhbjkjlbjhiuo")
+                        return
+                    }
+                    UserCompletedVoting = CommissionsCompleted
+                }
+            }
+        }
+    }
+}
+
+public extension Color {
+
+    static func random(randomOpacity: Bool = false) -> Color {
+        Color(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1),
+            opacity: randomOpacity ? .random(in: 0...1) : 1
+        )
+    }
+}
+
+struct ElectionsVoteView: View{
+    @EnvironmentObject var WindowMode: SelectedWindowMode
+    @Binding var SelectedElection: ElectionType
+    @Environment(\.presentationMode) var presentationMode
+    @State var VoteLoading: Bool = false
+    @State var showingAlert: Bool = false
+    @Binding var UserCompletedVoting: [String]
     var body: some View{
         ZStack{
             Rectangle()
-                .foregroundColor(Color.marron)
+                .foregroundColor(.marron)
                 .ignoresSafeArea()
             VStack{
-                Text("Election")
+                Text("Vote")
                 ScrollView{
                     ForEach(SelectedElection.Canadates, id: \.ID){ canadte in
                         HStack{
                             Text(canadte.Name)
+                                .font(.system(size: 17))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                            Spacer()
                             Button(){
-                                
+                                if VoteLoading == false{
+                                    VoteLoading = true
+                                    let db = Firestore.firestore()
+                                    let docRef = db.collection("Elections").document(SelectedElection.ElectionID).collection("Canadates").document(canadte.CanidateID)
+                                    docRef.updateData(["Votes":FieldValue.arrayUnion([WindowMode.UsernameIn])]){ error in
+                                        if error == nil{
+                                            db.collection("Users").document(WindowMode.UsernameIn).updateData(["ElectionsVoted":FieldValue.arrayUnion([SelectedElection.ElectionID])]){ err in
+                                                if err == nil{
+                                                    self.presentationMode.wrappedValue.dismiss()
+                                                } else {
+                                                    print(error)
+                                                    UserCompletedVoting.append(SelectedElection.ElectionID)
+                                                    if let Index = SelectedElection.Canadates.firstIndex(where: { $0.CanidateID == canadte.CanidateID }){
+                                                        SelectedElection.Canadates[Index].Votes.append(WindowMode.UsernameIn)
+                                                    }
+                                                    showingAlert = true
+                                                }
+                                            }
+                                        } else {
+                                            print(error)
+                                            showingAlert = true
+                                        }
+                                    }
+                                }
                             } label: {
-                                Text("Vote")
+                                if VoteLoading{
+                                    ProgressView()
+                                } else {
+                                    Text("Vote")
+                                }
                             }
                         }
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                        .padding([.top, .bottom])
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 25)
+                                .fill(Color.white)
+                                .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                        )
+                        .padding()
                     }
+                    .alert(isPresented: $showingAlert) {
+                         Alert(title: Text("Error"), message: Text("An Error Has Occured"), dismissButton: .default(Text("OK")))
+                     }
                 }
+                .navigationBarBackButtonHidden(true)
+                .navigationBarItems(leading:
+                           Button(action: {
+                               self.presentationMode.wrappedValue.dismiss()
+                           }) {
+                               HStack {
+                                   Image(systemName: "arrow.left.circle")
+                                   Text("Go Back")
+                               }
+                       })
             }
-        }.onAppear(){
-            print(SelectedElection.Canadates.description)
         }
     }
 }

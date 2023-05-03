@@ -440,11 +440,7 @@ struct GovernmentCreateElectionView: View{
                         CreateElectionLoading = false
                         return
                     }
-                    if selectedClass.Section == 0{
-                        inputData["SelectedClass"] = "\(selectedClass.Grade)-\(selectedClass.Name)-\(selectedClass.Section)"
-                    } else {
                         inputData["SelectedClass"] = "\(selectedClass.Grade)-\(selectedClass.Name)-\(selectedClass.Section)-\(selectedClass.SchoolYear!)"
-                    }
                 } else {
                     if SelectedMode.FireID ==  4{
                         var SelectedUsers: [String] = []
@@ -515,7 +511,7 @@ struct GovernmentCreateElectionView: View{
                    return
                }
                if CourseSection == 0{
-                   AvaliableClasses.append(ClassType(Name: CourseCourseName, BackgroundStyle: CourseBackgroundStyle, NumberOfPages: CourseNumberOfPages, PageInfo: CoursePageInfo, Section: CourseSection, Teacher: CourseTeacher, Grade: selectedGrade, DayA: nil, DayB: nil, DayC: nil, DayD: nil, NoClass: nil, Semester: nil, SchoolYear: nil))
+
                } else {
                    guard let CourseDayA = data["DayA"] as? Int else {
                        return

@@ -14,11 +14,10 @@ import FirebaseFirestore
 
 struct ImageView: View{
     @EnvironmentObject var WindowMode: SelectedWindowMode
+    @Binding var selectedImage: UIImage?
+    @Binding var ImageConfirmed: Bool
+    @Binding var SheetPresented: Bool
     @State private var sourceType: UIImagePickerController.SourceType = .photoLibrary
-    @State private var selectedImage: UIImage?
-    @Binding var ImageSubmission: Bool
-    @State var CommissionID: Int
-    @State var CommissionProcessStarted: Bool = false
     var body: some View{
         NavigationView{
             VStack{
@@ -45,65 +44,20 @@ struct ImageView: View{
                             .padding()
                     }
                     Button(){
-                        CommissionProcessStarted = true
-                        let Uid = Auth.auth().currentUser!.uid
-                        let storage = Storage.storage()
-                        let storageRef = storage.reference().child("\(CommissionID)-\(Uid)")
-                        let resizedImage = selectedImage?.scalePreservingAspectRatio(width: 200, height: 200)
-                        let data = resizedImage!.jpegData(compressionQuality: 0.2)
-                        let metadata = StorageMetadata()
-                        metadata.contentType = "image/jpg"
-                        if let data = data {
-                            storageRef.putData(data, metadata: metadata) { (metadata, error) in
-                                if let error = error {
-                                    print("Error while uploading file: ", error)
-                                }
-
-                                if let metadata = metadata {
-                                    print("Metadata: ", metadata)
-                                }
-                            }
-                        }
-                        let db = Firestore.firestore()
-
-                        let docRef = db.collection("Users").document(WindowMode.UsernameIn)
-                        
-                        docRef.updateData(["CompletedCommissions":FieldValue.arrayUnion([CommissionID])]) { error in
-                            if let error = error {
-                                print("Error updating document: \(error)")
-                                //TO DO HANDLE ERROR
-                            } else {
-                                ImageSubmission = false
-                            }
-                        }
-                        
-                        let CommissionRef = db.collection("Commissions").document("\(CommissionID)").collection("Submissions").document(Uid)
-                        CommissionRef.setData(["User":Uid, "SubmissionType":3,"Image":"\(CommissionID)-\(Uid)"])
+                        ImageConfirmed = true
                     } label: {
-                        if CommissionProcessStarted{
-                            ProgressView()
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding([.top, .bottom])
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .padding()
-                        } else {
-                            Text("CONFIRM")
-                                .font(.system(size: 17))
-                                .fontWeight(.bold)
-                                .foregroundColor(.black)
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                                .padding([.top, .bottom])
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(Color.white)
-                                        .shadow(color: .gray, radius: 2, x: 0, y: 2)
-                                )
-                                .padding()
-                        }
+                        Text("CONFIRM")
+                            .font(.system(size: 17))
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding([.top, .bottom])
+                            .background(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .fill(Color.white)
+                                    .shadow(color: .gray, radius: 2, x: 0, y: 2)
+                            )
+                            .padding()
                     }
                     
                 } else {
@@ -144,9 +98,7 @@ struct ImageView: View{
                     })
                 }
                 Button(){
-                    if CommissionProcessStarted == false{
-                        ImageSubmission = false
-                    }
+                    SheetPresented = false
                 } label: {
                     Text("BACK")
                         .font(.system(size: 17))

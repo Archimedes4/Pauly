@@ -69,7 +69,7 @@ struct MonthView: View{
                             .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.13)
                     }
                     if day == 2{
-                        Text("Wensday")
+                        Text("Wednesday")
                             .frame(width: geometry1.size.width * 0.2, height: geometry1.size.height * 0.13)
                     }
                     if day == 3{
@@ -452,7 +452,7 @@ struct HomePage: View{
                     }
                 } else {
                     Button{
-                        print(width)
+//                        WindowMode.SelectedWindowMode = .Announcment
                     } label: {
                         let size = geometry.size.width
                         InfiniteScroller(contentWidth: width.width * 2, AnimationDuration: $AnimationDuration) {
@@ -647,7 +647,7 @@ class SelectedWindowMode: ObservableObject{
 
 struct ContentView: View {
     @EnvironmentObject var WindowMode: SelectedWindowMode
-    @State var accountToken: String?
+    @Binding var accountToken: String?
     @State var MSALAccount: MSALAccount?
     
     var body: some View{

@@ -404,6 +404,12 @@ struct Provider: IntentTimelineProvider {
                                                                  return
                                                              } else {
                                                                  if value == 3 || value == 4{
+                                                                     var OutValue: String = ""
+                                                                     if value == 3{
+                                                                         OutValue = "Early Dismissal"
+                                                                     } else {
+                                                                         OutValue = "PM Assembly"
+                                                                     }
                                                                      guard let SchoolDay = data["SchoolDay"] as? String else {
                                                                          completion("An error has occurred", .Failure, "", "", "")
                                                                          return
@@ -412,25 +418,25 @@ struct Provider: IntentTimelineProvider {
                                                                          let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
                                                                              return a.DayA > b.DayA
                                                                          })
-                                                                         completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayA), .Success, "A", "\(value)", "")
+                                                                         completion(self.GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayA), .Success, "A", OutValue, "")
                                                                      } else {
                                                                          if SchoolDay == "B"{
                                                                              let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
                                                                                  return a.DayB > b.DayB
                                                                              })
-                                                                             completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayB), .Success, "B", "\(value)", "")
+                                                                             completion(self.GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayB), .Success, "B", OutValue, "")
                                                                          } else {
                                                                              if SchoolDay == "C"{
                                                                                  let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
                                                                                      return a.DayC > b.DayC
                                                                                  })
-                                                                                 completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayC), .Success, "C", "\(value)", "")
+                                                                                 completion(self.GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayC), .Success, "C", OutValue, "")
                                                                              } else {
                                                                                  if SchoolDay == "D"{
                                                                                      let StartTimeInt = CalendarClasses.max(by: { (a, b) -> Bool in
                                                                                          return a.DayD > b.DayD
                                                                                      })
-                                                                                     completion(GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayD), .Success, "D", "\(value)", "")
+                                                                                     completion(self.GivenStartIntGetTimeSchedualDismissal(StartTimeInt: StartTimeInt!.DayD), .Success, "D", OutValue, "")
                                                                                  }
                                                                              }
                                                                          }

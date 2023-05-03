@@ -200,12 +200,9 @@ struct AnimatedCheckmarkView_Previews: PreviewProvider {
 
 
 struct LocationServices: View {
-    @EnvironmentObject var WindowMode: SelectedWindowMode
     @StateObject var locationDataManager = LocationDataManager()
     @Binding var SelectedCommision: CommitionType
-    @State var PaulyRecieved: Bool = false
-    @Binding var SheetPresented: Bool
-    @Binding var isCommissionComplete: Bool
+    @Binding var Success: Bool?
     var body: some View {
         VStack {
             switch locationDataManager.locationManager.authorizationStatus {
@@ -219,46 +216,15 @@ struct LocationServices: View {
                 
                 if distanceInMeters <= SelectedCommision.Proximity!{
                     //Success
-                    if PaulyRecieved{
-                        VStack{
-                            AnimatedCheckmarkView()
-                            Text("Congradulations You Pauly Points have been added.")
-                            Button(){
-                                SheetPresented = false
-                            } label: {
-                                Text("OK")
-                            }
-                        }
-                    } else {
-                        ProgressView("Telling Pauly You have complete the commission")
-                            .onAppear(){
-                                let db = Firestore.firestore()
-
-                                let docRef = db.collection("Users").document(WindowMode.UsernameIn)
-                                
-                                print(SelectedCommision.Score)
-                                docRef.updateData(["Score": FieldValue.increment(Int64(SelectedCommision.Score)), "CompletedCommissions":FieldValue.arrayUnion([SelectedCommision.FirebaseID])]) { error in
-                                    if let error = error {
-                                        print("Error updating document: \(error)")
-                                        //TO DO HANDLE ERROR
-                                    } else {
-                                        PaulyRecieved = true
-                                        isCommissionComplete = true
-                                    }
-                                }
-                            }
-                    }
-                } else {
-                    //Failure
-                    Text("You are not close enough to claim this")
+                    ProgressView()
                         .onAppear(){
-                            print(distanceInMeters)
+                            Success = true
                         }
-                    Button(){
-                        SheetPresented = false
-                    } label: {
-                        Text("OK")
-                    }
+                } else {
+                    ProgressView()
+                        .onAppear(){
+                            Success = false
+                        }
                 }
             case .restricted, .denied:  // Location services currently unavailable.
                 // Insert code here of what should happen when Location services are NOT authorized

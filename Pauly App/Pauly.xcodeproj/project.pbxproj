@@ -13,6 +13,7 @@
 		C620B5D329B8BC09007DB698 /* PDFview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C620B5D229B8BC09007DB698 /* PDFview.swift */; };
 		C6248A6129D72AD7009D2765 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6248A6029D72AD7009D2765 /* CardView.swift */; };
 		C6248A6329D73975009D2765 /* LocationServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6248A6229D73975009D2765 /* LocationServices.swift */; };
+		C6352BAE29F589AD009A9280 /* PIE ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6352BAD29F589AC009A9280 /* PIE ChartView.swift */; };
 		C640C4AC29B1325E009668BF /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AB29B1325E009668BF /* QuizView.swift */; };
 		C640C4AE29B26FF1009668BF /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AD29B26FF1009668BF /* CalendarPageView.swift */; };
 		C640C4B029B29035009668BF /* LectureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C640C4AF29B29035009668BF /* LectureView.swift */; };
@@ -36,10 +37,11 @@
 		C695C01629A7E4F600D983E7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01529A7E4F600D983E7 /* Assets.xcassets */; };
 		C695C01929A7E4F600D983E7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */; };
 		C6CB35A129D28762007EC7A8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C6CB35A029D28762007EC7A8 /* LaunchScreen.storyboard */; };
-		C6D00E0529F1DEC3002544EE /* ConversationTeams copy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D00E0429F1DEC3002544EE /* ConversationTeams copy.swift */; };
+		C6D00E0529F1DEC3002544EE /* ConversationTeams.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D00E0429F1DEC3002544EE /* ConversationTeams.swift */; };
 		C6D00E0729F23222002544EE /* ElectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D00E0629F23222002544EE /* ElectionsView.swift */; };
 		C6D00E0929F2BA89002544EE /* GovernmentViewElections.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D00E0829F2BA89002544EE /* GovernmentViewElections.swift */; };
 		C6D00E0B29F32C5D002544EE /* NotificationsPauly.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D00E0A29F32C5D002544EE /* NotificationsPauly.swift */; };
+		C6D00E0D29F430AA002544EE /* CommissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D00E0C29F430AA002544EE /* CommissionsView.swift */; };
 		C6D4679029EB035E00A7882E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4678F29EB035E00A7882E /* FirebaseAuth */; };
 		C6D4679229EB036700A7882E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4679129EB036700A7882E /* FirebaseFirestore */; };
 		C6D4679429EB038400A7882E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C6D4679329EB038400A7882E /* FirebaseAuth */; };
@@ -104,6 +106,7 @@
 		C620B5D229B8BC09007DB698 /* PDFview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDFview.swift; sourceTree = "<group>"; };
 		C6248A6029D72AD7009D2765 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		C6248A6229D73975009D2765 /* LocationServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationServices.swift; sourceTree = "<group>"; };
+		C6352BAD29F589AC009A9280 /* PIE ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PIE ChartView.swift"; sourceTree = "<group>"; };
 		C640C4AB29B1325E009668BF /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
 		C640C4AD29B26FF1009668BF /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageView.swift; sourceTree = "<group>"; };
 		C640C4AF29B29035009668BF /* LectureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LectureView.swift; sourceTree = "<group>"; };
@@ -130,10 +133,11 @@
 		C695C01529A7E4F600D983E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C6CB35A029D28762007EC7A8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
-		C6D00E0429F1DEC3002544EE /* ConversationTeams copy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationTeams copy.swift"; sourceTree = "<group>"; };
+		C6D00E0429F1DEC3002544EE /* ConversationTeams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationTeams.swift; sourceTree = "<group>"; };
 		C6D00E0629F23222002544EE /* ElectionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionsView.swift; sourceTree = "<group>"; };
 		C6D00E0829F2BA89002544EE /* GovernmentViewElections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentViewElections.swift; sourceTree = "<group>"; };
 		C6D00E0A29F32C5D002544EE /* NotificationsPauly.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationsPauly.swift; sourceTree = "<group>"; };
+		C6D00E0C29F430AA002544EE /* CommissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommissionsView.swift; sourceTree = "<group>"; };
 		C6D4679D29EB524100A7882E /* UIImageExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageExtension.swift; sourceTree = "<group>"; };
 		C6D467AE29ECC69900A7882E /* GovernmentCardAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GovernmentCardAddView.swift; sourceTree = "<group>"; };
 		C6D467B129EF355A00A7882E /* Assests.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assests.xcassets; sourceTree = "<group>"; };
@@ -239,15 +243,16 @@
 				C6D4679D29EB524100A7882E /* UIImageExtension.swift */,
 				C6D00E0A29F32C5D002544EE /* NotificationsPauly.swift */,
 				C6E229C729BCDBF1008DB772 /* ProfileView.swift */,
+				C6D00E0C29F430AA002544EE /* CommissionsView.swift */,
 				C6D00E0629F23222002544EE /* ElectionsView.swift */,
+				C6352BAD29F589AC009A9280 /* PIE ChartView.swift */,
 				C6D5B9E129DFC55600F47CBA /* Images */,
 				C6D5B9FE29E0713B00F47CBA /* GovernmentView */,
 				C6248A6229D73975009D2765 /* LocationServices.swift */,
 				C6F2B18A29CCA86E00149F20 /* Leaderboard.swift */,
 				C6858FE629C8CA1500269A56 /* RecentNotificationsView.swift */,
-				C6858FE229C6621E00269A56 /* Messaging.swift */,
+				C6AD9A8E2A0259C800416631 /* Chat */,
 				C6FB8CC329C60EA100672E70 /* CreateNewUserView.swift */,
-				C6D00E0429F1DEC3002544EE /* ConversationTeams copy.swift */,
 				C657D0E929DB8EB4001A368B /* HTMLTextView.swift */,
 				C64C7A0029D1DC0400E966CF /* Backgrounds.swift */,
 				C60B567A29D8280D00E8AC5D /* Resources.swift */,
@@ -258,7 +263,6 @@
 				C620B5D229B8BC09007DB698 /* PDFview.swift */,
 				C64A91AD29DCA4A50049DDE9 /* GoogleService-Info.plist */,
 				C695C01129A7E4F200D983E7 /* PaulyApp.swift */,
-				C640C4B729B45C52009668BF /* ChatHomePage.swift */,
 				C640C4AF29B29035009668BF /* LectureView.swift */,
 				C695C01329A7E4F200D983E7 /* ContentView.swift */,
 				C6FB8CB429C39DA400672E70 /* SportsView.swift */,
@@ -277,6 +281,16 @@
 				C695C01829A7E4F600D983E7 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C6AD9A8E2A0259C800416631 /* Chat */ = {
+			isa = PBXGroup;
+			children = (
+				C6858FE229C6621E00269A56 /* Messaging.swift */,
+				C6D00E0429F1DEC3002544EE /* ConversationTeams.swift */,
+				C640C4B729B45C52009668BF /* ChatHomePage.swift */,
+			);
+			path = Chat;
 			sourceTree = "<group>";
 		};
 		C6D467B029ECC6A400A7882E /* Government Card */ = {
@@ -466,8 +480,9 @@
 				C6D5B9E029DFBC4500F47CBA /* ImageView.swift in Sources */,
 				C6858FE729C8CA1500269A56 /* RecentNotificationsView.swift in Sources */,
 				C6E229C829BCDBF1008DB772 /* ProfileView.swift in Sources */,
-				C6D00E0529F1DEC3002544EE /* ConversationTeams copy.swift in Sources */,
+				C6D00E0529F1DEC3002544EE /* ConversationTeams.swift in Sources */,
 				C6FB8CB529C39DA400672E70 /* SportsView.swift in Sources */,
+				C6352BAE29F589AD009A9280 /* PIE ChartView.swift in Sources */,
 				C640C4B829B45C52009668BF /* ChatHomePage.swift in Sources */,
 				C6D5BA0529E37B7300F47CBA /* GovernmentViewSports.swift in Sources */,
 				C695C01429A7E4F200D983E7 /* ContentView.swift in Sources */,
@@ -494,6 +509,7 @@
 				C6D467B529EF779400A7882E /* CalendarEventsView.swift in Sources */,
 				C64C7A0129D1DC0500E966CF /* Backgrounds.swift in Sources */,
 				C6FC4D3D29AA402A00F6ED3E /* Functions.swift in Sources */,
+				C6D00E0D29F430AA002544EE /* CommissionsView.swift in Sources */,
 				C640C4B029B29035009668BF /* LectureView.swift in Sources */,
 				C620B5D329B8BC09007DB698 /* PDFview.swift in Sources */,
 				C6858FE329C6621E00269A56 /* Messaging.swift in Sources */,
@@ -708,7 +724,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Pauly/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pauly;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pauly would like access to your camera.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Pauly needs to find where you are to complete this commission";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Pauly would like access to your photos";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
@@ -722,9 +742,12 @@
 				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = Archimedes4.Pauly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -743,7 +766,11 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Pauly/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pauly;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pauly would like access to your camera.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Pauly needs to find where you are to complete this commission";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Pauly would like access to your photos";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
@@ -758,9 +785,12 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = Archimedes4.Pauly;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

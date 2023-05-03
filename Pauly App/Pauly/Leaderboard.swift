@@ -118,45 +118,39 @@ struct ProfileViewLeaderboard: View{
                 }
             }
             .onAppear(){
-                Task{
-                    do{
-                        let db = Firestore.firestore()
-                        
-                        let docRef = db.collection("Users")
-                        docRef.getDocuments { (snapshot, error) in
-                             guard let snapshot = snapshot, error == nil else {
-                              //handle error
-                              return
-                            }
-                            snapshot.documents.forEach({ (documentSnapshot) in
-                                let documentData = documentSnapshot.data()
-                                let FirstNameOut = documentData["First Name"] as? String ?? "Error"
-                                let LastNameOut = documentData["Last Name"] as? String ?? "Error"
-                                let uid = documentData["uid"] as? String ?? "Error"
-                                let score = documentData["Score"] as? Int ?? 0
-                                let name = FirstNameOut + " " + LastNameOut
-                                Users.append(UserLeaderboard(uid: uid, Name: name, Score: score))
-                            })
-                            var Array1: [Int] = []
-                            for x in Users{
-                                Array1.append(x.Score)
-                            }
-                            var Array2: [Int] = Array(Set(Array1))
-                            var Array3: [Int] = Array2.sorted { $0 > $1}
-                            if Array3.count >= 1{
-                                HightestValue = Array3[0]
-                                if Array3.count >= 2{
-                                    SecondHightestValue = Array3[1]
-                                    if Array3.count >= 3{
-                                        ThirdHightestValue = Array3[2]
-                                    }
-                                }
-                            }
-                          }
-                    } catch {
-                        print("Error")
+                let db = Firestore.firestore()
+                
+                let docRef = db.collection("Users")
+                docRef.getDocuments { (snapshot, error) in
+                     guard let snapshot = snapshot, error == nil else {
+                      //handle error
+                      return
                     }
-                }
+                    snapshot.documents.forEach({ (documentSnapshot) in
+                        let documentData = documentSnapshot.data()
+                        let FirstNameOut = documentData["First Name"] as? String ?? "Error"
+                        let LastNameOut = documentData["Last Name"] as? String ?? "Error"
+                        let uid = documentData["uid"] as? String ?? "Error"
+                        let score = documentData["Score"] as? Int ?? 0
+                        let name = FirstNameOut + " " + LastNameOut
+                        Users.append(UserLeaderboard(uid: uid, Name: name, Score: score))
+                    })
+                    var Array1: [Int] = []
+                    for x in Users{
+                        Array1.append(x.Score)
+                    }
+                    let Array2: [Int] = Array(Set(Array1))
+                    let Array3: [Int] = Array2.sorted { $0 > $1}
+                    if Array3.count >= 1{
+                        HightestValue = Array3[0]
+                        if Array3.count >= 2{
+                            SecondHightestValue = Array3[1]
+                            if Array3.count >= 3{
+                                ThirdHightestValue = Array3[2]
+                            }
+                        }
+                    }
+                  }
             }
             .searchable(text: $searchText)
         }

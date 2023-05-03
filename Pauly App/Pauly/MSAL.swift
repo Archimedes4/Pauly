@@ -189,11 +189,11 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
 
     func loadMSALScreen(AccountMode: WindowSrceens, Grade: Int, UsernameIn: String, FirstName: String, LastName: String, SelectedCourses: [CourseSelectedType]) {
         do {
-            let authority = try MSALB2CAuthority(url: URL(string: "https://login.microsoftonline.com/common")!)
-            let pcaConfig = MSALPublicClientApplicationConfig(clientId: "82f52bae-8d11-4ed0-b1d1-83d76d2e605c", redirectUri: "msauth.Archimedes4.Pauly://auth", authority: authority)
+            let authority = try MSALB2CAuthority(url: URL(string: "https://login.microsoftonline.com/d9ad3c89-6aed-4783-93ce-212b71ee98f3")!)
+            let pcaConfig = MSALPublicClientApplicationConfig(clientId: "82f52bae-8d11-4ed0-b1d1-83d76d2e605c", redirectUri: "https://pauly-9dcfc.firebaseapp.com/__/auth/handler", authority: authority)
             let application = try MSALPublicClientApplication(configuration: pcaConfig)
             let webViewParameters1 = MSALWebviewParameters(authPresentationViewController: self)
-            let interactiveParameters = MSALInteractiveTokenParameters(scopes: ["user.read", "Files.Read.All", "Mail.Send"], webviewParameters: webViewParameters1)
+            let interactiveParameters = MSALInteractiveTokenParameters(scopes:  ["user.read", "Files.Read.All", "Mail.Send", "ChatMessage.Send", "Chat.ReadWrite", "User.ReadBasic.All"], webviewParameters: webViewParameters1)
             application.acquireToken(with: interactiveParameters) { (result, error) in
                 guard let result = result else {
                     print("error \(error?.localizedDescription)")
@@ -203,7 +203,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                 if let account = result.account.username{
                     print(account)
                     self.applicationContext = application
-                    
+                    let NewAccessToken = result.accessToken
                     var newselectedWindowMode = SelectedWindowMode()
                     newselectedWindowMode.SelectedWindowMode = AccountMode
                     newselectedWindowMode.UsernameIn = UsernameIn
@@ -211,7 +211,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                     newselectedWindowMode.FirstName = FirstName
                     newselectedWindowMode.LastName = LastName
                     newselectedWindowMode.SelectedCourses = SelectedCourses
-                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(MSALAccount: result.account).environmentObject(newselectedWindowMode))
+                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(accountToken: .constant(NewAccessToken), MSALAccount: result.account).environmentObject(newselectedWindowMode))
                 }
             }
         } catch {
@@ -310,7 +310,7 @@ class MSALScreenViewController: UIViewController, MSALScreenViewControllerProtoc
                     newselectedWindowMode.FirstName = FirstName
                     newselectedWindowMode.LastName = LastName
                     newselectedWindowMode.SelectedCourses = SelectedCourses
-                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(accountToken: result.accessToken, MSALAccount: account).environmentObject(newselectedWindowMode))
+                    UIApplication.shared.windows.first { $0.isKeyWindow }!.rootViewController = UIHostingController(rootView: ContentView(accountToken: .constant(result.accessToken), MSALAccount: account).environmentObject(newselectedWindowMode))
                 }
         } catch {
             print("\(#function) logging error \(error)")

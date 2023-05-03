@@ -76,8 +76,14 @@ struct DayView: View{
                                     let HourInt = Calendar.current.dateComponents([.hour], from: Date.now).hour
                                     if "\(MinuiteInt ?? 10)".count == 1{
                                         CurrentTime = "\(HourInt! % 12):0\(MinuiteInt!)"
+                                        if HourInt == 12{
+                                            CurrentTime = "12:0\(MinuiteInt!)"
+                                        }
                                     } else {
                                         CurrentTime = "\(HourInt! % 12):\(MinuiteInt!)"
+                                        if HourInt == 12{
+                                            CurrentTime = "12:\(MinuiteInt!)"
+                                        }
                                     }
                                     ScrollPosition = Int(HeightOffsetTOP)
                                     if ScrollPosition >= Int(Height){

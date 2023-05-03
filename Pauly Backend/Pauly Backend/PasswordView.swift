@@ -98,28 +98,38 @@ struct InitializeMicrosoft: View {
     }
     
     func signIn () {
-        let config = MSALPublicClientApplicationConfig(clientId: "82f52bae-8d11-4ed0-b1d1-83d76d2e605c")
-        let application = try? MSALPublicClientApplication(configuration: config)
-        let scopes = ["User.Read", "Mail.Send", "Sites.ReadWrite.All", "Files.ReadWrite.All", "Chat.ReadWrite"]
+        DispatchQueue.global().async {
+            do{
+                guard let authorityURL = URL(string: "https://login.microsoftonline.com/d9ad3c89-6aed-4783-93ce-212b71ee98f3") else {
+                        // Handle error
+                        return
+                    }
+                let b2cAuthority = try MSALB2CAuthority(url: authorityURL)
+                let config = MSALPublicClientApplicationConfig(clientId: "82f52bae-8d11-4ed0-b1d1-83d76d2e605c", redirectUri: "msauth.Archimedes4.Pauly-Backend://auth",authority: b2cAuthority)
+                let application = try? MSALPublicClientApplication(configuration: config)
+                let scopes = ["User.Read", "Mail.Send", "Sites.ReadWrite.All", "Files.ReadWrite.All", "Chat.ReadWrite"]
+                        
+                let webviewParameters = MSALWebviewParameters()
                 
-        let webviewParameters = MSALWebviewParameters()
-        
-        let interactiveParameters = MSALInteractiveTokenParameters(scopes: scopes, webviewParameters: webviewParameters)
-        
-        application!.acquireToken(with: interactiveParameters, completionBlock: { (result, error) in
-                        
-            guard let authResult = result, error == nil else {
-                print(error!.localizedDescription)
-                return
+                let interactiveParameters = MSALInteractiveTokenParameters(scopes: scopes, webviewParameters: webviewParameters)
+                
+                application!.acquireToken(with: interactiveParameters, completionBlock: { (result, error) in
+                                
+                    guard let authResult = result, error == nil else {
+                        print(error!.localizedDescription)
+                        return
+                    }
+                                
+                    // Get access token from result
+                    AccessToken = authResult.accessToken
+                    // You'll want to get the account identifier to retrieve and reuse the account for later acquireToken calls
+                    let accountIdentifier = authResult.account.identifier
+                    SelectedBackendMode = .Overview
+                })
+            } catch{
+                print(error)
             }
-                        
-            // Get access token from result
-            AccessToken = authResult.accessToken
-            // You'll want to get the account identifier to retrieve and reuse the account for later acquireToken calls
-            let accountIdentifier = authResult.account.identifier
-            SelectedBackendMode = .Overview
-        })
-        
+        }
     }
 }
 
