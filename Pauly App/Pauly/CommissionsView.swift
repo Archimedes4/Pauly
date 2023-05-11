@@ -670,7 +670,7 @@ struct ProfileViewCommissionsHome: View{
                                 )
                                 .padding()
                             }
-                        }.frame()
+                        }
                     } else {
                         Spacer()
                         ProgressView(ProgressViewText)

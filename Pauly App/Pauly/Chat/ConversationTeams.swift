@@ -62,9 +62,9 @@ struct CoversationTeamsMessgeBubleTextSize: View{
                 options: [.usesLineFragmentOrigin, .usesFontLeading, .usesDeviceMetrics],
                 context: nil
             )
-            DispatchQueue.global(qos: .userInitiated).async {
-                mesage.MessageSize = boundingBox.size
-            }
+//            DispatchQueue.global(qos: .userInitiated).async {
+//                mesage.MessageSize = boundingBox.size
+//            }
         })
         .onAppear(){
             //Get Message Content
@@ -107,10 +107,24 @@ struct ConversationTeams: View{
     @State var OldestCurrentMessage: Date = Date.now
     @State var RecievedAllMessages: Bool = false
     @State var PageLoading: Bool = true
+    @State var ProgressViewText: String = "Loading..."
     var body: some View{
         if PageLoading{
+            HStack{
+                Button(){
+                    SelectMessagingMode = .Home
+                } label: {
+                    HStack{
+                        Image(systemName: "chevron.backward")
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                        Text("Back")
+                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                    }
+                }.padding()
+                Spacer()
+            }
             Spacer()
-            ProgressView()
+            ProgressView(ProgressViewText)
                 .onAppear(){
                     MessageURLString = "https://graph.microsoft.com/v1.0/me/chats/\(SelectedMessageTeams!.GraphChatID)/messages"
                     Task{
@@ -119,6 +133,7 @@ struct ConversationTeams: View{
                             try await GetConversationTeams()
                         } catch {
                             print(error)
+                            ProgressViewText = "An Error has Occurred"
                         }
                     }
                 }
@@ -190,16 +205,8 @@ struct ConversationTeams: View{
                                                     if mesage.wrappedValue.MicrosoftSenderID == MicrosoftUserUID{
                                                         Spacer()
                                                     }
-    //                                                ZStack{
-    ////                                                    RoundedRectangle(cornerRadius: 20)
-    ////                                                        .fill(Color.white)
-    ////                                                        .frame(width: mesage.wrappedValue.MessageSize.width * 1.2, height: mesage.wrappedValue.MessageSize.height * 1.2)
-    //                                                    CoversationTeamsMessgeBubleTextSize(mesage: mesage, size: geo.size, MicrosoftUserUID: $MicrosoftUserUID, RecievedAllMessages: $RecievedAllMessages, SeenLastMessage: $SeenLastMessage, OldestCurrentMessage: $OldestCurrentMessage)
-    ////                                                            .frame(width: mesage.wrappedValue.MessageSize.width, height: mesage.wrappedValue.MessageSize.height)
-    //                                                            .padding([.top, .bottom])
-    //
-    //                                                }.frame(width: mesage.wrappedValue.MessageSize.width, height: mesage.wrappedValue.MessageSize.height)
                                                     CoversationTeamsMessgeBubleTextSize(mesage: mesage, size: geo.size, MicrosoftUserUID: $MicrosoftUserUID, RecievedAllMessages: $RecievedAllMessages, SeenLastMessage: $SeenLastMessage, OldestCurrentMessage: $OldestCurrentMessage)
+                                                        .background(mesage.wrappedValue.MicrosoftSenderID != MicrosoftUserUID ? Color.blue:Color.white)
 //                                                        .frame(width: mesage.wrappedValue.MessageSize.width, height: mesage.wrappedValue.MessageSize.height)
                                                     if mesage.wrappedValue.MicrosoftSenderID != MicrosoftUserUID{
                                                         Spacer()

@@ -46,10 +46,14 @@ struct ElectionsView: View {
                         Rectangle()
                             .fill(Color.marron)
                             .ignoresSafeArea()
-                        VStack{
-                            Image("Elections")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
+                        VStack(spacing: 0){
+                            HStack{
+                                Image("Elections")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .ignoresSafeArea()
+                                Spacer()   
+                            } .frame(height: geo.size.height * 0.2)
                             ScrollView{
                                 VStack{
                                     if AvaliableElections.count >= 1{
@@ -122,9 +126,10 @@ struct ElectionsView: View {
                                         }
                                     } else {
                                         Text("There are currently no elections")
+                                            .padding([.leading, .trailing])
                                     }
                                 }.frame(maxHeight: .infinity)
-                            }.frame(height: geo.size.height * 0.6)
+                            }.frame(height: geo.size.height * 0.5)
                             HStack{
                                 Spacer()
                                 GeometryReader{ TabGeo in
@@ -245,6 +250,7 @@ struct ElectionsView: View {
                                         }
                                         Spacer()
                                     }.frame(minWidth: 0, maxWidth: .infinity, alignment: .bottom)
+                                        .padding([.bottom], 20)
                                         .background(
                                             RoundedRectangle(cornerRadius: 30)
                                                 .fill(Color.white)

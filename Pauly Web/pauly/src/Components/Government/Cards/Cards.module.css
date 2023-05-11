@@ -1,0 +1,162 @@
+/* Back Button */
+.Link{
+    color: black;
+    background-color: white;
+    text-decoration: none;
+    margin: 1rem;
+    position: relative;
+    padding-left: 3%;
+    border-radius: 25px;
+    border: 2px solid black;
+}
+
+.DivBackground{
+    background-color: #793033;
+    height: 100vh;
+    width: 100%;
+}
+
+.Title{
+    text-align: center;
+}
+
+.DropdownButtonStyle{
+    background-color: gray;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    transform: translateY(-2vh);
+}
+
+.DropdownButtonStyle::after{
+    display: none;
+}
+
+.TitleEditCard{
+    text-align: left;
+}
+
+.EditCardBackButton{
+    text-align: right;
+    color: black;
+    padding-top: 0.5%;
+}
+
+.slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 25px; /* Specified height */
+    background: transparent; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+    transform: translateY(-14px);
+}
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: black;
+    opacity: 0.9;
+    border-radius: 50%;
+    width: 1vh;
+    height: 1vh;
+}
+.slider::-moz-range-thumb {
+    background: #053a5f;
+    height: 0.5rem;
+}
+
+.EditCardTopView{
+    position: absolute;
+    width: auto;
+    z-index: 2;
+    padding: 1%;
+    justify-content: center;
+    display: flex;
+}
+
+.EditCardBottemView{
+    position: absolute;
+    z-index: 1;
+    background-color: #793033;
+    height: 100vh;
+    width: 100%;
+}
+
+.ImageLibraryView{
+    position: absolute;
+    z-index: 2;
+    background-color: transparent;
+    padding: 5vw;
+    justify-content: center;
+    display: flex;
+    width: 100vw;
+}
+.ImageLibraryViewTitle{
+    padding-right: 55vw;
+}
+
+/* card tool bar */
+.CardToolbarDiv{
+    background-color: blue;
+    width: 80vw;
+    height: 5vh;
+    margin-top: 2vh;
+    border-radius: 5px;
+}
+
+.CardToolBarButton{
+    background-color: white;
+    border: #793033;
+    width: 7vh;
+    height: 4vh;
+    overflow: hidden;
+    display: flex;
+}
+
+.dotButtonStyle{
+    position: absolute;
+    border: none;
+    color: transparent;
+    background-color: transparent;
+    margin: 0;
+    padding: 0;
+}
+
+.dot{
+    height: 5px;
+    width: 5px;
+    background-color: #1e70ea;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.imgContainer {
+    max-width: inherit;
+    max-height: inherit;
+    height: inherit;
+    width: inherit;
+    object-fit: cover;
+}
+
+.formcontrol{
+    color: #1e70ea;
+    background-color: #1e70ea;
+}
+
+/* card containter */
+.CardContainterCardCSS {
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+.CardContainterCardCSS ::-webkit-scrollbar {display:none;}
+
+/* display: "flex",
+justifyContent: "center",
+alignItems: "center", */
