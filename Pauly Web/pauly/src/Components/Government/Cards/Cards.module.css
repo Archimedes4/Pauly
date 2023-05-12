@@ -148,12 +148,12 @@
 
 /* card containter */
 .CardContainterCardCSS {
-    overflow: hidden;
-    white-space: nowrap;
+    /* overflow: hidden; */
+    /* white-space: nowrap; */
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    background-color: #793033;
 }
 .CardContainterCardCSS ::-webkit-scrollbar {display:none;}
 
