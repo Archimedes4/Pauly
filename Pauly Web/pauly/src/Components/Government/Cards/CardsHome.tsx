@@ -17,7 +17,7 @@ export default function CardsHome() {
 
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
-      setCards(docSnap.data())
+      setCards(docSnap.data() as any)
     } else {
       // docSnap.data() will be undefined in this case
       console.log("No such document!");
@@ -48,7 +48,7 @@ export default function CardsHome() {
 
   const [NavigateToEdit, SetNavigateToEdit] = useState(false)
 
-  function setSelectedCard(e, item){
+  function setSelectedCard(e: React.SyntheticEvent, item: any){
     e.preventDefault()
     console.log(item)
     SetSelectedCard(item)
@@ -65,8 +65,10 @@ export default function CardsHome() {
       <div>  
         {
           Cards.map(item => (
-            <div key={item.FirebaseID}>
-                <button onClick={(e) => setSelectedCard(e, item)} style={{border: "none", background: "none"}} > <p className={styles.Link}>{item.Use}</p> </button>
+            <div key={item.FirebaseID} className={styles.LinkContainer}>
+                <button onClick={(e) => setSelectedCard(e, item)} style={{border: "none", background: "none"}} > 
+                <p className={styles.Link}>{(item.use !== "" ) ? item.use :  "This Card Does Not Have a Use" }</p>
+                </button>
             </div>
           ))
         }

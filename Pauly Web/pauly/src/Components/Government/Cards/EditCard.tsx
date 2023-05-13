@@ -5,6 +5,7 @@ import { Container, Row, Col, Button, Card, Form, Stack, Dropdown, InputGroup, L
 import textIcon from "../../../images/textIcon.png"
 import imageIcon from "../../../images/imageIcon.png"
 import shapesIcon from "../../../images/shapesIcon.png"
+import imageOverlay from "../../../images/Iphone14.png"
 import * as React from 'react';
 import { useCardContext } from "./Cards.js"
 import styles from "./Cards.module.css"
@@ -14,7 +15,12 @@ import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
 import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter } from "firebase/firestore";
 import { useAuth } from '../../../Contexts/AuthContext';
-import { read } from 'fs';
+import { InitialConfigType, LexicalComposer } from "@lexical/react/LexicalComposer";
+import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import PlaygroundNodes from './playgroundNode.ts';
+import PlaygroundEditorTheme from './EditorTheme.ts';
+import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 
 declare global{
   type CardElement = {
@@ -86,7 +92,6 @@ interface SelectedFont {
   category: string;
 }
 
-
 export default function EditCard() {
   const outerDivRef = useRef(null)
   const { SelectedCard, components, setComponents, zoomScale, setZoomScale } = useCardContext()
@@ -134,6 +139,19 @@ export default function EditCard() {
 
   const storage = getStorage(app);
 
+  const EMPTY_CONTENT =
+  '{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
+
+  const editorConfig = {
+    editorState: EMPTY_CONTENT,
+    namespace: 'Playground',
+    nodes: [...PlaygroundNodes],
+    onError: (error: Error) => {
+      throw error;
+    },
+    theme: PlaygroundEditorTheme,
+  };
+  
   useEffect(() => {
     CalculateAreaPlaneSize()
   }, [zoomScale, height, width, selectedElementValue]);
@@ -324,7 +342,7 @@ export default function EditCard() {
         selected: false
       }
       documents.push(newData);
-    });
+    })
     setFiles(documents)
     const NewComponents = [...files]
     for (const image of documents) {
@@ -560,6 +578,7 @@ export default function EditCard() {
   return (
     <>
       <div onClick={() => (setIsShowingRightClick(false))} ref={outerDivRef}>
+        <LexicalComposer initialConfig={editorConfig}>
         <div className={styles.EditCardBottemView} style={{overflow:"hidden"}}>
           <Container fluid>
             <Row>
@@ -581,14 +600,11 @@ export default function EditCard() {
                     <div className={styles.CardContainterCardCSS} style={(zoomScale >= 100) ? selectedElementValue ? {
                           height: "85vh",
                           width: "80vw",
-                          position:"relative",
-                          overflow: "scroll"
+                          position:"relative"
                         }:{
                           height: "85vh",
-                      }> */}
-                    <div className={styles.CardContainterCardCSS} style={selectedElementValue? {
                           width: "98vw",
-                          overflow: "scroll"
+                          position:"relative"
                         }: selectedElementValue ? {
                           height: "85vh",
                           width: "80vw"
@@ -597,14 +613,54 @@ export default function EditCard() {
                           width: "98vw"
                         }
                       }
+                      onKeyDown={handler}
+                      onMouseUp={ (e) => {
+                        if (e.button == 0){
+                            if (pressed){
+                              setPressed(false)
+                              // setIsShowingRightClick(false)
+                            } else {
+                                if (isChangeingSize){
+                                  setIsChangingSize(false)
+                                } else {
+                                  setPressed(false)
+                                  setSelectedElement(null)
+                                }
+                            }
+                        }
+                      }}
                     >
-                      <div style={{display: "block",  height: "85vh", width: (zoomScale >= 100) ? "80vw":"85vh"}}>
+                      
+                      <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center", height: "85vh", width: (zoomScale >= 100) ? "98vw":"85vh"}}>
+                        {/* <img src={imageOverlay} style={
+                           (zoomScale >= 100) ? 
+                           {
+                             width: areaWidth * 3 + "px",
+                             height: areaHeight + "px",
+                             transform: 'scale('+(zoomScale/150)+')',
+                             margin: "auto",
+                             left: (46 - (0 + (zoomScale/100 * 35))) + "%",
+                             zIndex: 2, 
+                             position:"absolute"
+                           }:{
+                             width: areaWidth * 3 + "px",
+                             height: areaHeight + "px",
+                             left:(46 - (0 + (zoomScale/100 * 35))) + "%",
+                             zIndex: 2, 
+                             display: "flex",
+                             justifyContent: "center",
+                             alignItems: "center",
+                             margin: "auto",
+                             transform: 'scale('+(zoomScale/150)+')',
+                             position:"absolute"
+                           }}/> */}
                         <div style={ (zoomScale >= 100) ? 
                           {
                             width: areaWidth + "px",
                             height: areaHeight + "px",
                             display: "block",
-                            overflow: "scroll"
+                            overflow: "scroll",
+                            margin: "auto"
                           }:{
                             width: areaWidth + "px",
                             height: areaHeight + "px",
@@ -613,22 +669,6 @@ export default function EditCard() {
                             alignItems: "center",
                             margin: "auto",
                             overflow: "scroll"
-                          }}
-                          onKeyDown={handler}
-                          onMouseUp={ (e) => {
-                              if (e.button == 0){
-                                  if (pressed){
-                                    setPressed(false)
-                                    // setIsShowingRightClick(false)
-                                  } else {
-                                      if (isChangeingSize){
-                                        setIsChangingSize(false)
-                                      } else {
-                                        setPressed(false)
-                                        setSelectedElement(null)
-                                      }
-                                  }
-                              }
                           }}
                           >  
                         {/* Area Plane */}
@@ -639,21 +679,15 @@ export default function EditCard() {
                             backgroundColor: "gray",
                             height: areaHeight + "px",
                             width: areaWidth + "px",
-                            border: "5px solid red"
+                            border: "2px solid black",
+                            display: 'flex'
                           }}
                           onMouseMove={ onMouseMove }
                         >
                           {components?.map((item: CardElement) => ( 
-                          <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", translate: `${item.Position.XPosition}px ${item.Position.YPosition}px`}}> 
-                              <div
-                                  style={{
-                                    position: "absolute",
-                                    height: (item.Height) + "px",
-                                    width: (item.Width) + "px",
-                                    transform: 'scale('+(zoomScale/100)+')'
-                                  }}
-                                  >
-                                  <button key={item.ElementIndex} style={{ border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", position: "absolute", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: (item.Height + 10) + "px", width: (item.Width + 10) + "px"}}
+                          <div style={{zIndex: item.CurrentZIndex, cursor: "move", position: "absolute", left: item.Position.XPosition * (zoomScale/100) + "px", top: item.Position.YPosition * (zoomScale/100) + "px", height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px"}}> 
+                              <div style={{transform:  'scale('+(zoomScale/100)+')'}}>
+                                  <button key={item.ElementIndex} style={{ border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px"}}
                                   onClick={ (e) => {
                                     handleOnClick(e, item)
                                   }}
@@ -674,7 +708,12 @@ export default function EditCard() {
                                       }}>
                                       {(() => {
                                             switch(item.ElementType) {
-                                            case "Text": return <input type="text" id="myInput"  
+                                            case "Text": return (
+                                              <>
+                                              <div onFocus={() => {setIsUserTypeing(true)}} onBlur={() => {setIsUserTypeing(false)}}>
+                                                  <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}></p>} ErrorBoundary={LexicalErrorBoundary} />
+                                              </div>
+                                              {/* <input type="text" id="myInput"  
                                               style={
                                                 {
                                                   padding: 0, 
@@ -692,7 +731,8 @@ export default function EditCard() {
                                                 const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
                                                 NewComponents[SelectedIndex]["Content"] = event.target.value
                                                 setComponents(NewComponents)
-                                              }} onFocus={() => {setIsUserTypeing(true)}} onBlur={() => {setIsUserTypeing(false)}}></input>;
+                                              }} ></input>; */}
+                                              </>)
                                             case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
                                             case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
                                             default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
@@ -759,7 +799,6 @@ export default function EditCard() {
                       {/* mark */}
                       </div>
                     </div>
-                    {/* </div> */}
                     <div className={styles.CardToolbarDiv}>
                       <Stack direction='horizontal' gap={3}>
                         <div>
@@ -878,6 +917,7 @@ export default function EditCard() {
             </Row>
           </Container>
         </div>
+        </LexicalComposer>
         {
           //Settings menu
           isShowingSettings ?
@@ -1068,8 +1108,11 @@ export default function EditCard() {
                                 >
                                   <div>
                                     <img src={file.fileURL} alt='Oh No' style={ file.selected ?
-                                      {}:
                                       {
+                                        width: "20%", height: "20%"
+                                      }:
+                                      {
+                                        width: "20%", height: "20%",
                                         border: "5px solid red"
                                       }
                                     }/>

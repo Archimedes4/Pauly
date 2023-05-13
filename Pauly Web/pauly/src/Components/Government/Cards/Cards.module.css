@@ -5,6 +5,17 @@
     text-decoration: none;
     margin: 1rem;
     position: relative;
+    border-radius: 25px;
+}
+
+.LinkContainer{
+    width: 80%;
+    height: 10%;
+    color: black;
+    background-color: white;
+    text-decoration: none;
+    margin: 1rem;
+    position: relative;
     padding-left: 3%;
     border-radius: 25px;
     border: 2px solid black;
@@ -148,7 +159,7 @@
 
 /* card containter */
 .CardContainterCardCSS {
-    /* overflow: hidden; */
+    overflow: hidden;
     /* white-space: nowrap; */
     display: flex;
     justify-content: center;
@@ -160,3 +171,12 @@
 /* display: "flex",
 justifyContent: "center",
 alignItems: "center", */
+
+.ContentEditable{
+    border: 0;
+    font-size: 15px;
+    display: block;
+    position: relative;
+    outline: 0;
+    padding: 8px 28px 40px;
+}
