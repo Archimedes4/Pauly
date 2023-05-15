@@ -65,9 +65,9 @@ export default function CardsHome() {
       <div>  
         {
           Cards.map(item => (
-            <div key={item.FirebaseID} className={styles.LinkContainer}>
+            <div key={item.FirebaseID} className={styles.LinkContainer} style={(item.Use === "") ? {backgroundColor: "red"}:{}}>
                 <button onClick={(e) => setSelectedCard(e, item)} style={{border: "none", background: "none"}} > 
-                <p className={styles.Link}>{(item.use !== "" ) ? item.use :  "This Card Does Not Have a Use" }</p>
+                  <p className={styles.Link} style={(item.Use === "") ? {backgroundColor: "red"}:{}}>{(item.Use === "" ) ? "This Card Does Not Have a Use": item.Use }</p>
                 </button>
             </div>
           ))

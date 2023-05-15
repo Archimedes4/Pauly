@@ -21,6 +21,18 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import PlaygroundNodes from './playgroundNode.ts';
 import PlaygroundEditorTheme from './EditorTheme.ts';
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
+import EditorToolbar from './EditorToolbar.tsx';
+import SplashCheckmark from '../../../UI/SplashCheckmark/SplashCheckmark.tsx';
+import VideoContainer from '../../../UI/VideoContainer.tsx';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import {
+  FOCUS_COMMAND,
+  COMMAND_PRIORITY_LOW
+} from 'lexical';
+import { TextFocusPlugin } from './TextFocusPlugin.tsx';
+import { MaxLengthPlugin } from './MaxLengthPlugin.tsx';
 
 declare global{
   type CardElement = {
@@ -55,7 +67,7 @@ type fileType = {
   searchWords: string[]
   uniqueID: string
   viewers: string[]
-  fileURL: string | null
+  fileURL: null | string
   selected: boolean
 }
 
@@ -112,6 +124,12 @@ export default function EditCard() {
   const [aspectWidth, setAspectWidth] = useState(10)
   const [width, setWidth] = useState(window.innerWidth);//Device Width
   const [height, setHeight] = useState(window.innerHeight);//Device height
+  const areaContainerZoomRef = useRef(null)
+  const zoomRefAdd = useRef(null)
+  const zommRefReset = useRef(null)
+  const zommRefSubtract = useRef(null)
+  const [hasFocus, setFocus] = useState(false)
+  const editorRef = useRef(null)
 
   //Pauly Library
   const fileInputRef = useRef(null);
@@ -140,7 +158,7 @@ export default function EditCard() {
   const storage = getStorage(app);
 
   const EMPTY_CONTENT =
-  '{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
+  '{"root":{"children":[{"children":[{"type":"overflow", "size":10}],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
 
   const editorConfig = {
     editorState: EMPTY_CONTENT,
@@ -344,15 +362,16 @@ export default function EditCard() {
       documents.push(newData);
     })
     setFiles(documents)
-    const NewComponents = [...files]
+    const NewComponents = [...documents]
     for (const image of documents) {
       const result = await handleDownload(image.fileLocation)
       console.log("This is image unique", image.uniqueID)
       console.log("This is files", files)
-      const SelectedIndex = files.findIndex((element: fileType) => element.uniqueID === image.uniqueID)
+      const SelectedIndex = documents.findIndex((element: fileType) => element.uniqueID === image.uniqueID)
       console.log("This is selected index", SelectedIndex)
-      console.log("This is newcomponents selected index", NewComponents[SelectedIndex]["fileURL"])
-      NewComponents[SelectedIndex]["fileURL"] = result as string
+      if (SelectedIndex != -1){
+        NewComponents[SelectedIndex]["fileURL"] = result as string
+      }
     }
     setFiles(NewComponents)
   }
@@ -365,6 +384,32 @@ export default function EditCard() {
     setViewers([currentUser.uid])
     CalculateAreaPlaneSize()
   }, [])
+
+  const arrayChunk = (arr: fileType[], n: number, modeIn: SelectedImageLibraryModeType) => {
+    var mode = ""
+    if (modeIn === SelectedImageLibraryModeType.Images) {
+      mode = "image/jpeg"
+    }
+    else if (modeIn === SelectedImageLibraryModeType.Gifs) {
+      mode = "image/gif"
+    }
+    else if (modeIn === SelectedImageLibraryModeType.Videos) {
+      mode = "video/mp4"
+    }
+    else if (modeIn === SelectedImageLibraryModeType.PDFS) {
+      mode = "application/pdf"
+    }
+    var NewArray = []
+    for (var index = 0; (arr.length - 1) >= index; index++) {
+      if (arr[index].fileType === mode){
+        NewArray.push(arr[index])
+      }
+    }
+    const array = NewArray.slice();
+    const chunks = [];
+    while (array.length) chunks.push(array.splice(0, n));
+    return chunks;
+  };
 
   const handleOnClick = (e: React.SyntheticEvent, Index: CardElement) => {
     e.preventDefault();
@@ -545,7 +590,18 @@ export default function EditCard() {
             };
             reader.readAsDataURL(selectedFileNew);
           } else if (videoTypes.includes(selectedFileNew.type)){
-
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              const blob = new Blob( [ reader.result ] );
+              setFileSize(blob.size);
+              const url = URL.createObjectURL( blob );
+              setFileUrl(url);
+              console.log(url)
+              setSelectedFile(selectedFileNew);
+              setFileType("video/mp4");
+              setFileName(selectedFileNew.name);
+            };
+            reader.readAsArrayBuffer(selectedFileNew);
           } else if (pdfTypes.includes(selectedFileNew.type)){
 
           } else {
@@ -578,19 +634,23 @@ export default function EditCard() {
   return (
     <>
       <div onClick={() => (setIsShowingRightClick(false))} ref={outerDivRef}>
-        <LexicalComposer initialConfig={editorConfig}>
         <div className={styles.EditCardBottemView} style={{overflow:"hidden"}}>
           <Container fluid>
             <Row>
-              <Col className={styles.TitleEditCard}>
-                <h1 className={styles.TitleEditCard}> Edit Card </h1>
-              </Col>
               <Col className='justify-content-right'>
                 <Link to="/government/cards" style={{textDecoration: "none"}}>
                   <p className={styles.EditCardBackButton}>
                     Back
                   </p>
                 </Link>
+              </Col>
+              <Col className={styles.TitleEditCard}>
+                <h1 className={styles.TitleEditCard}> Edit Card </h1>
+              </Col>
+              <Col>
+                <Button onClick={() => setIsShowingSettings(!isShowingSettings)} className={styles.DropdownButtonStyle}>
+                  <FcSettings />
+                </Button>
               </Col>
             </Row>
             <Row>
@@ -630,191 +690,219 @@ export default function EditCard() {
                         }
                       }}
                     >
-                      
-                      <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center", height: "85vh", width: (zoomScale >= 100) ? "98vw":"85vh"}}>
-                        {/* <img src={imageOverlay} style={
-                           (zoomScale >= 100) ? 
-                           {
-                             width: areaWidth * 3 + "px",
-                             height: areaHeight + "px",
-                             transform: 'scale('+(zoomScale/150)+')',
-                             margin: "auto",
-                             left: (46 - (0 + (zoomScale/100 * 35))) + "%",
-                             zIndex: 2, 
-                             position:"absolute"
-                           }:{
-                             width: areaWidth * 3 + "px",
-                             height: areaHeight + "px",
-                             left:(46 - (0 + (zoomScale/100 * 35))) + "%",
-                             zIndex: 2, 
-                             display: "flex",
-                             justifyContent: "center",
-                             alignItems: "center",
-                             margin: "auto",
-                             transform: 'scale('+(zoomScale/150)+')',
-                             position:"absolute"
-                           }}/> */}
-                        <div style={ (zoomScale >= 100) ? 
-                          {
-                            width: areaWidth + "px",
-                            height: areaHeight + "px",
-                            display: "block",
-                            overflow: "scroll",
-                            margin: "auto"
-                          }:{
-                            width: areaWidth + "px",
-                            height: areaHeight + "px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            margin: "auto",
-                            overflow: "scroll"
-                          }}
-                          >  
-                        {/* Area Plane */}
-                        <div 
-                          style={{
-                            transform: 'scale('+(zoomScale/100)+')',
-                            transformOrigin: "top left",
-                            backgroundColor: "gray",
-                            height: areaHeight + "px",
-                            width: areaWidth + "px",
-                            border: "2px solid black",
-                            display: 'flex'
-                          }}
-                          onMouseMove={ onMouseMove }
-                        >
-                          {components?.map((item: CardElement) => ( 
-                          <div style={{zIndex: item.CurrentZIndex, cursor: "move", position: "absolute", left: item.Position.XPosition * (zoomScale/100) + "px", top: item.Position.YPosition * (zoomScale/100) + "px", height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px"}}> 
-                              <div style={{transform:  'scale('+(zoomScale/100)+')'}}>
-                                  <button key={item.ElementIndex} style={{ border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px"}}
-                                  onClick={ (e) => {
-                                    handleOnClick(e, item)
-                                  }}
-                                  onMouseDown={(e) => {
-                                    if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
-                                      setPressed(true)
-                                    }
-                                  }}
-                                  onContextMenu={(e) => {
-                                    e.preventDefault()
-                                    handleOnClick(e, item)
-                                    setMousePosition({x: e.clientX, y: e.clientY})
-                                    setIsShowingRightClick(!isShowingRightClick)        
+                    
+                    <TransformWrapper
+                      initialScale={1}
+                      minScale={0.1}
+                      maxScale={7}
+                      initialPositionX={200}
+                      initialPositionY={100}
+                      panning={{disabled: true}}
+                      ref={areaContainerZoomRef}
+                      wheel={{
+                        step: zoomScale/100
+                      }}
+                    >
+                      {({ zoomIn, zoomOut, resetTransform, setTransform, ...rest }) => (
+                        <React.Fragment>
+                            <button style={{border: "none", display: "none"}} onClick={() => resetTransform()} ref={zommRefReset}>x</button>
+                          <TransformComponent>
+                          <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center", height: "85vh", width: (zoomScale >= 100) ? "98vw":"85vh"}}>
+                            {/* <img src={imageOverlay} style={
+                              (zoomScale >= 100) ? 
+                              {
+                                width: areaWidth * 3 + "px",
+                                height: areaHeight + "px",
+                                transform: 'scale('+(zoomScale/150)+')',
+                                margin: "auto",
+                                left: (46 - (0 + (zoomScale/100 * 35))) + "%",
+                                zIndex: 2, 
+                                position:"absolute"
+                              }:{
+                                width: areaWidth * 3 + "px",
+                                height: areaHeight + "px",
+                                left:(46 - (0 + (zoomScale/100 * 35))) + "%",
+                                zIndex: 2, 
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                margin: "auto",
+                                transform: 'scale('+(zoomScale/150)+')',
+                                position:"absolute"
+                              }}/> */}
+                            <div style={ (zoomScale >= 100) ? 
+                              {
+                                width: areaWidth + "px",
+                                height: areaHeight + "px",
+                                display: "block",
+                                overflow: "scroll",
+                                margin: "auto"
+                              }:{
+                                width: areaWidth + "px",
+                                height: areaHeight + "px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                margin: "auto",
+                                overflow: "scroll"
+                              }}
+                            >  
+                            {/* Area Plane */}
+                              <div 
+                                style={{
+                                  transformOrigin: "top left",
+                                  backgroundColor: "gray",
+                                  height: areaHeight + "px",
+                                  width: areaWidth + "px",
+                                  border: "2px solid black",
+                                  display: 'flex'
+                                }}
+                                onMouseMove={ onMouseMove }
+                              >
+                            {components?.map((item: CardElement) => ( 
+                            <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${item.Position.XPosition}px, ${item.Position.YPosition}px)`, height: (item.Height) + "px", width: (item.Width) + "px"}}> 
+                              <div style={{ position: "absolute",
+                                    height: (item.Height) + "px",
+                                    width: (item.Width) + "px",}}>
+                              <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: (item.Height + 10) + "px", width: (item.Width + 10) + "px"}}
+                              onClick={ (e) => {
+                                handleOnClick(e, item)
+                              }}
+                              onMouseDown={(e) => {
+                                if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
+                                  setPressed(true)
+                                }
+                              }}
+                              onContextMenu={(e) => {
+                                e.preventDefault()
+                                handleOnClick(e, item)
+                                setMousePosition({x: e.clientX, y: e.clientY})
+                                setIsShowingRightClick(!isShowingRightClick)        
+                              }}>
+                                <div style={
+                                  {
+                                    opacity: item.Opacity/100
                                   }}>
-                                    <div style={
-                                      {
-                                        opacity: item.Opacity/100
-                                      }}>
-                                      {(() => {
-                                            switch(item.ElementType) {
-                                            case "Text": return (
-                                              <>
-                                              <div onFocus={() => {setIsUserTypeing(true)}} onBlur={() => {setIsUserTypeing(false)}}>
-                                                  <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}></p>} ErrorBoundary={LexicalErrorBoundary} />
+                                  {(() => {
+                                        switch(item.ElementType) {
+                                        case "Text": return (
+                                          <>
+                                            <LexicalComposer initialConfig={editorConfig}>
+                                              <div onClick={() => {
+                                                setIsUserTypeing(!isUserTyping)
+                                              }} onBlur={() => {setIsUserTypeing(false)}} style={{border: "5px solid blue", height: (item.Height + 10) + "px", width: (item.Width + 10) + "px", overflow: "hidden"}} >
+                                                <MaxLengthPlugin maxLength={30}/>
+                                                <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
+                                                <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
+                                                <EditorToolbar />
                                               </div>
-                                              {/* <input type="text" id="myInput"  
-                                              style={
-                                                {
-                                                  padding: 0, 
-                                                  margin: 0, 
-                                                  backgroundColor: "transparent", 
-                                                  border:"none", 
-                                                  boxShadow: "none",
-                                                  outline: "none"
-                                                }
-                                              } 
-                                              className="apply-font"
-                                              value={String(item.Content)} 
-                                              onChange={(event) => {
-                                                const NewComponents = [...components]
-                                                const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                                                NewComponents[SelectedIndex]["Content"] = event.target.value
-                                                setComponents(NewComponents)
-                                              }} ></input>; */}
-                                              </>)
-                                            case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
-                                            case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                            default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
-                                            }
-                                        })()}
-                                    </div>
-                                  </button>
-                                  { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
-                                  <div>
-                                      <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
-                                          if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                              setIsChangingSize(true)
-                                              setChangingSizeDirection("ne")
-                                          }
-                                      }}><span className={styles.dot} /></button> {/* Right Top */}
-                                      <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, ${(item.Height - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
-                                          if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                              setIsChangingSize(true)
-                                              setChangingSizeDirection("e")
-                                          }
-                                      }}><span className={styles.dot} /></button>  {/* Right */} 
-                                      <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, ${item.Height - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
-                                          if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                              setIsChangingSize(true)
-                                              setChangingSizeDirection("se")
-                                          }
-                                      }}><span className={styles.dot} /></button> {/* Right Bottem */}
-                                      <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width + 5)/2}px, ${(item.Height - 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
-                                          if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                              setIsChangingSize(true)
-                                              setChangingSizeDirection("s")
-                                          }
-                                      }}><span className={styles.dot} /></button> {/* Bottem */}
-                                      <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${item.Height - 9}px)`, cursor:"sw-resize"}} onMouseDown={() => {
-                                          if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                              setIsChangingSize(true)
-                                              setChangingSizeDirection("sw")
-                                          }
-                                      }}><span className={styles.dot} /></button> {/* Left Bottem */}
-                                      <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height - 24)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
-                                          if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                              setIsChangingSize(true)
-                                              setChangingSizeDirection("w")
-                                          }
-                                      }}><span className={styles.dot} /></button> {/* Left */}
-                                      <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
-                                          if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                              setIsChangingSize(true)
-                                              setChangingSizeDirection("nw")
-                                          }
-                                      }}><span className={styles.dot} /></button> {/* Left Top */}
-                                      <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
-                                          if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                              setIsChangingSize(true)
-                                              setChangingSizeDirection("n")
-                                          }
-                                      }}><span className={styles.dot} /></button> {/* Top */}
-                                  </div>
-                                  }
+                                            </LexicalComposer>
+                                          </>)
+                                        case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
+                                        case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                        case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                        default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
+                                        }
+                                    })()}
+                                </div>
+                              </button>
+                              { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
+                              <div>
+                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
+                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                          setIsChangingSize(true)
+                                          setChangingSizeDirection("ne")
+                                      }
+                                  }}><span className={styles.dot} /></button> {/* Right Top */}
+                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, ${(item.Height - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
+                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                          setIsChangingSize(true)
+                                          setChangingSizeDirection("e")
+                                      }
+                                  }}><span className={styles.dot} /></button>  {/* Right */} 
+                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, ${item.Height - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
+                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                          setIsChangingSize(true)
+                                          setChangingSizeDirection("se")
+                                      }
+                                  }}><span className={styles.dot} /></button> {/* Right Bottem */}
+                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width + 5)/2}px, ${(item.Height - 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
+                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                          setIsChangingSize(true)
+                                          setChangingSizeDirection("s")
+                                      }
+                                  }}><span className={styles.dot} /></button> {/* Bottem */}
+                                  <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${item.Height - 9}px)`, cursor:"sw-resize"}} onMouseDown={() => {
+                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                          setIsChangingSize(true)
+                                          setChangingSizeDirection("sw")
+                                      }
+                                  }}><span className={styles.dot} /></button> {/* Left Bottem */}
+                                  <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height - 24)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
+                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                          setIsChangingSize(true)
+                                          setChangingSizeDirection("w")
+                                      }
+                                  }}><span className={styles.dot} /></button> {/* Left */}
+                                  <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
+                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                          setIsChangingSize(true)
+                                          setChangingSizeDirection("nw")
+                                      }
+                                  }}><span className={styles.dot} /></button> {/* Left Top */}
+                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
+                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                          setIsChangingSize(true)
+                                          setChangingSizeDirection("n")
+                                      }
+                                  }}><span className={styles.dot} /></button> {/* Top */}
                               </div>
-                          </div> ))}
-                        </div>
-                        </div>
-                      {/* mark */}
-                      </div>
+                              }
+                              </div>
+                            </div> 
+                            ))}
+                              </div>
+                            </div>
+                          {/* mark */}
+                          </div>
+                          {/* Mark */}
+                          </TransformComponent>
+                        </React.Fragment>
+                      )}
+                    </TransformWrapper>
                     </div>
                     <div className={styles.CardToolbarDiv}>
                       <Stack direction='horizontal' gap={3}>
                         <div>
-                        <InputGroup hasValidation>
-                          <InputGroup.Text id="inputGroupPrepend" onClick={setZoom} style={{backgroundColor: "white", padding:0, border: "none"}}><FaArrowLeft /></InputGroup.Text>
-                          <Form.Control
-                            id="SetZoom"
-                            onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
-                            value={zoomScale + "%"}
-                            onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
-                            className={styles.sizeForm}
-                            style={{color:"blue", border: "none",  borderRadius: 0}}
-                          />
-                          <InputGroup.Text id="inputGroupAfter" onClick={setZoom} style={{backgroundColor: "white", padding: 0, border: "none"}}><FaArrowRight/></InputGroup.Text>
-                          <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => setZoomScale(changeEvent.target.value)} className={styles.slider} id="myRange" />
-                        </InputGroup>
+                          <InputGroup hasValidation>
+                            <InputGroup.Text id="inputGroupPrepend" onClick={() => {
+                              if (zoomScale >= 10){
+                                setZoomScale((zoomScale - 10))
+                                // const { setTransform } = areaContainerZoomRef.current
+                                // setTransform(100,200,zoomScale/100)
+                              }
+                            }} style={{backgroundColor: "white", padding:0, border: "none"}}><FaArrowLeft /></InputGroup.Text>
+                            <Form.Control
+                              id="SetZoom"
+                              onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
+                              value={zoomScale + "%"}
+                              onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
+                              className={styles.sizeForm}
+                              style={{color:"blue", border: "none",  borderRadius: 0}}
+                            />
+                            <InputGroup.Text id="inputGroupAfter" onClick={() => {
+                              if (zoomScale <= 500){
+                                setZoomScale((zoomScale + 10))
+                                // const { setTransform } = areaContainerZoomRef.current
+                                // setTransform(100,200,zoomScale/100)
+                              }
+                            }} style={{backgroundColor: "white", padding: 0, border: "none"}}><FaArrowRight/></InputGroup.Text>
+                            <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => {
+                                const { setTransform } = areaContainerZoomRef.current
+                                setTransform(100,200,zoomScale/100)
+                                setZoomScale(changeEvent.target.value) 
+                              }} className={styles.slider} id="myRange" />
+                          </InputGroup>
                         </div>
                         <div style={{height:"2vh", width:"20vw"}}>
                           <Button className={styles.DropdownButtonStyle}>
@@ -845,9 +933,6 @@ export default function EditCard() {
                               </div>
                           </Button>
                         </div>
-                        <Button onClick={() => setIsShowingSettings(!isShowingSettings)} className={styles.DropdownButtonStyle}>
-                          <FcSettings />
-                        </Button>
                       </Stack>
                     </div>
                   </Stack>
@@ -889,7 +974,7 @@ export default function EditCard() {
                     { (selectedElementValue.ElementType === "Text") ?
                       <>
                         <Row>
-                          {/* <Editor editorState={this.state.editorState} onChange={this.onChange} /> */}
+                          {/* <EditorToolbar /> */}
                         </Row>
                       </>:null
                     }
@@ -917,7 +1002,6 @@ export default function EditCard() {
             </Row>
           </Container>
         </div>
-        </LexicalComposer>
         {
           //Settings menu
           isShowingSettings ?
@@ -968,7 +1052,7 @@ export default function EditCard() {
                         {fileUrl && (selectedFile.type === "video/mp4") &&(
                           <video controls  ref={videoElement}>
                             <source src={fileUrl} type="video/mp4" />
-                            Your browser does not support the video tag.
+                            Your browser does not support video.
                           </video>
                         )}
                          {fileUrl &&  (selectedFile.type === "image/gif") && <img src={fileUrl} alt="User-selected image" style={{height: "100px", width: "100px" }} />}
@@ -978,21 +1062,27 @@ export default function EditCard() {
                         {fileType && <p>Selected file type: {fileType}</p>}
                         {fileName && <p>Selected file name: {fileName}</p>}
                       </Stack>
-                      <Stack>
-                        <Stack direction='horizontal'>
+                      <Stack direction='horizontal'>
+                        {/* <Stack direction='horizontal'>
                           <p>Members</p>
                           <p>Owners</p>
                           <p>Contributes</p>
                           <p>Viewers</p>
-                        </Stack>
-                        <div>
-                          {fileUsers?.map((item: fileUserType) => (
-                            <Stack direction='horizontal'>
+                        </Stack> */}
+                        <div style={{width: "10vw"}}>
+                          <Stack>
+                            <p style={{textAlign: "center"}}>Users</p>
+                            {fileUsers?.map((item: fileUserType) => (
                               <p> {item.UsersName} </p>
-                              <input
-                                type="checkbox"
-                                checked={item.Owner}
-                                onChange={() => {
+                            ))}
+                          </Stack>
+                        </div>
+                        <div style={{width: "10vw"}}>
+                          <Stack>
+                            <p>Owner</p>
+                            {fileUsers?.map((item: fileUserType) => (
+                              <div style={{width: "15%", height: "15%"}}>
+                                <SplashCheckmark isPressed={item.Owner} setIsPressed={() => {
                                   const NewComponents = [...fileUsers]
                                   const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
                                   if (NewComponents[SelectedIndex]["Owner"]){
@@ -1005,13 +1095,17 @@ export default function EditCard() {
                                   }
                                   NewComponents[SelectedIndex]["Owner"] = !NewComponents[SelectedIndex]["Owner"]
                                   setFileUsers(NewComponents)
-                                  
-                                }}
-                              />
-                              <input
-                                type="checkbox"
-                                checked={item.Contributer}
-                                onChange={() => {
+                                }}/>
+                              </div>
+                            ))}
+                          </Stack>
+                        </div>
+                        <div style={{width: "10vw"}}>
+                          <Stack>
+                            <p>Contributers</p>
+                            {fileUsers?.map((item: fileUserType) => (
+                              <div style={{width: "15%", height: "15%"}}>
+                                <SplashCheckmark isPressed={item.Contributer} setIsPressed={() => {
                                   const NewComponents = [...fileUsers]
                                   const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
                                   if (NewComponents[SelectedIndex]["Contributer"]){
@@ -1024,30 +1118,35 @@ export default function EditCard() {
                                   }
                                   NewComponents[SelectedIndex]["Contributer"] = !NewComponents[SelectedIndex]["Contributer"]
                                   setFileUsers(NewComponents)
-                                  
-                                }}
-                              />
-                              <input
-                                type="checkbox"
-                                checked={item.Viewer}
-                                onChange={() => {
-                                  const NewComponents = [...fileUsers]
-                                  const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
-                                  if (NewComponents[SelectedIndex]["Viewer"]){
-                                    const NewContributers = contributers.filter(number => number !== item.UsersId);
-                                    setContributers(NewContributers)
-                                  } else {
-                                    const NewContributers = contributers
-                                    contributers.push(item.UsersId)
-                                    setContributers(NewContributers)
-                                  }
-                                  NewComponents[SelectedIndex]["Viewer"] = !NewComponents[SelectedIndex]["Viewer"]
-                                  setFileUsers(NewComponents)
-                                  
-                                }}
-                              />
-                            </Stack>
-                          ))}
+                                }}/>
+                              </div>
+                            ))}
+                          </Stack>
+                        </div>
+                        <div style={{width: "10vw"}}>
+                          <Stack>
+                            <p>Viewer</p>
+                            {fileUsers?.map((item: fileUserType) => (
+                              <div style={{width: "15%", height: "15%"}}>
+                                <div style={{ margin: "auto"}}>
+                                  <SplashCheckmark isPressed={item.Viewer} setIsPressed={() => {
+                                    const NewComponents = [...fileUsers]
+                                    const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
+                                    if (NewComponents[SelectedIndex]["Viewer"]){
+                                      const NewContributers = contributers.filter(number => number !== item.UsersId);
+                                      setContributers(NewContributers)
+                                    } else {
+                                      const NewContributers = contributers
+                                      contributers.push(item.UsersId)
+                                      setContributers(NewContributers)
+                                    }
+                                    NewComponents[SelectedIndex]["Viewer"] = !NewComponents[SelectedIndex]["Viewer"]
+                                    setFileUsers(NewComponents)
+                                }} />
+                                </div>
+                              </div>
+                            ))}
+                          </Stack>
                         </div>
                       </Stack>
                     </Stack>
@@ -1070,7 +1169,8 @@ export default function EditCard() {
                   </Card.Title>
                   <Card.Body>
                     <Card>
-                      <Stack direction='horizontal'>
+                      <Stack direction='horizontal' gap={1}>
+                        
                         <Button onClick={() => {setSelectedImageLibraryMode(SelectedImageLibraryModeType.Images)}}>
                           Images
                         </Button>
@@ -1084,93 +1184,54 @@ export default function EditCard() {
                           PDFs
                         </Button>
                       </Stack>
-                        {(SelectedImageLibraryMode === SelectedImageLibraryModeType.Images) ? 
-                        <> 
-                          {files.map((file) => (
-                            <div key={file.uniqueID}>
-                              { (file.fileType === "image/jpeg") ? 
-                                <button onClick={() => {
-                                  const NewComponents = [...files]
-                                  const SelectedIndex = files.findIndex((element: fileType) => element.uniqueID === file.uniqueID)
-                                  NewComponents[SelectedIndex]["selected"] = !NewComponents[SelectedIndex]["selected"]
-                                  setFiles(NewComponents)
-                                  if (NewComponents[SelectedIndex]["selected"]){
-                                    
-                                    setSelectedFileLibrary(null)
-                                  } else {
-                                    setSelectedFileLibrary(NewComponents[SelectedIndex])
-                                  }
-                                }}
-                                style={{
-                                  border: "none",
-                                  background: "transparent"
-                                }}
-                                >
-                                  <div>
-                                    <img src={file.fileURL} alt='Oh No' style={ file.selected ?
-                                      {
-                                        width: "20%", height: "20%"
-                                      }:
-                                      {
-                                        width: "20%", height: "20%",
-                                        border: "5px solid red"
+                        <>
+                          <Stack>
+                          {arrayChunk(files, 3, SelectedImageLibraryMode).map((row, i) => (
+                            <Stack direction='horizontal'>
+                              {row.map((item: fileType) => (
+                                <div key={item.uniqueID} style={{width: "30%", height: "30%", position: "relative"}}>
+                                  <button onClick={() => {
+                                    const NewComponents = [...files]
+                                    const SelectedIndex = files.findIndex((element: fileType) => element.uniqueID === item.uniqueID)
+                                    NewComponents[SelectedIndex]["selected"] = !NewComponents[SelectedIndex]["selected"]
+                                    setFiles(NewComponents)
+                                    if (NewComponents[SelectedIndex]["selected"]){
+                                      setSelectedFileLibrary(NewComponents[SelectedIndex])
+                                    } else {
+                                      setSelectedFileLibrary(null)
+                                    }
+                                  }}
+                                  style={{
+                                    border: "none",
+                                    background: "transparent"
+                                  }}
+                                  >
+                                    <div style={{display: "inline"}}>
+                                      {(item.fileURL == null) ?
+                                        <p>File Loading</p>: <>
+                                          { (SelectedImageLibraryMode === SelectedImageLibraryModeType.Gifs || SelectedImageLibraryMode === SelectedImageLibraryModeType.Images) ? 
+                                          <img src={item.fileURL} alt='Oh No' style={ item.selected ?
+                                            {width: "100%", height:"100%", border: "5px solid red"}:{width: "100%", height:"100%"}
+                                          }/>:null
+                                          }
+                                          {(SelectedImageLibraryMode === SelectedImageLibraryModeType.Videos) ?
+                                            <>{!!item.fileURL && (
+                                              <div style={{width: "100%", height: "100%", position: "relative"}}>
+                                                <VideoContainer url={item.fileURL} />
+                                              </div>
+                                            )}
+                                            </>:null
+                                          }
+                                        </>
                                       }
-                                    }/>
-                                  </div>
-                                </button>
-                                :null
-                              }
-                            </div>
-                          ))
-                          }
-                        </>:null}
-                        {(SelectedImageLibraryMode === SelectedImageLibraryModeType.Gifs) ? 
-                        <> 
-                          { (files.length <= 1) ?
-                            <p onClick={() => {console.log(files.length)}}>No Files</p>:
-                            <>
-                              {files.map((file) => (
-                                <div key={file.uniqueID}>
-                                  { (file.fileType === "image/gif") ? 
-                                    <button onClick={() => {
-                                      const NewComponents = [...files]
-                                      const SelectedIndex = files.findIndex((element: fileType) => element.uniqueID === file.uniqueID)
-                                      NewComponents[SelectedIndex]["selected"] = !NewComponents[SelectedIndex]["selected"]
-                                      setFiles(NewComponents)
-                                      if (NewComponents[SelectedIndex]["selected"]){
-                                        setSelectedFileLibrary(null)
-                                      } else {
-                                        setSelectedFileLibrary(NewComponents[SelectedIndex])
-                                      }
-                                    }}
-                                    style={{
-                                      border: "none",
-                                      background: "transparent"
-                                    }}
-                                    >
-                                      <div>
-                                        {(file.fileURL != null) ?
-                                          null:<img src={file.fileURL} alt='Oh No' style={ file.selected ?
-                                            {}:
-                                            {
-                                              border: "5px solid red"
-                                            }
-                                          }/>
-                                        }
-                                      </div>
-                                    </button>
-                                    :null
-                                  }
-                                </div>
-                              ))
-                              }
-                            </>
-                          }
-                        </>:null}
-                        {(SelectedImageLibraryMode === SelectedImageLibraryModeType.Videos) ? 
-                        <> 
-                          <p> This is videos </p>
-                        </>:null}
+                                    </div>
+                                  </button>
+                              </div>
+                              ))}
+                            </Stack>
+                          ))}
+                          </Stack>
+                        </>
                         {(SelectedImageLibraryMode === SelectedImageLibraryModeType.PDFS) ? 
                         <> 
                           <p> This is pdfs </p>
@@ -1178,12 +1239,13 @@ export default function EditCard() {
                       <Stack direction='horizontal'>
                         <Button onClick={(e) => {
                           addComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                          setIsShowingPaulyLibrary(false)
                         }} disabled={selectedFileLibrary === null}>
                           <p>Select</p>
                         </Button>
-                        <Button>
-                          <p>Edit</p>
-                        </Button>
+                        <button className={styles.ImageLibraryButton}>
+                          <p style={{padding: 0, margin: 0}}>Edit</p>
+                        </button>
                         <Dropdown>
                           <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
                             <div style={{height:"2vh"}}>

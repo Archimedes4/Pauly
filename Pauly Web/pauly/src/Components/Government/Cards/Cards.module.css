@@ -48,7 +48,7 @@
 }
 
 .EditCardBackButton{
-    text-align: right;
+    text-align: left;
     color: black;
     padding-top: 0.5%;
 }
@@ -116,6 +116,7 @@
     height: 5vh;
     margin-top: 2vh;
     border-radius: 5px;
+    display: block;
 }
 
 .CardToolBarButton{
@@ -178,5 +179,12 @@ alignItems: "center", */
     display: block;
     position: relative;
     outline: 0;
-    padding: 8px 28px 40px;
+    padding: 0;
+    overflow: hidden;
+}
+
+.ImageLibraryButton{
+    margin: 5%;
+    background-color: blue;
+    border: none;
 }
