@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Button, Dropdown } from 'react-bootstrap'
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import {
@@ -31,6 +31,7 @@ import DropdownColorPicker from '../../ui/DropdownColorPicker';
 import { $createOverflowNode } from "@lexical/overflow"
 
 export default function EditorToolbar() {
+  const refInput = useRef(null);
   const [editor] = useLexicalComposerContext();
   const [fonts, setFonts] = useState<string[]>(["Times New Roman", "Georgia", "Garamond", "Arial", "Verdana", "Helvetica", "Brush Script MT"])
   const [fontSizes, setFontSizes] = useState<string[]>(["10px", "12px", "14px", "16px", "18px", "20px", "36px"])
@@ -109,3 +110,12 @@ export default function EditorToolbar() {
   //   </div>
   // )
 }
+
+
+// export function changeFontBold(){
+//   const [editor] = useLexicalComposerContext();
+//   useEffect(() => {
+//     editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')
+//   }, [])
+//   return (<p>This</p>)
+// }

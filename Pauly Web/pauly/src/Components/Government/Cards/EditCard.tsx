@@ -33,6 +33,12 @@ import {
 } from 'lexical';
 import { TextFocusPlugin } from './TextFocusPlugin.tsx';
 import { MaxLengthPlugin } from './MaxLengthPlugin.tsx';
+import Bold from './LexicalFunctions/Bold.tsx';
+import FontSize from './LexicalFunctions/FontSize.tsx';
+import FontStyle from './LexicalFunctions/FontStyle.tsx';
+import Italic from './LexicalFunctions/Italic.tsx';
+import Strikethrough from './LexicalFunctions/Strikethrough.tsx';
+import Underlined from './LexicalFunctions/Underline.tsx';
 
 declare global{
   type CardElement = {
@@ -124,12 +130,15 @@ export default function EditCard() {
   const [aspectWidth, setAspectWidth] = useState(10)
   const [width, setWidth] = useState(window.innerWidth);//Device Width
   const [height, setHeight] = useState(window.innerHeight);//Device height
-  const areaContainerZoomRef = useRef(null)
-  const zoomRefAdd = useRef(null)
-  const zommRefReset = useRef(null)
-  const zommRefSubtract = useRef(null)
-  const [hasFocus, setFocus] = useState(false)
   const editorRef = useRef(null)
+  const [selectedDeviceMode, setSelectedDeviceMode] = useState<SelectedAspectType>(SelectedAspectType.Small)
+  const [selectedSettingsMode, setSelectedSettingsMode] = useState<SelectedSettingsModeType>(SelectedSettingsModeType.Discription)
+  const [bolded, setBolded] = useState<boolean>(false)
+  const [underlined, setUnderlined] = useState<boolean>(false)
+  const [italic, setItalic] = useState<boolean>(false)
+  const [strikethrough, setStrikethrough] = useState<boolean>(false)
+  const [fontSize, setFontSize] = useState<string>("12px")
+  const [fontStyle, setFontStyle] = useState<string>("Times New Roman")
 
   //Pauly Library
   const fileInputRef = useRef(null);
@@ -473,11 +482,8 @@ export default function EditCard() {
     //     setAreaWidth((((NewHeight/aspectWidth) * aspectHeight) * (zoomScale/100)))
     //   }
     // }
-    var elementWidth = width * 0.98
+    var elementWidth = width * 0.8
     const elementHeight = height * 0.85
-    if (selectedElementValue) {
-      elementWidth = width * 0.8
-    }
     if (aspectWidth >= aspectHeight){
       const newHeight = (elementWidth/aspectWidth) * aspectHeight
       console.log("new height", newHeight)
@@ -498,10 +504,6 @@ export default function EditCard() {
         setAreaHeight(elementHeight * (zoomScale/100))
       }
     }
-    console.log("height", areaHeight)
-    console.log("width", areaWidth)
-    console.log("Window Width 98", (width * 0.98))
-    console.log("window Height 85", (height * 0.85))
   }
 
   async function handleUpload() {
@@ -635,44 +637,121 @@ export default function EditCard() {
     <>
       <div onClick={() => (setIsShowingRightClick(false))} ref={outerDivRef}>
         <div className={styles.EditCardBottemView} style={{overflow:"hidden"}}>
-          <Container fluid>
-            <Row>
-              <Col className='justify-content-right'>
-                <Link to="/government/cards" style={{textDecoration: "none"}}>
-                  <p className={styles.EditCardBackButton}>
-                    Back
-                  </p>
-                </Link>
-              </Col>
-              <Col className={styles.TitleEditCard}>
-                <h1 className={styles.TitleEditCard}> Edit Card </h1>
-              </Col>
-              <Col>
-                <Button onClick={() => setIsShowingSettings(!isShowingSettings)} className={styles.DropdownButtonStyle}>
-                  <FcSettings />
-                </Button>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                  <Stack>
-                    {/* Continer */}
-                    <div className={styles.CardContainterCardCSS} style={(zoomScale >= 100) ? selectedElementValue ? {
-                          height: "85vh",
-                          width: "80vw",
-                          position:"relative"
-                        }:{
-                          height: "85vh",
-                          width: "98vw",
-                          position:"relative"
-                        }: selectedElementValue ? {
-                          height: "85vh",
-                          width: "80vw"
-                        }:{
-                          height: "85vh",
-                          width: "98vw"
-                        }
+          <Container fluid style={{height: "100%", width: "100%", padding: 0, margin: 0}}>
+              <Row>
+                <div style={{borderBottom: "3px solid black"}}>
+                  <Stack direction='horizontal' gap={5}>
+                    <div className={styles.editCardBackButtonOuterContainer}>
+                      <Link to="/government/cards" style={{textDecoration: "none"}}>
+                        <div className={styles.editCardBackButtonInnerContainer}>
+                          <p className={styles.EditCardBackButton}>Back</p>
+                        </div>
+                      </Link>
+                    </div>
+                    <h1 className={styles.TitleEditCard}> Edit Card </h1>
+                    <Button onClick={() => setIsShowingSettings(!isShowingSettings)} className={styles.DropdownButtonStyle}>
+                      <FcSettings />
+                    </Button>
+                  </Stack>
+                </div>
+              </Row>
+              <Row noGutters={true}>
+                <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%"}} className="d-none d-md-block">
+                  { selectedElementValue ? 
+                    <Container style={{margin: 0, padding: 0, height: "100%", backgroundColor: '#444444', width: "100%"}}>
+                      <Row>
+                        <Button onClick={() => setIsNavigateToDestinations(true)}>
+                          Destination
+                        </Button>
+                      </Row>
+                      { (selectedElementValue.ElementType === "Shape") ? 
+                        <>
+                          <Row>
+                            <p>Corner Radius: {selectedElementValue.CornerRadius}%</p>
+                            <input type="range" min="1" max="50" value={selectedElementValue.CornerRadius} 
+                            onChange={changeEvent => {
+                              const NewComponents = [...components]
+                              const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                              NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
+                              setComponents(NewComponents)
+                              setSelectedElement(NewComponents[SelectedIndex])
+                              
+                            }} 
+                            className={styles.slider} id="myRange" />
+                          </Row>
+                          <Row>
+                          <input type="color" id="colorpicker" value={selectedElementValue.SelectedColor.toString()} onChange={changeEvent => {
+                          const NewComponents = [...components]
+                          const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                          NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
+                          setComponents(NewComponents)
+                          setSelectedElement(NewComponents[SelectedIndex])
+                          }} />
+                          </Row>
+                        </>:null
                       }
+                      { (selectedElementValue.ElementType === "Text") ?
+                        <>
+                          <Row>
+                            {/* <EditorToolbar /> */}
+                            <button onClick={(e) => {
+                              e.preventDefault()
+                              setBolded(!bolded)
+                            }}>Bold</button>
+                            <button onClick={(e) => {
+                              e.preventDefault()
+                              setItalic(!italic)
+                            }}>
+                              Italic
+                            </button>
+                            <button onClick={(e) => {
+                              e.preventDefault()
+                              setItalic(!underlined)
+                            }}>
+                              Underline
+                            </button>
+                            <button onClick={(e) => {
+                              e.preventDefault()
+                              setUnderlined(!strikethrough)
+                            }}>
+                              Strikethrough
+                            </button>
+                            <button>
+                              Font: {fontStyle}
+                            </button>
+                            <button>
+                              Font Size: {fontSize}
+                            </button>
+                          </Row>
+                        </>:null
+                      }
+                      <Row>
+                        <p>Opacity: {selectedElementValue.Opacity}%</p>
+                        <input type="range" min="1" max="100" value={selectedElementValue.Opacity} 
+                        onChange={changeEvent => {
+                          const NewComponents = [...components]
+                          const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                          NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
+                          setComponents(NewComponents)
+                          setSelectedElement(NewComponents[SelectedIndex])
+                          
+                        }} 
+                        className={styles.slider} id="myRange" />
+                      </Row>
+                      <Row>
+                        <p>Undo</p>
+                      </Row>
+                    </Container>: 
+                    <Container style={{backgroundColor: '#444444', height: "100%", width: "100%", margin: 0, padding: 0}}>
+                      <p> This</p>
+                    </Container>
+                  }
+                </Col>
+                {/* <Col style={{backgroundColor: "#793033",padding: 0, margin: 0, height: "100%"}}>
+                    <div style={{height: "100%"}}> */}
+                <Col className={styles.CardContainterCardCSSColumn} style={{width: "100%"}}>
+                  {/* Continer */}
+                    <div className={styles.CardContainterCardCSS}
                       onKeyDown={handler}
                       onMouseUp={ (e) => {
                         if (e.button == 0){
@@ -680,353 +759,273 @@ export default function EditCard() {
                               setPressed(false)
                               // setIsShowingRightClick(false)
                             } else {
-                                if (isChangeingSize){
-                                  setIsChangingSize(false)
-                                } else {
-                                  setPressed(false)
-                                  setSelectedElement(null)
-                                }
+                              if (isChangeingSize){
+                                setIsChangingSize(false)
+                              } else {
+                                setPressed(false)
+                                setSelectedElement(null)
+                              }
                             }
                         }
                       }}
                     >
-                    
-                    <TransformWrapper
-                      initialScale={1}
-                      minScale={0.1}
-                      maxScale={7}
-                      initialPositionX={200}
-                      initialPositionY={100}
-                      panning={{disabled: true}}
-                      ref={areaContainerZoomRef}
-                      wheel={{
-                        step: zoomScale/100
-                      }}
-                    >
-                      {({ zoomIn, zoomOut, resetTransform, setTransform, ...rest }) => (
-                        <React.Fragment>
-                            <button style={{border: "none", display: "none"}} onClick={() => resetTransform()} ref={zommRefReset}>x</button>
-                          <TransformComponent>
-                          <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center", height: "85vh", width: (zoomScale >= 100) ? "98vw":"85vh"}}>
-                            {/* <img src={imageOverlay} style={
-                              (zoomScale >= 100) ? 
-                              {
-                                width: areaWidth * 3 + "px",
+                      <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center"}}>
+                          <div style={ (zoomScale >= 100) ? 
+                            {
+                              width: areaWidth + "px",
+                              height: areaHeight + "px",
+                              display: "block",
+                              overflow: "scroll",
+                              margin: "auto",
+                              transform: "scale(" + (zoomScale/100) +")",
+                              transformOrigin: "-" + (zoomScale/100) + "px" + " "+ "0" +"px"
+                            }:{
+                              width: areaWidth + "px",
+                              height: areaHeight + "px",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              margin: "auto",
+                              overflow: "scroll",
+                              transform: "scale(" + (zoomScale/100) +")",
+                            }}
+                          >  
+                          {/* Area Plane */}
+                            <div 
+                              style={{
+                                transformOrigin: "top left",
+                                backgroundColor: "gray",
                                 height: areaHeight + "px",
-                                transform: 'scale('+(zoomScale/150)+')',
-                                margin: "auto",
-                                left: (46 - (0 + (zoomScale/100 * 35))) + "%",
-                                zIndex: 2, 
-                                position:"absolute"
-                              }:{
-                                width: areaWidth * 3 + "px",
-                                height: areaHeight + "px",
-                                left:(46 - (0 + (zoomScale/100 * 35))) + "%",
-                                zIndex: 2, 
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                margin: "auto",
-                                transform: 'scale('+(zoomScale/150)+')',
-                                position:"absolute"
-                              }}/> */}
-                            <div style={ (zoomScale >= 100) ? 
-                              {
                                 width: areaWidth + "px",
-                                height: areaHeight + "px",
-                                display: "block",
-                                overflow: "scroll",
-                                margin: "auto"
-                              }:{
-                                width: areaWidth + "px",
-                                height: areaHeight + "px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                margin: "auto",
-                                overflow: "scroll"
+                                border: "2px solid black",
+                                display: 'flex'
                               }}
-                            >  
-                            {/* Area Plane */}
-                              <div 
-                                style={{
-                                  transformOrigin: "top left",
-                                  backgroundColor: "gray",
-                                  height: areaHeight + "px",
-                                  width: areaWidth + "px",
-                                  border: "2px solid black",
-                                  display: 'flex'
-                                }}
-                                onMouseMove={ onMouseMove }
-                              >
-                            {components?.map((item: CardElement) => ( 
-                            <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${item.Position.XPosition}px, ${item.Position.YPosition}px)`, height: (item.Height) + "px", width: (item.Width) + "px"}}> 
-                              <div style={{ position: "absolute",
-                                    height: (item.Height) + "px",
-                                    width: (item.Width) + "px",}}>
-                              <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: (item.Height + 10) + "px", width: (item.Width + 10) + "px"}}
-                              onClick={ (e) => {
-                                handleOnClick(e, item)
-                              }}
-                              onMouseDown={(e) => {
-                                if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
-                                  setPressed(true)
-                                }
-                              }}
-                              onContextMenu={(e) => {
-                                e.preventDefault()
-                                handleOnClick(e, item)
-                                setMousePosition({x: e.clientX, y: e.clientY})
-                                setIsShowingRightClick(!isShowingRightClick)        
-                              }}>
-                                <div style={
-                                  {
-                                    opacity: item.Opacity/100
-                                  }}>
-                                  {(() => {
-                                        switch(item.ElementType) {
-                                        case "Text": return (
-                                          <>
-                                            <LexicalComposer initialConfig={editorConfig}>
-                                              <div onClick={() => {
-                                                setIsUserTypeing(!isUserTyping)
-                                              }} onBlur={() => {setIsUserTypeing(false)}} style={{border: "5px solid blue", height: (item.Height + 10) + "px", width: (item.Width + 10) + "px", overflow: "hidden"}} >
-                                                <MaxLengthPlugin maxLength={30}/>
-                                                <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
-                                                <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
-                                                <EditorToolbar />
-                                              </div>
-                                            </LexicalComposer>
-                                          </>)
-                                        case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
-                                        case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                        case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: item.Height + "px", width: item.Width + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                        default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
-                                        }
-                                    })()}
-                                </div>
-                              </button>
-                              { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
-                              <div>
-                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
-                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                          setIsChangingSize(true)
-                                          setChangingSizeDirection("ne")
-                                      }
-                                  }}><span className={styles.dot} /></button> {/* Right Top */}
-                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, ${(item.Height - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
-                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                          setIsChangingSize(true)
-                                          setChangingSizeDirection("e")
-                                      }
-                                  }}><span className={styles.dot} /></button>  {/* Right */} 
-                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${item.Width + 5}px, ${item.Height - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
-                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                          setIsChangingSize(true)
-                                          setChangingSizeDirection("se")
-                                      }
-                                  }}><span className={styles.dot} /></button> {/* Right Bottem */}
-                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width + 5)/2}px, ${(item.Height - 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
-                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                          setIsChangingSize(true)
-                                          setChangingSizeDirection("s")
-                                      }
-                                  }}><span className={styles.dot} /></button> {/* Bottem */}
-                                  <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${item.Height - 9}px)`, cursor:"sw-resize"}} onMouseDown={() => {
-                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                          setIsChangingSize(true)
-                                          setChangingSizeDirection("sw")
-                                      }
-                                  }}><span className={styles.dot} /></button> {/* Left Bottem */}
-                                  <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height - 24)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
-                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                          setIsChangingSize(true)
-                                          setChangingSizeDirection("w")
-                                      }
-                                  }}><span className={styles.dot} /></button> {/* Left */}
-                                  <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
-                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                          setIsChangingSize(true)
-                                          setChangingSizeDirection("nw")
-                                      }
-                                  }}><span className={styles.dot} /></button> {/* Left Top */}
-                                  <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
-                                      if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                          setIsChangingSize(true)
-                                          setChangingSizeDirection("n")
-                                      }
-                                  }}><span className={styles.dot} /></button> {/* Top */}
-                              </div>
+                              onMouseMove={ onMouseMove }
+                            >
+                          {components?.map((item: CardElement) => ( 
+                          <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
+                            <div style={{ position: "absolute",
+                                  height: (item.Height  * (zoomScale/100)) + "px",
+                                  width: (item.Width  * (zoomScale/100)) + "px",}}>
+                            <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
+                            onClick={ (e) => {
+                              handleOnClick(e, item)
+                            }}
+                            onMouseDown={(e) => {
+                              if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
+                                setPressed(true)
                               }
+                            }}
+                            onContextMenu={(e) => {
+                              e.preventDefault()
+                              handleOnClick(e, item)
+                              setMousePosition({x: e.clientX, y: e.clientY})
+                              setIsShowingRightClick(!isShowingRightClick)        
+                            }}>
+                              <div style={
+                                {
+                                  opacity: item.Opacity/100
+                                }}>
+                                {(() => {
+                                      switch(item.ElementType) {
+                                      case "Text": return (
+                                        <>
+
+                                          <LexicalComposer initialConfig={editorConfig}>
+                                            <div onClick={() => {
+                                              setIsUserTypeing(!isUserTyping)
+                                            }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
+                                              <MaxLengthPlugin maxLength={300}/>
+                                              <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
+                                              <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
+                                              { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
+                                                <>
+                                                  <Bold bolded={bolded}/>
+                                                  <Italic italic={italic}/>
+                                                  <Strikethrough strikethrough={strikethrough}/>
+                                                  <Underlined underlined={underlined}/>
+                                                  <FontSize fontStyle={fontSize} />
+                                                  <FontStyle fontStyle={fontStyle}/>
+                                                </>:null
+                                              }
+                                            </div>
+                                          </LexicalComposer>
+                                        </>)
+                                      case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
+                                      case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                      case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                      default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
+                                      }
+                                  })()}
                               </div>
-                            </div> 
-                            ))}
-                              </div>
+                            </button>
+                            { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
+                            <div>
+                                <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
+                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setIsChangingSize(true)
+                                        setChangingSizeDirection("ne")
+                                    }
+                                }}><span className={styles.dot} /></button> {/* Right Top */}
+                                <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${((item.Height * (zoomScale/100)) - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
+                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setIsChangingSize(true)
+                                        setChangingSizeDirection("e")
+                                    }
+                                }}><span className={styles.dot} /></button>  {/* Right */} 
+                                <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${(item.Height * (zoomScale/100)) - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
+                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setIsChangingSize(true)
+                                        setChangingSizeDirection("se")
+                                    }
+                                }}><span className={styles.dot} /></button> {/* Right Bottem */}
+                                <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, ${((item.Height * (zoomScale/100))- 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
+                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setIsChangingSize(true)
+                                        setChangingSizeDirection("s")
+                                    }
+                                }}><span className={styles.dot} /></button> {/* Bottem */}
+                                <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height  * (zoomScale/100)) - 8 }px)`, cursor:"sw-resize"}} onMouseDown={() => {
+                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setIsChangingSize(true)
+                                        setChangingSizeDirection("sw")
+                                    }
+                                }}><span className={styles.dot} /></button> {/* Left Bottem */}
+                                <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
+                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setIsChangingSize(true)
+                                        setChangingSizeDirection("w")
+                                    }
+                                }}><span className={styles.dot} /></button> {/* Left */}
+                                <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
+                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setIsChangingSize(true)
+                                        setChangingSizeDirection("nw")
+                                    }
+                                }}><span className={styles.dot} /></button> {/* Left Top */}
+                                <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
+                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setIsChangingSize(true)
+                                        setChangingSizeDirection("n")
+                                    }
+                                }}><span className={styles.dot} /></button> {/* Top */}
                             </div>
-                          {/* mark */}
+                            }
+                            </div>
+                          </div> 
+                          ))}
                           </div>
-                          {/* Mark */}
-                          </TransformComponent>
-                        </React.Fragment>
-                      )}
-                    </TransformWrapper>
+                        </div>
+                      {/* mark */}
+                      </div>
                     </div>
-                    <div className={styles.CardToolbarDiv}>
-                      <Stack direction='horizontal' gap={3}>
-                        <div>
-                          <InputGroup hasValidation>
-                            <InputGroup.Text id="inputGroupPrepend" onClick={() => {
-                              if (zoomScale >= 10){
-                                setZoomScale((zoomScale - 10))
-                                // const { setTransform } = areaContainerZoomRef.current
-                                // setTransform(100,200,zoomScale/100)
-                              }
-                            }} style={{backgroundColor: "white", padding:0, border: "none"}}><FaArrowLeft /></InputGroup.Text>
-                            <Form.Control
-                              id="SetZoom"
-                              onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
-                              value={zoomScale + "%"}
-                              onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
-                              className={styles.sizeForm}
-                              style={{color:"blue", border: "none",  borderRadius: 0}}
-                            />
-                            <InputGroup.Text id="inputGroupAfter" onClick={() => {
-                              if (zoomScale <= 500){
-                                setZoomScale((zoomScale + 10))
-                                // const { setTransform } = areaContainerZoomRef.current
-                                // setTransform(100,200,zoomScale/100)
-                              }
-                            }} style={{backgroundColor: "white", padding: 0, border: "none"}}><FaArrowRight/></InputGroup.Text>
-                            <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => {
-                                const { setTransform } = areaContainerZoomRef.current
-                                setTransform(100,200,zoomScale/100)
-                                setZoomScale(changeEvent.target.value) 
-                              }} className={styles.slider} id="myRange" />
-                          </InputGroup>
+                  {/* mark */}
+                </Col>
+                    {/* </div>
+                </Col> */}
+              </Row>
+              <Row>
+                <div className={styles.CardToolbarDiv}>
+                  <Stack direction='horizontal' gap={3} style={{padding: 0, margin: 0, width: "100%", backgroundColor: "white"}}>
+                <div style={{display: "table"}}>
+                <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle", height:"50%"}}>
+                  <InputGroup hasValidation>
+                    <InputGroup.Text id="inputGroupPrepend" onClick={() => {
+                      if (zoomScale >= 10){
+                        setZoomScale((zoomScale - 10))
+                        // const { setTransform } = areaContainerZoomRef.current
+                        // setTransform(100,200,zoomScale/100)
+                      }
+                    }} style={{backgroundColor: "white", padding:0 ,borderLeft: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowLeft /></InputGroup.Text>
+                    <Form.Control
+                      id="SetZoom"
+                      onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
+                      value={zoomScale + "%"}
+                      onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
+                      className={styles.sizeForm}
+                      style={{color:"blue", borderRadius: 0, borderRight: "none", borderLeft: "none", borderBottom: "2px solid black", borderTop: "2px solid black"}}
+                    />
+                    <InputGroup.Text id="inputGroupAfter" onClick={() => {
+                      if (zoomScale <= 500){
+                        console.log(zoomScale)
+                        const newZoom: number = parseInt(zoomScale)
+                        setZoomScale((newZoom + 10))
+                        // const { setTransform } = areaContainerZoomRef.current
+                        // setTransform(100,200,zoomScale/100)
+                      }
+                    }} style={{backgroundColor: "white", padding: 0, borderRight: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowRight/></InputGroup.Text>
+                  </InputGroup>
+                  <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => {
+                        // const { setTransform } = areaContainerZoomRef.current
+                        // setTransform(100,200,zoomScale/100)
+                        setZoomScale(changeEvent.target.value) 
+                      }} className={styles.slider} id="myRange" />
+                </div>
+                </div>
+                <div style={{display: "table"}}>
+                  <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                    <Button className={styles.DropdownButtonStyle}>
+                        <div style={{height:"2vh"}} onClick={e => addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>
+                          <img src={textIcon} className={styles.imgContainer }/>
                         </div>
-                        <div style={{height:"2vh", width:"20vw"}}>
-                          <Button className={styles.DropdownButtonStyle}>
-                              <div style={{height:"2vh"}} onClick={e => addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>
-                                <img src={textIcon} className={styles.imgContainer }/>
-                              </div>
-                          </Button>
+                    </Button>
+                  </div>
+                </div>
+                <div style={{display: "table"}}>
+                  <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                    <Dropdown drop='up'>
+                      <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
+                        <div style={{height:"2vh"}}>
+                          <img src={shapesIcon} className={styles.imgContainer }/>
                         </div>
-                        <div style={{height:"2vh", width:"20vw"}}>
-                          <Dropdown>
-                            <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
-                              <div style={{height:"2vh"}}>
-                                <img src={shapesIcon} className={styles.imgContainer }/>
-                              </div>
-                            </Dropdown.Toggle>
-                            <DropdownMenu>
-                              <Dropdown.Item eventKey="1" onClick={e => addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>Square</Dropdown.Item>
-                              <Dropdown.Item eventKey="2">Dots</Dropdown.Item>
-                              <Dropdown.Item eventKey="3">Draw</Dropdown.Item>
-                              <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
-                            </DropdownMenu>
-                          </Dropdown>
+                      </Dropdown.Toggle>
+                      <DropdownMenu>
+                        <Dropdown.Item eventKey="1" onClick={e => addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>Square</Dropdown.Item>
+                        <Dropdown.Item eventKey="2">Dots</Dropdown.Item>
+                        <Dropdown.Item eventKey="3">Draw</Dropdown.Item>
+                        <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+                </div>
+                <div style={{display: "table"}}>
+                  <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                    <Button onClick={() => {setIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
+                      <div style={{height:"2vh"}}>
+                          <img src={imageIcon} className={styles.imgContainer}/>
                         </div>
-                        <div style={{height:"2vh", width:"20vw"}}>
-                          <Button onClick={() => {setIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
-                            <div style={{height:"2vh"}}>
-                                <img src={imageIcon} className={styles.imgContainer }/>
-                              </div>
-                          </Button>
-                        </div>
-                      </Stack>
-                    </div>
+                    </Button>
+                  </div>
+                </div>
+                {/* Mode Selection */}
                   </Stack>
-              </Col>
-              { selectedElementValue ? 
-                <Col xs={2}>
-                  <Container>
-                    <Row>
-                      <Button onClick={() => setIsNavigateToDestinations(true)}>
-                        Destination
-                      </Button>
-                    </Row>
-                    { (selectedElementValue.ElementType === "Shape") ? 
-                      <>
-                        <Row>
-                          <p>Corner Radius: {selectedElementValue.CornerRadius}%</p>
-                          <input type="range" min="1" max="50" value={selectedElementValue.CornerRadius} 
-                          onChange={changeEvent => {
-                            const NewComponents = [...components]
-                            const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                            NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
-                            setComponents(NewComponents)
-                            setSelectedElement(NewComponents[SelectedIndex])
-                            
-                          }} 
-                          className={styles.slider} id="myRange" />
-                       </Row>
-                        <Row>
-                        <input type="color" id="colorpicker" value={selectedElementValue.SelectedColor.toString()} onChange={changeEvent => {
-                        const NewComponents = [...components]
-                        const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                        NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                        setComponents(NewComponents)
-                        setSelectedElement(NewComponents[SelectedIndex])
-                        }} />
-                        </Row>
-                      </>:null
-                    }
-                    { (selectedElementValue.ElementType === "Text") ?
-                      <>
-                        <Row>
-                          {/* <EditorToolbar /> */}
-                        </Row>
-                      </>:null
-                    }
-                    <Row>
-                      <p>Opacity: {selectedElementValue.Opacity}%</p>
-                      <input type="range" min="1" max="100" value={selectedElementValue.Opacity} 
-                      onChange={changeEvent => {
-                        const NewComponents = [...components]
-                        const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                        NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
-                        setComponents(NewComponents)
-                        setSelectedElement(NewComponents[SelectedIndex])
-                        
-                      }} 
-                      className={styles.slider} id="myRange" />
-                    </Row>
-                    <Row>
-                    </Row>
-                    <Row>
-                      <p>Undo</p>
-                    </Row>
-                  </Container>
-                </Col>:null
-              }
-            </Row>
+                </div>
+              </Row>
           </Container>
         </div>
         {
           //Settings menu
           isShowingSettings ?
           <>
-            <Card style={{backgroundColor: "white"}}>
-              <Card.Body>
-                <div className={styles.EditCardTopView}>
-                  <Stack direction='horizontal'>
-                    <Stack>
-                      <p> Edit Use </p>
-                      <p> Current Use: {SelectedCard.Use}</p>
-                      <Form.Label htmlFor="overlayUse">Use</Form.Label>
-                      <Form.Control id="overlayUse"/>
+            <div className={styles.EditCardTopView}>
+              <Card className={styles.settingsCard}>
+                <Card.Body>
+                    <Stack direction='horizontal'>
+                      <Stack>
+                        <p> Edit Use </p>
+                        <p> Current Use: {SelectedCard.Use}</p>
+                        <Form.Label htmlFor="overlayUse">Use</Form.Label>
+                        <Form.Control id="overlayUse"/>
+                      </Stack>
+                      <Stack>
+                        <button>Use</button>
+                        <button>Members</button>
+                        <button>General</button>
+                      </Stack>
                     </Stack>
-                    <Stack>
-                      <ListGroup style={{ width: "25vw", zIndex: 100}}>
-                        <ListGroup.Item>Use</ListGroup.Item>
-                        <ListGroup.Item>Members</ListGroup.Item>
-                        <ListGroup.Item>General</ListGroup.Item>
-                        </ListGroup>
-                    </Stack>
-                  </Stack>
-                </div>
-              </Card.Body>
-            </Card>
+                </Card.Body>
+              </Card>
+            </div>
           </> 
           : null
           //Pauly Library

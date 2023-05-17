@@ -36,7 +36,6 @@
     display: flex;
     justify-content: center;
     margin: auto;
-    transform: translateY(-2vh);
 }
 
 .DropdownButtonStyle::after{
@@ -49,8 +48,29 @@
 
 .EditCardBackButton{
     text-align: left;
+    padding-top: 1%;
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 20%;
+    padding-left: 30%;
+    padding-right: 30%;
+    margin: 0;
     color: black;
-    padding-top: 0.5%;
+    border-radius: 20%;
+}
+
+.editCardBackButtonInnerContainer{
+    text-align: left;
+    padding-top: 1%;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.editCardBackButtonOuterContainer{
+    display: flex;
+    height: 100%;
 }
 
 .slider {
@@ -80,12 +100,16 @@
 }
 
 .EditCardTopView{
-    position: absolute;
     width: auto;
     z-index: 2;
     padding: 1%;
     justify-content: center;
     display: flex;
+}
+.settingsCard{
+    margin: auto;
+    background-color: white;
+    z-index: 2;
 }
 
 .EditCardBottemView{
@@ -109,23 +133,59 @@
     padding-right: 55vw;
 }
 
+
 /* card tool bar */
 .CardToolbarDiv{
-    background-color: blue;
-    width: 80vw;
-    height: 5vh;
-    margin-top: 2vh;
-    border-radius: 5px;
-    display: block;
+    background-color: white;
+    display:grid;
+    overflow: hidden;
+}
+
+.CardContainterCardCSSColumn{
+    padding: 0;
+    margin: 0;
+    height: 85vh;
+}
+
+.CardContainterCardCSSColumn:fullscreen{
+    padding: 0;
+    height: 20vh;
+}
+
+/* card containter */
+.CardContainterCardCSS {
+    overflow: scroll;
+    /* white-space: nowrap; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #b5b8ba;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+.CardContainterCardCSS ::-webkit-scrollbar {display:none;}
+
+.CardContainterCardCSS:fullscreen{
+    overflow: scroll;
+    /* white-space: nowrap; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #b5b8ba;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .CardToolBarButton{
     background-color: white;
     border: #793033;
-    width: 7vh;
-    height: 4vh;
-    overflow: hidden;
+    height: 15%;
     display: flex;
+    position: fixed;
 }
 
 .dotButtonStyle{
@@ -158,16 +218,6 @@
     background-color: #1e70ea;
 }
 
-/* card containter */
-.CardContainterCardCSS {
-    overflow: hidden;
-    /* white-space: nowrap; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #793033;
-}
-.CardContainterCardCSS ::-webkit-scrollbar {display:none;}
 
 /* display: "flex",
 justifyContent: "center",
