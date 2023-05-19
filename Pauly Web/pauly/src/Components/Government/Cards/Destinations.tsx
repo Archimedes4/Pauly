@@ -1,5 +1,6 @@
 import React from 'react'
-import { Stack } from 'react-bootstrap-icons'
+import { Stack } from "react-bootstrap"
+import styles from "DestinationsCss.module.css"
 
 export default function Destinations() {
   return (

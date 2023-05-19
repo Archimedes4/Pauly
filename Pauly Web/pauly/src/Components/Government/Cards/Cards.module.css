@@ -42,9 +42,6 @@
     display: none;
 }
 
-.TitleEditCard{
-    text-align: left;
-}
 
 .EditCardBackButton{
     text-align: left;
@@ -71,6 +68,13 @@
 .editCardBackButtonOuterContainer{
     display: flex;
     height: 100%;
+}
+
+.SettingsButtonStyle{
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    border: 0;
 }
 
 .slider {
@@ -106,6 +110,7 @@
     justify-content: center;
     display: flex;
 }
+
 .settingsCard{
     margin: auto;
     background-color: white;
@@ -130,7 +135,12 @@
     width: 100vw;
 }
 .ImageLibraryViewTitle{
-    padding-right: 55vw;
+    padding-left: 3%;
+    padding-top: 1%;
+}
+
+.ImageLibraryViewCard{
+    width: 90vw;
 }
 
 
@@ -138,7 +148,6 @@
 .CardToolbarDiv{
     background-color: white;
     display:grid;
-    overflow: hidden;
 }
 
 .CardContainterCardCSSColumn{
@@ -160,7 +169,6 @@
     justify-content: center;
     align-items: center;
     background-color: #b5b8ba;
-    height: auto;
     margin: 0;
     padding: 0;
     width: 100%;
@@ -241,12 +249,39 @@ alignItems: "center", */
 
 .TextSelectButton{  /* Bold Italic.. etc */
     border: none;
-    width: 20%;
+    width: 15%;
     display: inline-block;
+    border-radius: 10%;
+    aspect-ratio: 1/1;
+    background-color: white;
+    margin: auto;
+}
+
+.TextSelectionButtonSelected{
+    border: none;
+    width: 15%;
+    display: inline-block;
+    border-radius: 10%;
+    aspect-ratio: 1/1;
+    background-color: lightgrey;
 }
 
 .FontSelectionDivContainer{
     width: 100%;
     height: 15vh;
     overflow: scroll;
+    background-color: white;
+}
+
+.FontSelectionButton{
+    border: none;
+    display: block;
+    background-color: white;
+}
+
+.BindingButton{
+    border: none;
+    background-color: #1e70ea;
+    width: 40%;
+    border-radius: 5px;
 }

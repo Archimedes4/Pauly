@@ -10,7 +10,7 @@ import Book from "../../../images/Books.png"
 import * as React from 'react';
 import { useCardContext } from "./Cards.js"
 import styles from "./Cards.module.css"
-import { FaArrowRight, FaArrowLeft } from "react-icons/fa"
+import { FaArrowRight, FaArrowLeft, FaBold, FaItalic, FaUnderline, FaStrikethrough } from "react-icons/fa"
 import { FcLeft, FcSettings, FcIphone } from "react-icons/fc"
 import {RiComputerFill} from "react-icons/ri"
 import {BsTabletLandscape} from "react-icons/bs"
@@ -137,6 +137,12 @@ type FontTypeCSS = {
   UUID: string
 }
 
+enum MicrosoftUploadModeType {
+  ShareLink,
+  Personal,
+  Site
+}
+
 export default function EditCard() {
   const outerDivRef = useRef(null)
   const { SelectedCard, components, setComponents, zoomScale, setZoomScale } = useCardContext()
@@ -157,7 +163,6 @@ export default function EditCard() {
   const [aspectWidth, setAspectWidth] = useState(10)
   const [width, setWidth] = useState(window.innerWidth);//Device Width
   const [height, setHeight] = useState(window.innerHeight);//Device height
-  const editorRef = useRef(null)
   const [selectedDeviceMode, setSelectedDeviceMode] = useState<SelectedAspectType>(SelectedAspectType.Small)
   const [selectedSettingsMode, setSelectedSettingsMode] = useState<SelectedSettingsModeType>(SelectedSettingsModeType.Discription)
   const [bolded, setBolded] = useState<boolean>(false)
@@ -171,11 +176,14 @@ export default function EditCard() {
   const avaliableFontSizes: string[] = ["8px", "12px", "14px", "16px", "20px", "24px"]
   const [isShowingBindPage, setIsShowingBindPage] = useState<boolean>(false)
   const [currentUserInfo, setCurrentUserInfo] = useState<UserType>(null)
+  const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
 
   //Pauly Library
   const fileInputRef = useRef(null);
   const [isShowingPaulyLibaray, setIsShowingPaulyLibrary] = useState(false)
   const [isShowingUpload, setIsShowingUpload] = useState(false)
+  const [isShowingMicrosoftUpload, setIsShowingMicrosoftUpload] = useState(false)
+  const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
   const [fileUrl, setFileUrl] = useState('');
   const [fileSize, setFileSize] = useState<number>(0);
   const [fileType, setFileType] = useState<string>('');
@@ -699,6 +707,11 @@ export default function EditCard() {
     setIsShowingUpload(true)
   };
 
+  function handleMicrosoftButtonClick() {
+    setIsShowingUpload(true)
+    setIsShowingMicrosoftUpload(true)
+  }
+
   function create_UUID(){
     var dt = new Date().getTime();
     var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -722,14 +735,15 @@ export default function EditCard() {
     }
   }
 
+  
+
   return (
     <>
       <div onClick={() => (setIsShowingRightClick(false))} ref={outerDivRef}>
         <div className={styles.EditCardBottemView} style={{overflow:"hidden"}}>
           <Container fluid style={{height: "100%", width: "100%", padding: 0, margin: 0}}>
               <Row>
-                <div style={{borderBottom: "3px solid black"}}>
-                  <Stack direction='horizontal' gap={5}>
+                 <Col>
                     <div className={styles.editCardBackButtonOuterContainer}>
                       <Link to="/government/cards" style={{textDecoration: "none"}}>
                         <div className={styles.editCardBackButtonInnerContainer}>
@@ -737,12 +751,17 @@ export default function EditCard() {
                         </div>
                       </Link>
                     </div>
+                  </Col>
+                  <Col xs={10} className='ml-5'>
                     <h1 className={styles.TitleEditCard}> Edit Card </h1>
-                    <Button onClick={() => setIsShowingSettings(!isShowingSettings)} className={styles.DropdownButtonStyle}>
-                      <FcSettings />
-                    </Button>
-                  </Stack>
-                </div>
+                  </Col>
+                  <Col>
+                    <div className={styles.editCardBackButtonOuterContainer}>
+                      <Button onClick={() => setIsShowingSettings(!isShowingSettings)} className={styles.SettingsButtonStyle}>
+                        <FcSettings />
+                      </Button>
+                    </div>
+                  </Col>
               </Row>
               <Row noGutters={true}>
                 <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%"}} className="d-none d-md-block">
@@ -783,36 +802,46 @@ export default function EditCard() {
                         <>
                           <Row>
                             {/* <EditorToolbar /> */}
-                            <button onClick={(e) => {
-                              e.preventDefault()
-                              setBolded(!bolded)
-                            }} className={styles.TextSelectButton}>B</button>
-                            <button onClick={(e) => {
-                              e.preventDefault()
-                              setItalic(!italic)
-                            }} className={styles.TextSelectButton}>
-                              I
-                            </button>
-                            <button onClick={(e) => {
-                              e.preventDefault()
-                              setUnderlined(!underlined)
-                            }} className={styles.TextSelectButton}>
-                              U
-                            </button>
-                            <button onClick={(e) => {
-                              e.preventDefault()
-                              setStrikethrough(!strikethrough)
-                            }} className={styles.TextSelectButton}>
-                              S
-                            </button>
-                            <button>
+                            <Stack direction='horizontal' style={{paddingTop: "2%", paddingBottom: "2%"}}>
+                              <button onClick={(e) => {
+                                e.preventDefault()
+                                setBolded(!bolded)
+                              }} className={bolded ? (styles.TextSelectionButtonSelected):(styles.TextSelectButton)}>
+                                <FaBold />
+                              </button>
+                              <button onClick={(e) => {
+                                e.preventDefault()
+                                setItalic(!italic)
+                              }} className={italic ? (styles.TextSelectionButtonSelected):(styles.TextSelectButton)}>
+                                <FaItalic />
+                              </button>
+                              <button onClick={(e) => {
+                                e.preventDefault()
+                                setUnderlined(!underlined)
+                              }} className={underlined ? (styles.TextSelectionButtonSelected):(styles.TextSelectButton)}>
+                                <FaUnderline />
+                              </button>
+                              <button onClick={(e) => {
+                                e.preventDefault()
+                                setStrikethrough(!strikethrough)
+                              }} className={strikethrough ? (styles.TextSelectionButtonSelected):(styles.TextSelectButton)}>
+                                <FaStrikethrough />
+                              </button>
+                            </Stack>
+                            <button onClick={() => {
+                              setShowingFontSelectionMenu(!showingFontSelectedMenu)
+                            }}>
                               Font: {fontStyle}
                             </button>
-                            <div className={styles.FontSelectionDivContainer}>
-                              {fontList.map((font: FontType) => (
-                                <button onClick={() => {setSelectedFont(font)}}>{font.fontName}</button>
-                              ))}
-                            </div>
+                            { showingFontSelectedMenu ? 
+                              <div style={{display: "hidden"}}>
+                                <div className={styles.FontSelectionDivContainer}>
+                                  {fontList.map((font: FontType) => (
+                                    <button className={styles.FontSelectionButton} onClick={() => {setSelectedFont(font)}}>{font.fontName}</button>
+                                  ))}
+                                </div>
+                              </div>:null
+                            }
                             <Dropdown>
                               <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
                                 <div style={{height:"2vh"}}>
@@ -849,11 +878,14 @@ export default function EditCard() {
                       </Row>
                     </Container>: 
                     <Container style={{backgroundColor: '#444444', height: "100%", width: "100%", margin: 0, padding: 0}}>
-                        <div style={{margin: "auto"}}>
+                        <div style={{display: "flex", justifyContent: "center"}}>
+                          <p style={{fontSize: "12px", padding: 0, margin: 0, marginTop: "5%"}}>Connect Your Page</p>
+                        </div>
+                        <div style={{display: "flex", justifyContent: "center"}}>
                           <img src={Book} alt='Book' style={{width: "80%"}}/>
                         </div>
-                        <div>
-                          <button onClick={() => {setIsShowingBindPage(!isShowingBindPage)}}>
+                        <div  style={{display: "flex", justifyContent: "center"}}>
+                          <button onClick={() => {setIsShowingBindPage(!isShowingBindPage)}} className={styles.BindingButton}>
                             Bind
                           </button>
                         </div>
@@ -890,6 +922,7 @@ export default function EditCard() {
                               display: "block",
                               overflow: "scroll",
                               margin: "auto",
+                              padding: 0,
                               transform: "scale(" + (zoomScale/100) +")",
                               transformOrigin: "-" + (zoomScale/100) + "px" + " "+ "0" +"px"
                             }:{
@@ -899,6 +932,7 @@ export default function EditCard() {
                               justifyContent: "center",
                               alignItems: "center",
                               margin: "auto",
+                              padding: 0,
                               overflow: "scroll",
                               transform: "scale(" + (zoomScale/100) +")",
                             }}
@@ -1035,6 +1069,7 @@ export default function EditCard() {
                 </Col>
                     {/* </div>
                 </Col> */}
+                
               </Row>
               <Row>
                 <div className={styles.CardToolbarDiv}>
@@ -1156,25 +1191,40 @@ export default function EditCard() {
           //Settings menu
           isShowingSettings ?
           <>
-            <div className={styles.EditCardTopView}>
-              <Card className={styles.settingsCard}>
-                <Card.Body>
-                    <Stack direction='horizontal'>
-                      <Stack>
-                        <p> Edit Use </p>
-                        <p> Current Use: {SelectedCard.Use}</p>
-                        <Form.Label htmlFor="overlayUse">Use</Form.Label>
-                        <Form.Control id="overlayUse"/>
+           
+              <div className={styles.EditCardTopView}>
+                <Card className={styles.settingsCard}>
+                  <Card.Body>
+                      <Stack direction='horizontal'>
+                      { (selectedSettingsMode === SelectedSettingsModeType.Members) ? 
+                        <div>Members</div>:null
+                      }
+                      { (selectedSettingsMode === SelectedSettingsModeType.Gerneral) ? 
+                        <div>General</div>:null
+                      }
+                      { (selectedSettingsMode === SelectedSettingsModeType.Discription) ? 
+                        <Stack>
+                          <p> Edit Use </p>
+                          <p> Current Use: {SelectedCard.Use}</p>
+                          <Form.Label htmlFor="overlayUse">Use</Form.Label>
+                          <Form.Control id="overlayUse"/>
+                        </Stack>:null
+                      }
+                        <Stack>
+                          <button onClick={() => {
+                            setSelectedSettingsMode(SelectedSettingsModeType.Discription)
+                          }}>Discription</button>
+                          <button onClick={() => {
+                            setSelectedSettingsMode(SelectedSettingsModeType.Members)
+                          }}>Members</button>
+                          <button onClick={() => {
+                            setSelectedSettingsMode(SelectedSettingsModeType.Gerneral)
+                          }}>General</button>
+                        </Stack>
                       </Stack>
-                      <Stack>
-                        <button>Use</button>
-                        <button>Members</button>
-                        <button>General</button>
-                      </Stack>
-                    </Stack>
-                </Card.Body>
-              </Card>
-            </div>
+                  </Card.Body>
+                </Card>
+              </div>
           </> : null
         }
         {
@@ -1183,141 +1233,182 @@ export default function EditCard() {
           <>
             <input type="file" accept="'image/gif', 'image/jpeg', 'image/png', 'image/avif', 'application/pdf', 'image/svg+xml', 'image/webp', 'image/bmp', 'audio/aac', 'video/x-msvideo', 'audio/mpeg', 'video/mp4', 'video/mpeg', 'audio/webm', 'video/webm', 	'video/quicktime', 'application/pdf', 'text/csv', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/rtf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'text/plain', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.apple.keynote', 'application/vnd.apple.pages', 'application/vnd.apple.numbers'" onChange={handleFileChange} style={{display: "none"}} ref={fileInputRef}/>
             {
-              isShowingUpload ?
-              <div className={styles.ImageLibraryView}>
-                <Card>
-                  <Card.Text>
-                    <Stack direction='horizontal'>
-                      <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Upload File</h1>
-                      <Button variant="primary" style={{textAlign: "right"}} onClick={() => {setIsShowingUpload(false)}}>Back</Button>
-                    </Stack>
-                  </Card.Text>
-                  <Card.Body>
-                    <Stack direction='horizontal'>
-                      <Card>
-                        {fileUrl &&  (selectedFile.type === "image/jpeg") && <img src={fileUrl} alt="User-selected image" style={{height: "100px", width: "100px" }} />}
-                        {fileUrl && (selectedFile.type === "video/mp4") &&(
-                          <video controls  ref={videoElement}>
-                            <source src={fileUrl} type="video/mp4" />
-                            Your browser does not support video.
-                          </video>
-                        )}
-                         {fileUrl &&  (selectedFile.type === "image/gif") && <img src={fileUrl} alt="User-selected image" style={{height: "100px", width: "100px" }} />}
-                      </Card>
-                      <Stack>
-                        {fileSize > 0 && <p>Selected file size: {fileSize} bytes</p>}
-                        {fileType && <p>Selected file type: {fileType}</p>}
-                        {fileName && <p>Selected file name: {fileName}</p>}
-                      </Stack>
-                      <Stack direction='horizontal'>
-                        {/* <Stack direction='horizontal'>
-                          <p>Members</p>
-                          <p>Owners</p>
-                          <p>Contributes</p>
-                          <p>Viewers</p>
-                        </Stack> */}
-                        <div style={{width: "10vw"}}>
+              isShowingUpload ? 
+              <div>
+                {
+                  isShowingMicrosoftUpload ? 
+                  <div className={styles.ImageLibraryView}>
+                    <Card className={styles.ImageLibraryViewCard}>
+                      <Card.Text>
+                        <Stack direction='horizontal'>
+                          <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Upload File From Microsoft</h1>
+                          <Button variant="primary" style={{display: "flex", alignContent: "right", marginLeft: "auto", marginRight: "3%"}} onClick={() => {setIsShowingUpload(false); setIsShowingMicrosoftUpload(false)}}>Back</Button>
+                        </Stack>
+                      </Card.Text>
+                      <Card.Body>
+                        <Button onClick={() => {setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Personal)}}>
+                          Personal
+                        </Button>
+                        <Button onClick={() => {setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.ShareLink)}}>
+                          Link
+                        </Button>
+                        <Button onClick={() => {setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Site)}}>
+                          Teams
+                        </Button>
+                        { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 
+                          <div>
+                            Personal
+                          </div>:null
+                        }
+                        { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 
+                          <div>
+                            Link
+                          </div>:null
+                        }
+                        { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Site) ? 
+                          <div>
+                            Site
+                          </div>:null
+                        }
+                      </Card.Body>
+                    </Card>
+                  </div>:
+                  <div className={styles.ImageLibraryView}>
+                    <Card className={styles.ImageLibraryViewCard}>
+                      <Card.Text>
+                        <Stack direction='horizontal'>
+                          <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Upload File</h1>
+                          <Button variant="primary" style={{display: "flex", alignContent: "right", marginLeft: "auto", marginRight: "3%"}} onClick={() => {setIsShowingUpload(false)}}>Back</Button>
+                        </Stack>
+                      </Card.Text>
+                      <Card.Body>
+                        <Stack direction='horizontal'>
+                          <Card>
+                            {fileUrl &&  (selectedFile.type === "image/jpeg") && <img src={fileUrl} alt="User-selected image" style={{height: "100px", width: "100px" }} />}
+                            {fileUrl && (selectedFile.type === "video/mp4") &&(
+                              <video controls  ref={videoElement}>
+                                <source src={fileUrl} type="video/mp4" />
+                                Your browser does not support video.
+                              </video>
+                            )}
+                            {fileUrl &&  (selectedFile.type === "image/gif") && <img src={fileUrl} alt="User-selected image" style={{height: "100px", width: "100px" }} />}
+                          </Card>
                           <Stack>
-                            <p style={{textAlign: "center"}}>Users</p>
-                            {fileUsers?.map((item: fileUserType) => (
-                              <p> {item.UsersName} </p>
-                            ))}
+                            {fileSize > 0 && <p>Selected file size: {fileSize} bytes</p>}
+                            {fileType && <p>Selected file type: {fileType}</p>}
+                            {fileName && <p>Selected file name: {fileName}</p>}
                           </Stack>
-                        </div>
-                        <div style={{width: "10vw"}}>
-                          <Stack>
-                            <p>Owner</p>
-                            {fileUsers?.map((item: fileUserType) => (
-                              <div style={{width: "15%", height: "15%"}}>
-                                <SplashCheckmark isPressed={item.Owner} setIsPressed={() => {
-                                  const NewComponents = [...fileUsers]
-                                  const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
-                                  if (NewComponents[SelectedIndex]["Owner"]){
-                                    const NewContributers = contributers.filter(number => number !== item.UsersId);
-                                    setContributers(NewContributers)
-                                  } else {
-                                    const NewContributers = contributers
-                                    contributers.push(item.UsersId)
-                                    setContributers(NewContributers)
-                                  }
-                                  NewComponents[SelectedIndex]["Owner"] = !NewComponents[SelectedIndex]["Owner"]
-                                  setFileUsers(NewComponents)
-                                }}/>
-                              </div>
-                            ))}
+                          <Stack direction='horizontal'>
+                            {/* <Stack direction='horizontal'>
+                              <p>Members</p>
+                              <p>Owners</p>
+                              <p>Contributes</p>
+                              <p>Viewers</p>
+                            </Stack> */}
+                            <div style={{width: "10vw"}}>
+                              <Stack>
+                                <p style={{textAlign: "center"}}>Users</p>
+                                {fileUsers?.map((item: fileUserType) => (
+                                  <p> {item.UsersName} </p>
+                                ))}
+                              </Stack>
+                            </div>
+                            <div style={{width: "10vw"}}>
+                              <Stack>
+                                <p>Owner</p>
+                                {fileUsers?.map((item: fileUserType) => (
+                                  <div style={{width: "15%", height: "15%"}}>
+                                    <SplashCheckmark isPressed={item.Owner} setIsPressed={() => {
+                                      const NewComponents = [...fileUsers]
+                                      const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
+                                      if (NewComponents[SelectedIndex]["Owner"]){
+                                        const NewContributers = contributers.filter(number => number !== item.UsersId);
+                                        setContributers(NewContributers)
+                                      } else {
+                                        const NewContributers = contributers
+                                        contributers.push(item.UsersId)
+                                        setContributers(NewContributers)
+                                      }
+                                      NewComponents[SelectedIndex]["Owner"] = !NewComponents[SelectedIndex]["Owner"]
+                                      setFileUsers(NewComponents)
+                                    }}/>
+                                  </div>
+                                ))}
+                              </Stack>
+                            </div>
+                            <div style={{width: "10vw"}}>
+                              <Stack>
+                                <p>Contributers</p>
+                                {fileUsers?.map((item: fileUserType) => (
+                                  <div style={{width: "15%", height: "15%"}}>
+                                    <SplashCheckmark isPressed={item.Contributer} setIsPressed={() => {
+                                      const NewComponents = [...fileUsers]
+                                      const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
+                                      if (NewComponents[SelectedIndex]["Contributer"]){
+                                        const NewContributers = contributers.filter(number => number !== item.UsersId);
+                                        setContributers(NewContributers)
+                                      } else {
+                                        const NewContributers = contributers
+                                        contributers.push(item.UsersId)
+                                        setContributers(NewContributers)
+                                      }
+                                      NewComponents[SelectedIndex]["Contributer"] = !NewComponents[SelectedIndex]["Contributer"]
+                                      setFileUsers(NewComponents)
+                                    }}/>
+                                  </div>
+                                ))}
+                              </Stack>
+                            </div>
+                            <div style={{width: "10vw"}}>
+                              <Stack>
+                                <p>Viewer</p>
+                                {fileUsers?.map((item: fileUserType) => (
+                                  <div style={{width: "15%", height: "15%"}}>
+                                    <div style={{ margin: "auto"}}>
+                                      <SplashCheckmark isPressed={item.Viewer} setIsPressed={() => {
+                                        const NewComponents = [...fileUsers]
+                                        const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
+                                        if (NewComponents[SelectedIndex]["Viewer"]){
+                                          const NewContributers = contributers.filter(number => number !== item.UsersId);
+                                          setContributers(NewContributers)
+                                        } else {
+                                          const NewContributers = contributers
+                                          contributers.push(item.UsersId)
+                                          setContributers(NewContributers)
+                                        }
+                                        NewComponents[SelectedIndex]["Viewer"] = !NewComponents[SelectedIndex]["Viewer"]
+                                        setFileUsers(NewComponents)
+                                    }} />
+                                    </div>
+                                  </div>
+                                ))}
+                              </Stack>
+                            </div>
                           </Stack>
-                        </div>
-                        <div style={{width: "10vw"}}>
-                          <Stack>
-                            <p>Contributers</p>
-                            {fileUsers?.map((item: fileUserType) => (
-                              <div style={{width: "15%", height: "15%"}}>
-                                <SplashCheckmark isPressed={item.Contributer} setIsPressed={() => {
-                                  const NewComponents = [...fileUsers]
-                                  const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
-                                  if (NewComponents[SelectedIndex]["Contributer"]){
-                                    const NewContributers = contributers.filter(number => number !== item.UsersId);
-                                    setContributers(NewContributers)
-                                  } else {
-                                    const NewContributers = contributers
-                                    contributers.push(item.UsersId)
-                                    setContributers(NewContributers)
-                                  }
-                                  NewComponents[SelectedIndex]["Contributer"] = !NewComponents[SelectedIndex]["Contributer"]
-                                  setFileUsers(NewComponents)
-                                }}/>
-                              </div>
-                            ))}
-                          </Stack>
-                        </div>
-                        <div style={{width: "10vw"}}>
-                          <Stack>
-                            <p>Viewer</p>
-                            {fileUsers?.map((item: fileUserType) => (
-                              <div style={{width: "15%", height: "15%"}}>
-                                <div style={{ margin: "auto"}}>
-                                  <SplashCheckmark isPressed={item.Viewer} setIsPressed={() => {
-                                    const NewComponents = [...fileUsers]
-                                    const SelectedIndex = fileUsers.findIndex((element: fileUserType) => element.UsersId === item.UsersId)
-                                    if (NewComponents[SelectedIndex]["Viewer"]){
-                                      const NewContributers = contributers.filter(number => number !== item.UsersId);
-                                      setContributers(NewContributers)
-                                    } else {
-                                      const NewContributers = contributers
-                                      contributers.push(item.UsersId)
-                                      setContributers(NewContributers)
-                                    }
-                                    NewComponents[SelectedIndex]["Viewer"] = !NewComponents[SelectedIndex]["Viewer"]
-                                    setFileUsers(NewComponents)
-                                }} />
-                                </div>
-                              </div>
-                            ))}
-                          </Stack>
-                        </div>
-                      </Stack>
-                    </Stack>
-                    <Stack direction='horizontal'>
-                      <Button onClick={handleUpload}>
-                        Upload
-                      </Button>
-                      {uploadProgress > 0 && <p>Upload Progress: {uploadProgress}%</p>}
-                    </Stack>
-                  </Card.Body>
-                </Card>
+                        </Stack>
+                        <Stack direction='horizontal'>
+                          <Button onClick={handleUpload}>
+                            Upload
+                          </Button>
+                          {uploadProgress > 0 && <p>Upload Progress: {uploadProgress}%</p>}
+                        </Stack>
+                      </Card.Body>
+                    </Card>
+                  </div>
+                }
               </div>:
               <div className={styles.ImageLibraryView}>
-                <Card>
+                <Card className={styles.ImageLibraryViewCard}>
                   <Card.Title>
                     <Stack direction='horizontal'>
                       <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Library</h1>
-                      <Button variant="primary" style={{textAlign: "right"}} onClick={() => {setIsShowingPaulyLibrary(false)}}>Close</Button>
+                      <Button variant="primary" style={{display: "flex", alignContent: "right", marginLeft: "auto", marginRight: "3%"}} onClick={() => {setIsShowingPaulyLibrary(false)}}>Close</Button>
                     </Stack>
+
                   </Card.Title>
                   <Card.Body>
                     <Card>
                       <Stack direction='horizontal' gap={1}>
-                            
                         <Button onClick={() => {setSelectedImageLibraryMode(SelectedImageLibraryModeType.Images)}}>
                           Images
                         </Button>
@@ -1393,14 +1484,14 @@ export default function EditCard() {
                         <button className={styles.ImageLibraryButton}>
                           <p style={{padding: 0, margin: 0}}>Edit</p>
                         </button>
-                        <Dropdown>
-                          <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
+                        <Dropdown dir='up'>
+                          <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle} dir='up'>
                             <div style={{height:"2vh"}}>
                               <p>Upload</p>
                             </div>
                           </Dropdown.Toggle>
                           <DropdownMenu>
-                            <Dropdown.Item eventKey="1" onClick={e => addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>Choose From One Drive</Dropdown.Item>
+                            <Dropdown.Item eventKey="1" onClick={handleMicrosoftButtonClick}>Choose From One Drive</Dropdown.Item>
                             <Dropdown.Item eventKey="2" onClick={handleFileButtonClick}>Upload File</Dropdown.Item>
                           </DropdownMenu>
                         </Dropdown>
