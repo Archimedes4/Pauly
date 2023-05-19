@@ -11,16 +11,22 @@ export function useCardContext() {
 
 export default function Cards() {
     const [SelectedCard, SetSelectedCard] = useState()
-    const [components, setComponents] = useState([])
+    const [componentsSmall, setComponentsSmall] = useState([])
+    const [componentsMedium, setComponentsMedium] = useState([])
+    const [componentsLarge, setComponentsLarge] = useState([])
     const [zoomScale, setZoomScale] = useState(100)
 
     const value = {
         SelectedCard,
         SetSelectedCard,
-        components,
-        setComponents,
         zoomScale,
-        setZoomScale
+        setZoomScale,
+        componentsSmall,
+        setComponentsSmall,
+        componentsMedium,
+        setComponentsMedium,
+        componentsLarge,
+        setComponentsLarge
     }
 
     return (

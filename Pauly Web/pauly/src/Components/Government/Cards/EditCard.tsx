@@ -66,6 +66,8 @@ declare global{
     Permissions: number[]
     ClassMode: number | null
     ClassPerms: string[] | null
+    SportsMode: number | null
+    SportsPerms: string[] | null
   }
 }
 
@@ -143,9 +145,15 @@ enum MicrosoftUploadModeType {
   Site
 }
 
+type TeamsGroupType = {
+  TeamName: string
+  TeamId: string
+  TeamDescription: string
+}
+
 export default function EditCard() {
   const outerDivRef = useRef(null)
-  const { SelectedCard, components, setComponents, zoomScale, setZoomScale } = useCardContext()
+  const { SelectedCard, zoomScale, setZoomScale, componentsSmall, setComponentsSmall, componentsMedium, setComponentsMedium, componentsLarge, setComponentsLarge } = useCardContext()
   const [isShowingSettings, setIsShowingSettings] = useState(false)
   const [isNavigateToDestinations, setIsNavigateToDestinations] = useState(false)
   const [scrollDir, setScrollDir] = useState("scrolling down");
@@ -184,6 +192,7 @@ export default function EditCard() {
   const [isShowingUpload, setIsShowingUpload] = useState(false)
   const [isShowingMicrosoftUpload, setIsShowingMicrosoftUpload] = useState(false)
   const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
+  const [microsoftDrivePath, setMicrosoftDrivePath] = useState("/me/drives")
   const [fileUrl, setFileUrl] = useState('');
   const [fileSize, setFileSize] = useState<number>(0);
   const [fileType, setFileType] = useState<string>('');
@@ -197,11 +206,12 @@ export default function EditCard() {
   const [viewers, setViewers] =  useState<String []>([])
   const [description, setDiscriptions] = useState<String>('')
   const [files, setFiles] = useState<fileType[]>([])
-  const { app, db, currentUser } = useAuth()
+  const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
   const videoElement = useRef(null)
   const [fileUsers, setFileUsers] = useState<fileUserType[]>()
   const [collectionPageNumber, setCollectionPageNumber] = useState<number>(1)
   const [selectedFileLibrary, setSelectedFileLibrary] = useState<fileType | null>(null)
+  const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
 
   //Bind Menu
   const [selectedCardBindMode, setSelectedCardBindMode] = useState<SelectedCardBindModeType>(SelectedCardBindModeType.Class)
@@ -209,6 +219,10 @@ export default function EditCard() {
   const storage = getStorage(app);
 
   const EMPTY_CONTENT = '{"root":{"children":[{"children":[{"type":"overflow", "size":10}],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
+
+  useEffect(() => {
+    getUserSites()
+  }, [])
 
   useEffect(() => {
     fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8')
@@ -275,8 +289,14 @@ export default function EditCard() {
   }, []);
 
   function addComponent(e: React.SyntheticEvent, newValue:CardElement) { 
-      e.preventDefault()
-      setComponents([...components, newValue])
+    e.preventDefault()
+    if (selectedDeviceMode === SelectedAspectType.Small){
+      setComponentsSmall([...componentsSmall, newValue])
+    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+      setComponentsMedium([...componentsMedium, newValue])
+    } else if (selectedDeviceMode === SelectedAspectType.Large){
+      setComponentsLarge([...componentsLarge, newValue])
+    }
   }
 
   useEffect(() => {
@@ -322,66 +342,75 @@ export default function EditCard() {
     }
   }
 
-  // Update the current position if mouse is down
-  const onMouseMove = (event: React.MouseEvent) => {
+  function onMouseMoveUpdateComponents(NewComponents: any[], SelectedIndex: number, event: React.MouseEvent) {
     if (pressed){
-      const NewComponents = [...components]
-      const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
       if (selectedElementValue != undefined) {
           NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
           NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-          setComponents(NewComponents)
       }
     } else {
       if (isChangeingSize) {
-          const NewComponents = [...components]
-          const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
           if (selectedElementValue != undefined) {
               if (chaningSizeDirection === "n"){
                   NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
-                  setComponents(NewComponents)
               }
               else if (chaningSizeDirection === "s"){
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
-                  setComponents(NewComponents)
               }
               else if (chaningSizeDirection === "e"){
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
-                  setComponents(NewComponents)
               }
               else if (chaningSizeDirection === "w"){
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
                   NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
-                  setComponents(NewComponents)
               }
               else if (chaningSizeDirection === "nw" ){
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementY
                   NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
                   NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-                  setComponents(NewComponents)
               }
               else if (chaningSizeDirection === "ne"){
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementY
                   NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-                  setComponents(NewComponents)
               }
               else if (chaningSizeDirection === "sw"){
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementY
                   NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
-                  // NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-                  setComponents(NewComponents)
               }
               else if (chaningSizeDirection === "se"){
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementY
-                  setComponents(NewComponents)
               }
           }
       }
+    }
+    if (selectedDeviceMode === SelectedAspectType.Small){
+      setComponentsSmall(NewComponents)
+    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+      setComponentsMedium(NewComponents)
+    } else if (selectedDeviceMode === SelectedAspectType.Large){
+      setComponentsLarge(NewComponents)
+    }
+  }
+
+  // Update the current position if mouse is down
+  const onMouseMove = (event: React.MouseEvent) => {
+    if (selectedDeviceMode === SelectedAspectType.Small){
+      const NewComponents = [...componentsSmall]
+      const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
+    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+      const NewComponents = [...componentsMedium]
+      const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
+    } else if (selectedDeviceMode === SelectedAspectType.Large){
+      const NewComponents = [...componentsLarge]
+      const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
     }
   }
 
@@ -506,9 +535,19 @@ export default function EditCard() {
 
   const handler = (event: React.KeyboardEvent) => {
     if (event.key === 'Backspace' && !isUserTyping) {
-        const removeIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+      if (selectedDeviceMode === SelectedAspectType.Small){
+        const removeIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
         setSelectedElement(null)
-        components.pop(removeIndex - 1)
+        componentsSmall.pop(removeIndex - 1)
+      } else if (selectedDeviceMode === SelectedAspectType.Medium){
+        const removeIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+        setSelectedElement(null)
+        componentsMedium.pop(removeIndex - 1)
+      } else if (selectedDeviceMode === SelectedAspectType.Large){
+        const removeIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+        setSelectedElement(null)
+        componentsLarge.pop(removeIndex - 1)
+      }
     }
   };
 
@@ -728,14 +767,109 @@ export default function EditCard() {
 
     if (docSnap.exists()) {
       const data = docSnap.data()
-      setCurrentUserInfo({FirstName: data["First Name"], LastName: data["Last Name"], Permissions: data["Permissions"], ClassMode: data["ClassMode"], ClassPerms: data["ClassPerms"]})
+      setCurrentUserInfo({FirstName: data["First Name"], LastName: data["Last Name"], Permissions: data["Permissions"], ClassMode: data["ClassMode"], ClassPerms: data["ClassPerms"], SportsMode: data["SportsMode"], SportsPerms: data["SportsPerms"]})
     } else {
       // docSnap.data() will be undefined in this case
       console.log("No such document!");
     }
   }
 
+  async function getUserMicrosoftFiles() {
+
+  }
+
+  async function getUserSites() {
+    fetch("https://graph.microsoft.com/v1.0/me/memberOf", {method: "Get", headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+    },})
+    .then(response => response.json())
+    .then(data => {
+      const NewData: TeamsGroupType[] = []
+      for(var index = 0; index < data["value"].length; index++){
+        if (data["value"][index] !== undefined){
+          NewData.push({TeamName: data["value"][index]["displayName"], TeamId: data["value"][index]["id"], TeamDescription: data["value"][index]["description"]})
+        }
+      }
+      setUsersTeams(NewData)
+    })
+  }
+
+  async function getUsersCourses(grade: string) {
+    if (currentUserInfo.Permissions.includes(19)){
+      if (currentUserInfo.ClassMode === 1){
+        const querySnapshot = await getDocs(collection(db, "Grade" + grade + "Courses"));
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+        });
+      } else if (currentUserInfo.ClassMode === 0){
+        for(var index = 0; index < currentUserInfo.ClassPerms.length; index++){
+          const classData: string = currentUserInfo.ClassPerms[index]
+          const ClassDataArray = classData.split("-")
+          if (ClassDataArray.length === 4){
+            const docRef = doc(db, "Grade" + ClassDataArray[0] + "Courses", ClassDataArray[1], "Sections", ClassDataArray[2] + "-" + ClassDataArray[3]);
+            const docSnap = await getDoc(docRef);
   
+            if (docSnap.exists()) {
+              console.log("Document data:", docSnap.data());
+            } else {
+              // docSnap.data() will be undefined in this case
+              console.log("No such document!");
+            }
+          } else {
+            const docRef = doc(db, "Grade" + ClassDataArray[0] + "Courses", ClassDataArray[1], "Sections", ClassDataArray[2]);
+            const docSnap = await getDoc(docRef);
+  
+            if (docSnap.exists()) {
+              console.log("Document data:", docSnap.data());
+            } else {
+              // docSnap.data() will be undefined in this case
+              console.log("No such document!");
+            }
+          }
+        }
+      }
+    }
+  }
+
+  async function getUsersCommissions() {
+    if (currentUserInfo.Permissions.includes(18)){
+      const querySnapshot = await getDocs(collection(db, "Commissions"));
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          if (doc.id !== "CommissionsCount"){
+            console.log(doc.id, " => ", doc.data());
+          }
+        });
+    }
+  }
+
+  async function getUsersSports() {
+    if (currentUserInfo.Permissions.includes(15)){
+      if (currentUserInfo.SportsMode === 0){
+        for(var index = 0; index < currentUserInfo.SportsPerms.length; index++){
+          const sportData: string = currentUserInfo.SportsPerms[index]
+          const sportDataArray = sportData.split("-")
+          const docRef = doc(db, "Sports", sportDataArray[0], "Sections", sportDataArray[1] + "Teams" + sportDataArray[2]);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            console.log("Document data:", docSnap.data());
+          } else {
+            // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+          }
+        }
+      } else if (currentUserInfo.SportsMode === 1){
+        const querySnapshot = await getDocs(collection(db, "Sports"));
+        querySnapshot.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          console.log(doc.id, " => ", doc.data());
+        });
+      }
+    }
+  }
 
   return (
     <>
@@ -778,22 +912,49 @@ export default function EditCard() {
                             <p>Corner Radius: {selectedElementValue.CornerRadius}%</p>
                             <input type="range" min="1" max="50" value={selectedElementValue.CornerRadius} 
                             onChange={changeEvent => {
-                              const NewComponents = [...components]
-                              const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                              NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
-                              setComponents(NewComponents)
-                              setSelectedElement(NewComponents[SelectedIndex])
-                              
+                              if (selectedDeviceMode === SelectedAspectType.Small){
+                                const NewComponents = [...componentsSmall]
+                                const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                                NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
+                                setComponentsSmall(NewComponents)
+                                setSelectedElement(NewComponents[SelectedIndex])
+                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                                const NewComponents = [...componentsMedium]
+                                const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                                NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
+                                setComponentsMedium(NewComponents)
+                                setSelectedElement(NewComponents[SelectedIndex])
+                              } else if (selectedDeviceMode === SelectedAspectType.Large){
+                                const NewComponents = [...componentsLarge]
+                                const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                                NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
+                                setComponentsLarge(NewComponents)
+                                setSelectedElement(NewComponents[SelectedIndex])
+                              }
                             }} 
                             className={styles.slider} id="myRange" />
                           </Row>
                           <Row>
                           <input type="color" id="colorpicker" value={selectedElementValue.SelectedColor.toString()} onChange={changeEvent => {
-                          const NewComponents = [...components]
-                          const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                          NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                          setComponents(NewComponents)
-                          setSelectedElement(NewComponents[SelectedIndex])
+                            if (selectedDeviceMode === SelectedAspectType.Small){
+                              const NewComponents = [...componentsSmall]
+                              const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                              NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
+                              setComponentsSmall(NewComponents)
+                              setSelectedElement(NewComponents[SelectedIndex])
+                            } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                              const NewComponents = [...componentsMedium]
+                              const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                              NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
+                              setComponentsMedium(NewComponents)
+                              setSelectedElement(NewComponents[SelectedIndex])
+                            } else if (selectedDeviceMode === SelectedAspectType.Large){
+                              const NewComponents = [...componentsLarge]
+                              const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                              NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
+                              setComponentsLarge(NewComponents)
+                              setSelectedElement(NewComponents[SelectedIndex])
+                            }
                           }} />
                           </Row>
                         </>:null
@@ -864,12 +1025,25 @@ export default function EditCard() {
                         <p>Opacity: {selectedElementValue.Opacity}%</p>
                         <input type="range" min="1" max="100" value={selectedElementValue.Opacity} 
                         onChange={changeEvent => {
-                          const NewComponents = [...components]
-                          const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                          NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
-                          setComponents(NewComponents)
-                          setSelectedElement(NewComponents[SelectedIndex])
-                          
+                          if (selectedDeviceMode === SelectedAspectType.Small){
+                            const NewComponents = [...componentsSmall]
+                            const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                            NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
+                            setComponentsSmall(NewComponents)
+                            setSelectedElement(NewComponents[SelectedIndex])
+                          } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                            const NewComponents = [...componentsMedium]
+                            const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                            NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
+                            setComponentsMedium(NewComponents)
+                            setSelectedElement(NewComponents[SelectedIndex])
+                          } else if (selectedDeviceMode === SelectedAspectType.Large){
+                            const NewComponents = [...componentsLarge]
+                            const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                            NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
+                            setComponentsLarge(NewComponents)
+                            setSelectedElement(NewComponents[SelectedIndex])
+                          }
                         }} 
                         className={styles.slider} id="myRange" />
                       </Row>
@@ -949,127 +1123,351 @@ export default function EditCard() {
                               }}
                               onMouseMove={ onMouseMove }
                             >
-                          {components?.map((item: CardElement) => ( 
-                          <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
-                            <div style={{ position: "absolute",
-                                  height: (item.Height  * (zoomScale/100)) + "px",
-                                  width: (item.Width  * (zoomScale/100)) + "px",}}>
-                            <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
-                            onClick={ (e) => {
-                              handleOnClick(e, item)
-                            }}
-                            onMouseDown={(e) => {
-                              if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
-                                setPressed(true)
-                              }
-                            }}
-                            onContextMenu={(e) => {
-                              e.preventDefault()
-                              handleOnClick(e, item)
-                              setMousePosition({x: e.clientX, y: e.clientY})
-                              setIsShowingRightClick(!isShowingRightClick)        
-                            }}>
-                              <div style={
-                                {
-                                  opacity: item.Opacity/100
-                                }}>
-                                {(() => {
-                                      switch(item.ElementType) {
-                                      case "Text": return (
-                                        <>
-                                          <LexicalComposer initialConfig={editorConfig}>
-                                            <div onClick={() => {
-                                              setIsUserTypeing(!isUserTyping)
-                                            }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
-                                              <MaxLengthPlugin maxLength={300}/>
-                                              <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
-                                              <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
-                                              { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
-                                                <>
-                                                  <Bold bolded={bolded}/>
-                                                  <Italic italic={italic}/>
-                                                  <Strikethrough strikethrough={strikethrough}/>
-                                                  <Underlined underlined={underlined}/>
-                                                  <FontSize fontSize={fontSize} />
-                                                  <FontStyle fontStyle={fontStyle}/>
-                                                </>:null
-                                              }
-                                            </div>
-                                          </LexicalComposer>
-                                        </>)
-                                      case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
-                                      case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                      case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                      default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
+                              { (selectedDeviceMode === SelectedAspectType.Small) ?
+                                <div> {componentsSmall?.map((item: CardElement) => ( 
+                                  <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
+                                    <div style={{ position: "absolute",
+                                          height: (item.Height  * (zoomScale/100)) + "px",
+                                          width: (item.Width  * (zoomScale/100)) + "px",}}>
+                                    <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
+                                    onClick={ (e) => {
+                                      handleOnClick(e, item)
+                                    }}
+                                    onMouseDown={(e) => {
+                                      if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setPressed(true)
                                       }
-                                  })()}
-                              </div>
-                            </button>
-                            { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
-                            <div>
-                                <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
-                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setIsChangingSize(true)
-                                        setChangingSizeDirection("ne")
+                                    }}
+                                    onContextMenu={(e) => {
+                                      e.preventDefault()
+                                      handleOnClick(e, item)
+                                      setMousePosition({x: e.clientX, y: e.clientY})
+                                      setIsShowingRightClick(!isShowingRightClick)        
+                                    }}>
+                                      <div style={
+                                        {
+                                          opacity: item.Opacity/100
+                                        }}>
+                                        {(() => {
+                                              switch(item.ElementType) {
+                                              case "Text": return (
+                                                <>
+                                                  <LexicalComposer initialConfig={editorConfig}>
+                                                    <div onClick={() => {
+                                                      setIsUserTypeing(!isUserTyping)
+                                                    }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
+                                                      <MaxLengthPlugin maxLength={300}/>
+                                                      <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
+                                                      <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
+                                                      { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
+                                                        <>
+                                                          <Bold bolded={bolded}/>
+                                                          <Italic italic={italic}/>
+                                                          <Strikethrough strikethrough={strikethrough}/>
+                                                          <Underlined underlined={underlined}/>
+                                                          <FontSize fontSize={fontSize} />
+                                                          <FontStyle fontStyle={fontStyle}/>
+                                                        </>:null
+                                                      }
+                                                    </div>
+                                                  </LexicalComposer>
+                                                </>)
+                                              case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
+                                              case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                              case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                              default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
+                                              }
+                                          })()}
+                                      </div>
+                                    </button>
+                                    { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
+                                    <div>
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("ne")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Right Top */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${((item.Height * (zoomScale/100)) - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("e")
+                                            }
+                                        }}><span className={styles.dot} /></button>  {/* Right */} 
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${(item.Height * (zoomScale/100)) - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("se")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Right Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, ${((item.Height * (zoomScale/100))- 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("s")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height  * (zoomScale/100)) - 8 }px)`, cursor:"sw-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("sw")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("w")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("nw")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left Top */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("n")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Top */}
+                                    </div>
                                     }
-                                }}><span className={styles.dot} /></button> {/* Right Top */}
-                                <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${((item.Height * (zoomScale/100)) - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
-                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setIsChangingSize(true)
-                                        setChangingSizeDirection("e")
+                                    </div>
+                                  </div>
+                                ))} </div>:null
+                              }
+                              { (selectedDeviceMode === SelectedAspectType.Medium) ?
+                                <div> {componentsMedium?.map((item: CardElement) => ( 
+                                  <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
+                                    <div style={{ position: "absolute",
+                                          height: (item.Height  * (zoomScale/100)) + "px",
+                                          width: (item.Width  * (zoomScale/100)) + "px",}}>
+                                    <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
+                                    onClick={ (e) => {
+                                      handleOnClick(e, item)
+                                    }}
+                                    onMouseDown={(e) => {
+                                      if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setPressed(true)
+                                      }
+                                    }}
+                                    onContextMenu={(e) => {
+                                      e.preventDefault()
+                                      handleOnClick(e, item)
+                                      setMousePosition({x: e.clientX, y: e.clientY})
+                                      setIsShowingRightClick(!isShowingRightClick)        
+                                    }}>
+                                      <div style={
+                                        {
+                                          opacity: item.Opacity/100
+                                        }}>
+                                        {(() => {
+                                              switch(item.ElementType) {
+                                              case "Text": return (
+                                                <>
+                                                  <LexicalComposer initialConfig={editorConfig}>
+                                                    <div onClick={() => {
+                                                      setIsUserTypeing(!isUserTyping)
+                                                    }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
+                                                      <MaxLengthPlugin maxLength={300}/>
+                                                      <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
+                                                      <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
+                                                      { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
+                                                        <>
+                                                          <Bold bolded={bolded}/>
+                                                          <Italic italic={italic}/>
+                                                          <Strikethrough strikethrough={strikethrough}/>
+                                                          <Underlined underlined={underlined}/>
+                                                          <FontSize fontSize={fontSize} />
+                                                          <FontStyle fontStyle={fontStyle}/>
+                                                        </>:null
+                                                      }
+                                                    </div>
+                                                  </LexicalComposer>
+                                                </>)
+                                              case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
+                                              case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                              case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                              default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
+                                              }
+                                          })()}
+                                      </div>
+                                    </button>
+                                    { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
+                                    <div>
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("ne")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Right Top */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${((item.Height * (zoomScale/100)) - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("e")
+                                            }
+                                        }}><span className={styles.dot} /></button>  {/* Right */} 
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${(item.Height * (zoomScale/100)) - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("se")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Right Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, ${((item.Height * (zoomScale/100))- 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("s")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height  * (zoomScale/100)) - 8 }px)`, cursor:"sw-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("sw")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("w")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("nw")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left Top */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("n")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Top */}
+                                    </div>
                                     }
-                                }}><span className={styles.dot} /></button>  {/* Right */} 
-                                <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${(item.Height * (zoomScale/100)) - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
-                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setIsChangingSize(true)
-                                        setChangingSizeDirection("se")
+                                    </div>
+                                  </div>
+                                ))} </div>:null
+                              }
+                              { (selectedDeviceMode === SelectedAspectType.Large) ?
+                                <div> {componentsLarge?.map((item: CardElement) => ( 
+                                  <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
+                                    <div style={{ position: "absolute",
+                                          height: (item.Height  * (zoomScale/100)) + "px",
+                                          width: (item.Width  * (zoomScale/100)) + "px",}}>
+                                    <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
+                                    onClick={ (e) => {
+                                      handleOnClick(e, item)
+                                    }}
+                                    onMouseDown={(e) => {
+                                      if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
+                                        setPressed(true)
+                                      }
+                                    }}
+                                    onContextMenu={(e) => {
+                                      e.preventDefault()
+                                      handleOnClick(e, item)
+                                      setMousePosition({x: e.clientX, y: e.clientY})
+                                      setIsShowingRightClick(!isShowingRightClick)        
+                                    }}>
+                                      <div style={
+                                        {
+                                          opacity: item.Opacity/100
+                                        }}>
+                                        {(() => {
+                                              switch(item.ElementType) {
+                                              case "Text": return (
+                                                <>
+                                                  <LexicalComposer initialConfig={editorConfig}>
+                                                    <div onClick={() => {
+                                                      setIsUserTypeing(!isUserTyping)
+                                                    }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
+                                                      <MaxLengthPlugin maxLength={300}/>
+                                                      <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
+                                                      <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
+                                                      { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
+                                                        <>
+                                                          <Bold bolded={bolded}/>
+                                                          <Italic italic={italic}/>
+                                                          <Strikethrough strikethrough={strikethrough}/>
+                                                          <Underlined underlined={underlined}/>
+                                                          <FontSize fontSize={fontSize} />
+                                                          <FontStyle fontStyle={fontStyle}/>
+                                                        </>:null
+                                                      }
+                                                    </div>
+                                                  </LexicalComposer>
+                                                </>)
+                                              case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
+                                              case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                              case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                                              default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
+                                              }
+                                          })()}
+                                      </div>
+                                    </button>
+                                    { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
+                                    <div>
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("ne")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Right Top */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${((item.Height * (zoomScale/100)) - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("e")
+                                            }
+                                        }}><span className={styles.dot} /></button>  {/* Right */} 
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${(item.Height * (zoomScale/100)) - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("se")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Right Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, ${((item.Height * (zoomScale/100))- 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("s")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height  * (zoomScale/100)) - 8 }px)`, cursor:"sw-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("sw")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left Bottem */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("w")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("nw")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Left Top */}
+                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
+                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
+                                                setIsChangingSize(true)
+                                                setChangingSizeDirection("n")
+                                            }
+                                        }}><span className={styles.dot} /></button> {/* Top */}
+                                    </div>
                                     }
-                                }}><span className={styles.dot} /></button> {/* Right Bottem */}
-                                <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, ${((item.Height * (zoomScale/100))- 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
-                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setIsChangingSize(true)
-                                        setChangingSizeDirection("s")
-                                    }
-                                }}><span className={styles.dot} /></button> {/* Bottem */}
-                                <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height  * (zoomScale/100)) - 8 }px)`, cursor:"sw-resize"}} onMouseDown={() => {
-                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setIsChangingSize(true)
-                                        setChangingSizeDirection("sw")
-                                    }
-                                }}><span className={styles.dot} /></button> {/* Left Bottem */}
-                                <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
-                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setIsChangingSize(true)
-                                        setChangingSizeDirection("w")
-                                    }
-                                }}><span className={styles.dot} /></button> {/* Left */}
-                                <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
-                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setIsChangingSize(true)
-                                        setChangingSizeDirection("nw")
-                                    }
-                                }}><span className={styles.dot} /></button> {/* Left Top */}
-                                <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
-                                    if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setIsChangingSize(true)
-                                        setChangingSizeDirection("n")
-                                    }
-                                }}><span className={styles.dot} /></button> {/* Top */}
-                            </div>
-                            }
-                            </div>
-                          </div> 
-                          ))}
+                                    </div>
+                                  </div>
+                                ))} </div>:null
+                              }
+                          {/* End Of Components */}
                           </div>
                         </div>
-                      {/* mark */}
                       </div>
                     </div>
-                  {/* mark */}
                 </Col>
-                    {/* </div>
-                </Col> */}
-                
               </Row>
               <Row>
                 <div className={styles.CardToolbarDiv}>
@@ -1112,7 +1510,15 @@ export default function EditCard() {
                     <div style={{display: "table"}}>
                       <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
                         <Button className={styles.DropdownButtonStyle}>
-                            <div style={{height:"2vh"}} onClick={e => addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>
+                            <div style={{height:"2vh"}} onClick={(e) => {
+                              if (selectedDeviceMode === SelectedAspectType.Small){
+                                addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                                addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              } else if (selectedDeviceMode === SelectedAspectType.Large){
+                                addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              }
+                            }}>
                               <img src={textIcon} className={styles.imgContainer }/>
                             </div>
                         </Button>
@@ -1127,9 +1533,33 @@ export default function EditCard() {
                             </div>
                           </Dropdown.Toggle>
                           <DropdownMenu>
-                            <Dropdown.Item eventKey="1" onClick={e => addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>Square</Dropdown.Item>
-                            <Dropdown.Item eventKey="2">Dots</Dropdown.Item>
-                            <Dropdown.Item eventKey="3">Draw</Dropdown.Item>
+                            <Dropdown.Item eventKey="1" onClick={(e) => {
+                              if (selectedDeviceMode === SelectedAspectType.Small){
+                                addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                                addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              } else if (selectedDeviceMode === SelectedAspectType.Large){
+                                addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              }  
+                            }}>Square</Dropdown.Item>
+                            <Dropdown.Item eventKey="2" onClick={(e) => {
+                              if (selectedDeviceMode === SelectedAspectType.Small){
+                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              } else if (selectedDeviceMode === SelectedAspectType.Large){
+                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              }
+                            }}>Dots</Dropdown.Item>
+                            <Dropdown.Item eventKey="3" onClick={(e) => {
+                              if (selectedDeviceMode === SelectedAspectType.Small){
+                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              } else if (selectedDeviceMode === SelectedAspectType.Large){
+                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                              }
+                            }}>Draw</Dropdown.Item>
                             <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
                           </DropdownMenu>
                         </Dropdown>
@@ -1404,7 +1834,6 @@ export default function EditCard() {
                       <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Library</h1>
                       <Button variant="primary" style={{display: "flex", alignContent: "right", marginLeft: "auto", marginRight: "3%"}} onClick={() => {setIsShowingPaulyLibrary(false)}}>Close</Button>
                     </Stack>
-
                   </Card.Title>
                   <Card.Body>
                     <Card>
@@ -1476,7 +1905,13 @@ export default function EditCard() {
                         </>:null}
                       <Stack direction='horizontal'>
                         <Button onClick={(e) => {
-                          addComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                          if (selectedDeviceMode === SelectedAspectType.Small){
+                            addComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                          } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                            addComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                          } else if (selectedDeviceMode === SelectedAspectType.Large){
+                            addComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                          }
                           setIsShowingPaulyLibrary(false)
                         }} disabled={selectedFileLibrary === null}>
                           <p>Select</p>
@@ -1517,15 +1952,21 @@ export default function EditCard() {
                 </Card.Title>
                 <Card.Body>
                   <Stack direction='horizontal'>
-                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Class)}}>
-                      Class
-                    </Button>
-                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Commission)}}>
-                      Commission
-                    </Button>
-                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Sport)}}>
-                      Sport
-                    </Button>
+                    { currentUserInfo.Permissions.includes(19) ? 
+                      <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Class)}}>
+                        Class
+                      </Button>:null
+                    }
+                    { currentUserInfo.Permissions.includes(18) ?
+                      <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Commission)}}>
+                        Commission
+                      </Button>:null
+                    }
+                    { currentUserInfo.Permissions.includes(15) ?
+                      <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Sport)}}>
+                        Sport
+                      </Button>:null
+                    }
                   </Stack>
                   <Card>
                     { (selectedCardBindMode === SelectedCardBindModeType.Class) ? 
@@ -1555,30 +1996,82 @@ export default function EditCard() {
             <Stack direction='horizontal'>
               <ListGroup style={{position: "absolute", left: MousePosition.x, top: MousePosition.y, width: "25vw", zIndex: 100}}>
                   <ListGroup.Item onClick={() => {
-                      const NewComponents = [...components]
-                      const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
-                      setComponents(NewComponents)
+                      if (selectedDeviceMode === SelectedAspectType.Small){
+                        const NewComponents = [...componentsSmall]
+                        const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                        NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
+                        setComponentsSmall(NewComponents)
+                      } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                        const NewComponents = [...componentsMedium]
+                        const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                        NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
+                        setComponentsMedium(NewComponents)
+                      } else if (selectedDeviceMode === SelectedAspectType.Large){
+                        const NewComponents = [...componentsLarge]
+                        const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                        NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
+                        setComponentsLarge(NewComponents)
+                      }
                   }}>Move Forward</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
-                    const NewComponents = [...components]
-                    const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                    NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
-                    setComponents(NewComponents)
+                    if (selectedDeviceMode === SelectedAspectType.Small){
+                      const NewComponents = [...componentsSmall]
+                      const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
+                      setComponentsSmall(NewComponents)
+                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                      const NewComponents = [...componentsMedium]
+                      const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
+                      setComponentsMedium(NewComponents)
+                    } else if (selectedDeviceMode === SelectedAspectType.Large){
+                      const NewComponents = [...componentsLarge]
+                      const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
+                      setComponentsLarge(NewComponents)
+                    }
                   }}>Move Backward</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
-                    const maxValueOfY = Math.max(...components.map((o: CardElement) => o.CurrentZIndex), 0);
-                    const NewComponents = [...components]
-                    const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                    NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
-                    setComponents(NewComponents)
+                    if (selectedDeviceMode === SelectedAspectType.Small){
+                      const maxValueOfY = Math.max(...componentsSmall.map((o: CardElement) => o.CurrentZIndex), 0);
+                      const NewComponents = [...componentsSmall]
+                      const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
+                      setComponentsSmall(NewComponents)
+                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                      const maxValueOfY = Math.max(...componentsMedium.map((o: CardElement) => o.CurrentZIndex), 0);
+                      const NewComponents = [...componentsMedium]
+                      const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
+                      setComponentsMedium(NewComponents)
+                    } else if (selectedDeviceMode === SelectedAspectType.Large){
+                      const maxValueOfY = Math.max(...componentsLarge.map((o: CardElement) => o.CurrentZIndex), 0);
+                      const NewComponents = [...componentsLarge]
+                      const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
+                      setComponentsLarge(NewComponents)
+                    }
                   }}>Send To Front</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
-                    const maxValueOfY = Math.min(...components.map((o: CardElement) => o.CurrentZIndex), 0);
-                    const NewComponents = [...components]
-                    const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                    NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
-                    setComponents(NewComponents)
+                    if (selectedDeviceMode === SelectedAspectType.Small){
+                      const maxValueOfY = Math.min(...componentsSmall.map((o: CardElement) => o.CurrentZIndex), 0);
+                      const NewComponents = [...componentsSmall]
+                      const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
+                      setComponentsSmall(NewComponents)
+                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                      const maxValueOfY = Math.min(...componentsMedium.map((o: CardElement) => o.CurrentZIndex), 0);
+                      const NewComponents = [...componentsMedium]
+                      const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
+                      setComponentsMedium(NewComponents)
+                    } else if (selectedDeviceMode === SelectedAspectType.Large){
+                      const maxValueOfY = Math.min(...componentsLarge.map((o: CardElement) => o.CurrentZIndex), 0);
+                      const NewComponents = [...componentsLarge]
+                      const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
+                      setComponentsLarge(NewComponents)
+                    }
                   }} style={{cursor: "default"}}>Send To Back</ListGroup.Item>
                   <ListGroup.Item>Duplicate</ListGroup.Item>
               </ListGroup>
