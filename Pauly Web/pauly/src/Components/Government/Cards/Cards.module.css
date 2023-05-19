@@ -238,3 +238,15 @@ alignItems: "center", */
     background-color: blue;
     border: none;
 }
+
+.TextSelectButton{  /* Bold Italic.. etc */
+    border: none;
+    width: 20%;
+    display: inline-block;
+}
+
+.FontSelectionDivContainer{
+    width: 100%;
+    height: 15vh;
+    overflow: scroll;
+}

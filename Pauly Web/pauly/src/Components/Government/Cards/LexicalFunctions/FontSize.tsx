@@ -8,17 +8,17 @@ import {
   } from "@lexical/selection";
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
-export default function FontSize({fontStyle}:{fontStyle:string}) {
+export default function FontSize({fontSize}:{fontSize:string}) {
     const [editor] = useLexicalComposerContext();
     useEffect(() => {
-        editor.update(() => {
-            const selection = $getSelection();
-            if ($isRangeSelection(selection)) {
-              $patchStyleText(selection, {
-                ["font-family"]: fontStyle
-              });
-            }
-          })
-    }, [fontStyle])
+      editor.update(() => {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) {
+            $patchStyleText(selection, {
+              ["font-size"]: fontSize
+            });
+          }
+        })
+    }, [fontSize])
     return (<p style={{display: "none"}}>This</p>)
 }

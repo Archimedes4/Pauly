@@ -1,24 +1,24 @@
 import React, { useEffect } from 'react'
 import {    
-    $getSelection,
-    $isRangeSelection
+  $getSelection,
+  $isRangeSelection
 } from 'lexical';
 import {
-    $patchStyleText
-  } from "@lexical/selection";
+  $patchStyleText
+} from "@lexical/selection";
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
-export default function FontStyle({fontStyle}:{fontStyle:string}) {
+export default function FontSize({value, style}:{value:string, style: string}) {
     const [editor] = useLexicalComposerContext();
     useEffect(() => {
         editor.update(() => {
             const selection = $getSelection();
             if ($isRangeSelection(selection)) {
               $patchStyleText(selection, {
-                ["font-family"]: fontStyle
+                [style]: value
               });
             }
           })
-    }, [fontStyle])
+    }, [value, style])
     return (<p style={{display: "none"}}>This</p>)
 }

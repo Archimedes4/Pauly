@@ -6,11 +6,14 @@ import textIcon from "../../../images/textIcon.png"
 import imageIcon from "../../../images/imageIcon.png"
 import shapesIcon from "../../../images/shapesIcon.png"
 import imageOverlay from "../../../images/Iphone14.png"
+import Book from "../../../images/Books.png"
 import * as React from 'react';
 import { useCardContext } from "./Cards.js"
 import styles from "./Cards.module.css"
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa"
-import { FcLeft, FcSettings } from "react-icons/fc"
+import { FcLeft, FcSettings, FcIphone } from "react-icons/fc"
+import {RiComputerFill} from "react-icons/ri"
+import {BsTabletLandscape} from "react-icons/bs"
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
 import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter } from "firebase/firestore";
@@ -57,7 +60,15 @@ declare global{
     SelectedColor: String
     SelectedFont: string
   }
+  type UserType = {
+    FirstName: string
+    LastName: string
+    Permissions: number[]
+    ClassMode: number | null
+    ClassPerms: string[] | null
+  }
 }
+
 
 type fileType = {
   contributers: string[]
@@ -105,9 +116,25 @@ enum SelectedAspectType{
   Large
 }
 
+enum SelectedCardBindModeType{
+  Class,
+  Sport,
+  Commission
+}
+
 interface SelectedFont {
   family: string;
   category: string;
+}
+
+type FontType = {
+  fontName: string
+  fontVarients: string[]
+  fontSubsets: string[]
+  UUID: string
+}
+type FontTypeCSS = {
+  UUID: string
 }
 
 export default function EditCard() {
@@ -139,6 +166,11 @@ export default function EditCard() {
   const [strikethrough, setStrikethrough] = useState<boolean>(false)
   const [fontSize, setFontSize] = useState<string>("12px")
   const [fontStyle, setFontStyle] = useState<string>("Times New Roman")
+  const [fontList, setFontList] = useState<FontType []>([])
+  const [selectedFont, setSelectedFont] = useState<FontType>(null)
+  const avaliableFontSizes: string[] = ["8px", "12px", "14px", "16px", "20px", "24px"]
+  const [isShowingBindPage, setIsShowingBindPage] = useState<boolean>(false)
+  const [currentUserInfo, setCurrentUserInfo] = useState<UserType>(null)
 
   //Pauly Library
   const fileInputRef = useRef(null);
@@ -162,12 +194,53 @@ export default function EditCard() {
   const [fileUsers, setFileUsers] = useState<fileUserType[]>()
   const [collectionPageNumber, setCollectionPageNumber] = useState<number>(1)
   const [selectedFileLibrary, setSelectedFileLibrary] = useState<fileType | null>(null)
-  const [selectedFont, setSelectedFont] = useState<string>("Open Sans");
+
+  //Bind Menu
+  const [selectedCardBindMode, setSelectedCardBindMode] = useState<SelectedCardBindModeType>(SelectedCardBindModeType.Class)
 
   const storage = getStorage(app);
 
-  const EMPTY_CONTENT =
-  '{"root":{"children":[{"children":[{"type":"overflow", "size":10}],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
+  const EMPTY_CONTENT = '{"root":{"children":[{"children":[{"type":"overflow", "size":10}],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
+
+  useEffect(() => {
+    fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8')
+      .then(response => response.json())
+      .then((data) => {
+        var NewArray = []
+        for(var index = 0; index < data["items"].length; index++){
+          NewArray.push({ fontName:  data["items"][index]["family"], fontVarients: data["items"][index]["variants"], fontSubsets: data["items"][index]["subsets"], UUID: create_UUID()})
+        }
+        setFontList(NewArray)
+      })
+  }, [])
+
+  useEffect(() => {
+    if (selectedFont !== null) {
+      var apiUrl = [];
+      apiUrl.push('https://fonts.googleapis.com/css?family=');
+      apiUrl.push(selectedFont.fontName.replace(/ /g, '+'));
+      if (selectedFont.fontVarients.includes('italic')) {
+        apiUrl.push(':');
+        apiUrl.push('italic');
+      }
+      if (selectedFont.fontVarients.includes('bold')) {
+        apiUrl.push(':');
+        apiUrl.push('bold');
+      }
+      if (selectedFont.fontSubsets.includes("greek")) {
+        apiUrl.push('&subset=');
+        apiUrl.push('greek');
+      }
+  
+      // url: 'https://fonts.googleapis.com/css?family=Anonymous+Pro:italic&subset=greek'
+      var url = apiUrl.join('');
+      const linkElement = document.createElement('link');
+      linkElement.rel = 'stylesheet';
+      linkElement.href = url;
+      document.head.appendChild(linkElement);
+      setFontStyle(selectedFont.fontName)
+    }
+  }, [selectedFont])
 
   const editorConfig = {
     editorState: EMPTY_CONTENT,
@@ -196,10 +269,6 @@ export default function EditCard() {
   function addComponent(e: React.SyntheticEvent, newValue:CardElement) { 
       e.preventDefault()
       setComponents([...components, newValue])
-  }
-  
-  function setZoom(e: React.SyntheticEvent){
-    setZoomScale(100)
   }
 
   useEffect(() => {
@@ -374,10 +443,7 @@ export default function EditCard() {
     const NewComponents = [...documents]
     for (const image of documents) {
       const result = await handleDownload(image.fileLocation)
-      console.log("This is image unique", image.uniqueID)
-      console.log("This is files", files)
       const SelectedIndex = documents.findIndex((element: fileType) => element.uniqueID === image.uniqueID)
-      console.log("This is selected index", SelectedIndex)
       if (SelectedIndex != -1){
         NewComponents[SelectedIndex]["fileURL"] = result as string
       }
@@ -386,6 +452,7 @@ export default function EditCard() {
   }
 
   useEffect(() => {
+    getUserData()
     getUsers()
     getUsersFiles()
     setOwners([currentUser.uid])
@@ -440,7 +507,6 @@ export default function EditCard() {
   if (isNavigateToDestinations === true) {
     return <Navigate to="/government/cards/edit/destinations"/>;
   }
-
 
   function CalculateAreaPlaneSize() {
     // if (width >= height){ 
@@ -633,6 +699,29 @@ export default function EditCard() {
     setIsShowingUpload(true)
   };
 
+  function create_UUID(){
+    var dt = new Date().getTime();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = (dt + Math.random()*16)%16 | 0;
+        dt = Math.floor(dt/16);
+        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  }
+
+  async function getUserData(){
+    const docRef = doc(db, "Users", currentUser.uid)
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data()
+      setCurrentUserInfo({FirstName: data["First Name"], LastName: data["Last Name"], Permissions: data["Permissions"], ClassMode: data["ClassMode"], ClassPerms: data["ClassPerms"]})
+    } else {
+      // docSnap.data() will be undefined in this case
+      console.log("No such document!");
+    }
+  }
+
   return (
     <>
       <div onClick={() => (setIsShowingRightClick(false))} ref={outerDivRef}>
@@ -697,31 +786,48 @@ export default function EditCard() {
                             <button onClick={(e) => {
                               e.preventDefault()
                               setBolded(!bolded)
-                            }}>Bold</button>
+                            }} className={styles.TextSelectButton}>B</button>
                             <button onClick={(e) => {
                               e.preventDefault()
                               setItalic(!italic)
-                            }}>
-                              Italic
+                            }} className={styles.TextSelectButton}>
+                              I
                             </button>
                             <button onClick={(e) => {
                               e.preventDefault()
-                              setItalic(!underlined)
-                            }}>
-                              Underline
+                              setUnderlined(!underlined)
+                            }} className={styles.TextSelectButton}>
+                              U
                             </button>
                             <button onClick={(e) => {
                               e.preventDefault()
-                              setUnderlined(!strikethrough)
-                            }}>
-                              Strikethrough
+                              setStrikethrough(!strikethrough)
+                            }} className={styles.TextSelectButton}>
+                              S
                             </button>
                             <button>
                               Font: {fontStyle}
                             </button>
-                            <button>
-                              Font Size: {fontSize}
-                            </button>
+                            <div className={styles.FontSelectionDivContainer}>
+                              {fontList.map((font: FontType) => (
+                                <button onClick={() => {setSelectedFont(font)}}>{font.fontName}</button>
+                              ))}
+                            </div>
+                            <Dropdown>
+                              <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
+                                <div style={{height:"2vh"}}>
+                                  <p> Font Size: {fontSize} </p>
+                                </div>
+                              </Dropdown.Toggle>
+                              <DropdownMenu>
+                                { avaliableFontSizes.map((size: string) => (
+                                  <Dropdown.Item onClick={e => {
+                                    e.preventDefault()
+                                    setFontSize(size)
+                                  }}>{size}</Dropdown.Item>
+                                ))}
+                              </DropdownMenu>
+                            </Dropdown>
                           </Row>
                         </>:null
                       }
@@ -743,7 +849,14 @@ export default function EditCard() {
                       </Row>
                     </Container>: 
                     <Container style={{backgroundColor: '#444444', height: "100%", width: "100%", margin: 0, padding: 0}}>
-                      <p> This</p>
+                        <div style={{margin: "auto"}}>
+                          <img src={Book} alt='Book' style={{width: "80%"}}/>
+                        </div>
+                        <div>
+                          <button onClick={() => {setIsShowingBindPage(!isShowingBindPage)}}>
+                            Bind
+                          </button>
+                        </div>
                     </Container>
                   }
                 </Col>
@@ -830,7 +943,6 @@ export default function EditCard() {
                                       switch(item.ElementType) {
                                       case "Text": return (
                                         <>
-
                                           <LexicalComposer initialConfig={editorConfig}>
                                             <div onClick={() => {
                                               setIsUserTypeing(!isUserTyping)
@@ -844,7 +956,7 @@ export default function EditCard() {
                                                   <Italic italic={italic}/>
                                                   <Strikethrough strikethrough={strikethrough}/>
                                                   <Underlined underlined={underlined}/>
-                                                  <FontSize fontStyle={fontSize} />
+                                                  <FontSize fontSize={fontSize} />
                                                   <FontStyle fontStyle={fontStyle}/>
                                                 </>:null
                                               }
@@ -927,77 +1039,114 @@ export default function EditCard() {
               <Row>
                 <div className={styles.CardToolbarDiv}>
                   <Stack direction='horizontal' gap={3} style={{padding: 0, margin: 0, width: "100%", backgroundColor: "white"}}>
-                <div style={{display: "table"}}>
-                <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle", height:"50%"}}>
-                  <InputGroup hasValidation>
-                    <InputGroup.Text id="inputGroupPrepend" onClick={() => {
-                      if (zoomScale >= 10){
-                        setZoomScale((zoomScale - 10))
-                        // const { setTransform } = areaContainerZoomRef.current
-                        // setTransform(100,200,zoomScale/100)
-                      }
-                    }} style={{backgroundColor: "white", padding:0 ,borderLeft: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowLeft /></InputGroup.Text>
-                    <Form.Control
-                      id="SetZoom"
-                      onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
-                      value={zoomScale + "%"}
-                      onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
-                      className={styles.sizeForm}
-                      style={{color:"blue", borderRadius: 0, borderRight: "none", borderLeft: "none", borderBottom: "2px solid black", borderTop: "2px solid black"}}
-                    />
-                    <InputGroup.Text id="inputGroupAfter" onClick={() => {
-                      if (zoomScale <= 500){
-                        console.log(zoomScale)
-                        const newZoom: number = parseInt(zoomScale)
-                        setZoomScale((newZoom + 10))
-                        // const { setTransform } = areaContainerZoomRef.current
-                        // setTransform(100,200,zoomScale/100)
-                      }
-                    }} style={{backgroundColor: "white", padding: 0, borderRight: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowRight/></InputGroup.Text>
-                  </InputGroup>
-                  <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => {
-                        // const { setTransform } = areaContainerZoomRef.current
-                        // setTransform(100,200,zoomScale/100)
-                        setZoomScale(changeEvent.target.value) 
-                      }} className={styles.slider} id="myRange" />
-                </div>
-                </div>
-                <div style={{display: "table"}}>
-                  <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                    <Button className={styles.DropdownButtonStyle}>
-                        <div style={{height:"2vh"}} onClick={e => addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>
-                          <img src={textIcon} className={styles.imgContainer }/>
+                    <div style={{display: "table"}}>
+                    <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle", height:"50%"}}>
+                      <InputGroup hasValidation>
+                        <InputGroup.Text id="inputGroupPrepend" onClick={() => {
+                          if (zoomScale >= 10){
+                            setZoomScale((zoomScale - 10))
+                            // const { setTransform } = areaContainerZoomRef.current
+                            // setTransform(100,200,zoomScale/100)
+                          }
+                        }} style={{backgroundColor: "white", padding:0 ,borderLeft: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowLeft /></InputGroup.Text>
+                        <Form.Control
+                          id="SetZoom"
+                          onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
+                          value={zoomScale + "%"}
+                          onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
+                          className={styles.sizeForm}
+                          style={{color:"blue", borderRadius: 0, borderRight: "none", borderLeft: "none", borderBottom: "2px solid black", borderTop: "2px solid black"}}
+                        />
+                        <InputGroup.Text id="inputGroupAfter" onClick={() => {
+                          if (zoomScale <= 500){
+                            console.log(zoomScale)
+                            const newZoom: number = parseInt(zoomScale)
+                            setZoomScale((newZoom + 10))
+                            // const { setTransform } = areaContainerZoomRef.current
+                            // setTransform(100,200,zoomScale/100)
+                          }
+                        }} style={{backgroundColor: "white", padding: 0, borderRight: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowRight/></InputGroup.Text>
+                      </InputGroup>
+                      <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => {
+                            // const { setTransform } = areaContainerZoomRef.current
+                            // setTransform(100,200,zoomScale/100)
+                            setZoomScale(changeEvent.target.value) 
+                          }} className={styles.slider} id="myRange" />
+                    </div>
+                    </div>
+                    <div style={{display: "table"}}>
+                      <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                        <Button className={styles.DropdownButtonStyle}>
+                            <div style={{height:"2vh"}} onClick={e => addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>
+                              <img src={textIcon} className={styles.imgContainer }/>
+                            </div>
+                        </Button>
+                      </div>
+                    </div>
+                    <div style={{display: "table"}}>
+                      <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                        <Dropdown drop='up'>
+                          <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
+                            <div style={{height:"2vh"}}>
+                              <img src={shapesIcon} className={styles.imgContainer }/>
+                            </div>
+                          </Dropdown.Toggle>
+                          <DropdownMenu>
+                            <Dropdown.Item eventKey="1" onClick={e => addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>Square</Dropdown.Item>
+                            <Dropdown.Item eventKey="2">Dots</Dropdown.Item>
+                            <Dropdown.Item eventKey="3">Draw</Dropdown.Item>
+                            <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
+                          </DropdownMenu>
+                        </Dropdown>
+                      </div>
+                    </div>
+                    <div style={{display: "table"}}>
+                      <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                        <Button onClick={() => {setIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
+                          <div style={{height:"2vh"}}>
+                              <img src={imageIcon} className={styles.imgContainer}/>
+                            </div>
+                        </Button>
+                      </div>
+                    </div>
+                    {/* Mode Selection */}
+                    <div>
+                      <Stack direction='horizontal'>
+                        <div style={{display: "table"}}>
+                          <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                            <Button onClick={() => {
+                              setSelectedDeviceMode(SelectedAspectType.Small)
+                            }} className={styles.DropdownButtonStyle}>
+                              <div style={{height:"2vh"}}>
+                                  <RiComputerFill color='black' />
+                                </div>
+                            </Button>
+                          </div>
                         </div>
-                    </Button>
-                  </div>
-                </div>
-                <div style={{display: "table"}}>
-                  <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                    <Dropdown drop='up'>
-                      <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
-                        <div style={{height:"2vh"}}>
-                          <img src={shapesIcon} className={styles.imgContainer }/>
+                        <div style={{display: "table"}}>
+                          <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                            <Button onClick={() => {
+                              setSelectedDeviceMode(SelectedAspectType.Medium)
+                            }} className={styles.DropdownButtonStyle}>
+                              <div style={{height:"2vh"}}>
+                                  <BsTabletLandscape color='black' />
+                                </div>
+                            </Button>
+                          </div>
                         </div>
-                      </Dropdown.Toggle>
-                      <DropdownMenu>
-                        <Dropdown.Item eventKey="1" onClick={e => addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})}>Square</Dropdown.Item>
-                        <Dropdown.Item eventKey="2">Dots</Dropdown.Item>
-                        <Dropdown.Item eventKey="3">Draw</Dropdown.Item>
-                        <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
-                      </DropdownMenu>
-                    </Dropdown>
-                  </div>
-                </div>
-                <div style={{display: "table"}}>
-                  <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                    <Button onClick={() => {setIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
-                      <div style={{height:"2vh"}}>
-                          <img src={imageIcon} className={styles.imgContainer}/>
+                        <div style={{display: "table"}}>
+                          <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                            <Button onClick={() => {
+                              setSelectedDeviceMode(SelectedAspectType.Large)
+                            }} className={styles.DropdownButtonStyle}>
+                              <div style={{height:"2vh"}}>
+                                  <FcIphone color='black' />
+                                </div>
+                            </Button>
+                          </div>
                         </div>
-                    </Button>
-                  </div>
-                </div>
-                {/* Mode Selection */}
+                      </Stack>
+                    </div>
                   </Stack>
                 </div>
               </Row>
@@ -1026,11 +1175,10 @@ export default function EditCard() {
                 </Card.Body>
               </Card>
             </div>
-          </> 
-          : null
-          //Pauly Library
+          </> : null
         }
         {
+          //Pauly Library
           isShowingPaulyLibaray ?
           <>
             <input type="file" accept="'image/gif', 'image/jpeg', 'image/png', 'image/avif', 'application/pdf', 'image/svg+xml', 'image/webp', 'image/bmp', 'audio/aac', 'video/x-msvideo', 'audio/mpeg', 'video/mp4', 'video/mpeg', 'audio/webm', 'video/webm', 	'video/quicktime', 'application/pdf', 'text/csv', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/rtf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'text/plain', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.apple.keynote', 'application/vnd.apple.pages', 'application/vnd.apple.numbers'" onChange={handleFileChange} style={{display: "none"}} ref={fileInputRef}/>
@@ -1169,7 +1317,7 @@ export default function EditCard() {
                   <Card.Body>
                     <Card>
                       <Stack direction='horizontal' gap={1}>
-                        
+                            
                         <Button onClick={() => {setSelectedImageLibraryMode(SelectedImageLibraryModeType.Images)}}>
                           Images
                         </Button>
@@ -1262,8 +1410,53 @@ export default function EditCard() {
               </Card>
             </div>
             }
-          </> 
-          :null
+          </> :null
+        }
+        {
+          //Bind Page
+          isShowingBindPage ? 
+          <>
+            <div className={styles.ImageLibraryView}>
+              <Card>
+                <Card.Title>
+                  <Stack direction='horizontal'>
+                    <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Bind</h1>
+                    <Button variant="primary" style={{textAlign: "right"}} onClick={() => {setIsShowingBindPage(false)}}>Back</Button>
+                  </Stack>
+                </Card.Title>
+                <Card.Body>
+                  <Stack direction='horizontal'>
+                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Class)}}>
+                      Class
+                    </Button>
+                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Commission)}}>
+                      Commission
+                    </Button>
+                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Sport)}}>
+                      Sport
+                    </Button>
+                  </Stack>
+                  <Card>
+                    { (selectedCardBindMode === SelectedCardBindModeType.Class) ? 
+                      <>
+                        <p>Class</p>
+                      </>:null
+                    }
+                    { (selectedCardBindMode === SelectedCardBindModeType.Commission) ? 
+                      <>
+                        <p>Commission</p>
+                      </>:null
+                    }
+                    { (selectedCardBindMode === SelectedCardBindModeType.Sport) ? 
+                      <>
+                        <p>Sport</p>
+                      </>:null
+                    }
+                  </Card>
+                </Card.Body>
+              </Card>
+            </div>
+          </>:null
         }
       </div>
         {isShowingRightClick ? 
