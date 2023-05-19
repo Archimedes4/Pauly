@@ -14,34 +14,17 @@ import { FaArrowRight, FaArrowLeft, FaBold, FaItalic, FaUnderline, FaStrikethrou
 import { FcLeft, FcSettings, FcIphone } from "react-icons/fc"
 import {RiComputerFill} from "react-icons/ri"
 import {BsTabletLandscape} from "react-icons/bs"
+import {HiRectangleGroup} from "react-icons/hi2"
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
 import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter } from "firebase/firestore";
 import { useAuth } from '../../../Contexts/AuthContext';
-import { InitialConfigType, LexicalComposer } from "@lexical/react/LexicalComposer";
+import {  LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import PlaygroundNodes from './playgroundNode.ts';
-import PlaygroundEditorTheme from './EditorTheme.ts';
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import EditorToolbar from './EditorToolbar.tsx';
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';;
 import SplashCheckmark from '../../../UI/SplashCheckmark/SplashCheckmark.tsx';
 import VideoContainer from '../../../UI/VideoContainer.tsx';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import {
-  FOCUS_COMMAND,
-  COMMAND_PRIORITY_LOW
-} from 'lexical';
-import { TextFocusPlugin } from './TextFocusPlugin.tsx';
-import { MaxLengthPlugin } from './MaxLengthPlugin.tsx';
-import Bold from './LexicalFunctions/Bold.tsx';
-import FontSize from './LexicalFunctions/FontSize.tsx';
-import FontStyle from './LexicalFunctions/FontStyle.tsx';
-import Italic from './LexicalFunctions/Italic.tsx';
-import Strikethrough from './LexicalFunctions/Strikethrough.tsx';
-import Underlined from './LexicalFunctions/Underline.tsx';
+import EditCardArea from './EditCardArea.tsx';
 
 declare global{
   type CardElement = {
@@ -216,13 +199,13 @@ export default function EditCard() {
   //Bind Menu
   const [selectedCardBindMode, setSelectedCardBindMode] = useState<SelectedCardBindModeType>(SelectedCardBindModeType.Class)
 
+  //Card Menu
+
   const storage = getStorage(app);
 
-  const EMPTY_CONTENT = '{"root":{"children":[{"children":[{"type":"overflow", "size":10}],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
-
-  useEffect(() => {
-    getUserSites()
-  }, [])
+  // useEffect(() => {
+  //   getUserSites()
+  // }, [])
 
   useEffect(() => {
     fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8')
@@ -263,16 +246,6 @@ export default function EditCard() {
       setFontStyle(selectedFont.fontName)
     }
   }, [selectedFont])
-
-  const editorConfig = {
-    editorState: EMPTY_CONTENT,
-    namespace: 'Playground',
-    nodes: [...PlaygroundNodes],
-    onError: (error: Error) => {
-      throw error;
-    },
-    theme: PlaygroundEditorTheme,
-  };
   
   useEffect(() => {
     CalculateAreaPlaneSize()
@@ -775,7 +748,20 @@ export default function EditCard() {
   }
 
   async function getUserMicrosoftFiles() {
-
+    fetch("https://graph.microsoft.com/v1.0/me/drives", {method: "Get", headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+    },})
+    .then(response => response.json())
+    .then(data => {
+      const NewData: TeamsGroupType[] = []
+      for(var index = 0; index < data["value"].length; index++){
+        if (data["value"][index] !== undefined){
+          NewData.push({TeamName: data["value"][index]["displayName"], TeamId: data["value"][index]["id"], TeamDescription: data["value"][index]["description"]})
+        }
+      }
+      setUsersTeams(NewData)
+    })
   }
 
   async function getUserSites() {
@@ -1123,7 +1109,8 @@ export default function EditCard() {
                               }}
                               onMouseMove={ onMouseMove }
                             >
-                              { (selectedDeviceMode === SelectedAspectType.Small) ?
+                              <EditCardArea components={componentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>
+                              {/* { (selectedDeviceMode === SelectedAspectType.Small) ?
                                 <div> {componentsSmall?.map((item: CardElement) => ( 
                                   <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
                                     <div style={{ position: "absolute",
@@ -1237,117 +1224,7 @@ export default function EditCard() {
                                 ))} </div>:null
                               }
                               { (selectedDeviceMode === SelectedAspectType.Medium) ?
-                                <div> {componentsMedium?.map((item: CardElement) => ( 
-                                  <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
-                                    <div style={{ position: "absolute",
-                                          height: (item.Height  * (zoomScale/100)) + "px",
-                                          width: (item.Width  * (zoomScale/100)) + "px",}}>
-                                    <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
-                                    onClick={ (e) => {
-                                      handleOnClick(e, item)
-                                    }}
-                                    onMouseDown={(e) => {
-                                      if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setPressed(true)
-                                      }
-                                    }}
-                                    onContextMenu={(e) => {
-                                      e.preventDefault()
-                                      handleOnClick(e, item)
-                                      setMousePosition({x: e.clientX, y: e.clientY})
-                                      setIsShowingRightClick(!isShowingRightClick)        
-                                    }}>
-                                      <div style={
-                                        {
-                                          opacity: item.Opacity/100
-                                        }}>
-                                        {(() => {
-                                              switch(item.ElementType) {
-                                              case "Text": return (
-                                                <>
-                                                  <LexicalComposer initialConfig={editorConfig}>
-                                                    <div onClick={() => {
-                                                      setIsUserTypeing(!isUserTyping)
-                                                    }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
-                                                      <MaxLengthPlugin maxLength={300}/>
-                                                      <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
-                                                      <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
-                                                      { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
-                                                        <>
-                                                          <Bold bolded={bolded}/>
-                                                          <Italic italic={italic}/>
-                                                          <Strikethrough strikethrough={strikethrough}/>
-                                                          <Underlined underlined={underlined}/>
-                                                          <FontSize fontSize={fontSize} />
-                                                          <FontStyle fontStyle={fontStyle}/>
-                                                        </>:null
-                                                      }
-                                                    </div>
-                                                  </LexicalComposer>
-                                                </>)
-                                              case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
-                                              case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                              case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                              default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
-                                              }
-                                          })()}
-                                      </div>
-                                    </button>
-                                    { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
-                                    <div>
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("ne")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Right Top */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${((item.Height * (zoomScale/100)) - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("e")
-                                            }
-                                        }}><span className={styles.dot} /></button>  {/* Right */} 
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${(item.Height * (zoomScale/100)) - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("se")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Right Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, ${((item.Height * (zoomScale/100))- 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("s")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height  * (zoomScale/100)) - 8 }px)`, cursor:"sw-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("sw")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("w")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("nw")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left Top */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("n")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Top */}
-                                    </div>
-                                    }
-                                    </div>
-                                  </div>
-                                ))} </div>:null
+                                :null
                               }
                               { (selectedDeviceMode === SelectedAspectType.Large) ?
                                 <div> {componentsLarge?.map((item: CardElement) => ( 
@@ -1461,7 +1338,7 @@ export default function EditCard() {
                                     </div>
                                   </div>
                                 ))} </div>:null
-                              }
+                              } */}
                           {/* End Of Components */}
                           </div>
                         </div>
@@ -1570,6 +1447,15 @@ export default function EditCard() {
                         <Button onClick={() => {setIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
                           <div style={{height:"2vh"}}>
                               <img src={imageIcon} className={styles.imgContainer}/>
+                            </div>
+                        </Button>
+                      </div>
+                    </div>
+                    <div style={{display: "table"}}>
+                      <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
+                        <Button onClick={() => {setIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
+                          <div style={{height:"2vh"}}>
+                              <HiRectangleGroup color='black'/>
                             </div>
                         </Button>
                       </div>
@@ -1904,7 +1790,7 @@ export default function EditCard() {
                           <p> This is pdfs </p>
                         </>:null}
                       <Stack direction='horizontal'>
-                        <Button onClick={(e) => {
+                        <button onClick={(e) => {
                           if (selectedDeviceMode === SelectedAspectType.Small){
                             addComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
                           } else if (selectedDeviceMode === SelectedAspectType.Medium){
@@ -1913,16 +1799,16 @@ export default function EditCard() {
                             addComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
                           }
                           setIsShowingPaulyLibrary(false)
-                        }} disabled={selectedFileLibrary === null}>
-                          <p>Select</p>
-                        </Button>
+                        }} disabled={selectedFileLibrary === null} className={styles.ImageLibraryButton}>
+                          <p style={{padding: 0, margin: 0}}>Select</p>
+                        </button>
                         <button className={styles.ImageLibraryButton}>
                           <p style={{padding: 0, margin: 0}}>Edit</p>
                         </button>
                         <Dropdown dir='up'>
                           <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle} dir='up'>
                             <div style={{height:"2vh"}}>
-                              <p>Upload</p>
+                              <p style={{padding: 0, margin: 0, display: "flex", justifyContent: "center"}}>Upload</p>
                             </div>
                           </Dropdown.Toggle>
                           <DropdownMenu>
@@ -1943,11 +1829,11 @@ export default function EditCard() {
           isShowingBindPage ? 
           <>
             <div className={styles.ImageLibraryView}>
-              <Card>
+              <Card className={styles.ImageLibraryViewCard}>
                 <Card.Title>
                   <Stack direction='horizontal'>
                     <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Bind</h1>
-                    <Button variant="primary" style={{textAlign: "right"}} onClick={() => {setIsShowingBindPage(false)}}>Back</Button>
+                    <Button variant="primary" style={{display: "flex", alignContent: "right", marginLeft: "auto", marginRight: "3%"}} onClick={() => {setIsShowingBindPage(false)}}>Back</Button>
                   </Stack>
                 </Card.Title>
                 <Card.Body>
