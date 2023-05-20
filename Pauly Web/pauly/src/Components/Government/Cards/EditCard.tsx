@@ -1,13 +1,15 @@
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Link, Navigate } from "react-router-dom"
 import { Container, Row, Col, Button, Card, Form, Stack, Dropdown, InputGroup, ListGroup } from 'react-bootstrap';
 // import { View } from 'react-native';
+import SplashCheckmark from '../../../UI/SplashCheckmark/SplashCheckmark.tsx';
+import VideoContainer from '../../../UI/VideoContainer.tsx';
+import EditCardArea from './EditCardArea.tsx';
 import textIcon from "../../../images/textIcon.png"
 import imageIcon from "../../../images/imageIcon.png"
 import shapesIcon from "../../../images/shapesIcon.png"
 import imageOverlay from "../../../images/Iphone14.png"
 import Book from "../../../images/Books.png"
-import * as React from 'react';
 import { useCardContext } from "./Cards.js"
 import styles from "./Cards.module.css"
 import { FaArrowRight, FaArrowLeft, FaBold, FaItalic, FaUnderline, FaStrikethrough } from "react-icons/fa"
@@ -21,10 +23,8 @@ import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serv
 import { useAuth } from '../../../Contexts/AuthContext';
 import {  LexicalComposer } from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';;
-import SplashCheckmark from '../../../UI/SplashCheckmark/SplashCheckmark.tsx';
-import VideoContainer from '../../../UI/VideoContainer.tsx';
-import EditCardArea from './EditCardArea.tsx';
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import UploadMicrosoftFile from './uploadMicrosoftFile.tsx';
 
 declare global{
   type CardElement = {
@@ -52,6 +52,7 @@ declare global{
     SportsMode: number | null
     SportsPerms: string[] | null
   }
+  
 }
 
 
@@ -122,18 +123,6 @@ type FontTypeCSS = {
   UUID: string
 }
 
-enum MicrosoftUploadModeType {
-  ShareLink,
-  Personal,
-  Site
-}
-
-type TeamsGroupType = {
-  TeamName: string
-  TeamId: string
-  TeamDescription: string
-}
-
 export default function EditCard() {
   const outerDivRef = useRef(null)
   const { SelectedCard, zoomScale, setZoomScale, componentsSmall, setComponentsSmall, componentsMedium, setComponentsMedium, componentsLarge, setComponentsLarge } = useCardContext()
@@ -174,7 +163,6 @@ export default function EditCard() {
   const [isShowingPaulyLibaray, setIsShowingPaulyLibrary] = useState(false)
   const [isShowingUpload, setIsShowingUpload] = useState(false)
   const [isShowingMicrosoftUpload, setIsShowingMicrosoftUpload] = useState(false)
-  const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
   const [microsoftDrivePath, setMicrosoftDrivePath] = useState("/me/drives")
   const [fileUrl, setFileUrl] = useState('');
   const [fileSize, setFileSize] = useState<number>(0);
@@ -194,12 +182,13 @@ export default function EditCard() {
   const [fileUsers, setFileUsers] = useState<fileUserType[]>()
   const [collectionPageNumber, setCollectionPageNumber] = useState<number>(1)
   const [selectedFileLibrary, setSelectedFileLibrary] = useState<fileType | null>(null)
-  const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
 
   //Bind Menu
   const [selectedCardBindMode, setSelectedCardBindMode] = useState<SelectedCardBindModeType>(SelectedCardBindModeType.Class)
 
   //Card Menu
+  const [isShowingCardsMenu, setIsShowingCardsMenu] = useState<boolean>(false)
+  const [isShowingCardAddMenu, setIsShowingCardAddMenu] = useState<boolean>(false)
 
   const storage = getStorage(app);
 
@@ -508,18 +497,35 @@ export default function EditCard() {
 
   const handler = (event: React.KeyboardEvent) => {
     if (event.key === 'Backspace' && !isUserTyping) {
+      console.log("VVVVVVV THis THIS THIS THIS THIS THIS THIS THIS THIS this this this")
       if (selectedDeviceMode === SelectedAspectType.Small){
+        console.log("THis THIS THIS THIS THIS THIS THIS THIS THIS this this this")
+        const NewComponents = [...componentsSmall]
         const removeIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
         setSelectedElement(null)
-        componentsSmall.pop(removeIndex - 1)
+        const save = NewComponents[0] 
+        NewComponents[0] = NewComponents[removeIndex]
+        NewComponents[removeIndex] = save
+        NewComponents.shift()
+        setComponentsSmall(NewComponents)
       } else if (selectedDeviceMode === SelectedAspectType.Medium){
+        const NewComponents = [...componentsMedium]
         const removeIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
         setSelectedElement(null)
-        componentsMedium.pop(removeIndex - 1)
+        const save = NewComponents[0] 
+        NewComponents[0] = NewComponents[removeIndex]
+        NewComponents[removeIndex] = save
+        NewComponents.shift()
+        setComponentsMedium(NewComponents)
       } else if (selectedDeviceMode === SelectedAspectType.Large){
+        const NewComponents = [...componentsLarge]
         const removeIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
         setSelectedElement(null)
-        componentsLarge.pop(removeIndex - 1)
+        const save = NewComponents[0] 
+        NewComponents[0] = NewComponents[removeIndex]
+        NewComponents[removeIndex] = save
+        NewComponents.shift()
+        setComponentsLarge(NewComponents)
       }
     }
   };
@@ -745,40 +751,6 @@ export default function EditCard() {
       // docSnap.data() will be undefined in this case
       console.log("No such document!");
     }
-  }
-
-  async function getUserMicrosoftFiles() {
-    fetch("https://graph.microsoft.com/v1.0/me/drives", {method: "Get", headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + currentUserMicrosoftAccessToken
-    },})
-    .then(response => response.json())
-    .then(data => {
-      const NewData: TeamsGroupType[] = []
-      for(var index = 0; index < data["value"].length; index++){
-        if (data["value"][index] !== undefined){
-          NewData.push({TeamName: data["value"][index]["displayName"], TeamId: data["value"][index]["id"], TeamDescription: data["value"][index]["description"]})
-        }
-      }
-      setUsersTeams(NewData)
-    })
-  }
-
-  async function getUserSites() {
-    fetch("https://graph.microsoft.com/v1.0/me/memberOf", {method: "Get", headers: {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer " + currentUserMicrosoftAccessToken
-    },})
-    .then(response => response.json())
-    .then(data => {
-      const NewData: TeamsGroupType[] = []
-      for(var index = 0; index < data["value"].length; index++){
-        if (data["value"][index] !== undefined){
-          NewData.push({TeamName: data["value"][index]["displayName"], TeamId: data["value"][index]["id"], TeamDescription: data["value"][index]["description"]})
-        }
-      }
-      setUsersTeams(NewData)
-    })
   }
 
   async function getUsersCourses(grade: string) {
@@ -1109,236 +1081,15 @@ export default function EditCard() {
                               }}
                               onMouseMove={ onMouseMove }
                             >
-                              <EditCardArea components={componentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>
-                              {/* { (selectedDeviceMode === SelectedAspectType.Small) ?
-                                <div> {componentsSmall?.map((item: CardElement) => ( 
-                                  <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
-                                    <div style={{ position: "absolute",
-                                          height: (item.Height  * (zoomScale/100)) + "px",
-                                          width: (item.Width  * (zoomScale/100)) + "px",}}>
-                                    <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
-                                    onClick={ (e) => {
-                                      handleOnClick(e, item)
-                                    }}
-                                    onMouseDown={(e) => {
-                                      if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setPressed(true)
-                                      }
-                                    }}
-                                    onContextMenu={(e) => {
-                                      e.preventDefault()
-                                      handleOnClick(e, item)
-                                      setMousePosition({x: e.clientX, y: e.clientY})
-                                      setIsShowingRightClick(!isShowingRightClick)        
-                                    }}>
-                                      <div style={
-                                        {
-                                          opacity: item.Opacity/100
-                                        }}>
-                                        {(() => {
-                                              switch(item.ElementType) {
-                                              case "Text": return (
-                                                <>
-                                                  <LexicalComposer initialConfig={editorConfig}>
-                                                    <div onClick={() => {
-                                                      setIsUserTypeing(!isUserTyping)
-                                                    }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
-                                                      <MaxLengthPlugin maxLength={300}/>
-                                                      <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
-                                                      <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
-                                                      { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
-                                                        <>
-                                                          <Bold bolded={bolded}/>
-                                                          <Italic italic={italic}/>
-                                                          <Strikethrough strikethrough={strikethrough}/>
-                                                          <Underlined underlined={underlined}/>
-                                                          <FontSize fontSize={fontSize} />
-                                                          <FontStyle fontStyle={fontStyle}/>
-                                                        </>:null
-                                                      }
-                                                    </div>
-                                                  </LexicalComposer>
-                                                </>)
-                                              case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
-                                              case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                              case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                              default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
-                                              }
-                                          })()}
-                                      </div>
-                                    </button>
-                                    { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
-                                    <div>
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("ne")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Right Top */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${((item.Height * (zoomScale/100)) - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("e")
-                                            }
-                                        }}><span className={styles.dot} /></button>  {/* Right */} 
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${(item.Height * (zoomScale/100)) - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("se")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Right Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, ${((item.Height * (zoomScale/100))- 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("s")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height  * (zoomScale/100)) - 8 }px)`, cursor:"sw-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("sw")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("w")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("nw")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left Top */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("n")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Top */}
-                                    </div>
-                                    }
-                                    </div>
-                                  </div>
-                                ))} </div>:null
+                              { (selectedDeviceMode === SelectedAspectType.Small) ?
+                                <EditCardArea components={componentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>:null
                               }
                               { (selectedDeviceMode === SelectedAspectType.Medium) ?
-                                :null
+                                <EditCardArea components={componentsMedium} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>:null
                               }
                               { (selectedDeviceMode === SelectedAspectType.Large) ?
-                                <div> {componentsLarge?.map((item: CardElement) => ( 
-                                  <div style={{zIndex: item.CurrentZIndex, position: "absolute", cursor: "move", transform: `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))}px)`, height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px"}}> 
-                                    <div style={{ position: "absolute",
-                                          height: (item.Height  * (zoomScale/100)) + "px",
-                                          width: (item.Width  * (zoomScale/100)) + "px",}}>
-                                    <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
-                                    onClick={ (e) => {
-                                      handleOnClick(e, item)
-                                    }}
-                                    onMouseDown={(e) => {
-                                      if (e.button == 0 && selectedElementValue?.ElementIndex === item.ElementIndex){
-                                        setPressed(true)
-                                      }
-                                    }}
-                                    onContextMenu={(e) => {
-                                      e.preventDefault()
-                                      handleOnClick(e, item)
-                                      setMousePosition({x: e.clientX, y: e.clientY})
-                                      setIsShowingRightClick(!isShowingRightClick)        
-                                    }}>
-                                      <div style={
-                                        {
-                                          opacity: item.Opacity/100
-                                        }}>
-                                        {(() => {
-                                              switch(item.ElementType) {
-                                              case "Text": return (
-                                                <>
-                                                  <LexicalComposer initialConfig={editorConfig}>
-                                                    <div onClick={() => {
-                                                      setIsUserTypeing(!isUserTyping)
-                                                    }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
-                                                      <MaxLengthPlugin maxLength={300}/>
-                                                      <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
-                                                      <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
-                                                      { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
-                                                        <>
-                                                          <Bold bolded={bolded}/>
-                                                          <Italic italic={italic}/>
-                                                          <Strikethrough strikethrough={strikethrough}/>
-                                                          <Underlined underlined={underlined}/>
-                                                          <FontSize fontSize={fontSize} />
-                                                          <FontStyle fontStyle={fontStyle}/>
-                                                        </>:null
-                                                      }
-                                                    </div>
-                                                  </LexicalComposer>
-                                                </>)
-                                              case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
-                                              case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                              case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                                              default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
-                                              }
-                                          })()}
-                                      </div>
-                                    </button>
-                                    { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
-                                    <div>
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("ne")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Right Top */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${((item.Height * (zoomScale/100)) - 24)/2}px)`, cursor:"e-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("e")
-                                            }
-                                        }}><span className={styles.dot} /></button>  {/* Right */} 
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, ${(item.Height * (zoomScale/100)) - 8}px)`, cursor:"se-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("se")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Right Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, ${((item.Height * (zoomScale/100))- 8)}px)`, cursor:"s-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("s")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${(item.Height  * (zoomScale/100)) - 8 }px)`, cursor:"sw-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("sw")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left Bottem */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("w")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(0px, -13px)`, cursor:"nw-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("nw")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Left Top */}
-                                        <button className={styles.dotButtonStyle} style={{transform: `translate(${((item.Width  * (zoomScale/100)) + 5)/2}px, -13px)`, cursor:"n-resize"}} onMouseDown={() => {
-                                            if (selectedElementValue?.ElementIndex === item.ElementIndex){
-                                                setIsChangingSize(true)
-                                                setChangingSizeDirection("n")
-                                            }
-                                        }}><span className={styles.dot} /></button> {/* Top */}
-                                    </div>
-                                    }
-                                    </div>
-                                  </div>
-                                ))} </div>:null
-                              } */}
+                                <EditCardArea components={componentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>:null
+                              }
                           {/* End Of Components */}
                           </div>
                         </div>
@@ -1453,7 +1204,7 @@ export default function EditCard() {
                     </div>
                     <div style={{display: "table"}}>
                       <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                        <Button onClick={() => {setIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
+                        <Button onClick={() => {setIsShowingCardsMenu(!isShowingCardsMenu)}} className={styles.DropdownButtonStyle}>
                           <div style={{height:"2vh"}}>
                               <HiRectangleGroup color='black'/>
                             </div>
@@ -1553,41 +1304,8 @@ export default function EditCard() {
               <div>
                 {
                   isShowingMicrosoftUpload ? 
-                  <div className={styles.ImageLibraryView}>
-                    <Card className={styles.ImageLibraryViewCard}>
-                      <Card.Text>
-                        <Stack direction='horizontal'>
-                          <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Upload File From Microsoft</h1>
-                          <Button variant="primary" style={{display: "flex", alignContent: "right", marginLeft: "auto", marginRight: "3%"}} onClick={() => {setIsShowingUpload(false); setIsShowingMicrosoftUpload(false)}}>Back</Button>
-                        </Stack>
-                      </Card.Text>
-                      <Card.Body>
-                        <Button onClick={() => {setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Personal)}}>
-                          Personal
-                        </Button>
-                        <Button onClick={() => {setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.ShareLink)}}>
-                          Link
-                        </Button>
-                        <Button onClick={() => {setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Site)}}>
-                          Teams
-                        </Button>
-                        { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 
-                          <div>
-                            Personal
-                          </div>:null
-                        }
-                        { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 
-                          <div>
-                            Link
-                          </div>:null
-                        }
-                        { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Site) ? 
-                          <div>
-                            Site
-                          </div>:null
-                        }
-                      </Card.Body>
-                    </Card>
+                  <div>
+                    <UploadMicrosoftFile onSetIsShowingUpload={setIsShowingUpload} onSetIsShowingMicrosoftUpload={setIsShowingMicrosoftUpload} />
                   </div>:
                   <div className={styles.ImageLibraryView}>
                     <Card className={styles.ImageLibraryViewCard}>
@@ -1823,6 +1541,38 @@ export default function EditCard() {
             </div>
             }
           </> :null
+        }
+        {
+          //Cards Page
+          isShowingCardsMenu ?
+          <>
+            <div className={styles.ImageLibraryView}>
+              <Card className={styles.ImageLibraryViewCard}>
+                <Card.Title>
+                  <Stack direction='horizontal'>
+                    <h1 style={{textAlign: "left"}} className={styles.ImageLibraryViewTitle}>Cards</h1>
+                    <Button variant="primary" style={{display: "flex", alignContent: "right", marginLeft: "auto", marginRight: "3%"}} onClick={() => {setIsShowingCardsMenu(false)}}>Close</Button>
+                  </Stack>
+                </Card.Title>
+                <Card.Body>
+                  <Card>
+                    { isShowingCardAddMenu ? 
+                      <div>
+                          <p>Add New Card</p>
+                          
+                      </div>:
+                      <div>
+                        <p>Cards</p>
+                      </div>
+                    }
+                  </Card>
+                  <Button onClick={() => {setIsShowingCardAddMenu(true)}}>
+                    Add New
+                  </Button>
+                </Card.Body>
+              </Card>
+            </div>
+          </>:null
         }
         {
           //Bind Page

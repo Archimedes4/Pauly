@@ -285,3 +285,8 @@ alignItems: "center", */
     width: 40%;
     border-radius: 5px;
 }
+
+.uploadMicrosoftFilesContainer{
+    height: 60vh;
+    overflow-y: scroll;
+}
