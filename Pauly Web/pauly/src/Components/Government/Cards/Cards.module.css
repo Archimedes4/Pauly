@@ -141,6 +141,7 @@
 
 .ImageLibraryViewCard{
     width: 90vw;
+    height: 80vh;
 }
 
 
@@ -163,7 +164,7 @@
 
 /* card containter */
 .CardContainterCardCSS {
-    overflow: scroll;
+    overflow: hidden;
     /* white-space: nowrap; */
     display: flex;
     justify-content: center;
@@ -177,7 +178,7 @@
 .CardContainterCardCSS ::-webkit-scrollbar {display:none;}
 
 .CardContainterCardCSS:fullscreen{
-    overflow: scroll;
+    overflow: hidden;
     /* white-space: nowrap; */
     display: flex;
     justify-content: center;
