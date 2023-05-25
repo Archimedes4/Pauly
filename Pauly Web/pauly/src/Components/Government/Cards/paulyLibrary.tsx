@@ -6,9 +6,12 @@ import SplashCheckmark from '../../../UI/SplashCheckmark/SplashCheckmark.tsx';
 import VideoContainer from '../../../UI/VideoContainer.tsx';
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter } from "firebase/firestore";
-import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
+import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL, getBlob } from 'firebase/storage';
 import { useAuth } from '../../../Contexts/AuthContext';
 import PDFView from "./PDFView.tsx"
+import CustomButton from '../../../UI/CustomButton/CustomButton.tsx';
+import HorizontalPicker from "../../../UI/NavBar/NavBarHolder"
+import Progress from '../../../UI/ProgressView/Progress.tsx';
 
 type fileUserType = {
     UsersName: string
@@ -132,8 +135,71 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
         return Responce
     }
 
+    async function downloadPDF(fileId: string, name:string){
+        fetch("https://graph.microsoft.com/v1.0/sites/gocrusadersca.sharepoint.com/drive/items/" + fileId + "/content", {
+            headers: {
+                "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+            },
+            method: "GET"
+        }).then(response => response.blob())
+        .then(data => {
+            console.log("data", data)
+            const blob = new Blob([data], {type: 'application/pdf'});
+            setFileSize(blob.size);
+            const url = URL.createObjectURL( blob );
+            console.log(url)
+            setFileUrl(url);
+            setFileType("application/pdf");
+            setFileName(name);
+            const selectedFileNew = new File([blob], name)
+            setSelectedFile(selectedFileNew);
+        })
+    }
+
     async function downloadAsPDF(fileId: string, name: string){
         fetch("https://graph.microsoft.com/v1.0/sites/gocrusadersca.sharepoint.com/drive/items/" + fileId + "/content?format=pdf", {
+            headers: {
+                "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+            },
+            method: "GET"
+        }).then(response => response.blob())
+        .then(data => {
+            console.log("data", data)
+            const blob = new Blob([data], {type: 'application/pdf'});
+            setFileSize(blob.size);
+            const url = URL.createObjectURL( blob );
+            console.log(url)
+            setFileUrl(url);
+            setFileType("application/pdf");
+            setFileName(name);
+            const selectedFileNew = new File([blob], name)
+            setSelectedFile(selectedFileNew);
+        })
+    }
+
+    async function downloadMicosoftPDF(id: string, name: string) {
+        fetch("https://graph.microsoft.com/v1.0/me/drive/items/" + id + "/content", {
+            headers: {
+                "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+            },
+            method: "GET"
+        }).then(response => response.blob())
+        .then(data => {
+            console.log("data", data)
+            const blob = new Blob([data], {type: 'application/pdf'});
+            setFileSize(blob.size);
+            const url = URL.createObjectURL( blob );
+            console.log(url)
+            setFileUrl(url);
+            setFileType("application/pdf");
+            setFileName(name);
+            const selectedFileNew = new File([blob], name)
+            setSelectedFile(selectedFileNew);
+        })
+    }
+
+    async function downloadMicrosoftAsPDF(id: string, name: string){
+        fetch("https://graph.microsoft.com/v1.0/me/drive/items/" + id + "/content?format=pdf", {
             headers: {
                 "Authorization": "Bearer " + currentUserMicrosoftAccessToken
             },
@@ -317,8 +383,12 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
           // Create a storage reference for the selected file
           const storageRef = ref(storage, "Library/" + docRef.id);
     
+          const metadata = {
+            contentType: fileType,
+          };
+
           // Upload file
-          const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+          const uploadTask = uploadBytesResumable(storageRef, selectedFile, metadata);
     
           // Update progress bar
           uploadTask.on('state_changed', (snapshot: UploadTaskSnapshot) => {
@@ -329,6 +399,7 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
           }, () => {
             // Upload complete
             console.log('File uploaded successfully');
+
           });
         }
     }
@@ -372,12 +443,22 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
     async function handleDownload(contentFileUrl: string) {
         try {
           const url = await getDownloadURL(ref(storage, contentFileUrl));
-          console.log("This is url", url)
           return url
         } catch (error) {
           console.error('Error downloading file:', error);
         }
     };
+
+    async function handelDownloadPDF(contentFileUrl: string) {
+        try {
+            const blob = await getBlob(ref(storage, contentFileUrl));
+            const dataUrl = URL.createObjectURL( blob );
+            console.log("URL", dataUrl)
+            return dataUrl
+        } catch (error) {
+        console.error('Error downloading file:', error);
+        }
+    }
 
     async function getUsersFiles(){
         const collectionRef = collection(db, "Files")
@@ -410,11 +491,20 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
         setFiles(documents)
         const NewComponents = [...documents]
         for (const image of documents) {
-          const result = await handleDownload(image.fileLocation)
-          const SelectedIndex = documents.findIndex((element: fileType) => element.uniqueID === image.uniqueID)
-          if (SelectedIndex != -1){
-            NewComponents[SelectedIndex]["fileURL"] = result as string
-          }
+            if (image.fileType === "application/pdf"){
+                console.log("THis was ran")
+                const result = await handelDownloadPDF(image.fileLocation)
+                const SelectedIndex = documents.findIndex((element: fileType) => element.uniqueID === image.uniqueID)
+                if (SelectedIndex != -1){
+                  NewComponents[SelectedIndex]["fileURL"] = result as string
+                }
+            } else {
+                const result = await handleDownload(image.fileLocation)
+                const SelectedIndex = documents.findIndex((element: fileType) => element.uniqueID === image.uniqueID)
+                if (SelectedIndex != -1){
+                  NewComponents[SelectedIndex]["fileURL"] = result as string
+                }
+            }
         }
         setFiles(NewComponents)
     }
@@ -428,7 +518,11 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                 {
                   isShowingMicrosoftUpload ? 
                   <div>
-                    <UploadMicrosoftFile onSetIsShowingUpload={setIsShowingUpload} onSetIsShowingMicrosoftUpload={setIsShowingMicrosoftUpload} />
+                    <UploadMicrosoftFile onSetIsShowingUpload={setIsShowingUpload} onSetIsShowingMicrosoftUpload={setIsShowingMicrosoftUpload} onSelectedFile={(item) => {
+                        setIsShowingUpload(true)
+                        setIsShowingMicrosoftUpload(false)
+                        downloadMicrosoftAsPDF(item.id, item.name)
+                    }}/>
                   </div>:
                   <div className={styles.ImageLibraryView}>
                     <Card className={styles.ImageLibraryViewCard}>
@@ -451,14 +545,12 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                                 )}
                                 {fileUrl && (selectedFile.type === "image/gif") && <img src={fileUrl} alt="User-selected image" style={{height: "100px", width: "100px" }} />}
                                 {fileUrl && (fileType === "application/pdf") && 
-                                    <div style={{overflow: "scroll", height: "100%", width: "100%"}}>
-                                        {/* <p> This </p> */}
-                                        <PDFView dataUrl={fileUrl}/>
-                                        {/* <object data={fileUrl} type="application/pdf" width="100%" height="100%">
-                                            <p>Alternative text - include a link <a href="http://africau.edu/images/default/sample.pdf">to the PDF!</a></p>
-                                        </object> */}
-                                    </div>}
-                                {(fileUrl === "") ? <div>Please Upload A File</div>:null
+                                    <PDFView fileUrl={fileUrl}/>
+                                }
+                                {(fileUrl === "") ? 
+                                    <div>
+                                        Please Upload A File
+                                    </div>:null
                                 }
                             </div>
                           </Card>
@@ -570,26 +662,42 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                         </Card.Title>
                         <Card.Body>
                             <Card>
-                                <Stack direction='horizontal' gap={1}>
-                                    <Button onClick={() => {setSelectedImageLibraryMode(SelectedImageLibraryModeType.Images)}}>
-                                    Images
-                                    </Button>
-                                    <Button onClick={() => {setSelectedImageLibraryMode(SelectedImageLibraryModeType.Gifs)}}>
-                                    Gifs
-                                    </Button>
-                                    <Button onClick={() => {setSelectedImageLibraryMode(SelectedImageLibraryModeType.Videos)}}>
-                                    Vidoes
-                                    </Button>
-                                    <Button onClick={() => {setSelectedImageLibraryMode(SelectedImageLibraryModeType.PDFS)}}>
-                                    PDFs
-                                    </Button>
-                                </Stack>
-                                <>
+                                <div style={{marginLeft: "2%"}}>
+                                    <HorizontalPicker  selectedIndex={0} onSelectedIndexChange={(value: number) => {
+                                        if (value === 0) {
+                                            setSelectedImageLibraryMode(SelectedImageLibraryModeType.Images)
+                                            if (SelectedImageLibraryModeType.Images!== SelectedImageLibraryMode){
+                                                setSelectedFileLibrary(null)
+                                            }
+                                        } else if (value === 1){
+                                            setSelectedImageLibraryMode(SelectedImageLibraryModeType.Gifs)
+                                            if (SelectedImageLibraryModeType.Gifs!== SelectedImageLibraryMode){
+                                                setSelectedFileLibrary(null)
+                                            }
+                                        } else if (value === 2){
+                                            setSelectedImageLibraryMode(SelectedImageLibraryModeType.Videos)
+                                            if (SelectedImageLibraryModeType.Videos!== SelectedImageLibraryMode){
+                                                setSelectedFileLibrary(null)
+                                            }
+                                        } else if (value === 3){
+                                            setSelectedImageLibraryMode(SelectedImageLibraryModeType.PDFS)
+                                            if (SelectedImageLibraryModeType.PDFS!== SelectedImageLibraryMode){
+                                                setSelectedFileLibrary(null)
+                                            }
+                                        }
+                                    }} width='10%'>
+                                        <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>Images</p>
+                                        <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>Gifs</p>
+                                        <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>Vidoes</p>
+                                        <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>PDFs</p>
+                                    </HorizontalPicker>
+                                </div>
+                                <div style={{overflow: "scroll", height: "46vh", width: "100%"}}>
                                     <Stack>
                                     {arrayChunk(files, 3, SelectedImageLibraryMode).map((row, i) => (
                                         <Stack direction='horizontal'>
                                         {row.map((item: fileType) => (
-                                            <div key={item.uniqueID} style={{width: "30%", height: "30%", position: "relative"}}>
+                                            <div key={item.uniqueID} style={{width: "20%", height: "20%", position: "relative"}}>
                                             <button onClick={() => {
                                                 const NewComponents = [...files]
                                                 const SelectedIndex = files.findIndex((element: fileType) => element.uniqueID === item.uniqueID)
@@ -606,22 +714,26 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                                                 background: "transparent"
                                             }}
                                             >
-                                                <div style={{display: "inline"}}>
-                                                {(item.fileURL == null) ?
-                                                    <p>File Loading</p>: <>
-                                                    { (SelectedImageLibraryMode === SelectedImageLibraryModeType.Gifs || SelectedImageLibraryMode === SelectedImageLibraryModeType.Images) ? 
-                                                    <img src={item.fileURL} alt='Oh No' style={ item.selected ?
-                                                        {width: "100%", height:"100%", border: "5px solid red"}:{width: "100%", height:"100%"}
-                                                    }/>:null
-                                                    }
-                                                    {(SelectedImageLibraryMode === SelectedImageLibraryModeType.Videos) ?
-                                                        <>{!!item.fileURL && (
-                                                        <div style={{width: "100%", height: "100%", position: "relative"}}>
-                                                            <VideoContainer url={item.fileURL} />
-                                                        </div>
-                                                        )}
-                                                        </>:null
-                                                    }
+                                                <div style={{display: "inline", width: "100%", height: "100%"}}>
+                                                {(item.fileURL === null) ?
+                                                    <div><p>File Loading</p><Progress /></div>:
+                                                    <>
+                                                        { (SelectedImageLibraryMode === SelectedImageLibraryModeType.Gifs || SelectedImageLibraryMode === SelectedImageLibraryModeType.Images) ? 
+                                                        <img src={item.fileURL} alt='Oh No' style={ item.selected ?
+                                                            {width: "100%", height:"100%", border: "5px solid red"}:{width: "100%", height:"100%"}
+                                                        }/>:null
+                                                        }
+                                                        {(SelectedImageLibraryMode === SelectedImageLibraryModeType.Videos) ?
+                                                            <>{!!item.fileURL && (
+                                                            <div style={item.selected ? {width: "100%", height: "100%", position: "relative", border: "5px solid red"}:{width: "100%", height: "100%", position: "relative"}}>
+                                                                <VideoContainer url={item.fileURL} />
+                                                            </div>
+                                                            )}
+                                                            </>:null
+                                                        }
+                                                        {(SelectedImageLibraryMode === SelectedImageLibraryModeType.PDFS) ? 
+                                                            <div style={{border: "5px solid red"}}><PDFView fileUrl={item.fileURL} /></div>:null
+                                                        }
                                                     </>
                                                 }
                                                 </div>
@@ -631,32 +743,46 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                                         </Stack>
                                     ))}
                                     </Stack>
-                                </>
-                                {(SelectedImageLibraryMode === SelectedImageLibraryModeType.PDFS) ? 
-                                <> 
-                                    <p> This is pdfs </p>
-                                </>:null}
+                                </div>
                                 <Stack direction='horizontal'>
-                                    <button onClick={(e) => {
-                                    if (selectedDeviceMode === SelectedAspectType.Small){
-                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                                    } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                    { (selectedFileLibrary !== null) ? 
+                                        <>
+                                            <div onClick={(e) => {
+                                                if (selectedFileLibrary.fileType ===  "image/jpeg" || selectedFileLibrary.fileType ===  "image/gif"){
+                                                    if (selectedDeviceMode === SelectedAspectType.Small){
+                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    } else if (selectedDeviceMode === SelectedAspectType.Large){
+                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    }
+                                                } else if (selectedFileLibrary.fileType ===  "video/mp4") {
+                                                    if (selectedDeviceMode === SelectedAspectType.Small){
+                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    } else if (selectedDeviceMode === SelectedAspectType.Large){
+                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    }
+                                                } else if (selectedFileLibrary.fileType === "application/pdf") {
+                                                    if (selectedDeviceMode === SelectedAspectType.Small){
+                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    } else if (selectedDeviceMode === SelectedAspectType.Large){
+                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                    }
+                                                }
+                                                onSetIsShowingPaulyLibrary(false)
+                                                }}>
+                                                <CustomButton content='Select'/>
+                                            </div>
+                                            <CustomButton content='Edit'/>
+                                        </>:null
                                     }
-                                    onSetIsShowingPaulyLibrary(false)
-                                    }} disabled={selectedFileLibrary === null} className={styles.ImageLibraryButton}>
-                                        <p style={{padding: 0, margin: 0}}>Select</p>
-                                    </button>
-                                    <button className={styles.ImageLibraryButton}>
-                                    <p style={{padding: 0, margin: 0}}>Edit</p>
-                                    </button>
                                     <Dropdown dir='up'>
-                                    <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle} dir='up'>
-                                        <div style={{height:"2vh"}}>
-                                        <p style={{padding: 0, margin: 0, display: "flex", justifyContent: "center"}}>Upload</p>
-                                        </div>
+                                    <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.LibraryUploadDropdown} dir='up'>
+                                        <CustomButton content='upload'/>
                                     </Dropdown.Toggle>
                                     <DropdownMenu>
                                         <Dropdown.Item eventKey="1" onClick={handleMicrosoftButtonClick}>Choose From One Drive</Dropdown.Item>

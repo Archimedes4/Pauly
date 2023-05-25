@@ -1,31 +1,8 @@
 import React from 'react'
-import { InitialConfigType, LexicalComposer } from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import Bold from './LexicalFunctions/Bold.tsx';
-import FontSize from './LexicalFunctions/FontSize.tsx';
-import FontStyle from './LexicalFunctions/FontStyle.tsx';
-import Italic from './LexicalFunctions/Italic.tsx';
-import Strikethrough from './LexicalFunctions/Strikethrough.tsx';
-import Underlined from './LexicalFunctions/Underline.tsx';
-import PlaygroundNodes from './playgroundNode.ts';
-import PlaygroundEditorTheme from './EditorTheme.ts';
 import styles from "./Cards.module.css"
-import { TextFocusPlugin } from './TextFocusPlugin.tsx';
-import { MaxLengthPlugin } from './MaxLengthPlugin.tsx';
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-
-const EMPTY_CONTENT = '{"root":{"children":[{"children":[{"type":"overflow", "size":10}],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}';
-
-const editorConfig = {
-    editorState: EMPTY_CONTENT,
-    namespace: 'Playground',
-    nodes: [...PlaygroundNodes],
-    onError: (error: Error) => {
-      throw error;
-    },
-    theme: PlaygroundEditorTheme,
-  };
+import VideoContainerCard from '../../../UI/VideoContainerCard.tsx';
+import PDFViewContainer from './PDFView.tsx';
+import TextEditor from './TextEditor.tsx';
 
 export default function({components, zoomScale, onClick, bolded, italic, underlined, strikethrough, onPressed, onSetMousePosition, onIsShowingRightClick, selectedElementValue,
     isShowingRightClick, onIsChangingSize, onChangingSizeDirection, onIsUserTyping, isUserTyping, fontSize, fontStyle}:{
@@ -79,30 +56,19 @@ export default function({components, zoomScale, onClick, bolded, italic, underli
                         switch(item.ElementType) {
                         case "Text": return (
                         <>
-                            <LexicalComposer initialConfig={editorConfig}>
-                            <div onClick={() => {
-                                onIsUserTyping(!isUserTyping)
-                                // setIsUserTypeing(!isUserTyping)
-                            }} style={{height: (item.Height * (zoomScale/100)) + "px", width: (item.Width * (zoomScale/100)) + "px", overflow: "hidden"}} >
-                                <MaxLengthPlugin maxLength={300}/>
-                                <RichTextPlugin contentEditable={<ContentEditable className={styles.ContentEditable}/>} placeholder={<p style={{padding: 0, margin: 0}}>Double Click To Add Text</p>} ErrorBoundary={LexicalErrorBoundary} />
-                                <TextFocusPlugin isSelected={(isUserTyping === true && selectedElementValue?.ElementIndex === item.ElementIndex)}/>
-                                { (selectedElementValue?.ElementIndex === item.ElementIndex) ? 
-                                <>
-                                    <Bold bolded={bolded}/>
-                                    <Italic italic={italic}/>
-                                    <Strikethrough strikethrough={strikethrough}/>
-                                    <Underlined underlined={underlined}/>
-                                    <FontSize fontSize={fontSize} />
-                                    <FontStyle fontStyle={fontStyle}/>
-                                </>:null
-                                }
-                            </div>
-                            </LexicalComposer>
+                        <TextEditor onIsUserTyping={onIsUserTyping} zoomScale={zoomScale} isUserTyping={isUserTyping} item={item} bolded={bolded} italic={italic} strikethrough={strikethrough} underlined={underlined} fontSize={fontSize} fontStyle={fontStyle} selectedElementValue={selectedElementValue}/>  
                         </>)
                         case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
                         case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
-                        case "Video": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
+                        case "Video": return (
+                            <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}>
+                                <VideoContainerCard url={item.Content}/>
+                            </div>)
+                        case "PDF": return (
+                            <div style={{overflow: "scroll", width: "100%", height: (item.Height  * (zoomScale/100)) + "px"}}>
+                                <PDFViewContainer fileUrl={item.Content} />
+                            </div>
+                        )
                         default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
                         }
                     })()}
@@ -140,7 +106,7 @@ export default function({components, zoomScale, onClick, bolded, italic, underli
                         onChangingSizeDirection("sw")
                     }
                 }}><span className={styles.dot} /></button> {/* Left Bottem */}
-                <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) + 5)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
+                <button className={styles.dotButtonStyle} style={{transform: `translate(0px, ${((item.Height  * (zoomScale/100)) - 24)/2}px)`, cursor:"w-resize"}} onMouseDown={() => {
                     if (selectedElementValue?.ElementIndex === item.ElementIndex){
                         onIsChangingSize(true)
                         onChangingSizeDirection("w")

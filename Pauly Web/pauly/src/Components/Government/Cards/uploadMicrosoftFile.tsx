@@ -23,12 +23,14 @@ type microsoftFileType = {
     lastModified: string
     folder: boolean
     parentDriveId: string
+    parentPath: string
 }
 
 
-export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload }:{
+export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, onSelectedFile }:{
     onSetIsShowingUpload: (item: boolean) => void,
-    onSetIsShowingMicrosoftUpload: (item: boolean) => void
+    onSetIsShowingMicrosoftUpload: (item: boolean) => void,
+    onSelectedFile: (item: microsoftFileType) => void
 }) {
     const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
     const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
@@ -52,13 +54,29 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload }:
         .then(data => {
           console.log(data)
           if (data["error"] === undefined){
-            var newFiles = []
+            var newFiles: microsoftFileType [] = []
             for(var index = 0; index <= data["value"].length; index++){
               if (data['value'][index] !== undefined){
                   if ("@microsoft.graph.downloadUrl" in data["value"][index]){
-                      newFiles.push({name: data["value"][index]["name"], id: data["value"][index]["id"], lastModified: data["value"][index]["lastModifiedDateTime"], folder: false, parentDriveId: data["value"][index]["parentReference"]["driveId"]})
+                    newFiles.push(
+                        {
+                            name: data["value"][index]["name"], 
+                            id: data["value"][index]["id"], 
+                            lastModified: data["value"][index]["lastModifiedDateTime"], 
+                            folder: false, 
+                            parentDriveId: data["value"][index]["parentReference"]["driveId"], 
+                            parentPath: data["value"][index]["parentReference"]["path"]
+                        })
                   } else {
-                      newFiles.push({name: data["value"][index]["name"], id: data["value"][index]["id"], lastModified: data["value"][index]["lastModifiedDateTime"], folder: true, parentDriveId: data["value"][index]["parentReference"]["driveId"]})
+                    newFiles.push(
+                        {
+                            name: data["value"][index]["name"], 
+                            id: data["value"][index]["id"], 
+                            lastModified: data["value"][index]["lastModifiedDateTime"], 
+                            folder: true, 
+                            parentDriveId: data["value"][index]["parentReference"]["driveId"],
+                            parentPath: data["value"][index]["parentReference"]["path"]
+                        })
                   }
               }
             }
@@ -148,10 +166,14 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload }:
                                             <p style={{display: "block", padding: 0, margin: 0}}>{file.name}</p>
                                         </Stack>
                                     </button>:
-                                    <Stack direction='horizontal'>
-                                        <FcDocument style={{display: "block"}} />
-                                        <p style={{display: "block", padding: 0, margin: 0}}>{file.name}</p>
-                                    </Stack>
+                                    <button onClick={() => {
+                                        onSelectedFile(file)
+                                    }}>
+                                        <Stack direction='horizontal'>
+                                            <FcDocument style={{display: "block"}} />
+                                            <p style={{display: "block", padding: 0, margin: 0}}>{file.name}</p>
+                                        </Stack>
+                                    </button>
                                 }
                             </div>))
                         }
@@ -180,7 +202,9 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload }:
                         { usersTeams.map((team) => (
                             <div>
                                 { (team.TeamName !== "Student Password Policy" && team.TeamName !== "St Paul's High School" && team.TeamName !== "Adobe_Student" && team.TeamName !== "O365 Student A3 License Assignment" && team.TeamName !== "Student") ?
-                                    <div>{team.TeamName}</div>:null
+                                    <div>
+                                        {team.TeamName}
+                                    </div>:null
                                 }
                             </div>
                         )) 

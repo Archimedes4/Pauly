@@ -1,20 +1,24 @@
-// import React from 'react'
+import React, { ReactNode, useState } from 'react'
+import styles from "./NavBar.module.css"
 
-// export default function() {
-//   return (
-//     <div>
-//         <nav>
-//         <a onClick={ul(0)}> Home </a>
-//         a(onClick="ul(1)") Videos
-//         a(onClick="ul(2)") Playlists
-//         a(onClick="ul(3)") Community
-//         a(onClick="ul(4)") Channels
-//         a(onClick="ul(5)") About
-//         </nav>
-//     nav.black
-//         .underline
-//         .underline
-//         .underline
-//     </div>
-//   )
-// }
+export default function({children, selectedIndex, onSelectedIndexChange, width}:{children: ReactNode, selectedIndex: number, onSelectedIndexChange: (newIndex: number) => void, width: string}) {
+    const [selectedValue, setSelectedValue] = useState(selectedIndex);
+
+    return (
+    <div style={{height: "100%", overflow: "hidden"}}>
+        {
+            React.Children.map(children, (child, index) =>
+            <button style={{width: width }} className={styles.ChildrenBody} onClick={() => {
+                setSelectedValue(index); 
+                onSelectedIndexChange(index)
+            }}>
+                <React.Fragment>
+                    {child}
+                </React.Fragment>
+            </button>
+            )
+        }
+        <div style={{transform: 'translate3d(' + selectedValue * 100 + '%,0,0)', width: width }} className={styles.underline}> </div>
+    </div>
+    )
+}

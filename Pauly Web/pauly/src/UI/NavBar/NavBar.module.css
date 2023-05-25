@@ -1,0 +1,29 @@
+:root {
+	--underline-height: .5em;
+	--transition-duration : .5s;
+}
+
+.underline {
+	display: block;
+	z-index: 0;
+	height: var(--underline-height);
+	background: black;
+	pointer-events: none;
+	mix-blend-mode: multiply;
+	transition: transform var(--transition-duration) ease-in-out;
+	background: #222;
+	border-radius: .25em;
+	height: calc(var(--underline-height) / 2);
+	mix-blend-mode: initial;
+}
+
+.ChildrenBody{
+	display: inline-block;
+	z-index: 10;
+	padding: 0;
+	text-align: center;
+	cursor: pointer;
+	border: none;
+	background-color: white;
+}
+

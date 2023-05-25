@@ -9,7 +9,7 @@ import imageOverlay from "../../../images/Iphone14.png"
 import Book from "../../../images/Books.png"
 import { useCardContext } from "./Cards.js"
 import styles from "./Cards.module.css"
-import { FaArrowRight, FaArrowLeft, FaBold, FaItalic, FaUnderline, FaStrikethrough } from "react-icons/fa"
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa"
 import { FcLeft, FcSettings, FcIphone } from "react-icons/fc"
 import {RiComputerFill} from "react-icons/ri"
 import {BsTabletLandscape} from "react-icons/bs"
@@ -24,6 +24,7 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import UploadMicrosoftFile from './uploadMicrosoftFile.tsx';
 import BindMenu from './BindMenu.tsx';
 import PaulyLibrary from './paulyLibrary.tsx';
+import CardAddMenu from './CardAddMenu.tsx';
 
 declare global{
   type CardElement = {
@@ -477,172 +478,7 @@ export default function EditCard() {
               </Row>
               <Row noGutters={true}>
                 <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%"}} className="d-none d-md-block">
-                  { selectedElementValue ? 
-                    <Container style={{margin: 0, padding: 0, height: "100%", backgroundColor: '#444444', width: "100%"}}>
-                      <Row>
-                        <Button onClick={() => setIsNavigateToDestinations(true)}>
-                          Destination
-                        </Button>
-                      </Row>
-                      { (selectedElementValue.ElementType === "Shape") ? 
-                        <>
-                          <Row>
-                            <p>Corner Radius: {selectedElementValue.CornerRadius}%</p>
-                            <input type="range" min="1" max="50" value={selectedElementValue.CornerRadius} 
-                            onChange={changeEvent => {
-                              if (selectedDeviceMode === SelectedAspectType.Small){
-                                const NewComponents = [...componentsSmall]
-                                const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                                NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
-                                setComponentsSmall(NewComponents)
-                                setSelectedElement(NewComponents[SelectedIndex])
-                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                const NewComponents = [...componentsMedium]
-                                const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                                NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
-                                setComponentsMedium(NewComponents)
-                                setSelectedElement(NewComponents[SelectedIndex])
-                              } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                const NewComponents = [...componentsLarge]
-                                const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                                NewComponents[SelectedIndex]["CornerRadius"] = changeEvent.target.value
-                                setComponentsLarge(NewComponents)
-                                setSelectedElement(NewComponents[SelectedIndex])
-                              }
-                            }} 
-                            className={styles.slider} id="myRange" />
-                          </Row>
-                          <Row>
-                          <input type="color" id="colorpicker" value={selectedElementValue.SelectedColor.toString()} onChange={changeEvent => {
-                            if (selectedDeviceMode === SelectedAspectType.Small){
-                              const NewComponents = [...componentsSmall]
-                              const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                              NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                              setComponentsSmall(NewComponents)
-                              setSelectedElement(NewComponents[SelectedIndex])
-                            } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                              const NewComponents = [...componentsMedium]
-                              const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                              NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                              setComponentsMedium(NewComponents)
-                              setSelectedElement(NewComponents[SelectedIndex])
-                            } else if (selectedDeviceMode === SelectedAspectType.Large){
-                              const NewComponents = [...componentsLarge]
-                              const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                              NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                              setComponentsLarge(NewComponents)
-                              setSelectedElement(NewComponents[SelectedIndex])
-                            }
-                          }} />
-                          </Row>
-                        </>:null
-                      }
-                      { (selectedElementValue.ElementType === "Text") ?
-                        <>
-                          <Row>
-                            {/* <EditorToolbar /> */}
-                            <Stack direction='horizontal' style={{paddingTop: "2%", paddingBottom: "2%"}}>
-                              <button onClick={(e) => {
-                                e.preventDefault()
-                                setBolded(!bolded)
-                              }} className={bolded ? (styles.TextSelectionButtonSelected):(styles.TextSelectButton)}>
-                                <FaBold />
-                              </button>
-                              <button onClick={(e) => {
-                                e.preventDefault()
-                                setItalic(!italic)
-                              }} className={italic ? (styles.TextSelectionButtonSelected):(styles.TextSelectButton)}>
-                                <FaItalic />
-                              </button>
-                              <button onClick={(e) => {
-                                e.preventDefault()
-                                setUnderlined(!underlined)
-                              }} className={underlined ? (styles.TextSelectionButtonSelected):(styles.TextSelectButton)}>
-                                <FaUnderline />
-                              </button>
-                              <button onClick={(e) => {
-                                e.preventDefault()
-                                setStrikethrough(!strikethrough)
-                              }} className={strikethrough ? (styles.TextSelectionButtonSelected):(styles.TextSelectButton)}>
-                                <FaStrikethrough />
-                              </button>
-                            </Stack>
-                            <button onClick={() => {
-                              setShowingFontSelectionMenu(!showingFontSelectedMenu)
-                            }}>
-                              Font: {fontStyle}
-                            </button>
-                            { showingFontSelectedMenu ? 
-                              <div style={{display: "hidden"}}>
-                                <div className={styles.FontSelectionDivContainer}>
-                                  {fontList.map((font: FontType) => (
-                                    <button className={styles.FontSelectionButton} onClick={() => {setSelectedFont(font)}}>{font.fontName}</button>
-                                  ))}
-                                </div>
-                              </div>:null
-                            }
-                            <Dropdown>
-                              <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
-                                <div style={{height:"2vh"}}>
-                                  <p> Font Size: {fontSize} </p>
-                                </div>
-                              </Dropdown.Toggle>
-                              <DropdownMenu>
-                                { avaliableFontSizes.map((size: string) => (
-                                  <Dropdown.Item onClick={e => {
-                                    e.preventDefault()
-                                    setFontSize(size)
-                                  }}>{size}</Dropdown.Item>
-                                ))}
-                              </DropdownMenu>
-                            </Dropdown>
-                          </Row>
-                        </>:null
-                      }
-                      <Row>
-                        <p>Opacity: {selectedElementValue.Opacity}%</p>
-                        <input type="range" min="1" max="100" value={selectedElementValue.Opacity} 
-                        onChange={changeEvent => {
-                          if (selectedDeviceMode === SelectedAspectType.Small){
-                            const NewComponents = [...componentsSmall]
-                            const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                            NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
-                            setComponentsSmall(NewComponents)
-                            setSelectedElement(NewComponents[SelectedIndex])
-                          } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                            const NewComponents = [...componentsMedium]
-                            const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                            NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
-                            setComponentsMedium(NewComponents)
-                            setSelectedElement(NewComponents[SelectedIndex])
-                          } else if (selectedDeviceMode === SelectedAspectType.Large){
-                            const NewComponents = [...componentsLarge]
-                            const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                            NewComponents[SelectedIndex]["Opacity"] = changeEvent.target.value
-                            setComponentsLarge(NewComponents)
-                            setSelectedElement(NewComponents[SelectedIndex])
-                          }
-                        }} 
-                        className={styles.slider} id="myRange" />
-                      </Row>
-                      <Row>
-                        <p>Undo</p>
-                      </Row>
-                    </Container>: 
-                    <Container style={{backgroundColor: '#444444', height: "100%", width: "100%", margin: 0, padding: 0}}>
-                        <div style={{display: "flex", justifyContent: "center"}}>
-                          <p style={{fontSize: "12px", padding: 0, margin: 0, marginTop: "5%"}}>Connect Your Page</p>
-                        </div>
-                        <div style={{display: "flex", justifyContent: "center"}}>
-                          <img src={Book} alt='Book' style={{width: "80%"}}/>
-                        </div>
-                        <div  style={{display: "flex", justifyContent: "center"}}>
-                          <button onClick={() => {setIsShowingBindPage(!isShowingBindPage)}} className={styles.BindingButton}>
-                            Bind
-                          </button>
-                        </div>
-                    </Container>
-                  }
+                  
                 </Col>
                 {/* <Col style={{backgroundColor: "#793033",padding: 0, margin: 0, height: "100%"}}>
                     <div style={{height: "100%"}}> */}
@@ -921,7 +757,8 @@ export default function EditCard() {
         }
         {
           //Cards Page
-
+          isShowingCardsMenu ? 
+          <CardAddMenu onSetIsShowingCardsMenu={setIsShowingCardsMenu} />: null
         }
         {
           //Bind Page
