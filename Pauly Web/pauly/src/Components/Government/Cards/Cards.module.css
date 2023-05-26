@@ -166,7 +166,7 @@
 .CardContainterCardCSS {
     overflow: hidden;
     /* white-space: nowrap; */
-    display: flex;
+    /* display: flex; */
     justify-content: center;
     align-items: center;
     background-color: #b5b8ba;
@@ -180,13 +180,13 @@
 .CardContainterCardCSS:fullscreen{
     overflow: hidden;
     /* white-space: nowrap; */
-    display: flex;
     justify-content: center;
     align-items: center;
     background-color: #b5b8ba;
     height: 100%;
     margin: 0;
     padding: 0;
+    width: 100%;
 }
 
 .CardToolBarButton{

@@ -25,6 +25,8 @@ import UploadMicrosoftFile from './uploadMicrosoftFile.tsx';
 import BindMenu from './BindMenu.tsx';
 import PaulyLibrary from './paulyLibrary.tsx';
 import CardAddMenu from './CardAddMenu.tsx';
+import Toolbar from './Toolbar.tsx';
+import Canvas from "./Canvas/Canvas.js"
 
 declare global{
   type CardElement = {
@@ -71,14 +73,14 @@ interface SelectedFont {
   category: string;
 }
 
+type FontTypeCSS = {
+  UUID: string
+}
+
 type FontType = {
   fontName: string
   fontVarients: string[]
   fontSubsets: string[]
-  UUID: string
-}
-
-type FontTypeCSS = {
   UUID: string
 }
 
@@ -115,29 +117,20 @@ export default function EditCard() {
   const [strikethrough, setStrikethrough] = useState<boolean>(false)
   const [fontSize, setFontSize] = useState<string>("12px")
   const [fontStyle, setFontStyle] = useState<string>("Times New Roman")
-  const [fontList, setFontList] = useState<FontType []>([])
   const [selectedFont, setSelectedFont] = useState<FontType>(null)
-  const avaliableFontSizes: string[] = ["8px", "12px", "14px", "16px", "20px", "24px"]
   const [isShowingBindPage, setIsShowingBindPage] = useState<boolean>(false)
   const [currentUserInfo, setCurrentUserInfo] = useState<UserType>(null)
-  const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
   const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
   const [isShowingPaulyLibaray, setIsShowingPaulyLibrary] = useState(false)
 
   //Card Menu
   const [isShowingCardsMenu, setIsShowingCardsMenu] = useState<boolean>(false)
 
-  useEffect(() => {
-    fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8')
-      .then(response => response.json())
-      .then((data) => {
-        var NewArray = []
-        for(var index = 0; index < data["items"].length; index++){
-          NewArray.push({ fontName:  data["items"][index]["family"], fontVarients: data["items"][index]["variants"], fontSubsets: data["items"][index]["subsets"], UUID: create_UUID()})
-        }
-        setFontList(NewArray)
-      })
-  }, [])
+  //Draw Mode
+  const [isInDrawMode, setIsInDrawMode] = useState(false)
+
+  //Dots Mode
+  const [isInDotsMode, setIsInDotsMode] = useState(false)
 
   useEffect(() => {
     if (selectedFont !== null) {
@@ -361,45 +354,6 @@ export default function EditCard() {
   }
 
   function CalculateAreaPlaneSize() {
-    // if (width >= height){ 
-    //   if (aspectWidth >= aspectHeight){ 
-    //     //Lower Size: height
-    //     //Higher Size: width
-    //     //Lower Aspect: height
-    //     //Higher Aspect: width
-    //     console.log("hwhw")
-    //     setAreaHeight(Elementheight*(zoomScale/100))
-    //     setAreaWidth(((ElementWidth/aspectHeight) * aspectWidth)*(zoomScale/100))
-    //   } else { 
-    //     //Lower Size: height
-    //     //Higher Size: width
-    //     //Lower Aspect: width
-    //     //Higher Aspect: height
-    //     console.log("hwwh")
-    //     setAreaHeight((((Elementheight/aspectHeight) * aspectWidth))*(zoomScale/100))
-    //     const NewHeight = ((Elementheight/aspectHeight) * aspectWidth)
-    //     setAreaWidth((((NewHeight/aspectWidth) * aspectHeight)*(zoomScale/100)))
-    //   }
-    // } else {
-    //   if (aspectWidth >= aspectHeight){
-    //     //Lower Size: width
-    //     //Higher Size: height
-    //     //Lower Aspect: height
-    //     //Higher Aspect: width
-    //     console.log("whhw")
-    //     setAreaHeight(Elementheight)
-    //     setAreaWidth((((ElementWidth/aspectHeight) * aspectWidth)*(zoomScale/100)))
-    //   } else {
-    //     //Lower Size: width
-    //     //Higher Size: height
-    //     //Lower Aspect: width
-    //     //Higher Aspect: height
-    //     console.log("whwh")
-    //     setAreaHeight((((Elementheight/aspectHeight) * aspectWidth)*(zoomScale/100)))
-    //     const NewHeight = ((Elementheight/aspectHeight) * aspectWidth)
-    //     setAreaWidth((((NewHeight/aspectWidth) * aspectHeight) * (zoomScale/100)))
-    //   }
-    // }
     var elementWidth = width * 0.8
     const elementHeight = height * 0.85
     if (aspectWidth >= aspectHeight){
@@ -453,38 +407,45 @@ export default function EditCard() {
         <div className={styles.EditCardBottemView} style={{overflow:"hidden"}}>
           <Container fluid style={{height: "100%", width: "100%", padding: 0, margin: 0}}>
               <Row>
-                 <Col>
-                    <div className={styles.editCardBackButtonOuterContainer}>
-                      <Link to="/government/cards" style={{textDecoration: "none"}}>
-                        <div className={styles.editCardBackButtonInnerContainer}>
-                          <p className={styles.EditCardBackButton}>Back</p>
-                        </div>
-                      </Link>
-                    </div>
-                  </Col>
-                  <Col xs={10} className='ml-5'>
-                    <h1 className={styles.TitleEditCard}> Edit Card </h1>
-                  </Col>
-                  <Col>
+                <Col>
+                  <div className={styles.editCardBackButtonOuterContainer}>
+                    <Link to="/government/cards" style={{textDecoration: "none"}}>
+                      <div className={styles.editCardBackButtonInnerContainer}>
+                        <p className={styles.EditCardBackButton}>Back</p>
+                      </div>
+                    </Link>
+                  </div>
+                </Col>
+                <Col xs={10} className='ml-5'>
+                  <h1 className={styles.TitleEditCard}> Edit Card </h1>
+                </Col>
+                <Col>
 
-                  </Col>
-                  <Col>
-                    <div className={styles.editCardBackButtonOuterContainer}>
-                      <Button onClick={() => setIsShowingSettings(!isShowingSettings)} className={styles.SettingsButtonStyle}>
-                        <FcSettings />
-                      </Button>
-                    </div>
-                  </Col>
+                </Col>
+                <Col>
+                  <div className={styles.editCardBackButtonOuterContainer}>
+                    <Button onClick={() => setIsShowingSettings(!isShowingSettings)} className={styles.SettingsButtonStyle}>
+                      <FcSettings />
+                    </Button>
+                  </div>
+                </Col>
               </Row>
               <Row noGutters={true}>
-                <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%"}} className="d-none d-md-block">
-                  
+                <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%", backgroundColor: "#444444"}} className="d-none d-md-block">
+                  { (isInDrawMode) ? <p>Draw</p>:null
+
+                  }
+                  { (isInDotsMode) ? <p>Dots</p>:null
+
+                  }
+                  { (selectedElementValue || (isInDotsMode === false && isInDrawMode === false)) ? <Toolbar onSetBolded={setBolded} onSetComponentsLarge={setComponentsLarge} onSetComponentsMedium={setComponentsMedium} onSetComponentsSmall={setComponentsSmall} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} onSetItalic={setItalic} onSetStrikethrough={setStrikethrough} onSetUnderlined={setUnderlined} onSetIsNavigateToDestinations={setIsNavigateToDestinations} onSetIsShowingBindPage={setIsShowingBindPage} onSetSelectedElement={setSelectedElement} selectedDeviceMode={selectedDeviceMode} selectedElementValue={selectedElementValue} strikethrough={strikethrough} underlined={underlined} isShowingBindPage={isShowingBindPage} italic={italic} fontSize={fontSize} fontStyle={fontStyle} componentsLarge={componentsLarge} componentsMedium={componentsMedium} componentsSmall={componentsSmall} bolded={bolded}/>:null
+                  }
                 </Col>
                 {/* <Col style={{backgroundColor: "#793033",padding: 0, margin: 0, height: "100%"}}>
                     <div style={{height: "100%"}}> */}
                 <Col className={styles.CardContainterCardCSSColumn} style={{width: "100%"}}>
                   {/* Continer */}
-                    <div className={styles.CardContainterCardCSS}
+                    <div style={{display: (zoomScale >= 100) ? "block":"flex"}} className={styles.CardContainterCardCSS}
                       onKeyDown={handler}
                       onMouseUp={ (e) => {
                         if (e.button == 0){
@@ -502,7 +463,7 @@ export default function EditCard() {
                         }
                       }}
                     >
-                      <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center"}}>
+                      <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "bottom", alignItems: "bottom", overflow: "scroll"}}>
                           <div style={ (zoomScale >= 100) ? 
                             {
                               width: areaWidth + "px",
@@ -545,6 +506,9 @@ export default function EditCard() {
                               }
                               { (selectedDeviceMode === SelectedAspectType.Large) ?
                                 <EditCardArea components={componentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>:null
+                              }
+                              { isInDrawMode ? <Canvas width={areaWidth} height={areaHeight} />: null
+
                               }
                           {/* End Of Components */}
                           </div>
@@ -624,25 +588,13 @@ export default function EditCard() {
                                 addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
                               } else if (selectedDeviceMode === SelectedAspectType.Large){
                                 addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              }  
+                              }
                             }}>Square</Dropdown.Item>
                             <Dropdown.Item eventKey="2" onClick={(e) => {
-                              if (selectedDeviceMode === SelectedAspectType.Small){
-                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              }
+                              setIsInDotsMode(true)
                             }}>Dots</Dropdown.Item>
                             <Dropdown.Item eventKey="3" onClick={(e) => {
-                              if (selectedDeviceMode === SelectedAspectType.Small){
-                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              }
+                              setIsInDrawMode(true)
                             }}>Draw</Dropdown.Item>
                             <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
                           </DropdownMenu>
