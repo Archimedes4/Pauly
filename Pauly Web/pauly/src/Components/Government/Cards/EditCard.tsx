@@ -27,6 +27,8 @@ import PaulyLibrary from './paulyLibrary.tsx';
 import CardAddMenu from './CardAddMenu.tsx';
 import Toolbar from './Toolbar.tsx';
 import Canvas from "./Canvas/Canvas.js"
+import SVG from './SVG/SVG.tsx';
+import { text } from 'stream/consumers';
 
 declare global{
   type CardElement = {
@@ -131,6 +133,7 @@ export default function EditCard() {
 
   //Dots Mode
   const [isInDotsMode, setIsInDotsMode] = useState(false)
+  const [dotsText, setDotsText] = useState<string>("")
 
   useEffect(() => {
     if (selectedFont !== null) {
@@ -432,10 +435,42 @@ export default function EditCard() {
               </Row>
               <Row noGutters={true}>
                 <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%", backgroundColor: "#444444"}} className="d-none d-md-block">
-                  { (isInDrawMode) ? <p>Draw</p>:null
+                  { (isInDrawMode) ? 
+                    <div>
+                      <p>Draw</p>
+                    </div>:null
 
                   }
-                  { (isInDotsMode) ? <p>Dots</p>:null
+                  { (isInDotsMode) ? 
+                    <div>
+                      <p>Dots</p>
+                      <button onClick={(e) => {
+                        setIsInDotsMode(false)
+                        const pointsArray = dotsText.split(" ")
+                        var HeightestX = 0
+                        var HeightestY = 0
+                        for(var index = 0; index < pointsArray.length; index++){
+                          const value = pointsArray[index]
+                          const valueArray = value.split(",")
+                          if (parseFloat(valueArray[0]) > HeightestX){
+                            HeightestX = parseFloat(valueArray[0]) 
+                          }
+                          if (parseFloat(valueArray[1]) > HeightestY){
+                            HeightestY = parseFloat(valueArray[1])
+                          }
+                        }
+                        if (selectedDeviceMode === SelectedAspectType.Small){
+                          addComponent(e,  {ElementType: "SVG", Content: dotsText, Position: {XPosition: 0, YPosition: 0}, Width: HeightestX, Height: HeightestY, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                        } else if (selectedDeviceMode === SelectedAspectType.Medium){
+                          addComponent(e,  {ElementType: "SVG", Content: dotsText, Position: {XPosition: 0, YPosition: 0}, Width: HeightestX, Height: HeightestY, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                        } else if (selectedDeviceMode === SelectedAspectType.Large){
+                          addComponent(e,  {ElementType: "SVG", Content: dotsText, Position: {XPosition: 0, YPosition: 0}, Width: HeightestX, Height: HeightestY, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                        }
+                        setDotsText("")
+                      }}>
+                        done
+                      </button>
+                    </div>:null
 
                   }
                   { (selectedElementValue || (isInDotsMode === false && isInDrawMode === false)) ? <Toolbar onSetBolded={setBolded} onSetComponentsLarge={setComponentsLarge} onSetComponentsMedium={setComponentsMedium} onSetComponentsSmall={setComponentsSmall} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} onSetItalic={setItalic} onSetStrikethrough={setStrikethrough} onSetUnderlined={setUnderlined} onSetIsNavigateToDestinations={setIsNavigateToDestinations} onSetIsShowingBindPage={setIsShowingBindPage} onSetSelectedElement={setSelectedElement} selectedDeviceMode={selectedDeviceMode} selectedElementValue={selectedElementValue} strikethrough={strikethrough} underlined={underlined} isShowingBindPage={isShowingBindPage} italic={italic} fontSize={fontSize} fontStyle={fontStyle} componentsLarge={componentsLarge} componentsMedium={componentsMedium} componentsSmall={componentsSmall} bolded={bolded}/>:null
@@ -508,6 +543,9 @@ export default function EditCard() {
                                 <EditCardArea components={componentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>:null
                               }
                               { isInDrawMode ? <Canvas width={areaWidth} height={areaHeight} />: null
+
+                              }
+                              {  isInDotsMode ? <SVG width={areaWidth} height={areaHeight} text={dotsText} onSetText={setDotsText}/>: null
 
                               }
                           {/* End Of Components */}

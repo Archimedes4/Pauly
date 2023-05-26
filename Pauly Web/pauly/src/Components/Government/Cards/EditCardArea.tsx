@@ -3,6 +3,7 @@ import styles from "./Cards.module.css"
 import VideoContainerCard from '../../../UI/VideoContainerCard.tsx';
 import PDFViewContainer from './PDFView.tsx';
 import TextEditor from './TextEditor.tsx';
+import SVG from './SVG/SVG.tsx';
 
 export default function({components, zoomScale, onClick, bolded, italic, underlined, strikethrough, onPressed, onSetMousePosition, onIsShowingRightClick, selectedElementValue,
     isShowingRightClick, onIsChangingSize, onChangingSizeDirection, onIsUserTyping, isUserTyping, fontSize, fontStyle}:{
@@ -67,6 +68,11 @@ export default function({components, zoomScale, onClick, bolded, italic, underli
                         case "PDF": return (
                             <div style={{overflow: "scroll", width: "100%", height: (item.Height  * (zoomScale/100)) + "px"}}>
                                 <PDFViewContainer fileUrl={item.Content} />
+                            </div>
+                        )
+                        case "SVG": return(
+                            <div style={{display: "block"}}>
+                                <SVG width={item.Width} height={item.Height} text={item.Content} onSetText={() => {}}/>
                             </div>
                         )
                         default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>

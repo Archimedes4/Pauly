@@ -14,6 +14,7 @@ export function useOnDraw(onDraw) {
     }
 
     function onCanvasMouseDown() {
+        console.log(canvasRef.current)
         isDrawingRef.current = true;
     }
 
