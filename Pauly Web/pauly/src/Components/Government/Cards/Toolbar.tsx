@@ -18,20 +18,14 @@ type FontType = {
     UUID: string
 }
 
-export default function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, selectedDeviceMode, componentsSmall, componentsMedium, componentsLarge,
-    onSetComponentsSmall, onSetComponentsMedium, onSetComponentsLarge, onSetSelectedElement, onSetBolded, onSetItalic, onSetUnderlined, onSetStrikethrough,
+export default function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, components, onSetComponents, onSetSelectedElement, onSetBolded, onSetItalic, onSetUnderlined, onSetStrikethrough,
     bolded, italic, underlined, strikethrough, isShowingBindPage, onSetIsShowingBindPage, onSetFontSize,
     fontSize, fontStyle, onSetSelectedFont
 }:{
-    onSetIsNavigateToDestinations: (item: boolean) => void, 
+    onSetIsNavigateToDestinations?: (item: boolean) => void, 
     selectedElementValue: CardElement, 
-    selectedDeviceMode: SelectedAspectType, 
-    componentsSmall: CardElement[], 
-    componentsMedium: CardElement[], 
-    componentsLarge: CardElement[],
-    onSetComponentsSmall: (item: CardElement[]) => void,
-    onSetComponentsMedium: (item: CardElement[]) => void,
-    onSetComponentsLarge: (item: CardElement[]) => void,
+    components: CardElement[],
+    onSetComponents: (item: CardElement[]) => void,
     onSetSelectedElement: (item: CardElement) => void,
     bolded: boolean,
     onSetBolded: (item:boolean) => void,
@@ -67,49 +61,21 @@ export default function Toolbar({onSetIsNavigateToDestinations, selectedElementV
                         <p>Corner Radius: {selectedElementValue.CornerRadius}%</p>
                         <input type="range" min="1" max="50" value={selectedElementValue.CornerRadius} 
                         onChange={changeEvent => {
-                            if (selectedDeviceMode === SelectedAspectType.Small){
-                                const NewComponents = [...componentsSmall]
-                                const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                                NewComponents[SelectedIndex]["CornerRadius"] = parseInt(changeEvent.target.value)
-                                onSetComponentsSmall(NewComponents)
-                                onSetSelectedElement(NewComponents[SelectedIndex])
-                            } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                const NewComponents = [...componentsMedium]
-                                const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                                NewComponents[SelectedIndex]["CornerRadius"] = parseInt(changeEvent.target.value)
-                                onSetComponentsMedium(NewComponents)
-                                onSetSelectedElement(NewComponents[SelectedIndex])
-                            } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                const NewComponents = [...componentsLarge]
-                                const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                                NewComponents[SelectedIndex]["CornerRadius"] = parseInt(changeEvent.target.value)
-                                onSetComponentsLarge(NewComponents)
-                                onSetSelectedElement(NewComponents[SelectedIndex])
-                            }
+                            const NewComponents = [...components]
+                            const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                            NewComponents[SelectedIndex]["CornerRadius"] = parseInt(changeEvent.target.value)
+                            onSetComponents(NewComponents)
+                            onSetSelectedElement(NewComponents[SelectedIndex])
                         }} 
                         className={styles.slider} id="myRange" />
                         </Row>
                         <Row>
                         <input type="color" id="colorpicker" value={selectedElementValue.SelectedColor.toString()} onChange={changeEvent => {
-                        if (selectedDeviceMode === SelectedAspectType.Small){
-                            const NewComponents = [...componentsSmall]
-                            const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                            const NewComponents = [...components]
+                            const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
                             NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                            onSetComponentsSmall(NewComponents)
+                            onSetComponents(NewComponents)
                             onSetSelectedElement(NewComponents[SelectedIndex])
-                        } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                            const NewComponents = [...componentsMedium]
-                            const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                            NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                            onSetComponentsMedium(NewComponents)
-                            onSetSelectedElement(NewComponents[SelectedIndex])
-                        } else if (selectedDeviceMode === SelectedAspectType.Large){
-                            const NewComponents = [...componentsLarge]
-                            const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                            NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                            onSetComponentsLarge(NewComponents)
-                            onSetSelectedElement(NewComponents[SelectedIndex])
-                        }
                         }} />
                         </Row>
                     </>:null
@@ -180,25 +146,11 @@ export default function Toolbar({onSetIsNavigateToDestinations, selectedElementV
                     <p>Opacity: {selectedElementValue.Opacity}%</p>
                     <input type="range" min="1" max="100" value={selectedElementValue.Opacity} 
                     onChange={changeEvent => {
-                        if (selectedDeviceMode === SelectedAspectType.Small){
-                        const NewComponents = [...componentsSmall]
-                        const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                        const NewComponents = [...components]
+                        const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
                         NewComponents[SelectedIndex]["Opacity"] = parseInt(changeEvent.target.value)
-                        onSetComponentsSmall(NewComponents)
+                        onSetComponents(NewComponents)
                         onSetSelectedElement(NewComponents[SelectedIndex])
-                        } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                        const NewComponents = [...componentsMedium]
-                        const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                        NewComponents[SelectedIndex]["Opacity"] = parseInt(changeEvent.target.value)
-                        onSetComponentsMedium(NewComponents)
-                        onSetSelectedElement(NewComponents[SelectedIndex])
-                        } else if (selectedDeviceMode === SelectedAspectType.Large){
-                        const NewComponents = [...componentsLarge]
-                        const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                        NewComponents[SelectedIndex]["Opacity"] = parseInt(changeEvent.target.value)
-                        onSetComponentsLarge(NewComponents)
-                        onSetSelectedElement(NewComponents[SelectedIndex])
-                        }
                     }} 
                     className={styles.slider} id="myRange" />
                     </Row>

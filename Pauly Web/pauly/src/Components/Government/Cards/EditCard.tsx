@@ -18,13 +18,11 @@ import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
 import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter } from "firebase/firestore";
 import { useAuth } from '../../../Contexts/AuthContext';
-import {  LexicalComposer } from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin"
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import UploadMicrosoftFile from './uploadMicrosoftFile.tsx';
 import BindMenu from './BindMenu.tsx';
 import PaulyLibrary from './paulyLibrary.tsx';
 import CardAddMenu from './CardAddMenu.tsx';
+import Toolbar from './Toolbar.tsx';
 
 declare global{
   type CardElement = {
@@ -51,6 +49,11 @@ declare global{
     ClassPerms: string[] | null
     SportsMode: number | null
     SportsPerms: string[] | null
+  }
+  enum SelectedAspectType{
+    Small,
+    Medium,
+    Large
   }
 }
 
@@ -82,11 +85,6 @@ type FontTypeCSS = {
   UUID: string
 }
 
-enum SelectedAspectType{
-  Small,
-  Medium,
-  Large
-}
 
 export default function EditCard() {
   const outerDivRef = useRef(null)
@@ -477,8 +475,8 @@ export default function EditCard() {
                   </Col>
               </Row>
               <Row noGutters={true}>
-                <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%"}} className="d-none d-md-block">
-                  
+                <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%", backgroundColor: '#444444'}} className="d-none d-md-block">
+                  <Toolbar onSetIsNavigateToDestinations={setIsNavigateToDestinations} selectedElementValue={selectedElementValue} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetComponents={(selectedDeviceMode === SelectedAspectType.Small) ? setComponentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? setComponentsMedium:setComponentsLarge} onSetSelectedElement={setSelectedElement} onSetBolded={setBolded} onSetItalic={setItalic} onSetUnderlined={setUnderlined} onSetStrikethrough={setStrikethrough} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
                 </Col>
                 {/* <Col style={{backgroundColor: "#793033",padding: 0, margin: 0, height: "100%"}}>
                     <div style={{height: "100%"}}> */}

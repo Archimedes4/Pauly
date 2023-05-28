@@ -31,10 +31,10 @@ export default function CardsHome() {
       console.log('ran')
       async function getCardData() {
         const db = getFirestore(app);
-        const querySnapshot = await getDocs(collection(db, "Cards"));
+        const querySnapshot = await getDocs(collection(db, "Pages"));
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots.data()
-          if (doc.data().CardCount == undefined) {
+          if (doc.data().Count == undefined) {
             setCards(Cards => [...Cards, doc.data()])
             console.log("This is cards", Cards)
           }
@@ -72,6 +72,9 @@ export default function CardsHome() {
             </div>
           ))
         }
+        <button>
+          Create New
+        </button>
       </div>
     </div>
   )
