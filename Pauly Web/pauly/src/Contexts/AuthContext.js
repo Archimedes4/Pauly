@@ -42,7 +42,7 @@ export function AuthProvider({ children }) {
         const errorMessage = error.message;
       });
   }
-  function LoginMicrosoft(){
+  async function LoginMicrosoft(){
     const provider = new OAuthProvider('microsoft.com');
     provider.addScope('mail.read');
     provider.addScope('calendars.read');
@@ -51,31 +51,27 @@ export function AuthProvider({ children }) {
     provider.setCustomParameters({
       tenant: 'd9ad3c89-6aed-4783-93ce-212b71ee98f3'
     });
-    
-    signInWithPopup(auth, provider)
-      .then(async (result) => {
-        // User is signed in.
-        // IdP data available in result.additionalUserInfo.profile.
-    
-        // Get the OAuth access token and ID Token
-        const credential = OAuthProvider.credentialFromResult(result);
-        const accessToken = credential.accessToken;
-        const idToken = credential.idToken;
-        setCurrentUserMicrosoftAccessToken(accessToken)
-        const docRef = doc(db, "Users", currentUser.uid)
-        const docSnap = await getDoc(docRef);
-    
-        if (docSnap.exists()) {
-          const data = docSnap.data()
-          setCurrentUserInfo({FirstName: data["First Name"], LastName: data["Last Name"], Permissions: data["Permissions"], ClassMode: data["ClassMode"], ClassPerms: data["ClassPerms"], SportsMode: data["SportsMode"], SportsPerms: data["SportsPerms"]})
-        } else {
-          // docSnap.data() will be undefined in this case
-          console.log("No such document!");
-        }
-        })
-      .catch((error) => {
-        // Handle error.
-      });
+    try{
+      const result = await signInWithPopup(auth, provider)
+      const credential = OAuthProvider.credentialFromResult(result);
+      console.log(credential)
+      const accessToken = credential.accessToken;
+      const idToken = credential.idToken;
+      setCurrentUserMicrosoftAccessToken(accessToken)
+      const docRef = doc(db, "Users", currentUser.uid)
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data()
+        setCurrentUserInfo({FirstName: data["First Name"], LastName: data["Last Name"], Permissions: data["Permissions"], ClassMode: data["ClassMode"], ClassPerms: data["ClassPerms"], SportsMode: data["SportsMode"], SportsPerms: data["SportsPerms"]})
+      } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No such document!");
+      }
+      console.log("Happening")
+      return true
+    } catch {
+      return false
+    }
   }
 
   useEffect(() => {
@@ -84,6 +80,7 @@ export function AuthProvider({ children }) {
 
     onAuthStateChanged(auth,( user => {
       setCurrentUser(user)
+      console.log(user)
     }))
   }, [])
 

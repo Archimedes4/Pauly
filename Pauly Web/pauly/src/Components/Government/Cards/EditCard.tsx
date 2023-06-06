@@ -46,15 +46,6 @@ declare global{
     SelectedFont: string
     ElementUUID: string
   }
-  type UserType = {
-    FirstName: string
-    LastName: string
-    Permissions: number[]
-    ClassMode: number | null
-    ClassPerms: string[] | null
-    SportsMode: number | null
-    SportsPerms: string[] | null
-  }
   type ClassType = {
     CourseName: string,
     DayA: number,

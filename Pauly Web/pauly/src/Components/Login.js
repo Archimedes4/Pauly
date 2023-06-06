@@ -29,12 +29,13 @@ export default function Login() {
     try{
       setError("")
       setLoading(true)
-      LoginMicrosoft()
+      const result = LoginMicrosoft()
+      console.log(result)
+      history("/")
+      setLoading(false)
     } catch {
       setError("Failed to log in")
     }
-    history("/")
-    setLoading(false)
   }
 
   return (
