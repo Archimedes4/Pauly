@@ -104,6 +104,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
             }
         })
     }
+    
     async function getShareFile(ShareLink: string) {
         console.log("This https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
         fetch("https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl", {method: "Get", headers: {

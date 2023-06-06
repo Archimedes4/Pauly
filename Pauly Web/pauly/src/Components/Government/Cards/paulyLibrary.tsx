@@ -509,6 +509,17 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
         setFiles(NewComponents)
     }
 
+
+    function create_UUID(){
+      var dt = new Date().getTime();
+      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          var r = (dt + Math.random()*16)%16 | 0;
+          dt = Math.floor(dt/16);
+          return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+      });
+      return uuid;
+    }
+
     return (
         <>
             <input onClick={() => {setIsShowingUpload(false)}} onBlur={() => {setIsShowingUpload(false); console.log("This")}} type="file" accept="'image/gif', 'image/jpeg', 'image/png', 'image/avif', 'application/pdf', 'image/svg+xml', 'image/webp', 'image/bmp', 'audio/aac', 'video/x-msvideo', 'audio/mpeg', 'video/mp4', 'video/mpeg', 'audio/webm', 'video/webm', 	'video/quicktime', 'application/pdf', 'text/csv', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/rtf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'text/plain', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.apple.keynote', 'application/vnd.apple.pages', 'application/vnd.apple.numbers'" onChange={handleFileChange} style={{display: "none"}} ref={fileInputRef}/>
@@ -538,7 +549,7 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                             <div style={{height: "100%", width: "100%"}}>
                                 {fileUrl &&  (selectedFile.type === "image/jpeg") && <img src={fileUrl} alt="User-selected image" style={{height: "100px", width: "100px" }} />}
                                 {fileUrl && (selectedFile.type === "video/mp4") &&(
-                                <video controls  ref={videoElement}>
+                                <video controls  ref={videoElement} width={"100%"} height={"100%"}>
                                     <source src={fileUrl} type="video/mp4" />
                                     Your browser does not support video.
                                 </video>
@@ -750,27 +761,27 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                                             <div onClick={(e) => {
                                                 if (selectedFileLibrary.fileType ===  "image/jpeg" || selectedFileLibrary.fileType ===  "image/gif"){
                                                     if (selectedDeviceMode === SelectedAspectType.Small){
-                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     }
                                                 } else if (selectedFileLibrary.fileType ===  "video/mp4") {
                                                     if (selectedDeviceMode === SelectedAspectType.Small){
-                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     }
                                                 } else if (selectedFileLibrary.fileType === "application/pdf") {
                                                     if (selectedDeviceMode === SelectedAspectType.Small){
-                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
+                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                     }
                                                 }
                                                 onSetIsShowingPaulyLibrary(false)

@@ -10,18 +10,26 @@ import {RiComputerFill} from "react-icons/ri"
 import {BsTabletLandscape} from "react-icons/bs"
 import {HiRectangleGroup} from "react-icons/hi2"
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
+import Picker from '../../../UI/Picker/Picker'
 
-export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowingPaulyLibrary, onSetIsShowingCardsMenu, onSetSelectedDeviceMode, selectedDeviceMode, isShowingPaulyLibaray, isShowingCardsMenu, onAddComponent, components}:
+enum SelectedAspectType{
+    Small,
+    Medium,
+    Large
+}
+
+export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowingPaulyLibrary, onSetIsShowingCardsMenu, onSetSelectedDeviceMode, selectedDeviceMode, isShowingPaulyLibaray, onAddComponent, components, onSetInDotsMode, onSetInDrawMode}:
     {   zoomScale: string, 
         onSetZoomScale: (item: string) => void
         onSetIsShowingPaulyLibrary: (item: boolean) => void,
         onSetIsShowingCardsMenu: (item: boolean) => void,
-        onSetSelectedDeviceMode: (item: SelectedAspectType) => void,
-        selectedDeviceMode: SelectedAspectType,
+        onSetSelectedDeviceMode?: (item: SelectedAspectType) => void,
+        selectedDeviceMode?: SelectedAspectType,
         isShowingPaulyLibaray: boolean,
-        isShowingCardsMenu: boolean,
         onAddComponent: (e: React.SyntheticEvent, newValue:CardElement) => void,
-        components: CardElement[]
+        components: CardElement[],
+        onSetInDotsMode: (item: boolean) => void,
+        onSetInDrawMode: (item: boolean) => void
     }) {
     function onChangeSetZoomScale(value: string){
         if (value.slice(-1) == "%") {
@@ -35,135 +43,109 @@ export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowing
           }
         }
     }
+
+    function create_UUID(){
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+    }
+    
   return (
     <div className={styles.CardToolbarDiv}>
-        <Stack direction='horizontal' gap={3} style={{padding: 0, margin: 0, width: "100%", backgroundColor: "white"}}>
-        <div style={{display: "table"}}>
-        <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle", height:"50%"}}>
-            <InputGroup hasValidation>
-            <InputGroup.Text id="inputGroupPrepend" onClick={() => {
-                if (parseFloat(zoomScale) >= 10){
-                    onSetZoomScale("" + (parseFloat(zoomScale) - 10))
+            <div style={{gridRow: 1, gridColumn: 1}}>
+                <InputGroup hasValidation>
+                <InputGroup.Text id="inputGroupPrepend" onClick={() => {
+                    if (parseFloat(zoomScale) >= 10){
+                        onSetZoomScale("" + (parseFloat(zoomScale) - 10))
+                        // const { setTransform } = areaContainerZoomRef.current
+                        // setTransform(100,200,zoomScale/100)
+                    }
+                }} style={{backgroundColor: "white", padding:0 ,borderLeft: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowLeft /></InputGroup.Text>
+                <Form.Control
+                    id="SetZoom"
+                    onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
+                    value={zoomScale + "%"}
+                    onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
+                    className={styles.sizeForm}
+                    style={{color:"blue", borderRadius: 0, borderRight: "none", borderLeft: "none", borderBottom: "2px solid black", borderTop: "2px solid black"}}
+                />
+                <InputGroup.Text id="inputGroupAfter" onClick={() => {
+                    if (parseFloat(zoomScale) <= 500){
+                    console.log(zoomScale)
+                    const newZoom: number = parseInt(zoomScale)
+                    onSetZoomScale("" + (newZoom + 10))
                     // const { setTransform } = areaContainerZoomRef.current
                     // setTransform(100,200,zoomScale/100)
-                }
-            }} style={{backgroundColor: "white", padding:0 ,borderLeft: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowLeft /></InputGroup.Text>
-            <Form.Control
-                id="SetZoom"
-                onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
-                value={zoomScale + "%"}
-                onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
-                className={styles.sizeForm}
-                style={{color:"blue", borderRadius: 0, borderRight: "none", borderLeft: "none", borderBottom: "2px solid black", borderTop: "2px solid black"}}
-            />
-            <InputGroup.Text id="inputGroupAfter" onClick={() => {
-                if (parseFloat(zoomScale) <= 500){
-                console.log(zoomScale)
-                const newZoom: number = parseInt(zoomScale)
-                onSetZoomScale("" + (newZoom + 10))
-                // const { setTransform } = areaContainerZoomRef.current
-                // setTransform(100,200,zoomScale/100)
-                }
-            }} style={{backgroundColor: "white", padding: 0, borderRight: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowRight/></InputGroup.Text>
-            </InputGroup>
-            <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => {
-                // const { setTransform } = areaContainerZoomRef.current
-                // setTransform(100,200,zoomScale/100)
-                onSetZoomScale(changeEvent.target.value) 
-                }} className={styles.slider} id="myRange" />
-        </div>
-        </div>
-        <div style={{display: "table"}}>
-            <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-            <Button className={styles.DropdownButtonStyle}>
-                <div style={{height:"2vh"}} onClick={(e) => {
-                        onAddComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                }}>
-                    <img src={textIcon} className={styles.imgContainer }/>
-                </div>
-            </Button>
+                    }
+                }} style={{backgroundColor: "white", padding: 0, borderRight: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowRight/></InputGroup.Text>
+                </InputGroup>
+                <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => {
+                    // const { setTransform } = areaContainerZoomRef.current
+                    // setTransform(100,200,zoomScale/100)
+                    onSetZoomScale(changeEvent.target.value) 
+                    }} className={styles.slider} id="myRange" />
             </div>
-        </div>
-        <div style={{display: "table"}}>
-            <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-            <Dropdown drop='up'>
-                <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
-                <div style={{height:"2vh"}}>
-                    <img src={shapesIcon} className={styles.imgContainer }/>
-                </div>
-                </Dropdown.Toggle>
-                <DropdownMenu>
-                <Dropdown.Item eventKey="1" onClick={(e) => {
-                        onAddComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                }}>Square</Dropdown.Item>
-                <Dropdown.Item eventKey="2" onClick={(e) => {
-                    onAddComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                }}>Dots</Dropdown.Item>
-                <Dropdown.Item eventKey="3" onClick={(e) => {
-                    onAddComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                }}>Draw</Dropdown.Item>
-                <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
-                </DropdownMenu>
-            </Dropdown>
+            <div style={{gridRow: 1, gridColumn: 2}}>
+                <Button className={styles.DropdownButtonStyle} onClick={(e) => {
+                            onAddComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
+                    }}>
+                        <img src={textIcon} className={styles.imgContainer } style={{maxWidth: "2vh", height: "auto"}}/>
+                </Button>
             </div>
-        </div>
-        <div style={{display: "table"}}>
-            <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-            <Button onClick={() => {onSetIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
-                <div style={{height:"2vh"}}>
-                    <img src={imageIcon} className={styles.imgContainer}/>
-                </div>
-            </Button>
+            <div style={{gridRow: 1, gridColumn: 3}}>
+                <Dropdown drop='up'>
+                    <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
+                        <img src={shapesIcon} style={{maxWidth: "2vh", height: "auto"}} className={styles.imgContainer }/>
+                    </Dropdown.Toggle>
+                    <DropdownMenu>
+                    <Dropdown.Item eventKey="1" onClick={(e) => {
+                        onAddComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
+                    }}>Square</Dropdown.Item>
+                    <Dropdown.Item eventKey="2" onClick={(e) => {
+                        onSetInDrawMode(false) //TO DO SAVE DRAW MODE
+                        onSetInDotsMode(true)
+                    }}>Dots</Dropdown.Item>
+                    <Dropdown.Item eventKey="3" onClick={(e) => {
+                        onSetInDotsMode(false) //TO DO SAVE DOS MODE
+                        onSetInDrawMode(true)
+                    }}>Draw</Dropdown.Item>
+                    <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
+                    </DropdownMenu>
+                </Dropdown>
             </div>
-        </div>
-        <div style={{display: "table"}}>
-            <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-            <Button onClick={() => {onSetIsShowingCardsMenu(!isShowingCardsMenu)}} className={styles.DropdownButtonStyle}>
-                <div style={{height:"2vh"}}>
+            <div style={{gridRow: 1, gridColumn: 4}}>
+                <Button onClick={() => {onSetIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
+                    <img style={{maxWidth: "2vh", height: "auto"}} src={imageIcon} className={styles.imgContainer}/>
+                </Button>
+            </div>
+            <div style={{gridRow: 1, gridColumn: 5}}>
+                <Button onClick={() => {onSetIsShowingCardsMenu(true)}} className={styles.DropdownButtonStyle}>
                     <HiRectangleGroup color='black'/>
-                </div>
-            </Button>
+                </Button>
             </div>
-        </div>
         {/* Mode Selection */}
-        <div>
-            <Stack direction='horizontal'>
-            <div style={{display: "table"}}>
-                <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                <Button onClick={() => {
-                    onSetSelectedDeviceMode(SelectedAspectType.Small)
-                }} className={styles.DropdownButtonStyle}>
-                    <div style={{height:"2vh"}}>
-                        <RiComputerFill color='black' />
-                    </div>
-                </Button>
-                </div>
-            </div>
-            <div style={{display: "table"}}>
-                <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                <Button onClick={() => {
-                    onSetSelectedDeviceMode(SelectedAspectType.Medium)
-                }} className={styles.DropdownButtonStyle}>
-                    <div style={{height:"2vh"}}>
-                        <BsTabletLandscape color='black' />
-                    </div>
-                </Button>
-                </div>
-            </div>
-            <div style={{display: "table"}}>
-                <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                <Button onClick={() => {
-                    onSetSelectedDeviceMode(SelectedAspectType.Large)
-                }} className={styles.DropdownButtonStyle}>
-                    <div style={{height:"2vh"}}>
-                        <FcIphone color='black' />
-                    </div>
-                </Button>
-                </div>
-            </div>
-            </Stack>
-        </div>
-        </Stack>
+        { (selectedDeviceMode !== undefined) ?
+            <div  style={{gridRow: 1, gridColumn: "6/8"}}>
+                <Picker onSetSelectedIndex={(index) => {
+                    if (index === 0){
+                        onSetSelectedDeviceMode(SelectedAspectType.Small)
+                    } else if (index === 1) {
+                        onSetSelectedDeviceMode(SelectedAspectType.Medium)
+                    } else if (index === 2){
+                        onSetSelectedDeviceMode(SelectedAspectType.Large)
+                    }
+                }} selectedIndex={(selectedDeviceMode === SelectedAspectType.Small) ? 0:(selectedDeviceMode === SelectedAspectType.Medium) ? 1:2}>
+                    <RiComputerFill color='black' style={{margin: 0, padding: 0}} />
+                    <BsTabletLandscape color='black' style={{margin: 0, padding: 0}} />
+                    <FcIphone color='black' style={{margin: 0, padding: 0}}/>
+                </Picker>
+
+            </div>:null
+        }
     </div>
   )
 }

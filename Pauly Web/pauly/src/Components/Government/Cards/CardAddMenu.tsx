@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Card, Stack, Container, Row, Col } from 'react-bootstrap'
 import styles from "./Cards.module.css"
 import EditCardArea from './EditCardArea'
 import Toolbar from './Toolbar'
+import ToolbarBottom from './ToolbarBottom'
 
 type FontType = {
     fontName: string
@@ -11,7 +12,13 @@ type FontType = {
     UUID: string
 }
 
-function CardAddNewCard(){
+function CardAddNewCard({isShowingPaulyLibaray, onSetIsShowingPaulyLibrary, onSetIsShowingCardsMenu}:
+    {
+        isShowingPaulyLibaray: boolean,
+        onSetIsShowingPaulyLibrary: (item: boolean) => void,
+        onSetIsShowingCardsMenu: (item: boolean) => void,
+
+    }){
     const [components, setComponents] = useState<CardElement[]>([])
     const [scrollDir, setScrollDir] = useState("scrolling down");
     const [pressed, setPressed] = React.useState(false)
@@ -23,10 +30,10 @@ function CardAddNewCard(){
     const [isUserTyping, setIsUserTypeing] = React.useState(false)
     const [areaHeight, setAreaHeight] = useState(85)
     const [areaWidth, setAreaWidth] = useState(80)
-    const [aspectHeight, setAspectHeight] = useState(20)
+    const [aspectHeight, setAspectHeight] = useState(10)
     const [aspectWidth, setAspectWidth] = useState(10)
-    const [width, setWidth] = useState(window.innerWidth);//Device Width
-    const [height, setHeight] = useState(window.innerHeight);//Device height
+    const [width, setWidth] = useState(window.innerWidth * 0.9);//Device Width
+    const [height, setHeight] = useState(window.innerHeight * 0.7);//Device height
     const [bolded, setBolded] = useState<boolean>(false)
     const [underlined, setUnderlined] = useState<boolean>(false)
     const [italic, setItalic] = useState<boolean>(false)
@@ -39,14 +46,16 @@ function CardAddNewCard(){
     const [isShowingBindPage, setIsShowingBindPage] = useState<boolean>(false)
     const [currentUserInfo, setCurrentUserInfo] = useState<UserType>(null)
     const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
-    const [zoomScale, setZoomScale] = useState(100)
+    const [zoomScale, setZoomScale] = useState("100")
+    const [isInDotsMode, setIsInDotsMode] = useState(false)
+    const [isInDrawMode, setIsInDrawMode] = useState(false)
+    const [dotsText, setDotsText] = useState("")
+    const [selectedTextColor, setSelectedTextColor] = useState("")
 
     const handleOnClick = (e: React.SyntheticEvent, Index: CardElement) => {
         e.preventDefault();
-        if (selectedElementValue?.ElementIndex === Index.ElementIndex){
-            
-        } else {
-          setSelectedElement(Index)
+        if (selectedElementValue?.ElementIndex !== Index.ElementIndex){
+            setSelectedElement(Index)
         }
     };
 
@@ -119,14 +128,63 @@ function CardAddNewCard(){
         onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
     }
 
+    function addComponent(e: React.SyntheticEvent, newValue:CardElement) { 
+        e.preventDefault()
+        setComponents([...components, newValue])
+
+    }
+
+    function create_UUID(){
+        var dt = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (dt + Math.random()*16)%16 | 0;
+            dt = Math.floor(dt/16);
+            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+    }
+
+    useEffect(() => {
+        CalculateAreaPlaneSize()
+    }, [zoomScale, height, width, selectedElementValue]);
+
+    function CalculateAreaPlaneSize() {
+        const zoomScaleF = parseFloat(zoomScale)
+        var elementWidth = width * 0.8
+        const elementHeight = height * 0.85
+        if (aspectWidth >= aspectHeight){
+          const newHeight = (elementWidth/aspectWidth) * aspectHeight
+          console.log("new height", newHeight)
+          if (newHeight > elementHeight){
+            setAreaHeight((elementHeight) * (zoomScaleF/100))
+            setAreaWidth(((elementWidth/aspectWidth) * aspectHeight) * (zoomScaleF/100))
+          } else {
+            setAreaHeight(newHeight * (zoomScaleF/100))
+            setAreaWidth(elementWidth * (zoomScaleF/100))
+          }
+        } else {
+          const newWidth = (elementHeight/aspectHeight) * aspectWidth
+          if (newWidth > elementHeight){
+            setAreaWidth((elementHeight) * (zoomScaleF/100))
+            setAreaHeight(((elementHeight/aspectHeight) * aspectWidth) * (zoomScaleF/100))
+          } else {
+            setAreaWidth(newWidth * (zoomScaleF/100))
+            setAreaHeight(elementHeight * (zoomScaleF/100))
+          }
+        }
+    }
+    
+
     return (
         <Card>
-            <Container>
                 <Row>
                     <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%", backgroundColor: '#444444'}} className="d-none d-md-block">
-                        <Toolbar selectedElementValue={selectedElementValue} components={components} onSetComponents={setComponents} onSetSelectedElement={setSelectedElement} onSetBolded={setBolded} onSetItalic={setItalic} onSetUnderlined={setUnderlined} onSetStrikethrough={setStrikethrough} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
+                        <Toolbar onSaveDrawMode={(e) => {
+                            var myImage = "text"
+                            addComponent(e,  {ElementType: "Image", Content: myImage, Position: {XPosition: 0, YPosition: 0}, Width: 500, Height: 500, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
+                        }} selectedTextColor={selectedTextColor} onSetSelectedTextColor={setSelectedTextColor} onSetDotsText={setDotsText} dotsText={dotsText} onAddComponent={addComponent} onSetIsInDotsMode={setIsInDotsMode} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} selectedElementValue={selectedElementValue} components={components} onSetComponents={setComponents} onSetSelectedElement={setSelectedElement} onSetBolded={setBolded} onSetItalic={setItalic} onSetUnderlined={setUnderlined} onSetStrikethrough={setStrikethrough} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
                     </Col>
-                    <Col>
+                    <Col style={{padding: 0}}>
                         {/* Continer */}
                         <div className={styles.CardContainterCardCSS}
                             onKeyDown={handler}
@@ -146,8 +204,8 @@ function CardAddNewCard(){
                             }
                             }}
                         >
-                            <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center"}}>
-                                <div style={ (zoomScale >= 100) ? 
+                            <div style={{display: (parseFloat(zoomScale) >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center", overflow: "scroll", height: (height * 0.8), width: (width * 0.8)}}>
+                                <div style={ (parseFloat(zoomScale) >= 100) ? 
                                 {
                                     width: areaWidth + "px",
                                     height: areaHeight + "px",
@@ -155,8 +213,8 @@ function CardAddNewCard(){
                                     overflow: "hidden",
                                     margin: "auto",
                                     padding: 0,
-                                    transform: "scale(" + (zoomScale/100) +")",
-                                    transformOrigin: "-" + (zoomScale/100) + "px" + " "+ "0" +"px"
+                                    transform: "scale(" + (parseFloat(zoomScale)/100) +")",
+                                    transformOrigin: "-" + (parseFloat(zoomScale)/100) + "px" + " "+ "0" +"px"
                                 }:{
                                     width: areaWidth + "px",
                                     height: areaHeight + "px",
@@ -166,7 +224,7 @@ function CardAddNewCard(){
                                     margin: "auto",
                                     padding: 0,
                                     overflow: "scroll",
-                                    transform: "scale(" + (zoomScale/100) +")",
+                                    transform: "scale(" + (parseFloat(zoomScale)/100) +")",
                                 }}
                                 >  
                                 {/* Area Plane */}
@@ -181,7 +239,7 @@ function CardAddNewCard(){
                                     }}
                                     onMouseMove={ onMouseMove }
                                 >
-                                    <EditCardArea components={components} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>
+                                    <EditCardArea components={components} onSetComponents={setComponents} zoomScale={parseFloat(zoomScale)} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>
                                 {/* End Of Components */}
                                 </div>
                             </div>
@@ -189,12 +247,19 @@ function CardAddNewCard(){
                         </div>
                     </Col>
                 </Row>
-            </Container>
+                <Row>
+                    <ToolbarBottom zoomScale={zoomScale} onSetZoomScale={setZoomScale} onSetIsShowingPaulyLibrary={onSetIsShowingPaulyLibrary} onSetIsShowingCardsMenu={onSetIsShowingCardsMenu}
+                    isShowingPaulyLibaray={isShowingPaulyLibaray} onAddComponent={addComponent} components={components} onSetInDotsMode={() => {}} onSetInDrawMode={() => {}} />
+                </Row>
         </Card>
     )
 }
 
-export default function CardAddMenu({onSetIsShowingCardsMenu}:{onSetIsShowingCardsMenu: (item: boolean) => void}) {
+export default function CardAddMenu({onSetIsShowingCardsMenu, onSetIsShowingPaulyLibrary, isShowingPaulyLibrary}:{
+    onSetIsShowingCardsMenu: (item: boolean) => void,
+    onSetIsShowingPaulyLibrary: (item: boolean) => void,
+    isShowingPaulyLibrary: boolean
+}) {
     const [isShowingCardAddMenu, setIsShowingCardAddMenu] = useState<boolean>(false)
     return (
         <div className={styles.ImageLibraryView}>
@@ -210,7 +275,7 @@ export default function CardAddMenu({onSetIsShowingCardsMenu}:{onSetIsShowingCar
             <Card.Body>
                 { isShowingCardAddMenu ? 
                 <div>
-                    <CardAddNewCard />
+                    <CardAddNewCard isShowingPaulyLibaray={isShowingPaulyLibrary} onSetIsShowingCardsMenu={setIsShowingCardAddMenu} onSetIsShowingPaulyLibrary={onSetIsShowingPaulyLibrary}/>
                 </div>:
                 <div>
                     <Card>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { doc, collection, getDoc, getDocs, getFirestore } from "firebase/firestore";
+import { doc, collection, getDoc, getDocs, getFirestore, runTransaction } from "firebase/firestore";
 import { useAuth } from '../../../Contexts/AuthContext';
 import { useCardContext } from "./Cards.js"
-import { Navigate } from "react-router-dom"
+import { Navigate, Link } from "react-router-dom"
 import styles from "./Cards.module.css"
+import { Stack } from 'react-bootstrap';
+import {IoIosArrowBack} from "react-icons/io"
 
 export default function CardsHome() { 
   const { currentUser, currentUserMicrosoftAccessToken } = useAuth()
@@ -59,8 +61,37 @@ export default function CardsHome() {
     return <Navigate to="/government/cards/edit"/>
   }
 
+  async function createNewPage() {
+    const docRef = doc(db, "Pages", "PagesCount")
+    try {
+      await runTransaction(db, async (transaction) => {
+        const countDoc = await transaction.get(docRef);
+        if (!countDoc.exists()) {
+          throw "Document does not exist!";
+        }
+    
+        const newID: number = countDoc.data().Count + 1
+        transaction.set(doc(db, "Pages", newID.toString()), {FirebaseID: newID, Use: "Test", BindRef: ""})
+        transaction.update(docRef, {Count: newID})
+      });
+      console.log("Transaction successfully committed!");
+    } catch (e) {
+      console.log("Transaction failed: ", e);
+    } 
+  }
+
   return (
     <div className={styles.DivBackground}>
+      <div>
+        <Link to="/government" style={{textDecoration: "none"}}>
+          <div className={styles.editCardBackButtonInnerContainer}>
+            <Stack direction='horizontal'>
+              <IoIosArrowBack color='white'/>
+              <p className={styles.EditCardBackButton}>Back</p>
+            </Stack>
+          </div>
+        </Link>
+      </div>
       <h1 className={styles.Title}> Cards </h1>
       <div>  
         {
@@ -72,7 +103,9 @@ export default function CardsHome() {
             </div>
           ))
         }
-        <button>
+        <button onClick={() =>  {     
+          createNewPage()    
+        }}>
           Create New
         </button>
       </div>

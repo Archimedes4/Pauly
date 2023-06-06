@@ -14,7 +14,7 @@ function App() {
           <Routes>
             <Route exact path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
-            <Route path='/Government/*' element={<Government />} />
+            <Route path='/government/*' element={<Government />} />
           </Routes>
         </div>
       </AuthProvider>

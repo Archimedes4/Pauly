@@ -16,13 +16,17 @@ import {BsTabletLandscape} from "react-icons/bs"
 import {HiRectangleGroup} from "react-icons/hi2"
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
-import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter } from "firebase/firestore";
+import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter, setDoc, deleteDoc } from "firebase/firestore";
 import { useAuth } from '../../../Contexts/AuthContext';
 import UploadMicrosoftFile from './uploadMicrosoftFile.tsx';
 import BindMenu from './BindMenu.tsx';
 import PaulyLibrary from './paulyLibrary.tsx';
 import CardAddMenu from './CardAddMenu.tsx';
 import Toolbar from './Toolbar.tsx';
+import ToolbarBottom from './ToolbarBottom.tsx';
+import Canvas from "./Canvas/Canvas.js"
+import SVG from './SVG.tsx';
+import {IoIosArrowBack} from "react-icons/io"
 
 declare global{
   type CardElement = {
@@ -38,8 +42,9 @@ declare global{
     ElementIndex: number
     Opacity: number
     CornerRadius: number
-    SelectedColor: String
+    SelectedColor: string
     SelectedFont: string
+    ElementUUID: string
   }
   type UserType = {
     FirstName: string
@@ -50,11 +55,24 @@ declare global{
     SportsMode: number | null
     SportsPerms: string[] | null
   }
-  enum SelectedAspectType{
-    Small,
-    Medium,
-    Large
+  type ClassType = {
+    CourseName: string,
+    DayA: number,
+    DayB: number,
+    DayC: number,
+    DayD: number,
+    noClass: string[],
+    schoolYear: number,
+    section: number,
+    Semester: number,
+    Teacher: string
   }
+}
+
+enum SelectedAspectType{
+  Small,
+  Medium,
+  Large
 }
 
 enum SelectedCardBindModeType{
@@ -107,35 +125,42 @@ export default function EditCard() {
   const [height, setHeight] = useState(window.innerHeight);//Device height
   const [selectedDeviceMode, setSelectedDeviceMode] = useState<SelectedAspectType>(SelectedAspectType.Small)
   const [selectedSettingsMode, setSelectedSettingsMode] = useState<SelectedSettingsModeType>(SelectedSettingsModeType.Discription)
+  const [isShowingBindPage, setIsShowingBindPage] = useState<boolean>(false)
+  const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
+  const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
+  const [isShowingPaulyLibaray, setIsShowingPaulyLibrary] = useState(false)
+
+  //TextSettings
   const [bolded, setBolded] = useState<boolean>(false)
   const [underlined, setUnderlined] = useState<boolean>(false)
   const [italic, setItalic] = useState<boolean>(false)
   const [strikethrough, setStrikethrough] = useState<boolean>(false)
   const [fontSize, setFontSize] = useState<string>("12px")
   const [fontStyle, setFontStyle] = useState<string>("Times New Roman")
-  const [fontList, setFontList] = useState<FontType []>([])
   const [selectedFont, setSelectedFont] = useState<FontType>(null)
-  const avaliableFontSizes: string[] = ["8px", "12px", "14px", "16px", "20px", "24px"]
-  const [isShowingBindPage, setIsShowingBindPage] = useState<boolean>(false)
-  const [currentUserInfo, setCurrentUserInfo] = useState<UserType>(null)
-  const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
-  const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
-  const [isShowingPaulyLibaray, setIsShowingPaulyLibrary] = useState(false)
+  const [selectedTextColor, setSelectedTextColor] = useState("#000000")
+  const textEditorRef = useRef(null)
+
 
   //Card Menu
   const [isShowingCardsMenu, setIsShowingCardsMenu] = useState<boolean>(false)
 
+
+  const [isInDotsMode, setIsInDotsMode] = useState(false)
+  const [isInDrawMode, setIsInDrawMode] = useState(false)
+  const [dotsText, setDotsText] = useState("")
+  const canvasRef = useRef(null)
+  const svgRef = useRef(null)
+
   useEffect(() => {
-    fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8')
-      .then(response => response.json())
-      .then((data) => {
-        var NewArray = []
-        for(var index = 0; index < data["items"].length; index++){
-          NewArray.push({ fontName:  data["items"][index]["family"], fontVarients: data["items"][index]["variants"], fontSubsets: data["items"][index]["subsets"], UUID: create_UUID()})
-        }
-        setFontList(NewArray)
-      })
-  }, [])
+    if (selectedDeviceMode === SelectedAspectType.Large){
+      {/* 16:9 */}
+    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+      {/* 16:9 */}
+    } else if (selectedDeviceMode === SelectedAspectType.Small){
+      
+    }
+  }, [selectedDeviceMode])
 
   useEffect(() => {
     if (selectedFont !== null) {
@@ -170,8 +195,8 @@ export default function EditCard() {
   }, [zoomScale, height, width, selectedElementValue]);
 
   const updateDimensions = () => {
-      setWidth(window.innerWidth);
-      setHeight(window.innerHeight);
+    setWidth(window.innerWidth);
+    setHeight(window.innerHeight);
   }
 
   useEffect(() => {
@@ -181,6 +206,7 @@ export default function EditCard() {
 
   function addComponent(e: React.SyntheticEvent, newValue:CardElement) { 
     e.preventDefault()
+    addNewOnFierbase(newValue)
     if (selectedDeviceMode === SelectedAspectType.Small){
       setComponentsSmall([...componentsSmall, newValue])
     } else if (selectedDeviceMode === SelectedAspectType.Medium){
@@ -220,24 +246,12 @@ export default function EditCard() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [scrollDir]);
 
-  function onChangeSetZoomScale(value: string){
-    if (value.slice(-1) == "%") {
-      setZoomScale(value.slice(0, -1))
-    } else {
-      if (value.includes('%')) {
-        const last = value.slice(-1)
-        setZoomScale(value.slice(0, -2) + last)
-      } else {
-        setZoomScale(value.slice(0, -1))
-      }
-    }
-  }
-
   function onMouseMoveUpdateComponents(NewComponents: any[], SelectedIndex: number, event: React.MouseEvent) {
     if (pressed){
       if (selectedElementValue != undefined) {
           NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
           NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
+          updateOnFierbase(NewComponents[SelectedIndex])
       }
     } else {
       if (isChangeingSize) {
@@ -276,6 +290,7 @@ export default function EditCard() {
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementY
               }
+              updateOnFierbase(NewComponents[SelectedIndex])
           }
       }
     }
@@ -306,8 +321,8 @@ export default function EditCard() {
   }
 
   useEffect(() => {
-    getUserData()
     CalculateAreaPlaneSize()
+    loadFromFirebase()
   }, [])
 
   const handleOnClick = (e: React.SyntheticEvent, Index: CardElement) => {
@@ -319,38 +334,43 @@ export default function EditCard() {
     }
   };
 
+  function DeleteFunction(){
+    if (selectedDeviceMode === SelectedAspectType.Small){
+      const NewComponents = [...componentsSmall]
+      const removeIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+      setSelectedElement(null)
+      deleteOnFirebase(NewComponents[removeIndex])
+      const save = NewComponents[0] 
+      NewComponents[0] = NewComponents[removeIndex]
+      NewComponents[removeIndex] = save
+      NewComponents.shift()
+      setComponentsSmall(NewComponents)
+    } else if (selectedDeviceMode === SelectedAspectType.Medium){
+      const NewComponents = [...componentsMedium]
+      const removeIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+      deleteOnFirebase(NewComponents[removeIndex])
+      setSelectedElement(null)
+      const save = NewComponents[0] 
+      NewComponents[0] = NewComponents[removeIndex]
+      NewComponents[removeIndex] = save
+      NewComponents.shift()
+      setComponentsMedium(NewComponents)
+    } else if (selectedDeviceMode === SelectedAspectType.Large){
+      const NewComponents = [...componentsLarge]
+      const removeIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+      deleteOnFirebase(NewComponents[removeIndex])
+      setSelectedElement(null)
+      const save = NewComponents[0] 
+      NewComponents[0] = NewComponents[removeIndex]
+      NewComponents[removeIndex] = save
+      NewComponents.shift()
+      setComponentsLarge(NewComponents)
+    }
+  }
+
   const handler = (event: React.KeyboardEvent) => {
     if (event.key === 'Backspace' && !isUserTyping) {
-      console.log("VVVVVVV THis THIS THIS THIS THIS THIS THIS THIS THIS this this this")
-      if (selectedDeviceMode === SelectedAspectType.Small){
-        console.log("THis THIS THIS THIS THIS THIS THIS THIS THIS this this this")
-        const NewComponents = [...componentsSmall]
-        const removeIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-        setSelectedElement(null)
-        const save = NewComponents[0] 
-        NewComponents[0] = NewComponents[removeIndex]
-        NewComponents[removeIndex] = save
-        NewComponents.shift()
-        setComponentsSmall(NewComponents)
-      } else if (selectedDeviceMode === SelectedAspectType.Medium){
-        const NewComponents = [...componentsMedium]
-        const removeIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-        setSelectedElement(null)
-        const save = NewComponents[0] 
-        NewComponents[0] = NewComponents[removeIndex]
-        NewComponents[removeIndex] = save
-        NewComponents.shift()
-        setComponentsMedium(NewComponents)
-      } else if (selectedDeviceMode === SelectedAspectType.Large){
-        const NewComponents = [...componentsLarge]
-        const removeIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-        setSelectedElement(null)
-        const save = NewComponents[0] 
-        NewComponents[0] = NewComponents[removeIndex]
-        NewComponents[removeIndex] = save
-        NewComponents.shift()
-        setComponentsLarge(NewComponents)
-      }
+      DeleteFunction()
     }
   };
 
@@ -359,45 +379,6 @@ export default function EditCard() {
   }
 
   function CalculateAreaPlaneSize() {
-    // if (width >= height){ 
-    //   if (aspectWidth >= aspectHeight){ 
-    //     //Lower Size: height
-    //     //Higher Size: width
-    //     //Lower Aspect: height
-    //     //Higher Aspect: width
-    //     console.log("hwhw")
-    //     setAreaHeight(Elementheight*(zoomScale/100))
-    //     setAreaWidth(((ElementWidth/aspectHeight) * aspectWidth)*(zoomScale/100))
-    //   } else { 
-    //     //Lower Size: height
-    //     //Higher Size: width
-    //     //Lower Aspect: width
-    //     //Higher Aspect: height
-    //     console.log("hwwh")
-    //     setAreaHeight((((Elementheight/aspectHeight) * aspectWidth))*(zoomScale/100))
-    //     const NewHeight = ((Elementheight/aspectHeight) * aspectWidth)
-    //     setAreaWidth((((NewHeight/aspectWidth) * aspectHeight)*(zoomScale/100)))
-    //   }
-    // } else {
-    //   if (aspectWidth >= aspectHeight){
-    //     //Lower Size: width
-    //     //Higher Size: height
-    //     //Lower Aspect: height
-    //     //Higher Aspect: width
-    //     console.log("whhw")
-    //     setAreaHeight(Elementheight)
-    //     setAreaWidth((((ElementWidth/aspectHeight) * aspectWidth)*(zoomScale/100)))
-    //   } else {
-    //     //Lower Size: width
-    //     //Higher Size: height
-    //     //Lower Aspect: width
-    //     //Higher Aspect: height
-    //     console.log("whwh")
-    //     setAreaHeight((((Elementheight/aspectHeight) * aspectWidth)*(zoomScale/100)))
-    //     const NewHeight = ((Elementheight/aspectHeight) * aspectWidth)
-    //     setAreaWidth((((NewHeight/aspectWidth) * aspectHeight) * (zoomScale/100)))
-    //   }
-    // }
     var elementWidth = width * 0.8
     const elementHeight = height * 0.85
     if (aspectWidth >= aspectHeight){
@@ -432,17 +413,193 @@ export default function EditCard() {
     return uuid;
   }
 
-  async function getUserData(){
-    const docRef = doc(db, "Users", currentUser.uid)
-    const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      const data = docSnap.data()
-      setCurrentUserInfo({FirstName: data["First Name"], LastName: data["Last Name"], Permissions: data["Permissions"], ClassMode: data["ClassMode"], ClassPerms: data["ClassPerms"], SportsMode: data["SportsMode"], SportsPerms: data["SportsPerms"]})
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log("No such document!");
+  async function addNewOnFierbase(item: CardElement) {
+    if (selectedDeviceMode === SelectedAspectType.Small){
+      await setDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Small", item.ElementUUID), {
+        ElementType: item.ElementType,
+        Content: item.Content,
+        PositionX: item.Position.XPosition,
+        PositionY: item.Position.YPosition,
+        Width: item.Width,
+        Height: item.Height,
+        CurrentZIndex: item.CurrentZIndex,
+        ElementIndex: item.ElementIndex,
+        Opacity: item.Opacity,
+        CornerRadius: item.CornerRadius,
+        SelectedColor: item.SelectedColor,
+        SelectedFont: item.SelectedFont,
+        ElementUUID: item.ElementUUID
+      })
+    } else if (selectedDeviceMode === SelectedAspectType.Medium) {
+      await setDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Medium", item.ElementUUID), {
+        ElementType: item.ElementType,
+        Content: item.Content,
+        PositionX: item.Position.XPosition,
+        PositionY: item.Position.YPosition,
+        Width: item.Width,
+        Height: item.Height,
+        CurrentZIndex: item.CurrentZIndex,
+        ElementIndex: item.ElementIndex,
+        Opacity: item.Opacity,
+        CornerRadius: item.CornerRadius,
+        SelectedColor: item.SelectedColor,
+        SelectedFont: item.SelectedFont,
+        ElementUUID: item.ElementUUID
+      })
+    } else if  (selectedDeviceMode === SelectedAspectType.Large) {
+      await setDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Large", item.ElementUUID), {
+        ElementType: item.ElementType,
+        Content: item.Content,
+        PositionX: item.Position.XPosition,
+        PositionY: item.Position.YPosition,
+        Width: item.Width,
+        Height: item.Height,
+        CurrentZIndex: item.CurrentZIndex,
+        ElementIndex: item.ElementIndex,
+        Opacity: item.Opacity,
+        CornerRadius: item.CornerRadius,
+        SelectedColor: item.SelectedColor,
+        SelectedFont: item.SelectedFont,
+        ElementUUID: item.ElementUUID
+      })
     }
+  }
+
+  async function updateOnFierbase(item: CardElement) {
+    if (selectedDeviceMode === SelectedAspectType.Small){
+      await updateDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Small", item.ElementUUID), {
+        ElementType: item.ElementType,
+        Content: item.Content,
+        PositionX: item.Position.XPosition,
+        PositionY: item.Position.YPosition,
+        Width: item.Width,
+        Height: item.Height,
+        CurrentZIndex: item.CurrentZIndex,
+        ElementIndex: item.ElementIndex,
+        Opacity: item.Opacity,
+        CornerRadius: item.CornerRadius,
+        SelectedColor: item.SelectedColor,
+        SelectedFont: item.SelectedFont,
+        ElementUUID: item.ElementUUID
+      })
+    } else if (selectedDeviceMode === SelectedAspectType.Medium) {
+      await updateDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Medium", item.ElementUUID), {
+        ElementType: item.ElementType,
+        Content: item.Content,
+        PositionX: item.Position.XPosition,
+        PositionY: item.Position.YPosition,
+        Width: item.Width,
+        Height: item.Height,
+        CurrentZIndex: item.CurrentZIndex,
+        ElementIndex: item.ElementIndex,
+        Opacity: item.Opacity,
+        CornerRadius: item.CornerRadius,
+        SelectedColor: item.SelectedColor,
+        SelectedFont: item.SelectedFont,
+        ElementUUID: item.ElementUUID
+      })
+    } else if  (selectedDeviceMode === SelectedAspectType.Large) {
+      await updateDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Large", item.ElementUUID), {
+        ElementType: item.ElementType,
+        Content: item.Content,
+        PositionX: item.Position.XPosition,
+        PositionY: item.Position.YPosition,
+        Width: item.Width,
+        Height: item.Height,
+        CurrentZIndex: item.CurrentZIndex,
+        ElementIndex: item.ElementIndex,
+        Opacity: item.Opacity,
+        CornerRadius: item.CornerRadius,
+        SelectedColor: item.SelectedColor,
+        SelectedFont: item.SelectedFont,
+        ElementUUID: item.ElementUUID
+      })
+    }
+  }
+  async function deleteOnFirebase(item: CardElement) {
+    if (selectedDeviceMode === SelectedAspectType.Small){
+      await deleteDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Small", item.ElementUUID))
+    } else if (selectedDeviceMode === SelectedAspectType.Medium) {
+      await deleteDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Medium", item.ElementUUID))
+    } else if  (selectedDeviceMode === SelectedAspectType.Large) {
+      await deleteDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Large", item.ElementUUID))
+    }
+  }
+  async function loadFromFirebase(){
+    console.log("Card", SelectedCard)
+    var resultSmall: CardElement[] = []
+    const snapshotSmall = await getDocs(collection(db, "Pages", SelectedCard.FirebaseID.toString(), "Small"))
+    snapshotSmall.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+      const data = doc.data()
+      resultSmall.push({
+        ElementType: data.ElementType,
+        Content: data.Content,
+        Position: {
+          XPosition: data.PositionX,
+          YPosition: data.PositionY
+        },
+        Width: data.Width,
+        Height: data.Height,
+        CurrentZIndex: data.CurrentZIndex,
+        ElementIndex: data.ElementIndex,
+        Opacity: data.Opacity,
+        CornerRadius: data.CornerRadius,
+        SelectedColor: data.SelectedColor,
+        SelectedFont: data.SelectedFont,
+        ElementUUID: data.ElementUUID
+      })
+    })
+    setComponentsSmall(resultSmall)
+    var resultMedium: CardElement[] = []
+    const snapshotMedium = await getDocs(collection(db, "Pages", SelectedCard.FirebaseID.toString(), "Medium"))
+    snapshotMedium.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+      const data = doc.data()
+      resultMedium.push({
+        ElementType: data.ElementType,
+        Content: data.Content,
+        Position: {
+          XPosition: data.PositionX,
+          YPosition: data.PositionY
+        },
+        Width: data.Width,
+        Height: data.Height,
+        CurrentZIndex: data.CurrentZIndex,
+        ElementIndex: data.ElementIndex,
+        Opacity: data.Opacity,
+        CornerRadius: data.CornerRadius,
+        SelectedColor: data.SelectedColor,
+        SelectedFont: data.SelectedFont,
+        ElementUUID: data.ElementUUID
+      })
+    })
+    setComponentsMedium(resultMedium)
+    var resultLarge: CardElement[] = []
+    const snapshotLarge = await getDocs(collection(db, "Pages", SelectedCard.FirebaseID.toString(), "Small"))
+    snapshotLarge.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+      const data = doc.data()
+      resultLarge.push({
+        ElementType: data.ElementType,
+        Content: data.Content,
+        Position: {
+          XPosition: data.PositionX,
+          YPosition: data.PositionY
+        },
+        Width: data.Width,
+        Height: data.Height,
+        CurrentZIndex: data.CurrentZIndex,
+        ElementIndex: data.ElementIndex,
+        Opacity: data.Opacity,
+        CornerRadius: data.CornerRadius,
+        SelectedColor: data.SelectedColor,
+        SelectedFont: data.SelectedFont,
+        ElementUUID: data.ElementUUID
+      })
+    })
+    setComponentsLarge(resultLarge)
   }
 
   return (
@@ -455,13 +612,16 @@ export default function EditCard() {
                     <div className={styles.editCardBackButtonOuterContainer}>
                       <Link to="/government/cards" style={{textDecoration: "none"}}>
                         <div className={styles.editCardBackButtonInnerContainer}>
-                          <p className={styles.EditCardBackButton}>Back</p>
+                          <Stack direction='horizontal'>
+                           <IoIosArrowBack color='white'/>
+                            <p className={styles.EditCardBackButton}>Back</p>
+                          </Stack>
                         </div>
                       </Link>
                     </div>
                   </Col>
-                  <Col xs={10} className='ml-5'>
-                    <h1 className={styles.TitleEditCard}> Edit Card </h1>
+                  <Col xs={10} className='ml-2'>
+                    <h1 className={styles.TitleEditCard}> Cards </h1>
                   </Col>
                   <Col>
 
@@ -476,7 +636,14 @@ export default function EditCard() {
               </Row>
               <Row noGutters={true}>
                 <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%", backgroundColor: '#444444'}} className="d-none d-md-block">
-                  <Toolbar onSetIsNavigateToDestinations={setIsNavigateToDestinations} selectedElementValue={selectedElementValue} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetComponents={(selectedDeviceMode === SelectedAspectType.Small) ? setComponentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? setComponentsMedium:setComponentsLarge} onSetSelectedElement={setSelectedElement} onSetBolded={setBolded} onSetItalic={setItalic} onSetUnderlined={setUnderlined} onSetStrikethrough={setStrikethrough} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
+                  <Toolbar onSetDotsText={setDotsText} dotsText={dotsText} onAddComponent={addComponent} onSetIsInDotsMode={setIsInDotsMode} 
+                  onSetSelectedTextColor={setSelectedTextColor} selectedTextColor={selectedTextColor}
+                  onSaveDrawMode={async (e) => {
+                    const myImage = await canvasRef.current.download()
+                    console.log("This is Image", myImage)
+                    addComponent(e,  {ElementType: "Image", Content: myImage, Position: {XPosition: 0, YPosition: 0}, Width: 500, Height: 500, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
+                    setIsInDrawMode(false)
+                  }} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} onSetIsNavigateToDestinations={setIsNavigateToDestinations} selectedElementValue={selectedElementValue} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetComponents={(selectedDeviceMode === SelectedAspectType.Small) ? setComponentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? setComponentsMedium:setComponentsLarge} onSetSelectedElement={setSelectedElement} onSetBolded={(e) => {setBolded(e); textEditorRef.current.bold()}} onSetItalic={(e) => {setItalic(e); textEditorRef.current.italic()}} onSetUnderlined={(e) => {setUnderlined(e); textEditorRef.current.underline()}} onSetStrikethrough={(e) => {setStrikethrough(e); textEditorRef.current.strikethrough()}} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
                 </Col>
                 {/* <Col style={{backgroundColor: "#793033",padding: 0, margin: 0, height: "100%"}}>
                     <div style={{height: "100%"}}> */}
@@ -499,8 +666,9 @@ export default function EditCard() {
                             }
                         }
                       }}
+                      style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center", height: "85vh", width: "84vw", overflow: "scroll"}}
                     >
-                      <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center"}}>
+                      {/* <div style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center"}}> */}
                           <div style={ (zoomScale >= 100) ? 
                             {
                               width: areaWidth + "px",
@@ -536,175 +704,35 @@ export default function EditCard() {
                               onMouseMove={ onMouseMove }
                             >
                               { (selectedDeviceMode === SelectedAspectType.Small) ?
-                                <EditCardArea components={componentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>:null
+                                <EditCardArea ref={textEditorRef} components={componentsSmall} onSetComponents={setComponentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
                               }
                               { (selectedDeviceMode === SelectedAspectType.Medium) ?
-                                <EditCardArea components={componentsMedium} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>:null
+                                <EditCardArea ref={textEditorRef} components={componentsMedium} onSetComponents={setComponentsMedium} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
                               }
                               { (selectedDeviceMode === SelectedAspectType.Large) ?
-                                <EditCardArea components={componentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle}></EditCardArea>:null
+                                <EditCardArea ref={textEditorRef} components={componentsLarge} onSetComponents={setComponentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
                               }
+                              {isInDrawMode ? 
+                                <Canvas onCanvas={(item: string) => {
+                                  console.log(item)
+                                }} width={areaWidth + "px"} height={areaHeight + "px"} ref={canvasRef}/>:null
+                              }
+                              {isInDotsMode ? 
+                                <div style={{zIndex: 100}}>
+                                  <SVG read={false} content={dotsText} width={areaWidth} height={areaHeight} onClickContent={setDotsText} ref={svgRef}/>
+                                </div>:null
+                              }
+
                           {/* End Of Components */}
                           </div>
                         </div>
-                      </div>
+                      {/* </div> */}
                     </div>
                 </Col>
               </Row>
               <Row>
-                <div className={styles.CardToolbarDiv}>
-                  <Stack direction='horizontal' gap={3} style={{padding: 0, margin: 0, width: "100%", backgroundColor: "white"}}>
-                    <div style={{display: "table"}}>
-                    <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle", height:"50%"}}>
-                      <InputGroup hasValidation>
-                        <InputGroup.Text id="inputGroupPrepend" onClick={() => {
-                          if (zoomScale >= 10){
-                            setZoomScale((zoomScale - 10))
-                            // const { setTransform } = areaContainerZoomRef.current
-                            // setTransform(100,200,zoomScale/100)
-                          }
-                        }} style={{backgroundColor: "white", padding:0 ,borderLeft: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowLeft /></InputGroup.Text>
-                        <Form.Control
-                          id="SetZoom"
-                          onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
-                          value={zoomScale + "%"}
-                          onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
-                          className={styles.sizeForm}
-                          style={{color:"blue", borderRadius: 0, borderRight: "none", borderLeft: "none", borderBottom: "2px solid black", borderTop: "2px solid black"}}
-                        />
-                        <InputGroup.Text id="inputGroupAfter" onClick={() => {
-                          if (zoomScale <= 500){
-                            console.log(zoomScale)
-                            const newZoom: number = parseInt(zoomScale)
-                            setZoomScale((newZoom + 10))
-                            // const { setTransform } = areaContainerZoomRef.current
-                            // setTransform(100,200,zoomScale/100)
-                          }
-                        }} style={{backgroundColor: "white", padding: 0, borderRight: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowRight/></InputGroup.Text>
-                      </InputGroup>
-                      <input type="range" min="10" max="500" value={zoomScale} onChange={changeEvent => {
-                            // const { setTransform } = areaContainerZoomRef.current
-                            // setTransform(100,200,zoomScale/100)
-                            setZoomScale(changeEvent.target.value) 
-                          }} className={styles.slider} id="myRange" />
-                    </div>
-                    </div>
-                    <div style={{display: "table"}}>
-                      <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                        <Button className={styles.DropdownButtonStyle}>
-                            <div style={{height:"2vh"}} onClick={(e) => {
-                              if (selectedDeviceMode === SelectedAspectType.Small){
-                                addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                addComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              }
-                            }}>
-                              <img src={textIcon} className={styles.imgContainer }/>
-                            </div>
-                        </Button>
-                      </div>
-                    </div>
-                    <div style={{display: "table"}}>
-                      <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                        <Dropdown drop='up'>
-                          <Dropdown.Toggle id="dropdown-custom-components" bsPrefix={styles.DropdownButtonStyle}>
-                            <div style={{height:"2vh"}}>
-                              <img src={shapesIcon} className={styles.imgContainer }/>
-                            </div>
-                          </Dropdown.Toggle>
-                          <DropdownMenu>
-                            <Dropdown.Item eventKey="1" onClick={(e) => {
-                              if (selectedDeviceMode === SelectedAspectType.Small){
-                                addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                addComponent(e,  {ElementType: "Shape", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              }  
-                            }}>Square</Dropdown.Item>
-                            <Dropdown.Item eventKey="2" onClick={(e) => {
-                              if (selectedDeviceMode === SelectedAspectType.Small){
-                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                addComponent(e,  {ElementType: "SVG", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              }
-                            }}>Dots</Dropdown.Item>
-                            <Dropdown.Item eventKey="3" onClick={(e) => {
-                              if (selectedDeviceMode === SelectedAspectType.Small){
-                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                addComponent(e,  {ElementType: "Canvas", Content: "", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans"})
-                              }
-                            }}>Draw</Dropdown.Item>
-                            <Dropdown.Item eventKey="4">Shapes Library</Dropdown.Item>
-                          </DropdownMenu>
-                        </Dropdown>
-                      </div>
-                    </div>
-                    <div style={{display: "table"}}>
-                      <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                        <Button onClick={() => {setIsShowingPaulyLibrary(!isShowingPaulyLibaray)}} className={styles.DropdownButtonStyle}>
-                          <div style={{height:"2vh"}}>
-                              <img src={imageIcon} className={styles.imgContainer}/>
-                            </div>
-                        </Button>
-                      </div>
-                    </div>
-                    <div style={{display: "table"}}>
-                      <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                        <Button onClick={() => {setIsShowingCardsMenu(!isShowingCardsMenu)}} className={styles.DropdownButtonStyle}>
-                          <div style={{height:"2vh"}}>
-                              <HiRectangleGroup color='black'/>
-                            </div>
-                        </Button>
-                      </div>
-                    </div>
-                    {/* Mode Selection */}
-                    <div>
-                      <Stack direction='horizontal'>
-                        <div style={{display: "table"}}>
-                          <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                            <Button onClick={() => {
-                              setSelectedDeviceMode(SelectedAspectType.Small)
-                            }} className={styles.DropdownButtonStyle}>
-                              <div style={{height:"2vh"}}>
-                                  <RiComputerFill color='black' />
-                                </div>
-                            </Button>
-                          </div>
-                        </div>
-                        <div style={{display: "table"}}>
-                          <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                            <Button onClick={() => {
-                              setSelectedDeviceMode(SelectedAspectType.Medium)
-                            }} className={styles.DropdownButtonStyle}>
-                              <div style={{height:"2vh"}}>
-                                  <BsTabletLandscape color='black' />
-                                </div>
-                            </Button>
-                          </div>
-                        </div>
-                        <div style={{display: "table"}}>
-                          <div style={{display: "table-cell", textAlign: "center", verticalAlign: "middle"}}>
-                            <Button onClick={() => {
-                              setSelectedDeviceMode(SelectedAspectType.Large)
-                            }} className={styles.DropdownButtonStyle}>
-                              <div style={{height:"2vh"}}>
-                                  <FcIphone color='black' />
-                                </div>
-                            </Button>
-                          </div>
-                        </div>
-                      </Stack>
-                    </div>
-                  </Stack>
-                </div>
+                <ToolbarBottom zoomScale={zoomScale} onSetZoomScale={setZoomScale} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} onSetIsShowingCardsMenu={setIsShowingCardsMenu} onSetSelectedDeviceMode={setSelectedDeviceMode} selectedDeviceMode={selectedDeviceMode}
+                isShowingPaulyLibaray={isShowingPaulyLibaray} onAddComponent={addComponent} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetInDotsMode={setIsInDotsMode} onSetInDrawMode={setIsInDrawMode} />
               </Row>
           </Container>
         </div>
@@ -756,13 +784,13 @@ export default function EditCard() {
         {
           //Cards Page
           isShowingCardsMenu ? 
-          <CardAddMenu onSetIsShowingCardsMenu={setIsShowingCardsMenu} />: null
+          <CardAddMenu onSetIsShowingCardsMenu={setIsShowingCardsMenu} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} isShowingPaulyLibrary={isShowingPaulyLibaray}/>: null
         }
         {
           //Bind Page
           isShowingBindPage ? 
           <>
-            <BindMenu currentUserInfo={currentUserInfo} onSetIsShowingBindPage={setIsShowingBindPage}/>
+            <BindMenu onSetIsShowingBindPage={setIsShowingBindPage}/>
           </>:null
         }
       </div>
@@ -849,6 +877,7 @@ export default function EditCard() {
                     }
                   }} style={{cursor: "default"}}>Send To Back</ListGroup.Item>
                   <ListGroup.Item>Duplicate</ListGroup.Item>
+                  <ListGroup.Item onClick={() => {DeleteFunction()}}>Delete</ListGroup.Item>
               </ListGroup>
             </Stack>
           </div>

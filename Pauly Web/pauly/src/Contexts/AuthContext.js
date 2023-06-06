@@ -2,7 +2,7 @@ import React, {useContext, useState, useEffect} from 'react'
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, OAuthProvider, signInWithPopup } from "firebase/auth";
 import { initializeApp } from "firebase/app"
 import { getStorage } from "firebase/storage"
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, getDoc, doc } from 'firebase/firestore';
 
 const app = initializeApp({
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -28,6 +28,7 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState()
   const [currentUserMicrosoftAccessToken, setCurrentUserMicrosoftAccessToken] = useState()
+  const [currentUserInfo, setCurrentUserInfo] = useState()
 
   function LoginPassword(email, password){
     signInWithEmailAndPassword(auth, email, password)
@@ -52,7 +53,7 @@ export function AuthProvider({ children }) {
     });
     
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result) => {
         // User is signed in.
         // IdP data available in result.additionalUserInfo.profile.
     
@@ -61,6 +62,16 @@ export function AuthProvider({ children }) {
         const accessToken = credential.accessToken;
         const idToken = credential.idToken;
         setCurrentUserMicrosoftAccessToken(accessToken)
+        const docRef = doc(db, "Users", currentUser.uid)
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+          const data = docSnap.data()
+          setCurrentUserInfo({FirstName: data["First Name"], LastName: data["Last Name"], Permissions: data["Permissions"], ClassMode: data["ClassMode"], ClassPerms: data["ClassPerms"], SportsMode: data["SportsMode"], SportsPerms: data["SportsPerms"]})
+        } else {
+          // docSnap.data() will be undefined in this case
+          console.log("No such document!");
+        }
         })
       .catch((error) => {
         // Handle error.
@@ -79,6 +90,7 @@ export function AuthProvider({ children }) {
   const value = {
     db,
     currentUser,
+    currentUserInfo,
     LoginPassword,
     LoginMicrosoft,
     currentUserMicrosoftAccessToken

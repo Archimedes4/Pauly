@@ -1,15 +1,18 @@
-import React from 'react'
+import React, { useImperativeHandle, useRef } from 'react'
 import styles from "./Cards.module.css"
 import VideoContainerCard from '../../../UI/VideoContainerCard.tsx';
 import PDFViewContainer from './PDFView.tsx';
-import TextEditor from './TextEditor.tsx';
+import TextEditor from './LexicalFunctions/TextEditor.tsx';
+import SVG from './SVG.tsx';
+import Textview from './LexicalFunctions/Textview.tsx';
 
-export default function({components, zoomScale, onClick, bolded, italic, underlined, strikethrough, onPressed, onSetMousePosition, onIsShowingRightClick, selectedElementValue,
-    isShowingRightClick, onIsChangingSize, onChangingSizeDirection, onIsUserTyping, isUserTyping, fontSize, fontStyle}:{
+export default React.forwardRef(({components, onSetComponents, zoomScale, onClick, bolded, italic, underlined, strikethrough, onPressed, onSetMousePosition, onIsShowingRightClick, selectedElementValue, isShowingRightClick, onIsChangingSize, onChangingSizeDirection, onIsUserTyping, isUserTyping, fontSize, fontStyle}:{
     components: CardElement[], 
+    onSetComponents: (item: CardElement[]) => void,
     zoomScale: number, 
     onClick: (e: React.SyntheticEvent, Index: CardElement) => void,
     bolded: boolean,
+    onSetIsBolded: (item: boolean) => void,
     italic: boolean,
     underlined: boolean,
     strikethrough: boolean,
@@ -24,7 +27,24 @@ export default function({components, zoomScale, onClick, bolded, italic, underli
     isUserTyping: boolean,
     fontSize: string,
     fontStyle: string
-    }) {
+    }, ref) =>  {
+    const textEditorRef = useRef(null)
+    useImperativeHandle(ref, () => {
+        return {
+            bold () {
+                textEditorRef.current?.bold()
+            },
+            italic () {
+                textEditorRef.current?.italic()
+            },
+            underline (){
+                textEditorRef.current?.underline()
+            },
+            strikethrough () {
+                textEditorRef.current?.strikethrough()
+            }
+        }
+    }, [])
   return (
     <div>
         {components?.map((item: CardElement) => ( 
@@ -32,7 +52,7 @@ export default function({components, zoomScale, onClick, bolded, italic, underli
             <div style={{ position: "absolute",
                     height: (item.Height  * (zoomScale/100)) + "px",
                     width: (item.Width  * (zoomScale/100)) + "px",}}>
-            <button key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
+            <div key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
             onClick={ (e) => {
                 onClick(e, item)
             }}
@@ -55,9 +75,19 @@ export default function({components, zoomScale, onClick, bolded, italic, underli
                 {(() => {
                         switch(item.ElementType) {
                         case "Text": return (
-                        <>
-                        <TextEditor onIsUserTyping={onIsUserTyping} zoomScale={zoomScale} isUserTyping={isUserTyping} item={item} bolded={bolded} italic={italic} strikethrough={strikethrough} underlined={underlined} fontSize={fontSize} fontStyle={fontStyle} selectedElementValue={selectedElementValue}/>  
-                        </>)
+                            <div style={{width: item.Width, height: item.Height}}>
+                                { (selectedElementValue?.ElementUUID === item.ElementUUID) ?
+                                    <TextEditor text={item.Content} onSetText={(value: string) => {
+                                        if (value !== undefined && selectedElementValue){
+                                            const NewComponents = [...components]
+                                            const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                                            NewComponents[SelectedIndex]["Content"] = value
+                                            onSetComponents(NewComponents)
+                                        }
+                                    }} onSetIsUserTyping={onIsUserTyping} selected={(selectedElementValue?.ElementUUID === item.ElementUUID)} ref={textEditorRef} selectedColor={item.SelectedColor} selectedSize={fontSize}/>:<Textview text={item.Content}/>
+                                } {/* onIsUserTyping={onIsUserTyping} isUserTyping={isUserTyping} item={item} bolded={bolded} italic={italic} strikethrough={strikethrough} underlined={underlined} fontSize={fontSize} fontStyle={fontStyle} selectedElementValue={selectedElementValue}*/}  
+                            </div>
+                        )
                         case "Shape": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height  * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: item.SelectedColor.toString(), padding: 0, margin: 0, border: "none"}}> </div>;
                         case "Image": return <div style={{ borderRadius: item.CornerRadius + "px",  height: (item.Height * (zoomScale/100)) + "px", width: (item.Width  * (zoomScale/100)) + "px", backgroundColor: "transparent", padding: 0, margin: 0, border: "none"}}><img src={item.Content} style={{height: item.Height + "px", width: item.Width + "px"}} draggable={false}/></div>;
                         case "Video": return (
@@ -69,11 +99,12 @@ export default function({components, zoomScale, onClick, bolded, italic, underli
                                 <PDFViewContainer fileUrl={item.Content} />
                             </div>
                         )
+                        case "SVG": return <SVG read={true} content={item.Content} width={item.Width} height={item.Height} />
                         default: return <p style={{padding: 0, margin: 0}}> {item.Content} </p>
                         }
                     })()}
                 </div>
-            </button>
+            </div>
             { (selectedElementValue?.ElementIndex !== item.ElementIndex) ? null:
             <div>
                 <button className={styles.dotButtonStyle} style={{transform: `translate(${(item.Width  * (zoomScale/100)) + 5}px, -13px)`, cursor:"ne-resize"}}onMouseDown={() => {
@@ -131,4 +162,4 @@ export default function({components, zoomScale, onClick, bolded, italic, underli
         ))}
     </div>
   )
-}
+})

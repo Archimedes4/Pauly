@@ -1,17 +1,34 @@
 import React, { useState, useEffect } from 'react'
 import { Card, Stack, Button } from "react-bootstrap"
 import styles from "./Cards.module.css"
-import { collection, getDoc, getDocs, doc } from 'firebase/firestore'
+import { collection, getDoc, getDocs, doc, updateDoc } from 'firebase/firestore'
 import { useAuth } from '../../../Contexts/AuthContext';
+import HorizontalPicker from "../../../UI/NavBar/NavBarHolder"
+import { useCardContext } from "./Cards.js"
+
+declare global {
+    type CommissionsType = {
+        Title: string
+        Caption: string
+    }
+    
+    type ClassSectionType = {
+        Name: string,
+        id: string
+    }
+}
+
+enum SelectedClassViewType{
+    Class,
+    Section,
+    Overview
+}
 
 enum SelectedCardBindModeType{
     Class,
     Sport,
-    Commission
-}
-type CommissionsType = {
-    Title: string
-    Caption: string
+    Commission,
+    NoPermissions
 }
 
 enum SelectedSportViewModeType{
@@ -20,34 +37,77 @@ enum SelectedSportViewModeType{
     team
 }
 
+
 export default function BindMenu(
-    {currentUserInfo, onSetIsShowingBindPage}:
+    { onSetIsShowingBindPage}:
     {
-        currentUserInfo: UserType
         onSetIsShowingBindPage: (input: boolean) => void
     }
     ) {
+    const { SelectedCard } = useCardContext()
     const [selectedCardBindMode, setSelectedCardBindMode] = useState<SelectedCardBindModeType>(SelectedCardBindModeType.Class)
-    const { db } = useAuth()
-    const [selectedGrade, setSelectedGrade] = useState<string>("9")
-    const [selectedGradeClasses, setSelectedGradeClasses] = useState<string[]>([])
-    const [selectedGradeClassesSections, setSelectedGradeClassesSections] = useState<string[]>([])
-    const [isShowingSection, setIsShowingSection] = useState<boolean>(false)
+    const { db, currentUserInfo } = useAuth()
     const [avaliableCommissions, setAvaliableCommissions] = useState<CommissionsType[]>([])
+
+    //Sports
     const [avaliableSportsSports, setAvaliableSportsSports] = useState<string[]>([])
     const [avaliableSportsSeasons, setAvaliableSportsSeasons] = useState<string[]>([])
     const [avaliableSportsTeams, setAvaliableSportsTeams] = useState<string[]>([])
     const [selectedSportViewMode, setSelectedSportViewMode] = useState<SelectedSportViewModeType>(SelectedSportViewModeType.sport)
 
+    //Class
+    const [selectedClassView, setSelectedClassView] = useState<SelectedClassViewType>(SelectedClassViewType.Class)
+    const [selectedGrade, setSelectedGrade] = useState<string>("9")
+    const [selectedGradeClasses, setSelectedGradeClasses] = useState<string[]>([])
+    const [selectedClassName, setSelectedClassName] = useState("")
+    const [selectedGradeClassesSections, setSelectedGradeClassesSections] = useState<ClassSectionType[]>([])
+    const [selectedClass, setSelectedClass] = useState<ClassType |  null>(null)
+
+    useEffect(() => {
+        if (currentUserInfo.Permissions.includes(19)){ //Class
+            setSelectedCardBindMode(SelectedCardBindModeType.Class)
+        } else if (currentUserInfo.Permissions.includes(18)){ //Commision
+            setSelectedCardBindMode(SelectedCardBindModeType.Commission)
+        } else if (currentUserInfo.Permissions.includes(15)){ //Sport
+            setSelectedCardBindMode(SelectedCardBindModeType.Sport)
+        } else { //NO Permission
+            setSelectedCardBindMode(SelectedCardBindModeType.NoPermissions)
+        }
+    }, [])
+
+    async function getClass(grade: string, courseName: string, courseSection: string) {
+        const docRef = doc(db, "Grade" + grade + "Courses", courseName, "Sections", courseSection);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+            const data = docSnap.data()
+            setSelectedClass({CourseName: data["CourseName"],
+                DayA: data["DayA"],
+                DayB: data["DayB"],
+                DayC: data["DayC"],
+                DayD: data["DayD"],
+                noClass: data["NoClass"],
+                schoolYear: data["School Year"],
+                section: data["Section"],
+                Semester: data["Semester"],
+                Teacher: data["Teacher"]
+            })
+            setSelectedClassView(SelectedClassViewType.Overview)
+          } else {
+            // docSnap.data() will be undefined in this case
+            console.log("No such document!");
+            //TO DO handel error
+        }
+    }
+
     async function getUserSections(grade: string, courseName: string){
         const querySnapshot = await getDocs(collection(db, "Grade" + grade + "Courses", courseName, "Sections"))
-        var dataArray: string[] = []
+        var dataArray: ClassSectionType[] = []
         querySnapshot.forEach((doc) => {
             const data = doc.data()
             if (data["School Year"] === undefined){
-                dataArray.push(data["CourseName"] + " " + data["Section"])
+                dataArray.push({Name: data["CourseName"] + " " + data["Section"], id: doc.id})
             } else {
-                dataArray.push(data["CourseName"] + " " + data["Section"] + " " + data["School Year"])
+                dataArray.push({Name: data["CourseName"] + " " + data["Section"] + " " + data["School Year"], id: doc.id})
             }
         })
         setSelectedGradeClassesSections(dataArray)
@@ -143,10 +203,16 @@ export default function BindMenu(
     useEffect(() => {
         getUsersCourses(selectedGrade)
     }, [selectedGrade])
+
     useEffect(() => {
         getUsersCommissions()
         getUsersSports()
     }, [])
+
+    async function BindPage(value: string) {
+        await updateDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString()), {BindRef: value})
+        //TO DO error handling
+    }
 
     return (
     <div className={styles.ImageLibraryView}>
@@ -158,63 +224,110 @@ export default function BindMenu(
                 </Stack>
             </Card.Title>
             <Card.Body>
-                <Stack direction='horizontal'>
-                { currentUserInfo.Permissions.includes(19) ? 
-                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Class)}}>
-                    Class
-                    </Button>:null
-                }
-                { currentUserInfo.Permissions.includes(18) ?
-                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Commission)}}>
-                    Commission
-                    </Button>:null
-                }
-                { currentUserInfo.Permissions.includes(15) ?
-                    <Button onClick={() => {setSelectedCardBindMode(SelectedCardBindModeType.Sport)}}>
-                    Sport
-                    </Button>:null
-                }
-                </Stack>
+                <div style={{height: "8%"}}>
+                    <HorizontalPicker selectedIndex={0} onSelectedIndexChange={(value: number) => {
+                        if (currentUserInfo.Permissions.includes(19) && currentUserInfo.Permissions.includes(18) && currentUserInfo.Permissions.includes(15)) {
+                            if (value === 0) {
+                                setSelectedCardBindMode(SelectedCardBindModeType.Class)
+                            } else if (value === 1){
+                                setSelectedCardBindMode(SelectedCardBindModeType.Commission)
+                            } else if (value === 2){
+                                setSelectedCardBindMode(SelectedCardBindModeType.Sport)
+                            } 
+                        } else if (currentUserInfo.Permissions.includes(19) && currentUserInfo.Permissions.includes(18)) {
+                            if (value === 0) {
+                                setSelectedCardBindMode(SelectedCardBindModeType.Class)
+                            } else if (value === 1){
+                                setSelectedCardBindMode(SelectedCardBindModeType.Commission)
+                            }
+                        } else if (currentUserInfo.Permissions.includes(19) && currentUserInfo.Permissions.includes(15)) {
+                            if (value === 0) {
+                                setSelectedCardBindMode(SelectedCardBindModeType.Class)
+                            } else if (value === 1){
+                                setSelectedCardBindMode(SelectedCardBindModeType.Sport)
+                            }
+                        } else if (currentUserInfo.Permissions.includes(18) && currentUserInfo.Permissions.includes(15)) {
+                            if (value === 0) {
+                                setSelectedCardBindMode(SelectedCardBindModeType.Commission)
+                            } else if (value === 1){
+                                setSelectedCardBindMode(SelectedCardBindModeType.Sport)
+                            }
+                        }
+                    }} width='10%'>
+                    { currentUserInfo.Permissions.includes(19) ? 
+                    <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>Class</p>:null
+                    }
+                    { currentUserInfo.Permissions.includes(18) ?
+                        <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>Commision</p>:null
+                    }
+                    { currentUserInfo.Permissions.includes(15) ?
+                        <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>Sport</p>:null
+                    }
+                    </HorizontalPicker>
+                </div>
                 <Card>
                     { (selectedCardBindMode === SelectedCardBindModeType.Class) ? 
                     <>
-                        <Stack direction='horizontal'>
-                            <Button onClick={() => {setSelectedGrade("9"); setIsShowingSection(false)}}>
-                                9
-                            </Button>
-                            <Button onClick={() => {setSelectedGrade("10"); setIsShowingSection(false)}}>
-                                10
-                            </Button>
-                            <Button onClick={() => {setSelectedGrade("11"); setIsShowingSection(false)}}>
-                                11
-                            </Button>
-                            <Button onClick={() => {setSelectedGrade("12"); setIsShowingSection(false)}}>
-                                12
-                            </Button>
-                        </Stack>
-                        { isShowingSection ? <div>
-                            <Button onClick={() => {setIsShowingSection(false)}}>
-                                Back
-                            </Button>
-                            <Stack>
-                                {selectedGradeClassesSections.map((item) => (
-                                <button onClick={() => {setIsShowingSection(true); getUserSections(selectedGrade, item)}}>
-                                   <p>{item}</p>
+                        <div style={{paddingLeft: "0.5%"}}>
+                            <HorizontalPicker  selectedIndex={0} onSelectedIndexChange={(value: number) => {
+                                if (value === 0) {
+                                    setSelectedGrade("9")
+                                } else if (value === 1){
+                                    setSelectedGrade("10")
+                                } else if (value === 2){
+                                    setSelectedGrade("11")
+                                } else if (value === 3){
+                                    setSelectedGrade("12")
+                                }
+                                setSelectedClassView(SelectedClassViewType.Class)
+                            }} width='10%'>
+                                <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>9</p>
+                                <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>10</p>
+                                <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>11</p>
+                                <p style={{margin: 0, marginTop: "4%", marginBottom: "3%"}}>12</p>
+                            </HorizontalPicker>
+                        </div>
+                        { (selectedClassView === SelectedClassViewType.Class) ? 
+                            <div> 
+                                <Stack>
+                                { selectedGradeClasses.map((item) => (
+                                    <button onClick={() => {setSelectedClassView(SelectedClassViewType.Section); getUserSections(selectedGrade, item); setSelectedClassName(item)}}>
+                                        <p>{item}</p>
                                     </button>
                                 ))
                                 }
-                            </Stack>
-                            </div>:<div>
-                            <Stack>
-                            { selectedGradeClasses.map((item) => (
-                                <button onClick={() => {setIsShowingSection(true); getUserSections(selectedGrade, item)}}>
-                                   <p>{item}</p>
+                                </Stack> 
+                            </div>:null
+                        }
+                        { (selectedClassView === SelectedClassViewType.Section) ? 
+                            <div>
+                                <Button onClick={() => {setSelectedClassView(SelectedClassViewType.Class)}}>
+                                    Back
+                                </Button>
+                                <Stack>
+                                    {selectedGradeClassesSections.map((item) => (
+                                        <button onClick={() => {getClass(selectedGrade, selectedClassName, item.id)}}>
+                                            <p>{item.Name}</p>
+                                        </button>
+                                    ))
+                                    }
+                                </Stack>
+                            </div>:null
+                        }
+                        { (selectedClassView === SelectedClassViewType.Overview) ?
+                            <div>
+                                <Button onClick={() => {setSelectedClassView(SelectedClassViewType.Section)}}>
+                                    Back
+                                </Button>
+                                <p>{selectedClass.CourseName}</p>
+                                <p>School Year: {selectedClass.schoolYear} Section: {selectedClass.section} Semester: {selectedClass.Semester}</p>
+                                <p>{selectedClass.Teacher}</p>
+                                <button onClick={() => {
+                                    BindPage("Class-" + selectedGrade + "-" + selectedClassName + "-"  + selectedClass.section + ((selectedClass.section === 0) ? "":"-") + ((selectedClass.section === 0) ? "":selectedClass.schoolYear.toString()))
+                                }}>
+                                    Bind
                                 </button>
-                            ))
-                            }
-                            </Stack> 
-                        </div>
-
+                            </div>:null
                         }
                     </>:null
                     }
@@ -258,6 +371,9 @@ export default function BindMenu(
                         <button>{item}</button>))
                         }
                     </>:null
+                    }
+                    { (selectedCardBindMode === SelectedCardBindModeType.NoPermissions) ? <p>You Don't have the necessary permissions to bind to anything.</p>:null
+
                     }
                 </Card>
             </Card.Body>

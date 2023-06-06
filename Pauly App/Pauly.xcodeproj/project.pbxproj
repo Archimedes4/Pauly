@@ -250,7 +250,6 @@
 				C6D5B9FE29E0713B00F47CBA /* GovernmentView */,
 				C6248A6229D73975009D2765 /* LocationServices.swift */,
 				C6F2B18A29CCA86E00149F20 /* Leaderboard.swift */,
-				C6858FE629C8CA1500269A56 /* RecentNotificationsView.swift */,
 				C6AD9A8E2A0259C800416631 /* Chat */,
 				C6FB8CC329C60EA100672E70 /* CreateNewUserView.swift */,
 				C657D0E929DB8EB4001A368B /* HTMLTextView.swift */,
@@ -313,6 +312,7 @@
 		C6D5B9FE29E0713B00F47CBA /* GovernmentView */ = {
 			isa = PBXGroup;
 			children = (
+				C6858FE629C8CA1500269A56 /* RecentNotificationsView.swift */,
 				C671570E29DF3A6C00D6DD57 /* GovernmentView.swift */,
 				C6D00E0829F2BA89002544EE /* GovernmentViewElections.swift */,
 				C6D5BA0429E37B7300F47CBA /* GovernmentViewSports.swift */,

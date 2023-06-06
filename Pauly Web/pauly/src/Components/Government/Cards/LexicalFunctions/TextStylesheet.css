@@ -1,0 +1,9 @@
+.ql-font span[data-label="Ubuntu"]::before {
+    font-family: "Ubuntu";
+}
+.ql-font .ql-font span[data-label="Raleway"]::before {
+    font-family: "Raleway";
+}
+.ql-font span[data-label="Roboto"]::before {
+    font-family: "Roboto" !important;
+}
