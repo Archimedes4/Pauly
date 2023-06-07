@@ -8,7 +8,6 @@ export default function Home() {
     <div style={{width: "100vw", height: "100vh"}}>
       <p>Home</p>
       <Link to="/government">  Government </Link>
-      <TinyMCETextEditor />
     </div>
   );
 }

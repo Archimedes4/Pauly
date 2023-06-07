@@ -2,7 +2,7 @@ import React, { useImperativeHandle, useRef } from 'react'
 import styles from "./Cards.module.css"
 import VideoContainerCard from '../../../UI/VideoContainerCard.tsx';
 import PDFViewContainer from './PDFView.tsx';
-import TextEditor from './LexicalFunctions/TextEditor.tsx';
+import TextEditor from './LexicalFunctions/TinyMCETextEditor.tsx';
 import SVG from './SVG.tsx';
 import Textview from './LexicalFunctions/Textview.tsx';
 
@@ -84,7 +84,7 @@ export default React.forwardRef(({components, onSetComponents, zoomScale, onClic
                                             NewComponents[SelectedIndex]["Content"] = value
                                             onSetComponents(NewComponents)
                                         }
-                                    }} onSetIsUserTyping={onIsUserTyping} selected={(selectedElementValue?.ElementUUID === item.ElementUUID)} ref={textEditorRef} selectedColor={item.SelectedColor} selectedSize={fontSize}/>:<Textview text={item.Content}/>
+                                    }}ref={textEditorRef} height={item.Height} width={item.Width}/>:<div> PlaceHolder </div>
                                 } {/* onIsUserTyping={onIsUserTyping} isUserTyping={isUserTyping} item={item} bolded={bolded} italic={italic} strikethrough={strikethrough} underlined={underlined} fontSize={fontSize} fontStyle={fontStyle} selectedElementValue={selectedElementValue}*/}  
                             </div>
                         )
