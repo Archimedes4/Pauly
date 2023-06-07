@@ -1,5 +1,6 @@
 import React, {useEffect, useImperativeHandle, useRef, useState} from 'react'
-import ReactQuill from 'react-quill'
+import ReactQuill, {Quill} from 'react-quill'
+import { DeltaStatic, Sources } from 'quill'
 import 'react-quill/dist/quill.snow.css';
 import "react-quill/dist/quill.core.css";
 
@@ -33,9 +34,15 @@ export default React.forwardRef(({selected, onSetIsUserTyping, text, onSetText, 
       
     // }, [selectedSize])
 
-    const handleChange= (html: string)=> {
-      onSetText(html);
+    const handleChange= (value: string, delta: DeltaStatic, source: Sources, editor: ReactQuill.UnprivilegedEditor)=> {
+      console.log(value)
+      console.log(delta)
+      console.log(source)
+      console.log(editor)
+      
+      onSetText(value);
     }
+
     const modules = {
         toolbar: {
           container:  "#toolbar"
@@ -57,10 +64,9 @@ export default React.forwardRef(({selected, onSetIsUserTyping, text, onSetText, 
     ]
 
     useEffect(() => {
-      var Size = ReactQuill.Quill.import('attributors/style/size');
-      Size.whitelist = ["8px", "12px", "14px", "16px", "20px", "24px"]
+      const Size = ReactQuill.Quill.import("formats/size");
+      Size.whitelist = ["extra-small", "small", "medium", "large"];
       ReactQuill.Quill.register(Size, true);
-      const qlstroke = document.getElementsByClassName(".ql-stroke");
     }, [])
 
 
@@ -72,16 +78,23 @@ export default React.forwardRef(({selected, onSetIsUserTyping, text, onSetText, 
           <button ref={italicRef} className="ql-italic" onClick={(e) => {e.preventDefault()}} />
           <button ref={underlineRef} className="ql-underline" onClick={(e) => {e.preventDefault()}} />
           <button ref={strikethroughRef} className="ql-strike" onClick={(e) => {e.preventDefault()}}/>
-          <select className="ql-size" defaultValue={selectedSize}>
-            <option value={selectedSize}/>
+          <select className="ql-size" defaultValue="medium">
+            <option value="extra-small">Size 1</option>
+            <option value="small">Size 2</option>
+            <option value="medium">Size 3</option>
+            <option value="large">Size 4</option>
           </select>
           <select className="ql-color" value={selectedColor} />
           <select className="ql-background" />
-
+          <button onClick={() => {
+            console.log(text)
+          }}>
+            Log
+          </button>
         </div>
         <ReactQuill
           value={text}
-          onChange={handleChange}
+          onChange={(value, delta, source, editor) => {handleChange(value, delta, source, editor)}}
           modules={modules}
           style={{width: "100%", height: "100%"}}
           theme='snow'
