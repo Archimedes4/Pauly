@@ -7,3 +7,7 @@
 .ql-font span[data-label="Roboto"]::before {
     font-family: "Roboto" !important;
 }
+
+.ql-size-12px{
+    font-size: 12px;
+}

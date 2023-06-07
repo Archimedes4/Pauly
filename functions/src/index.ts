@@ -20,37 +20,96 @@ admin.initializeApp();
 //   response.send("Hello from Firebase!");
 // });
 
-export const addMicrosoftUser = onCall(async (request) => {
+const runtimeOpts = {
+  timeoutSeconds: 400,
+};
+
+export const addMicrosoftUser = onCall(runtimeOpts, async (request) => {
   // Data
   // userName: string (email)
   // displayName: string
   // externalId
   try {
-    const user:UserRecord = await admin.auth()
-      .createUser(
-        {
-          email: request.data.userName,
-        }
-      );
-
-    const updatedUser = await admin.auth().updateUser(user.uid, {
-      displayName: request.data.displayName,
-      emailVerified: true,
-      disabled: true,
-      providerToLink: {
-        displayName: request.data.displayName,
-        email: request.data.userName,
-        providerId: "microsoft.com",
-        uid: request.data.externalId,
-        // e.g. 8066569b-7203-4894-8552-4be01e28d2a2
-      },
-    });
-    return {
-      Result: "Success" + updatedUser.providerData[0],
+    const result = {
+      SuccessfulCreations: 0,
+      UnsuccessfulCreations: 0,
+      NewAccounts: 0,
+      AlreadyMade: 0,
     };
-  } catch {
+    for (let index = 0; index < request.data.Body.length; index++) {
+      try {
+        await admin.auth()
+          .getUserByEmail(request.data.Body[index]["userName"]);
+        result.AlreadyMade += 1;
+      } catch (_e) {
+        const err:Error= _e as Error;
+        if (err.message === "auth/user-not-found") {
+          result.NewAccounts += 1;
+          try {
+            const user: UserRecord = await admin.auth()
+              .createUser(
+                {
+                  email: request.data.Body[index]["userName"],
+                }
+              );
+            await admin.auth().updateUser(user.uid, {
+              displayName: request.data.Body[index]["displayName"],
+              emailVerified: true,
+              disabled: true,
+              providerToLink: {
+                displayName: request.data.Body[index]["displayName"],
+                email: request.data.Body[index]["userName"],
+                providerId: "microsoft.com",
+                uid: request.data.Body[index]["externalId"],
+                // e.g. 8066569b-7203-4894-8552-4be01e28d2a2
+              },
+            });
+            result.SuccessfulCreations += 1;
+          } catch {
+            result.UnsuccessfulCreations += 1;
+          }
+        } else {
+          result.UnsuccessfulCreations += 1;
+        }
+      }
+    }
     return {
-      Result: "Error",
+      // Result: "Success" + updatedUser.providerData[0],
+      Result: result,
+    };
+  } catch (error) {
+    return {
+      Result: "Error" + error + request.data.Body,
     };
   }
+});
+
+export const deleteAnonymousUsers = onCall(async (request) => {
+  let user: string[] = [];
+  /**
+  * @param {string} nextPageToken
+  */
+  function listAllUsers(nextPageToken?: string) {
+    // List batch of users, 1000 at a time.
+    admin.auth().listUsers(1000, nextPageToken)
+      .then(function(listUsersResult) {
+        listUsersResult.users.forEach(function(userRecord) {
+          console.log("user", userRecord.toJSON());
+          if (userRecord?.providerData.length === 0) {
+            user.push(userRecord.uid);
+          }
+        });
+        admin.auth().deleteUsers(user);
+        user = [];
+        if (listUsersResult.pageToken) {
+          // List next batch of users.
+          listAllUsers(listUsersResult.pageToken);
+        }
+      })
+      .catch(function(error) {
+        console.log("Error listing users:", error);
+      });
+  }
+  // Start listing users from the beginning, 1000 at a time.
+  listAllUsers();
 });
