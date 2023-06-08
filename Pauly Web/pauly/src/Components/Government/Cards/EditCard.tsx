@@ -136,10 +136,11 @@ export default function EditCard() {
   //Card Menu
   const [isShowingCardsMenu, setIsShowingCardsMenu] = useState<boolean>(false)
 
-
+  //Shapes Menu
   const [isInDotsMode, setIsInDotsMode] = useState(false)
   const [isInDrawMode, setIsInDrawMode] = useState(false)
   const [dotsText, setDotsText] = useState("")
+  const [selectedColor, setSelectedColor] = useState("")
   const canvasRef = useRef(null)
   const svgRef = useRef(null)
 
@@ -704,9 +705,7 @@ export default function EditCard() {
                                 <EditCardArea ref={textEditorRef} components={componentsLarge} onSetComponents={setComponentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
                               }
                               {isInDrawMode ? 
-                                <Canvas onCanvas={(item: string) => {
-                                  console.log(item)
-                                }} width={areaWidth + "px"} height={areaHeight + "px"} ref={canvasRef}/>:null
+                                <Canvas width={areaWidth + "px"} height={areaHeight + "px"} selectedColor='' ref={canvasRef}/>:null
                               }
                               {isInDotsMode ? 
                                 <div style={{zIndex: 100}}>

@@ -2,6 +2,11 @@ import React, {useState, useRef, useImperativeHandle, useEffect} from 'react'
 import { Editor } from "@tinymce/tinymce-react";
 import { TinyMCE } from 'tinymce';
 import styles from "./EditorCSS.module.css"
+import "tinymce/skins/ui/tinymce-5/skin.min.css"
+import "tinymce/skins/ui/tinymce-5/content.min.css"
+import "tinymce/icons/default/icons.min.js"
+import "tinymce/models/dom/model.min.js"
+import "tinymce/themes/silver/theme.min.js"
 
 export default React.forwardRef(({text, onSetText, height, width}:{text: string, onSetText: (item: string) => void, height: number, width: number}, ref) => {
     const editorRef = useRef(null);
@@ -108,14 +113,16 @@ export default React.forwardRef(({text, onSetText, height, width}:{text: string,
                 menubar: false,
                 branding: false,
                 statusbar: false,
+                base_url: "tinymce/",
                 // plugins: [
                 //     "mentions advlist autolink lists link image charmap print preview anchor",
                 //     "searchreplace visualblocks code fullscreen",
                 //     "insertdatetime media paste code help wordcount",
                 // ],
                 toolbar: false,
-                skin: "/Main",
-                content_style: "body { background-color: rgba(0,0,0,0); padding: none; margin: none !important; border: none; font-family: 'Josefin Sans', sans-serif; line-height: 1.4; } p {margin: 0}",
+                skin: "tinymce-5",
+                // skin_url: "/Main",
+                content_style: "body { background-color: rgba(0,0,0,0); padding: none; margin: 0 !important; border: none; font-family: 'Josefin Sans', sans-serif; line-height: 1.4; } p {margin: 0}",
                 emoticons_append: {
                     custom_mind_explode: {
                     keywords: ["brain", "mind", "explode", "blown"],

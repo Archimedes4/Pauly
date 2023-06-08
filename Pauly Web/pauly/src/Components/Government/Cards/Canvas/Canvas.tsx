@@ -65,17 +65,9 @@
 //     border: "1px solid black"
 // }
 
-import React, { useCallback, useEffect, useRef, useState, useImperativeHandle } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useImperativeHandle, MouseEventHandler } from 'react';
 
-const colors = [
-  "red",
-  "green",
-  "yellow",
-  "black",
-  "blue"
-]
-
-const App = React.forwardRef(({width, height}, ref) => {
+const App = React.forwardRef(({width, height, selectedColor}:{width: string, height: string, selectedColor: string}, ref) => {
     const canvasRef = useRef(null);
 
     useImperativeHandle(ref, () => {
@@ -94,7 +86,6 @@ const App = React.forwardRef(({width, height}, ref) => {
 
     const ctx = useRef(null);
 
-    const [selectedColor, setSelectedColor] = useState(colors[0]);
     const [mouseDown, setMouseDown] = useState(false);
     const [lastPosition, setPosition] = useState({
         x: 0,
@@ -107,7 +98,7 @@ const App = React.forwardRef(({width, height}, ref) => {
         }
     }, []);
 
-    const draw = useCallback((x, y) => {
+    const draw = useCallback((x: number, y: number) => {
         if (mouseDown) {
         ctx.current.beginPath();
         ctx.current.strokeStyle = selectedColor;
@@ -140,7 +131,7 @@ const App = React.forwardRef(({width, height}, ref) => {
         ctx.current.clearRect(0, 0, ctx.current.canvas.width, ctx.current.canvas.height)
     }
 
-    const onMouseDown = (e) => {
+    const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
         setPosition({
         x: e.clientX - canvasRef.current?.getBoundingClientRect().left,
         y: e.clientY - canvasRef.current?.getBoundingClientRect().top
@@ -148,11 +139,11 @@ const App = React.forwardRef(({width, height}, ref) => {
         setMouseDown(true)
     }
 
-    const onMouseUp = (e) => {
+    const onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
         setMouseDown(false)
     }
 
-    const onMouseMove = (e) => {
+    const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
         draw(e.clientX - canvasRef.current?.getBoundingClientRect().left, e.clientY - canvasRef.current?.getBoundingClientRect().top)
     }
 
@@ -165,7 +156,7 @@ const App = React.forwardRef(({width, height}, ref) => {
             width={width}
             height={height}
             ref={canvasRef}
-            onMouseDown={onMouseDown}
+            onMouseDown={(e) => {onMouseDown(e)}}
             onMouseUp={onMouseUp}
             onMouseLeave={onMouseUp}
             onMouseMove={onMouseMove}
