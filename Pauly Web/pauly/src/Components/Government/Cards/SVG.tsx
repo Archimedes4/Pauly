@@ -37,44 +37,7 @@ const SVG = React.forwardRef(({content, width, height, onClickContent, read}:{co
             setEditablePoints(editOutput)
             setCurrentText(output)
         }
-    }, [dotsContent])
-
-    useEffect(() => {
-        window.addEventListener('keydown', e => {
-            console.log(e.key)
-            console.log(selectedDot)
-            if (e.key === 'Backspace' && selectedDot !== null) {
-                console.log("here")
-                console.log("before", editablePoints)
-                const resulteditablePoints = editablePoints
-                const zero = resulteditablePoints[0]
-                resulteditablePoints[0] = resulteditablePoints[selectedDot.index]
-                resulteditablePoints[selectedDot.index] = zero
-                console.log(resulteditablePoints)
-                resulteditablePoints.shift()
-                for (var index = 0; index < resulteditablePoints.length; index++){
-                    resulteditablePoints[index].index = index
-                }
-                setEditablePoints(resulteditablePoints)
-                console.log("Result", resulteditablePoints)
-                var output = ""
-                var textOutput = ""
-                for(var index = 0; index < resulteditablePoints.length; index++){
-                    console.log(resulteditablePoints[index])
-                    if (index === 0){
-                        output = resulteditablePoints[index].x/width + "," + resulteditablePoints[index].y/height
-                        textOutput = resulteditablePoints[index].x + "," + resulteditablePoints[index].y
-                    } else {
-                        output += " " + resulteditablePoints[index].x/width + "," + resulteditablePoints[index].y/height
-                        textOutput += " " + resulteditablePoints[index].x + "," + resulteditablePoints[index].y
-                    }
-                }
-                setDotsContent(output)
-                setCurrentText(textOutput)
-                setSelectedDot(null)
-            }
-        })
-    }, [selectedDot])       
+    }, [dotsContent])   
 
     function updatePosition(points: EditPoint[]) {
         if (selectedDot !== null){
@@ -128,6 +91,39 @@ const SVG = React.forwardRef(({content, width, height, onClickContent, read}:{co
                     editablePoints[SelectedIndex].y = e.clientY - divRef.current.getBoundingClientRect().top
                     updatePosition(editablePoints)
                 }
+            }
+        }} onKeyDown={(e) => {
+            console.log(e.key)
+            console.log(selectedDot)
+            if (e.key === 'Backspace' && selectedDot !== null) {
+                console.log("here")
+                console.log("before", editablePoints)
+                const resulteditablePoints = editablePoints
+                const zero = resulteditablePoints[0]
+                resulteditablePoints[0] = resulteditablePoints[selectedDot.index]
+                resulteditablePoints[selectedDot.index] = zero
+                console.log(resulteditablePoints)
+                resulteditablePoints.shift()
+                for (var index = 0; index < resulteditablePoints.length; index++){
+                    resulteditablePoints[index].index = index
+                }
+                setEditablePoints(resulteditablePoints)
+                console.log("Result", resulteditablePoints)
+                var output = ""
+                var textOutput = ""
+                for(var index = 0; index < resulteditablePoints.length; index++){
+                    console.log(resulteditablePoints[index])
+                    if (index === 0){
+                        output = resulteditablePoints[index].x/width + "," + resulteditablePoints[index].y/height
+                        textOutput = resulteditablePoints[index].x + "," + resulteditablePoints[index].y
+                    } else {
+                        output += " " + resulteditablePoints[index].x/width + "," + resulteditablePoints[index].y/height
+                        textOutput += " " + resulteditablePoints[index].x + "," + resulteditablePoints[index].y
+                    }
+                }
+                setDotsContent(output)
+                setCurrentText(textOutput)
+                setSelectedDot(null)
             }
         }}
         ref={divRef} style={{border: "5px soild red"}}>

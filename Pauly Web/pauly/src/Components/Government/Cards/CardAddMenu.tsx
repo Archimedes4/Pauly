@@ -51,6 +51,7 @@ function CardAddNewCard({isShowingPaulyLibaray, onSetIsShowingPaulyLibrary, onSe
     const [isInDrawMode, setIsInDrawMode] = useState(false)
     const [dotsText, setDotsText] = useState("")
     const [selectedTextColor, setSelectedTextColor] = useState("")
+    const [selectedBrushColor, setSelectedBrushColor] = useState("#000000")
 
     const handleOnClick = (e: React.SyntheticEvent, Index: CardElement) => {
         e.preventDefault();
@@ -182,7 +183,7 @@ function CardAddNewCard({isShowingPaulyLibaray, onSetIsShowingPaulyLibrary, onSe
                         <Toolbar onSaveDrawMode={(e) => {
                             var myImage = "text"
                             addComponent(e,  {ElementType: "Image", Content: myImage, Position: {XPosition: 0, YPosition: 0}, Width: 500, Height: 500, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                        }} selectedTextColor={selectedTextColor} onSetSelectedTextColor={setSelectedTextColor} onSetDotsText={setDotsText} dotsText={dotsText} onAddComponent={addComponent} onSetIsInDotsMode={setIsInDotsMode} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} selectedElementValue={selectedElementValue} components={components} onSetComponents={setComponents} onSetSelectedElement={setSelectedElement} onSetBolded={setBolded} onSetItalic={setItalic} onSetUnderlined={setUnderlined} onSetStrikethrough={setStrikethrough} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
+                        }} selectedBrushColor={selectedBrushColor} onSetSelectedBrushColor={setSelectedBrushColor} selectedTextColor={selectedTextColor} onSetSelectedTextColor={setSelectedTextColor} onSetDotsText={setDotsText} dotsText={dotsText} onAddComponent={addComponent} onSetIsInDotsMode={setIsInDotsMode} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} selectedElementValue={selectedElementValue} components={components} onSetComponents={setComponents} onSetSelectedElement={setSelectedElement} onSetBolded={setBolded} onSetItalic={setItalic} onSetUnderlined={setUnderlined} onSetStrikethrough={setStrikethrough} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
                     </Col>
                     <Col style={{padding: 0}}>
                         {/* Continer */}

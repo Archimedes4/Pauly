@@ -1,73 +1,14 @@
-// import {useOnDraw} from './CanvasHooks';
-// import {getRef} from "../Toolbar"
-// import React, { useRef, useImperativeHandle } from 'react';
-
-
-
-// const Canvas = React.forwardRef(function Canvas({width, height}, ref) {
-
-//     const inputRef = useRef(null)
-
-//     useImperativeHandle(ref, // forwarded ref
-//     function () {
-//       return {
-//         value() { inputRef.current?.toDataURL('image/jpeg') }
-//       } // the forwarded ref value
-//     }, [])
-
-
-//     const {
-//         setCanvasRef,
-//         onCanvasMouseDown
-//     } = useOnDraw(onDraw);
-
-//     function onDraw(ctx, point, prevPoint) {
-//         drawLine(prevPoint, point, ctx, '#000000', 5);
-//     }
-
-//     function drawLine(
-//         start,
-//         end,
-//         ctx,
-//         color,
-//         width
-//     ) {
-//         start = start ?? end;
-//         ctx.beginPath();
-//         ctx.lineWidth = width;
-//         ctx.strokeStyle = color;
-//         ctx.moveTo(start.x, start.y);
-//         ctx.lineTo(end.x, end.y);
-//         ctx.stroke();
-
-//         ctx.fillStyle = color;
-//         ctx.beginPath();
-//         ctx.arc(start.x, start.y, 2, 0, 2 * Math.PI);
-//         ctx.fill();
-
-//     }
-
-//     return(
-//         <canvas
-//             width={width}
-//             height={height}
-//             onMouseDown={onCanvasMouseDown}
-//             style={canvasStyle}
-//             ref={((e) => {setCanvasRef(e); console.log("REFY GIT")}) && ref}
-//         />
-//     );
-
-// })
-
-// export default Canvas;
-
-// const canvasStyle = {
-//     border: "1px solid black"
-// }
-
 import React, { useCallback, useEffect, useRef, useState, useImperativeHandle, MouseEventHandler } from 'react';
 
-const App = React.forwardRef(({width, height, selectedColor}:{width: string, height: string, selectedColor: string}, ref) => {
+
+export enum CanvasModeType{
+    Draw,
+    PickColor
+}
+
+
+
+const App = React.forwardRef(({width, height, selectedColor, onSetSelectedColor, selectedCanvasMode}:{selectedCanvasMode: CanvasModeType, width: string, height: string, selectedColor: string, onSetSelectedColor: (item: string) => void}, ref) => {
     const canvasRef = useRef(null);
 
     useImperativeHandle(ref, () => {
@@ -94,25 +35,25 @@ const App = React.forwardRef(({width, height, selectedColor}:{width: string, hei
 
     useEffect(() => {
         if (canvasRef.current) {
-        ctx.current = canvasRef.current.getContext('2d');
+            ctx.current = canvasRef.current.getContext('2d');
         }
     }, []);
 
     const draw = useCallback((x: number, y: number) => {
         if (mouseDown) {
-        ctx.current.beginPath();
-        ctx.current.strokeStyle = selectedColor;
-        ctx.current.lineWidth = 10;
-        ctx.current.lineJoin = 'round';
-        ctx.current.moveTo(lastPosition.x, lastPosition.y);
-        ctx.current.lineTo(x, y);
-        ctx.current.closePath();
-        ctx.current.stroke();
+            ctx.current.beginPath();
+            ctx.current.strokeStyle = selectedColor;
+            ctx.current.lineWidth = 10;
+            ctx.current.lineJoin = 'round';
+            ctx.current.moveTo(lastPosition.x, lastPosition.y);
+            ctx.current.lineTo(x, y);
+            ctx.current.closePath();
+            ctx.current.stroke();
 
-        setPosition({
-            x,
-            y
-        })
+            setPosition({
+                x,
+                y
+            })
         }
     }, [lastPosition, mouseDown, selectedColor, setPosition])
 
@@ -121,10 +62,6 @@ const App = React.forwardRef(({width, height, selectedColor}:{width: string, hei
         const blob = await (await fetch(image)).blob();
         const blobURL = URL.createObjectURL(blob);
         return blobURL
-        // const link = document.createElement('a');
-        // link.href = blobURL;
-        // link.download = "image.png";
-        // link.click();
     }
 
     const clear = () => {
@@ -132,11 +69,20 @@ const App = React.forwardRef(({width, height, selectedColor}:{width: string, hei
     }
 
     const onMouseDown = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-        setPosition({
-        x: e.clientX - canvasRef.current?.getBoundingClientRect().left,
-        y: e.clientY - canvasRef.current?.getBoundingClientRect().top
-        })
-        setMouseDown(true)
+        if (selectedCanvasMode === CanvasModeType.Draw){
+            setPosition({
+                x: e.clientX - canvasRef.current?.getBoundingClientRect().left,
+                y: e.clientY - canvasRef.current?.getBoundingClientRect().top
+            })
+            setMouseDown(true)
+        } else if (selectedCanvasMode === CanvasModeType.PickColor){
+            console.log("Running Code Right Here. Does this thing work.")
+            const x = e.clientX - canvasRef.current?.getBoundingClientRect().left
+            const y = e.clientY - canvasRef.current?.getBoundingClientRect().top
+            var imageData = ctx.current.getImageData(x, y, 1, 1).data;
+            const rgbaColor = 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
+            onSetSelectedColor(rgbaColor)
+        }
     }
 
     const onMouseUp = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
@@ -144,7 +90,9 @@ const App = React.forwardRef(({width, height, selectedColor}:{width: string, hei
     }
 
     const onMouseMove = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-        draw(e.clientX - canvasRef.current?.getBoundingClientRect().left, e.clientY - canvasRef.current?.getBoundingClientRect().top)
+        if (selectedCanvasMode === CanvasModeType.Draw){
+            draw(e.clientX - canvasRef.current?.getBoundingClientRect().left, e.clientY - canvasRef.current?.getBoundingClientRect().top)
+        }
     }
 
     return (

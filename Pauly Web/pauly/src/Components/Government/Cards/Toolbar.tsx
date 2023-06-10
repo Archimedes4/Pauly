@@ -8,6 +8,7 @@ import {save} from './Canvas/CanvasHooks';
 import ReactQuill from 'react-quill'
 import "react-quill/dist/quill.snow.css";
 import { useCardContext } from "./Cards.js"
+import { CanvasModeType } from './Canvas/Canvas';
 
 enum SelectedAspectType{
     Small,
@@ -24,7 +25,8 @@ type FontType = {
 
 function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, components, onSetComponents, onSetSelectedElement, onSetBolded, onSetItalic, onSetUnderlined, onSetStrikethrough,
     bolded, italic, underlined, strikethrough, isShowingBindPage, onSetIsShowingBindPage, onSetFontSize,
-    fontSize, fontStyle, onSetSelectedFont, isInDotsMode, isInDrawMode, onAddComponent, onSetIsInDotsMode, onSaveDrawMode, dotsText, onSetDotsText, selectedTextColor, onSetSelectedTextColor
+    fontSize, fontStyle, onSetSelectedFont, isInDotsMode, isInDrawMode, onAddComponent, onSetIsInDotsMode, onSaveDrawMode, dotsText, onSetDotsText, selectedTextColor, onSetSelectedTextColor,
+    selectedBrushColor, onSetSelectedBrushColor, onSetCanvasMode
 }:{
     onSetIsNavigateToDestinations?: (item: boolean) => void, 
     selectedElementValue: CardElement, 
@@ -56,7 +58,10 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
     onSetIsInDotsMode: (item: boolean) => void,
     onAddComponent: (e: React.SyntheticEvent, newValue:CardElement) => void,
     dotsText: string,
-    onSetDotsText: (item: string) => void
+    onSetDotsText: (item: string) => void,
+    selectedBrushColor: string,
+    onSetSelectedBrushColor: (item: string) => void,
+    onSetCanvasMode?: (item: CanvasModeType) => void
     }) {
     const [fontList, setFontList] = useState<FontType []>([])
     const avaliableFontSizes: string[] = ["8px", "12px", "14px", "16px", "20px", "24px"]
@@ -179,6 +184,11 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                             </DropdownMenu>
                         </Dropdown>
                         </Row>
+                        <Row>
+                            <input type="color" id="colorpicker" value={selectedTextColor} onChange={changeEvent => {
+                                onSetSelectedTextColor(changeEvent.target.value)
+                            }} />
+                        </Row>
                         {/* <div id="toolbar">
                             <button className="ql-bold" style={{backgroundColor: "lightgrey", borderRadius: "10%", height: "auto", aspectRatio: "1/1", margin: "auto"}} onClick={(e) => {e.preventDefault()}}>
 
@@ -195,16 +205,6 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                         </div> */}
                     </>:null
                     }
-                    <Row>
-                        <input type="color" id="colorpicker" value={selectedTextColor} onChange={changeEvent => {
-                            // const NewComponents = [...components]
-                            // const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                            // NewComponents[SelectedIndex]["SelectedColor"] = changeEvent.target.value
-                            // onSetComponents(NewComponents)
-                            // onSetSelectedElement(NewComponents[SelectedIndex])
-                            onSetSelectedTextColor(changeEvent.target.value)
-                        }} />
-                    </Row>
                     <Row>
                     <p>Opacity: {selectedElementValue.Opacity}%</p>
                     <input type="range" min="1" max="100" value={selectedElementValue.Opacity} 
@@ -241,9 +241,16 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                         DRAW MODE 
                         <button onClick={(e) => {
                             onSaveDrawMode(e)
+                            onSetCanvasMode(CanvasModeType.Draw)
                         }}>
                             Place
                         </button>
+                        <input type="color" id="colorpicker" value={selectedBrushColor} onChange={changeEvent => {
+                            onSetSelectedBrushColor(changeEvent.target.value)
+                        }} />
+                        <button onClick={() => {
+                            onSetCanvasMode(CanvasModeType.PickColor)
+                        }}>Pick Color</button>
                     </div>:null
                 }
                 { (isInDotsMode === false && isInDrawMode === false) ? 

@@ -67,7 +67,7 @@ export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowing
                 }} style={{backgroundColor: "white", padding:0 ,borderLeft: "2px solid black", borderBottom: "2px solid black", borderTop: "2px solid black"}}><FaArrowLeft /></InputGroup.Text>
                 <Form.Control
                     id="SetZoom"
-                    onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
+                    // onKeyDown={ (evt) => evt.key === 'e' && evt.preventDefault() } 
                     value={zoomScale + "%"}
                     onChange={(event) => { onChangeSetZoomScale(event.target.value) }}
                     className={styles.sizeForm}

@@ -13,6 +13,7 @@
     "firebase": "^9.21.0",
     "fluent-ffmpeg": "^2.1.2",
     "font-picker-react": "^3.5.2",
+    "gsap": "^3.12.1",
     "lexical": "^0.10.0",
     "path-browserify": "^1.0.1",
     "react": "^18.2.0",
@@ -55,9 +56,10 @@
     ]
   },
   "devDependencies": {
+    "@types/gsap": "^3.0.0",
     "@types/jest": "^29.5.1",
     "@types/node": "^18.16.3",
-    "@types/react": "^18.2.0",
+    "@types/react": "^18.2.9",
     "@types/react-dom": "^18.2.1",
     "typescript": "^5.0.4"
   }

@@ -16,7 +16,7 @@ import {BsTabletLandscape} from "react-icons/bs"
 import {HiRectangleGroup} from "react-icons/hi2"
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
-import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter, setDoc, deleteDoc } from "firebase/firestore";
+import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter, setDoc, deleteDoc, and } from "firebase/firestore";
 import { useAuth } from '../../../Contexts/AuthContext';
 import UploadMicrosoftFile from './uploadMicrosoftFile.tsx';
 import BindMenu from './BindMenu.tsx';
@@ -24,9 +24,10 @@ import PaulyLibrary from './paulyLibrary.tsx';
 import CardAddMenu from './CardAddMenu.tsx';
 import Toolbar from './Toolbar.tsx';
 import ToolbarBottom from './ToolbarBottom.tsx';
-import Canvas from "./Canvas/Canvas.js"
+import Canvas from "./Canvas/Canvas"
 import SVG from './SVG.tsx';
 import {IoIosArrowBack} from "react-icons/io"
+import { CanvasModeType } from './Canvas/Canvas';
 
 declare global{
   type CardElement = {
@@ -59,6 +60,7 @@ declare global{
     Teacher: string
   }
 }
+
 
 enum SelectedAspectType{
   Small,
@@ -120,6 +122,8 @@ export default function EditCard() {
   const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
   const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
   const [isShowingPaulyLibaray, setIsShowingPaulyLibrary] = useState(false)
+  const editorRef = useRef(null)
+  const [lastMousePosition, setLastMousePosition] = useState({x: 0, y:0})
 
   //TextSettings
   const [bolded, setBolded] = useState<boolean>(false)
@@ -140,9 +144,10 @@ export default function EditCard() {
   const [isInDotsMode, setIsInDotsMode] = useState(false)
   const [isInDrawMode, setIsInDrawMode] = useState(false)
   const [dotsText, setDotsText] = useState("")
-  const [selectedColor, setSelectedColor] = useState("")
+  const [selectedBrushColor, setSelectedBrushColor] = useState("")
   const canvasRef = useRef(null)
   const svgRef = useRef(null)
+  const [selectedCanvasMode, setSelectedCanvasMode] = useState<CanvasModeType>(CanvasModeType.Draw)
 
   useEffect(() => {
     if (selectedDeviceMode === SelectedAspectType.Large){
@@ -238,7 +243,9 @@ export default function EditCard() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [scrollDir]);
 
-  function onMouseMoveUpdateComponents(NewComponents: any[], SelectedIndex: number, event: React.MouseEvent) {
+  function onMouseMoveUpdateComponents(NewComponents: any[], SelectedIndex: number, event: React.MouseEvent, alternate: boolean) {
+    var runAgain = false
+    const nwPosition = `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))
     if (pressed){
       if (selectedElementValue != undefined) {
           NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
@@ -249,49 +256,108 @@ export default function EditCard() {
       if (isChangeingSize) {
           if (selectedElementValue != undefined) {
               if (chaningSizeDirection === "n"){
+                if (NewComponents[SelectedIndex]["Height"] <= 0) {
+                  setChangingSizeDirection("s")
+                } else {
                   NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
+                }
               }
               else if (chaningSizeDirection === "s"){
+                if ((NewComponents[SelectedIndex]["Position"]["YPosition"] + editorRef.current.getBoundingClientRect().top) > event.clientY){
+                  setChangingSizeDirection("n")
+                } else {
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
+                }
               }
               else if (chaningSizeDirection === "e"){
+                console.log("Triggering")
+                if ((NewComponents[SelectedIndex]["Position"]["XPosition"] + editorRef.current.getBoundingClientRect().left) > event.clientX  && !alternate) {
+                  setChangingSizeDirection("w")
+                  console.log("Triggering THIS THING")
+                  runAgain = true
+                } else {
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
+                }
               }
               else if (chaningSizeDirection === "w"){
+                console.log("Triggering Width")
+                if ((NewComponents[SelectedIndex]["Position"]["XPosition"] + editorRef.current.getBoundingClientRect().left +  NewComponents[SelectedIndex]["Width"]) <= (NewComponents[SelectedIndex]["Position"]["XPosition"] + editorRef.current.getBoundingClientRect().left + event.movementX)  && !alternate) {
+                  setChangingSizeDirection("e")
+                  console.log("Triggering THIS THING Width")
+                  runAgain = true
+                } else {
                   NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
                   NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
+                }
               }
-              else if (chaningSizeDirection === "nw" ){
+              else if (chaningSizeDirection === "nw"){
+                if (NewComponents[SelectedIndex]["Height"] >= 0 && !alternate) {
+                  setChangingSizeDirection("sw")
+                  runAgain = true
+                  console.log("Triggering LALALALLAL")
+                // } else if (NewComponents[SelectedIndex]["Width"] < 0 && !alternate) { 
+                //   setChangingSizeDirection("se")
+                //   runAgain = true
+                } else {
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementY
+                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
                   NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
                   NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
+                }
               }
               else if (chaningSizeDirection === "ne"){
+                if (NewComponents[SelectedIndex]["Height"] <= 0 && !alternate) {
+                  setChangingSizeDirection("se")
+                  runAgain = true
+                } else if (NewComponents[SelectedIndex]["Width"] <= 0 && !alternate) {
+                  setChangingSizeDirection("nw")
+                  runAgain = true
+                } else {
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementY
+                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
                   NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
+                }
               }
               else if (chaningSizeDirection === "sw"){
+                if (NewComponents[SelectedIndex]["Height"] <= 0 && !alternate){
+                  setChangingSizeDirection("nw")
+                  runAgain = true
+                } else if (NewComponents[SelectedIndex]["Width"] < 0 && !alternate) {
+                  setChangingSizeDirection("se")
+                  runAgain = true
+                } else {
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementY
+                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
                   NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
+                }
               }
               else if (chaningSizeDirection === "se"){
+                if (NewComponents[SelectedIndex]["Height"] <= 0 && !alternate){
+                  setChangingSizeDirection("ne")
+                  runAgain = true
+                } else if (NewComponents[SelectedIndex]["Width"] <= 0 && !alternate) {
+                  setChangingSizeDirection("sw")
+                  runAgain = true
+                } else {
                   NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementY
+                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
+                }
               }
               updateOnFierbase(NewComponents[SelectedIndex])
           }
       }
     }
+    setLastMousePosition({x: event.clientX, y: event.clientY})
     if (selectedDeviceMode === SelectedAspectType.Small){
       setComponentsSmall(NewComponents)
     } else if (selectedDeviceMode === SelectedAspectType.Medium){
       setComponentsMedium(NewComponents)
     } else if (selectedDeviceMode === SelectedAspectType.Large){
       setComponentsLarge(NewComponents)
+    }
+    if (runAgain) {
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event, true)
     }
   }
 
@@ -300,15 +366,15 @@ export default function EditCard() {
     if (selectedDeviceMode === SelectedAspectType.Small){
       const NewComponents = [...componentsSmall]
       const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event, false)
     } else if (selectedDeviceMode === SelectedAspectType.Medium){
       const NewComponents = [...componentsMedium]
       const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event, false)
     } else if (selectedDeviceMode === SelectedAspectType.Large){
       const NewComponents = [...componentsLarge]
       const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event, false)
     }
   }
 
@@ -361,7 +427,9 @@ export default function EditCard() {
   }
 
   const handler = (event: React.KeyboardEvent) => {
-    if (event.key === 'Backspace' && !isUserTyping) {
+    console.log("Here")
+    if (event.key === 'Backspace' && !isUserTyping && selectedElementValue) {
+      console.log("Deleteing")
       DeleteFunction()
     }
   };
@@ -404,7 +472,6 @@ export default function EditCard() {
     });
     return uuid;
   }
-
 
   async function addNewOnFierbase(item: CardElement) {
     if (selectedDeviceMode === SelectedAspectType.Small){
@@ -628,21 +695,20 @@ export default function EditCard() {
               </Row>
               <Row noGutters={true}>
                 <Col md={2} style={{margin: 0, padding: 0, paddingLeft: "0.8%", backgroundColor: '#444444'}} className="d-none d-md-block">
-                  <Toolbar onSetDotsText={setDotsText} dotsText={dotsText} onAddComponent={addComponent} onSetIsInDotsMode={setIsInDotsMode} 
+                  <Toolbar onSetCanvasMode={setSelectedCanvasMode} onSetDotsText={setDotsText} dotsText={dotsText} onAddComponent={addComponent} onSetIsInDotsMode={setIsInDotsMode} 
                   onSetSelectedTextColor={setSelectedTextColor} selectedTextColor={selectedTextColor}
                   onSaveDrawMode={async (e) => {
                     const myImage = await canvasRef.current.download()
                     console.log("This is Image", myImage)
                     addComponent(e,  {ElementType: "Image", Content: myImage, Position: {XPosition: 0, YPosition: 0}, Width: 500, Height: 500, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                     setIsInDrawMode(false)
-                  }} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} onSetIsNavigateToDestinations={setIsNavigateToDestinations} selectedElementValue={selectedElementValue} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetComponents={(selectedDeviceMode === SelectedAspectType.Small) ? setComponentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? setComponentsMedium:setComponentsLarge} onSetSelectedElement={setSelectedElement} onSetBolded={(e) => {setBolded(e); textEditorRef.current.bold()}} onSetItalic={(e) => {setItalic(e); textEditorRef.current.italic()}} onSetUnderlined={(e) => {setUnderlined(e); textEditorRef.current.underline()}} onSetStrikethrough={(e) => {setStrikethrough(e); textEditorRef.current.strikethrough()}} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
+                  }} selectedBrushColor={selectedBrushColor} onSetSelectedBrushColor={setSelectedBrushColor} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} onSetIsNavigateToDestinations={setIsNavigateToDestinations} selectedElementValue={selectedElementValue} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetComponents={(selectedDeviceMode === SelectedAspectType.Small) ? setComponentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? setComponentsMedium:setComponentsLarge} onSetSelectedElement={setSelectedElement} onSetBolded={(e) => {setBolded(e); textEditorRef.current.bold()}} onSetItalic={(e) => {setItalic(e); textEditorRef.current.italic()}} onSetUnderlined={(e) => {setUnderlined(e); textEditorRef.current.underline()}} onSetStrikethrough={(e) => {setStrikethrough(e); textEditorRef.current.strikethrough()}} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
                 </Col>
                 {/* <Col style={{backgroundColor: "#793033",padding: 0, margin: 0, height: "100%"}}>
                     <div style={{height: "100%"}}> */}
                 <Col className={styles.CardContainterCardCSSColumn} style={{width: "100%"}}>
                   {/* Continer */}
                     <div className={styles.CardContainterCardCSS}
-                      onKeyDown={handler}
                       onMouseUp={ (e) => {
                         if (e.button == 0){
                             if (pressed){
@@ -657,6 +723,11 @@ export default function EditCard() {
                               }
                             }
                         }
+                      }}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        handler(e)
+                        console.log("Went down")
                       }}
                       style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center", height: "85vh", width: "84vw", overflow: "scroll"}}
                     >
@@ -694,6 +765,7 @@ export default function EditCard() {
                                 display: 'flex'
                               }}
                               onMouseMove={ onMouseMove }
+                              ref={editorRef}
                             >
                               { (selectedDeviceMode === SelectedAspectType.Small) ?
                                 <EditCardArea ref={textEditorRef} components={componentsSmall} onSetComponents={setComponentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
@@ -705,7 +777,9 @@ export default function EditCard() {
                                 <EditCardArea ref={textEditorRef} components={componentsLarge} onSetComponents={setComponentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
                               }
                               {isInDrawMode ? 
-                                <Canvas width={areaWidth + "px"} height={areaHeight + "px"} selectedColor='' ref={canvasRef}/>:null
+                                <div style={{zIndex: 100}}>
+                                <Canvas selectedCanvasMode={selectedCanvasMode} onSetSelectedColor={setSelectedBrushColor} width={areaWidth + "px"} height={areaHeight + "px"} selectedColor={selectedBrushColor} ref={canvasRef}/>
+                                </div>:null
                               }
                               {isInDotsMode ? 
                                 <div style={{zIndex: 100}}>
