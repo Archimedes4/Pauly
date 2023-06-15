@@ -243,121 +243,164 @@ export default function EditCard() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [scrollDir]);
 
-  function onMouseMoveUpdateComponents(NewComponents: any[], SelectedIndex: number, event: React.MouseEvent, alternate: boolean) {
-    var runAgain = false
-    const nwPosition = `translate(${(item.Position.XPosition * (zoomScale/100))}px, ${(item.Position.YPosition * (zoomScale/100))
-    if (pressed){
-      if (selectedElementValue != undefined) {
-          NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
-          NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-          updateOnFierbase(NewComponents[SelectedIndex])
-      }
-    } else {
-      if (isChangeingSize) {
-          if (selectedElementValue != undefined) {
-              if (chaningSizeDirection === "n"){
-                if (NewComponents[SelectedIndex]["Height"] <= 0) {
-                  setChangingSizeDirection("s")
-                } else {
-                  NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-                  NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
-                }
-              }
-              else if (chaningSizeDirection === "s"){
-                if ((NewComponents[SelectedIndex]["Position"]["YPosition"] + editorRef.current.getBoundingClientRect().top) > event.clientY){
-                  setChangingSizeDirection("n")
-                } else {
-                  NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
-                }
-              }
-              else if (chaningSizeDirection === "e"){
-                console.log("Triggering")
-                if ((NewComponents[SelectedIndex]["Position"]["XPosition"] + editorRef.current.getBoundingClientRect().left) > event.clientX  && !alternate) {
-                  setChangingSizeDirection("w")
-                  console.log("Triggering THIS THING")
-                  runAgain = true
-                } else {
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
-                }
-              }
-              else if (chaningSizeDirection === "w"){
-                console.log("Triggering Width")
-                if ((NewComponents[SelectedIndex]["Position"]["XPosition"] + editorRef.current.getBoundingClientRect().left +  NewComponents[SelectedIndex]["Width"]) <= (NewComponents[SelectedIndex]["Position"]["XPosition"] + editorRef.current.getBoundingClientRect().left + event.movementX)  && !alternate) {
-                  setChangingSizeDirection("e")
-                  console.log("Triggering THIS THING Width")
-                  runAgain = true
-                } else {
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
-                  NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
-                }
-              }
-              else if (chaningSizeDirection === "nw"){
-                if (NewComponents[SelectedIndex]["Height"] >= 0 && !alternate) {
-                  setChangingSizeDirection("sw")
-                  runAgain = true
-                  console.log("Triggering LALALALLAL")
-                // } else if (NewComponents[SelectedIndex]["Width"] < 0 && !alternate) { 
-                //   setChangingSizeDirection("se")
-                //   runAgain = true
-                } else {
-                  NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
-                  NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
-                  NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-                }
-              }
-              else if (chaningSizeDirection === "ne"){
-                if (NewComponents[SelectedIndex]["Height"] <= 0 && !alternate) {
-                  setChangingSizeDirection("se")
-                  runAgain = true
-                } else if (NewComponents[SelectedIndex]["Width"] <= 0 && !alternate) {
-                  setChangingSizeDirection("nw")
-                  runAgain = true
-                } else {
-                  NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
-                  NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-                }
-              }
-              else if (chaningSizeDirection === "sw"){
-                if (NewComponents[SelectedIndex]["Height"] <= 0 && !alternate){
-                  setChangingSizeDirection("nw")
-                  runAgain = true
-                } else if (NewComponents[SelectedIndex]["Width"] < 0 && !alternate) {
-                  setChangingSizeDirection("se")
-                  runAgain = true
-                } else {
-                  NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
-                  NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
-                }
-              }
-              else if (chaningSizeDirection === "se"){
-                if (NewComponents[SelectedIndex]["Height"] <= 0 && !alternate){
-                  setChangingSizeDirection("ne")
-                  runAgain = true
-                } else if (NewComponents[SelectedIndex]["Width"] <= 0 && !alternate) {
-                  setChangingSizeDirection("sw")
-                  runAgain = true
-                } else {
-                  NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
-                  NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
-                }
-              }
-              updateOnFierbase(NewComponents[SelectedIndex])
+  function onMouseMoveUpdateComponents(NewComponents: any[], SelectedIndex: number, event: React.MouseEvent) {
+    if (selectedElementValue != undefined) {
+      const XPosition = NewComponents[SelectedIndex]["Position"]["XPosition"] * (zoomScale/100)
+      const YPosition = NewComponents[SelectedIndex]["Position"]["YPosition"] * (zoomScale/100)
+      const XOffset = 0
+      const YOffset = 0
+      //editorRef.current.getBoundingClientRect().left
+      const ComponentWidth = NewComponents[SelectedIndex]["Width"]
+      const ComponentHeight = NewComponents[SelectedIndex]["Height"]
+      const nePositionX = (ComponentWidth  * (zoomScale/100)) + 5 + XPosition + XOffset
+      const ePositionX = (ComponentWidth  * (zoomScale/100)) + 5 + XPosition + XOffset
+      const sePositionX = (ComponentWidth  * (zoomScale/100)) + 5 + XPosition + XOffset
+      const sPositionX = ((ComponentWidth  * (zoomScale/100)) + 5)/2 + XPosition + XOffset
+      const swPositionX = 0 + XPosition + XOffset
+      const wPositionX = 0 + XPosition + XOffset
+      const nwPositionX = 0 + XPosition + XOffset
+      const nPositionX = ((ComponentWidth  * (zoomScale/100)) + 5)/2 + XPosition + XOffset
+      const nePositionY = -13 + YPosition + YOffset
+      const ePositionY = ((ComponentHeight * (zoomScale/100)) - 24)/2 + YPosition + YOffset
+      const sePositionY = (ComponentHeight * (zoomScale/100)) - 8 + YPosition
+      const sPositionY = (ComponentHeight * (zoomScale/100))- 8 + YPosition + YOffset
+      const swPositionY = (ComponentHeight  * (zoomScale/100)) - 8 + YPosition + YOffset
+      const wPositionY = ((ComponentHeight  * (zoomScale/100)) - 24)/2 + YPosition + YOffset
+      const nwPositionY =  -13 + YPosition + YOffset
+      const nPositionY =  -13 + YPosition + YOffset
+      //YOffset
+      
+      console.log(
+        "Report",
+        "\n chaningSizeDirection:", chaningSizeDirection,
+        "\n nePositionX:", nePositionX, 
+        "\n ePositionX", ePositionX, 
+        "\n sePositionX: ", sePositionX,  
+        "\n sPositionX:", sPositionX , 
+        "\n swPositionX:", swPositionX, 
+        "\n wPositionX", wPositionX, 
+        "\n nwPositionX:", nwPositionX,
+        "\n nPositionX", nPositionX, 
+        "\n nePositionY", nePositionY, 
+        "\n ePositionY", ePositionY, 
+        "\n sePositionY", sePositionY, 
+        "\n sPositionY:", sPositionY , 
+        "\n swPositionY:", swPositionY, 
+        "\n wPositionY:", wPositionY,
+        "\n nwPositionY:", nwPositionY, 
+        "\n nPositionY ", 
+        "\n nPositionY < sPositionY:", (nPositionY < sPositionY),
+        "\n sPositionY < nPositionY:", sPositionY < nPositionY,
+        "\n YPosition", NewComponents[SelectedIndex]["Position"]["YPosition"],
+        "\n XPosition", NewComponents[SelectedIndex]["Position"]["XPosition"],
+        )
+      if (pressed){
+        NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
+        NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
+        updateOnFierbase(NewComponents[SelectedIndex])
+      } else {
+        if (isChangeingSize) {
+          if (chaningSizeDirection === "n"){
+            if (sPositionY < nPositionY) {
+              setChangingSizeDirection("s")
+              NewComponents[SelectedIndex]["Height"] = 0
+              NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
+            } else {
+              NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
+              NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
+            }
           }
+          else if (chaningSizeDirection === "s"){
+            if (!(nPositionY < sPositionY)) {
+              setChangingSizeDirection("n")
+              NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
+            } else  {
+              NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
+            }
+          }
+          else if (chaningSizeDirection === "e"){
+            if ((NewComponents[SelectedIndex]["Position"]["XPosition"] + editorRef.current.getBoundingClientRect().left) > event.clientX) {
+              setChangingSizeDirection("w")
+              NewComponents[SelectedIndex]["Width"] = 0
+              NewComponents[SelectedIndex]["Position"]["XPosition"] = ePositionX 
+            } else {
+              NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
+            }
+          }
+          else if (chaningSizeDirection === "w"){
+            console.log("Triggering Width")
+            if (wPositionX > ePositionX) {
+              setChangingSizeDirection("e")
+              NewComponents[SelectedIndex]["Width"] =  NewComponents[SelectedIndex]["Width"] + event.movementX
+            } else {
+              NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
+              NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
+            }
+          }
+          else if (chaningSizeDirection === "nw"){
+            if (nwPositionY > swPositionY){
+              setChangingSizeDirection("sw")
+            } else if (nwPositionX > nePositionX){
+              setChangingSizeDirection("se")
+              NewComponents[SelectedIndex]["Position"]["YPosition"] = nwPositionY
+            } else {
+              NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
+              NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
+              NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
+              NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
+            }
+          }
+          else if (chaningSizeDirection === "ne"){
+            if (nePositionY > sePositionY) {
+              setChangingSizeDirection("se")
+              NewComponents[SelectedIndex]["Position"]["YPosition"] = nePositionY
+              NewComponents[SelectedIndex]["Height"] = 0
+            } else if (nePositionX < nwPositionX) {
+              setChangingSizeDirection("nw")
+            } else {
+              NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] - event.movementY
+              NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
+              NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
+            }
+          }
+          else if (chaningSizeDirection === "sw"){
+            if (swPositionY < nwPositionY){
+              setChangingSizeDirection("nw")
+              NewComponents[SelectedIndex]["Height"] = 0
+              NewComponents[SelectedIndex]["Position"]["YPosition"] = sePositionY 
+            } else if (swPositionX > sePositionX) {
+              setChangingSizeDirection("se")
+            } else {
+              NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
+              NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] - event.movementX
+              NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
+            }
+          }
+          else if (chaningSizeDirection === "se"){
+            if (sePositionY < nePositionY){
+              setChangingSizeDirection("ne")
+              NewComponents[SelectedIndex]["Position"]["YPosition"] = sePositionY 
+              NewComponents[SelectedIndex]["Height"] = 0
+            } else if (sePositionX < swPositionX) {
+              setChangingSizeDirection("sw")
+              NewComponents[SelectedIndex]["Position"]["XPosition"] = sePositionX
+              NewComponents[SelectedIndex]["Width"] = 0
+            } else {
+              NewComponents[SelectedIndex]["Height"] = NewComponents[SelectedIndex]["Height"] + event.movementY
+              NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
+            }
+          }
+          updateOnFierbase(NewComponents[SelectedIndex])
+        }
       }
-    }
-    setLastMousePosition({x: event.clientX, y: event.clientY})
-    if (selectedDeviceMode === SelectedAspectType.Small){
-      setComponentsSmall(NewComponents)
-    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-      setComponentsMedium(NewComponents)
-    } else if (selectedDeviceMode === SelectedAspectType.Large){
-      setComponentsLarge(NewComponents)
-    }
-    if (runAgain) {
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event, true)
+      setLastMousePosition({x: event.clientX, y: event.clientY})
+      if (selectedDeviceMode === SelectedAspectType.Small){
+        setComponentsSmall(NewComponents)
+      } else if (selectedDeviceMode === SelectedAspectType.Medium){
+        setComponentsMedium(NewComponents)
+      } else if (selectedDeviceMode === SelectedAspectType.Large){
+        setComponentsLarge(NewComponents)
+      }
     }
   }
 
@@ -366,15 +409,15 @@ export default function EditCard() {
     if (selectedDeviceMode === SelectedAspectType.Small){
       const NewComponents = [...componentsSmall]
       const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event, false)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
     } else if (selectedDeviceMode === SelectedAspectType.Medium){
       const NewComponents = [...componentsMedium]
       const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event, false)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
     } else if (selectedDeviceMode === SelectedAspectType.Large){
       const NewComponents = [...componentsLarge]
       const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event, false)
+      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
     }
   }
 
@@ -576,6 +619,7 @@ export default function EditCard() {
       })
     }
   }
+
   async function deleteOnFirebase(item: CardElement) {
     if (selectedDeviceMode === SelectedAspectType.Small){
       await deleteDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Small", item.ElementUUID))
@@ -585,6 +629,7 @@ export default function EditCard() {
       await deleteDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Large", item.ElementUUID))
     }
   }
+
   async function loadFromFirebase(){
     console.log("Card", SelectedCard)
     var resultSmall: CardElement[] = []

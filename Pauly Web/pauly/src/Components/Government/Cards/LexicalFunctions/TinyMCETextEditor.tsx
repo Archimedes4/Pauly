@@ -71,28 +71,6 @@ export default React.forwardRef(({text, onSetText, height, width}:{text: string,
     
     return (
         <div>
-            {/* <button onClick={(e) => {
-                e.preventDefault()
-                editorRef.current.focus()
-                editorRef.current.formatter.toggle('bold')
-            }}>
-                Bold
-            </button>
-            <button onClick={(e) => {
-                e.preventDefault()
-                editorRef.current.focus()
-                editorRef.current.formatter.register('mycustomformat', {
-                    inline: 'span',
-                    styles: {color: foregroundColor, fontSize: fontSize}
-                });
-                editorRef.current.formatter.apply('mycustomformat');
-            }}>
-                Apply
-            </button>
-            <input name="myInput" onChange={value => {
-                setFontSize(value.currentTarget.value)
-            }} value={fontSize}/>
-            <input type="color" id="colorpicker" value={foregroundColor} onChange={changeEvent => {setForegroundColor(changeEvent.target.value)}} /> */}
             <Editor
             onEditorChange={onEditorChange}
             //initialValue={content}
