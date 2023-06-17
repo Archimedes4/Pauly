@@ -7,11 +7,13 @@ import "tinymce/skins/ui/tinymce-5/content.min.css"
 import "tinymce/icons/default/icons.min.js"
 import "tinymce/models/dom/model.min.js"
 import "tinymce/themes/silver/theme.min.js"
+import "./EditorSkin.css"
 
 export default React.forwardRef(({text, onSetText, height, width}:{text: string, onSetText: (item: string) => void, height: number, width: number}, ref) => {
     const editorRef = useRef(null);
-    const [content, setContent] = useState("This is the initial content of the editor.");
     const [foregroundColor, setForegroundColor] = useState<string>("#ff0000")
+    const [backgroundColor, setBackgorundColor] = useState<string>("#ff0000")
+    const [selectedFont, setSelectedFont] = useState<string>("Times New Roman")
     const [fontSize, setFontSize] = useState<string>("12px")
 
     useImperativeHandle(ref, () => {
@@ -31,6 +33,12 @@ export default React.forwardRef(({text, onSetText, height, width}:{text: string,
           strikethrough () {
             editorRef.current.focus()
             editorRef.current.formatter.toggle('strikethrough')
+          },
+          setForegroundColorRef (value: string) {
+            setForegroundColor(value)
+          },
+          setFontSizeRef (value: string) {
+            setFontSize(value)
           }
         }
     }, [])
@@ -52,11 +60,23 @@ export default React.forwardRef(({text, onSetText, height, width}:{text: string,
     };
 
     const onEditorChange = function (a: string, editor: any) {
-      // console.log(a);
-      setContent(a);
-      onSetText(editor.getContent({ format: "text" }));
-      //console.log(editor);
+        onSetText(a);
     };
+
+    useEffect(() => {
+      const newID = create_UUID()
+      editorRef.current?.formatter.register(newID, {
+        inline: 'span',
+        styles: {
+          backgroundColor: backgroundColor,
+          fontSize: fontSize,
+          foregroundColor: foregroundColor,
+          fontFamily: selectedFont
+        }
+      });
+     
+      editorRef.current?.formatter.apply(newID);
+    }, [foregroundColor, backgroundColor, selectedFont, fontSize])
 
     useEffect(() => {
         console.log(editorRef.current)
@@ -73,34 +93,21 @@ export default React.forwardRef(({text, onSetText, height, width}:{text: string,
         <div>
             <Editor
             onEditorChange={onEditorChange}
-            //initialValue={content}
-            //outputFormat="text"
-            
-            value={content}
+            value={text}
             onInit={(evt, editor) => (editorRef.current = editor)}
-            // initialValue="<p>This is the initial content of the editor.</p>"
             onSkinLoadError={() => {
                 console.log("Skin Error")
             }}
             init={{
                 height: height,
                 width: width,
-                // iframe_attrs: {
-                //     styles: "backgound: blue"
-                // },
                 menubar: false,
                 branding: false,
                 statusbar: false,
                 base_url: "tinymce/",
-                // plugins: [
-                //     "mentions advlist autolink lists link image charmap print preview anchor",
-                //     "searchreplace visualblocks code fullscreen",
-                //     "insertdatetime media paste code help wordcount",
-                // ],
                 toolbar: false,
                 skin: "tinymce-5",
-                // skin_url: "/Main",
-                content_style: "body { background-color: rgba(0,0,0,0); padding: none; margin: 0 !important; border: none; font-family: 'Josefin Sans', sans-serif; line-height: 1.4; } p {margin: 0}",
+                content_style: "body { background-color: rgba(0,0,0,0); padding: none; margin: 0 !important; border: none; } p {margin: 0}",
                 emoticons_append: {
                     custom_mind_explode: {
                     keywords: ["brain", "mind", "explode", "blown"],

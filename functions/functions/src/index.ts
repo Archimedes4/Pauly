@@ -13,14 +13,6 @@ import * as admin from "firebase-admin";
 import {UserRecord} from "firebase-admin/auth";
 admin.initializeApp();
 
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-
 const runtimeOpts = {
   timeoutSeconds: 400,
 };

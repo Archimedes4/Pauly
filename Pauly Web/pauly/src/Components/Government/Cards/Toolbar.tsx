@@ -189,20 +189,6 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                                 onSetSelectedTextColor(changeEvent.target.value)
                             }} />
                         </Row>
-                        {/* <div id="toolbar">
-                            <button className="ql-bold" style={{backgroundColor: "lightgrey", borderRadius: "10%", height: "auto", aspectRatio: "1/1", margin: "auto"}} onClick={(e) => {e.preventDefault()}}>
-
-                            </button>
-                            <button className="ql-italic" onClick={(e) => {e.preventDefault()}}>
-                         
-                            </button>
-                            <button className="ql-underline" onClick={(e) => {e.preventDefault()}}>
-                                Underline
-                            </button>
-                            <button className="ql-strike">
-                                Strike
-                            </button>
-                        </div> */}
                     </>:null
                     }
                     <Row>
@@ -216,9 +202,6 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                         onSetSelectedElement(NewComponents[SelectedIndex])
                     }} 
                     className={styles.slider} id="myRange" />
-                    </Row>
-                    <Row>
-                    <p>Undo</p>
                     </Row>
                 </Container>: <>
                 {

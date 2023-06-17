@@ -134,13 +134,10 @@ export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowing
                     if (index === 0){
                         onSetSelectedDeviceMode(SelectedAspectType.Small)
                     } else if (index === 1) {
-                        onSetSelectedDeviceMode(SelectedAspectType.Medium)
-                    } else if (index === 2){
                         onSetSelectedDeviceMode(SelectedAspectType.Large)
                     }
                 }} selectedIndex={(selectedDeviceMode === SelectedAspectType.Small) ? 0:(selectedDeviceMode === SelectedAspectType.Medium) ? 1:2}>
                     <RiComputerFill color='black' style={{margin: 0, padding: 0}} />
-                    <BsTabletLandscape color='black' style={{margin: 0, padding: 0}} />
                     <FcIphone color='black' style={{margin: 0, padding: 0}}/>
                 </Picker>
 

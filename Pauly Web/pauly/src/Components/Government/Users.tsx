@@ -38,7 +38,7 @@ export default function Users() {
   const [userCount, setUserCount] = useState<number>(0)
   const [microsoftUserCount, setMicrosoftUserCount] = useState<number>(0)
   const userContainerRef = useRef(null)
-  const [currentPage, setCurrentPage] = useState<QueryDocumentSnapshot<DocumentData> | null>(null)
+  const [currentPage, setCurrentPage] = useState<string | null>(null)
   const [searchText, setSearchText] = useState<string>("")
   
   async function getMicrosoftUsers(nextLinkIn: string) {
@@ -219,10 +219,10 @@ export default function Users() {
     }
   }
 
-  async function getUsers(page?: QueryDocumentSnapshot<DocumentData>, search?: string, teacher?: boolean, student?: boolean){
+  async function getUsers(page?: string, search?: string, teacher?: boolean, student?: boolean){
     console.log("This is page", page)
 
-    var q = query(collection(db, "Users"), orderBy("Last Name"), startAfter(page), limit(100));
+    var q = query(collection(db, "Users"), orderBy("uid"), limit(100));
     // if (teacher){
     //   if (search !== undefined){
     //     q = query(collection(db, "Users"), where("First Name", ">=", search), limit(100));
@@ -239,10 +239,10 @@ export default function Users() {
     //   if (search !== undefined){
     //     q = query(collection(db, "Users"), where("First Name", ">=", search), limit(100));
     //   } else 
-      if (page !== undefined) {
-        console.log("Thi")
-        q = query(collection(db, "Users"), orderBy("Last Name"), startAfter(page), limit(100));
-      }
+    if (page !== null && page !== undefined) {
+      console.log("A change occured")
+      q = query(collection(db, "Users"), orderBy("uid"), startAfter(page), limit(100));
+    }
    // }
     console.log(q)
     const querySnapshot = await getDocs(q);
@@ -250,7 +250,6 @@ export default function Users() {
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       const data = doc.data()
-      console.log(data)
       newUsers.push({
         FirstName: data["First Name"],
         LastName: data["Last Name"],
@@ -275,9 +274,10 @@ export default function Users() {
       })
     });
     if (search === undefined){      
-      console.log("This")
-      setCurrentPage(querySnapshot.docs[querySnapshot.docs.length-1])
+      console.log("This", querySnapshot.docs[querySnapshot.docs.length-1].get("First Name"))
+      setCurrentPage(querySnapshot.docs[querySnapshot.docs.length-1].get("uid"))
     }
+    console.log("Value")
     setUsers(newUsers)
   }
 
@@ -300,23 +300,22 @@ export default function Users() {
   function handelScroll() {
     let triggerHeight = userContainerRef.current.scrollTop + userContainerRef.current.offsetHeight;
     if (triggerHeight >= userContainerRef.current.scrollHeight){
-      console.log("SO IS THIS CURRENT PAGE", currentPage)
-      if (currentPage !== null){
-        console.log("This 1234", currentPage)
-        getUsers(currentPage)
-      } else {
-        console.log("That")
-        getUsers(currentPage)
-      }
+      console.log("Triggering")
+      userContainerRef.current.scrollTo({
+        top: 0
+      })
+      getUsers(currentPage)
     }
   }
 
   useEffect(() => {
     getUsers(currentPage)
     getUserCount()
-    // getMicrosoftUserCount()
-    userContainerRef.current.addEventListener('scroll', handelScroll)
   }, [])
+
+  useEffect(() => {
+    userContainerRef.current.addEventListener('scroll', handelScroll)
+  }, [currentPage])
   
 
   return (

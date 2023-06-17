@@ -4,7 +4,7 @@ import VideoContainerCard from '../../../UI/VideoContainerCard.tsx';
 import PDFViewContainer from './PDFView.tsx';
 import TextEditor from './LexicalFunctions/TinyMCETextEditor.tsx';
 import SVG from './SVG.tsx';
-import Textview from './LexicalFunctions/Textview.tsx';
+import RenderHTML from '../../../UI/SanatizedHTML.tsx';
 
 export default React.forwardRef(({components, onSetComponents, zoomScale, onClick, bolded, italic, underlined, strikethrough, onPressed, onSetMousePosition, onIsShowingRightClick, selectedElementValue, isShowingRightClick, onIsChangingSize, onChangingSizeDirection, onIsUserTyping, isUserTyping, fontSize, fontStyle}:{
     components: CardElement[], 
@@ -54,6 +54,7 @@ export default React.forwardRef(({components, onSetComponents, zoomScale, onClic
                     width: (item.Width  * (zoomScale/100)) + "px",}}>
             <div key={item.ElementIndex} style={{ position: "absolute", border: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "5px solid red":"none", backgroundColor: "transparent", margin:0, padding:0, cursor: (selectedElementValue?.ElementIndex === item.ElementIndex) ? "select":"move", height: ((item.Height  * (zoomScale/100)) + 10) + "px", width: ((item.Width  * (zoomScale/100)) + 10) + "px"}}
             onClick={ (e) => {
+                console.log(item.Content)
                 onClick(e, item)
             }}
             onMouseDown={(e) => {
@@ -84,7 +85,10 @@ export default React.forwardRef(({components, onSetComponents, zoomScale, onClic
                                             NewComponents[SelectedIndex]["Content"] = value
                                             onSetComponents(NewComponents)
                                         }
-                                    }}ref={textEditorRef} height={item.Height} width={item.Width}/>:<div> PlaceHolder </div>
+                                    }}ref={textEditorRef} height={item.Height} width={item.Width}/>:
+                                    <div>
+                                        <RenderHTML value={item.Content} />
+                                    </div> 
                                 } {/* onIsUserTyping={onIsUserTyping} isUserTyping={isUserTyping} item={item} bolded={bolded} italic={italic} strikethrough={strikethrough} underlined={underlined} fontSize={fontSize} fontStyle={fontStyle} selectedElementValue={selectedElementValue}*/}  
                             </div>
                         )
