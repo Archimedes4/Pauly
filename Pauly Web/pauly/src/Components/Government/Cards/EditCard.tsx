@@ -2,19 +2,10 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Link, Navigate } from "react-router-dom"
 import { Container, Row, Col, Button, Card, Form, Stack, Dropdown, InputGroup, ListGroup } from 'react-bootstrap';
 import EditCardArea from './EditCardArea.tsx';
-import textIcon from "../../../images/textIcon.png"
-import imageIcon from "../../../images/imageIcon.png"
-import shapesIcon from "../../../images/shapesIcon.png"
-import imageOverlay from "../../../images/Iphone14.png"
-import Book from "../../../images/Books.png"
-import { useCardContext } from "./Cards.js"
+import { useCardContext } from "./Cards"
 import styles from "./Cards.module.css"
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa"
 import { FcLeft, FcSettings, FcIphone } from "react-icons/fc"
-import {RiComputerFill} from "react-icons/ri"
-import {BsTabletLandscape} from "react-icons/bs"
-import {HiRectangleGroup} from "react-icons/hi2"
-import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
 import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter, setDoc, deleteDoc, and } from "firebase/firestore";
 import { useAuth } from '../../../Contexts/AuthContext';
@@ -48,16 +39,19 @@ declare global{
     ElementUUID: string
   }
   type ClassType = {
-    CourseName: string,
-    DayA: number,
-    DayB: number,
-    DayC: number,
-    DayD: number,
+    courseName: string,
+    dayA: number,
+    dayB: number,
+    dayC: number,
+    dayD: number,
     noClass: string[],
     schoolYear: number,
     section: number,
-    Semester: number,
-    Teacher: string
+    semester: number,
+    teacher?: UserType,
+    teacherArray?: UserType[],
+    team?: TeamsGroupType,
+    grade: number
   }
 }
 
@@ -96,10 +90,9 @@ type FontTypeCSS = {
   UUID: string
 }
 
-
 export default function EditCard() {
   const outerDivRef = useRef(null)
-  const { SelectedCard, zoomScale, setZoomScale, componentsSmall, setComponentsSmall, componentsMedium, setComponentsMedium, componentsLarge, setComponentsLarge } = useCardContext()
+  const { SelectedPage, zoomScale, setZoomScale, componentsSmall, setComponentsSmall, componentsMedium, setComponentsMedium, componentsLarge, setComponentsLarge } = useCardContext()
   const [isShowingSettings, setIsShowingSettings] = useState(false)
   const [isNavigateToDestinations, setIsNavigateToDestinations] = useState(false)
   const [scrollDir, setScrollDir] = useState("scrolling down");
@@ -518,7 +511,7 @@ export default function EditCard() {
 
   async function addNewOnFierbase(item: CardElement) {
     if (selectedDeviceMode === SelectedAspectType.Small){
-      await setDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Small", item.ElementUUID), {
+      await setDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Small", item.ElementUUID), {
         ElementType: item.ElementType,
         Content: item.Content,
         PositionX: item.Position.XPosition,
@@ -534,7 +527,7 @@ export default function EditCard() {
         ElementUUID: item.ElementUUID
       })
     } else if (selectedDeviceMode === SelectedAspectType.Medium) {
-      await setDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Medium", item.ElementUUID), {
+      await setDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Medium", item.ElementUUID), {
         ElementType: item.ElementType,
         Content: item.Content,
         PositionX: item.Position.XPosition,
@@ -550,7 +543,7 @@ export default function EditCard() {
         ElementUUID: item.ElementUUID
       })
     } else if  (selectedDeviceMode === SelectedAspectType.Large) {
-      await setDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Large", item.ElementUUID), {
+      await setDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Large", item.ElementUUID), {
         ElementType: item.ElementType,
         Content: item.Content,
         PositionX: item.Position.XPosition,
@@ -570,7 +563,7 @@ export default function EditCard() {
 
   async function updateOnFierbase(item: CardElement) {
     if (selectedDeviceMode === SelectedAspectType.Small){
-      await updateDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Small", item.ElementUUID), {
+      await updateDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Small", item.ElementUUID), {
         ElementType: item.ElementType,
         Content: item.Content,
         PositionX: item.Position.XPosition,
@@ -586,7 +579,7 @@ export default function EditCard() {
         ElementUUID: item.ElementUUID
       })
     } else if (selectedDeviceMode === SelectedAspectType.Medium) {
-      await updateDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Medium", item.ElementUUID), {
+      await updateDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Medium", item.ElementUUID), {
         ElementType: item.ElementType,
         Content: item.Content,
         PositionX: item.Position.XPosition,
@@ -602,7 +595,7 @@ export default function EditCard() {
         ElementUUID: item.ElementUUID
       })
     } else if  (selectedDeviceMode === SelectedAspectType.Large) {
-      await updateDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Large", item.ElementUUID), {
+      await updateDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Large", item.ElementUUID), {
         ElementType: item.ElementType,
         Content: item.Content,
         PositionX: item.Position.XPosition,
@@ -622,18 +615,18 @@ export default function EditCard() {
 
   async function deleteOnFirebase(item: CardElement) {
     if (selectedDeviceMode === SelectedAspectType.Small){
-      await deleteDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Small", item.ElementUUID))
+      await deleteDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Small", item.ElementUUID))
     } else if (selectedDeviceMode === SelectedAspectType.Medium) {
-      await deleteDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Medium", item.ElementUUID))
+      await deleteDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Medium", item.ElementUUID))
     } else if  (selectedDeviceMode === SelectedAspectType.Large) {
-      await deleteDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString(), "Large", item.ElementUUID))
+      await deleteDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Large", item.ElementUUID))
     }
   }
 
   async function loadFromFirebase(){
-    console.log("Card", SelectedCard)
+    console.log("Card", SelectedPage)
     var resultSmall: CardElement[] = []
-    const snapshotSmall = await getDocs(collection(db, "Pages", SelectedCard.FirebaseID.toString(), "Small"))
+    const snapshotSmall = await getDocs(collection(db, "Pages", SelectedPage.FirebaseID.toString(), "Small"))
     snapshotSmall.forEach((doc) => {
       console.log(doc.id, " => ", doc.data());
       const data = doc.data()
@@ -657,7 +650,7 @@ export default function EditCard() {
     })
     setComponentsSmall(resultSmall)
     var resultMedium: CardElement[] = []
-    const snapshotMedium = await getDocs(collection(db, "Pages", SelectedCard.FirebaseID.toString(), "Medium"))
+    const snapshotMedium = await getDocs(collection(db, "Pages", SelectedPage.FirebaseID.toString(), "Medium"))
     snapshotMedium.forEach((doc) => {
       console.log(doc.id, " => ", doc.data());
       const data = doc.data()
@@ -681,7 +674,7 @@ export default function EditCard() {
     })
     setComponentsMedium(resultMedium)
     var resultLarge: CardElement[] = []
-    const snapshotLarge = await getDocs(collection(db, "Pages", SelectedCard.FirebaseID.toString(), "Small"))
+    const snapshotLarge = await getDocs(collection(db, "Pages", SelectedPage.FirebaseID.toString(), "Small"))
     snapshotLarge.forEach((doc) => {
       console.log(doc.id, " => ", doc.data());
       const data = doc.data()
@@ -840,7 +833,7 @@ export default function EditCard() {
                 </Col>
               </Row>
               <Row>
-                <ToolbarBottom zoomScale={zoomScale} onSetZoomScale={setZoomScale} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} onSetIsShowingCardsMenu={setIsShowingCardsMenu} onSetSelectedDeviceMode={setSelectedDeviceMode} selectedDeviceMode={selectedDeviceMode}
+                <ToolbarBottom zoomScale={zoomScale.toString()} onSetZoomScale={(e) => setZoomScale(parseFloat(e))} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} onSetIsShowingCardsMenu={setIsShowingCardsMenu} onSetSelectedDeviceMode={setSelectedDeviceMode} selectedDeviceMode={selectedDeviceMode}
                 isShowingPaulyLibaray={isShowingPaulyLibaray} onAddComponent={addComponent} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetInDotsMode={setIsInDotsMode} onSetInDrawMode={setIsInDrawMode} />
               </Row>
           </Container>
@@ -863,7 +856,7 @@ export default function EditCard() {
                       { (selectedSettingsMode === SelectedSettingsModeType.Discription) ? 
                         <Stack>
                           <p> Edit Use </p>
-                          <p> Current Use: {SelectedCard.Use}</p>
+                          <p> Current Use: {SelectedPage.Use}</p>
                           <Form.Label htmlFor="overlayUse">Use</Form.Label>
                           <Form.Control id="overlayUse"/>
                         </Stack>:null

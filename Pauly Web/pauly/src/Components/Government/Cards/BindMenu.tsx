@@ -4,7 +4,7 @@ import styles from "./Cards.module.css"
 import { collection, getDoc, getDocs, doc, updateDoc } from 'firebase/firestore'
 import { useAuth } from '../../../Contexts/AuthContext';
 import HorizontalPicker from "../../../UI/NavBar/NavBarHolder"
-import { useCardContext } from "./Cards.js"
+import { useCardContext } from "./Cards"
 
 declare global {
     type CommissionsType = {
@@ -44,7 +44,7 @@ export default function BindMenu(
         onSetIsShowingBindPage: (input: boolean) => void
     }
     ) {
-    const { SelectedCard } = useCardContext()
+    const { SelectedPage } = useCardContext()
     const [selectedCardBindMode, setSelectedCardBindMode] = useState<SelectedCardBindModeType>(SelectedCardBindModeType.Class)
     const { db, currentUserInfo } = useAuth()
     const [avaliableCommissions, setAvaliableCommissions] = useState<CommissionsType[]>([])
@@ -80,16 +80,20 @@ export default function BindMenu(
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
             const data = docSnap.data()
-            setSelectedClass({CourseName: data["CourseName"],
-                DayA: data["DayA"],
-                DayB: data["DayB"],
-                DayC: data["DayC"],
-                DayD: data["DayD"],
+            setSelectedClass({
+                courseName: data["CourseName"],
+                dayA: data["DayA"],
+                dayB: data["DayB"],
+                dayC: data["DayD"],
+                dayD: data["DayC"],
                 noClass: data["NoClass"],
                 schoolYear: data["School Year"],
                 section: data["Section"],
-                Semester: data["Semester"],
-                Teacher: data["Teacher"]
+                semester: data["Semester"],
+                teacher: data["Teacher"],
+                teacherArray: data["TeacherArray"],
+                team: data["TeamID"],
+                grade: parseInt(grade)
             })
             setSelectedClassView(SelectedClassViewType.Overview)
           } else {
@@ -210,7 +214,7 @@ export default function BindMenu(
     }, [])
 
     async function BindPage(value: string) {
-        await updateDoc(doc(db, "Pages", SelectedCard.FirebaseID.toString()), {BindRef: value})
+        await updateDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString()), {BindRef: value})
         //TO DO error handling
     }
 
@@ -319,9 +323,9 @@ export default function BindMenu(
                                 <Button onClick={() => {setSelectedClassView(SelectedClassViewType.Section)}}>
                                     Back
                                 </Button>
-                                <p>{selectedClass.CourseName}</p>
-                                <p>School Year: {selectedClass.schoolYear} Section: {selectedClass.section} Semester: {selectedClass.Semester}</p>
-                                <p>{selectedClass.Teacher}</p>
+                                <p>{selectedClass.courseName}</p>
+                                <p>School Year: {selectedClass.schoolYear} Section: {selectedClass.section} Semester: {selectedClass.semester}</p>
+                                <p>{selectedClass.teacher.FirstName} {selectedClass.teacher.LastName}</p>
                                 <button onClick={() => {
                                     BindPage("Class-" + selectedGrade + "-" + selectedClassName + "-"  + selectedClass.section + ((selectedClass.section === 0) ? "":"-") + ((selectedClass.section === 0) ? "":selectedClass.schoolYear.toString()))
                                 }}>

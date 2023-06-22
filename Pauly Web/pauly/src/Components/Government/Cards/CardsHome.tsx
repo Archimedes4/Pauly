@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { doc, collection, getDoc, getDocs, getFirestore, runTransaction } from "firebase/firestore";
 import { useAuth } from '../../../Contexts/AuthContext';
-import { useCardContext } from "./Cards.js"
+import { useCardContext } from "./Cards"
 import { Navigate, Link } from "react-router-dom"
 import styles from "./Cards.module.css"
 import { Stack } from 'react-bootstrap';
@@ -9,43 +9,50 @@ import {IoIosArrowBack} from "react-icons/io"
 
 export default function CardsHome() { 
   const { currentUser, currentUserMicrosoftAccessToken } = useAuth()
-  const [Cards, setCards] = useState([])
+  const [Cards, setCards] = useState<PageType[]>([])
   const { app, db } = useAuth()
-  const { SetSelectedCard } = useCardContext()
+  const { SetSelectedPage } = useCardContext()
 
-  async function getUserData() {
-    const docRef = doc(db, "Users/", currentUser.uid);
-    const docSnap = await getDoc(docRef);
+  // async function getUserData() {
+  //   const docRef = doc(db, "Users/", currentUser.uid);
+  //   const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      setCards(docSnap.data() as any)
-    } else {
-      // docSnap.data() will be undefined in this case
-      console.log("No such document!");
-    }
+  //   if (docSnap.exists()) {
+  //     console.log("Document data:", docSnap.data());
+  //     setCards(docSnap.data() as any)
+  //   } else {
+  //     // docSnap.data() will be undefined in this case
+  //     console.log("No such document!");
+  //   }
+  // }
+
+  const [gotCardData, setGotCardData] = useState(false)
+
+  async function getCardData() {
+    const db = getFirestore(app);
+    const querySnapshot = await getDocs(collection(db, "Pages"));
+    var newPages: PageType[] = []
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots.data()
+      if (doc.data().Count == undefined) {
+        const data = doc.data()
+        newPages.push(
+          {
+            BindRef: data["BindRef"],
+            FirebaseID: data["FirebaseID"],
+            Use: data["Use"]
+          }
+        )
+      }
+    });
+    setCards(newPages)
   }
 
-  const gotCardData = useRef(false)
-
   useEffect(() => {
-    if (gotCardData.current === false){
-      console.log('ran')
-      async function getCardData() {
-        const db = getFirestore(app);
-        const querySnapshot = await getDocs(collection(db, "Pages"));
-        querySnapshot.forEach((doc) => {
-          // doc.data() is never undefined for query doc snapshots.data()
-          if (doc.data().Count == undefined) {
-            setCards(Cards => [...Cards, doc.data()])
-            console.log("This is cards", Cards)
-          }
-        });
-      }
+    if (gotCardData === false){
       getCardData()
-      gotCardData.current = true
+      setGotCardData(true)
     }
-    console.log("This is cards", Cards)
   }, [currentUser.uid, gotCardData])
 
   const [NavigateToEdit, SetNavigateToEdit] = useState(false)
@@ -53,7 +60,7 @@ export default function CardsHome() {
   function setSelectedCard(e: React.SyntheticEvent, item: any){
     e.preventDefault()
     console.log(item)
-    SetSelectedCard(item)
+    SetSelectedPage(item)
     SetNavigateToEdit(true)
   }
 
@@ -69,7 +76,6 @@ export default function CardsHome() {
         if (!countDoc.exists()) {
           throw "Document does not exist!";
         }
-    
         const newID: number = countDoc.data().Count + 1
         transaction.set(doc(db, "Pages", newID.toString()), {FirebaseID: newID, Use: "Test", BindRef: ""})
         transaction.update(docRef, {Count: newID})

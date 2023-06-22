@@ -4,7 +4,7 @@ import VideoContainerCard from '../../../UI/VideoContainerCard.tsx';
 import PDFViewContainer from './PDFView.tsx';
 import TextEditor from './LexicalFunctions/TinyMCETextEditor.tsx';
 import SVG from './SVG.tsx';
-import RenderHTML from '../../../UI/SanatizedHTML.tsx';
+import RenderHTML from '../../../UI/SanatizedHTML/SanatizedHTML.tsx';
 
 export default React.forwardRef(({components, onSetComponents, zoomScale, onClick, bolded, italic, underlined, strikethrough, onPressed, onSetMousePosition, onIsShowingRightClick, selectedElementValue, isShowingRightClick, onIsChangingSize, onChangingSizeDirection, onIsUserTyping, isUserTyping, fontSize, fontStyle}:{
     components: CardElement[], 

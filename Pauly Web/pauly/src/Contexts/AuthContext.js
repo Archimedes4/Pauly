@@ -46,7 +46,9 @@ export function AuthProvider({ children }) {
     const provider = new OAuthProvider('microsoft.com');
     provider.addScope('mail.read');
     provider.addScope('calendars.read');
-    provider.addScope('Directory.Read.All')
+    provider.addScope('Directory.Read.All');
+    provider.addScope('Team.ReadBasic.All');
+    provider.addScope('Channel.ReadBasic.All');
 
     provider.setCustomParameters({
       tenant: 'd9ad3c89-6aed-4783-93ce-212b71ee98f3'

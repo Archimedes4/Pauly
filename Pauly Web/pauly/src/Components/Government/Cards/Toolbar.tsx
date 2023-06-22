@@ -7,8 +7,10 @@ import {FaBold, FaItalic, FaUnderline, FaStrikethrough} from "react-icons/fa"
 import {save} from './Canvas/CanvasHooks';
 import ReactQuill from 'react-quill'
 import "react-quill/dist/quill.snow.css";
-import { useCardContext } from "./Cards.js"
+import { useCardContext } from "./Cards"
 import { CanvasModeType } from './Canvas/Canvas';
+import { doc, getDoc } from 'firebase/firestore';
+import { useAuth } from '../../../Contexts/AuthContext';
 
 enum SelectedAspectType{
     Small,
@@ -66,7 +68,9 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
     const [fontList, setFontList] = useState<FontType []>([])
     const avaliableFontSizes: string[] = ["8px", "12px", "14px", "16px", "20px", "24px"]
     const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
-    const { SelectedCard } = useCardContext()
+    const { SelectedPage } = useCardContext()
+    const { db, currentUserMicrosoftAccessToken } = useAuth()
+    const [appIconURL, setAppIconURL] = useState("")
 
     useEffect(() => {
         fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8')
@@ -80,6 +84,10 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
         })
     }, [])
 
+    useEffect(() => {
+        loadPageData()
+    }, [SelectedPage.BindRef])
+
     function create_UUID(){
         var dt = new Date().getTime();
         var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -88,6 +96,58 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
             return (c=='x' ? r :(r&0x3|0x8)).toString(16);
         });
         return uuid;
+    }
+
+    async function loadPageData(){
+        if (SelectedPage.BindRef !== ""){
+          const BindArray = SelectedPage.BindRef.split("-")
+          if (BindArray[0] === "Class" && BindArray.length >= 4){
+            const classDocRef = doc(db, "Grade"+BindArray[1]+"Courses", BindArray[2], "Sections", (BindArray[3] == "0") ? "0":BindArray[3]+"-"+BindArray[4])
+            const classDocSnapshot = await getDoc(classDocRef)
+            if (classDocSnapshot.exists()){
+              const classData = classDocSnapshot.data()
+              getTeamsAvatar(classData["TeamID"])
+              const teacherDocRef = doc(db, "Users", classData["Teacher"])
+              const teacherDocSnap = await getDoc(teacherDocRef)
+              if (teacherDocSnap.exists()){
+                const teacherData = teacherDocSnap.data()
+                getTeacherLastMessage(teacherData["Teacher"], classData["TeamID"])
+              }
+            } else {
+              //TO DO handel error
+            }
+          }
+        }
+    }
+
+    async function getTeacherLastMessage(TeacherMicrosoftID: string, TeamId: string) {
+        const response = await fetch("https://graph.microsoft.com/v1.0/teams/"+TeamId+"/channels", {method: "Get", headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+            },})
+        const data = await response.json()
+        for (var index = 0; index < data["value"].length; index++){
+            const channelID: string = data["value"][index]["id"]
+            const channelResponse = await fetch("https://graph.microsoft.com/v1.0/chats/"+channelID, {method: "Get", headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+            },})
+            const channelData = channelResponse.json()
+            console.log(channelData)
+
+        }
+        console.log(data)
+    }
+    
+    async function getTeamsAvatar(TeamId: string) {
+        const response = await fetch("https://graph.microsoft.com/v1.0/teams/"+TeamId+"/photo/$value", {method: "Get", headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+        },})
+        const dataBlob = await response.blob()
+        const url = URL.createObjectURL(dataBlob)
+        setAppIconURL(url)
+        console.log(url) 
     }
 
     return (
@@ -239,7 +299,7 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                 { (isInDotsMode === false && isInDrawMode === false) ? 
                     <div>
                         {
-                            (SelectedCard.BindRef === "") ? 
+                            (SelectedPage.BindRef === "") ? 
                             <Container style={{backgroundColor: '#444444', height: "100%", width: "100%", margin: 0, padding: 0}}>
                                 <div style={{display: "flex", justifyContent: "center"}}>
                                     <p style={{fontSize: "16px", padding: 0, margin: 0, marginTop: "5%", color: "white"}}>Connect Your Page</p>
@@ -262,7 +322,24 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                                 <div style={{display: "flex", justifyContent: "center"}}>
                                     <p style={{fontSize: "16px", padding: 0, margin: 0, marginTop: "5%", color: "white"}}>Assests</p>
                                 </div>
-                                
+                                <div>
+                                    { (appIconURL !== "") ?
+                                        <button onClick={(e) => {
+                                            onAddComponent(e,  {ElementType: "Image", Content: appIconURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
+                                        }}>
+                                            <img src={appIconURL} style={{height: "50%", width: "50%"}} draggable={false}/>
+                                        </button>:null
+                                    }
+                                    <button>
+                                        Assignment
+                                    </button>
+                                    <button>
+                                        <div>
+                                            <p>Last Message From Teacher</p>
+
+                                        </div>
+                                    </button>
+                                </div>
                             </Container>
                         }
                     </div>:null

@@ -61,6 +61,7 @@ export default React.forwardRef(({text, onSetText, height, width}:{text: string,
 
     const onEditorChange = function (a: string, editor: any) {
         onSetText(a);
+        console.log(a)
     };
 
     useEffect(() => {

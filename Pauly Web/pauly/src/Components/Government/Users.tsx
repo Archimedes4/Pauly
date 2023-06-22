@@ -2,9 +2,10 @@ import React, { useEffect, useReducer, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Form, Stack } from 'react-bootstrap'
 import { useAuth } from '../../Contexts/AuthContext';
-import { collection, query, where, getDocs, limit, getCountFromServer, startAfter, doc, DocumentReference, DocumentData, QuerySnapshot, QueryDocumentSnapshot, startAt, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, limit, getCountFromServer, startAfter, doc, DocumentReference, DocumentData, QuerySnapshot, QueryDocumentSnapshot, startAt, orderBy, or, and } from "firebase/firestore";
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { title } from 'process';
+import UserQuery from '../../Functions/UserQuery';
 
 declare global{
   type UserType = {
@@ -20,26 +21,39 @@ declare global{
     SubmittedCommissions: number[] | null
     ElectionsVoted: string[] | null
     Email: string
-    Grade: number
+    Grade: number | null
     Groups: string[] | null
     MemberGroups: string[] | null
     NotificationToken: string
     Score: string | null
     Section: number
     Title: string
-    uid: string
+    uid: string,
+    MicrosoftID: string
   }
+}
+
+enum SelectedSearchModeType {
+  Staff,
+  Student,
+  All
 }
 
 export default function Users() {
   const { db, app,  currentUserMicrosoftAccessToken } = useAuth()
+  const getQuery = UserQuery()
   const [users, setUsers] = useState<UserType[]>([])
   const [selctedUser, setSelectedUser] = useState<UserType | null>(null)
   const [userCount, setUserCount] = useState<number>(0)
   const [microsoftUserCount, setMicrosoftUserCount] = useState<number>(0)
   const userContainerRef = useRef(null)
+
   const [currentPage, setCurrentPage] = useState<string | null>(null)
   const [searchText, setSearchText] = useState<string>("")
+  const [selectedSearchMode, setSelectedSearchMode] = useState<SelectedSearchModeType>(SelectedSearchModeType.All)
+  const [selectedGrade, setSelectedGrade] = useState<undefined | number>(undefined)
+  const [selectedSection, setSelectedSection] = useState(undefined)
+  const [searchCount, setSearchCount] = useState(null)
   
   async function getMicrosoftUsers(nextLinkIn: string) {
     const result = await fetch(nextLinkIn, {method: "Get", headers: {
@@ -48,7 +62,6 @@ export default function Users() {
     },})
     const data = await result.json()
     const nextLink = data["@odata.nextLink"]
-    console.log(data)
     return {
       Link: nextLink,
       Data: data["value"]
@@ -115,7 +128,6 @@ export default function Users() {
       "Authorization": "Bearer " + currentUserMicrosoftAccessToken
     },})
     const data = await result.json()
-    console.log(data)
     return data
   }
 
@@ -133,7 +145,6 @@ export default function Users() {
       }
       var userArray = []
       for (var index = 0; index < result.Data.length; index++) {
-        console.log(result.Data[index]["displayName"])
         const teams = await getMembership(result.Data[index]["id"])
         const year = new Date().getFullYear() 
         const month = new Date().getMonth()
@@ -148,8 +159,11 @@ export default function Users() {
         var staff = false
         var student = false
         var Grade = 9
-        for (var teamIndex = 0; teamIndex < teams.length; teamIndex++){
-          if (teams[teamIndex]["id"] === "067182cf-aede-45f8-8e2a-8c817b11e978"){
+        var TeamIdsRan = ""
+        console.log(teams["value".length])
+        for (var teamIndex = 0; teamIndex < teams["value"].length; teamIndex++){
+          TeamIdsRan += teams["value"][teamIndex]["id"] + " "
+          if (teams["value"][teamIndex]["id"] === "067182cf-aede-45f8-8e2a-8c817b11e978" || teams["value"][teamIndex]["id"] === "104f886b-08e0-4415-a694-fc4e3203c6e0"){
             staff = true
             console.log("THIS IS A STAFF MEMBER")
           }
@@ -175,9 +189,11 @@ export default function Users() {
           userArray.push({Grade: null, Title: "Staff", userName: result.Data[index]["userPrincipalName"], surname: result.Data[index]["surname"], givenName: result.Data[index]["givenName"], displayName: result.Data[index]["displayName"], externalId: result.Data[index]["id"]})
         } else if (student) {
           userArray.push({Grade: Grade, Title: "Student", userName: result.Data[index]["userPrincipalName"], surname: result.Data[index]["surname"], givenName: result.Data[index]["givenName"], displayName: result.Data[index]["displayName"], externalId: result.Data[index]["id"]})
-          console.log({Grade: Grade, Title: "Student", userName: result.Data[index]["userPrincipalName"], surname: result.Data[index]["surname"], givenName: result.Data[index]["givenName"], displayName: result.Data[index]["displayName"], externalId: result.Data[index]["id"]})
-          console.log(result.Data[index])
         } else {
+          console.log(result.Data[index]["displayName"])
+          console.log(teams)
+          console.log("length", teams["value"].length)
+          console.log(TeamIdsRan)
           userArray.push({Grade: null, Title: "", userName: result.Data[index]["userPrincipalName"], surname: result.Data[index]["surname"], givenName: result.Data[index]["givenName"], displayName: result.Data[index]["displayName"], externalId: result.Data[index]["id"]})
         }
       }
@@ -219,66 +235,18 @@ export default function Users() {
     }
   }
 
-  async function getUsers(page?: string, search?: string, teacher?: boolean, student?: boolean){
-    console.log("This is page", page)
-
-    var q = query(collection(db, "Users"), orderBy("uid"), limit(100));
-    // if (teacher){
-    //   if (search !== undefined){
-    //     q = query(collection(db, "Users"), where("First Name", ">=", search), limit(100));
-    //   } else {
-    //     q = query(collection(db, "Users"), where("Title", "==", ""), limit(100));
-    //   }
-    // } else if (student) {
-    //   if (search !== undefined){
-    //     q = query(collection(db, "Users"), where("First Name", ">=", search), limit(100));
-    //   } else {
-
-    //   }
-    // } else {
-    //   if (search !== undefined){
-    //     q = query(collection(db, "Users"), where("First Name", ">=", search), limit(100));
-    //   } else 
-    if (page !== null && page !== undefined) {
-      console.log("A change occured")
-      q = query(collection(db, "Users"), orderBy("uid"), startAfter(page), limit(100));
+  async function getUsers(searchMode: SelectedSearchModeType, newSearch: boolean, page?: string, search?: string){
+    console.log(selectedGrade)
+    var q = await getQuery({newSearch: newSearch, search: search, page: page, grade: selectedGrade, section: undefined, staff: (searchMode === SelectedSearchModeType.Staff) ? true:false, student: (searchMode === SelectedSearchModeType.Student) ? true:false})
+    setCurrentPage(q.NextPage)
+    if (newSearch){
+      setUsers(q.value)
+    } else {
+      setUsers([...users, ...q.value])
     }
-   // }
-    console.log(q)
-    const querySnapshot = await getDocs(q);
-    var newUsers: UserType[] = []
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      const data = doc.data()
-      newUsers.push({
-        FirstName: data["First Name"],
-        LastName: data["Last Name"],
-        Permissions: data["Permissions"],
-        ClassMode: data["ClassMode"],
-        ClassPerms: data["ClassPerms"],
-        SportsMode: data["SportsMode"],
-        SportsPerms: data["SportsPerms"],
-        Classses: data["Classses"],
-        CompletedCommissions: data["CompletedCommissions"],
-        SubmittedCommissions: data["SubmittedCommissions"],
-        ElectionsVoted: data["ElectionsVoted"],
-        Email: data["Email"],
-        Grade: data["Grade"],
-        Groups: data["Groups"],
-        MemberGroups: data["MemberGroups"],
-        NotificationToken: data["NotificationToken"],
-        Score: data["Score"],
-        Section: data["Section"],
-        Title: data["Title"],
-        uid: data["uid"]
-      })
-    });
-    if (search === undefined){      
-      console.log("This", querySnapshot.docs[querySnapshot.docs.length-1].get("First Name"))
-      setCurrentPage(querySnapshot.docs[querySnapshot.docs.length-1].get("uid"))
+    if (q.Count !== null){
+      setSearchCount(q.Count)
     }
-    console.log("Value")
-    setUsers(newUsers)
   }
 
   async function getMicrosoftUserCount() {
@@ -297,26 +265,30 @@ export default function Users() {
     setUserCount(snapshot.data().count)
   }
 
-  function handelScroll() {
-    let triggerHeight = userContainerRef.current.scrollTop + userContainerRef.current.offsetHeight;
-    if (triggerHeight >= userContainerRef.current.scrollHeight){
-      console.log("Triggering")
-      userContainerRef.current.scrollTo({
-        top: 0
-      })
-      getUsers(currentPage)
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight, offsetHeight, offsetWidth } = userContainerRef.current;
+    const hasOverflowingChildren = offsetHeight < scrollHeight
+    const bottom = scrollHeight - scrollTop === clientHeight;
+    if (bottom && hasOverflowingChildren) { 
+      console.log("This is page", currentPage)
+      getUsers(selectedSearchMode, false,  currentPage)
     }
   }
 
   useEffect(() => {
-    getUsers(currentPage)
     getUserCount()
-  }, [])
+  }, []) 
 
   useEffect(() => {
-    userContainerRef.current.addEventListener('scroll', handelScroll)
-  }, [currentPage])
-  
+    setUsers([])
+    getUsers(selectedSearchMode, true, currentPage)
+  }, [selectedSearchMode])
+
+  useEffect(() => {
+    console.log("This", selectedGrade)
+    setUsers([])
+    getUsers(selectedSearchMode, true, currentPage)
+  }, [selectedGrade])
 
   return (
     <div>
@@ -337,21 +309,50 @@ export default function Users() {
             <Stack>
               <Link to='/government/'>Back</Link>
               <p>User Count: {userCount} Microsoft User Count: {microsoftUserCount}</p>
-              <button>Teachers</button><button>Students</button>
+              <button onClick={() => {setCurrentPage(""); setSelectedSearchMode(SelectedSearchModeType.Staff); setSelectedGrade(undefined); setSelectedSection(undefined)}}>
+                Teachers
+              </button>
+              <button onClick={() => {setCurrentPage(""); setSelectedSearchMode(SelectedSearchModeType.Student)}}>
+                Students
+              </button>
+              <button onClick={() => {setSelectedSearchMode(SelectedSearchModeType.All); setSelectedGrade(undefined); setSelectedSection(undefined)}}>
+                All Users
+              </button>
+              { (selectedSearchMode === SelectedSearchModeType.Student) ? 
+                <div>
+                  <p>Student</p>
+                  <p>Grade</p>
+                  <select value={selectedGrade} onChange={(e) => {
+                    console.log(parseInt(e.currentTarget.value))
+                    setCurrentPage("");
+                    setSelectedGrade(parseInt(e.currentTarget.value))}}>
+                    <option value={undefined}>No Selection</option>
+                    <option value={9}>Grade 9</option>
+                    <option value={10}>Grade 10</option>
+                    <option value={11}>Grade 11</option>
+                    <option value={12}>Grade 12</option>
+                  </select>
+                </div>:null
+              }
               <Form onSubmit={(e) => {
                 e.preventDefault()
-                console.log(searchText)
-                getUsers(currentPage, searchText)
+                getUsers(selectedSearchMode, true, currentPage, searchText)
+                userContainerRef.current.scrollTo({
+                  top: 0,
+                });
               }} style={{backgroundColor:  "#793033", width: "80vw"}}>
                 <Form.Group id="email">
                   <Form.Control  value={searchText} onChange={(e) => {
                     e.preventDefault()
                     setSearchText(e.currentTarget.value)
-                  }} required />
+                  }} />
                 </Form.Group>
               </Form>
-              <div style={{height: "50vh"}}>
-                <div ref={userContainerRef} style={{overflow: "scroll", height: "50vh"}}>
+              {(searchCount !== null) ?
+                <p>Search Result Count: {searchCount}</p>:null
+              }
+              <div style={{height: "50vh"}} >
+                <div ref={userContainerRef} onScroll={() => handleScroll()} style={{overflow: "scroll", height: "50vh"}}>
                   { users.map((user) => (
                     <div>
                       <button onClick={() => {
@@ -389,12 +390,10 @@ export default function Users() {
               }}>
                 Sync User Data With Microsoft
               </button>
-              <button onClick={ async () => {
-                const functions = getFunctions(app);
-                const addMessage = httpsCallable(functions, 'helloWorld');
-                const result = await addMessage({})
+              <button onClick={() => {
+                setUsers([])
               }}>
-                Test Firebase Function
+                Clear
               </button>
             </Stack>
         }
