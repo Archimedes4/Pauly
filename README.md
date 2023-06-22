@@ -1,2 +1,2 @@
-# PaulyUnbroken
- GIT HUB BAD
+# Pauly
+Pauly is a hub for all things school related. 
