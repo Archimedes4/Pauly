@@ -51,6 +51,7 @@ function CardAddNewCard({isShowingPaulyLibaray, onSetIsShowingPaulyLibrary, onSe
     const [isInDrawMode, setIsInDrawMode] = useState(false)
     const [dotsText, setDotsText] = useState("")
     const [selectedTextColor, setSelectedTextColor] = useState("")
+    const [selectedHighlightColor, setSelectedHighlightColor] = useState("#000000")
     const [selectedBrushColor, setSelectedBrushColor] = useState("#000000")
 
     const handleOnClick = (e: React.SyntheticEvent, Index: CardElement) => {
@@ -240,7 +241,7 @@ function CardAddNewCard({isShowingPaulyLibaray, onSetIsShowingPaulyLibrary, onSe
                                     }}
                                     onMouseMove={ onMouseMove }
                                 >
-                                    <EditCardArea components={components} onSetComponents={setComponents} zoomScale={parseFloat(zoomScale)} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>
+                                    <EditCardArea components={components} onSetComponents={setComponents} zoomScale={parseFloat(zoomScale)} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}></EditCardArea>
                                 {/* End Of Components */}
                                 </div>
                             </div>

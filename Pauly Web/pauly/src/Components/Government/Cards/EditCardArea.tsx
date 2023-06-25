@@ -4,47 +4,45 @@ import VideoContainerCard from '../../../UI/VideoContainerCard.tsx';
 import PDFViewContainer from './PDFView.tsx';
 import TextEditor from './LexicalFunctions/TinyMCETextEditor.tsx';
 import SVG from './SVG.tsx';
-import RenderHTML from '../../../UI/SanatizedHTML/SanatizedHTML.tsx';
+import LexicalRead from './LexicalFunctions/LexicalEditorReadOnly.tsx';
+import LexicalEditor from "./LexicalFunctions/LexicalEditor.tsx"
 
-export default React.forwardRef(({components, onSetComponents, zoomScale, onClick, bolded, italic, underlined, strikethrough, onPressed, onSetMousePosition, onIsShowingRightClick, selectedElementValue, isShowingRightClick, onIsChangingSize, onChangingSizeDirection, onIsUserTyping, isUserTyping, fontSize, fontStyle}:{
-    components: CardElement[], 
-    onSetComponents: (item: CardElement[]) => void,
-    zoomScale: number, 
-    onClick: (e: React.SyntheticEvent, Index: CardElement) => void,
-    bolded: boolean,
-    onSetIsBolded: (item: boolean) => void,
-    italic: boolean,
-    underlined: boolean,
-    strikethrough: boolean,
-    onPressed: (item: boolean) => void,
-    onSetMousePosition: (item: {x: number, y: number}) => void,
-    onIsShowingRightClick: (item: boolean) => void,
-    selectedElementValue: CardElement,
-    isShowingRightClick: boolean,
-    onIsChangingSize: (item: boolean) => void,
-    onChangingSizeDirection: (item: string) => void,
-    onIsUserTyping: (item: boolean) => void,
-    isUserTyping: boolean,
-    fontSize: string,
-    fontStyle: string
-    }, ref) =>  {
-    const textEditorRef = useRef(null)
-    useImperativeHandle(ref, () => {
-        return {
-            bold () {
-                textEditorRef.current?.bold()
-            },
-            italic () {
-                textEditorRef.current?.italic()
-            },
-            underline (){
-                textEditorRef.current?.underline()
-            },
-            strikethrough () {
-                textEditorRef.current?.strikethrough()
-            }
-        }
-    }, [])
+export default function ExitCardArea({
+    components, onSetComponents, zoomScale, 
+    onClick, bolded, italic, underlined, 
+    strikethrough, onPressed, onSetMousePosition, 
+    onIsShowingRightClick, selectedElementValue, isShowingRightClick, 
+    onIsChangingSize, onChangingSizeDirection, onIsUserTyping,
+    isUserTyping, fontSize, fontStyle, selectedHighlightColor, selectedTextColor}:
+    {
+        components: CardElement[], 
+        onSetComponents: (item: CardElement[]) => void,
+        zoomScale: number, 
+        onClick: (e: React.SyntheticEvent, Index: CardElement) => void,
+        onPressed: (item: boolean) => void,
+        onSetMousePosition: (item: {x: number, y: number}) => void,
+        onIsShowingRightClick: (item: boolean) => void,
+        selectedElementValue: CardElement,
+        isShowingRightClick: boolean,
+        onIsChangingSize: (item: boolean) => void,
+        onChangingSizeDirection: (item: string) => void,
+
+        //Text
+        onIsUserTyping: (item: boolean) => void,
+        isUserTyping: boolean,
+        bolded: boolean,
+        onSetIsBolded: (item: boolean) => void,
+        italic: boolean,
+        onSetIsItalic: (item: boolean) => void,
+        underlined: boolean,
+        onSetIsUnderlined: (item: boolean) => void,
+        strikethrough: boolean,
+        onSetIsStrikethrough: (item: boolean) => void,
+        fontSize: string,
+        fontStyle: string,
+        selectedHighlightColor: string,
+        selectedTextColor: string
+    }) {
   return (
     <div>
         {components?.map((item: CardElement) => ( 
@@ -78,16 +76,27 @@ export default React.forwardRef(({components, onSetComponents, zoomScale, onClic
                         case "Text": return (
                             <div style={{width: item.Width, height: item.Height}}>
                                 { (selectedElementValue?.ElementUUID === item.ElementUUID) ?
-                                    <TextEditor text={item.Content} onSetText={(value: string) => {
-                                        if (value !== undefined && selectedElementValue){
-                                            const NewComponents = [...components]
-                                            const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                                            NewComponents[SelectedIndex]["Content"] = value
-                                            onSetComponents(NewComponents)
-                                        }
-                                    }}ref={textEditorRef} height={item.Height} width={item.Width}/>:
                                     <div>
-                                        <RenderHTML value={item.Content} />
+                                        {  isUserTyping ? 
+                                            <LexicalEditor height={item.Height} width={item.Width} EditorState={item.Content} onEditorStateChange={(value: string) => {
+                                                if (value !== undefined && selectedElementValue){
+                                                    const NewComponents = [...components]
+                                                    const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                                                    NewComponents[SelectedIndex]["Content"] = value
+                                                    onSetComponents(NewComponents)
+                                                    console.log("Changin value", value)
+                                                }
+                                            }} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} selectedFontSize={fontSize} selectedFontStyle={fontStyle} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}
+                                            onSetIsBold={() => {}} onSetIsItalic={() => {}} onSetIsUnderline={() => {}} onSetIsStrikethrough={() => {}} onSetIsSubscript={() => {}} onSetIsSuperscript={() => {}}/>:
+                                            <div onClick={() => {
+                                                onIsUserTyping(true)
+                                            }}>
+                                                <LexicalRead value={item.Content} onMount={() => { onIsUserTyping(false); } } width={item.Width} height={item.Height}/>
+                                            </div>
+                                        }
+                                    </div>:
+                                    <div>
+                                        <LexicalRead value={item.Content} onMount={() => {onIsUserTyping(false)}} width={item.Width} height={item.Height}/>
                                     </div> 
                                 } {/* onIsUserTyping={onIsUserTyping} isUserTyping={isUserTyping} item={item} bolded={bolded} italic={italic} strikethrough={strikethrough} underlined={underlined} fontSize={fontSize} fontStyle={fontStyle} selectedElementValue={selectedElementValue}*/}  
                             </div>
@@ -166,4 +175,4 @@ export default React.forwardRef(({components, onSetComponents, zoomScale, onClic
         ))}
     </div>
   )
-})
+}

@@ -91,7 +91,7 @@ export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowing
             </div>
             <div style={{gridRow: 1, gridColumn: 2}}>
                 <Button className={styles.DropdownButtonStyle} onClick={(e) => {
-                            onAddComponent(e,  {ElementType: "Text", Content: "Text", Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
+                            onAddComponent(e,  {ElementType: "Text", Content: '{"root":{"children":[{"children":[],"direction":null,"format":"","indent":0,"type":"paragraph","version":1}],"direction":null,"format":"","indent":0,"type":"root","version":1}}', Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                     }}>
                         <img src={textIcon} className={styles.imgContainer } style={{maxWidth: "2vh", height: "auto"}}/>
                 </Button>

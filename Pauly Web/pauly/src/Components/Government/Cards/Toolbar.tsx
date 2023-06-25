@@ -71,6 +71,8 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
     const { SelectedPage } = useCardContext()
     const { db, currentUserMicrosoftAccessToken } = useAuth()
     const [appIconURL, setAppIconURL] = useState("")
+    const [opacity, setOpacity] = useState<number>(1)
+    const [selectedColor, setSelectedColor] = useState("")
 
     useEffect(() => {
         fetch('https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyB-YMRvC6BSysmmxt5ZQGIZ06izNO20lU8')
@@ -126,17 +128,25 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
             "Authorization": "Bearer " + currentUserMicrosoftAccessToken
             },})
         const data = await response.json()
-        for (var index = 0; index < data["value"].length; index++){
-            const channelID: string = data["value"][index]["id"]
-            const channelResponse = await fetch("https://graph.microsoft.com/v1.0/chats/"+channelID, {method: "Get", headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + currentUserMicrosoftAccessToken
-            },})
-            const channelData = channelResponse.json()
-            console.log(channelData)
-
+        if (response.status === 200){
+            for (var index = 0; index < data["value"].length; index++){
+                const channelID: string = data["value"][index]["id"]
+                const channelResponse = await fetch("https://graph.microsoft.com/v1.0/chats/"+channelID, {method: "Get", headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + currentUserMicrosoftAccessToken
+                },})
+                const channelData = channelResponse.json()
+    
+            }
+        } else {
+            if (response.status === 401){
+                //To DO handle unautorized
+            } else if (response.status === 403) {
+                //TO DO handle and log error
+            } else {
+                //TO Do create default catch all
+            }
         }
-        console.log(data)
     }
     
     async function getTeamsAvatar(TeamId: string) {
@@ -148,6 +158,32 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
         const url = URL.createObjectURL(dataBlob)
         setAppIconURL(url)
         console.log(url) 
+    }
+
+    function hexToRgb(hex: string) {
+        // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+        var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+          return r + r + g + g + b + b;
+        });
+      
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
+    }
+
+    function rgbaToHex(rgba: string) {
+        const RGBArray = rgba.split(/[(), ]/)
+        if (RGBArray.length === 9){
+            function componentToHex(c: string) {
+                var hex = parseInt(c).toString(16);
+                return hex.length == 1 ? "0" + hex : hex;
+            }
+            return "#" + componentToHex(RGBArray[1]) + componentToHex(RGBArray[3]) + componentToHex(RGBArray[5])
+        }
     }
 
     return (
@@ -245,8 +281,9 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                         </Dropdown>
                         </Row>
                         <Row>
-                            <input type="color" id="colorpicker" value={selectedTextColor} onChange={changeEvent => {
-                                onSetSelectedTextColor(changeEvent.target.value)
+                            <input type="color" id="colorpicker" value={rgbaToHex(selectedTextColor)} onChange={changeEvent => {
+                                const RgbResult = hexToRgb(changeEvent.target.value)
+                                onSetSelectedTextColor(`rgba(${RgbResult.r}, ${RgbResult.g}, ${RgbResult.b}, ${opacity})`)
                             }} />
                         </Row>
                     </>:null

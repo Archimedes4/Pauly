@@ -123,11 +123,11 @@ export default function EditCard() {
   const [underlined, setUnderlined] = useState<boolean>(false)
   const [italic, setItalic] = useState<boolean>(false)
   const [strikethrough, setStrikethrough] = useState<boolean>(false)
+  const [selectedFont, setSelectedFont] = useState<FontType>(null)
   const [fontSize, setFontSize] = useState<string>("12px")
   const [fontStyle, setFontStyle] = useState<string>("Times New Roman")
-  const [selectedFont, setSelectedFont] = useState<FontType>(null)
-  const [selectedTextColor, setSelectedTextColor] = useState("#000000")
-  const textEditorRef = useRef(null)
+  const [selectedTextColor, setSelectedTextColor] = useState("rgba(0, 0, 0, 1)")
+  const [selectedHighlightColor, setSelectedHighlightColor] = useState("rgba(255, 165, 0, 0)")
 
 
   //Card Menu
@@ -263,30 +263,30 @@ export default function EditCard() {
       const nPositionY =  -13 + YPosition + YOffset
       //YOffset
       
-      console.log(
-        "Report",
-        "\n chaningSizeDirection:", chaningSizeDirection,
-        "\n nePositionX:", nePositionX, 
-        "\n ePositionX", ePositionX, 
-        "\n sePositionX: ", sePositionX,  
-        "\n sPositionX:", sPositionX , 
-        "\n swPositionX:", swPositionX, 
-        "\n wPositionX", wPositionX, 
-        "\n nwPositionX:", nwPositionX,
-        "\n nPositionX", nPositionX, 
-        "\n nePositionY", nePositionY, 
-        "\n ePositionY", ePositionY, 
-        "\n sePositionY", sePositionY, 
-        "\n sPositionY:", sPositionY , 
-        "\n swPositionY:", swPositionY, 
-        "\n wPositionY:", wPositionY,
-        "\n nwPositionY:", nwPositionY, 
-        "\n nPositionY ", 
-        "\n nPositionY < sPositionY:", (nPositionY < sPositionY),
-        "\n sPositionY < nPositionY:", sPositionY < nPositionY,
-        "\n YPosition", NewComponents[SelectedIndex]["Position"]["YPosition"],
-        "\n XPosition", NewComponents[SelectedIndex]["Position"]["XPosition"],
-        )
+      // console.log(
+      //   "Report",
+      //   "\n chaningSizeDirection:", chaningSizeDirection,
+      //   "\n nePositionX:", nePositionX, 
+      //   "\n ePositionX", ePositionX, 
+      //   "\n sePositionX: ", sePositionX,  
+      //   "\n sPositionX:", sPositionX , 
+      //   "\n swPositionX:", swPositionX, 
+      //   "\n wPositionX", wPositionX, 
+      //   "\n nwPositionX:", nwPositionX,
+      //   "\n nPositionX", nPositionX, 
+      //   "\n nePositionY", nePositionY, 
+      //   "\n ePositionY", ePositionY, 
+      //   "\n sePositionY", sePositionY, 
+      //   "\n sPositionY:", sPositionY , 
+      //   "\n swPositionY:", swPositionY, 
+      //   "\n wPositionY:", wPositionY,
+      //   "\n nwPositionY:", nwPositionY, 
+      //   "\n nPositionY ", 
+      //   "\n nPositionY < sPositionY:", (nPositionY < sPositionY),
+      //   "\n sPositionY < nPositionY:", sPositionY < nPositionY,
+      //   "\n YPosition", NewComponents[SelectedIndex]["Position"]["YPosition"],
+      //   "\n XPosition", NewComponents[SelectedIndex]["Position"]["XPosition"],
+      //   )
       if (pressed){
         NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
         NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
@@ -463,7 +463,6 @@ export default function EditCard() {
   }
 
   const handler = (event: React.KeyboardEvent) => {
-    console.log("Here")
     if (event.key === 'Backspace' && !isUserTyping && selectedElementValue) {
       console.log("Deleteing")
       DeleteFunction()
@@ -740,7 +739,7 @@ export default function EditCard() {
                     console.log("This is Image", myImage)
                     addComponent(e,  {ElementType: "Image", Content: myImage, Position: {XPosition: 0, YPosition: 0}, Width: 500, Height: 500, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                     setIsInDrawMode(false)
-                  }} selectedBrushColor={selectedBrushColor} onSetSelectedBrushColor={setSelectedBrushColor} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} onSetIsNavigateToDestinations={setIsNavigateToDestinations} selectedElementValue={selectedElementValue} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetComponents={(selectedDeviceMode === SelectedAspectType.Small) ? setComponentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? setComponentsMedium:setComponentsLarge} onSetSelectedElement={setSelectedElement} onSetBolded={(e) => {setBolded(e); textEditorRef.current.bold()}} onSetItalic={(e) => {setItalic(e); textEditorRef.current.italic()}} onSetUnderlined={(e) => {setUnderlined(e); textEditorRef.current.underline()}} onSetStrikethrough={(e) => {setStrikethrough(e); textEditorRef.current.strikethrough()}} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
+                  }} selectedBrushColor={selectedBrushColor} onSetSelectedBrushColor={setSelectedBrushColor} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} onSetIsNavigateToDestinations={setIsNavigateToDestinations} selectedElementValue={selectedElementValue} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetComponents={(selectedDeviceMode === SelectedAspectType.Small) ? setComponentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? setComponentsMedium:setComponentsLarge} onSetSelectedElement={setSelectedElement} onSetBolded={(e) => {setBolded(e)}} onSetItalic={(e) => {setItalic(e)}} onSetUnderlined={(e) => {setUnderlined(e)}} onSetStrikethrough={(e) => {setStrikethrough(e)}} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
                 </Col>
                 {/* <Col style={{backgroundColor: "#793033",padding: 0, margin: 0, height: "100%"}}>
                     <div style={{height: "100%"}}> */}
@@ -765,7 +764,6 @@ export default function EditCard() {
                       tabIndex={0}
                       onKeyDown={(e) => {
                         handler(e)
-                        console.log("Went down")
                       }}
                       style={{display: (zoomScale >= 100) ? "block":"flex", justifyContent: "center", alignItems: "center", height: "85vh", width: "84vw", overflow: "scroll"}}
                     >
@@ -805,14 +803,15 @@ export default function EditCard() {
                               onMouseMove={ onMouseMove }
                               ref={editorRef}
                             >
+                              {/* TO DO use terneray expersions to condense into one*/}
                               { (selectedDeviceMode === SelectedAspectType.Small) ?
-                                <EditCardArea ref={textEditorRef} components={componentsSmall} onSetComponents={setComponentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
+                                <EditCardArea components={componentsSmall} onSetComponents={setComponentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}></EditCardArea>:null
                               }
                               { (selectedDeviceMode === SelectedAspectType.Medium) ?
-                                <EditCardArea ref={textEditorRef} components={componentsMedium} onSetComponents={setComponentsMedium} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
+                                <EditCardArea components={componentsMedium} onSetComponents={setComponentsMedium} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}></EditCardArea>:null
                               }
                               { (selectedDeviceMode === SelectedAspectType.Large) ?
-                                <EditCardArea ref={textEditorRef} components={componentsLarge} onSetComponents={setComponentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}}></EditCardArea>:null
+                                <EditCardArea components={componentsLarge} onSetComponents={setComponentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor} ></EditCardArea>:null
                               }
                               {isInDrawMode ? 
                                 <div style={{zIndex: 100}}>
