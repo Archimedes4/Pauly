@@ -7,11 +7,12 @@ import VideoContainer from '../../../UI/VideoContainer.tsx';
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter } from "firebase/firestore";
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL, getBlob } from 'firebase/storage';
-import { useAuth } from '../../../Contexts/AuthContext';
+import { UseAuth } from '../../../Contexts/AuthContext';
 import PDFView from "./PDFView.tsx"
 import CustomButton from '../../../UI/CustomButton/CustomButton.tsx';
 import HorizontalPicker from "../../../UI/NavBar/NavBarHolder"
 import Progress from '../../../UI/ProgressView/Progress.tsx';
+import create_UUID from "../../../Functions/CreateUUID"
 
 type fileUserType = {
     UsersName: string
@@ -46,20 +47,12 @@ enum SelectedImageLibraryModeType {
     Videos,
     PDFS
 }
-
-enum SelectedAspectType{
-    Small,
-    Medium,
-    Large
-}
   
-export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetIsShowingPaulyLibrary, componentsSmall, componentsMedium, componentsLarge}:{
+export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetIsShowingPaulyLibrary, components}:{
     onAddComponent: (e: React.SyntheticEvent, newValue:CardElement) => void
-    selectedDeviceMode: SelectedAspectType
+    selectedDeviceMode: deviceModeType
     onSetIsShowingPaulyLibrary: (item: boolean) => void
-    componentsSmall: CardElement[]
-    componentsMedium: CardElement[]
-    componentsLarge: CardElement[]
+    components: CardElement[]
 }) {
     //Pauly Library
     const fileInputRef = useRef(null);
@@ -84,7 +77,7 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
     const [collectionPageNumber, setCollectionPageNumber] = useState<number>(1)
     const [selectedFileLibrary, setSelectedFileLibrary] = useState<fileType | null>(null)
     const [SelectedImageLibraryMode, setSelectedImageLibraryMode] = React.useState<SelectedImageLibraryModeType>(SelectedImageLibraryModeType.Images)
-    const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
+    const { app, db, currentUser, currentUserMicrosoftAccessToken } = UseAuth()
 
     const storage = getStorage(app);
 
@@ -509,17 +502,6 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
         setFiles(NewComponents)
     }
 
-
-    function create_UUID(){
-      var dt = new Date().getTime();
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          var r = (dt + Math.random()*16)%16 | 0;
-          dt = Math.floor(dt/16);
-          return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-      });
-      return uuid;
-    }
-
     return (
         <>
             <input onClick={() => {setIsShowingUpload(false)}} onBlur={() => {setIsShowingUpload(false); console.log("This")}} type="file" accept="'image/gif', 'image/jpeg', 'image/png', 'image/avif', 'application/pdf', 'image/svg+xml', 'image/webp', 'image/bmp', 'audio/aac', 'video/x-msvideo', 'audio/mpeg', 'video/mp4', 'video/mpeg', 'audio/webm', 'video/webm', 	'video/quicktime', 'application/pdf', 'text/csv', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/rtf', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'text/plain', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.apple.keynote', 'application/vnd.apple.pages', 'application/vnd.apple.numbers'" onChange={handleFileChange} style={{display: "none"}} ref={fileInputRef}/>
@@ -727,7 +709,7 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                                             >
                                                 <div style={{display: "inline", width: "100%", height: "100%"}}>
                                                 {(item.fileURL === null) ?
-                                                    <div><p>File Loading</p><Progress /></div>:
+                                                    <div><p>File Loading</p><Progress height={10}/></div>:
                                                     <>
                                                         { (SelectedImageLibraryMode === SelectedImageLibraryModeType.Gifs || SelectedImageLibraryMode === SelectedImageLibraryModeType.Images) ? 
                                                         <img src={item.fileURL} alt='Oh No' style={ item.selected ?
@@ -760,29 +742,11 @@ export default function PaulyLibrary({onAddComponent, selectedDeviceMode, onSetI
                                         <>
                                             <div onClick={(e) => {
                                                 if (selectedFileLibrary.fileType ===  "image/jpeg" || selectedFileLibrary.fileType ===  "image/gif"){
-                                                    if (selectedDeviceMode === SelectedAspectType.Small){
-                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                                        onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    }
+                                                  onAddComponent(e,  {ElementType: "Image", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                 } else if (selectedFileLibrary.fileType ===  "video/mp4") {
-                                                    if (selectedDeviceMode === SelectedAspectType.Small){
-                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                                        onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    }
+                                                  onAddComponent(e,  {ElementType: "Video", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                 } else if (selectedFileLibrary.fileType === "application/pdf") {
-                                                    if (selectedDeviceMode === SelectedAspectType.Small){
-                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsMedium.length + 1, ElementIndex: componentsMedium.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    } else if (selectedDeviceMode === SelectedAspectType.Large){
-                                                        onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: componentsLarge.length + 1, ElementIndex: componentsLarge.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
-                                                    }
+                                                  onAddComponent(e,  {ElementType: "PDF", Content: selectedFileLibrary.fileURL, Position: {XPosition: 0, YPosition: 0}, Width: 50, Height: 50, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                                                 }
                                                 onSetIsShowingPaulyLibrary(false)
                                                 }}>

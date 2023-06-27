@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Form, Stack } from 'react-bootstrap'
-import { useAuth } from '../../Contexts/AuthContext';
+import { UseAuth } from '../../Contexts/AuthContext';
 import { collection, query, where, getDocs, limit, getCountFromServer, startAfter, doc, DocumentReference, DocumentData, QuerySnapshot, QueryDocumentSnapshot, startAt, orderBy, or, and } from "firebase/firestore";
 import { getFunctions, httpsCallable } from 'firebase/functions';
 import { title } from 'process';
@@ -40,7 +40,7 @@ enum SelectedSearchModeType {
 }
 
 export default function Users() {
-  const { db, app,  currentUserMicrosoftAccessToken } = useAuth()
+  const { db, app,  currentUserMicrosoftAccessToken } = UseAuth()
   const getQuery = UserQuery()
   const [users, setUsers] = useState<UserType[]>([])
   const [selctedUser, setSelectedUser] = useState<UserType | null>(null)

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { useAuth } from "../Contexts/AuthContext"
+import { UseAuth } from "../Contexts/AuthContext"
 import { Link, useNavigate } from "react-router-dom"
 import { Form, Button, Card, Alert } from "react-bootstrap"
 import microsoftIcon from "../images/MicrosoftLogo.png"
@@ -7,7 +7,7 @@ import microsoftIcon from "../images/MicrosoftLogo.png"
 export default function Login() {
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
-  const { LoginPassword, LoginMicrosoft } = useAuth()
+  const { LoginPassword, LoginMicrosoft } = UseAuth()
   const history = useNavigate()
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -30,8 +30,7 @@ export default function Login() {
     try{
       setError("")
       setLoading(true)
-      const result = LoginMicrosoft()
-      console.log(result)
+      await LoginMicrosoft()
       history("/")
       setLoading(false)
     } catch {
@@ -40,7 +39,7 @@ export default function Login() {
   }
 
   return (
-    <>
+    <div style={{backgroundColor: "#793033", width: "100%", height: "100%"}}>
       <div className="w-100 text-center mt-2" style={{backgroundColor: "#793033"}}>
         {error && <Alert variant="danger">{error}</Alert>}
         <h1>Login</h1>
@@ -57,13 +56,16 @@ export default function Login() {
             Log In
           </Button>
         </Form>
-        <Button disabled={loading} className="w-100" onClick={handelMicrosoftLogin} style={{width: "80vw"}}>
+        <Button disabled={loading} className="w-100" onClick={handelMicrosoftLogin}>
           <img style={{maxWidth: "2vh", height: "auto"}} src={microsoftIcon} />
           <p style={{display: "inline", marginLeft: "2%", height: "2vh"}}>
             Login With Microsoft
           </p>
+          {
+
+          }
         </Button>
       </div>
-    </>
+    </div>
   )
 }

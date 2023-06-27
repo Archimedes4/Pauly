@@ -1,9 +1,9 @@
 import { collection, query, where, getDocs, limit, getCountFromServer, startAfter, doc, DocumentReference, DocumentData, QuerySnapshot, QueryDocumentSnapshot, startAt, orderBy, or, and, Query } from "firebase/firestore";
-import { useAuth } from '../Contexts/AuthContext';
+import { UseAuth } from '../Contexts/AuthContext';
 import { useEffect } from "react";
 
 export default function UserQuery() {
-  const { db } = useAuth()
+  const { db } = UseAuth()
 
   const getQuery = async function({ newSearch, search, page, grade, section, staff, student }:{newSearch: boolean, search: string, page: string, grade: number | undefined, section: number | undefined, staff: boolean, student: boolean }): Promise<{ value: Query<DocumentData>; Count: null | number; }> {
     console.log("Running", "Student", student, "Staff", staff)

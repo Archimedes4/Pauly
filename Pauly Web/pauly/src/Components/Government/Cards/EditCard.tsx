@@ -8,7 +8,7 @@ import { FaArrowRight, FaArrowLeft } from "react-icons/fa"
 import { FcLeft, FcSettings, FcIphone } from "react-icons/fc"
 import { getStorage, ref, uploadBytesResumable, UploadTaskSnapshot, getDownloadURL } from 'firebase/storage';
 import { doc, collection, getDoc, getDocs, getFirestore, addDoc, Timestamp, serverTimestamp, FieldValue, updateDoc, where, query, DocumentData, startAt, limit, startAfter, setDoc, deleteDoc, and } from "firebase/firestore";
-import { useAuth } from '../../../Contexts/AuthContext';
+import { UseAuth } from '../../../Contexts/AuthContext';
 import UploadMicrosoftFile from './uploadMicrosoftFile.tsx';
 import BindMenu from './BindMenu.tsx';
 import PaulyLibrary from './paulyLibrary.tsx';
@@ -19,6 +19,9 @@ import Canvas from "./Canvas/Canvas"
 import SVG from './SVG.tsx';
 import {IoIosArrowBack} from "react-icons/io"
 import { CanvasModeType } from './Canvas/Canvas';
+import { addNewOnFierbase, updateOnFierbase, deleteOnFirebase } from '../../../Functions/CardFirebaseFuncitons.tsx';
+import  loadFromFirebase from '../../../Functions/CardFirebaseFuncitons.tsx';
+import create_UUID from "../../../Functions/CreateUUID"
 
 declare global{
   type CardElement = {
@@ -53,14 +56,25 @@ declare global{
     team?: TeamsGroupType,
     grade: number
   }
+  type deviceModeType = {
+    aspectRatio: {
+      Width: number
+      Height: number
+    }
+    name: string
+    id: string
+    logo: "computer" | "phone" | "tablet"
+    order: number
+    components?: CardElement[]
+  }
 }
 
 
-enum SelectedAspectType{
-  Small,
-  Medium,
-  Large
-}
+// enum SelectedAspectType{
+//   Small,
+//   Medium,
+//   Large
+// }
 
 enum SelectedCardBindModeType{
   Class,
@@ -90,9 +104,10 @@ type FontTypeCSS = {
   UUID: string
 }
 
+
 export default function EditCard() {
   const outerDivRef = useRef(null)
-  const { SelectedPage, zoomScale, setZoomScale, componentsSmall, setComponentsSmall, componentsMedium, setComponentsMedium, componentsLarge, setComponentsLarge } = useCardContext()
+  const { selectedPage, zoomScale, setZoomScale, components, setComponents } = useCardContext()
   const [isShowingSettings, setIsShowingSettings] = useState(false)
   const [isNavigateToDestinations, setIsNavigateToDestinations] = useState(false)
   const [scrollDir, setScrollDir] = useState("scrolling down");
@@ -109,11 +124,12 @@ export default function EditCard() {
   const [aspectWidth, setAspectWidth] = useState(10)
   const [width, setWidth] = useState(window.innerWidth);//Device Width
   const [height, setHeight] = useState(window.innerHeight);//Device height
-  const [selectedDeviceMode, setSelectedDeviceMode] = useState<SelectedAspectType>(SelectedAspectType.Small)
+  const [avaliableDeviceModes, setAvaliableDeviceModes] = useState<deviceModeType[]>(null)
+  const [selectedDeviceMode, setSelectedDeviceMode] = useState<deviceModeType>(null)
   const [selectedSettingsMode, setSelectedSettingsMode] = useState<SelectedSettingsModeType>(SelectedSettingsModeType.Discription)
   const [isShowingBindPage, setIsShowingBindPage] = useState<boolean>(false)
   const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
-  const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
+  const { app, db, currentUser, currentUserMicrosoftAccessToken } = UseAuth()
   const [isShowingPaulyLibaray, setIsShowingPaulyLibrary] = useState(false)
   const editorRef = useRef(null)
   const [lastMousePosition, setLastMousePosition] = useState({x: 0, y:0})
@@ -143,12 +159,9 @@ export default function EditCard() {
   const [selectedCanvasMode, setSelectedCanvasMode] = useState<CanvasModeType>(CanvasModeType.Draw)
 
   useEffect(() => {
-    if (selectedDeviceMode === SelectedAspectType.Large){
-      {/* 16:9 */}
-    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-      {/* 16:9 */}
-    } else if (selectedDeviceMode === SelectedAspectType.Small){
-      
+    if (selectedDeviceMode !== null){
+      setAspectHeight(selectedDeviceMode.aspectRatio.Height)
+      setAspectWidth(selectedDeviceMode.aspectRatio.Width)
     }
   }, [selectedDeviceMode])
 
@@ -196,14 +209,8 @@ export default function EditCard() {
 
   function addComponent(e: React.SyntheticEvent, newValue:CardElement) { 
     e.preventDefault()
-    addNewOnFierbase(newValue)
-    if (selectedDeviceMode === SelectedAspectType.Small){
-      setComponentsSmall([...componentsSmall, newValue])
-    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-      setComponentsMedium([...componentsMedium, newValue])
-    } else if (selectedDeviceMode === SelectedAspectType.Large){
-      setComponentsLarge([...componentsLarge, newValue])
-    }
+    addNewOnFierbase(newValue, selectedDeviceMode.id, selectedPage.firebaseID.toString())
+    setComponents([...components, newValue])
   }
 
   useEffect(() => {
@@ -290,7 +297,7 @@ export default function EditCard() {
       if (pressed){
         NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
         NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-        updateOnFierbase(NewComponents[SelectedIndex])
+        updateOnFierbase(NewComponents[SelectedIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString())
       } else {
         if (isChangeingSize) {
           if (chaningSizeDirection === "n"){
@@ -383,40 +390,38 @@ export default function EditCard() {
               NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
             }
           }
-          updateOnFierbase(NewComponents[SelectedIndex])
+          updateOnFierbase(NewComponents[SelectedIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString())
         }
       }
       setLastMousePosition({x: event.clientX, y: event.clientY})
-      if (selectedDeviceMode === SelectedAspectType.Small){
-        setComponentsSmall(NewComponents)
-      } else if (selectedDeviceMode === SelectedAspectType.Medium){
-        setComponentsMedium(NewComponents)
-      } else if (selectedDeviceMode === SelectedAspectType.Large){
-        setComponentsLarge(NewComponents)
-      }
+      setComponents(NewComponents)
     }
   }
 
   // Update the current position if mouse is down
   const onMouseMove = (event: React.MouseEvent) => {
-    if (selectedDeviceMode === SelectedAspectType.Small){
-      const NewComponents = [...componentsSmall]
-      const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
-    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-      const NewComponents = [...componentsMedium]
-      const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
-    } else if (selectedDeviceMode === SelectedAspectType.Large){
-      const NewComponents = [...componentsLarge]
-      const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
-    }
+    const NewComponents = [...components]
+    const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+    onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
+  }
+
+  async function loadFunction(index: number){
+    const loadFunc = loadFromFirebase()
+    await loadFunc(selectedPage.deviceModes[index].id, selectedPage.firebaseID.toString())
   }
 
   useEffect(() => {
     CalculateAreaPlaneSize()
-    loadFromFirebase()
+    for(var index = 0; index < selectedPage.deviceModes.length; index++){
+      loadFunction(index)
+      if (selectedPage.defaultDeviceMode !== undefined){
+        if (selectedPage.deviceModes[index].id === selectedPage.defaultDeviceMode){
+          setSelectedDeviceMode(selectedPage.deviceModes[index])
+        }
+      } else if (selectedPage.deviceModes[index].order === 0) {
+        setSelectedDeviceMode(selectedPage.deviceModes[0])
+      }
+    }
   }, [])
 
   const handleOnClick = (e: React.SyntheticEvent, Index: CardElement) => {
@@ -429,37 +434,15 @@ export default function EditCard() {
   };
 
   function DeleteFunction(){
-    if (selectedDeviceMode === SelectedAspectType.Small){
-      const NewComponents = [...componentsSmall]
-      const removeIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      setSelectedElement(null)
-      deleteOnFirebase(NewComponents[removeIndex])
-      const save = NewComponents[0] 
-      NewComponents[0] = NewComponents[removeIndex]
-      NewComponents[removeIndex] = save
-      NewComponents.shift()
-      setComponentsSmall(NewComponents)
-    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-      const NewComponents = [...componentsMedium]
-      const removeIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      deleteOnFirebase(NewComponents[removeIndex])
-      setSelectedElement(null)
-      const save = NewComponents[0] 
-      NewComponents[0] = NewComponents[removeIndex]
-      NewComponents[removeIndex] = save
-      NewComponents.shift()
-      setComponentsMedium(NewComponents)
-    } else if (selectedDeviceMode === SelectedAspectType.Large){
-      const NewComponents = [...componentsLarge]
-      const removeIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-      deleteOnFirebase(NewComponents[removeIndex])
-      setSelectedElement(null)
-      const save = NewComponents[0] 
-      NewComponents[0] = NewComponents[removeIndex]
-      NewComponents[removeIndex] = save
-      NewComponents.shift()
-      setComponentsLarge(NewComponents)
-    }
+    const NewComponents = [...components]
+    const removeIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+    setSelectedElement(null)
+    deleteOnFirebase(NewComponents[removeIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString())
+    const save = NewComponents[0] 
+    NewComponents[0] = NewComponents[removeIndex]
+    NewComponents[removeIndex] = save
+    NewComponents.shift()
+    setComponents(NewComponents)
   }
 
   const handler = (event: React.KeyboardEvent) => {
@@ -496,206 +479,6 @@ export default function EditCard() {
         setAreaHeight(elementHeight * (zoomScale/100))
       }
     }
-  }
-
-  function create_UUID(){
-    var dt = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = (dt + Math.random()*16)%16 | 0;
-        dt = Math.floor(dt/16);
-        return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-    });
-    return uuid;
-  }
-
-  async function addNewOnFierbase(item: CardElement) {
-    if (selectedDeviceMode === SelectedAspectType.Small){
-      await setDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Small", item.ElementUUID), {
-        ElementType: item.ElementType,
-        Content: item.Content,
-        PositionX: item.Position.XPosition,
-        PositionY: item.Position.YPosition,
-        Width: item.Width,
-        Height: item.Height,
-        CurrentZIndex: item.CurrentZIndex,
-        ElementIndex: item.ElementIndex,
-        Opacity: item.Opacity,
-        CornerRadius: item.CornerRadius,
-        SelectedColor: item.SelectedColor,
-        SelectedFont: item.SelectedFont,
-        ElementUUID: item.ElementUUID
-      })
-    } else if (selectedDeviceMode === SelectedAspectType.Medium) {
-      await setDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Medium", item.ElementUUID), {
-        ElementType: item.ElementType,
-        Content: item.Content,
-        PositionX: item.Position.XPosition,
-        PositionY: item.Position.YPosition,
-        Width: item.Width,
-        Height: item.Height,
-        CurrentZIndex: item.CurrentZIndex,
-        ElementIndex: item.ElementIndex,
-        Opacity: item.Opacity,
-        CornerRadius: item.CornerRadius,
-        SelectedColor: item.SelectedColor,
-        SelectedFont: item.SelectedFont,
-        ElementUUID: item.ElementUUID
-      })
-    } else if  (selectedDeviceMode === SelectedAspectType.Large) {
-      await setDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Large", item.ElementUUID), {
-        ElementType: item.ElementType,
-        Content: item.Content,
-        PositionX: item.Position.XPosition,
-        PositionY: item.Position.YPosition,
-        Width: item.Width,
-        Height: item.Height,
-        CurrentZIndex: item.CurrentZIndex,
-        ElementIndex: item.ElementIndex,
-        Opacity: item.Opacity,
-        CornerRadius: item.CornerRadius,
-        SelectedColor: item.SelectedColor,
-        SelectedFont: item.SelectedFont,
-        ElementUUID: item.ElementUUID
-      })
-    }
-  }
-
-  async function updateOnFierbase(item: CardElement) {
-    if (selectedDeviceMode === SelectedAspectType.Small){
-      await updateDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Small", item.ElementUUID), {
-        ElementType: item.ElementType,
-        Content: item.Content,
-        PositionX: item.Position.XPosition,
-        PositionY: item.Position.YPosition,
-        Width: item.Width,
-        Height: item.Height,
-        CurrentZIndex: item.CurrentZIndex,
-        ElementIndex: item.ElementIndex,
-        Opacity: item.Opacity,
-        CornerRadius: item.CornerRadius,
-        SelectedColor: item.SelectedColor,
-        SelectedFont: item.SelectedFont,
-        ElementUUID: item.ElementUUID
-      })
-    } else if (selectedDeviceMode === SelectedAspectType.Medium) {
-      await updateDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Medium", item.ElementUUID), {
-        ElementType: item.ElementType,
-        Content: item.Content,
-        PositionX: item.Position.XPosition,
-        PositionY: item.Position.YPosition,
-        Width: item.Width,
-        Height: item.Height,
-        CurrentZIndex: item.CurrentZIndex,
-        ElementIndex: item.ElementIndex,
-        Opacity: item.Opacity,
-        CornerRadius: item.CornerRadius,
-        SelectedColor: item.SelectedColor,
-        SelectedFont: item.SelectedFont,
-        ElementUUID: item.ElementUUID
-      })
-    } else if  (selectedDeviceMode === SelectedAspectType.Large) {
-      await updateDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Large", item.ElementUUID), {
-        ElementType: item.ElementType,
-        Content: item.Content,
-        PositionX: item.Position.XPosition,
-        PositionY: item.Position.YPosition,
-        Width: item.Width,
-        Height: item.Height,
-        CurrentZIndex: item.CurrentZIndex,
-        ElementIndex: item.ElementIndex,
-        Opacity: item.Opacity,
-        CornerRadius: item.CornerRadius,
-        SelectedColor: item.SelectedColor,
-        SelectedFont: item.SelectedFont,
-        ElementUUID: item.ElementUUID
-      })
-    }
-  }
-
-  async function deleteOnFirebase(item: CardElement) {
-    if (selectedDeviceMode === SelectedAspectType.Small){
-      await deleteDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Small", item.ElementUUID))
-    } else if (selectedDeviceMode === SelectedAspectType.Medium) {
-      await deleteDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Medium", item.ElementUUID))
-    } else if  (selectedDeviceMode === SelectedAspectType.Large) {
-      await deleteDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString(), "Large", item.ElementUUID))
-    }
-  }
-
-  async function loadFromFirebase(){
-    console.log("Card", SelectedPage)
-    var resultSmall: CardElement[] = []
-    const snapshotSmall = await getDocs(collection(db, "Pages", SelectedPage.FirebaseID.toString(), "Small"))
-    snapshotSmall.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-      const data = doc.data()
-      resultSmall.push({
-        ElementType: data.ElementType,
-        Content: data.Content,
-        Position: {
-          XPosition: data.PositionX,
-          YPosition: data.PositionY
-        },
-        Width: data.Width,
-        Height: data.Height,
-        CurrentZIndex: data.CurrentZIndex,
-        ElementIndex: data.ElementIndex,
-        Opacity: data.Opacity,
-        CornerRadius: data.CornerRadius,
-        SelectedColor: data.SelectedColor,
-        SelectedFont: data.SelectedFont,
-        ElementUUID: data.ElementUUID
-      })
-    })
-    setComponentsSmall(resultSmall)
-    var resultMedium: CardElement[] = []
-    const snapshotMedium = await getDocs(collection(db, "Pages", SelectedPage.FirebaseID.toString(), "Medium"))
-    snapshotMedium.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-      const data = doc.data()
-      resultMedium.push({
-        ElementType: data.ElementType,
-        Content: data.Content,
-        Position: {
-          XPosition: data.PositionX,
-          YPosition: data.PositionY
-        },
-        Width: data.Width,
-        Height: data.Height,
-        CurrentZIndex: data.CurrentZIndex,
-        ElementIndex: data.ElementIndex,
-        Opacity: data.Opacity,
-        CornerRadius: data.CornerRadius,
-        SelectedColor: data.SelectedColor,
-        SelectedFont: data.SelectedFont,
-        ElementUUID: data.ElementUUID
-      })
-    })
-    setComponentsMedium(resultMedium)
-    var resultLarge: CardElement[] = []
-    const snapshotLarge = await getDocs(collection(db, "Pages", SelectedPage.FirebaseID.toString(), "Small"))
-    snapshotLarge.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-      const data = doc.data()
-      resultLarge.push({
-        ElementType: data.ElementType,
-        Content: data.Content,
-        Position: {
-          XPosition: data.PositionX,
-          YPosition: data.PositionY
-        },
-        Width: data.Width,
-        Height: data.Height,
-        CurrentZIndex: data.CurrentZIndex,
-        ElementIndex: data.ElementIndex,
-        Opacity: data.Opacity,
-        CornerRadius: data.CornerRadius,
-        SelectedColor: data.SelectedColor,
-        SelectedFont: data.SelectedFont,
-        ElementUUID: data.ElementUUID
-      })
-    })
-    setComponentsLarge(resultLarge)
   }
 
   return (
@@ -737,9 +520,11 @@ export default function EditCard() {
                   onSaveDrawMode={async (e) => {
                     const myImage = await canvasRef.current.download()
                     console.log("This is Image", myImage)
-                    addComponent(e,  {ElementType: "Image", Content: myImage, Position: {XPosition: 0, YPosition: 0}, Width: 500, Height: 500, CurrentZIndex: componentsSmall.length + 1, ElementIndex: componentsSmall.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
+                    addComponent(e,  {ElementType: "Image", Content: myImage, Position: {XPosition: 0, YPosition: 0}, Width: 500, Height: 500, CurrentZIndex: components.length + 1, ElementIndex: components.length + 2, Opacity: 100, CornerRadius: 0, SelectedColor: "#555", SelectedFont: "Open Sans", ElementUUID: create_UUID()})
                     setIsInDrawMode(false)
-                  }} selectedBrushColor={selectedBrushColor} onSetSelectedBrushColor={setSelectedBrushColor} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} onSetIsNavigateToDestinations={setIsNavigateToDestinations} selectedElementValue={selectedElementValue} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetComponents={(selectedDeviceMode === SelectedAspectType.Small) ? setComponentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? setComponentsMedium:setComponentsLarge} onSetSelectedElement={setSelectedElement} onSetBolded={(e) => {setBolded(e)}} onSetItalic={(e) => {setItalic(e)}} onSetUnderlined={(e) => {setUnderlined(e)}} onSetStrikethrough={(e) => {setStrikethrough(e)}} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
+                  }} selectedBrushColor={selectedBrushColor} onSetSelectedBrushColor={setSelectedBrushColor} isInDotsMode={isInDotsMode} isInDrawMode={isInDrawMode} onSetIsNavigateToDestinations={setIsNavigateToDestinations} 
+                  selectedElementValue={selectedElementValue} 
+                  components={components} onSetComponents={setComponents} onSetSelectedElement={setSelectedElement} onSetBolded={(e) => {setBolded(e)}} onSetItalic={(e) => {setItalic(e)}} onSetUnderlined={(e) => {setUnderlined(e)}} onSetStrikethrough={(e) => {setStrikethrough(e)}} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} isShowingBindPage={isShowingBindPage} onSetIsShowingBindPage={setIsShowingBindPage} onSetFontSize={setFontSize} onSetSelectedFont={setSelectedFont} fontSize={fontSize} fontStyle={fontStyle} />
                 </Col>
                 {/* <Col style={{backgroundColor: "#793033",padding: 0, margin: 0, height: "100%"}}>
                     <div style={{height: "100%"}}> */}
@@ -804,15 +589,7 @@ export default function EditCard() {
                               ref={editorRef}
                             >
                               {/* TO DO use terneray expersions to condense into one*/}
-                              { (selectedDeviceMode === SelectedAspectType.Small) ?
-                                <EditCardArea components={componentsSmall} onSetComponents={setComponentsSmall} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}></EditCardArea>:null
-                              }
-                              { (selectedDeviceMode === SelectedAspectType.Medium) ?
-                                <EditCardArea components={componentsMedium} onSetComponents={setComponentsMedium} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}></EditCardArea>:null
-                              }
-                              { (selectedDeviceMode === SelectedAspectType.Large) ?
-                                <EditCardArea components={componentsLarge} onSetComponents={setComponentsLarge} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor} ></EditCardArea>:null
-                              }
+                              <EditCardArea components={components} onSetComponents={setComponents} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}></EditCardArea>:null
                               {isInDrawMode ? 
                                 <div style={{zIndex: 100}}>
                                 <Canvas selectedCanvasMode={selectedCanvasMode} onSetSelectedColor={setSelectedBrushColor} width={areaWidth + "px"} height={areaHeight + "px"} selectedColor={selectedBrushColor} ref={canvasRef}/>
@@ -833,7 +610,7 @@ export default function EditCard() {
               </Row>
               <Row>
                 <ToolbarBottom zoomScale={zoomScale.toString()} onSetZoomScale={(e) => setZoomScale(parseFloat(e))} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} onSetIsShowingCardsMenu={setIsShowingCardsMenu} onSetSelectedDeviceMode={setSelectedDeviceMode} selectedDeviceMode={selectedDeviceMode}
-                isShowingPaulyLibaray={isShowingPaulyLibaray} onAddComponent={addComponent} components={(selectedDeviceMode === SelectedAspectType.Small) ? componentsSmall:(selectedDeviceMode === SelectedAspectType.Medium) ? componentsMedium:componentsLarge} onSetInDotsMode={setIsInDotsMode} onSetInDrawMode={setIsInDrawMode} />
+                isShowingPaulyLibaray={isShowingPaulyLibaray} onAddComponent={addComponent} components={components} onSetInDotsMode={setIsInDotsMode} onSetInDrawMode={setIsInDrawMode} />
               </Row>
           </Container>
         </div>
@@ -855,7 +632,7 @@ export default function EditCard() {
                       { (selectedSettingsMode === SelectedSettingsModeType.Discription) ? 
                         <Stack>
                           <p> Edit Use </p>
-                          <p> Current Use: {SelectedPage.Use}</p>
+                          <p> Current Use: {selectedPage.use}</p>
                           <Form.Label htmlFor="overlayUse">Use</Form.Label>
                           <Form.Control id="overlayUse"/>
                         </Stack>:null
@@ -880,7 +657,7 @@ export default function EditCard() {
         {
           //Pauly Library
           isShowingPaulyLibaray ?
-            <PaulyLibrary onAddComponent={addComponent} selectedDeviceMode={selectedDeviceMode} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} componentsSmall={componentsSmall} componentsMedium={componentsMedium} componentsLarge={componentsLarge} />:null
+            <PaulyLibrary onAddComponent={addComponent} selectedDeviceMode={selectedDeviceMode} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} components={components} />:null
         }
         {
           //Cards Page
@@ -900,82 +677,30 @@ export default function EditCard() {
             <Stack direction='horizontal'>
               <ListGroup style={{position: "absolute", left: MousePosition.x, top: MousePosition.y, width: "25vw", zIndex: 100}}>
                   <ListGroup.Item onClick={() => {
-                      if (selectedDeviceMode === SelectedAspectType.Small){
-                        const NewComponents = [...componentsSmall]
-                        const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                        NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
-                        setComponentsSmall(NewComponents)
-                      } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                        const NewComponents = [...componentsMedium]
-                        const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                        NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
-                        setComponentsMedium(NewComponents)
-                      } else if (selectedDeviceMode === SelectedAspectType.Large){
-                        const NewComponents = [...componentsLarge]
-                        const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                        NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
-                        setComponentsLarge(NewComponents)
-                      }
+                      const NewComponents = [...components]
+                      const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                      NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
+                      setComponents(NewComponents)
                   }}>Move Forward</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
-                    if (selectedDeviceMode === SelectedAspectType.Small){
-                      const NewComponents = [...componentsSmall]
-                      const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
-                      setComponentsSmall(NewComponents)
-                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                      const NewComponents = [...componentsMedium]
-                      const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
-                      setComponentsMedium(NewComponents)
-                    } else if (selectedDeviceMode === SelectedAspectType.Large){
-                      const NewComponents = [...componentsLarge]
-                      const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
-                      setComponentsLarge(NewComponents)
-                    }
+                    const NewComponents = [...components]
+                    const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                    NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
+                    setComponents(NewComponents)
                   }}>Move Backward</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
-                    if (selectedDeviceMode === SelectedAspectType.Small){
-                      const maxValueOfY = Math.max(...componentsSmall.map((o: CardElement) => o.CurrentZIndex), 0);
-                      const NewComponents = [...componentsSmall]
-                      const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
-                      setComponentsSmall(NewComponents)
-                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                      const maxValueOfY = Math.max(...componentsMedium.map((o: CardElement) => o.CurrentZIndex), 0);
-                      const NewComponents = [...componentsMedium]
-                      const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
-                      setComponentsMedium(NewComponents)
-                    } else if (selectedDeviceMode === SelectedAspectType.Large){
-                      const maxValueOfY = Math.max(...componentsLarge.map((o: CardElement) => o.CurrentZIndex), 0);
-                      const NewComponents = [...componentsLarge]
-                      const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
-                      setComponentsLarge(NewComponents)
-                    }
+                    const maxValueOfY = Math.max(...components.map((o: CardElement) => o.CurrentZIndex), 0);
+                    const NewComponents = [...components]
+                    const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                    NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
+                    setComponents(NewComponents)
                   }}>Send To Front</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
-                    if (selectedDeviceMode === SelectedAspectType.Small){
-                      const maxValueOfY = Math.min(...componentsSmall.map((o: CardElement) => o.CurrentZIndex), 0);
-                      const NewComponents = [...componentsSmall]
-                      const SelectedIndex = componentsSmall.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
-                      setComponentsSmall(NewComponents)
-                    } else if (selectedDeviceMode === SelectedAspectType.Medium){
-                      const maxValueOfY = Math.min(...componentsMedium.map((o: CardElement) => o.CurrentZIndex), 0);
-                      const NewComponents = [...componentsMedium]
-                      const SelectedIndex = componentsMedium.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
-                      setComponentsMedium(NewComponents)
-                    } else if (selectedDeviceMode === SelectedAspectType.Large){
-                      const maxValueOfY = Math.min(...componentsLarge.map((o: CardElement) => o.CurrentZIndex), 0);
-                      const NewComponents = [...componentsLarge]
-                      const SelectedIndex = componentsLarge.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
-                      NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
-                      setComponentsLarge(NewComponents)
-                    }
+                    const maxValueOfY = Math.min(...components.map((o: CardElement) => o.CurrentZIndex), 0);
+                    const NewComponents = [...components]
+                    const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
+                    NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
+                    setComponents(NewComponents)
                   }} style={{cursor: "default"}}>Send To Back</ListGroup.Item>
                   <ListGroup.Item>Duplicate</ListGroup.Item>
                   <ListGroup.Item onClick={() => {DeleteFunction()}}>Delete</ListGroup.Item>

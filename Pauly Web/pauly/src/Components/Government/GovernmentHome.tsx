@@ -1,10 +1,10 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from '../../Contexts/AuthContext'
+import { UseAuth } from '../../Contexts/AuthContext'
 import { Stack } from 'react-bootstrap'
 
 export default function GovernmentHome() {
-    const { currentUser, currentUserMicrosoftAccessToken } = useAuth()
+    const { currentUser, currentUserMicrosoftAccessToken } = UseAuth()
     return (
     <div>
         <Link to="/">Back</Link>

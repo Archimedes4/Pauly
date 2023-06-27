@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'BukhariScript';
+    src: url('../../../Fonts/BukhariScript.ttf')  format('truetype'),
+         url('../../../Fonts/BukhariScript.woff') format('woff')
+}
+
+.Title{
+    font-family: BukhariScript;
+}
+
 .react-calendar {
     width: 350px;
     max-width: 100%;

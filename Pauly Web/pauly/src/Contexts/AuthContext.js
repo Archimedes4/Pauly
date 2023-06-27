@@ -21,7 +21,7 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
-export function useAuth() {
+export function UseAuth() {
   return useContext(AuthContext)
 }
 

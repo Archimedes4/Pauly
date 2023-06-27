@@ -222,3 +222,7 @@ export const helloWorld = onCall(async (request) => {
   };
 });
 
+export const getQuiz = onCall(async (request) => {
+  const createdFunction = new Function(request.data.Data);
+  return (createdFunction());
+});

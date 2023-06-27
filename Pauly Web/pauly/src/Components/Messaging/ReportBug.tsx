@@ -8,6 +8,7 @@ export default function ReportBug() {
             Back
         </Link>
         ReportBug
+        
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import HorizontalPicker from "../../UI/NavBar/NavBarHolder"
 import {doc, getDoc, getDocs, collection, setDoc} from "firebase/firestore"
-import { useAuth } from '../../Contexts/AuthContext';
+import { UseAuth } from '../../Contexts/AuthContext';
 import { Stack, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import UserQuery from '../../Functions/UserQuery';
@@ -70,7 +70,7 @@ function TeacherList({onSelectTeacher}:{onSelectTeacher: (item: UserType) => voi
 }
 
 function EditClass({selectedClass, onSetSelectedClass, onBack, onSelectTeam, selectedTeam}:{selectedClass: ClassType, onSetSelectedClass: (item: ClassType) => void, onBack: () => void, onSelectTeam: () => void, selectedTeam?: TeamsGroupType}) {
-  const {db} = useAuth()
+  const {db} = UseAuth()
   const [isShowingSelectTeacher, setIsShowingSelectTeacher] = useState<boolean>(false)
   async function updateClass(updateClass: ClassType) {
     try{
@@ -228,7 +228,7 @@ function ConnectToTeams({usersTeams, onSelectTeam, onBack}:{usersTeams: TeamsGro
 }
 
 export default function Class() {
-  const {db,currentUserInfo, currentUserMicrosoftAccessToken} = useAuth()
+  const {db,currentUserInfo, currentUserMicrosoftAccessToken} = UseAuth()
   const [selectedGrade, setSelectedGrade] = useState<string>("9")
   const [selectedGradeClasses, setSelectedGradeClasses] = useState<string[]>([])
   const [selectedClassName, setSelectedClassName] = useState("")

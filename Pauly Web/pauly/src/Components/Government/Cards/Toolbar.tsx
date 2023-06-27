@@ -10,7 +10,8 @@ import "react-quill/dist/quill.snow.css";
 import { useCardContext } from "./Cards"
 import { CanvasModeType } from './Canvas/Canvas';
 import { doc, getDoc } from 'firebase/firestore';
-import { useAuth } from '../../../Contexts/AuthContext';
+import { UseAuth } from '../../../Contexts/AuthContext';
+import create_UUID from "../../../Functions/CreateUUID"
 
 enum SelectedAspectType{
     Small,
@@ -68,8 +69,8 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
     const [fontList, setFontList] = useState<FontType []>([])
     const avaliableFontSizes: string[] = ["8px", "12px", "14px", "16px", "20px", "24px"]
     const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
-    const { SelectedPage } = useCardContext()
-    const { db, currentUserMicrosoftAccessToken } = useAuth()
+    const { selectedPage } = useCardContext()
+    const { db, currentUserMicrosoftAccessToken } = UseAuth()
     const [appIconURL, setAppIconURL] = useState("")
     const [opacity, setOpacity] = useState<number>(1)
     const [selectedColor, setSelectedColor] = useState("")
@@ -88,21 +89,11 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
 
     useEffect(() => {
         loadPageData()
-    }, [SelectedPage.BindRef])
-
-    function create_UUID(){
-        var dt = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = (dt + Math.random()*16)%16 | 0;
-            dt = Math.floor(dt/16);
-            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-        });
-        return uuid;
-    }
+    }, [selectedPage.bindRef])
 
     async function loadPageData(){
-        if (SelectedPage.BindRef !== ""){
-          const BindArray = SelectedPage.BindRef.split("-")
+        if (selectedPage.bindRef !== ""){
+          const BindArray = selectedPage.bindRef.split("-")
           if (BindArray[0] === "Class" && BindArray.length >= 4){
             const classDocRef = doc(db, "Grade"+BindArray[1]+"Courses", BindArray[2], "Sections", (BindArray[3] == "0") ? "0":BindArray[3]+"-"+BindArray[4])
             const classDocSnapshot = await getDoc(classDocRef)
@@ -336,7 +327,7 @@ function Toolbar({onSetIsNavigateToDestinations, selectedElementValue, component
                 { (isInDotsMode === false && isInDrawMode === false) ? 
                     <div>
                         {
-                            (SelectedPage.BindRef === "") ? 
+                            (selectedPage.bindRef === "") ? 
                             <Container style={{backgroundColor: '#444444', height: "100%", width: "100%", margin: 0, padding: 0}}>
                                 <div style={{display: "flex", justifyContent: "center"}}>
                                     <p style={{fontSize: "16px", padding: 0, margin: 0, marginTop: "5%", color: "white"}}>Connect Your Page</p>

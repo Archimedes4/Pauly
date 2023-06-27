@@ -8,6 +8,7 @@ import "tinymce/icons/default/icons.min.js"
 import "tinymce/models/dom/model.min.js"
 import "tinymce/themes/silver/theme.min.js"
 import "./EditorSkin.css"
+import {create_UUID} from "../../../Functions/CreateUUID"
 
 export default React.forwardRef(({text, onSetText, height, width}:{text: string, onSetText: (item: string) => void, height: number, width: number}, ref) => {
     const editorRef = useRef(null);
@@ -42,16 +43,6 @@ export default React.forwardRef(({text, onSetText, height, width}:{text: string,
           }
         }
     }, [])
-
-    function create_UUID(){
-        var dt = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = (dt + Math.random()*16)%16 | 0;
-            dt = Math.floor(dt/16);
-            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-        });
-        return uuid;
-    }
   
     const log = () => {
       if (editorRef.current) {

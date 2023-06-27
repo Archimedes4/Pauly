@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { doc, collection, getDoc, getDocs, getFirestore, runTransaction } from "firebase/firestore";
-import { useAuth } from '../../../Contexts/AuthContext';
+import { UseAuth } from '../../../Contexts/AuthContext';
 import { useCardContext } from "./Cards"
 import { Navigate, Link } from "react-router-dom"
 import styles from "./Cards.module.css"
 import { Stack } from 'react-bootstrap';
 import {IoIosArrowBack} from "react-icons/io"
+import create_UUID from "../../../Functions/CreateUUID"
 
 export default function CardsHome() { 
-  const { currentUser, currentUserMicrosoftAccessToken } = useAuth()
+  const { currentUser, currentUserMicrosoftAccessToken } = UseAuth()
   const [Cards, setCards] = useState<PageType[]>([])
-  const { app, db } = useAuth()
-  const { SetSelectedPage } = useCardContext()
+  const { app, db } = UseAuth()
+  const { setSelectedPage } = useCardContext()
 
   // async function getUserData() {
   //   const docRef = doc(db, "Users/", currentUser.uid);
@@ -36,15 +37,18 @@ export default function CardsHome() {
       // doc.data() is never undefined for query doc snapshots.data()
       if (doc.data().Count == undefined) {
         const data = doc.data()
+        console.log(data)
         newPages.push(
           {
-            BindRef: data["BindRef"],
-            FirebaseID: data["FirebaseID"],
-            Use: data["Use"]
+            bindRef: data["BindRef"],
+            firebaseID: data["FirebaseID"],
+            use: data["Use"],
+            deviceModes: data["DeviceModes"]
           }
         )
       }
     });
+    console.log(newPages)
     setCards(newPages)
   }
 
@@ -55,16 +59,16 @@ export default function CardsHome() {
     }
   }, [currentUser.uid, gotCardData])
 
-  const [NavigateToEdit, SetNavigateToEdit] = useState(false)
+  const [navigateToEdit, setNavigateToEdit] = useState(false)
 
-  function setSelectedCard(e: React.SyntheticEvent, item: any){
+  function setSelectedCard(e: React.SyntheticEvent, item: PageType){
     e.preventDefault()
     console.log(item)
-    SetSelectedPage(item)
-    SetNavigateToEdit(true)
+    setSelectedPage(item)
+    setNavigateToEdit(true)
   }
 
-  if (NavigateToEdit === true) {
+  if (navigateToEdit === true) {
     return <Navigate to="/government/cards/edit"/>
   }
 
@@ -77,10 +81,11 @@ export default function CardsHome() {
           throw "Document does not exist!";
         }
         const newID: number = countDoc.data().Count + 1
-        transaction.set(doc(db, "Pages", newID.toString()), {FirebaseID: newID, Use: "Test", BindRef: ""})
+        transaction.set(doc(db, "Pages", newID.toString()), {FirebaseID: newID, Use: "Test", BindRef: "", DeviceModes: [{aspectRatio: {Width: 16,Height: 9}, name: "Computer", id: create_UUID(), logo: "computer", order: 0}, {aspectRatio: {Width: 5,Height: 19}, name: "Phone", id: create_UUID(), logo: "phone", order: 1}]})
         transaction.update(docRef, {Count: newID})
       });
       console.log("Transaction successfully committed!");
+      getCardData()
     } catch (e) {
       console.log("Transaction failed: ", e);
     } 
@@ -102,9 +107,9 @@ export default function CardsHome() {
       <div>  
         {
           Cards.map(item => (
-            <div key={item.FirebaseID} className={styles.LinkContainer} style={(item.Use === "") ? {backgroundColor: "red"}:{}}>
+            <div key={item.firebaseID} className={styles.LinkContainer} style={(item.use === "") ? {backgroundColor: "red"}:{}}>
                 <button onClick={(e) => setSelectedCard(e, item)} style={{border: "none", background: "none"}} > 
-                  <p className={styles.Link} style={(item.Use === "") ? {backgroundColor: "red"}:{}}>{(item.Use === "" ) ? "This Card Does Not Have a Use": item.Use }</p>
+                  <p className={styles.Link} style={(item.use === "") ? {backgroundColor: "red"}:{}}>{(item.use === "" ) ? "This Card Does Not Have a Use": item.use }</p>
                 </button>
             </div>
           ))

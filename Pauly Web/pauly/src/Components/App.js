@@ -7,7 +7,7 @@ import Government from "./Government"
 import styles from "./AppStyles.module.css"
 import Sports from "./Sports"
 import Calendar from "./Calendar"
-import Profile from "./Profile"
+import Profile from "./Profile/Profile"
 import Messaging from "./Messaging/Messaging"
 import Quiz from "./Quiz"
 
@@ -17,12 +17,12 @@ function App() {
       <AuthProvider>
         <div className={styles.AppDiv}>
           <Routes>
-            <Route exact path='/' element={<Home />} />
+            <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />
             <Route path='/government/*' element={<Government />} />
             <Route path='/sports' element={<Sports />}/>
             <Route path='/calendar' element={<Calendar />}/>
-            <Route path='/profile' element={<Profile />}/>
+            <Route path='/profile/*' element={<Profile />}/>
             <Route path='/messaging/*' element={<Messaging />}/>
             <Route path='/quiz' element={<Quiz />}/>
           </Routes>

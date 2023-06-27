@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Stack, Button, Form } from 'react-bootstrap';
 import styles from "./Cards.module.css"
-import { useAuth } from '../../../Contexts/AuthContext';
+import { UseAuth } from '../../../Contexts/AuthContext';
 import {FcFolder, FcDocument} from "react-icons/fc"
 
 enum MicrosoftUploadModeType {
@@ -32,7 +32,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     onSetIsShowingMicrosoftUpload: (item: boolean) => void,
     onSelectedFile: (item: microsoftFileType) => void
 }) {
-    const { app, db, currentUser, currentUserMicrosoftAccessToken } = useAuth()
+    const { app, db, currentUser, currentUserMicrosoftAccessToken } = UseAuth()
     const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
     const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
     const [microsoftPath, setMicrosoftPath] = useState<string>("https://graph.microsoft.com/v1.0/me/drive/root/children")

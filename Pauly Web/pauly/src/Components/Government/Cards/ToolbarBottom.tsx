@@ -11,20 +11,16 @@ import {BsTabletLandscape} from "react-icons/bs"
 import {HiRectangleGroup} from "react-icons/hi2"
 import DropdownMenu from 'react-bootstrap/esm/DropdownMenu';
 import Picker from '../../../UI/Picker/Picker'
+import create_UUID from "../../../Functions/CreateUUID"
 
-enum SelectedAspectType{
-    Small,
-    Medium,
-    Large
-}
 
 export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowingPaulyLibrary, onSetIsShowingCardsMenu, onSetSelectedDeviceMode, selectedDeviceMode, isShowingPaulyLibaray, onAddComponent, components, onSetInDotsMode, onSetInDrawMode}:
     {   zoomScale: string, 
         onSetZoomScale: (item: string) => void
         onSetIsShowingPaulyLibrary: (item: boolean) => void,
         onSetIsShowingCardsMenu: (item: boolean) => void,
-        onSetSelectedDeviceMode?: (item: SelectedAspectType) => void,
-        selectedDeviceMode?: SelectedAspectType,
+        onSetSelectedDeviceMode?: (item: deviceModeType) => void,
+        selectedDeviceMode?: deviceModeType,
         isShowingPaulyLibaray: boolean,
         onAddComponent: (e: React.SyntheticEvent, newValue:CardElement) => void,
         components: CardElement[],
@@ -42,16 +38,6 @@ export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowing
             onSetZoomScale(value.slice(0, -1))
           }
         }
-    }
-
-    function create_UUID(){
-        var dt = new Date().getTime();
-        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = (dt + Math.random()*16)%16 | 0;
-            dt = Math.floor(dt/16);
-            return (c=='x' ? r :(r&0x3|0x8)).toString(16);
-        });
-        return uuid;
     }
     
   return (
@@ -131,12 +117,12 @@ export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowing
         { (selectedDeviceMode !== undefined) ?
             <div  style={{gridRow: 1, gridColumn: "6/8"}}>
                 <Picker onSetSelectedIndex={(index) => {
-                    if (index === 0){
-                        onSetSelectedDeviceMode(SelectedAspectType.Small)
-                    } else if (index === 1) {
-                        onSetSelectedDeviceMode(SelectedAspectType.Large)
-                    }
-                }} selectedIndex={(selectedDeviceMode === SelectedAspectType.Small) ? 0:(selectedDeviceMode === SelectedAspectType.Medium) ? 1:2}>
+                    // if (index === 0){
+                    //     onSetSelectedDeviceMode(SelectedAspectType.Small)
+                    // } else if (index === 1) {
+                    //     onSetSelectedDeviceMode(SelectedAspectType.Large)
+                    // }
+                }} selectedIndex={0}>
                     <RiComputerFill color='black' style={{margin: 0, padding: 0}} />
                     <FcIphone color='black' style={{margin: 0, padding: 0}}/>
                 </Picker>

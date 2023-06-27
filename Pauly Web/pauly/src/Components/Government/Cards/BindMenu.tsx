@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, Stack, Button } from "react-bootstrap"
 import styles from "./Cards.module.css"
 import { collection, getDoc, getDocs, doc, updateDoc } from 'firebase/firestore'
-import { useAuth } from '../../../Contexts/AuthContext';
+import { UseAuth } from '../../../Contexts/AuthContext';
 import HorizontalPicker from "../../../UI/NavBar/NavBarHolder"
 import { useCardContext } from "./Cards"
 
@@ -44,9 +44,9 @@ export default function BindMenu(
         onSetIsShowingBindPage: (input: boolean) => void
     }
     ) {
-    const { SelectedPage } = useCardContext()
+    const { selectedPage } = useCardContext()
     const [selectedCardBindMode, setSelectedCardBindMode] = useState<SelectedCardBindModeType>(SelectedCardBindModeType.Class)
-    const { db, currentUserInfo } = useAuth()
+    const { db, currentUserInfo } = UseAuth()
     const [avaliableCommissions, setAvaliableCommissions] = useState<CommissionsType[]>([])
 
     //Sports
@@ -214,7 +214,7 @@ export default function BindMenu(
     }, [])
 
     async function BindPage(value: string) {
-        await updateDoc(doc(db, "Pages", SelectedPage.FirebaseID.toString()), {BindRef: value})
+        await updateDoc(doc(db, "Pages", selectedPage.firebaseID.toString()), {BindRef: value})
         //TO DO error handling
     }
 

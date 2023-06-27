@@ -5,21 +5,19 @@ import EditCardRouter from './EditCardRouter'
   
 declare global{
     type PageType = {
-        BindRef: string
-        FirebaseID: number
-        Use: String
+        bindRef: string
+        firebaseID: number
+        use: String
+        deviceModes: deviceModeType[]
+        defaultDeviceMode?: string //The UUID of the default device mode if the value is undefined it will pick the first one downloaded. Which is probablt the first one alphabetically
     }
     interface PageContextType {
-        SelectedPage: PageType,
-        SetSelectedPage: React.Dispatch<React.SetStateAction<PageType>>,
+        selectedPage: PageType,
+        setSelectedPage: React.Dispatch<React.SetStateAction<PageType>>,
         zoomScale: number,
         setZoomScale: React.Dispatch<React.SetStateAction<number>>,
-        componentsSmall: CardElement[],
-        setComponentsSmall: React.Dispatch<React.SetStateAction<CardElement[]>>,
-        componentsMedium: CardElement[],
-        setComponentsMedium: React.Dispatch<React.SetStateAction<CardElement[]>>,
-        componentsLarge: CardElement[],
-        setComponentsLarge: React.Dispatch<React.SetStateAction<CardElement[]>>
+        components: CardElement[],
+        setComponents: React.Dispatch<React.SetStateAction<CardElement[]>>,
     }
 }
 
@@ -31,23 +29,17 @@ export function useCardContext() {
 
 
 export default function Cards() {
-    const [SelectedPage, SetSelectedPage] = useState<PageType>(null)
-    const [componentsSmall, setComponentsSmall] = useState<CardElement[]>([])
-    const [componentsMedium, setComponentsMedium] = useState<CardElement[]>([])
-    const [componentsLarge, setComponentsLarge] = useState<CardElement[]>([])
+    const [selectedPage, setSelectedPage] = useState<PageType>(null)
+    const [components, setComponents] = useState<CardElement[]>([])
     const [zoomScale, setZoomScale] = useState<number>(100)
 
     const value: PageContextType = {
-        SelectedPage,
-        SetSelectedPage,
+        selectedPage,
+        setSelectedPage,
         zoomScale,
         setZoomScale,
-        componentsSmall,
-        setComponentsSmall,
-        componentsMedium,
-        setComponentsMedium,
-        componentsLarge,
-        setComponentsLarge
+        components,
+        setComponents
     }
 
     return (
