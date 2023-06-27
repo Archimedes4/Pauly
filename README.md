@@ -11,4 +11,8 @@ Commissions are organized into documents that are named with there commission id
 2. End date
 3. Hidden
 4. Points (what the commission is worth)
-5. 
+5. Selected Page (which page is shown)
+6. Value (the type of commission it is)
+      1. 
+
+
