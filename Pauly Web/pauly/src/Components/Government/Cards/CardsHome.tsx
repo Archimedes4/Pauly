@@ -43,7 +43,8 @@ export default function CardsHome() {
             bindRef: data["BindRef"],
             firebaseID: data["FirebaseID"],
             use: data["Use"],
-            deviceModes: data["DeviceModes"]
+            deviceModes: data["DeviceModes"],
+            backgroundColor: data["BackgroundColor"]
           }
         )
       }
@@ -81,7 +82,7 @@ export default function CardsHome() {
           throw "Document does not exist!";
         }
         const newID: number = countDoc.data().Count + 1
-        transaction.set(doc(db, "Pages", newID.toString()), {FirebaseID: newID, Use: "Test", BindRef: "", DeviceModes: [{aspectRatio: {Width: 16,Height: 9}, name: "Computer", id: create_UUID(), logo: "computer", order: 0}, {aspectRatio: {Width: 5,Height: 19}, name: "Phone", id: create_UUID(), logo: "phone", order: 1}]})
+        transaction.set(doc(db, "Pages", newID.toString()), {FirebaseID: newID, Use: "Test", BackgroundColor: "#793033", BindRef: "", DeviceModes: [{aspectRatio: {Width: 16,Height: 9}, name: "Computer", id: create_UUID(), logo: "computer", order: 0}, {aspectRatio: {Width: 5,Height: 19}, name: "Phone", id: create_UUID(), logo: "phone", order: 1}]})
         transaction.update(docRef, {Count: newID})
       });
       console.log("Transaction successfully committed!");

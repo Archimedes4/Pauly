@@ -78,7 +78,6 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const auth = getAuth(app);
-    const db = getFirestore(app);
 
     onAuthStateChanged(auth,( user => {
       setCurrentUser(user)

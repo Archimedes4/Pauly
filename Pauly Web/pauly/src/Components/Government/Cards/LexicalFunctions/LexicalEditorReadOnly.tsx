@@ -9,6 +9,7 @@ export default function LexicalEditorReadOnly({value, width, height, onMount}: {
     const initialConfig = {
         editorState: value,
         namespace: 'Playground',
+        editable: false,
         onError: (error: Error) => {
         throw error;
         },
@@ -24,7 +25,7 @@ export default function LexicalEditorReadOnly({value, width, height, onMount}: {
                 <div className={`editor-container`}>
                     <RichTextPlugin
                     contentEditable={
-                        <div className="editor" style={{overflow: "scroll", width: width, height: height}}>
+                        <div className="editor" style={{overflow: "hidden", width: width, height: height}}>
                             <ContentEditable style={{outline: "none"}}/>
                         </div>
                     }

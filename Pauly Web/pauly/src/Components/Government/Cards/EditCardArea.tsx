@@ -2,7 +2,6 @@ import React, { useImperativeHandle, useRef } from 'react'
 import styles from "./Cards.module.css"
 import VideoContainerCard from '../../../UI/VideoContainerCard.tsx';
 import PDFViewContainer from './PDFView.tsx';
-import TextEditor from './LexicalFunctions/TinyMCETextEditor.tsx';
 import SVG from './SVG.tsx';
 import LexicalRead from './LexicalFunctions/LexicalEditorReadOnly.tsx';
 import LexicalEditor from "./LexicalFunctions/LexicalEditor.tsx"
