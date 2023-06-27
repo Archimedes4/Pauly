@@ -13,6 +13,6 @@ Commissions are organized into documents that are named with there commission id
 4. Points (what the commission is worth)
 5. Selected Page (which page is shown)
 6. Value (the type of commission it is)
-      1. 
+      1. This is a test
 
 
