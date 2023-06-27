@@ -9,6 +9,7 @@ declare global{
         firebaseID: number
         use: String
         deviceModes: deviceModeType[]
+        backgroundColor: string
         defaultDeviceMode?: string //The UUID of the default device mode if the value is undefined it will pick the first one downloaded. Which is probablt the first one alphabetically
     }
     interface PageContextType {

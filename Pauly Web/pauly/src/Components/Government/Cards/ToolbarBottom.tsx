@@ -14,13 +14,14 @@ import Picker from '../../../UI/Picker/Picker'
 import create_UUID from "../../../Functions/CreateUUID"
 
 
-export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowingPaulyLibrary, onSetIsShowingCardsMenu, onSetSelectedDeviceMode, selectedDeviceMode, isShowingPaulyLibaray, onAddComponent, components, onSetInDotsMode, onSetInDrawMode}:
+export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowingPaulyLibrary, onSetIsShowingCardsMenu, onSetSelectedDeviceMode, selectedDeviceMode, avaliableDeviceModes, isShowingPaulyLibaray, onAddComponent, components, onSetInDotsMode, onSetInDrawMode}:
     {   zoomScale: string, 
         onSetZoomScale: (item: string) => void
         onSetIsShowingPaulyLibrary: (item: boolean) => void,
         onSetIsShowingCardsMenu: (item: boolean) => void,
         onSetSelectedDeviceMode?: (item: deviceModeType) => void,
         selectedDeviceMode?: deviceModeType,
+        avaliableDeviceModes?: deviceModeType[],
         isShowingPaulyLibaray: boolean,
         onAddComponent: (e: React.SyntheticEvent, newValue:CardElement) => void,
         components: CardElement[],
@@ -114,17 +115,25 @@ export default function ToolbarBottom({zoomScale, onSetZoomScale, onSetIsShowing
                 </Button>
             </div>
         {/* Mode Selection */}
-        { (selectedDeviceMode !== undefined) ?
+        { (selectedDeviceMode !== undefined && selectedDeviceMode !== null && avaliableDeviceModes !== undefined && avaliableDeviceModes !== null) ?
             <div  style={{gridRow: 1, gridColumn: "6/8"}}>
-                <Picker onSetSelectedIndex={(index) => {
-                    // if (index === 0){
-                    //     onSetSelectedDeviceMode(SelectedAspectType.Small)
-                    // } else if (index === 1) {
-                    //     onSetSelectedDeviceMode(SelectedAspectType.Large)
-                    // }
-                }} selectedIndex={0}>
-                    <RiComputerFill color='black' style={{margin: 0, padding: 0}} />
-                    <FcIphone color='black' style={{margin: 0, padding: 0}}/>
+                <Picker onSetSelectedIndex={(change) => {
+                    for(var index = 0; index < avaliableDeviceModes.length; index++){
+                        if (avaliableDeviceModes[index].order === change){
+                            onSetSelectedDeviceMode(avaliableDeviceModes[index])
+                        }
+                    }
+                }} selectedIndex={selectedDeviceMode.order}>
+                    {avaliableDeviceModes.map((deviceMode) => (
+                        <div>
+                            {(deviceMode.logo === "computer") ?
+                                <RiComputerFill color='black' style={{margin: 0, padding: 0}} />:null
+                            }
+                            {(deviceMode.logo === "phone") ?
+                                <FcIphone color='black' style={{margin: 0, padding: 0}}/>:null
+                            }
+                        </div>
+                    ))}
                 </Picker>
 
             </div>:null

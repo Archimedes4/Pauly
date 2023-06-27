@@ -19,9 +19,9 @@ import Canvas from "./Canvas/Canvas"
 import SVG from './SVG.tsx';
 import {IoIosArrowBack} from "react-icons/io"
 import { CanvasModeType } from './Canvas/Canvas';
-import { addNewOnFierbase, updateOnFierbase, deleteOnFirebase } from '../../../Functions/CardFirebaseFuncitons.tsx';
-import  loadFromFirebase from '../../../Functions/CardFirebaseFuncitons.tsx';
+import { addNewOnFierbase, updateOnFierbase, deleteOnFirebase, loadFromFirebase } from '../../../Functions/CardFirebaseFuncitons.tsx';
 import create_UUID from "../../../Functions/CreateUUID"
+import PageSettings from './PageSettings.tsx';
 
 declare global{
   type CardElement = {
@@ -69,25 +69,6 @@ declare global{
   }
 }
 
-
-// enum SelectedAspectType{
-//   Small,
-//   Medium,
-//   Large
-// }
-
-enum SelectedCardBindModeType{
-  Class,
-  Sport,
-  Commission
-}
-
-enum SelectedSettingsModeType{
-  Gerneral,
-  Members,
-  Discription
-}
-
 interface SelectedFont {
   family: string;
   category: string;
@@ -126,7 +107,6 @@ export default function EditCard() {
   const [height, setHeight] = useState(window.innerHeight);//Device height
   const [avaliableDeviceModes, setAvaliableDeviceModes] = useState<deviceModeType[]>(null)
   const [selectedDeviceMode, setSelectedDeviceMode] = useState<deviceModeType>(null)
-  const [selectedSettingsMode, setSelectedSettingsMode] = useState<SelectedSettingsModeType>(SelectedSettingsModeType.Discription)
   const [isShowingBindPage, setIsShowingBindPage] = useState<boolean>(false)
   const [showingFontSelectedMenu, setShowingFontSelectionMenu] = useState<boolean>(false)
   const { app, db, currentUser, currentUserMicrosoftAccessToken } = UseAuth()
@@ -160,8 +140,10 @@ export default function EditCard() {
 
   useEffect(() => {
     if (selectedDeviceMode !== null){
+      setSelectedElement(undefined)
       setAspectHeight(selectedDeviceMode.aspectRatio.Height)
-      setAspectWidth(selectedDeviceMode.aspectRatio.Width)
+      setAspectWidth(selectedDeviceMode.aspectRatio.Width)      
+      CalculateAreaPlaneSize()  
     }
   }, [selectedDeviceMode])
 
@@ -209,7 +191,7 @@ export default function EditCard() {
 
   function addComponent(e: React.SyntheticEvent, newValue:CardElement) { 
     e.preventDefault()
-    addNewOnFierbase(newValue, selectedDeviceMode.id, selectedPage.firebaseID.toString())
+    addNewOnFierbase(newValue, selectedDeviceMode.id, selectedPage.firebaseID.toString(), db)
     setComponents([...components, newValue])
   }
 
@@ -297,7 +279,7 @@ export default function EditCard() {
       if (pressed){
         NewComponents[SelectedIndex]["Position"]["XPosition"] = NewComponents[SelectedIndex]["Position"]["XPosition"] + event.movementX
         NewComponents[SelectedIndex]["Position"]["YPosition"] = NewComponents[SelectedIndex]["Position"]["YPosition"] + event.movementY
-        updateOnFierbase(NewComponents[SelectedIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString())
+        updateOnFierbase(NewComponents[SelectedIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString(), db)
       } else {
         if (isChangeingSize) {
           if (chaningSizeDirection === "n"){
@@ -390,7 +372,7 @@ export default function EditCard() {
               NewComponents[SelectedIndex]["Width"] = NewComponents[SelectedIndex]["Width"] + event.movementX
             }
           }
-          updateOnFierbase(NewComponents[SelectedIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString())
+          updateOnFierbase(NewComponents[SelectedIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString(), db)
         }
       }
       setLastMousePosition({x: event.clientX, y: event.clientY})
@@ -405,23 +387,25 @@ export default function EditCard() {
     onMouseMoveUpdateComponents(NewComponents, SelectedIndex, event)
   }
 
-  async function loadFunction(index: number){
-    const loadFunc = loadFromFirebase()
-    await loadFunc(selectedPage.deviceModes[index].id, selectedPage.firebaseID.toString())
+  async function loadFirebase(){
+    var newAvaiableDeviceModes: deviceModeType[] = selectedPage.deviceModes
+    for(var index = 0; index < newAvaiableDeviceModes.length; index++){
+      const result = await loadFromFirebase(newAvaiableDeviceModes[index].id, selectedPage.firebaseID.toString(), db)
+      newAvaiableDeviceModes[index].components = result
+      if (selectedPage.defaultDeviceMode !== undefined){
+        if (newAvaiableDeviceModes[index].id === selectedPage.defaultDeviceMode){
+          setSelectedDeviceMode(newAvaiableDeviceModes[index])
+        }
+      } else if (newAvaiableDeviceModes[index].order === 0) {
+        setSelectedDeviceMode(newAvaiableDeviceModes[0])
+      }
+    }
+    setAvaliableDeviceModes(newAvaiableDeviceModes)
   }
 
   useEffect(() => {
     CalculateAreaPlaneSize()
-    for(var index = 0; index < selectedPage.deviceModes.length; index++){
-      loadFunction(index)
-      if (selectedPage.defaultDeviceMode !== undefined){
-        if (selectedPage.deviceModes[index].id === selectedPage.defaultDeviceMode){
-          setSelectedDeviceMode(selectedPage.deviceModes[index])
-        }
-      } else if (selectedPage.deviceModes[index].order === 0) {
-        setSelectedDeviceMode(selectedPage.deviceModes[0])
-      }
-    }
+    loadFirebase()
   }, [])
 
   const handleOnClick = (e: React.SyntheticEvent, Index: CardElement) => {
@@ -437,7 +421,7 @@ export default function EditCard() {
     const NewComponents = [...components]
     const removeIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
     setSelectedElement(null)
-    deleteOnFirebase(NewComponents[removeIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString())
+    deleteOnFirebase(NewComponents[removeIndex], selectedDeviceMode.id, selectedPage.firebaseID.toString(), db)
     const save = NewComponents[0] 
     NewComponents[0] = NewComponents[removeIndex]
     NewComponents[removeIndex] = save
@@ -579,7 +563,7 @@ export default function EditCard() {
                             <div 
                               style={{
                                 transformOrigin: "top left",
-                                backgroundColor: "gray",
+                                backgroundColor: selectedPage.backgroundColor,
                                 height: areaHeight + "px",
                                 width: areaWidth + "px",
                                 border: "2px solid black",
@@ -589,7 +573,7 @@ export default function EditCard() {
                               ref={editorRef}
                             >
                               {/* TO DO use terneray expersions to condense into one*/}
-                              <EditCardArea components={components} onSetComponents={setComponents} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}></EditCardArea>:null
+                              <EditCardArea components={components} onSetComponents={setComponents} zoomScale={zoomScale} onClick={handleOnClick} bolded={bolded} italic={italic} underlined={underlined} strikethrough={strikethrough} onPressed={setPressed} onSetMousePosition={setMousePosition} onIsShowingRightClick={setIsShowingRightClick} selectedElementValue={selectedElementValue} isShowingRightClick={isShowingRightClick} onIsChangingSize={setIsChangingSize} onChangingSizeDirection={setChangingSizeDirection} onIsUserTyping={setIsUserTypeing} isUserTyping={isUserTyping} fontSize={fontSize} fontStyle={fontStyle} onSetIsBolded={() => {}} onSetIsItalic={() => {}} onSetIsStrikethrough={() => {}} onSetIsUnderlined={() => {}} selectedHighlightColor={selectedHighlightColor} selectedTextColor={selectedTextColor}></EditCardArea>
                               {isInDrawMode ? 
                                 <div style={{zIndex: 100}}>
                                 <Canvas selectedCanvasMode={selectedCanvasMode} onSetSelectedColor={setSelectedBrushColor} width={areaWidth + "px"} height={areaHeight + "px"} selectedColor={selectedBrushColor} ref={canvasRef}/>
@@ -609,50 +593,23 @@ export default function EditCard() {
                 </Col>
               </Row>
               <Row>
-                <ToolbarBottom zoomScale={zoomScale.toString()} onSetZoomScale={(e) => setZoomScale(parseFloat(e))} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} onSetIsShowingCardsMenu={setIsShowingCardsMenu} onSetSelectedDeviceMode={setSelectedDeviceMode} selectedDeviceMode={selectedDeviceMode}
-                isShowingPaulyLibaray={isShowingPaulyLibaray} onAddComponent={addComponent} components={components} onSetInDotsMode={setIsInDotsMode} onSetInDrawMode={setIsInDrawMode} />
+                <ToolbarBottom zoomScale={zoomScale.toString()} onSetZoomScale={(e) => setZoomScale(parseFloat(e))} onSetIsShowingPaulyLibrary={setIsShowingPaulyLibrary} onSetIsShowingCardsMenu={setIsShowingCardsMenu} 
+                onSetSelectedDeviceMode={(e) => {
+                  console.log(e)
+                  const SelectedIndex = avaliableDeviceModes.findIndex((element: deviceModeType) => element.id === selectedDeviceMode.id)
+                  var newDeviceModes =  avaliableDeviceModes
+                  newDeviceModes[SelectedIndex].components = components
+                  setSelectedDeviceMode(e)
+                  setComponents(e.components)
+                }} selectedDeviceMode={selectedDeviceMode}
+                  avaliableDeviceModes={avaliableDeviceModes} isShowingPaulyLibaray={isShowingPaulyLibaray} onAddComponent={addComponent} components={components} onSetInDotsMode={setIsInDotsMode} onSetInDrawMode={setIsInDrawMode} />
               </Row>
           </Container>
         </div>
         {
           //Settings menu
           isShowingSettings ?
-          <>
-           
-              <div className={styles.EditCardTopView}>
-                <Card className={styles.settingsCard}>
-                  <Card.Body>
-                      <Stack direction='horizontal'>
-                      { (selectedSettingsMode === SelectedSettingsModeType.Members) ? 
-                        <div>Members</div>:null
-                      }
-                      { (selectedSettingsMode === SelectedSettingsModeType.Gerneral) ? 
-                        <div>General</div>:null
-                      }
-                      { (selectedSettingsMode === SelectedSettingsModeType.Discription) ? 
-                        <Stack>
-                          <p> Edit Use </p>
-                          <p> Current Use: {selectedPage.use}</p>
-                          <Form.Label htmlFor="overlayUse">Use</Form.Label>
-                          <Form.Control id="overlayUse"/>
-                        </Stack>:null
-                      }
-                        <Stack>
-                          <button onClick={() => {
-                            setSelectedSettingsMode(SelectedSettingsModeType.Discription)
-                          }}>Discription</button>
-                          <button onClick={() => {
-                            setSelectedSettingsMode(SelectedSettingsModeType.Members)
-                          }}>Members</button>
-                          <button onClick={() => {
-                            setSelectedSettingsMode(SelectedSettingsModeType.Gerneral)
-                          }}>General</button>
-                        </Stack>
-                      </Stack>
-                  </Card.Body>
-                </Card>
-              </div>
-          </> : null
+          <PageSettings selectedPage={selectedPage}/>: null
         }
         {
           //Pauly Library
@@ -681,29 +638,59 @@ export default function EditCard() {
                       const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
                       NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] + 1
                       setComponents(NewComponents)
-                  }}>Move Forward</ListGroup.Item>
+                  }} style={{userSelect: "none"}}>Move Forward</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
                     const NewComponents = [...components]
                     const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
                     NewComponents[SelectedIndex]["CurrentZIndex"] = NewComponents[SelectedIndex]["CurrentZIndex"] - 1
                     setComponents(NewComponents)
-                  }}>Move Backward</ListGroup.Item>
+                  }} style={{userSelect: "none"}}>Move Backward</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
                     const maxValueOfY = Math.max(...components.map((o: CardElement) => o.CurrentZIndex), 0);
                     const NewComponents = [...components]
                     const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
                     NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
                     setComponents(NewComponents)
-                  }}>Send To Front</ListGroup.Item>
+                  }} style={{userSelect: "none"}}>Send To Front</ListGroup.Item>
                   <ListGroup.Item onClick={() => {
                     const maxValueOfY = Math.min(...components.map((o: CardElement) => o.CurrentZIndex), 0);
                     const NewComponents = [...components]
                     const SelectedIndex = components.findIndex((element: CardElement) => element.ElementIndex === selectedElementValue?.ElementIndex)
                     NewComponents[SelectedIndex]["CurrentZIndex"] = maxValueOfY + 1
                     setComponents(NewComponents)
-                  }} style={{cursor: "default"}}>Send To Back</ListGroup.Item>
-                  <ListGroup.Item>Duplicate</ListGroup.Item>
-                  <ListGroup.Item onClick={() => {DeleteFunction()}}>Delete</ListGroup.Item>
+                  }} style={{cursor: "default", userSelect: "none"}}>Send To Back</ListGroup.Item>
+                  <ListGroup.Item onClick={(e) => {
+                    const newUUID = create_UUID()
+                    addComponent(e, {
+                      ElementType: selectedElementValue.ElementType, 
+                      Content: selectedElementValue.Content, 
+                      Position: selectedElementValue.Position, 
+                      Width: selectedElementValue.Width, 
+                      Height: selectedElementValue.Height, 
+                      CurrentZIndex: selectedElementValue.CurrentZIndex, 
+                      ElementIndex: components.length + 2, 
+                      Opacity: selectedElementValue.Opacity, 
+                      CornerRadius: selectedElementValue.CornerRadius, 
+                      SelectedColor: selectedElementValue.SelectedColor, 
+                      SelectedFont: selectedElementValue.SelectedFont, 
+                      ElementUUID: newUUID
+                    })
+                    setSelectedElement({
+                      ElementType: selectedElementValue.ElementType, 
+                      Content: selectedElementValue.Content, 
+                      Position: selectedElementValue.Position, 
+                      Width: selectedElementValue.Width, 
+                      Height: selectedElementValue.Height, 
+                      CurrentZIndex: selectedElementValue.CurrentZIndex, 
+                      ElementIndex: components.length + 2, 
+                      Opacity: selectedElementValue.Opacity, 
+                      CornerRadius: selectedElementValue.CornerRadius, 
+                      SelectedColor: selectedElementValue.SelectedColor, 
+                      SelectedFont: selectedElementValue.SelectedFont, 
+                      ElementUUID: newUUID
+                    })
+                  }} style={{cursor: "default", userSelect: "none"}}>Duplicate</ListGroup.Item>
+                  <ListGroup.Item onClick={() => {DeleteFunction()}} style={{cursor: "default", userSelect: "none"}}>Delete</ListGroup.Item>
               </ListGroup>
             </Stack>
           </div>
