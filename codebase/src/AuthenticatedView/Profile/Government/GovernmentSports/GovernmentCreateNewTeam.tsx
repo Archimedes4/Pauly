@@ -5,7 +5,7 @@ import {convertYearToSchoolYear} from '../../../../Functions/calendarFunctions'
 import NavBarComponent from '../../../../UI/NavComponent';
 import callMsGraph from '../../../../Functions/microsoftAssets';
 import create_UUID from '../../../../Functions/CreateUUID';
-import { accessTokenContent } from '../../../../App';
+import { accessTokenContent } from '../../../../../App';
 import { siteID } from '../../../../PaulyConfig';
 
 const windowDimensions = Dimensions.get('window');

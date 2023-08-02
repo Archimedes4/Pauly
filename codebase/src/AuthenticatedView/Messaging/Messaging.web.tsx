@@ -2,7 +2,7 @@ import { View, Text, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Button
 import React, { useEffect, useRef, useState, useContext } from 'react'
 import { Link } from 'react-router-native'
 import NavBarComponent from '../../UI/NavComponent';
-import { accessTokenContent } from '../../App';
+import { accessTokenContent } from '../../../App';
 import callMsGraph from '../../Functions/microsoftAssets';
 import SendMessageComponent from './SendMessageComponent';
 import SanatizeHTML from '../../UI/SanatizeHTML/SanatizeHTML.web';

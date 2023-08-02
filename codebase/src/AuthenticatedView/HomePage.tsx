@@ -97,13 +97,13 @@ export default function HomePage() {
             <Link to={'/quiz'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: dimensions.window.width * 0.5, height: dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
-                    <Image source={require("../assests/images/QuizIcon.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <Image source={require("../../assets/images/QuizIcon.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
             <Link to={'/sports'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: dimensions.window.width * 0.5, height: dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-                    <Image source={require("../assests/images/Football.png")} resizeMode='contain' width={dimensions.window.width * 0.3} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={dimensions.window.width * 0.3} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
         </View>
@@ -111,13 +111,13 @@ export default function HomePage() {
             <Link to={'/messaging'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: dimensions.window.width * 0.5, height: dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-                    <Image source={require("../assests/images/MessagingIcon.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <Image source={require("../../assets/images/MessagingIcon.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link >
             <Link to={'/profile'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: dimensions.window.width * 0.5, height: dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
-                    <Image source={require("../assests/images/Books.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <Image source={require("../../assets/images/Books.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
         </View>

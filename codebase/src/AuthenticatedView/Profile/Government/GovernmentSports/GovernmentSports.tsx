@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import NavBarComponent from '../../../../UI/NavComponent';
 import callMsGraph from '../../../../Functions/microsoftAssets';
-import { accessTokenContent } from '../../../../App';
+import { accessTokenContent } from '../../../../../App';
 import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
 
 const windowDimensions = Dimensions.get('window');

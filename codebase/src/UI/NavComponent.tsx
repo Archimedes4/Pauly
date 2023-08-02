@@ -29,7 +29,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
     <View style={{backgroundColor: "#793033", height: height, overflow: "hidden", width: (expandedMode) ? (width * 2.5):width, flexDirection: "row"}}>
         <View style={{height: height, overflow: "hidden", width: width, alignItems: "center"}}>
             <Pressable style={[styles.LinkStyle, {height: length, width: length, margin: 0, marginTop: length * 0.4, marginBottom: length * 0.4}]} onPress={() => {onSetExpandedMode(!expandedMode)}}>
-                <Image source={require("../assests/images/PaulyLogo.png")} resizeMode='contain' style={{width: length, height:  length}} />
+                <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: length, height:  length}} />
             </Pressable>
             <Link to="/notifications" style={[styles.LinkStyle, {height: length, width: length, margin: 0}]}>
                 <View style={[{height: iconLength, width: iconLength}]}>
@@ -52,7 +52,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
                 {/* <Image source={require("../assests/images/MessagingIcon.png")} resizeMode='contain' style={{width: length, height:  length}} /> */}
                 <MessagingIcon />
             </Link>
-            <Link to="/quiz"  style={[styles.LinkStyle, {margin: 0}]}><Image source={require("../assests/images/QuizIcon.png")}  resizeMode='contain' style={{width: length, height:  length}} /></Link>
+            <Link to="/quiz"  style={[styles.LinkStyle, {margin: 0}]}><Image source={require("../../assets/images/QuizIcon.png")}  resizeMode='contain' style={{width: length, height:  length}} /></Link>
             <Link to="/calendar" style={[styles.LinkStyle, {margin: 0}]}>
                 <Svg style={{width: iconLength, height: iconLength}} viewBox="0 0 24 24" fill="none">
                     <Path d="M7.75 2.5C7.75 2.08579 7.41421 1.75 7 1.75C6.58579 1.75 6.25 2.08579 6.25 2.5V4.07926C4.81067 4.19451 3.86577 4.47737 3.17157 5.17157C2.47737 5.86577 2.19451 6.81067 2.07926 8.25H21.9207C21.8055 6.81067 21.5226 5.86577 20.8284 5.17157C20.1342 4.47737 19.1893 4.19451 17.75 4.07926V2.5C17.75 2.08579 17.4142 1.75 17 1.75C16.5858 1.75 16.25 2.08579 16.25 2.5V4.0129C15.5847 4 14.839 4 14 4H10C9.16097 4 8.41527 4 7.75 4.0129V2.5Z" fill="#000000"/>
@@ -60,7 +60,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
                 </Svg>
             </Link>
             <Link to="/sports" style={[styles.LinkStyle, {height: length, width: length, margin: 0}]}>
-                <Image source={require("../assests/images/Football.png")} resizeMode='contain' style={{width: length, height:  length}}/>
+                <Image source={require("../../assets/images/Football.png")} resizeMode='contain' style={{width: length, height:  length}}/>
             </Link>
             <Link to="/profile/government"  style={[styles.LinkStyle, {height: length, width: length, margin: 0}]}>
                 <Svg style={{width: length, height: length}} viewBox="0 0 24 24" fill="black">

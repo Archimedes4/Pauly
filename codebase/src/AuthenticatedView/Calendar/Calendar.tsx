@@ -1,5 +1,5 @@
 import { View, Text, Dimensions, Pressable, TextInput } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import NavBarComponent from '../../UI/NavComponent'
 import callMsGraph from '../../Functions/microsoftAssets';
@@ -12,6 +12,8 @@ import ChevronRight from '../../UI/ChevronRight';
 import DayView from "./DayView"
 import Week from './Week';
 import DatePicker from '../../UI/DateTimePicker/DatePicker';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -35,21 +37,16 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   const microsoftAccessToken = useContext(accessTokenContent);
   const [selectedCalendarMode, setSelectedCalendarMode] = useState<calendarMode>(calendarMode.month)
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
-  const [dimensions, setDimensions] = useState({
-    window: windowDimensions,
-    screen: screenDimensions,
-  });
   const [selectedDate, setSelectedDate] = useState<Date>(new Date)
-
-  useEffect(() => {
-      const subscription = Dimensions.addEventListener(
-        'change',
-        ({window, screen}) => {
-          setDimensions({window, screen});
-        },
-      );
-      return () => subscription?.remove();
+  const [fontsLoaded] = useFonts({
+    'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
   async function getCalendars(){
     const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/calendars")
@@ -62,11 +59,15 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
     getCalendars()
   }, [])
 
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <View>
-      <View style={{height: dimensions.window.height * 0.1, backgroundColor: '#444444'}}>
+      <View style={{height: microsoftAccessToken.dimensions.window.height * 0.1, backgroundColor: '#444444'}}>
         <View style={{flexDirection: "row"}}>
-          { (dimensions.window.width > 576) ?
+          { (microsoftAccessToken.dimensions.window.width > 576) ?
             null:<Link to="/">
               <View style={{flexDirection: "row"}}>
                 <ChevronLeft />
@@ -74,7 +75,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
               </View>
             </Link>
           } 
-          <Text>Calendar</Text>
+          <Text style={{fontFamily: "BukhariScript"}}>Calendar</Text>
         </View>
         <View style={{flexDirection: "row"}}>
           <Pressable onPress={() => {
@@ -99,15 +100,15 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
           <Text>+</Text>
         </Pressable>
       </View> 
-      <View style={{height: dimensions.window.height * 0.9}}>
+      <View style={{height: microsoftAccessToken.dimensions.window.height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
-        <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={dimensions.window.height * 0.9} selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>: null
+        <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>: null
       }
       { (selectedCalendarMode === calendarMode.week) ?
-        <Week width={microsoftAccessToken.dimensions.window.width * 0.8} height={dimensions.window.height * 0.9}/>:null
+        <Week width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9}/>:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
-        <DayView width={microsoftAccessToken.dimensions.window.width * 0.8} height={dimensions.window.height * 0.9} selectedDate={selectedDate} />:null
+        <DayView width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} />:null
       }
       </View>
       { isShowingAddDate ?
@@ -125,6 +126,9 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
   const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
   const [startDate, setStartDate] = useState<Date>(new Date)
   const [endDate, setEndDate] = useState<Date>(new Date)
+  async function createEvent() {
+    
+  }
   return (
     <View style={{backgroundColor: "white", width: width, height: height}}>
       { (isPickingStartDate || isPickingEndDate) ?

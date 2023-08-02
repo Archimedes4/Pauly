@@ -12,7 +12,7 @@
 import { View, Text, Button, TextInput, Pressable, Dimensions } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../App';
+import { accessTokenContent } from '../../../../../App';
 import NavBarComponent from '../../../../UI/NavComponent';
 import { Link } from 'react-router-native';
 

@@ -9,11 +9,7 @@ export default function DatePicker({selectedDate, onSetSelectedDate, width, heig
     const today = new Date
     useEffect(() => {
         setViewingDate(selectedDate)
-        console.log("Operation")
     }, [selectedDate])
-    useEffect(() => {
-        console.log("NEW DATE", viewingDate)
-    }, [viewingDate])
     function getValue(columnNumber: number, rowNumber: number, inputDate: Date): {v: number, m: "B" | "C" | "A"} {
         //Check if this month
         var lastDay = new Date(inputDate.getFullYear(), inputDate.getMonth() + 1, 0);
@@ -37,7 +33,7 @@ export default function DatePicker({selectedDate, onSetSelectedDate, width, heig
     <View style={{width: width, height: height}}>
         <View style={{flexDirection: "row", height: height/7}}>
             <View style={{width: width * 0.5}}>
-                <Text  style={{fontSize: (width < height) ? (width * 0.4)/(height * 0.01):(height * 0.5)/(width * 0.02), fontFamily: require("../../assests/fonts/BukhariScript.woff")}} adjustsFontSizeToFit={true} numberOfLines={1}>{viewingDate.toLocaleString("en-us", { month: "long" })} {viewingDate.getFullYear()}</Text>
+                <Text  style={{fontSize: (width < height) ? (width * 0.4)/(height * 0.01):(height * 0.5)/(width * 0.02)}} adjustsFontSizeToFit={true} numberOfLines={1}>{viewingDate.toLocaleString("en-us", { month: "long" })} {viewingDate.getFullYear()}</Text>
             </View>
             <Pressable onPress={() => {
                 const newDate = new Date(viewingDate.getFullYear(), viewingDate.getMonth() + 1)

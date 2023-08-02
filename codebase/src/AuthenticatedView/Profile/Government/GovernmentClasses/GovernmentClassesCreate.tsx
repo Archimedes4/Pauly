@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../App';
+import { accessTokenContent } from '../../../../../App';
 import { siteID } from '../../../../PaulyConfig';
 
 declare global {

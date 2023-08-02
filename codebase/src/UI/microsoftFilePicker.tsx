@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 // import { Card, Stack, Button, Form } from 'react-bootstrap';
-import { accessTokenContent } from '../App';
+import { accessTokenContent } from '../../App';
 import { Button, Pressable, View, Text, TextInput, Dimensions } from 'react-native';
 import Svg, { Polygon, Rect, G, Path } from 'react-native-svg';
 // import {FcFolder, FcDocument} from "react-icons/fc"

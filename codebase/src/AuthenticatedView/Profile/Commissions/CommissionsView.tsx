@@ -1,7 +1,7 @@
 import { View, Text, Button } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../App';
+import { accessTokenContent } from '../../../../App';
 import { siteID } from '../../../PaulyConfig';
 import { useParams } from 'react-router-native';
 

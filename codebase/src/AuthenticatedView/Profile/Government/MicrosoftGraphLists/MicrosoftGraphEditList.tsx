@@ -2,7 +2,7 @@ import { View, Text, Dimensions, Button } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../App';
+import { accessTokenContent } from '../../../../../App';
 
 declare global {
     type listColumnType = {

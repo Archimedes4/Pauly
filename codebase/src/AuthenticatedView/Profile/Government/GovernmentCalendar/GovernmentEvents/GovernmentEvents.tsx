@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React, { useContext, useEffect } from 'react'
 import callMsGraph from '../../../../../Functions/microsoftAssets';
-import { accessTokenContent } from '../../../../../App';
+import { accessTokenContent } from '../../../../../../App';
 import { Link } from 'react-router-native';
 import { siteID } from '../../../../../PaulyConfig';
 
@@ -22,7 +22,6 @@ export default function GovernmentEvents({}:{isCreatingEvent: boolean}) {
             <Text>Back</Text>
         </Link>
         <Text>GovernmentEvents Normie</Text>
-        
     </View>
    
   )

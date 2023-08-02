@@ -11,19 +11,27 @@ export default function Login() {
     const [dimensions, setDimensions] = useState({
         window: windowDimensions,
         screen: screenDimensions,
-      });
+    });
     
-      useEffect(() => {
-          const subscription = Dimensions.addEventListener(
-            'change',
-            ({window, screen}) => {
-              setDimensions({window, screen});
-            },
-          );
-          return () => subscription?.remove();
-      });
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener(
+        'change',
+        ({window, screen}) => {
+            setDimensions({window, screen});
+        },
+        );
+        return () => subscription?.remove();
+    });
+
+    useEffect(() => {
+        setDimensions({
+            window: Dimensions.get('window'),
+            screen: Dimensions.get('screen'),
+        });
+    }, [])
+
     return (
-        <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height}}>
+        <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
             <Pressable onPress={async () => {
                 instance.loginRedirect(loginRequest).catch((e) => {
                     console.log(e);

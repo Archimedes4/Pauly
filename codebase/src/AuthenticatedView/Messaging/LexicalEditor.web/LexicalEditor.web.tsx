@@ -3,6 +3,7 @@ import {ClearEditorPlugin} from '@lexical/react/LexicalClearEditorPlugin';
 import {HorizontalRulePlugin} from '@lexical/react/LexicalHorizontalRulePlugin';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {TabIndentationPlugin} from '@lexical/react/LexicalTabIndentationPlugin';
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import * as React from 'react';
 import {useEffect, useRef, useState} from 'react';
 

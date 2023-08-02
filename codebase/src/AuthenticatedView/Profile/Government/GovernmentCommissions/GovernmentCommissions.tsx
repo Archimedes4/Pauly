@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Button } from 'react-native'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../App'
+import { accessTokenContent } from '../../../../../App'
 import { siteID } from '../../../../PaulyConfig'
 
 declare global {
