@@ -62,7 +62,6 @@ const msalInstance = new PublicClientApplication(msalConfig);
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
-
 export const accessTokenContent = React.createContext<{uri: string, accessToken: string, dimensions: {window: ScaledSize, screen: ScaledSize}}>({uri: "", accessToken: "",dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}});
 
 function AuthenticatedView({dimensions}:{dimensions: {
@@ -72,7 +71,7 @@ function AuthenticatedView({dimensions}:{dimensions: {
   const { instance, accounts } = useMsal();
   const [context, setContext] = useState<{uri: string, accessToken: string, dimensions: {window: ScaledSize, screen: ScaledSize}}>({uri: "", accessToken: "",dimensions: dimensions})
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
-
+  
   async function getUserProfile(microsoftAccessToken: string) {
     console.log("Token", microsoftAccessToken)
     const result = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me/photo/$value")

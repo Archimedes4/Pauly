@@ -14,6 +14,8 @@ import Week from './Week';
 import DatePicker from '../../UI/DateTimePicker/DatePicker';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import TimePicker from '../../UI/DateTimePicker/TimePicker';
+import { orgWideGroupID } from '../../PaulyConfig';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -41,6 +43,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });
+  const [events, setEvents] = useState()
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -49,14 +52,21 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   }, [fontsLoaded]);
 
   async function getCalendars(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/calendars")
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/calendars", "GET", true)
     console.log(result)
     const data = await result.json()
     console.log(data)
   }
 
+  async function getOrgWideEvents() {
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events")
+    const data = await result.json()
+    console.log("ORg Data", data)
+  }
+
   useEffect(() => {
     getCalendars()
+    getOrgWideEvents()
   }, [])
 
   if (!fontsLoaded) {
@@ -108,7 +118,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
         <Week width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9}/>:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
-        <DayView width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} />:null
+        <DayView width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} currentEvents={events} />:null
       }
       </View>
       { isShowingAddDate ?
@@ -121,18 +131,31 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
 }
 
 function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number}) {
+  const microsoftAccessToken = useContext(accessTokenContent);
   const [eventName, setEventName] = useState("")
   const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
   const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
   const [startDate, setStartDate] = useState<Date>(new Date)
   const [endDate, setEndDate] = useState<Date>(new Date)
   async function createEvent() {
-    
+    const data = {
+      "subject": eventName,
+      "start": {
+        "dateTime": startDate.toISOString().replace(/.\d+Z$/g, "Z"),
+        "timeZone": "Central America Standard Time"
+      },
+      "end": {
+        "dateTime": endDate.toISOString().replace(/.\d+Z$/g, "Z"),
+        "timeZone": "Central America Standard Time"
+      }
+    }
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", false, JSON.stringify(data))
+    console.log(result)
   }
   return (
     <View style={{backgroundColor: "white", width: width, height: height}}>
       { (isPickingStartDate || isPickingEndDate) ?
-        <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height}/>:
+        <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}}/>:
         <View>
           <Text>Add Event</Text>
           <Text>Event Name:</Text>
@@ -141,16 +164,22 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
             onChangeText={setEventName}
           />
           <Text>Start Date</Text>
-          <Text>{startDate.toISOString()}</Text>
-          <Pressable onPress={() => {setIsPickingStartDate(true)}}>
-            <Text>Pick Start Date</Text>
-          </Pressable>
+          <View style={{flexDirection: "row"}}>
+            <Text>{startDate.toLocaleString("en-us", { month: "long" })} {startDate.getDate()} {startDate.getFullYear()}</Text>
+            <Pressable onPress={() => {setIsPickingStartDate(true)}}>
+              <Text>Pick Start Date</Text>
+            </Pressable>
+            <TimePicker selectedHourMilitary={startDate.getHours()} selectedMinuteMilitary={startDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = startDate; newDate.setHours(e); setStartDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = startDate; newDate.setMinutes(e); setStartDate(newDate)}}/>
+          </View>
           <Text>End Date</Text>
-          <Text>{endDate.toISOString()}</Text>
-          <Pressable onPress={() => {setIsPickingEndDate(true)}}>
-            <Text>Pick End Date</Text>
-          </Pressable>
-          <Pressable onPress={() => {setIsShowingAddDate(false)}}>
+          <View style={{flexDirection: "row"}}>
+            <Text>{endDate.toLocaleString("en-us", { month: "long" })} {endDate.getDate()} {endDate.getFullYear()}</Text>
+            <Pressable onPress={() => {setIsPickingEndDate(true)}} style={{margin: 5}}>
+              <Text>Pick End Date</Text>
+            </Pressable>
+            <TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}}/>
+          </View>
+          <Pressable onPress={() => {setIsShowingAddDate(false); createEvent()}}>
             <Text>Create</Text>
           </Pressable>
         </View>

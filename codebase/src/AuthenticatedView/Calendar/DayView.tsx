@@ -46,18 +46,11 @@ declare global {
     }
 }
 
-export default function DayView({width, height, selectedDate}:{width: number, height: number, selectedDate: Date}) {
-    // @Binding var CalendarClasses: calendarCourseType[]
-    // @Binding var SelectedDates: DateProperty[]
-    // @State var CurrentEvents: eventType[] = []
+export default function DayView({width, height, selectedDate, currentEvents}:{width: number, height: number, selectedDate: Date, currentEvents: eventType[]}) {
     const colorScheme = useColorScheme();
-
-    const [currentEvents, setCurrentEvents] = useState<eventType[]>([])
     const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0)
     const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0)
-    // const [scrollPosition, setScrollPosition] = useState<number>(0)
     const [currentTime, setCurrentTime] = useState<string>("12:00")
-    // const [dateIntFetched, setDateFetched] = useState<boolean>(false)
     const [isShowingTime, setIsShowingTime] = useState<boolean>(true)
     const [hourLength, setHourLength] = useState<number>(0)
     const hoursText: string[] = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM","10PM", "11PM"]

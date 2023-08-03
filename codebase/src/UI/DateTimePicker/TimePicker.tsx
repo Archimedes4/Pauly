@@ -38,7 +38,6 @@ export default function TimePicker({selectedHourMilitary, selectedMinuteMilitary
 
   return (
     <View style={{flexDirection: "row"}}>
-        <Text>TimePicker</Text>
         <TextInput value={selectedHour} onChangeText={(e) => {
             if (e.length == 1){
                 setSelectedHour("00")
