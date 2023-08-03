@@ -16,6 +16,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import TimePicker from '../../UI/DateTimePicker/TimePicker';
 import { orgWideGroupID } from '../../PaulyConfig';
+import CalendarIcon from '../../UI/Icons/CalendarIcon';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -173,11 +174,13 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
           </View>
           <Text>End Date</Text>
           <View style={{flexDirection: "row"}}>
-            <Text>{endDate.toLocaleString("en-us", { month: "long" })} {endDate.getDate()} {endDate.getFullYear()}</Text>
             <Pressable onPress={() => {setIsPickingEndDate(true)}} style={{margin: 5}}>
-              <Text>Pick End Date</Text>
+              <View style={{flexDirection: "row"}}>
+                <Text>{endDate.toLocaleString("en-us", { month: "long" })} {endDate.getDate()} {endDate.getFullYear()}</Text>
+                <CalendarIcon width={14} height={14}/>
+              </View>
             </Pressable>
-            <TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/24}}/>
+            <TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
           </View>
           <Pressable onPress={() => {setIsShowingAddDate(false); createEvent()}}>
             <Text>Create</Text>

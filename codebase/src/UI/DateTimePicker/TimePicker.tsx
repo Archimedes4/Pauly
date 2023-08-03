@@ -50,7 +50,7 @@ export default function TimePicker(
                     }
                 }   
             }
-        }} keyboardType='numeric' style={{width:  (dimentions.hourWidth) ? dimentions.hourWidth:"100%", height:  (dimentions.hourHeight) ? dimentions.hourHeight:"100%"}}/>
+        }} keyboardType='numeric' style={{width: (dimentions?.hourWidth) ? dimentions.hourWidth:"100%", height:  (dimentions?.hourHeight) ? dimentions.hourHeight:"100%"}}/>
         <TextInput value={selectedMinute} onChangeText={(e) => {
             if (e.length == 1){
                 setSelectedMinute("00")
@@ -65,14 +65,14 @@ export default function TimePicker(
                     }
                 }   
             }
-        }} keyboardType='numeric' style={{width: (dimentions.minuteWidth) ? dimentions.minuteWidth:"100%", height: (dimentions.minuteHeight) ? dimentions.minuteHeight:"100%"}}/>
+        }} keyboardType='numeric' style={{width: (dimentions?.minuteWidth) ? dimentions.minuteWidth:"100%", height: (dimentions?.minuteHeight) ? dimentions.minuteHeight:"100%"}}/>
         <TextInput value={selectedTimeOfDay} onChangeText={(e) => {
             if (e == "PMa" || e == "PMA"){
                 setSelectedTimeOfDay("AM")
             } else if (e == "AMp" || e == "AMP") {
                 setSelectedTimeOfDay("PM")
             }
-        }} style={{width: (dimentions.timeWidth) ? dimentions.timeWidth:"100%", height:  (dimentions.timeHeight) ? dimentions.timeHeight:"100%"}}/>
+        }} style={{width: (dimentions?.timeWidth) ? dimentions.timeWidth:"100%", height:  (dimentions?.timeHeight) ? dimentions.timeHeight:"100%"}}/>
 
     </View>
   )
