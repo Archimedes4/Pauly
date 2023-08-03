@@ -189,31 +189,20 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
 }
 
 function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: number, height: number, selectedDate: Date, setSelectedDate: (item: Date) => void}) {
-  const [year, setYear] = useState<number>(2020)
-  const [month, setMonth] = useState<string>("January")
-  const [startDate, setStartDate] = useState<number>(0)
-  const nowDay = new Date().getDay()
-  const nowMonth = new Date().getMonth()
-  const nowYear = new Date().getFullYear()
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
   
   function getMonthData(selectedDate: Date) {
-    setYear(selectedDate.getFullYear())
-    setStartDate(findFirstDayinMonth(selectedDate))
-    setMonth(monthNames[selectedDate.getMonth()])
-    const numberOfDaysInMonth = getDaysInMonth(selectedDate)
-    var daySelected = 0
-    if (startDate >= 1) {
-      daySelected = (numberOfDaysInMonth + startDate)
-    } else {
-      daySelected = (numberOfDaysInMonth + startDate - 1)
-    }
+
+    //Check if this month
+    var lastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+    var monthBeforeLastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 0);
+    const firstDayWeek = findFirstDayinMonth(selectedDate)
     var monthDataResult: monthDataType[] = []
     for (let index = 0; index < 42; index++) {
-      console.log("Day Selected", daySelected, "StartDate", startDate, "Number of days in month", numberOfDaysInMonth, "First Condition:", (index >= (startDate - 1)), "Second Condition", (index <= (daySelected - 2)))
-      if (index >= (startDate - 1) && index <= (daySelected - 2)) {
-        monthDataResult.push({showing: true, dayData: "" + (index - startDate + 2), id: create_UUID()})
+      if (index >= firstDayWeek && (index - firstDayWeek) < (lastDay.getDate())){
+        //In the current month
+        monthDataResult.push({showing: true, dayData: "" + (index - firstDayWeek + 1), id: create_UUID()})
       } else {
         monthDataResult.push({showing: false, dayData: "", id: create_UUID()})
       }
@@ -230,14 +219,14 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
     <View style={{backgroundColor: "#793033"}}>
       <View style={{height: height/8, width: width}}>
         <View>
-          <Text>{year.toString()}</Text>{/*leading, white*/}
+          <Text>{selectedDate.getFullYear()}</Text>{/*leading, white*/}
         </View>
         <View style={{flexDirection: "row"}}>
           <View style={{width: width * 0.2}}>
-            <Text>{month}</Text>{/*leading, title, white*/}
+            <Text>{selectedDate.toLocaleString("en-us", { month: "long" })}</Text>{/*leading, title, white*/}
           </View>
           <View>
-            {(year != nowYear || selectedDate.getMonth() != nowMonth) ?
+            {(selectedDate.getFullYear() != new Date().getFullYear() || selectedDate.getMonth() != new Date().getMonth()) ?
               <View style={{width: width * 0.2}}>
                 <Pressable onPress={() => {setSelectedDate(new Date)}}>
                   <Text style={{color: "white"}}>Today</Text>
