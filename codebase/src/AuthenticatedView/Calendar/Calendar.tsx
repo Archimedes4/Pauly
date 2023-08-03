@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, Pressable, TextInput } from 'react-native'
+import { View, Text, Dimensions, Pressable, TextInput, Switch } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import NavBarComponent from '../../UI/NavComponent'
@@ -17,6 +17,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import TimePicker from '../../UI/DateTimePicker/TimePicker';
 import { orgWideGroupID } from '../../PaulyConfig';
 import CalendarIcon from '../../UI/Icons/CalendarIcon';
+import Dropdown from '../../UI/Dropdown';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -131,15 +132,25 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   )
 }
 
+enum reocurringType {
+  daily,
+  weekly,
+  monthly,
+  yearly
+}
+
 function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number}) {
   const microsoftAccessToken = useContext(accessTokenContent);
-  const [eventName, setEventName] = useState("")
+  const [eventName, setEventName] = useState<string>("")
   const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
   const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
   const [startDate, setStartDate] = useState<Date>(new Date)
   const [endDate, setEndDate] = useState<Date>(new Date)
+  const [allDay, setAllDay] = useState<boolean>(false)
+  const [recurringEvent, setRecurringEvent] = useState<boolean>(false)
+  const [selectedReocurringType, setSelectedReocurringType] = useState<reocurringType>(reocurringType.daily)
   async function createEvent() {
-    const data = {
+    var data = {
       "subject": eventName,
       "start": {
         "dateTime": startDate.toISOString().replace(/.\d+Z$/g, "Z"),
@@ -150,27 +161,51 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
         "timeZone": "Central America Standard Time"
       }
     }
+    if (allDay) {
+      data["start"]["dateTime"] = startDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
+      data["end"]["dateTime"] = endDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
+      data["isAllDay"] = true
+    }
+    if (recurringEvent) {
+
+    }
     const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", false, JSON.stringify(data))
     console.log(result)
+    const dataOut = await result.json()
+    console.log(dataOut)
   }
   return (
     <View style={{backgroundColor: "white", width: width, height: height}}>
       { (isPickingStartDate || isPickingEndDate) ?
         <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}}/>:
         <View>
+          <Pressable onPress={() => {setIsShowingAddDate(false)}}>
+            <Text>X</Text>
+          </Pressable>
           <Text>Add Event</Text>
           <Text>Event Name:</Text>
           <TextInput
             value={eventName}
             onChangeText={setEventName}
           />
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={setAllDay}
+            value={allDay}
+          />
           <Text>Start Date</Text>
           <View style={{flexDirection: "row"}}>
-            <Text>{startDate.toLocaleString("en-us", { month: "long" })} {startDate.getDate()} {startDate.getFullYear()}</Text>
             <Pressable onPress={() => {setIsPickingStartDate(true)}}>
-              <Text>Pick Start Date</Text>
+              <View style={{flexDirection: "row"}}>
+                <Text>{startDate.toLocaleString("en-us", { month: "long" })} {startDate.getDate()} {startDate.getFullYear()}</Text>
+                <CalendarIcon width={14} height={14}/>
+              </View>
             </Pressable>
-            <TimePicker selectedHourMilitary={startDate.getHours()} selectedMinuteMilitary={startDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = startDate; newDate.setHours(e); setStartDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = startDate; newDate.setMinutes(e); setStartDate(newDate)}}/>
+            { allDay ?
+              null:<TimePicker selectedHourMilitary={startDate.getHours()} selectedMinuteMilitary={startDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = startDate; newDate.setHours(e); setStartDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = startDate; newDate.setMinutes(e); setStartDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
+            }
           </View>
           <Text>End Date</Text>
           <View style={{flexDirection: "row"}}>
@@ -180,10 +215,42 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
                 <CalendarIcon width={14} height={14}/>
               </View>
             </Pressable>
-            <TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
+            { allDay ?
+              null:<TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
+            }
           </View>
+          <Text>Reocurring Event</Text>
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={recurringEvent ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={setRecurringEvent}
+            value={recurringEvent}
+          />
+          { recurringEvent ?
+            <View style={{zIndex: 100}}>
+              <Dropdown onSetSelectedIndex={(item) => {
+                if (item >= 0 && item <= 3){
+                  setSelectedReocurringType(item)
+                } 
+              }} selectedIndex={selectedReocurringType} style={{height: height * 0.04}} expandedStyle={{height: height * 0.12, backgroundColor: "white"}}>
+                <View>
+                  <Text>Daily</Text>
+                </View>
+                <View>
+                  <Text>Weekly</Text>
+                </View>
+                <View>
+                  <Text>Monthly</Text>
+                </View>
+                <View>
+                  <Text>Yearly</Text>
+                </View>
+              </Dropdown>
+            </View>:null
+          }
           <Pressable onPress={() => {setIsShowingAddDate(false); createEvent()}}>
-            <Text>Create</Text>
+            <Text style={{zIndex: -1}}>Create</Text>
           </Pressable>
         </View>
       }
@@ -196,10 +263,8 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
   
   function getMonthData(selectedDate: Date) {
-
     //Check if this month
     var lastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
-    var monthBeforeLastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 0);
     const firstDayWeek = findFirstDayinMonth(selectedDate)
     var monthDataResult: monthDataType[] = []
     for (let index = 0; index < 42; index++) {

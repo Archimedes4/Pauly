@@ -1,21 +1,61 @@
 import { View, Text, TextInput, Button } from 'react-native'
 import React, { useContext, useState } from 'react'
 import callMsGraph from '../../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App';
+import { accessTokenContent } from '../../../../../../App';
 import { siteID } from '../../../../../PaulyConfig';
+
+enum loadingStateEnum {
+  loading,
+  success,
+  failed
+}
 
 export default function GovernmentTimetableCreate() {
     const microsoftAccessToken = useContext(accessTokenContent);
     const [timetableName, setTimetableName] = useState<string>("")
-    const [selectedSchedules, setSelectedSchedules] = useState<string[]>([])
+    const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+    const [selectedSchedules, setSelectedSchedules] = useState<scheduleType[]>([])
+    const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
     async function createTimetable() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields")//TO DO fix site id
+      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields")//TO DO fix site id
+    }
+    async function getSchedules() {
+      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields")
+      if (result.ok){
+        const dataResult = await result.json()
+        if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
+          var newLoadedSchedules: scheduleType[] = []
+          for (let index = 0; index < dataResult["value"].length; index++) {
+            try {
+              const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[]
+              console.log(scheduleData)
+              newLoadedSchedules.push({
+                name: dataResult["value"][index]["fields"]["name"],
+                id: dataResult["value"][index]["fields"]["scheduleId"],
+                periods: scheduleData
+              })
+            } catch {
+              //TO DO unimportant but this shouldn't be able to happen if this doesn't work most likly invalid data has somehow gotten into the schedule data column of the schedule list
+            }
+          }
+          setLoadedSchedules(newLoadedSchedules)
+          setLoadingState(loadingStateEnum.success)
+        }
+      } else {
+        setLoadingState(loadingStateEnum.failed)
+      }
     }
   return (
     <View>
       <Text>GovernmentTimetableCreate</Text>
       <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}}/>
-
+      <Text>Selected Schedules</Text>
+      { selectedSchedules.map((item) => (
+        <View>
+          <Text>{item.name}</Text>
+        </View>
+      ))}
+      <Text>Other Schedules</Text>
       <Button title="Create Timetable" onPress={() => {}}/>
     </View>
   )
