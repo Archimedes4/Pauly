@@ -1,12 +1,12 @@
 import { View, Text, TextInput } from 'react-native'
 import React, { useEffect, useState } from 'react'
 
-export default function TimePicker({selectedHourMilitary, selectedMinuteMilitary, onSetSelectedHourMilitary, onSetSelectedMinuteMilitary}:{selectedHourMilitary: number, selectedMinuteMilitary: number, onSetSelectedHourMilitary: (item: number) => void, onSetSelectedMinuteMilitary: (item: number) => void}) {
+export default function TimePicker(
+    {selectedHourMilitary, selectedMinuteMilitary, onSetSelectedHourMilitary, onSetSelectedMinuteMilitary, dimentions}:{selectedHourMilitary: number, selectedMinuteMilitary: number, onSetSelectedHourMilitary: (item: number) => void, onSetSelectedMinuteMilitary: (item: number) => void, dimentions?: {hourHeight?: number, hourWidth?: number, minuteHeight?: number, minuteWidth?: number, timeWidth?: number, timeHeight?: number}}) {
     const [selectedMinute, setSelectedMinute] = useState<string>("00")
     const [selectedHour, setSelectedHour] = useState<string>("12")
     const [selectedTimeOfDay, setSelectedTimeOfDay] = useState<"AM"|"PM">("AM")
     useEffect(() => {
-        console.log("RUN THIS SHIT")
         if (selectedMinuteMilitary <= 9){
             setSelectedMinute("0" + selectedMinuteMilitary.toString())
         } else if (selectedMinuteMilitary) {
@@ -15,12 +15,10 @@ export default function TimePicker({selectedHourMilitary, selectedMinuteMilitary
         if (selectedHourMilitary > 12){
             //PM
             setSelectedTimeOfDay("PM")
-            console.log("Here")
             setSelectedHour(((selectedHourMilitary - 12) <= 9) ? "0" + (selectedHourMilitary-12).toString():(selectedHourMilitary-12).toString())
         } else {
             //AM
             setSelectedTimeOfDay("AM")
-            console.log("Here AM")
             setSelectedHour(((selectedHourMilitary) <= 9) ? "0" + selectedHourMilitary.toString():selectedHourMilitary.toString())
         }
 
@@ -52,7 +50,7 @@ export default function TimePicker({selectedHourMilitary, selectedMinuteMilitary
                     }
                 }   
             }
-        }} keyboardType='numeric'/>
+        }} keyboardType='numeric' style={{width:  (dimentions.hourWidth) ? dimentions.hourWidth:"100%", height:  (dimentions.hourHeight) ? dimentions.hourHeight:"100%"}}/>
         <TextInput value={selectedMinute} onChangeText={(e) => {
             if (e.length == 1){
                 setSelectedMinute("00")
@@ -67,14 +65,14 @@ export default function TimePicker({selectedHourMilitary, selectedMinuteMilitary
                     }
                 }   
             }
-        }} keyboardType='numeric'/>
+        }} keyboardType='numeric' style={{width: (dimentions.minuteWidth) ? dimentions.minuteWidth:"100%", height: (dimentions.minuteHeight) ? dimentions.minuteHeight:"100%"}}/>
         <TextInput value={selectedTimeOfDay} onChangeText={(e) => {
             if (e == "PMa" || e == "PMA"){
                 setSelectedTimeOfDay("AM")
             } else if (e == "AMp" || e == "AMP") {
                 setSelectedTimeOfDay("PM")
             }
-        }}/>
+        }} style={{width: (dimentions.timeWidth) ? dimentions.timeWidth:"100%", height:  (dimentions.timeHeight) ? dimentions.timeHeight:"100%"}}/>
 
     </View>
   )

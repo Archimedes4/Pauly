@@ -177,7 +177,7 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
             <Pressable onPress={() => {setIsPickingEndDate(true)}} style={{margin: 5}}>
               <Text>Pick End Date</Text>
             </Pressable>
-            <TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}}/>
+            <TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/24}}/>
           </View>
           <Pressable onPress={() => {setIsShowingAddDate(false); createEvent()}}>
             <Text>Create</Text>
@@ -266,7 +266,7 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
                 { monthData.map((value, id) => (
                   <View>
                     { (id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
-                      <Pressable onPress={() => {}}>
+                      <Pressable onPress={() => {}} key={value.id}>
                         <CalendarCardView width={width/7} height={height/8} value={value}/>
                       </Pressable>: null
                     }
@@ -281,10 +281,6 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
 }
 
 function CalendarCardView({value, width, height}:{value: monthDataType, width: number, height: number}) {
-  const nowDay = new Date().getDay()
-  const nowMonth = new Date().getMonth()
-  const nowYear = new Date().getFullYear()
-  const currentMonth = monthNames[nowMonth]
   return(
     <View>
       { (value.showing) ?
