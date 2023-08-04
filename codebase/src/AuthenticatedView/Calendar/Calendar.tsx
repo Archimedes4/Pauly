@@ -149,6 +149,7 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
   const [allDay, setAllDay] = useState<boolean>(false)
   const [recurringEvent, setRecurringEvent] = useState<boolean>(false)
   const [selectedReocurringType, setSelectedReocurringType] = useState<reocurringType>(reocurringType.daily)
+  const [isSchoolDay, setIsSchoolDay] = useState<boolean>(false)
   async function createEvent() {
     var data = {
       "subject": eventName,
@@ -247,6 +248,19 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
                   <Text>Yearly</Text>
                 </View>
               </Dropdown>
+            </View>:null
+          }
+          <Text>School Day</Text>
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={isSchoolDay ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={setIsSchoolDay}
+            value={isSchoolDay}
+          />
+          { isSchoolDay ?
+            <View>
+              
             </View>:null
           }
           <Pressable onPress={() => {setIsShowingAddDate(false); createEvent()}}>

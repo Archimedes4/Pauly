@@ -3,6 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import NavBarComponent from '../../../UI/NavComponent'
 
+function Block() {
+  return (
+    <View>
+      
+    </View>
+  )
+}
 
 export default function Government() {
   return (

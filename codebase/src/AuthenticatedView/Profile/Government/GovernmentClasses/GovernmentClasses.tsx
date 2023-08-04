@@ -5,6 +5,9 @@ import { Link } from 'react-router-native'
 export default function GovernmentClasses() {
   return (
     <View>
+      <Link to="/profile/government/classes">
+        <Text>Back</Text>
+      </Link>
         <Text>GovernmentClasses</Text>
         <Link to="/profile/government/classes/root/create/">
             <Text>Create Root Class</Text>

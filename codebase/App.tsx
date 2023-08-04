@@ -56,6 +56,7 @@ import GovernmentHomePage from './src/AuthenticatedView/Profile/Government/Gover
 import GovernmentEvents from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentEvents/GovernmentEvents';
 import callMsGraph from './src/Functions/microsoftAssets';
 import NavBarComponent from './src/UI/NavComponent';
+import GovernmentTimetableCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableCreate';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -159,6 +160,7 @@ function AuthenticatedView({dimensions}:{dimensions: {
                   <Route path="/profile/government/calendar/schedule/create" element={<GovernmentScheduleCreate />} />
                   <Route path="/profile/government/calendar/schedule/edit/:scheduleId" element={<GovernmentScheduleEdit />} />
                   <Route path="/profile/government/calendar/timetable" element={<GovernmentTimetable />} />
+                  <Route path="/profile/government/calendar/timetable/create" element={<GovernmentTimetableCreate />} />
                   <Route path="/profile/government/sports" element={<GovernmentSports/>}/>
                   <Route path="/profile/government/sports/create" element={<GovernmentCreateNewSport/>}/>
                   <Route path="/profile/government/sports/team/:sport/:id" element={<GovernmentSportsTeams/>}/>

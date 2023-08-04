@@ -46,6 +46,9 @@ export default function GovernmentSchedule() {
   }, [])
   return (
     <View>
+      <Link to="/">
+        <Text>Back</Text>
+      </Link>
       <Text>GovernmentSchedule</Text>
       { (loadingState === loadingStateEnum.loading) ?
         <Text>Loading</Text>:null
@@ -53,7 +56,7 @@ export default function GovernmentSchedule() {
       { (loadingState === loadingStateEnum.success) ?
         <View>
           { loadedSchedules.map((schedule) => (
-            <Link to={"/profile/government/calendar/schedule/edit/" + schedule.id}>
+            <Link to={"/profile/government/calendar/schedule/edit/" + schedule.id} key={schedule.id}>
               <View>
                 <Text>{schedule.name}</Text>
               </View>
