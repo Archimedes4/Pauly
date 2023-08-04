@@ -1,15 +1,17 @@
 import { View, Text, Dimensions, Image, ImageSourcePropType } from 'react-native'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import NavBarComponent from '../../../UI/NavComponent'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { accessTokenContent } from '../../../../App';
+import { CalendarIcon, MedalIcon } from '../../../UI/Icons/Icons';
 
-function Block({height, width, text, imageSource}:{height: number, width: number, text: string, imageSource?: ImageSourcePropType}) {
+function Block({height, width, text, imageSource, children}:{height: number, width: number, text: string, imageSource?: ImageSourcePropType, children?: ReactNode}) {
   return (
-    <View style={{height: height, width: width, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+    <View style={{height: height, width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#444444", borderRadius: 5}}>
       { (imageSource !== undefined) && <Image source={imageSource} style={{width: width * 0.5, height: height * 0.5}}/>}
+      { (imageSource === undefined && children !== undefined) && <View style={{width: width * 0.5, height: height * 0.5}}><React.Fragment>{children}</React.Fragment></View> }
       <Text>{text}</Text>
     </View>
   )
@@ -30,14 +32,16 @@ export default function Government() {
   }
   return (
     <View>
-      <View style={{height: pageData.dimensions.window.height * 0.2, width: pageData.dimensions.window.width, alignContent: "center", justifyContent: "center", alignItems: "center", backgroundColor: "#444444"}}>
+      <View style={{height: pageData.dimensions.window.height * 0.2, width: pageData.dimensions.window.width, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <Text style={{fontFamily: "BukhariScript", fontSize: 100}}>Government</Text>
       </View>
       <Link to="/profile/government/graph">
-        <Text>Microsoft Graph</Text>
+      <Block width={100} height={100} text='Graph' imageSource={require('../../../../assets/images/GraphAPILogo.png')} />
       </Link>
       <Link to="/profile/government/commissions">
-        <Text>Commissions</Text>
+        <Block width={100} height={100} text='Commissions'>
+          <MedalIcon width={50} height={50} />
+        </Block>
       </Link>
       <Link to="/profile/government/sports">
         <Block width={100} height={100} text='Sports' imageSource={require('../../../../assets/images/Football.png')} />

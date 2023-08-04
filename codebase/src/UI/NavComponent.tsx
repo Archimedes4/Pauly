@@ -5,7 +5,7 @@ import {Image, StyleSheet, View, Dimensions, Pressable } from "react-native"
 import { Path, Svg, G } from 'react-native-svg'
 import callMsGraph from '../Functions/microsoftAssets'
 import { accessTokenContent } from '../../App'
-import CalendarIcon from './Icons/CalendarIcon'
+import {CalendarIcon} from './Icons/Icons'
 
 export default function NavBarComponent({width, height, expandedMode, onSetExpandedMode}:{width: number, height: number, expandedMode: boolean, onSetExpandedMode: (item: boolean) => void}) {
     const microsoftAccessToken = useContext(accessTokenContent);

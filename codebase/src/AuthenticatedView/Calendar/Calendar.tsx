@@ -16,7 +16,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import TimePicker from '../../UI/DateTimePicker/TimePicker';
 import { orgWideGroupID } from '../../PaulyConfig';
-import CalendarIcon from '../../UI/Icons/CalendarIcon';
+import {CalendarIcon} from '../../UI/Icons/Icons';
 import Dropdown from '../../UI/Dropdown';
 import SelectTimetable from './SelectTimetable';
 
