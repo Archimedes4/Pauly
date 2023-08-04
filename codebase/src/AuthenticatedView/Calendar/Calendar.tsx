@@ -18,6 +18,7 @@ import TimePicker from '../../UI/DateTimePicker/TimePicker';
 import { orgWideGroupID } from '../../PaulyConfig';
 import CalendarIcon from '../../UI/Icons/CalendarIcon';
 import Dropdown from '../../UI/Dropdown';
+import SelectTimetable from './SelectTimetable';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -150,6 +151,8 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
   const [recurringEvent, setRecurringEvent] = useState<boolean>(false)
   const [selectedReocurringType, setSelectedReocurringType] = useState<reocurringType>(reocurringType.daily)
   const [isSchoolDay, setIsSchoolDay] = useState<boolean>(false)
+  const [isSchoolYear, setIsSchoolYear] = useState<boolean>(false)
+  const [selectedTimetable, setSelectedTimetable] = useState<timetableType | undefined>(undefined)
   async function createEvent() {
     var data = {
       "subject": eventName,
@@ -255,12 +258,24 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
             trackColor={{false: '#767577', true: '#81b0ff'}}
             thumbColor={isSchoolDay ? '#f5dd4b' : '#f4f3f4'}
             ios_backgroundColor="#3e3e3e"
-            onValueChange={setIsSchoolDay}
+            onValueChange={(e) => {setIsSchoolDay(e); setIsSchoolYear(false); setAllDay(true)}}
             value={isSchoolDay}
           />
           { isSchoolDay ?
             <View>
               
+            </View>:null
+          }
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={isSchoolYear ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={(e) => {setIsSchoolDay(!e); setIsSchoolYear(e); setAllDay(true)}}
+            value={isSchoolYear}
+          />
+          { isSchoolYear ?
+            <View>
+              <SelectTimetable governmentMode={false} onSelect={(e) => {setSelectedTimetable(e)}}/>
             </View>:null
           }
           <Pressable onPress={() => {setIsShowingAddDate(false); createEvent()}}>

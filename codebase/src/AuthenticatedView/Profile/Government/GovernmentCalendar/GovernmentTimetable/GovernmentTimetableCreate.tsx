@@ -29,8 +29,8 @@ export default function GovernmentTimetableCreate() {
           "Title":timetableName,
           "timetableName":timetableName,
           "timetableId":create_UUID(),
-          "timetableDataSchedules":scheduals.toString(),
-          "timetableDataDays":schoolDays.toString()
+          "timetableDataSchedules":JSON.stringify(scheduals),
+          "timetableDataDays":JSON.stringify(schoolDays)
         }
       }
       const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields", "POST", false, JSON.stringify(data))//TO DO fix site id
