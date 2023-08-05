@@ -50,10 +50,15 @@ export default function Government() {
         <Text>President</Text>
       </Link>
       <Link to="/profile/government/calendar">
-        <Text>Calendar</Text>
+        <Block width={100} height={100} text='Calendar'>
+          <CalendarIcon width={50} height={50} />
+        </Block>
       </Link>
       <Link to="/profile/government/classes">
         <Text>Classes</Text>
+      </Link>
+      <Link to="/testing">
+        <Text>Testing</Text>
       </Link>
     </View>
   )

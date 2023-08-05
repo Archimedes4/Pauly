@@ -4,6 +4,7 @@ import callMsGraph from '../../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../../App';
 import { siteID } from '../../../../../PaulyConfig';
 import create_UUID from '../../../../../Functions/CreateUUID';
+import { Link } from 'react-router-native';
 
 enum loadingStateEnum {
   loading,
@@ -66,6 +67,9 @@ export default function GovernmentTimetableCreate() {
     }, [])
   return (
     <View>
+      <Link to="/profile/government/calendar/timetable/">
+        <Text>Back</Text>
+      </Link>
       <Text>GovernmentTimetableCreate</Text>
       <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}}/>
       <Text>Scheduals</Text>

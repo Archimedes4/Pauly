@@ -57,6 +57,7 @@ import GovernmentEvents from './src/AuthenticatedView/Profile/Government/Governm
 import callMsGraph from './src/Functions/microsoftAssets';
 import NavBarComponent from './src/UI/NavComponent';
 import GovernmentTimetableCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableCreate';
+import Testing from './src/AuthenticatedView/Profile/Government/Testing';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -167,7 +168,11 @@ function AuthenticatedView({dimensions}:{dimensions: {
                   <Route path="/profile/government/sports/team/:sport/:id/create/" element={<GovernmentCreateNewTeam/>}/>
                   <Route path="/profile/government/sports/team/edit/:sport/:id/:team/:teamId/:season" element={<GovernmentSportTeamEdit />} />
                   <Route path="/profile/government/sports/post/:sport/:id/:team/:teamId/:season" element={<GovernmentSportsTeamAddPost />} />
-                  <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} /> 
+                  <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
+
+                  {/* TO DO remove went development complete and move to production */}
+                  <Route path="/testing" element={<Testing />} />
+
                 </Routes>
               </View>
           </View>
