@@ -171,7 +171,12 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
       data["isAllDay"] = true
     }
     if (recurringEvent) {
-
+    }
+    if (isSchoolYear) {
+      data["extdvshodc4_paulyEvents"] = {
+        "eventType":"schoolYear",
+        "eventData":selectedTimetable
+      }
     }
     const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", false, JSON.stringify(data))
     console.log(result)
@@ -273,12 +278,16 @@ function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (it
             onValueChange={(e) => {setIsSchoolDay(!e); setIsSchoolYear(e); setAllDay(true)}}
             value={isSchoolYear}
           />
+          <Text>Selected Timetable: {(selectedTimetable) ? selectedTimetable.name:"Unselected"}</Text>
           { isSchoolYear ?
             <View>
               <SelectTimetable governmentMode={false} onSelect={(e) => {setSelectedTimetable(e)}}/>
             </View>:null
           }
-          <Pressable onPress={() => {setIsShowingAddDate(false); createEvent()}}>
+          <Pressable onPress={() => {
+            setIsShowingAddDate(false); 
+            createEvent()
+          }}>
             <Text style={{zIndex: -1}}>Create</Text>
           </Pressable>
         </View>
