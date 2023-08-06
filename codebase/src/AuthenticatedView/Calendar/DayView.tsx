@@ -43,6 +43,7 @@ declare global {
         startTime: Date
         endTime: Date
         eventColor: string
+        schoolYearData?: string
     }
 }
 

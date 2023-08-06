@@ -1,24 +1,18 @@
 import { View, Text, Dimensions, Pressable, TextInput, Switch } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
-import NavBarComponent from '../../UI/NavComponent'
 import callMsGraph from '../../Functions/microsoftAssets';
 import { accessTokenContent } from '../../../App';
-import {Svg, Path, Circle} from 'react-native-svg';
-import { findFirstDayinMonth, getDaysInMonth } from '../../Functions/calendarFunctions';
+import { findFirstDayinMonth, getDaysInMonth, getOrgWideEvents } from '../../Functions/calendarFunctions';
 import create_UUID from '../../Functions/CreateUUID';
 import ChevronLeft from '../../UI/ChevronLeft';
 import ChevronRight from '../../UI/ChevronRight';
 import DayView from "./DayView"
 import Week from './Week';
-import DatePicker from '../../UI/DateTimePicker/DatePicker';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import TimePicker from '../../UI/DateTimePicker/TimePicker';
 import { orgWideGroupID } from '../../PaulyConfig';
-import {CalendarIcon} from '../../UI/Icons/Icons';
-import Dropdown from '../../UI/Dropdown';
-import SelectTimetable from './SelectTimetable';
+import AddEvent from './AddEvent';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -32,7 +26,7 @@ declare global {
   type monthDataType = {
     id: string
     showing: boolean
-    dayData: String
+    dayData: string
   }
 }
 
@@ -43,10 +37,11 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   const [selectedCalendarMode, setSelectedCalendarMode] = useState<calendarMode>(calendarMode.month)
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date)
+  const [events, setEvents] = useState<eventType[]>([])
+  
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });
-  const [events, setEvents] = useState()
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -61,15 +56,9 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
     console.log(data)
   }
 
-  async function getOrgWideEvents() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events")
-    const data = await result.json()
-    console.log("ORg Data", data)
-  }
-
   useEffect(() => {
     getCalendars()
-    getOrgWideEvents()
+    getOrgWideEvents(microsoftAccessToken.accessToken, false)
   }, [])
 
   if (!fontsLoaded) {
@@ -128,169 +117,6 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
         <View style={{zIndex: 2, position: "absolute", left: microsoftAccessToken.dimensions.window.width * 0.2, top: microsoftAccessToken.dimensions.window.height * 0.1}}>
           <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={microsoftAccessToken.dimensions.window.width * 0.6} height={microsoftAccessToken.dimensions.window.height * 0.8}/>
         </View>:null
-      }
-    </View>
-  )
-}
-
-enum reocurringType {
-  daily,
-  weekly,
-  monthly,
-  yearly
-}
-
-function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number}) {
-  const microsoftAccessToken = useContext(accessTokenContent);
-  const [eventName, setEventName] = useState<string>("")
-  const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
-  const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
-  const [startDate, setStartDate] = useState<Date>(new Date)
-  const [endDate, setEndDate] = useState<Date>(new Date)
-  const [allDay, setAllDay] = useState<boolean>(false)
-  const [recurringEvent, setRecurringEvent] = useState<boolean>(false)
-  const [selectedReocurringType, setSelectedReocurringType] = useState<reocurringType>(reocurringType.daily)
-  const [isSchoolDay, setIsSchoolDay] = useState<boolean>(false)
-  const [isSchoolYear, setIsSchoolYear] = useState<boolean>(false)
-  const [selectedTimetable, setSelectedTimetable] = useState<timetableType | undefined>(undefined)
-  async function createEvent() {
-    var data = {
-      "subject": eventName,
-      "start": {
-        "dateTime": startDate.toISOString().replace(/.\d+Z$/g, "Z"),
-        "timeZone": "Central America Standard Time"
-      },
-      "end": {
-        "dateTime": endDate.toISOString().replace(/.\d+Z$/g, "Z"),
-        "timeZone": "Central America Standard Time"
-      }
-    }
-    if (allDay) {
-      data["start"]["dateTime"] = startDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-      data["end"]["dateTime"] = endDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-      data["isAllDay"] = true
-    }
-    if (recurringEvent) {
-    }
-    if (isSchoolYear) {
-      data["extdvshodc4_paulyEvents"] = {
-        "eventType":"schoolYear",
-        "eventData":selectedTimetable
-      }
-    }
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", false, JSON.stringify(data))
-    console.log(result)
-    const dataOut = await result.json()
-    console.log(dataOut)
-  }
-  return (
-    <View style={{backgroundColor: "white", width: width, height: height}}>
-      { (isPickingStartDate || isPickingEndDate) ?
-        <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}}/>:
-        <View>
-          <Pressable onPress={() => {setIsShowingAddDate(false)}}>
-            <Text>X</Text>
-          </Pressable>
-          <Text>Add Event</Text>
-          <Text>Event Name:</Text>
-          <TextInput
-            value={eventName}
-            onChangeText={setEventName}
-          />
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={setAllDay}
-            value={allDay}
-          />
-          <Text>Start Date</Text>
-          <View style={{flexDirection: "row"}}>
-            <Pressable onPress={() => {setIsPickingStartDate(true)}}>
-              <View style={{flexDirection: "row"}}>
-                <Text>{startDate.toLocaleString("en-us", { month: "long" })} {startDate.getDate()} {startDate.getFullYear()}</Text>
-                <CalendarIcon width={14} height={14}/>
-              </View>
-            </Pressable>
-            { allDay ?
-              null:<TimePicker selectedHourMilitary={startDate.getHours()} selectedMinuteMilitary={startDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = startDate; newDate.setHours(e); setStartDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = startDate; newDate.setMinutes(e); setStartDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
-            }
-          </View>
-          <Text>End Date</Text>
-          <View style={{flexDirection: "row"}}>
-            <Pressable onPress={() => {setIsPickingEndDate(true)}} style={{margin: 5}}>
-              <View style={{flexDirection: "row"}}>
-                <Text>{endDate.toLocaleString("en-us", { month: "long" })} {endDate.getDate()} {endDate.getFullYear()}</Text>
-                <CalendarIcon width={14} height={14}/>
-              </View>
-            </Pressable>
-            { allDay ?
-              null:<TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
-            }
-          </View>
-          <Text>Reocurring Event</Text>
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={recurringEvent ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={setRecurringEvent}
-            value={recurringEvent}
-          />
-          { recurringEvent ?
-            <View style={{zIndex: 100}}>
-              <Dropdown onSetSelectedIndex={(item) => {
-                if (item >= 0 && item <= 3){
-                  setSelectedReocurringType(item)
-                } 
-              }} selectedIndex={selectedReocurringType} style={{height: height * 0.04}} expandedStyle={{height: height * 0.12, backgroundColor: "white"}}>
-                <View>
-                  <Text>Daily</Text>
-                </View>
-                <View>
-                  <Text>Weekly</Text>
-                </View>
-                <View>
-                  <Text>Monthly</Text>
-                </View>
-                <View>
-                  <Text>Yearly</Text>
-                </View>
-              </Dropdown>
-            </View>:null
-          }
-          <Text>School Day</Text>
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={isSchoolDay ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={(e) => {setIsSchoolDay(e); setIsSchoolYear(false); setAllDay(true)}}
-            value={isSchoolDay}
-          />
-          { isSchoolDay ?
-            <View>
-              
-            </View>:null
-          }
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={isSchoolYear ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={(e) => {setIsSchoolDay(!e); setIsSchoolYear(e); setAllDay(true)}}
-            value={isSchoolYear}
-          />
-          <Text>Selected Timetable: {(selectedTimetable) ? selectedTimetable.name:"Unselected"}</Text>
-          { isSchoolYear ?
-            <View>
-              <SelectTimetable governmentMode={false} onSelect={(e) => {setSelectedTimetable(e)}}/>
-            </View>:null
-          }
-          <Pressable onPress={() => {
-            setIsShowingAddDate(false); 
-            createEvent()
-          }}>
-            <Text style={{zIndex: -1}}>Create</Text>
-          </Pressable>
-        </View>
       }
     </View>
   )

@@ -2,6 +2,11 @@
 //Andrew Mainella
 //Calendar functions
 
+import callMsGraph from "./microsoftAssets";
+import { orgWideGroupID } from "../PaulyConfig";
+import { calendarEventsSlice } from "../Redux/reducers";
+import store from "../Redux/store";
+
 export function getDaysInMonth(input: Date): number{
     var d = new Date();
     d.setFullYear(input.getFullYear(), input.getMonth() + 1, 0)
@@ -58,3 +63,54 @@ export function isDateToday(dateToCheck: Date) {
 export function convertYearToSchoolYear(year: number) {
     return (year - 1) + "-" + year
 }
+
+export async function getOrgWideEvents(accessToken: string, schoolYear: boolean, eventsIn?: eventType[], url?: string) {
+    const result = await callMsGraph(accessToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", "GET", true)
+    if (result.ok){
+      const data = await result.json()
+      console.log("ORg Data", data)
+      var newEvents: eventType[] = (eventsIn !== undefined) ? eventsIn:[]
+      for(var index = 0; index < data["value"].length; index++) {
+        if (schoolYear) {
+          //TO DO update extention value
+          if (data["value"][index]["ext9u07b055_paulyEvents"] !== undefined) {
+            if (data["value"][index]["ext9u07b055_paulyEvents"]["eventType"] === "schoolYear") {
+              newEvents.push({
+                id: data["value"][index]["id"],
+                name: data["value"][index]["subject"],
+                startTime: new Date(data["value"][index]["start"]["dateTime"]),
+                endTime: new Date(data["value"][index]["end"]["dateTime"]),
+                eventColor: "white",
+                schoolYearData: data["value"][index]["ext9u07b055_paulyEvents"]["eventData"]
+              })
+            }
+          }
+        } else {
+          newEvents.push({
+            id: data["value"][index]["id"],
+            name: data["value"][index]["subject"],
+            startTime: new Date(data["value"][index]["start"]["dateTime"]),
+            endTime: new Date(data["value"][index]["end"]["dateTime"]),
+            eventColor: "white"
+          })
+        }
+      }
+      if (data["@odata.nextLink"] !== undefined && data["@odata.nextLink"] !== null) {
+        getOrgWideEvents(accessToken, schoolYear, newEvents, data["@odata.nextLink"])
+      } else {
+        var resultArray: string[] = []
+        for(var index = 0; index < newEvents.length; index++) {
+          resultArray.push(JSON.stringify(newEvents[index]))
+        }
+        if (schoolYear) {
+          const { setCurrentEvents } = calendarEventsSlice.actions;
+          store.dispatch(setCurrentEvents(resultArray))
+        } else {
+          store.dispatch(calendarEventsSlice.actions.setCurrentEvents(resultArray))
+        }
+      }
+    } else {
+      const data = await result.json()
+      console.log(data)
+    }
+  }

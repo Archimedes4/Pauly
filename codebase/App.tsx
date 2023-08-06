@@ -14,6 +14,7 @@ import {
   View,
   ScaledSize
 } from 'react-native';
+import { Provider } from 'react-redux'
 import HomePage from './src/AuthenticatedView/HomePage';
 import Commissions from './src/AuthenticatedView/Profile/Commissions/Commissions';
 import { NativeRouter, Route, Routes } from 'react-router-native';
@@ -58,6 +59,7 @@ import callMsGraph from './src/Functions/microsoftAssets';
 import NavBarComponent from './src/UI/NavComponent';
 import GovernmentTimetableCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableCreate';
 import Testing from './src/AuthenticatedView/Profile/Government/Testing';
+import store from './src/Redux/store';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -207,17 +209,25 @@ function App() {
   }, [])
 
   return (
-    <SafeAreaView>
-      <MsalProvider instance={msalInstance}>
-        <AuthenticatedTemplate>
+    <Provider store={store}>
+      <SafeAreaView>
+        <MsalProvider instance={msalInstance}>
+          <AuthenticatedTemplate>
           <AuthenticatedView dimensions={dimensions} />
-        </AuthenticatedTemplate>
-        <UnauthenticatedTemplate>
-          <Login />
-        </UnauthenticatedTemplate>
-      </MsalProvider>
-    </SafeAreaView>
+            </AuthenticatedTemplate>
+          <UnauthenticatedTemplate>
+            <Login />
+          </UnauthenticatedTemplate>
+        </MsalProvider>
+      </SafeAreaView>
+    </Provider>
   );
 }
+
+// function AuthenticatedViewRedux({dimensions}:{dimensions: {window: ScaledSize, screen: ScaledSize}}) {
+//   return (
+      
+//   )
+// }
 
 export default App;
