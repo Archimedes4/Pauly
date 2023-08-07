@@ -83,8 +83,10 @@ export default function MicrosoftGraphCreateList() {
         "template": " genericList"
       }
     }
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists", "POST", JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists", "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
     console.log(result)
+    const data = await result.json()
+    console.log(data)
   }
   return (
     <View style={{width: (dimensions.window.width > 576) ? dimensions.window.width * 0.9:dimensions.window.width}}>

@@ -7,7 +7,7 @@ import Dropdown from "../../UI/Dropdown";
 import SelectTimetable from "./SelectTimetable";
 import { CalendarIcon } from "../../UI/Icons/Icons";
 import TimePicker from "../../UI/DateTimePicker/TimePicker";
-import { orgWideGroupID } from "../../PaulyConfig";
+import { orgWideGroupID, siteID } from "../../PaulyConfig";
 import { getOrgWideEvents } from "../../Functions/calendarFunctions";
 import { useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
@@ -17,6 +17,12 @@ enum reocurringType {
     weekly,
     monthly,
     yearly
+}
+
+enum loadingStateEnum {
+  loading,
+  success,
+  failed
 }
 
 export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number}) {
@@ -161,8 +167,11 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
               value={isSchoolDay}
             />
             { isSchoolDay ?
-              <View>
-                <SchoolYearsSelect width={100} height={100} onSelect={(e) => {}}/>
+              <View style={{width: 100, height: 100}}>
+                { (selectedSchoolYear === undefined) ?
+                  <SchoolYearsSelect width={100} height={100} onSelect={(e) => {setSelectedSchoolYear(e)}}/>:
+                  <SchoolDaySelect width={100} height={100} timetableId={selectedSchoolYear.schoolYearData} />
+                }
               </View>:null
             }
             <Switch
@@ -195,10 +204,73 @@ function getEvent(input: string): eventType {
   return JSON.parse(input)
 }
 
-function SchoolDaySelect({width, height}:{width: number, height: number}) {
+function SchoolDaySelect({width, height, timetableId}:{width: number, height: number, timetableId: string}) {
+  const microsoftAccessToken = useContext(accessTokenContent);
+  const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [schoolDays, setSchoolDays] =  useState<string[]>([])
+  async function getSchedule(id: string) {
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
+    if (result.ok) {
+      console.log(result)
+      const data = await result.json()
+      console.log(data)
+    } else {
+      const data = await result.json()
+      console.log(data)
+      setLoadingState(loadingStateEnum.failed)
+    }
+  }
+  async function getTimetable() {
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
+    if (result.ok) {
+      console.log(result)
+      const data = await result.json()
+      console.log(data)
+      if (data["value"].length !== undefined){
+        if (data["value"].length === 1) {
+          try {
+            setSchoolDays(JSON.parse(data["value"][0]["fields"]["timetableDataDays"]))
+            const scheduleData: string[] = JSON.parse(data["value"][0]["fields"]["timetableDataSchedules"])
+            for (var index = 0; index < scheduleData.length; index++) {
+              getSchedule(scheduleData[index])
+            }
+            setLoadingState(loadingStateEnum.success)
+          } catch (e) {
+            console.log("Failure", e)
+            setLoadingState(loadingStateEnum.failed)
+          }
+        } else {
+          setLoadingState(loadingStateEnum.failed)
+        }
+      } else {
+        setLoadingState(loadingStateEnum.failed)
+      }
+    } else {
+      const data = await result.json()
+      console.log(data)
+      setLoadingState(loadingStateEnum.failed)
+    }
+  }
+  useEffect(() => {
+    getTimetable()
+  }, [])
   return (
     <View>
-      <Text></Text>
+      { (loadingState === loadingStateEnum.loading) ?
+        <Text>Loading</Text>:
+        <View>
+          {(loadingState === loadingStateEnum.success) ?
+            <View>
+              {schoolDays.map((day) => (
+                <View>
+                  <Text>{day}</Text>
+                </View>
+              ))
+              }
+            </View>:<Text>Failed</Text>
+          }
+        </View>
+      }
     </View>
   )
 }
@@ -217,8 +289,6 @@ function SchoolYearsSelect({width, height, onSelect}:{width: number, height: num
             </View>
           </Pressable>
         ))}
-        <Text>AddEvent</Text>
-        <Button title="call" onPress={() => {console.log("This is calendar event reducer", store.getState())}}/>
     </View>
     )
 }

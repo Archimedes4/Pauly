@@ -47,6 +47,7 @@ export default function Government() {
         <Block width={100} height={100} text='Sports' imageSource={require('../../../../assets/images/Football.png')} />
       </Link>
       <Link to="/profile/government/president">
+        <Block width={100} height={100} text="President" />
         <Text>President</Text>
       </Link>
       <Link to="/profile/government/calendar">
@@ -56,9 +57,6 @@ export default function Government() {
       </Link>
       <Link to="/profile/government/classes">
         <Text>Classes</Text>
-      </Link>
-      <Link to="/testing">
-        <Text>Testing</Text>
       </Link>
     </View>
   )

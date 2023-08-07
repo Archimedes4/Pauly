@@ -61,11 +61,19 @@ export default function MicrosoftGraphEditList() {
         const data = {
             "indexed": "true" 
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/"+ listId + "/columns/" + columnId, "PATCH", JSON.stringify(data))//TO DO fix ids
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/"+ listId + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
         console.log(result)
         if (result.ok){
-            const data = result.json()
+            const data = await result.json()
             console.log(data)
+            var newColumnData: listColumnType[] = currentColumns
+            const index = newColumnData.findIndex((e) => {e.id === columnId})
+            if (index !== -1){
+                newColumnData[index].indexed = true
+                setCurrentColumns(newColumnData)
+            } else {
+                //TO DO failed
+            }
         }
     }
     async function getColumns() {
@@ -108,7 +116,6 @@ export default function MicrosoftGraphEditList() {
                 <View style={{width: dimensions.window.width * 0.3, height: dimensions.window.height * 0.4, borderColor: "black", borderWidth: 2}}>
                     <Text>{item.displayName}</Text>
                     {(item.indexed === false) ? <Button title='Index This Propertie' onPress={() => {indexColumn(item.id)}}/>:<Text>Already Indexed</Text>
-
                     }
                 </View>
             ))}

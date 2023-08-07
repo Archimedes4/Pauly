@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {Link} from 'react-router-native'
 //import {IoPersonCircleOutline} from "react-native-vector-icons/io5"
-import {Image, StyleSheet, View, Dimensions, Pressable } from "react-native"
+import {Image, StyleSheet, View, Dimensions, Pressable, Text } from "react-native"
 import { Path, Svg, G } from 'react-native-svg'
 import callMsGraph from '../Functions/microsoftAssets'
 import { accessTokenContent } from '../../App'
-import {CalendarIcon} from './Icons/Icons'
+import {BookIcon, CalendarIcon, MedalIcon} from './Icons/Icons'
 
 export default function NavBarComponent({width, height, expandedMode, onSetExpandedMode}:{width: number, height: number, expandedMode: boolean, onSetExpandedMode: (item: boolean) => void}) {
     const microsoftAccessToken = useContext(accessTokenContent);
@@ -33,27 +33,34 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
                 <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: length, height:  length}} />
             </Pressable>
             <Link to="/notifications" style={[styles.LinkStyle, {height: length, width: length, margin: 0}]}>
-                <View style={[{height: iconLength, width: iconLength}]}>
-                    {/* <Image height={height/8} style={{height: height/8, width: width, position: "absolute", zIndex: 100, backgroundColor: "red", tintColor: "black"}} source={require("./assests/images/Books.png")}/> */}
-                    <Svg style={{width: iconLength, height: iconLength}} viewBox="0 0 460.298 460.297">
-                        <Path d="M230.149,120.939L65.986,256.274c0,0.191-0.048,0.472-0.144,0.855c-0.094,0.38-0.144,0.656-0.144,0.852v137.041
-                        c0,4.948,1.809,9.236,5.426,12.847c3.616,3.613,7.898,5.431,12.847,5.431h109.63V303.664h73.097v109.64h109.629
-                        c4.948,0,9.236-1.814,12.847-5.435c3.617-3.607,5.432-7.898,5.432-12.847V257.981c0-0.76-0.104-1.334-0.288-1.707L230.149,120.939
-                        z"/>
-                        <Path d="M457.122,225.438L394.6,173.476V56.989c0-2.663-0.856-4.853-2.574-6.567c-1.704-1.712-3.894-2.568-6.563-2.568h-54.816
-                        c-2.666,0-4.855,0.856-6.57,2.568c-1.711,1.714-2.566,3.905-2.566,6.567v55.673l-69.662-58.245
-                        c-6.084-4.949-13.318-7.423-21.694-7.423c-8.375,0-15.608,2.474-21.698,7.423L3.172,225.438c-1.903,1.52-2.946,3.566-3.14,6.136
-                        c-0.193,2.568,0.472,4.811,1.997,6.713l17.701,21.128c1.525,1.712,3.521,2.759,5.996,3.142c2.285,0.192,4.57-0.476,6.855-1.998
-                        L230.149,95.817l197.57,164.741c1.526,1.328,3.521,1.991,5.996,1.991h0.858c2.471-0.376,4.463-1.43,5.996-3.138l17.703-21.125
-                        c1.522-1.906,2.189-4.145,1.991-6.716C460.068,229.007,459.021,226.961,457.122,225.438z"/>
-                    </Svg>
+                <View>
+                    <View style={[{height: iconLength, width: iconLength}]}>
+                        {/* <Image height={height/8} style={{height: height/8, width: width, position: "absolute", zIndex: 100, backgroundColor: "red", tintColor: "black"}} source={require("./assests/images/Books.png")}/> */}
+                        <Svg style={{width: iconLength, height: iconLength}} viewBox="0 0 460.298 460.297">
+                            <Path d="M230.149,120.939L65.986,256.274c0,0.191-0.048,0.472-0.144,0.855c-0.094,0.38-0.144,0.656-0.144,0.852v137.041
+                            c0,4.948,1.809,9.236,5.426,12.847c3.616,3.613,7.898,5.431,12.847,5.431h109.63V303.664h73.097v109.64h109.629
+                            c4.948,0,9.236-1.814,12.847-5.435c3.617-3.607,5.432-7.898,5.432-12.847V257.981c0-0.76-0.104-1.334-0.288-1.707L230.149,120.939
+                            z"/>
+                            <Path d="M457.122,225.438L394.6,173.476V56.989c0-2.663-0.856-4.853-2.574-6.567c-1.704-1.712-3.894-2.568-6.563-2.568h-54.816
+                            c-2.666,0-4.855,0.856-6.57,2.568c-1.711,1.714-2.566,3.905-2.566,6.567v55.673l-69.662-58.245
+                            c-6.084-4.949-13.318-7.423-21.694-7.423c-8.375,0-15.608,2.474-21.698,7.423L3.172,225.438c-1.903,1.52-2.946,3.566-3.14,6.136
+                            c-0.193,2.568,0.472,4.811,1.997,6.713l17.701,21.128c1.525,1.712,3.521,2.759,5.996,3.142c2.285,0.192,4.57-0.476,6.855-1.998
+                            L230.149,95.817l197.57,164.741c1.526,1.328,3.521,1.991,5.996,1.991h0.858c2.471-0.376,4.463-1.43,5.996-3.138l17.703-21.125
+                            c1.522-1.906,2.189-4.145,1.991-6.716C460.068,229.007,459.021,226.961,457.122,225.438z"/>
+                        </Svg>
+                    </View>
+                    { expandedMode ? 
+                        <Text>Notifications</Text>:null
+                    }
                 </View>
             </Link>
-            <Link to="/messaging"  style={[styles.LinkStyle, {height: length, width: length, margin: 0}]}>
+            <Link to="/resources"  style={[styles.LinkStyle, {height: length, width: length, margin: 0}]}>
                 {/* <Image source={require("../assests/images/MessagingIcon.png")} resizeMode='contain' style={{width: length, height:  length}} /> */}
-                <MessagingIcon />
+                <BookIcon width={iconLength} height={iconLength}/>
             </Link>
-            <Link to="/quiz"  style={[styles.LinkStyle, {margin: 0}]}><Image source={require("../../assets/images/QuizIcon.png")}  resizeMode='contain' style={{width: length, height:  length}} /></Link>
+            <Link to="/commissions"  style={[styles.LinkStyle, {margin: 0}]}>
+                <MedalIcon width={iconLength} height={iconLength}/>
+            </Link>
             <Link to="/calendar" style={[styles.LinkStyle, {margin: 0}]}>
                 <CalendarIcon width={iconLength} height={iconLength}/>
             </Link>
@@ -79,7 +86,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
         </View>
         { expandedMode ?
             <View style={{width: width * 1.5, backgroundColor: "#793033", height: height}}>
-
+                
             </View>:null
         }
     </View>
@@ -94,36 +101,3 @@ const styles = StyleSheet.create({
         margin: "auto"
     }
 })
-
-function MessagingIcon() {
-    return (
-        <Svg  viewBox="0 0 498.000000 268.000000"preserveAspectRatio="xMidYMid meet">
-            <G transform="translate(0.000000,268.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
-                <Path d="M1140 2481 c-50 -16 -89 -41 -128 -86 -74 -84 -72 -67 -72 -730 l0
-                -591 -30 -45 c-16 -24 -54 -73 -84 -109 -64 -75 -116 -196 -116 -266 0 -104
-                50 -147 187 -160 95 -9 158 8 246 66 115 76 187 148 232 234 l40 76 438 0 437
-                0 0 -95 c0 -150 47 -241 154 -298 41 -22 45 -22 791 -27 l750 -5 100 -69 c55
-                -37 108 -75 117 -83 25 -22 144 -53 205 -53 47 0 58 4 92 36 44 39 66 91 57
-                130 -8 29 -67 124 -89 143 -9 7 -30 35 -48 63 l-32 50 2 466 c2 537 2 540 -76
-                623 -82 87 -92 89 -533 89 l-380 0 0 210 c0 250 -9 289 -89 363 -87 81 -23 77
-                -1150 76 -548 0 -1007 -4 -1021 -8z m2051 -164 c18 -12 39 -34 46 -47 18 -36
-                18 -1144 0 -1180 -7 -13 -28 -35 -46 -47 l-34 -23 -857 0 -857 0 -63 -32 c-34
-                -18 -70 -44 -78 -58 -59 -96 -89 -134 -150 -191 -73 -70 -158 -119 -204 -119
-                -40 0 -94 25 -107 48 -17 31 -13 81 8 116 11 17 55 63 98 102 55 50 87 89 108
-                130 l30 59 5 596 c5 651 2 612 65 651 29 17 77 18 1016 18 l986 0 34 -23z
-                m986 -647 c64 -38 63 -33 63 -527 0 -518 -11 -463 118 -598 63 -65 72 -80 72
-                -112 0 -50 -32 -83 -79 -83 -45 0 -104 38 -161 105 -59 69 -104 102 -164 122
-                -46 16 -125 18 -782 23 -714 5 -732 5 -754 25 -39 36 -50 69 -50 160 l0 86 62
-                -3 61 -3 1 -55 1 -55 738 -3 737 -2 0 75 0 75 -390 0 -389 0 49 46 c85 80 90
-                103 90 449 l0 295 373 0 c351 0 374 -1 404 -20z"/>
-                <Path d="M1470 1945 l0 -75 715 0 715 0 0 75 0 75 -715 0 -715 0 0 -75z"/>
-                <Path d="M1460 1605 l0 -75 430 0 430 0 0 75 0 75 -430 0 -430 0 0 -75z"/>
-                <Path d="M2580 1605 l0 -75 160 0 160 0 0 75 0 75 -160 0 -160 0 0 -75z"/>
-                <Path d="M1720 1285 l0 -75 650 0 650 0 0 75 0 75 -650 0 -650 0 0 -75z"/>
-                <Path d="M3460 1495 l0 -75 290 0 290 0 0 75 0 75 -290 0 -290 0 0 -75z"/>
-                <Path d="M3510 1155 l0 -75 155 0 155 0 0 75 0 75 -155 0 -155 0 0 -75z"/>
-                <Path d="M3900 1155 l0 -75 65 0 65 0 0 75 0 75 -65 0 -65 0 0 -75z"/>
-            </G>
-        </Svg>
-    )
-}

@@ -60,6 +60,7 @@ import NavBarComponent from './src/UI/NavComponent';
 import GovernmentTimetableCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableCreate';
 import Testing from './src/AuthenticatedView/Profile/Government/Testing';
 import store from './src/Redux/store';
+import PageNotFound from './src/AuthenticatedView/404Page';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -139,13 +140,12 @@ function AuthenticatedView({dimensions}:{dimensions: {
                   <Route path="/quiz" element={<QuizView/>}/>
                   <Route path="/sports" element={<Sports/>}/>
                   <Route path="/notifications" element={<Notifications/>}/>
-                  <Route path="/messaging" element={<Messaging />}/>
                   <Route path="/calendar" element={<Calendar governmentMode={false} />}/>
+                  <Route path="/resources" element={<Resources/>}/>
+                  <Route path="/commissions" element={<Commissions/>}/>
                   <Route path="/profile/" element={<Profile/>}/>
-                  <Route path="/profile/commissions" element={<Commissions/>}/>
                   <Route path="/profile/commissions/:id" element={<CommissionsView/>}/>
                   <Route path="/profile/settings" element={<Settings/>}/>
-                  <Route path="/profile/resources" element={<Resources/>}/>
                   <Route path="/profile/government" element={<Government />}/>
                   <Route path="/profile/government/graph" element={<MicrosoftGraphOverview/>}/>
                   <Route path="/profile/government/graph/create" element={<MicrosoftGraphCreateList/>}/>
@@ -171,7 +171,7 @@ function AuthenticatedView({dimensions}:{dimensions: {
                   <Route path="/profile/government/sports/team/edit/:sport/:id/:team/:teamId/:season" element={<GovernmentSportTeamEdit />} />
                   <Route path="/profile/government/sports/post/:sport/:id/:team/:teamId/:season" element={<GovernmentSportsTeamAddPost />} />
                   <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
-
+                  <Route path="*" element={<PageNotFound />} />
                   {/* TO DO remove went development complete and move to production */}
                   <Route path="/testing" element={<Testing />} />
 
