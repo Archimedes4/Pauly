@@ -4,13 +4,13 @@ import { findFirstDayinMonth } from '../../Functions/calendarFunctions'
 import Svg, { G, Path } from 'react-native-svg'
 import { useFonts } from 'expo-font';
 
-export default function DatePicker({selectedDate, onSetSelectedDate, width, height, onCancel}:{selectedDate: Date, onSetSelectedDate: (item: Date) => void, width: number, height: number, onCancel: () => void}) {
+export default function DatePicker({selectedDate, onSetSelectedDate, width, height, onCancel, allowedDatesRange}:{selectedDate: Date, onSetSelectedDate: (item: Date) => void, width: number, height: number, onCancel: () => void, allowedDatesRange?: {startDate: Date, endDate: Date}}) {
     const [viewingDate, setViewingDate] = useState<Date>(selectedDate)
     const today = new Date
     useEffect(() => {
         setViewingDate(selectedDate)
     }, [selectedDate])
-    function getValue(columnNumber: number, rowNumber: number, inputDate: Date): {v: number, m: "B" | "C" | "A"} {
+    function getValue(columnNumber: number, rowNumber: number, inputDate: Date): {v: number, m: "B" | "C" | "A", d: Date} {
         //Check if this month
         var lastDay = new Date(inputDate.getFullYear(), inputDate.getMonth() + 1, 0);
         var monthBeforeLastDay = new Date(inputDate.getFullYear(), inputDate.getMonth(), 0);
@@ -19,14 +19,14 @@ export default function DatePicker({selectedDate, onSetSelectedDate, width, heig
         if (gridNumber > firstDayWeek){
             if ((gridNumber - firstDayWeek) <= (lastDay.getDate())) {
                 //In the current month
-                return {v: gridNumber - firstDayWeek, m: "C"}
+                return {v: gridNumber - firstDayWeek, m: "C", d: new Date(inputDate.getFullYear(), inputDate.getMonth(), gridNumber - firstDayWeek)}
             } else {
                 //In the month after
-                return {v: gridNumber - firstDayWeek - lastDay.getDate(), m: "A"}
+                return {v: gridNumber - firstDayWeek - lastDay.getDate(), m: "A", d: new Date((inputDate.getMonth() === 1) ? inputDate.getFullYear() - 1:inputDate.getFullYear(), (inputDate.getMonth() === 0) ? 12:inputDate.getMonth() - 1, gridNumber - firstDayWeek)}
             }
         } else {
             //In the month before
-            return {v: monthBeforeLastDay.getDate() - firstDayWeek + gridNumber, m: "B"}
+            return {v: monthBeforeLastDay.getDate() - firstDayWeek + gridNumber, m: "B", d: new Date((inputDate.getMonth() === 11) ? inputDate.getFullYear() + 1:inputDate.getFullYear(), (inputDate.getMonth() === 11) ? 1:inputDate.getMonth() + 1, gridNumber - firstDayWeek)}
         }
     }
   return (
@@ -70,15 +70,21 @@ export default function DatePicker({selectedDate, onSetSelectedDate, width, heig
         {Array.from(Array(6).keys()).map((rowNumber) => (
             <View style={{flexDirection: "row"}}>
                 { Array.from(Array(7).keys()).map((columnNumber) => (
-                    <Pressable onPress={() => {
-                        const value =  getValue(columnNumber, rowNumber, viewingDate)
-                        onSetSelectedDate(new Date(viewingDate.getFullYear(), (value.m === "C") ? viewingDate.getMonth():(value.m === "B") ? viewingDate.getMonth() - 1:viewingDate.getMonth() + 1, value.v))
-                    }}>
-                        <View style={{height: ((width * 0.8) <= height) ? (width * 0.8)/7:height/6, width: ((width * 0.8) <= height) ? (width * 0.8)/7:height/6, alignItems: "center", justifyContent: "center"}}>
-                            <Text>{getValue(columnNumber, rowNumber, viewingDate).v}</Text>
-                            {/* <Text>{(columnNumber) + (rowNumber * 7) + 1} {columnNumber} {rowNumber}</Text> */}
-                        </View>
-                    </Pressable>
+                    <View>
+                        { (allowedDatesRange === undefined || (allowedDatesRange.startDate <= getValue(columnNumber, rowNumber, viewingDate).d && allowedDatesRange.endDate >= getValue(columnNumber, rowNumber, viewingDate).d)) ?
+                            <Pressable onPress={() => {
+                                const value =  getValue(columnNumber, rowNumber, viewingDate)
+                                onSetSelectedDate(new Date(viewingDate.getFullYear(), (value.m === "C") ? viewingDate.getMonth():(value.m === "B") ? viewingDate.getMonth() - 1:viewingDate.getMonth() + 1, value.v))
+                            }}>
+                                <View style={{height: ((width * 0.8) <= height) ? (width * 0.8)/7:height/6, width: ((width * 0.8) <= height) ? (width * 0.8)/7:height/6, alignItems: "center", justifyContent: "center"}}>
+                                    <Text>{getValue(columnNumber, rowNumber, viewingDate).v}</Text>
+                                </View>
+                            </Pressable>:
+                            <View style={{height: ((width * 0.8) <= height) ? (width * 0.8)/7:height/6, width: ((width * 0.8) <= height) ? (width * 0.8)/7:height/6, alignItems: "center", justifyContent: "center"}}>
+                                <Text>{getValue(columnNumber, rowNumber, viewingDate).v}</Text>
+                            </View>
+                        }
+                    </View>
                 ))
                 }
             </View>

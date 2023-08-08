@@ -139,7 +139,6 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
         monthDataResult.push({showing: false, dayData: 0, id: create_UUID()})
       }
     }
-    console.log("this is month data", monthDataResult)
     setMonthData(monthDataResult)
   }
 

@@ -8,7 +8,7 @@ import SelectTimetable from "./SelectTimetable";
 import { CalendarIcon } from "../../UI/Icons/Icons";
 import TimePicker from "../../UI/DateTimePicker/TimePicker";
 import { orgWideGroupID, siteID } from "../../PaulyConfig";
-import { getOrgWideEvents } from "../../Functions/calendarFunctions";
+import { getOrgWideEvents, getTimetable } from "../../Functions/calendarFunctions";
 import { useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
 
@@ -25,21 +25,35 @@ enum loadingStateEnum {
   failed
 }
 
+interface schoolDayDataInteface {
+  schoolDay: string
+  schedule: scheduleType
+}
+
 export default function AddEvent({setIsShowingAddDate, width, height, selectedDate}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, selectedDate: Date}) {
     const microsoftAccessToken = useContext(accessTokenContent);
+
+    //Calendar
     const [eventName, setEventName] = useState<string>("")
     const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
     const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
     const [startDate, setStartDate] = useState<Date>(selectedDate)
     const [endDate, setEndDate] = useState<Date>(selectedDate)
     const [allDay, setAllDay] = useState<boolean>(false)
+
+    //Recurring
     const [recurringEvent, setRecurringEvent] = useState<boolean>(false)
     const [selectedReocurringType, setSelectedReocurringType] = useState<reocurringType>(reocurringType.daily)
+
+    //School Day
     const [isSchoolDay, setIsSchoolDay] = useState<boolean>(false)
+    const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
+    const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<schoolDayDataInteface | undefined>(undefined)
+    const [selectedSchoolYearTimetable, setSelectedSchoolYearTimtable] = useState<timetableType | undefined>(undefined)
+
+    //School Year
     const [isSchoolYear, setIsSchoolYear] = useState<boolean>(false)
     const [selectedTimetable, setSelectedTimetable] = useState<timetableType | undefined>(undefined)
-    const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
-    const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<{schoolDay: string, schedule: scheduleType} | undefined>(undefined)
     async function createEvent() {
       var data = {
         "subject": eventName,
@@ -52,7 +66,15 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
           "timeZone": "Central America Standard Time"
         }
       }
-      if (allDay) {
+      if (isSchoolDay) {
+        if (selectedSchoolDayData === undefined) return
+        data["start"]["dateTime"] = startDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
+        var newEndDate = startDate
+        newEndDate.setDate(startDate.getDate() + 1)
+        data["end"]["dateTime"] = newEndDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
+        data["isAllDay"] = true
+        data["subject"] = selectedSchoolDayData.schoolDay + " " + selectedSchoolDayData.schedule.name
+      } else if (allDay) {
         data["start"]["dateTime"] = startDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         data["end"]["dateTime"] = endDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         data["isAllDay"] = true
@@ -74,10 +96,18 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
           }
           const patchResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
           const patchOut = await patchResult.json()
-          const getResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"] + "?$select=ext9u07b055_paulyEvents", "GET", true)
           console.log("OUTPUT", patchOut)
-          const getOut = await getResult.json()
-          console.log("OUTPUT GET", getOut)
+        } else if (isSchoolDay && selectedSchoolDayData !== undefined) {
+          const patchData = {
+            //Be wear this extension name could change
+            "ext9u07b055_paulyEvents": {
+              "eventType":"schoolDay",
+              "eventData":JSON.stringify(selectedSchoolDayData)
+            }
+          }
+          const patchResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
+          const patchOut = await patchResult.json()
+          console.log("OUTPUT", patchOut)
         }
       } else {
         const dataOut = await result.json()
@@ -87,7 +117,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
     return (
       <View style={{backgroundColor: "white", width: width, height: height}}>
         { (isPickingStartDate || isPickingEndDate) ?
-          <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}}/>:
+          <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}} allowedDatesRange={undefined}/>:
           <View>
             <Pressable onPress={() => {setIsShowingAddDate(false)}}>
               <Text>X</Text>
@@ -193,9 +223,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
               <View style={{width: 100, height: 100}}>
                 { (selectedSchoolYear === undefined) ?
                   <SchoolYearsSelect width={100} height={100} onSelect={(e) => {setSelectedSchoolYear(e)}}/>:
-                  <SchoolDaySelect width={100} height={100} timetableId={selectedSchoolYear.schoolYearData} onSelect={(day, schedule) => {
-
-                  }}/>
+                  <SchoolDaySelect width={100} height={100} timetableId={selectedSchoolYear.schoolYearData} onSelect={(day, schedule) => {setSelectedSchoolDayData({schoolDay: day, schedule: schedule})}}/>
                 }
               </View>:null
             }
@@ -217,83 +245,25 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
     )
 }
 
-function getEvent(input: string): eventType {
-  return JSON.parse(input)
-}
-
-function SchoolDaySelect({width, height, timetableId}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: string, selectedSchedule: scheduleType) => void}) {
+function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: string, selectedSchedule: scheduleType) => void}) {
   const microsoftAccessToken = useContext(accessTokenContent);
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolDays, setSchoolDays] =  useState<string[]>([])
   const [schedules, setSchedules] = useState<scheduleType[]>([])
   const [isPickingSchoolDay, setIsPickingSchoolDay] = useState<boolean>(true)
   const [selectedSchoolDay, setSelectedSchoolDay] = useState<string | undefined>(undefined)
-  async function getSchedule(id: string): Promise<scheduleType | undefined> {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
-    if (result.ok) {
-      const data = await result.json()
-      console.log(data)
-      if (data["value"].length !== undefined) {
-        if (data["value"].length === 1) {
-          const resultSchedule: scheduleType = {
-            name: data["value"][0]["fields"]["name"],
-            periods: JSON.parse(data["value"][0]["fields"]["scheduleData"]) as periodType[],
-            id: data["value"][0]["fields"]["scheduleId"]
-          }
-          return resultSchedule
-        } else {
-          setLoadingState(loadingStateEnum.failed)
-          return undefined
-        }
-      } else {
-        setLoadingState(loadingStateEnum.failed)
-        return undefined
-      }
+  async function loadData() {
+    const result = await getTimetable(microsoftAccessToken.accessToken, timetableId)
+    if (result.result === loadingStateEnum.success && result.schedules !== undefined && result.schoolDays !== undefined) {
+      setSchoolDays(result.schoolDays)
+      setSchedules(result.schedules)
+      setLoadingState(loadingStateEnum.success)
     } else {
-      const data = await result.json()
-      console.log(data)
-      setLoadingState(loadingStateEnum.failed)
-      return undefined
-    }
-  }
-  async function getTimetable() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
-    if (result.ok) {
-      console.log(result)
-      const data = await result.json()
-      console.log(data)
-      if (data["value"].length !== undefined){
-        if (data["value"].length === 1) {
-          try {
-            setSchoolDays(JSON.parse(data["value"][0]["fields"]["timetableDataDays"]))
-            const scheduleData: string[] = JSON.parse(data["value"][0]["fields"]["timetableDataSchedules"])
-            var newSchedules: scheduleType[] = []
-            for (var index = 0; index < scheduleData.length; index++) {
-              const result = await getSchedule(scheduleData[index])
-              if (result !== undefined) {
-                newSchedules.push(result)
-              }
-            }
-            setSchedules(newSchedules)
-            setLoadingState(loadingStateEnum.success)
-          } catch (e) {
-            console.log("Failure", e)
-            setLoadingState(loadingStateEnum.failed)
-          }
-        } else {
-          setLoadingState(loadingStateEnum.failed)
-        }
-      } else {
-        setLoadingState(loadingStateEnum.failed)
-      }
-    } else {
-      const data = await result.json()
-      console.log(data)
       setLoadingState(loadingStateEnum.failed)
     }
   }
   useEffect(() => {
-    getTimetable()
+    loadData()
   }, [])
   return (
     <View>
@@ -314,7 +284,7 @@ function SchoolDaySelect({width, height, timetableId}:{width: number, height: nu
                 </View>:
                 <View>
                   {schedules.map((schedule) => (
-                    <Pressable >
+                    <Pressable onPress={() => {onSelect(selectedSchoolDay, schedule)}}>
                       <View>
                         <Text>{schedule.name}</Text>
                       </View>
@@ -331,11 +301,23 @@ function SchoolDaySelect({width, height, timetableId}:{width: number, height: nu
 }
 
 function SchoolYearsSelect({width, height, onSelect}:{width: number, height: number, onSelect: (item: eventType) => void}) {
-    const microsoftAccessToken = useContext(accessTokenContent);
-    const fullStore = useSelector((state: RootState) => state)
-    useEffect(() => {console.log("This is calendar event reducer", fullStore)}, [fullStore.calendarEvents])
-    useEffect(() => {getOrgWideEvents(microsoftAccessToken.accessToken, true, undefined, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")}, [])
-    return (
+  function getEvent(input: string): eventType {
+    return JSON.parse(input)
+  }
+  const microsoftAccessToken = useContext(accessTokenContent);
+  const fullStore = useSelector((state: RootState) => state)
+  useEffect(() => {
+    getOrgWideEvents(microsoftAccessToken.accessToken, true, undefined, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
+  }, [])
+  useEffect(() => {
+    var newTimtableEvents
+    for (var index = 0; index < fullStore.calendarEvents.length; index++){
+
+    }
+
+  }, [fullStore.calendarEvents])
+
+  return (
     <View style={{width: width, height: height, overflow: "scroll"}}>
         { fullStore.calendarEvents.map((event) => (
           <Pressable onPress={() => {onSelect(getEvent(event))}}>
@@ -345,5 +327,5 @@ function SchoolYearsSelect({width, height, onSelect}:{width: number, height: num
           </Pressable>
         ))}
     </View>
-    )
+  )
 }

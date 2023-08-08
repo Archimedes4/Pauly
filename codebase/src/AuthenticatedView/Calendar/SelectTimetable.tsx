@@ -12,25 +12,30 @@ enum loadingStateEnum {
 }
 
 declare global {
-    type timetableType = {
+    type timetableStringType = {
       name: string,
       id: string,
       schedules: string[],
       days: string[]
     }
+    type timetableType = {
+      name: string,
+      id: string,
+      schedules: scheduleType[],
+      days: string[]
+    }
 }  
 
-export default function SelectTimetable({governmentMode, onSelect}:{governmentMode: boolean, onSelect?: (item: timetableType) => void}) {
+export default function SelectTimetable({governmentMode, onSelect}:{governmentMode: boolean, onSelect?: (item: timetableStringType) => void}) {
   const microsoftAccessToken = useContext(accessTokenContent);
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const [loadedTimetables, setLoadedTimetables] = useState<timetableType[]>([])
+  const [loadedTimetables, setLoadedTimetables] = useState<timetableStringType[]>([])
   async function getTimetables() {
     const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + "72367e66-6d0f-4beb-8b91-bb6e9be9b433" + "/items?expand=fields")
     if (result.ok){
       const dataResult = await result.json()
-      console.log(dataResult, "Thi")
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
-        var newLoadedTimetables: timetableType[] = []
+        var newLoadedTimetables: timetableStringType[] = []
         for (let index = 0; index < dataResult["value"].length; index++) {
           try {
             newLoadedTimetables.push({
@@ -44,7 +49,6 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
             //TO DO unimportant but this shouldn't be able to happen if this doesn't work most likly invalid data has somehow gotten into the schedule data column of the schedule list
           }
         }
-        console.log(newLoadedTimetables)
         setLoadedTimetables(newLoadedTimetables)
         setLoadingState(loadingStateEnum.success)
       }
