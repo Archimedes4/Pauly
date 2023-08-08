@@ -36,7 +36,7 @@ export default function Government() {
         <Text style={{fontFamily: "BukhariScript", fontSize: 100}}>Government</Text>
       </View>
       <Link to="/profile/government/graph">
-      <Block width={100} height={100} text='Graph' imageSource={require('../../../../assets/images/GraphAPILogo.png')} />
+        <Block width={100} height={100} text='Graph' imageSource={require('../../../../assets/images/GraphAPILogo.png')} />
       </Link>
       <Link to="/profile/government/commissions">
         <Block width={100} height={100} text='Commissions'>
@@ -48,7 +48,6 @@ export default function Government() {
       </Link>
       <Link to="/profile/government/president">
         <Block width={100} height={100} text="President" />
-        <Text>President</Text>
       </Link>
       <Link to="/profile/government/calendar">
         <Block width={100} height={100} text='Calendar'>
@@ -56,7 +55,7 @@ export default function Government() {
         </Block>
       </Link>
       <Link to="/profile/government/classes">
-        <Text>Classes</Text>
+        <Block width={100} height={100} text="Classes" />
       </Link>
     </View>
   )

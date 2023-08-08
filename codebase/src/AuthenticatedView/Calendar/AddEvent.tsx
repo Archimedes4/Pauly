@@ -25,13 +25,13 @@ enum loadingStateEnum {
   failed
 }
 
-export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number}) {
+export default function AddEvent({setIsShowingAddDate, width, height, selectedDate}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, selectedDate: Date}) {
     const microsoftAccessToken = useContext(accessTokenContent);
     const [eventName, setEventName] = useState<string>("")
     const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
     const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(new Date)
-    const [endDate, setEndDate] = useState<Date>(new Date)
+    const [startDate, setStartDate] = useState<Date>(selectedDate)
+    const [endDate, setEndDate] = useState<Date>(selectedDate)
     const [allDay, setAllDay] = useState<boolean>(false)
     const [recurringEvent, setRecurringEvent] = useState<boolean>(false)
     const [selectedReocurringType, setSelectedReocurringType] = useState<reocurringType>(reocurringType.daily)
@@ -39,6 +39,7 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
     const [isSchoolYear, setIsSchoolYear] = useState<boolean>(false)
     const [selectedTimetable, setSelectedTimetable] = useState<timetableType | undefined>(undefined)
     const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
+    const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<{schoolDay: string, schedule: scheduleType} | undefined>(undefined)
     async function createEvent() {
       var data = {
         "subject": eventName,
@@ -92,19 +93,24 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
               <Text>X</Text>
             </Pressable>
             <Text>Add Event</Text>
-            <Text>Event Name:</Text>
-            <TextInput
-              value={eventName}
-              onChangeText={setEventName}
-            />
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={setAllDay}
-              value={allDay}
-            />
-            <Text>Start Date</Text>
+            { isSchoolDay ?
+              null:
+              <View>
+                <Text>Event Name:</Text>
+                <TextInput
+                  value={eventName}
+                  onChangeText={setEventName}
+                />
+                <Switch
+                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={setAllDay}
+                  value={allDay}
+                />
+              </View>
+            }
+            <Text>{(isSchoolDay) ? "":"Start "}Date</Text>
             <View style={{flexDirection: "row"}}>
               <Pressable onPress={() => {setIsPickingStartDate(true)}}>
                 <View style={{flexDirection: "row"}}>
@@ -116,18 +122,23 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
                 null:<TimePicker selectedHourMilitary={startDate.getHours()} selectedMinuteMilitary={startDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = startDate; newDate.setHours(e); setStartDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = startDate; newDate.setMinutes(e); setStartDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
               }
             </View>
-            <Text>End Date</Text>
-            <View style={{flexDirection: "row"}}>
-              <Pressable onPress={() => {setIsPickingEndDate(true)}} style={{margin: 5}}>
+            { isSchoolDay ?
+              null:
+              <View>
+                <Text>End Date</Text>
                 <View style={{flexDirection: "row"}}>
-                  <Text>{endDate.toLocaleString("en-us", { month: "long" })} {endDate.getDate()} {endDate.getFullYear()}</Text>
-                  <CalendarIcon width={14} height={14}/>
+                  <Pressable onPress={() => {setIsPickingEndDate(true)}} style={{margin: 5}}>
+                    <View style={{flexDirection: "row"}}>
+                      <Text>{endDate.toLocaleString("en-us", { month: "long" })} {endDate.getDate()} {endDate.getFullYear()}</Text>
+                      <CalendarIcon width={14} height={14}/>
+                    </View>
+                  </Pressable>
+                  { allDay ?
+                    null:<TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
+                  }
                 </View>
-              </Pressable>
-              { allDay ?
-                null:<TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
-              }
-            </View>
+              </View>
+            }
             <Text>Reocurring Event</Text>
             <Switch
               trackColor={{false: '#767577', true: '#81b0ff'}}
@@ -158,34 +169,40 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
                 </Dropdown>
               </View>:null
             }
-            <Text>School Day</Text>
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={isSchoolDay ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={(e) => {setIsSchoolDay(e); setIsSchoolYear(false); setAllDay(true)}}
-              value={isSchoolDay}
-            />
+            <View style={{flexDirection: "row"}}>
+              <Text>School Day:</Text>
+              <Switch
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={isSchoolDay ? '#f5dd4b' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={(e) => {setIsSchoolDay(e); setIsSchoolYear(false); setAllDay(true)}}
+                value={isSchoolDay}
+              />
+            </View>
+            <View style={{flexDirection: "row"}}>
+              <Text>School Year:</Text>
+              <Switch
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={isSchoolYear ? '#f5dd4b' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={(e) => {setIsSchoolDay(false); setIsSchoolYear(e); setAllDay(true)}}
+                value={isSchoolYear}
+              />
+            </View>
             { isSchoolDay ?
               <View style={{width: 100, height: 100}}>
                 { (selectedSchoolYear === undefined) ?
                   <SchoolYearsSelect width={100} height={100} onSelect={(e) => {setSelectedSchoolYear(e)}}/>:
-                  <SchoolDaySelect width={100} height={100} timetableId={selectedSchoolYear.schoolYearData} />
+                  <SchoolDaySelect width={100} height={100} timetableId={selectedSchoolYear.schoolYearData} onSelect={(day, schedule) => {
+
+                  }}/>
                 }
               </View>:null
             }
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={isSchoolYear ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={(e) => {setIsSchoolDay(!e); setIsSchoolYear(e); setAllDay(true)}}
-              value={isSchoolYear}
-            />
             { isSchoolYear ?
               <View>
                 <Text>Selected Timetable: {(selectedTimetable) ? selectedTimetable.name:"Unselected"}</Text>
                 <SelectTimetable governmentMode={false} onSelect={(e) => {setSelectedTimetable(e)}}/>
-                
               </View>:null
             }
             <Pressable onPress={() => {
@@ -204,20 +221,39 @@ function getEvent(input: string): eventType {
   return JSON.parse(input)
 }
 
-function SchoolDaySelect({width, height, timetableId}:{width: number, height: number, timetableId: string}) {
+function SchoolDaySelect({width, height, timetableId}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: string, selectedSchedule: scheduleType) => void}) {
   const microsoftAccessToken = useContext(accessTokenContent);
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolDays, setSchoolDays] =  useState<string[]>([])
-  async function getSchedule(id: string) {
+  const [schedules, setSchedules] = useState<scheduleType[]>([])
+  const [isPickingSchoolDay, setIsPickingSchoolDay] = useState<boolean>(true)
+  const [selectedSchoolDay, setSelectedSchoolDay] = useState<string | undefined>(undefined)
+  async function getSchedule(id: string): Promise<scheduleType | undefined> {
     const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
     if (result.ok) {
-      console.log(result)
       const data = await result.json()
       console.log(data)
+      if (data["value"].length !== undefined) {
+        if (data["value"].length === 1) {
+          const resultSchedule: scheduleType = {
+            name: data["value"][0]["fields"]["name"],
+            periods: JSON.parse(data["value"][0]["fields"]["scheduleData"]) as periodType[],
+            id: data["value"][0]["fields"]["scheduleId"]
+          }
+          return resultSchedule
+        } else {
+          setLoadingState(loadingStateEnum.failed)
+          return undefined
+        }
+      } else {
+        setLoadingState(loadingStateEnum.failed)
+        return undefined
+      }
     } else {
       const data = await result.json()
       console.log(data)
       setLoadingState(loadingStateEnum.failed)
+      return undefined
     }
   }
   async function getTimetable() {
@@ -231,9 +267,14 @@ function SchoolDaySelect({width, height, timetableId}:{width: number, height: nu
           try {
             setSchoolDays(JSON.parse(data["value"][0]["fields"]["timetableDataDays"]))
             const scheduleData: string[] = JSON.parse(data["value"][0]["fields"]["timetableDataSchedules"])
+            var newSchedules: scheduleType[] = []
             for (var index = 0; index < scheduleData.length; index++) {
-              getSchedule(scheduleData[index])
+              const result = await getSchedule(scheduleData[index])
+              if (result !== undefined) {
+                newSchedules.push(result)
+              }
             }
+            setSchedules(newSchedules)
             setLoadingState(loadingStateEnum.success)
           } catch (e) {
             console.log("Failure", e)
@@ -261,11 +302,25 @@ function SchoolDaySelect({width, height, timetableId}:{width: number, height: nu
         <View>
           {(loadingState === loadingStateEnum.success) ?
             <View>
-              {schoolDays.map((day) => (
+              { isPickingSchoolDay ? 
                 <View>
-                  <Text>{day}</Text>
+                  {schoolDays.map((day) => (
+                    <Pressable onPress={() => {setIsPickingSchoolDay(false); setSelectedSchoolDay(day)}}>
+                      <View>
+                        <Text>{day}</Text>
+                      </View>
+                    </Pressable>
+                  ))}
+                </View>:
+                <View>
+                  {schedules.map((schedule) => (
+                    <Pressable >
+                      <View>
+                        <Text>{schedule.name}</Text>
+                      </View>
+                    </Pressable>
+                  ))}
                 </View>
-              ))
               }
             </View>:<Text>Failed</Text>
           }

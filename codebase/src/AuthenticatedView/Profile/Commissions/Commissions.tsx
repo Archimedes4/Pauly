@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button, Dimensions, Platform, Text, View } from 'react-native'
 import Geolocation from '@react-native-community/geolocation';
 import { Link } from 'react-router-native';
@@ -6,6 +6,8 @@ import callMsGraph from '../../../Functions/microsoftAssets';
 import { accessTokenContent } from '../../../../App';
 import NavBarComponent from '../../../UI/NavComponent';
 import { siteID } from '../../../PaulyConfig';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 enum CommissionMode{
   Before,
@@ -70,12 +72,27 @@ export default function Commissions() {
   useEffect(() => {
     getCommissions()
   }, [])
+
+  const [fontsLoaded] = useFonts({
+    'BukhariScript': require('../../../../assets/fonts/BukhariScript.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+  
   return (
     <View>
       { (dimensions.window.width > 576) ?
-        null:<Link to="/profile/">
+        <Link to="/profile/">
           <Text>Back</Text>
-        </Link>
+        </Link>:null
       }
       <Text>Commissions</Text>
       { currentCommissions.map((item: commissionType) => (
@@ -85,7 +102,6 @@ export default function Commissions() {
           </View>
         </Link>
       ))}
-      <Button title="Show me my current location" onPress={() => {getUsersLocation()}}/>
     </View>
   )
 }

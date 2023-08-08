@@ -26,7 +26,7 @@ declare global {
   type monthDataType = {
     id: string
     showing: boolean
-    dayData: string
+    dayData: number
   }
 }
 
@@ -104,7 +104,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
       </View> 
       <View style={{height: microsoftAccessToken.dimensions.window.height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
-        <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>: null
+        <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} setSelectedDate={(e, b) => {setSelectedDate(e); if (b) {setIsShowingAddDate(true)}}}/>: null
       }
       { (selectedCalendarMode === calendarMode.week) ?
         <Week width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9}/>:null
@@ -115,14 +115,14 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
       </View>
       { isShowingAddDate ?
         <View style={{zIndex: 2, position: "absolute", left: microsoftAccessToken.dimensions.window.width * 0.2, top: microsoftAccessToken.dimensions.window.height * 0.1}}>
-          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={microsoftAccessToken.dimensions.window.width * 0.6} height={microsoftAccessToken.dimensions.window.height * 0.8}/>
+          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={microsoftAccessToken.dimensions.window.width * 0.6} height={microsoftAccessToken.dimensions.window.height * 0.8} selectedDate={selectedDate}/>
         </View>:null
       }
     </View>
   )
 }
 
-function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: number, height: number, selectedDate: Date, setSelectedDate: (item: Date) => void}) {
+function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: number, height: number, selectedDate: Date, setSelectedDate: (item: Date, addDate: boolean) => void}) {
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
   
@@ -134,9 +134,9 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
     for (let index = 0; index < 42; index++) {
       if (index >= firstDayWeek && (index - firstDayWeek) < (lastDay.getDate())){
         //In the current month
-        monthDataResult.push({showing: true, dayData: "" + (index - firstDayWeek + 1), id: create_UUID()})
+        monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID()})
       } else {
-        monthDataResult.push({showing: false, dayData: "", id: create_UUID()})
+        monthDataResult.push({showing: false, dayData: 0, id: create_UUID()})
       }
     }
     console.log("this is month data", monthDataResult)
@@ -160,7 +160,7 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
           <View>
             {(selectedDate.getFullYear() != new Date().getFullYear() || selectedDate.getMonth() != new Date().getMonth()) ?
               <View style={{width: width * 0.2}}>
-                <Pressable onPress={() => {setSelectedDate(new Date)}}>
+                <Pressable onPress={() => {setSelectedDate(new Date, false)}}>
                   <Text style={{color: "white"}}>Today</Text>
                 </Pressable>
               </View>:<View style={{width: width * 0.2}}></View>
@@ -170,7 +170,7 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
           <Pressable onPress={() => {
             const d = new Date();
             d.setFullYear((selectedDate.getMonth() === 1) ? selectedDate.getFullYear() - 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 1) ? 12:selectedDate.getMonth() - 1, selectedDate.getDay());
-            setSelectedDate(d)
+            setSelectedDate(d, false)
           }} >
             <ChevronLeft />
           </Pressable>
@@ -178,7 +178,7 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
           <Pressable onPress={() => {
             const d = new Date();
             d.setFullYear((selectedDate.getMonth() === 12) ? selectedDate.getFullYear() + 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 12) ? 1:selectedDate.getMonth() + 1, selectedDate.getDay());
-            setSelectedDate(d)
+            setSelectedDate(d, false)
           }}>
             <ChevronRight />
           </Pressable>
@@ -198,9 +198,17 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
                 { monthData.map((value, id) => (
                   <View>
                     { (id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
-                      <Pressable onPress={() => {}} key={value.id}>
-                        <CalendarCardView width={width/7} height={height/8} value={value}/>
-                      </Pressable>: null
+                      <View>
+                        { value.showing ?
+                          <Pressable onPress={() => {
+                            const d = new Date();
+                            d.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), value.dayData);
+                            setSelectedDate(d, true)
+                          }} key={value.id}>
+                            <CalendarCardView width={width/7} height={height/8} value={value}/>
+                          </Pressable>:<View key={value.id}><CalendarCardView width={width/7} height={height/8} value={value}/></View>
+                        }
+                      </View>:null
                     }
                   </View>
                 ))}

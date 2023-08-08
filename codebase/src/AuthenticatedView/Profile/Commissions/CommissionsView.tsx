@@ -14,7 +14,17 @@ export default function CommissionsView() {
     if (result.ok){
       const data = await result.json()
       console.log(data)
-
+      setCommissionData({
+        title: data["value"][0]["fields"]["Title"],
+        startDate: new Date(data["value"][0]["fields"]["StartDate"]),
+        endDate: new Date(data["value"][0]["fields"]["EndDate"]),
+        points: data["value"][0]["fields"]["Points"],
+        hidden: data["value"][0]["fields"]["Hidden"],
+        commissionId: data["value"][0]["fields"]["CommissionID"],
+        proximity: data["value"][0]["fields"]["Proximity"],
+        coordinateLat: data["value"][0]["fields"]["CoordinateLat"],
+        coordinateLng: data["value"][0]["fields"]["CoordinateLng"]
+      })
     } else {
       //TO DO error occured
       console.log("Error occured")
@@ -22,8 +32,20 @@ export default function CommissionsView() {
   }
   async function claimCommission() {
     if (commissionData !== undefined) {
-      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionData.commissionId +"/items")
-      
+      const userResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me")
+      if (userResult.ok){
+        const userData = await userResult.json()
+        const currentTime = new Date
+        const data = {
+          "fields": {
+            "Title":userData["id"],
+            "Submitted":currentTime.toDateString(),
+            "UserID":userData["id"]
+          }
+        }
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionData.commissionId + "/items", "POST", false, JSON.stringify(data))
+        
+      }
     }
   }
   useEffect(() => {getCommissionInformation()}, [id])

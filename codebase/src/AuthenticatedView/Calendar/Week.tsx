@@ -5,52 +5,37 @@ const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
 export default function Week({width, height}:{width: number, height: number}) {
-  const [dimensions, setDimensions] = useState({
-    window: windowDimensions,
-    screen: screenDimensions,
-  });
-  
-  useEffect(() => {
-      const subscription = Dimensions.addEventListener(
-        'change',
-        ({window, screen}) => {
-          setDimensions({window, screen});
-        },
-      );
-      return () => subscription?.remove();
-  });
-
-  useEffect(() => {
-      setDimensions({
-          window: Dimensions.get('window'),
-          screen: Dimensions.get('screen')
-      })
-  }, [])
-
+  const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([])
   function getDOW(selectedDate: Date) {
-    var week = new Array(); 
+    var week: Date[] = []
     // Starting Monday not Sunday
-    selectedDate.setDate((selectedDate.getDate() - selectedDate.getDay() +1));
+    selectedDate.setDate((selectedDate.getDate() - selectedDate.getDay()));
     for (var i = 0; i < 7; i++) {
         week.push(
           new Date(selectedDate)
         ); 
         selectedDate.setDate(selectedDate.getDate() +1);
     }
+    console.log("Week", week)
     return week; 
   }
-  useEffect(() => {console.log(getDOW(new Date(2023, 1, 1)))}, [])
+  useEffect(() => {setDaysOfWeek(getDOW(new Date))}, [])
   return (
     <View>
         <View>
-        {(dimensions.window.width >= 768) ?
+          {/* 768 TO DO get dimentiosn value*/}
+        {(false) ?
             <View>
                 
             </View>:
             <View>
-                <View>
-
-                </View>
+              <View>
+                {daysOfWeek.map((day) => (
+                  <View>
+                    <Text>{day.getDate()}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
         }
         </View>

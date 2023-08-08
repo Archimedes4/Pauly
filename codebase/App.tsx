@@ -24,7 +24,7 @@ import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsal }
 import Login from './src/Login';
 import { loginRequest } from './src/authConfig';
 import Notifications from './src/AuthenticatedView/Notifications';
-import Resources from './src/AuthenticatedView/Profile/Resources';
+import Resources from './src/AuthenticatedView/Resources';
 import Settings from './src/AuthenticatedView/Profile/Settings';
 import Profile from './src/AuthenticatedView/Profile/Profile';
 import Government from './src/AuthenticatedView/Profile/Government/Government';
@@ -64,27 +64,35 @@ import PageNotFound from './src/AuthenticatedView/404Page';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
+interface contextInterface {
+  uri: string;
+  displayName: string;
+  accessToken: string;
+  dimensions: {window: ScaledSize, screen: ScaledSize};
+}
 
-export const accessTokenContent = React.createContext<{uri: string, accessToken: string, dimensions: {window: ScaledSize, screen: ScaledSize}}>({uri: "", accessToken: "",dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}});
+export const accessTokenContent = React.createContext<contextInterface>({uri: "", displayName: "", accessToken: "",dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}});
 
 function AuthenticatedView({dimensions}:{dimensions: {
   window: ScaledSize,
   screen: ScaledSize
 }}) {
   const { instance, accounts } = useMsal();
-  const [context, setContext] = useState<{uri: string, accessToken: string, dimensions: {window: ScaledSize, screen: ScaledSize}}>({uri: "", accessToken: "",dimensions: dimensions})
+  const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: dimensions})
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
-  
+
   async function getUserProfile(microsoftAccessToken: string) {
+    //TO DO check if ok
     console.log("Token", microsoftAccessToken)
     const result = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me/photo/$value")
     // const data = await result.json()
     // console.log(data)
     const dataBlob = await result.blob()
     const urlOut = URL.createObjectURL(dataBlob)
-    setContext({uri: urlOut, accessToken: microsoftAccessToken, dimensions: dimensions})
+    const profileResult = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me")
+    const profileData = await profileResult.json()
+    console.log(profileData)
+    setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: microsoftAccessToken, dimensions: dimensions})
   }
 
   function getMicrosoftAccessToken() {
@@ -109,6 +117,7 @@ function AuthenticatedView({dimensions}:{dimensions: {
   }, [])
 
   useEffect(() => {
+    console.log("Dimentions", dimensions.window, "This:", dimensions.window.width * 0.75)
     var newContext = context
     if (dimensions.window.width > 576){
       if (expandedMode){
@@ -128,7 +137,7 @@ function AuthenticatedView({dimensions}:{dimensions: {
     <View>
       <accessTokenContent.Provider value={context}>
         <NativeRouter>
-          <View style={{flexDirection: "row", overflow: "hidden"}}>
+          <View style={{flexDirection: "row", overflow: "hidden", width: dimensions.window.width}}>
               { (dimensions.window.width > 576) ?
               <View style={{width: (expandedMode) ? dimensions.window.width * 0.25:dimensions.window.width * 0.1, height: dimensions.window.height}}>
                   <NavBarComponent width={dimensions.window.width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />
@@ -184,6 +193,9 @@ function AuthenticatedView({dimensions}:{dimensions: {
   )
 }
 
+const windowDimensions = Dimensions.get('window');
+const screenDimensions = Dimensions.get('screen');
+
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
   const [dimensions, setDimensions] = useState({
@@ -200,13 +212,6 @@ function App() {
     );
     return () => subscription?.remove();
   });
-
-  useEffect(() => {
-    setDimensions({
-        window: Dimensions.get('window'),
-        screen: Dimensions.get('screen')
-    })
-  }, [])
 
   return (
     <Provider store={store}>
