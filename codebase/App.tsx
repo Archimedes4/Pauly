@@ -73,26 +73,32 @@ interface contextInterface {
 
 export const accessTokenContent = React.createContext<contextInterface>({uri: "", displayName: "", accessToken: "",dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}});
 
-function AuthenticatedView({dimensions}:{dimensions: {
+function AuthenticatedView({dimensions, width}:{dimensions: {
   window: ScaledSize,
   screen: ScaledSize
-}}) {
+}, width: number}) {
   const { instance, accounts } = useMsal();
   const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: dimensions})
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
+  const [mounted, setMounted] = useState<boolean>(false)
 
   async function getUserProfile(microsoftAccessToken: string) {
     //TO DO check if ok
-    console.log("Token", microsoftAccessToken)
     const result = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me/photo/$value")
-    // const data = await result.json()
-    // console.log(data)
-    const dataBlob = await result.blob()
-    const urlOut = URL.createObjectURL(dataBlob)
-    const profileResult = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me")
-    const profileData = await profileResult.json()
-    console.log(profileData)
-    setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: microsoftAccessToken, dimensions: dimensions})
+    if (result.ok){
+      const dataBlob = await result.blob()
+      const urlOut = URL.createObjectURL(dataBlob)
+      const profileResult = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me")
+      if (profileResult.ok){
+        const profileData = await profileResult.json()
+        var newDimentions: {window: ScaledSize, screen: ScaledSize} = dimensions
+        if (width > 576) {
+          newDimentions.window.width = width * 0.9
+        }
+        console.log("Out Dimentions", newDimentions.window.width, dimensions.window.width)
+        setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: microsoftAccessToken, dimensions: newDimentions})
+      }
+    }
   }
 
   function getMicrosoftAccessToken() {
@@ -113,17 +119,23 @@ function AuthenticatedView({dimensions}:{dimensions: {
   }
 
   useEffect(() => {
+    var newContext = context
+    if (dimensions.window.width > 576) {
+      newContext.dimensions.window.width = width * 0.9
+    }
+    console.log("Inital Context", newContext.dimensions.window.width, dimensions.window.width, "90%", dimensions.window.width * 0.9)
+    setContext(newContext)
     getMicrosoftAccessToken()
   }, [])
 
   useEffect(() => {
-    console.log("Dimentions", dimensions.window, "This:", dimensions.window.width * 0.75)
-    var newContext = context
+    console.error("DIMENTIONS CHANGED", dimensions.window.width)
+    var newContext = {...context}
     if (dimensions.window.width > 576){
       if (expandedMode){
-        newContext.dimensions.window.width = dimensions.window.width * 0.75
+        newContext.dimensions.window.width = context.dimensions.window.width - dimensions.window.width * 0.15
       } else {
-        newContext.dimensions.window.width = dimensions.window.width * 0.9
+        newContext.dimensions.window.width = context.dimensions.window.width + dimensions.window.width * 0.15
       }
     } else {
       newContext.dimensions.window.width = dimensions.window.width
@@ -132,18 +144,29 @@ function AuthenticatedView({dimensions}:{dimensions: {
     newContext.dimensions.window.scale = dimensions.window.scale
     newContext.dimensions.window.fontScale = dimensions.window.fontScale
     setContext(newContext)
-  }, [dimensions, expandedMode])
+  }, [dimensions])
+
+  useEffect(() => {
+    console.log("Ran")
+    var newContext = {...context}
+    if (dimensions.window.width > 576){
+      if (expandedMode){
+        newContext.dimensions.window.width = width * 0.75
+      } else {
+        newContext.dimensions.window.width = width * 0.9
+      }
+    } 
+    setContext(newContext)
+  }, [expandedMode])
   return (
-    <View>
+    <View style={{width: width}}>
       <accessTokenContent.Provider value={context}>
         <NativeRouter>
-          <View style={{flexDirection: "row", overflow: "hidden", width: dimensions.window.width}}>
+          <View style={{flexDirection: "row", overflow: "hidden", width: width}}>
               { (dimensions.window.width > 576) ?
-              <View style={{width: (expandedMode) ? dimensions.window.width * 0.25:dimensions.window.width * 0.1, height: dimensions.window.height}}>
-                  <NavBarComponent width={dimensions.window.width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />
-              </View>:null
+                  <NavBarComponent width={width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />:null
               }
-              <View style={{width: (dimensions.window.width > 576) ? (expandedMode) ? dimensions.window.width * 0.75:dimensions.window.width * 0.9:dimensions.window.width}}>
+              <View id='Base' style={{width: context.dimensions.window.width}}>
                 <Routes>
                   <Route path="/" element={<HomePage/>}/>
                   <Route path="/quiz" element={<QuizView/>}/>
@@ -207,19 +230,22 @@ function App() {
     const subscription = Dimensions.addEventListener(
       'change',
       ({window, screen}) => {
+        console.log("Window Change")
         setDimensions({window, screen});
       },
     );
     return () => subscription?.remove();
   });
 
+  useEffect(() => {console.log("Main Dimentions", dimensions.window.width, "90%", dimensions.window.width * 0.9)}, [dimensions.window.width])
+
   return (
     <Provider store={store}>
       <SafeAreaView>
         <MsalProvider instance={msalInstance}>
           <AuthenticatedTemplate>
-          <AuthenticatedView dimensions={dimensions} />
-            </AuthenticatedTemplate>
+            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width}/>
+          </AuthenticatedTemplate>
           <UnauthenticatedTemplate>
             <Login />
           </UnauthenticatedTemplate>
