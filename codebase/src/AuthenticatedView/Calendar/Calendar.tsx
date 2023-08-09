@@ -107,7 +107,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
         <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} setSelectedDate={(e, b) => {setSelectedDate(e); if (b) {setIsShowingAddDate(true)}}}/>: null
       }
       { (selectedCalendarMode === calendarMode.week) ?
-        <Week width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9}/>:null
+        <Week width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate}/>:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
         <DayView width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} currentEvents={events} />:null

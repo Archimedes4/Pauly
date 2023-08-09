@@ -5,11 +5,20 @@ import { accessTokenContent } from '../../../../../../App';
 import { siteID } from '../../../../../PaulyConfig';
 import create_UUID from '../../../../../Functions/CreateUUID';
 import { Link } from 'react-router-native';
+import { DownIcon, UpIcon } from '../../../../../UI/Icons/Icons';
 
 enum loadingStateEnum {
   loading,
   success,
   failed
+}
+
+declare global {
+  type schoolDayType = {
+    name: string,
+    id: string,
+    order: number     
+  }
 }
 
 export default function GovernmentTimetableCreate() {
@@ -18,7 +27,7 @@ export default function GovernmentTimetableCreate() {
     const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
     const [selectedSchedules, setSelectedSchedules] = useState<scheduleType[]>([])
     const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
-    const [schoolDays, setSchoolDays] = useState<string[]>([])
+    const [schoolDays, setSchoolDays] = useState<schoolDayType[]>([])
     const [newSchoolDayName, setNewSchoolDayName] = useState<string>("")
     async function createTimetable() {
       var scheduals = []
@@ -70,7 +79,7 @@ export default function GovernmentTimetableCreate() {
       <Link to="/profile/government/calendar/timetable/">
         <Text>Back</Text>
       </Link>
-      <Text>GovernmentTimetableCreate</Text>
+      <Text>Create Timetable</Text>
       <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}}/>
       <Text>Scheduals</Text>
       <Text>Selected Schedules</Text>
@@ -88,13 +97,48 @@ export default function GovernmentTimetableCreate() {
         </Pressable>
       ))}
       <Text>School Days</Text>
-      {schoolDays.map((item) => (
-        <View>
-          <Text>{item}</Text>
+      {schoolDays.map((item, index) => (
+        <View style={{flexDirection: "row"}}>
+          <Text>{item.name}</Text>
+          {(item.order !== 0) ? 
+          <Pressable onPress={() => {
+            var newSchoolDays = schoolDays
+            newSchoolDays[index].order = newSchoolDays[index].order - 1
+            newSchoolDays[index - 1].order = newSchoolDays[index - 1].order + 1
+            const saveCurrent = newSchoolDays[index]
+            newSchoolDays[index] = newSchoolDays[index - 1]
+            newSchoolDays[index - 1] = saveCurrent
+            setSchoolDays(newSchoolDays)
+          }}>
+            <UpIcon width={10} height={10}/>
+          </Pressable>:null}
+          {((item.order + 1) < schoolDays.length) ? 
+          <Pressable onPress={() => {
+            var newSchoolDays = schoolDays
+            newSchoolDays[index].order = newSchoolDays[index].order + 1
+            newSchoolDays[index + 1].order = newSchoolDays[index + 1].order - 1
+            const saveCurrent = newSchoolDays[index]
+            newSchoolDays[index] = newSchoolDays[index + 1]
+            newSchoolDays[index + 1] = saveCurrent
+            setSchoolDays(newSchoolDays)
+          }}>
+            <DownIcon width={10} height={10} />
+          </Pressable>:null}
+          <Pressable onPress={() => {
+            var newSchoolDays = schoolDays
+            newSchoolDays.splice(index, 1)
+            setSchoolDays(newSchoolDays)
+          }}>
+            <Text>X</Text>
+          </Pressable>
         </View>
       ))}
-      <TextInput value={newSchoolDayName} onChangeText={setNewSchoolDayName} />
-      <Button title='Add' onPress={() => {setSchoolDays([...schoolDays, newSchoolDayName]); setNewSchoolDayName("")}} />
+      <TextInput value={newSchoolDayName} onChangeText={setNewSchoolDayName}/>
+      <Button title='Add' onPress={() => {
+        if (newSchoolDayName !== ""){
+          setSchoolDays([...schoolDays, {name: newSchoolDayName, id: create_UUID(), order: (schoolDays.length === 0) ? 0:schoolDays[schoolDays.length - 1].order + 1}]); setNewSchoolDayName("")
+        }
+      }} />
       <Button title="Create Timetable" onPress={() => {createTimetable()}}/>
     </View>
   )

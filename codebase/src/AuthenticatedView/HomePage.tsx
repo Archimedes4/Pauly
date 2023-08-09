@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Dimensions, View, Text, Image, TouchableOpacity } from 'react-native';
+import { Dimensions, View, Text, Image, Pressable } from 'react-native';
 import MonthView from './MonthView';
 import { Link, Navigate, useNavigate } from 'react-router-native';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
@@ -86,13 +86,13 @@ export default function HomePage() {
                 </ScrollingTextAnimation>:null
             }
         </View>
-        <TouchableOpacity style={{width: dimensions.window.width * 0.999, height: dimensions.window.height * 0.42}} onPress={() => {//TO DO Naviate to Calendar
+        <Pressable style={{width: dimensions.window.width * 0.999, height: dimensions.window.height * 0.42}} onPress={() => {//TO DO Naviate to Calendar
         }}>
             <View>
                 <Text style={{margin: "auto", width: dimensions.window.width * 1.0, height: dimensions.window.height * 0.05}}>Calendar</Text>
                 <MonthView width={dimensions.window.width * 1.0} height={dimensions.window.height * 0.37}/>
             </View>
-        </TouchableOpacity>
+        </Pressable>
         <View style={{flexDirection: 'row', width: dimensions.window.width * 1.0, height: dimensions.window.height * 0.25}}>
             <Link to={'/quiz'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>

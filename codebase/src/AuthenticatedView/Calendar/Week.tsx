@@ -1,10 +1,10 @@
-import { View, Text, Dimensions } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, Dimensions, Pressable } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { accessTokenContent } from '../../../App';
+import DayView from './DayView';
 
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
-
-export default function Week({width, height}:{width: number, height: number}) {
+export default function Week({width, height, selectedDate}:{width: number, height: number, selectedDate: Date}) {
+  //const microsoftAccessToken = useContext(accessTokenContent);
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([])
   function getDOW(selectedDate: Date) {
     var week: Date[] = []
@@ -22,24 +22,27 @@ export default function Week({width, height}:{width: number, height: number}) {
   useEffect(() => {setDaysOfWeek(getDOW(new Date))}, [])
   return (
     <View>
+      <View>
+      {/* 768 TO DO get dimentiosn value*/}
+      {(false) ?
         <View>
-          {/* 768 TO DO get dimentiosn value*/}
-        {(false) ?
-            <View>
-                
-            </View>:
-            <View>
-              <View>
-                {daysOfWeek.map((day) => (
-                  <View>
-                    <Text>{day.getDate()}</Text>
-                  </View>
-                ))}
+            
+        </View>:
+        <View>
+          <Pressable onTouchMove={(e) => {e.type}}></Pressable>
+          <View style={{flexDirection: "row", height: width * 0.179}}>
+            {daysOfWeek.map((day) => (
+              <View style={{width: width * 0.135, height: width * 0.135, borderRadius: 50, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center", margin: width * 0.022}}>
+                <Text>{day.getDate()}</Text>
               </View>
-            </View>
-        }
+            ))}
+          </View>
         </View>
-      <Text>Week</Text>
+      }
+      </View>
+      <View style={{height: (false) ? height:(height - width * 0.179)}}>
+        <DayView width={width} height={(false) ? height * 0.757:height} selectedDate={selectedDate} currentEvents={[]} />
+      </View>
     </View>
   )
 }

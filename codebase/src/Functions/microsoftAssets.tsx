@@ -1,5 +1,4 @@
 export default async function callMsGraph(accessToken: string, url: string, method?: "GET" | "POST" | "PATCH" | "DELETE", perfer?: boolean, body?: string): Promise<Response> {
-    console.log("This", url)
     const headers = new Headers();
     const bearer = `Bearer ${accessToken}`;
 
@@ -9,7 +8,6 @@ export default async function callMsGraph(accessToken: string, url: string, meth
     if (perfer){
         headers.append('Prefer','outlook.timezone="Central America Standard Time"')
     }
-    console.log("This is data", body)
 
     const options = {
         method: (method) ? method:"GET",

@@ -49,11 +49,10 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
     const [isSchoolDay, setIsSchoolDay] = useState<boolean>(false)
     const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
     const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<schoolDayDataInteface | undefined>(undefined)
-    const [selectedSchoolYearTimetable, setSelectedSchoolYearTimtable] = useState<timetableType | undefined>(undefined)
 
     //School Year
     const [isSchoolYear, setIsSchoolYear] = useState<boolean>(false)
-    const [selectedTimetable, setSelectedTimetable] = useState<timetableType | undefined>(undefined)
+    const [selectedTimetable, setSelectedTimetable] = useState<timetableStringType | undefined>(undefined)
     async function createEvent() {
       var data = {
         "subject": eventName,
@@ -117,7 +116,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
     return (
       <View style={{backgroundColor: "white", width: width, height: height}}>
         { (isPickingStartDate || isPickingEndDate) ?
-          <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}} allowedDatesRange={undefined}/>:
+          <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}} allowedDatesRange={(isSchoolDay) ? {startDate: selectedSchoolYear.startTime, endDate: selectedSchoolYear.endTime}:undefined}/>:
           <View>
             <Pressable onPress={() => {setIsShowingAddDate(false)}}>
               <Text>X</Text>
@@ -254,9 +253,9 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
   const [selectedSchoolDay, setSelectedSchoolDay] = useState<string | undefined>(undefined)
   async function loadData() {
     const result = await getTimetable(microsoftAccessToken.accessToken, timetableId)
-    if (result.result === loadingStateEnum.success && result.schedules !== undefined && result.schoolDays !== undefined) {
-      setSchoolDays(result.schoolDays)
-      setSchedules(result.schedules)
+    if (result.result === loadingStateEnum.success && result.timetable !== undefined) {
+      setSchoolDays(result.timetable.days)
+      setSchedules(result.timetable.schedules)
       setLoadingState(loadingStateEnum.success)
     } else {
       setLoadingState(loadingStateEnum.failed)
@@ -302,25 +301,21 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
 
 function SchoolYearsSelect({width, height, onSelect}:{width: number, height: number, onSelect: (item: eventType) => void}) {
   function getEvent(input: string): eventType {
-    return JSON.parse(input)
+    var result = JSON.parse(input)
+    result["endTime"] = new Date(result["endTime"])
+    result["startTime"] = new Date(result["startTime"])
+    return result
   }
   const microsoftAccessToken = useContext(accessTokenContent);
   const fullStore = useSelector((state: RootState) => state)
   useEffect(() => {
     getOrgWideEvents(microsoftAccessToken.accessToken, true, undefined, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
   }, [])
-  useEffect(() => {
-    var newTimtableEvents
-    for (var index = 0; index < fullStore.calendarEvents.length; index++){
-
-    }
-
-  }, [fullStore.calendarEvents])
 
   return (
     <View style={{width: width, height: height, overflow: "scroll"}}>
         { fullStore.calendarEvents.map((event) => (
-          <Pressable onPress={() => {onSelect(getEvent(event))}}>
+          <Pressable onPress={() => {onSelect(getEvent(event)); console.log("Event", getEvent(event))}}>
             <View>
               <Text>{getEvent(event).name}</Text>
             </View>

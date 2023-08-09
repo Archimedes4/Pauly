@@ -8,7 +8,6 @@ function MonthBlock({value, width, height, startDate, daySelected, selectedDates
     let day = new Date().getDate()
     let index = selectedDates.findIndex((input) => input.Date == textval)
     let var1: DateProperty = selectedDates[index]
-    useEffect(() => {console.log("Value", value, "startDate", startDate, "Dayselected", daySelected, "TextVal", textval)}, [])
     return(
         <View style={{width: width, height: height, borderColor: "black", borderWidth: 2}} id="This">
             { (value >= (startDate - 1) && value <= daySelected) ?

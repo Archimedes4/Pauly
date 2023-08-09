@@ -29,7 +29,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
     const [blockLength, setBlockLength] = useState<number>(0)
     const [iconLength, setIconLength] = useState<number>(0)
     useEffect(() => {
-        console.log("This is width: " + width +" This is height:", height)
+        console.log("Changed")
         if ((width * 0.6) > ((height * 0.6)/8)){ //checking to see if the width or the height is going to 
             setBlockLength((height * 0.6)/8)
         } else {
@@ -41,8 +41,6 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
             setIconLength(width * 0.5)
         }
     }, [width, height])
-    useEffect(() => {console.log("Icon Length Changed", iconLength)}, [iconLength])
-    useEffect(() => {console.log("Length Changed", length)}, [length])
     
   return (
     <Pressable onHoverIn={() => {onSetExpandedMode(true)}} onHoverOut={() => {onSetExpandedMode(false)}}>

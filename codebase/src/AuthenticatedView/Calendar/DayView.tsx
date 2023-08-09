@@ -175,15 +175,17 @@ function calculateIfShowing(value: String, Time: Date): boolean { //TO DO shorte
     if (isDateToday(Time)) {
         const hourInt = Time.getHours()
         const minuiteInt = Time.getMinutes()
-        if (minuiteInt + 20 >= 60){
-            const resepctiveTime = (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString() + (hourInt > 12) ? "PM":"AM"
+        if (minuiteInt + 15 >= 60){
+            var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
+            resepctiveTime += (hourInt > 12) ? "PM":"AM"
             if (resepctiveTime === value){
                 return false
             } else {
                 return true
             }
-        } else if (minuiteInt - 20 <= 0) {
-            const resepctiveTime = (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString() + (hourInt > 12) ? "PM":"AM"
+        } else if (minuiteInt - 15 <= 0) {
+            var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
+            resepctiveTime += (hourInt > 12) ? "PM":"AM"
             if (resepctiveTime === value){
                 return false
             } else {
