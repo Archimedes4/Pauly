@@ -7,7 +7,9 @@
 import { useEffect, useRef, useState } from "react"
 import {View, ScrollView, useColorScheme, Text} from "react-native"
 import { useSearchParams } from "react-router-native"
-import { isDateToday } from "../../Functions/calendarFunctions"
+import { getEventFromJSON, isDateToday } from "../../Functions/calendarFunctions"
+import { useSelector } from "react-redux"
+import { RootState } from "../../Redux/store"
 
 declare global {
     type calendarCourseType = {
@@ -47,8 +49,9 @@ declare global {
     }
 }
 
-export default function DayView({width, height, selectedDate, currentEvents}:{width: number, height: number, selectedDate: Date, currentEvents: eventType[]}) {
+export default function DayView({width, height}:{width: number, height: number}) {
     const colorScheme = useColorScheme();
+    const fullStore = useSelector((state: RootState) => state)
     const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0)
     const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0)
     const [currentTime, setCurrentTime] = useState<string>("12:00")
@@ -133,7 +136,7 @@ export default function DayView({width, height, selectedDate, currentEvents}:{wi
                             <View>
                                 {hoursText.map((value) => (
                                     <View style={{flexDirection: "row", height: hourLength}}>
-                                        { (calculateIfShowing(value,  selectedDate)) ?
+                                        { (calculateIfShowing(value,  JSON.parse(fullStore.selectedDate))) ?
                                             <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
                                         }
                                         <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0}} />
@@ -143,13 +146,13 @@ export default function DayView({width, height, selectedDate, currentEvents}:{wi
                         }
                     </View>
                     <View>
-                        { currentEvents.map((event) => (
+                        { fullStore.currentEvents.map((event) => (
                             <View>
-                                <EventBlock event={event} width={width} height={0} />
+                                <EventBlock event={getEventFromJSON(event)} width={width} height={0} />
                             </View>
                         ))}
                     </View>
-                    { (selectedDate.getDate() === new Date().getDate() && selectedDate.getMonth() === new Date().getMonth() && selectedDate.getFullYear() === new Date().getFullYear()) ?
+                    { (JSON.parse(fullStore.selectedDate).getDate() === new Date().getDate() && JSON.parse(fullStore.selectedDate).getMonth() === new Date().getMonth() && JSON.parse(fullStore.selectedDate).getFullYear() === new Date().getFullYear()) ?
                         <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
                             <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
                             <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       

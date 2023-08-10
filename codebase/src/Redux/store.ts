@@ -1,16 +1,21 @@
+import { currentEventsLastCalled } from './reducers/currentEventLastCalledReducer';
 // import { configureStore } from '@reduxjs/toolkit'
 // import {calendarEventsReducer} from './Reducers';
 
 // export default configureStore({reducer: {calendarEventsReducer, }, })
 
 import { configureStore } from '@reduxjs/toolkit';
-import currentEventsReducer from './reducers/calendarEventReducer';
-import currentEventsSchoolYear from './reducers/calendarEventSchoolYearReducer'
+import currentEventsReducer from './reducers/currentEventReducer';
+import currentEventsSchoolYearReducer from './reducers/currentEventSchoolYearReducer'
+import currentEventsLastCalledReducer from './reducers/currentEventLastCalledReducer';
+import selectedDateReducer from './reducers/selectedDateReducer';
 
 const store = configureStore({
   reducer: {
-    calendarEvents: currentEventsReducer,
-    calendarEventsSchoolYear: currentEventsSchoolYear
+    currentEvents: currentEventsReducer,
+    currentEventsSchoolYear: currentEventsSchoolYearReducer,
+    currentEventsLastCalled: currentEventsLastCalledReducer,
+    selectedDate: selectedDateReducer
   }
 });
 

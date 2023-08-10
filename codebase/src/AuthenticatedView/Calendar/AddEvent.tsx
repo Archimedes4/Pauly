@@ -1,16 +1,19 @@
-import { useContext, useEffect, useState } from "react";
-import { accessTokenContent } from "../../../App";
-import callMsGraph from "../../Functions/microsoftAssets";
-import DatePicker from "../../UI/DateTimePicker/DatePicker";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Pressable, View, Text, Switch, TextInput, Button } from "react-native";
-import Dropdown from "../../UI/Dropdown";
-import SelectTimetable from "./SelectTimetable";
-import { CalendarIcon } from "../../UI/Icons/Icons";
-import TimePicker from "../../UI/DateTimePicker/TimePicker";
-import { orgWideGroupID, siteID } from "../../PaulyConfig";
-import { getOrgWideEvents, getTimetable } from "../../Functions/calendarFunctions";
 import { useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
+import { accessTokenContent } from "../../../App";
+import { orgWideGroupID, siteID } from "../../PaulyConfig";
+import DatePicker from "../../UI/DateTimePicker/DatePicker";
+import Dropdown from "../../UI/Dropdown";
+import { CalendarIcon, CloseIcon } from "../../UI/Icons/Icons";
+import TimePicker from "../../UI/DateTimePicker/TimePicker";
+import callMsGraph from "../../Functions/microsoftAssets";
+import { getEventFromJSON } from "../../Functions/calendarFunctions";
+import { getOrgWideEvents, getTimetable } from "../../Functions/calendarFunctionsGraph";
+import SelectTimetable from "./SelectTimetable";
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 enum reocurringType {
     daily,
@@ -30,15 +33,16 @@ interface schoolDayDataInteface {
   schedule: scheduleType
 }
 
-export default function AddEvent({setIsShowingAddDate, width, height, selectedDate}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, selectedDate: Date}) {
+export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number}) {
     const microsoftAccessToken = useContext(accessTokenContent);
+    const fullStore = useSelector((state: RootState) => state)
 
     //Calendar
     const [eventName, setEventName] = useState<string>("")
     const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
     const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(selectedDate)
-    const [endDate, setEndDate] = useState<Date>(selectedDate)
+    const [startDate, setStartDate] = useState<Date>(JSON.parse(fullStore.selectedDate))
+    const [endDate, setEndDate] = useState<Date>(JSON.parse(fullStore.selectedDate))
     const [allDay, setAllDay] = useState<boolean>(false)
 
     //Recurring
@@ -53,6 +57,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
     //School Year
     const [isSchoolYear, setIsSchoolYear] = useState<boolean>(false)
     const [selectedTimetable, setSelectedTimetable] = useState<timetableStringType | undefined>(undefined)
+
     async function createEvent() {
       var data = {
         "subject": eventName,
@@ -113,30 +118,49 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
         console.log(dataOut)
       }
     }
+
+    const [fontsLoaded] = useFonts({
+      'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
+    });
+  
+    const onLayoutRootView = useCallback(async () => {
+      if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+      }
+    }, [fontsLoaded]);
+    
+    if (!fontsLoaded) {
+      return null;
+    }
+
     return (
-      <View style={{backgroundColor: "white", width: width, height: height}}>
+      <View style={{backgroundColor: "white", width: width, height: height, borderRadius: 5, borderWidth: 5}}>
         { (isPickingStartDate || isPickingEndDate) ?
           <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}} allowedDatesRange={(isSchoolDay) ? {startDate: selectedSchoolYear.startTime, endDate: selectedSchoolYear.endTime}:undefined}/>:
           <View>
             <Pressable onPress={() => {setIsShowingAddDate(false)}}>
-              <Text>X</Text>
+              <CloseIcon width={10} height={10}/>
             </Pressable>
-            <Text>Add Event</Text>
+            <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
             { isSchoolDay ?
               null:
               <View>
-                <Text>Event Name:</Text>
                 <TextInput
                   value={eventName}
                   onChangeText={setEventName}
+                  placeholder="Event Name"
+                  style={{width: width * 0.8, height: height * 0.05, borderBottomColor: '#000000', borderBottomWidth: 1, marginLeft: width * 0.01}}
                 />
-                <Switch
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
-                  thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={setAllDay}
-                  value={allDay}
-                />
+                <View style={{flexDirection: "row"}}>
+                  <Text>All Day</Text>
+                  <Switch
+                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                    thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={setAllDay}
+                    value={allDay}
+                  />
+                </View>
               </View>
             }
             <Text>{(isSchoolDay) ? "":"Start "}Date</Text>
@@ -235,7 +259,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, selectedDa
             <Pressable onPress={() => {
               setIsShowingAddDate(false); 
               createEvent()
-            }}>
+            }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
               <Text style={{zIndex: -1}}>Create</Text>
             </Pressable>
           </View>
@@ -300,27 +324,54 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
 }
 
 function SchoolYearsSelect({width, height, onSelect}:{width: number, height: number, onSelect: (item: eventType) => void}) {
-  function getEvent(input: string): eventType {
-    var result = JSON.parse(input)
-    result["endTime"] = new Date(result["endTime"])
-    result["startTime"] = new Date(result["startTime"])
-    return result
-  }
   const microsoftAccessToken = useContext(accessTokenContent);
   const fullStore = useSelector((state: RootState) => state)
+  const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  async function getData() {
+    const result = await getOrgWideEvents(microsoftAccessToken.accessToken, true, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
+    if (result.result === loadingStateEnum.success) {
+      setLoadingState(loadingStateEnum.success)
+      var outPutEvents: eventType[] = []
+      var url: string = (result.nextLink !== undefined) ? result.nextLink:""
+      var notFound: boolean = (result.nextLink !== undefined) ? true:false
+      while (notFound) {
+        const furtherResult = await getOrgWideEvents(microsoftAccessToken.accessToken, true, url)
+        if (furtherResult.result === loadingStateEnum.success) {
+          outPutEvents = [...outPutEvents, ...furtherResult.events]
+          url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
+          notFound = (furtherResult.nextLink !== undefined) ? true:false
+        } else {
+          notFound = false
+        }
+      }
+      
+    } else {
+      setLoadingState(loadingStateEnum.failed)
+    }
+  }
   useEffect(() => {
-    getOrgWideEvents(microsoftAccessToken.accessToken, true, undefined, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
+    getData()
   }, [])
 
   return (
     <View style={{width: width, height: height, overflow: "scroll"}}>
-        { fullStore.calendarEventsSchoolYear.map((event) => (
-          <Pressable onPress={() => {onSelect(getEvent(event)); console.log("Event", getEvent(event))}}>
+      { (loadingState === loadingStateEnum.loading) ?
+        <Text>Loading</Text>:
+        <View>
+          { (loadingState === loadingStateEnum.success) ?
             <View>
-              <Text>{getEvent(event).name}</Text>
-            </View>
-          </Pressable>
-        ))}
+              { fullStore.currentEventsSchoolYear.map((event) => (
+                <Pressable onPress={() => {onSelect(getEventFromJSON(event)); console.log("Event", getEventFromJSON(event))}}>
+                  <View>
+                    <Text>{getEventFromJSON(event).name}</Text>
+                  </View>
+                </Pressable>
+              ))}
+            </View>:
+            <Text>Failed</Text>
+          }
+        </View>
+      }
     </View>
   )
 }

@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { accessTokenContent } from '../../../App';
 import DayView from './DayView';
 
-export default function Week({width, height, selectedDate, setSelectedDate}:{width: number, height: number, selectedDate: Date, setSelectedDate: (item: Date) => void}) {
+export default function Week({width, height}:{width: number, height: number}) {
   //const microsoftAccessToken = useContext(accessTokenContent);
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([])
   function getDOW(selectedDate: Date) {
@@ -41,7 +41,7 @@ export default function Week({width, height, selectedDate, setSelectedDate}:{wid
       }
       </View>
       <View style={{height: (false) ? height:(height - width * 0.179), width: width, alignContent: "center", alignItems: "center"}}>
-        <DayView width={width * 0.95} height={(false) ? height * 0.757:height} selectedDate={selectedDate} currentEvents={[]} />
+        <DayView width={width * 0.95} height={(false) ? height * 0.757:height}/>
       </View>
     </View>
   )
