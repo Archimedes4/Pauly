@@ -5,6 +5,7 @@
 import callMsGraph from "./microsoftAssets";
 import { orgWideGroupID, siteID } from "../PaulyConfig";
 import { calendarEventsSlice } from "../Redux/reducers/calendarEventReducer";
+import { calendarEventsSchoolYearSlice } from "../Redux/reducers/calendarEventSchoolYearReducer";
 import store from "../Redux/store";
 
 export function getDaysInMonth(input: Date): number{
@@ -103,8 +104,8 @@ export async function getOrgWideEvents(accessToken: string, schoolYear: boolean,
           resultArray.push(JSON.stringify(newEvents[index]))
         }
         if (schoolYear) {
-          const { setCurrentEvents } = calendarEventsSlice.actions;
-          store.dispatch(setCurrentEvents(resultArray))
+          const { setCurrentEventsSchoolYear } = calendarEventsSchoolYearSlice.actions;
+          store.dispatch(setCurrentEventsSchoolYear(resultArray))
         } else {
           const { setCurrentEvents } = calendarEventsSlice.actions;
           store.dispatch(setCurrentEvents(resultArray))
@@ -114,6 +115,16 @@ export async function getOrgWideEvents(accessToken: string, schoolYear: boolean,
       const data = await result.json()
       console.log(data)
     }
+}
+
+export async function getCalendarId(accessToken: string, url: string): Promise<{result: "Error"|"Success", id?: string}> {
+  const result = await callMsGraph(accessToken, url)
+  if (result.ok){
+    const data = await result.json()
+    return({result: "Success", id: data["id"]})
+  } else {
+    return({result: "Error"})
+  }
 }
 
 enum loadingStateEnum {

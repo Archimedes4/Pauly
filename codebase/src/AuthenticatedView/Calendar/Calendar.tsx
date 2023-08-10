@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../Functions/microsoftAssets';
 import { accessTokenContent } from '../../../App';
-import { findFirstDayinMonth, getDaysInMonth, getOrgWideEvents } from '../../Functions/calendarFunctions';
+import { findFirstDayinMonth, getCalendarId, getDaysInMonth, getOrgWideEvents } from '../../Functions/calendarFunctions';
 import create_UUID from '../../Functions/CreateUUID';
 import ChevronLeft from '../../UI/ChevronLeft';
 import ChevronRight from '../../UI/ChevronRight';
@@ -15,6 +15,8 @@ import { orgWideGroupID } from '../../PaulyConfig';
 import AddEvent from './AddEvent';
 import CalendarTypePicker from '../../UI/CalendarTypePicker';
 import { AddIcon } from '../../UI/Icons/Icons';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/store';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -28,7 +30,8 @@ declare global {
   type monthDataType = {
     id: string
     showing: boolean
-    dayData: number
+    dayData: number,
+    events: eventType[]
   }
 }
 
@@ -60,6 +63,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
 
   useEffect(() => {
     getCalendars()
+    getCalendarId(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar")
     getOrgWideEvents(microsoftAccessToken.accessToken, false)
   }, [])
 
@@ -111,6 +115,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
 function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: number, height: number, selectedDate: Date, setSelectedDate: (item: Date, addDate: boolean) => void}) {
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
+  const fullStore = useSelector((state: RootState) => state)
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });
@@ -129,9 +134,10 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
     for (let index = 0; index < 42; index++) {
       if (index >= firstDayWeek && (index - firstDayWeek) < (lastDay.getDate())){
         //In the current month
-        monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID()})
+
+        monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID(), events: []})
       } else {
-        monthDataResult.push({showing: false, dayData: 0, id: create_UUID()})
+        monthDataResult.push({showing: false, dayData: 0, id: create_UUID(), events: []})
       }
     }
     setMonthData(monthDataResult)
@@ -144,7 +150,7 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
   if (!fontsLoaded) {
     return null;
   }
-  
+
   return (
     <View style={{backgroundColor: "white"}}>
       <View style={{height: height/8, width: width}}>

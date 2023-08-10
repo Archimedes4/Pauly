@@ -314,7 +314,7 @@ function SchoolYearsSelect({width, height, onSelect}:{width: number, height: num
 
   return (
     <View style={{width: width, height: height, overflow: "scroll"}}>
-        { fullStore.calendarEvents.map((event) => (
+        { fullStore.calendarEventsSchoolYear.map((event) => (
           <Pressable onPress={() => {onSelect(getEvent(event)); console.log("Event", getEvent(event))}}>
             <View>
               <Text>{getEvent(event).name}</Text>
