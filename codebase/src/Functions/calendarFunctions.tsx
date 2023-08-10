@@ -4,7 +4,7 @@
 
 import callMsGraph from "./microsoftAssets";
 import { orgWideGroupID, siteID } from "../PaulyConfig";
-import { calendarEventsSlice } from "../Redux/reducers";
+import { calendarEventsSlice } from "../Redux/reducers/calendarEventReducer";
 import store from "../Redux/store";
 
 export function getDaysInMonth(input: Date): number{
@@ -106,7 +106,8 @@ export async function getOrgWideEvents(accessToken: string, schoolYear: boolean,
           const { setCurrentEvents } = calendarEventsSlice.actions;
           store.dispatch(setCurrentEvents(resultArray))
         } else {
-          store.dispatch(calendarEventsSlice.actions.setCurrentEvents(resultArray))
+          const { setCurrentEvents } = calendarEventsSlice.actions;
+          store.dispatch(setCurrentEvents(resultArray))
         }
       }
     } else {

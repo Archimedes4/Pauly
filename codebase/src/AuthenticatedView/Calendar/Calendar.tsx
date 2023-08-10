@@ -13,14 +13,16 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { orgWideGroupID } from '../../PaulyConfig';
 import AddEvent from './AddEvent';
+import CalendarTypePicker from '../../UI/CalendarTypePicker';
+import { AddIcon } from '../../UI/Icons/Icons';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
 enum calendarMode {
-  day,
+  month,
   week,
-  month
+  day
 }
 declare global {
   type monthDataType = {
@@ -77,40 +79,24 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
               </View>
             </Link>
           } 
-          <Text style={{fontFamily: "BukhariScript"}}>Calendar</Text>
         </View>
-        <View style={{flexDirection: "row"}}>
-          <Pressable onPress={() => {
-            setSelectedCalendarMode(calendarMode.month)
-          }}>
-            <Text>Month</Text>
-          </Pressable>
-          <Pressable onPress={() => {
-            setSelectedCalendarMode(calendarMode.week)
-          }}>
-            <Text>Week</Text>
-          </Pressable>
-          <Pressable onPress={() => {
-            setSelectedCalendarMode(calendarMode.day)
-          }}>
-            <Text>Day</Text>
+        <View style={{flexDirection: "row", alignItems: "center", height: microsoftAccessToken.dimensions.window.height * 0.1}}>
+          <Text style={{fontFamily: "BukhariScript", fontSize: Math.sqrt(((microsoftAccessToken.dimensions.window.width * 0.4)*(microsoftAccessToken.dimensions.window.height * 0.1))/8), color: "white", marginLeft: microsoftAccessToken.dimensions.window.width * 0.05, marginRight: (microsoftAccessToken.dimensions.window.width * 0.00316227766017) * (microsoftAccessToken.dimensions.window.width * 0.0316227766017)}}>Calendar</Text>
+          <CalendarTypePicker setSelectedCalendarMode={setSelectedCalendarMode} selectedIndex={selectedCalendarMode} width={microsoftAccessToken.dimensions.window.width * 0.5} height={microsoftAccessToken.dimensions.window.height * 0.05}/>
+          <Pressable onPress={() => {setIsShowingAddDate(true)}} style={{height: microsoftAccessToken.dimensions.window.height * 0.05, width: microsoftAccessToken.dimensions.window.height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1, marginLeft: microsoftAccessToken.dimensions.window.width * 0.005}}>
+            <AddIcon width={microsoftAccessToken.dimensions.window.height * 0.03} height={microsoftAccessToken.dimensions.window.height * 0.03}/>
           </Pressable>
         </View>
-        <Pressable onPress={() => {
-          setIsShowingAddDate(true)
-        }}>
-          <Text>+</Text>
-        </Pressable>
       </View> 
       <View style={{height: microsoftAccessToken.dimensions.window.height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
         <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} setSelectedDate={(e, b) => {setSelectedDate(e); if (b) {setIsShowingAddDate(true)}}}/>: null
       }
       { (selectedCalendarMode === calendarMode.week) ?
-        <Week width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate}/>:null
+        <Week width={microsoftAccessToken.dimensions.window.width * 1.0} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} setSelectedDate={setSelectedDate}/>:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
-        <DayView width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} currentEvents={events} />:null
+        <DayView width={microsoftAccessToken.dimensions.window.width * 0.9} height={microsoftAccessToken.dimensions.window.height * 0.9} selectedDate={selectedDate} currentEvents={events} />:null
       }
       </View>
       { isShowingAddDate ?
@@ -125,7 +111,16 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
 function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: number, height: number, selectedDate: Date, setSelectedDate: (item: Date, addDate: boolean) => void}) {
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
-  
+  const [fontsLoaded] = useFonts({
+    'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
   function getMonthData(selectedDate: Date) {
     //Check if this month
     var lastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
@@ -146,21 +141,22 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
     getMonthData(selectedDate)
   }, [selectedDate])
 
+  if (!fontsLoaded) {
+    return null;
+  }
+  
   return (
-    <View style={{backgroundColor: "#793033"}}>
+    <View style={{backgroundColor: "white"}}>
       <View style={{height: height/8, width: width}}>
-        <View>
-          <Text>{selectedDate.getFullYear()}</Text>{/*leading, white*/}
-        </View>
         <View style={{flexDirection: "row"}}>
-          <View style={{width: width * 0.2}}>
-            <Text>{selectedDate.toLocaleString("en-us", { month: "long" })}</Text>{/*leading, title, white*/}
+          <View style={{width: width * 0.2, flexDirection: "row"}}>
+            <Text style={{}}>{selectedDate.toLocaleString("en-us", { month: "long" })}</Text><Text> {selectedDate.getFullYear()}</Text>{/*leading, title, white*/}
           </View>
           <View>
             {(selectedDate.getFullYear() != new Date().getFullYear() || selectedDate.getMonth() != new Date().getMonth()) ?
               <View style={{width: width * 0.2}}>
                 <Pressable onPress={() => {setSelectedDate(new Date, false)}}>
-                  <Text style={{color: "white"}}>Today</Text>
+                  <Text style={{color: "black"}}>Today</Text>
                 </Pressable>
               </View>:<View style={{width: width * 0.2}}></View>
             }
@@ -187,7 +183,7 @@ function MonthViewMain({width, height, selectedDate, setSelectedDate}:{width: nu
         <View style={{flexDirection: "row"}}>
           {daysInWeek.map((DOW) => (
             <View style={{width: width/7, height: height/8}}>
-              <Text style={{color: "white"}}>{DOW}</Text>
+              <Text style={{color: "black"}}>{DOW}</Text>
             </View>
           ))}
         </View>
@@ -224,7 +220,7 @@ function CalendarCardView({value, width, height}:{value: monthDataType, width: n
     <View>
       { (value.showing) ?
         <View style={{width: width, height: height}}>
-          <Text style={{color: "white"}}>{value.dayData}</Text>
+          <Text style={{color: "black"}}>{value.dayData}</Text>
         </View>:<View style={{width: width, height: height}}></View>
       }
     </View>

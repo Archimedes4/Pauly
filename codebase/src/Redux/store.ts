@@ -1,17 +1,16 @@
-
-
-
 // import { configureStore } from '@reduxjs/toolkit'
 // import {calendarEventsReducer} from './Reducers';
 
 // export default configureStore({reducer: {calendarEventsReducer, }, })
 
 import { configureStore } from '@reduxjs/toolkit';
-import reducers from './reducers';
+import currentEventsReducer from './reducers/calendarEventReducer';
+import currentEventsSchoolYear from './reducers/calendarEventSchoolYearReducer'
 
 const store = configureStore({
   reducer: {
-    calendarEvents: reducers
+    calendarEvents: currentEventsReducer,
+    calendarEventsSchoolYear: currentEventsSchoolYear
   }
 });
 

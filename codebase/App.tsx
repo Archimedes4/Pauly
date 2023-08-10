@@ -133,9 +133,9 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
     var newContext = {...context}
     if (dimensions.window.width > 576){
       if (expandedMode){
-        newContext.dimensions.window.width = context.dimensions.window.width - dimensions.window.width * 0.15
+        newContext.dimensions.window.width = width * 0.75
       } else {
-        newContext.dimensions.window.width = context.dimensions.window.width + dimensions.window.width * 0.15
+        newContext.dimensions.window.width = width * 0.9
       }
     } else {
       newContext.dimensions.window.width = dimensions.window.width
@@ -166,7 +166,7 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
               { (dimensions.window.width > 576) ?
                   <NavBarComponent width={width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />:null
               }
-              <View id='Base' style={{width: context.dimensions.window.width}}>
+              <View style={{width: context.dimensions.window.width}}>
                 <Routes>
                   <Route path="/" element={<HomePage/>}/>
                   <Route path="/quiz" element={<QuizView/>}/>
