@@ -6,6 +6,7 @@ import callMsGraph from '../../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../../App'
 import create_UUID from '../../../../../Functions/CreateUUID'
 import { siteID } from '../../../../../PaulyConfig'
+import { useMsal } from '@azure/msal-react'
 
 declare global{
     type periodType = {
@@ -24,6 +25,7 @@ declare global{
 
 export default function GovernmentSchedule() {
     const microsoftAccessToken = useContext(accessTokenContent);
+    const { instance, accounts } = useMsal();
     const [newPeriodHourStart, setNewPeriodHourStart] = useState<number>(12)
     const [newPeriodMinuteStart, setNewPeriodMinuteStart] = useState<number>(0)
     const [newPeriodHourEnd, setNewPeriodHourEnd] = useState<number>(12)
@@ -39,7 +41,7 @@ export default function GovernmentSchedule() {
                 "scheduleData":JSON.stringify(newPeriods)
             }
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items", "POST", false, JSON.stringify(data))
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items", instance, accounts, "POST", false, JSON.stringify(data))
         console.log(result)
         const dataResult = await result.json()
         console.log(dataResult)

@@ -4,10 +4,8 @@ import { Link } from 'react-router-native'
 import callMsGraph from '../../Functions/microsoftAssets';
 import { accessTokenContent } from '../../../App';
 import { findFirstDayinMonth } from '../../Functions/calendarFunctions';
-import { getCalendarId, getOrgWideEvents } from '../../Functions/calendarFunctionsGraph';
+import { getGraphEvents } from '../../Functions/calendarFunctionsGraph';
 import create_UUID from '../../Functions/CreateUUID';
-import ChevronLeft from '../../UI/ChevronLeft';
-import ChevronRight from '../../UI/ChevronRight';
 import DayView from "./DayView"
 import Week from './Week';
 import { useFonts } from 'expo-font';
@@ -15,10 +13,11 @@ import * as SplashScreen from 'expo-splash-screen';
 import { orgWideGroupID } from '../../PaulyConfig';
 import AddEvent from './AddEvent';
 import CalendarTypePicker from '../../UI/CalendarTypePicker';
-import { AddIcon } from '../../UI/Icons/Icons';
+import { AddIcon, ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
+import { useMsal } from '@azure/msal-react';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -28,6 +27,13 @@ enum calendarMode {
   week,
   day
 }
+
+enum loadingStateEnum {
+  loading,
+  success,
+  failed
+}
+
 declare global {
   type monthDataType = {
     id: string
@@ -41,8 +47,10 @@ const monthNames = ["January", "February", "March", "April", "May", "June","July
 
 export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   const [selectedCalendarMode, setSelectedCalendarMode] = useState<calendarMode>(calendarMode.month)
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
+  const fullStore = useSelector((state: RootState) => state)
   const dispatch = useDispatch()
   
   const [fontsLoaded] = useFonts({
@@ -55,22 +63,43 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
     }
   }, [fontsLoaded]);
 
-  async function getCalendars(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/calendars", "GET", true)
+  async function getPersonalCalendar(){
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/calendars", instance, accounts, "GET", true)
     console.log(result)
     const data = await result.json()
     console.log(data)
   }
 
   async function getEvents() {
-
+    const selectedDate = new Date(JSON.parse(fullStore.selectedDate))
+    const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
+    const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
+    //PersonalCalendar
+    var outputEvents: eventType[] = []
+    const personalCalendarResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=" + startDate.toISOString() +"&endDateTime=" + endDate.toISOString())
+    if (personalCalendarResult.result === loadingStateEnum.success){
+      outputEvents = personalCalendarResult.events
+      //This code is pulled from add events School Years Select
+      var url: string = (personalCalendarResult.nextLink !== undefined) ? personalCalendarResult.nextLink:""
+      var notFound: boolean = (personalCalendarResult.nextLink !== undefined) ? true:false
+      while (notFound) {
+        const furtherResult = await getGraphEvents(microsoftAccessToken.accessToken, true, instance, accounts, url)
+        if (furtherResult.result === loadingStateEnum.success) {
+          outputEvents = [...outputEvents, ...furtherResult.events]
+          url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
+          notFound = (furtherResult.nextLink !== undefined) ? true:false
+        } else {
+          notFound = false
+        }
+      }
+    }
+    //OrgWideEvents
+    const orgEventsResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start" + startDate.toISOString() + "&endDateTime=" + endDate.toISOString())
   }
 
   useEffect(() => {
-    getCalendars()
-    getCalendarId(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar")
-    getOrgWideEvents(microsoftAccessToken.accessToken, false)
-  }, [])
+    getEvents()
+  }, [fullStore.selectedDate])
 
   if (!fontsLoaded) {
     return null;
@@ -80,11 +109,12 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
     <View>
       <View style={{height: microsoftAccessToken.dimensions.window.height * 0.1, backgroundColor: '#444444'}}>
         <View style={{flexDirection: "row"}}>
-          { (microsoftAccessToken.dimensions.window.width > 576) ?
+          { (microsoftAccessToken.currentBreakPointMode >= 1) ?
             null:<Link to="/">
               <View style={{flexDirection: "row"}}>
-                <ChevronLeft />
+                <ChevronLeft width={14} height={14}/>
                 <Text>Back</Text>
+                <Text>{microsoftAccessToken.currentBreakPointMode}</Text>
               </View>
             </Link>
           } 
@@ -140,7 +170,6 @@ function MonthViewMain({width, height, setAddDate}:{width: number, height: numbe
     for (let index = 0; index < 42; index++) {
       if (index >= firstDayWeek && (index - firstDayWeek) < (lastDay.getDate())){
         //In the current month
-
         monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID(), events: []})
       } else {
         monthDataResult.push({showing: false, dayData: 0, id: create_UUID(), events: []})
@@ -150,7 +179,7 @@ function MonthViewMain({width, height, setAddDate}:{width: number, height: numbe
   }
 
   useEffect(() => {
-    getMonthData(JSON.parse(fullStore.selectedDate))
+    getMonthData(new Date(JSON.parse(fullStore.selectedDate)))
   }, [fullStore.selectedDate])
 
   if (!fontsLoaded) {
@@ -162,10 +191,10 @@ function MonthViewMain({width, height, setAddDate}:{width: number, height: numbe
       <View style={{height: height/8, width: width}}>
         <View style={{flexDirection: "row"}}>
           <View style={{width: width * 0.2, flexDirection: "row"}}>
-            <Text style={{}}>{JSON.parse(fullStore.selectedDate).toLocaleString("en-us", { month: "long" })}</Text><Text> {JSON.parse(fullStore.selectedDate).getFullYear()}</Text>{/*leading, title, white*/}
+            <Text style={{}}>{new Date(JSON.parse(fullStore.selectedDate)).toLocaleString("en-us", { month: "long" })}</Text><Text> {new Date(JSON.parse(fullStore.selectedDate)).getFullYear()}</Text>{/*leading, title, white*/}
           </View>
           <View>
-            {(JSON.parse(fullStore.selectedDate).getFullYear() != new Date().getFullYear() || JSON.parse(fullStore.selectedDate).getMonth() != new Date().getMonth()) ?
+            {(new Date(JSON.parse(fullStore.selectedDate)).getFullYear() != new Date().getFullYear() || new Date(JSON.parse(fullStore.selectedDate)).getMonth() != new Date().getMonth()) ?
               <View style={{width: width * 0.2}}>
                 <Pressable onPress={() => {
                   dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(new Date())))
@@ -178,34 +207,34 @@ function MonthViewMain({width, height, setAddDate}:{width: number, height: numbe
           {/*This is left chevron*/}
           <Pressable onPress={() => {
             const d = new Date();
-            d.setFullYear((JSON.parse(fullStore.selectedDate).getMonth() === 1) ? JSON.parse(fullStore.selectedDate).getFullYear() - 1:JSON.parse(fullStore.selectedDate).getFullYear(), (JSON.parse(fullStore.selectedDate).getMonth() === 1) ? 12:JSON.parse(fullStore.selectedDate).getMonth() - 1, JSON.parse(fullStore.selectedDate).getDay());
+            d.setFullYear((new Date(JSON.parse(fullStore.selectedDate)).getMonth() === 1) ? new Date(JSON.parse(fullStore.selectedDate)).getFullYear() - 1:new Date(JSON.parse(fullStore.selectedDate)).getFullYear(), (new Date(JSON.parse(fullStore.selectedDate)).getMonth() === 1) ? 12:new Date(JSON.parse(fullStore.selectedDate)).getMonth() - 1, new Date(JSON.parse(fullStore.selectedDate)).getDay());
             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
           }} >
-            <ChevronLeft />
+            <ChevronLeft width={14} height={14}/>
           </Pressable>
           {/*This is right chevron*/}
           <Pressable onPress={() => {
             const d = new Date();
-            d.setFullYear((JSON.parse(fullStore.selectedDate).getMonth() === 12) ? JSON.parse(fullStore.selectedDate).getFullYear() + 1:JSON.parse(fullStore.selectedDate).getFullYear(), (JSON.parse(fullStore.selectedDate).getMonth() === 12) ? 1:JSON.parse(fullStore.selectedDate).getMonth() + 1, JSON.parse(fullStore.selectedDate).getDay());
+            d.setFullYear((new Date(JSON.parse(fullStore.selectedDate)).getMonth() === 12) ? new Date(JSON.parse(fullStore.selectedDate)).getFullYear() + 1:new Date(JSON.parse(fullStore.selectedDate)).getFullYear(), (new Date(JSON.parse(fullStore.selectedDate)).getMonth() === 12) ? 1:new Date(JSON.parse(fullStore.selectedDate)).getMonth() + 1, new Date(JSON.parse(fullStore.selectedDate)).getDay());
             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
           }}>
-            <ChevronRight />
+            <ChevronRight width={14} height={14}/>
           </Pressable>
         </View>
       </View>
       <View style={{width: width}}>
         <View style={{flexDirection: "row"}}>
           {daysInWeek.map((DOW) => (
-            <View style={{width: width/7, height: height/8}}>
+            <View key={create_UUID()} style={{width: width/7, height: height/8}}>
               <Text style={{color: "black"}}>{DOW}</Text>
             </View>
           ))}
         </View>
           <View>
             { Array.from(Array(7).keys()).map((valueRow) => (
-              <View style={{flexDirection: "row"}}>
+              <View key={"Row_"+valueRow+"_"+create_UUID()} style={{flexDirection: "row"}}>
                 { monthData.map((value, id) => (
-                  <View>
+                  <View key={value.id}>
                     { (id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
                       <View>
                         { value.showing ?

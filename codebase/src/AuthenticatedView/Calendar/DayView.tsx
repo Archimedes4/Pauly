@@ -10,6 +10,7 @@ import { useSearchParams } from "react-router-native"
 import { getEventFromJSON, isDateToday } from "../../Functions/calendarFunctions"
 import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
+import create_UUID from "../../Functions/CreateUUID"
 
 declare global {
     type calendarCourseType = {
@@ -135,8 +136,8 @@ export default function DayView({width, height}:{width: number, height: number})
                         { isShowingTime ?
                             <View>
                                 {hoursText.map((value) => (
-                                    <View style={{flexDirection: "row", height: hourLength}}>
-                                        { (calculateIfShowing(value,  JSON.parse(fullStore.selectedDate))) ?
+                                    <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
+                                        { (calculateIfShowing(value, new Date(JSON.parse(fullStore.selectedDate)))) ?
                                             <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
                                         }
                                         <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0}} />
@@ -152,7 +153,7 @@ export default function DayView({width, height}:{width: number, height: number})
                             </View>
                         ))}
                     </View>
-                    { (JSON.parse(fullStore.selectedDate).getDate() === new Date().getDate() && JSON.parse(fullStore.selectedDate).getMonth() === new Date().getMonth() && JSON.parse(fullStore.selectedDate).getFullYear() === new Date().getFullYear()) ?
+                    { (new Date(JSON.parse(fullStore.selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(fullStore.selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(fullStore.selectedDate)).getFullYear() === new Date().getFullYear()) ?
                         <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
                             <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
                             <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       

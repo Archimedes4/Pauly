@@ -1,3 +1,4 @@
+import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
 import { orgWideGroupID, siteID } from "../PaulyConfig";
 import callMsGraph from "./microsoftAssets";
 
@@ -7,10 +8,12 @@ enum loadingStateEnum {
   failed
 }
 
-export async function getOrgWideEvents(accessToken: string, schoolYear: boolean, url?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
-  const result = await callMsGraph(accessToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", "GET", true)
+//Defaults to org wide events
+export async function getGraphEvents(accessToken: string, schoolYear: boolean, instance: IPublicClientApplication, accounts: AccountInfo[], url?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
+  const result = await callMsGraph(accessToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", instance, accounts, "GET", true)
   if (result.ok){
     const data = await result.json()
+    console.log(data)
     var newEvents: eventType[] = []
     for(var index = 0; index < data["value"].length; index++) {
       if (schoolYear) {
@@ -39,21 +42,14 @@ export async function getOrgWideEvents(accessToken: string, schoolYear: boolean,
     }
     return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
   } else {
+    const data = await result.json()
+    console.log(data)
     return {result: loadingStateEnum.failed}
   }
 }
-export async function getCalendarId(accessToken: string, url: string): Promise<{result: "Error"|"Success", id?: string}> {
-  const result = await callMsGraph(accessToken, url)
-  if (result.ok){
-    const data = await result.json()
-    return({result: "Success", id: data["id"]})
-  } else {
-    return({result: "Error"})
-  }
-}
   
-async function getSchedule(accessToken: string, id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
-  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
+async function getSchedule(accessToken: string, id: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
+  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'", instance, accounts)//TO DO fix site id
   if (result.ok) {
     const data = await result.json()
     console.log(data)
@@ -78,8 +74,8 @@ async function getSchedule(accessToken: string, id: string): Promise<{result: lo
   }
 }
   
-export async function getTimetable(accessToken: string, timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
+export async function getTimetable(accessToken: string, timetableId: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
+  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'", instance, accounts)//TO DO fix site id
   if (result.ok) {
     console.log(result)
     const data = await result.json()
@@ -90,7 +86,7 @@ export async function getTimetable(accessToken: string, timetableId: string): Pr
           const scheduleData: string[] = JSON.parse(data["value"][0]["fields"]["timetableDataSchedules"])
           var newSchedules: scheduleType[] = []
           for (var index = 0; index < scheduleData.length; index++) {
-            const result = await getSchedule(accessToken, scheduleData[index])
+            const result = await getSchedule(accessToken, scheduleData[index], instance, accounts)
             if (result.result === loadingStateEnum.success && result.schedule !== undefined) {
               newSchedules.push(result.schedule)
             } else {

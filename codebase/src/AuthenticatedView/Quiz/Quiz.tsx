@@ -5,6 +5,7 @@ import NavBarComponent from '../../UI/NavComponent'
 import callMsGraph from '../../Functions/microsoftAssets';
 import { accessTokenContent } from '../../../App';
 import TeamAvatar from '../../UI/TeamAvatar';
+import { useMsal } from '@azure/msal-react';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -23,6 +24,7 @@ enum loadingResult {
 
 export default function Quiz() {
   const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   const [teams, setTeams] = useState<teamType[]>([])
   const [currentLoadingResult, setCurrentLoadingResult] = useState<loadingResult>(loadingResult.loading)
   const [dimensions, setDimensions] = useState({
@@ -41,7 +43,7 @@ export default function Quiz() {
   });
 
   async function getTeams(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/joinedTeams")
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/joinedTeams", instance, accounts)
     if (result.ok){
       const data = await result.json()
       console.log(result, data)

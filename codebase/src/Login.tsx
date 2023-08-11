@@ -36,10 +36,8 @@ export default function Login() {
                 instance.loginRedirect(loginRequest).catch((e) => {
                     console.log(e);
                 })
-            }}>
-                <View style={{height: dimensions.window.height * 0.2, width: dimensions.window.width * 0.5, borderRadius: 25, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-                    <Text style={{textAlign: "center", textAlignVertical: "center"}}>Login</Text>
-                </View>
+            }} style={{height: dimensions.window.height * 0.2, width: dimensions.window.width * 0.5, borderRadius: 25, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                <Text style={{textAlign: "center"}}>Login</Text>
             </Pressable>
         </View>
     )

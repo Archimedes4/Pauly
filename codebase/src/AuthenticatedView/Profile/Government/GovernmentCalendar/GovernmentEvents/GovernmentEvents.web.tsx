@@ -5,11 +5,13 @@ import { accessTokenContent } from '../../../../../../App';
 import { Link } from 'react-router-native';
 import { siteID } from '../../../../../PaulyConfig';
 import Calendar from '../../../../Calendar/Calendar';
+import { useMsal } from '@azure/msal-react';
 
 export default function GovernmentEvents({}:{isCreatingEvent: boolean}) {
     const microsoftAccessToken = useContext(accessTokenContent);
+    const { instance, accounts } = useMsal();
     async function getCalendar() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/d60ef458-c8a5-4562-9fb7-f48b2d355f8b/items?expand=fields")
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/d60ef458-c8a5-4562-9fb7-f48b2d355f8b/items?expand=fields", instance, accounts)
         console.log(result)
         const data = await result.json()
         console.log("This is data", data)

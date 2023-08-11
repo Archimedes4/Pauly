@@ -6,6 +6,7 @@ import { siteID } from '../../../../../PaulyConfig';
 import create_UUID from '../../../../../Functions/CreateUUID';
 import { Link } from 'react-router-native';
 import { DownIcon, UpIcon } from '../../../../../UI/Icons/Icons';
+import { useMsal } from '@azure/msal-react';
 
 enum loadingStateEnum {
   loading,
@@ -23,6 +24,7 @@ declare global {
 
 export default function GovernmentTimetableCreate() {
     const microsoftAccessToken = useContext(accessTokenContent);
+    const { instance, accounts } = useMsal();
     const [timetableName, setTimetableName] = useState<string>("")
     const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
     const [selectedSchedules, setSelectedSchedules] = useState<scheduleType[]>([])
@@ -43,10 +45,10 @@ export default function GovernmentTimetableCreate() {
           "timetableDataDays":JSON.stringify(schoolDays)
         }
       }
-      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields", "POST", false, JSON.stringify(data))//TO DO fix site id
+      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix site id
     }
     async function getSchedules() {
-      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields")
+      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields", instance, accounts)
       if (result.ok){
         const dataResult = await result.json()
         if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){

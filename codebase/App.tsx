@@ -69,34 +69,43 @@ interface contextInterface {
   displayName: string;
   accessToken: string;
   dimensions: {window: ScaledSize, screen: ScaledSize};
+  currentBreakPointMode: breakPointMode
 }
 
-export const accessTokenContent = React.createContext<contextInterface>({uri: "", displayName: "", accessToken: "",dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}});
+//From https://getbootstrap.com/docs/5.0/layout/breakpoints/
+enum breakPointMode {
+  xSmall,	//<576px
+  small, //≥576px
+  medium, //≥768px
+  large, //≥992px
+  xLarge //≥1200px
+}
+
+export const accessTokenContent = React.createContext<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}, currentBreakPointMode: breakPointMode.xSmall});
 
 function AuthenticatedView({dimensions, width}:{dimensions: {
   window: ScaledSize,
   screen: ScaledSize
 }, width: number}) {
   const { instance, accounts } = useMsal();
-  const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: dimensions})
+  const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: dimensions, currentBreakPointMode: breakPointMode.xSmall})
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
-  const [mounted, setMounted] = useState<boolean>(false)
 
   async function getUserProfile(microsoftAccessToken: string) {
     //TO DO check if ok
-    const result = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me/photo/$value")
+    const result = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me/photo/$value", instance, accounts)
     if (result.ok){
       const dataBlob = await result.blob()
       const urlOut = URL.createObjectURL(dataBlob)
-      const profileResult = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me")
+      const profileResult = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me", instance, accounts)
       if (profileResult.ok){
         const profileData = await profileResult.json()
         var newDimentions: {window: ScaledSize, screen: ScaledSize} = dimensions
-        if (width > 576) {
+        if (width >= 576) {
           newDimentions.window.width = width * 0.9
         }
         console.log("Out Dimentions", newDimentions.window.width, dimensions.window.width)
-        setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: microsoftAccessToken, dimensions: newDimentions})
+        setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: microsoftAccessToken, dimensions: newDimentions, currentBreakPointMode: breakPointMode.xSmall})
       }
     }
   }
@@ -120,7 +129,7 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
 
   useEffect(() => {
     var newContext = context
-    if (dimensions.window.width > 576) {
+    if (width >= 576) {
       newContext.dimensions.window.width = width * 0.9
     }
     console.log("Inital Context", newContext.dimensions.window.width, dimensions.window.width, "90%", dimensions.window.width * 0.9)
@@ -131,7 +140,7 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
   useEffect(() => {
     console.error("DIMENTIONS CHANGED", dimensions.window.width)
     var newContext = {...context}
-    if (dimensions.window.width > 576){
+    if (width >= 576){
       if (expandedMode){
         newContext.dimensions.window.width = width * 0.75
       } else {
@@ -143,13 +152,29 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
     newContext.dimensions.window.height = dimensions.window.height 
     newContext.dimensions.window.scale = dimensions.window.scale
     newContext.dimensions.window.fontScale = dimensions.window.fontScale
+    if (width >= 1200) {
+      //extraLarge ≥1200px
+      newContext.currentBreakPointMode = breakPointMode.xLarge
+    } else if (width >= 992) {
+      //large, ≥992px
+      newContext.currentBreakPointMode = breakPointMode.large
+    } else if (width >= 768) {
+      //medium, ≥768px
+      newContext.currentBreakPointMode = breakPointMode.medium
+    } else if (width >= 576) {
+      //small, ≥576px
+      newContext.currentBreakPointMode = breakPointMode.small
+    } else if (width < 576) {
+      //xSmall,	<576px
+      newContext.currentBreakPointMode = breakPointMode.xSmall
+    }
     setContext(newContext)
   }, [dimensions])
 
   useEffect(() => {
     console.log("Ran")
     var newContext = {...context}
-    if (dimensions.window.width > 576){
+    if (width >= 576){
       if (expandedMode){
         newContext.dimensions.window.width = width * 0.75
       } else {
@@ -163,7 +188,7 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
       <accessTokenContent.Provider value={context}>
         <NativeRouter>
           <View style={{flexDirection: "row", overflow: "hidden", width: width}}>
-              { (dimensions.window.width > 576) ?
+              { (width >= 576) ?
                   <NavBarComponent width={width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />:null
               }
               <View style={{width: context.dimensions.window.width}}>
@@ -220,7 +245,6 @@ const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
   const [dimensions, setDimensions] = useState({
     window: windowDimensions,
     screen: screenDimensions,

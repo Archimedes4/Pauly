@@ -14,7 +14,7 @@ enum calendarMode {
     day
   }
 
-export default function CalendarTypePicker({ selectedIndex, setSelectedCalendarMode, width, height }) {
+export default function CalendarTypePicker({ selectedIndex, setSelectedCalendarMode, width, height }:PickerWrapperProps) {
     const pan = useRef(new Animated.Value(0)).current
     const [compoentWidth, setComponentWidth] = useState(width/3)
     function fadeIn(id: number) {
@@ -44,19 +44,19 @@ export default function CalendarTypePicker({ selectedIndex, setSelectedCalendarM
                     setSelectedCalendarMode(calendarMode.month)
                     fadeIn(0)
                 }} style={{position: "absolute", width: compoentWidth, height: height, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
-                    <Text style={{textAlignVertical: "center", textAlign: "center", fontSize: Math.sqrt((compoentWidth * 0.8)*height/5)}}>Month</Text>
+                    <Text style={{textAlign: "center", fontSize: Math.sqrt((compoentWidth * 0.8)*height/5)}}>Month</Text>
                 </Pressable>
                 <Pressable onPress={() => {
                     setSelectedCalendarMode(calendarMode.week)
                     fadeIn(1)
                 }} style={{position: "absolute", transform: [{translateX: 1 * compoentWidth}], width: compoentWidth, height: height, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
-                    <Text style={{textAlignVertical: "center", textAlign: "center", fontSize: Math.sqrt((compoentWidth * 0.8)*height/5)}}>Week</Text>
+                    <Text style={{textAlign: "center", fontSize: Math.sqrt((compoentWidth * 0.8)*height/5)}}>Week</Text>
                 </Pressable>
                 <Pressable onPress={() => {
                     setSelectedCalendarMode(calendarMode.day)
                     fadeIn(2)
                 }} style={{position: "absolute", transform: [{translateX: 2 * compoentWidth}], width: compoentWidth, height: height, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
-                    <Text style={{textAlignVertical: "center", textAlign: "center", fontSize: Math.sqrt((compoentWidth * 0.8)*height/5)}}>Day</Text>
+                    <Text style={{textAlign: "center", fontSize: Math.sqrt((compoentWidth * 0.8)*height/5)}}>Day</Text>
                 </Pressable>
                 <Animated.View style={{transform: [{translateX: pan}], zIndex: -1}}>
                     <View style={{ height: height * 0.95, width: compoentWidth - compoentWidth * 0.01, backgroundColor: "white", top: height * 0.025, borderRadius: 20, position: "absolute", zIndex: -1, alignItems: "center", alignContent: "center", justifyContent: "center"}} />

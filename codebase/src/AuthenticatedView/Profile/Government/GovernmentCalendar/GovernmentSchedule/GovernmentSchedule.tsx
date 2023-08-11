@@ -4,6 +4,7 @@ import { accessTokenContent } from '../../../../../../App';
 import { siteID } from '../../../../../PaulyConfig';
 import callMsGraph from '../../../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
+import { useMsal } from '@azure/msal-react';
 
 enum loadingStateEnum {
   loading,
@@ -13,10 +14,11 @@ enum loadingStateEnum {
 
 export default function GovernmentSchedule() {
   const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   async function getSchedules() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields")
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields", instance, accounts)
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){

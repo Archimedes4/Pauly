@@ -1,12 +1,11 @@
 import { View, Text, Dimensions, Image } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
-import NavBarComponent from '../../UI/NavComponent'
+import { ChevronLeft } from '../../UI/Icons/Icons'
 import { siteID } from '../../PaulyConfig'
 import { accessTokenContent } from '../../../App'
 import callMsGraph from '../../Functions/microsoftAssets'
 import getFileWithShareID from '../../Functions/getFileWithShareID'
-import ChevronLeft from '../../UI/ChevronLeft'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -93,7 +92,7 @@ export default function Sports() {
         { (microsoftAccessToken.dimensions.window.width > 576) ?
           null:<Link to="/">
             <View style={{flexDirection: "row"}}>
-              <ChevronLeft />
+              <ChevronLeft width={14} height={14}/>
               <Text>Back</Text>
             </View>
           </Link>

@@ -5,6 +5,7 @@ import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../App'
 import { siteID } from '../../../../PaulyConfig'
+import { useMsal } from '@azure/msal-react'
 
 declare global {
   type commissionType = {
@@ -22,9 +23,10 @@ declare global {
 
 export default function GovernmentCommissions() {
   const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   const [commissions, setCommissions] = useState<commissionType[]>([])
   async function getCommissions(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields")
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields", instance, accounts)
     if (result.ok){
       const data = await result.json()
       console.log(data)

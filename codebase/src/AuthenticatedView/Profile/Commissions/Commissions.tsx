@@ -8,6 +8,7 @@ import NavBarComponent from '../../../UI/NavComponent';
 import { siteID } from '../../../PaulyConfig';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { useMsal } from '@azure/msal-react';
 
 enum CommissionMode{
   Before,
@@ -21,6 +22,7 @@ const screenDimensions = Dimensions.get('screen');
 
 export default function Commissions() {
   const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
   const [dimensions, setDimensions] = useState({
     window: windowDimensions,
@@ -48,7 +50,7 @@ export default function Commissions() {
     Geolocation.getCurrentPosition(info => console.log(info))
   }
   async function getCommissions(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields")//TO DO list id
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields", instance, accounts)//TO DO list id
     if (result.ok) {
       const data = await result.json()
       console.log(data)

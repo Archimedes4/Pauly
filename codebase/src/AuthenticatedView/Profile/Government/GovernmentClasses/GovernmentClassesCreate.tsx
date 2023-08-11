@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../App';
 import { siteID } from '../../../../PaulyConfig';
+import { useMsal } from '@azure/msal-react';
 
 declare global {
     type microsoftUserType = {
@@ -13,12 +14,13 @@ declare global {
 
 export default function GovernmentClassesCreate() {
     const microsoftAccessToken = useContext(accessTokenContent);
+    const { instance, accounts } = useMsal();
     const [teacherNameSearch, setTeacherNameSearch] = useState<string>("")
     const [teachers, setTeachers] = useState<microsoftUserType[]>([])
     const [selectedTeacher, setSelectedTeacher] = useState<microsoftUserType | undefined>(undefined)
     async function getUsers() {
         //TO DO on deploy ment make only teachers instead of searching users search group
-        const result = await callMsGraph(microsoftAccessToken.accessToken, (teacherNameSearch === "") ? "https://graph.microsoft.com/v1.0/users/":"https://graph.microsoft.com/v1.0/users/?$filter=startswith(displayName,'" + encodeURI(teacherNameSearch) + "')")
+        const result = await callMsGraph(microsoftAccessToken.accessToken, (teacherNameSearch === "") ? "https://graph.microsoft.com/v1.0/users/":"https://graph.microsoft.com/v1.0/users/?$filter=startswith(displayName,'" + encodeURI(teacherNameSearch) + "')", instance, accounts)
         if (result.ok){
             const data = await result.json()
             console.log(data)
@@ -41,7 +43,7 @@ export default function GovernmentClassesCreate() {
         }
     }
     async function getRootClasses() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/800202d8-1f51-4df4-ac39-08da7357ca89/items?expand=field")
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/800202d8-1f51-4df4-ac39-08da7357ca89/items?expand=field", instance, accounts)
         if (result.ok){
             const data = await result.json()
             console.log(data)

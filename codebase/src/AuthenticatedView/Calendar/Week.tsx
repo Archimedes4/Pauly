@@ -2,6 +2,7 @@ import { View, Text, Dimensions, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { accessTokenContent } from '../../../App';
 import DayView from './DayView';
+import create_UUID from '../../Functions/CreateUUID';
 
 export default function Week({width, height}:{width: number, height: number}) {
   //const microsoftAccessToken = useContext(accessTokenContent);
@@ -32,7 +33,7 @@ export default function Week({width, height}:{width: number, height: number}) {
           <Pressable onTouchMove={(e) => {e.type}}></Pressable>
           <View style={{flexDirection: "row", height: width * 0.142857142857143, width: width}}>
             {daysOfWeek.map((day) => (
-              <View style={{width: width * 0.1, height: width * 0.1, borderRadius: 50, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center", margin: width * 0.021428571428571, borderColor: "#793033", borderWidth: (new Date().getDate() === day.getDate()) ? 5:0}}>
+              <View key={day.getDay() + "_" + create_UUID()}style={{width: width * 0.1, height: width * 0.1, borderRadius: 50, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center", margin: width * 0.021428571428571, borderColor: "#793033", borderWidth: (new Date().getDate() === day.getDate()) ? 5:0}}>
                 <Text>{day.getDate()}</Text>
               </View>
             ))}

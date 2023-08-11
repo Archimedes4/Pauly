@@ -1,7 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Pressable, View, Text, Switch, TextInput, Button } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
+import { currentEventsSchoolYearSlice } from "../../Redux/reducers/currentEventSchoolYearReducer";
 import { accessTokenContent } from "../../../App";
 import { orgWideGroupID, siteID } from "../../PaulyConfig";
 import DatePicker from "../../UI/DateTimePicker/DatePicker";
@@ -10,10 +11,11 @@ import { CalendarIcon, CloseIcon } from "../../UI/Icons/Icons";
 import TimePicker from "../../UI/DateTimePicker/TimePicker";
 import callMsGraph from "../../Functions/microsoftAssets";
 import { getEventFromJSON } from "../../Functions/calendarFunctions";
-import { getOrgWideEvents, getTimetable } from "../../Functions/calendarFunctionsGraph";
+import { getGraphEvents, getTimetable } from "../../Functions/calendarFunctionsGraph";
 import SelectTimetable from "./SelectTimetable";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { useMsal } from "@azure/msal-react";
 
 enum reocurringType {
     daily,
@@ -35,14 +37,15 @@ interface schoolDayDataInteface {
 
 export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number}) {
     const microsoftAccessToken = useContext(accessTokenContent);
+    const { instance, accounts } = useMsal();
     const fullStore = useSelector((state: RootState) => state)
 
     //Calendar
     const [eventName, setEventName] = useState<string>("")
     const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
     const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(JSON.parse(fullStore.selectedDate))
-    const [endDate, setEndDate] = useState<Date>(JSON.parse(fullStore.selectedDate))
+    const [startDate, setStartDate] = useState<Date>(new Date(JSON.parse(fullStore.selectedDate)))
+    const [endDate, setEndDate] = useState<Date>(new Date(JSON.parse(fullStore.selectedDate)))
     const [allDay, setAllDay] = useState<boolean>(false)
 
     //Recurring
@@ -85,7 +88,7 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
       }
       if (recurringEvent) {
       }
-      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", true, JSON.stringify(data))
+      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", instance, accounts, "POST", true, JSON.stringify(data))
       console.log(result)
       if (result.ok){
         const dataOut = await result.json()
@@ -98,7 +101,7 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
               "eventData":selectedTimetable.id
             }
           }
-          const patchResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
+          const patchResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], instance, accounts, "PATCH", false, JSON.stringify(patchData))
           const patchOut = await patchResult.json()
           console.log("OUTPUT", patchOut)
         } else if (isSchoolDay && selectedSchoolDayData !== undefined) {
@@ -109,7 +112,7 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
               "eventData":JSON.stringify(selectedSchoolDayData)
             }
           }
-          const patchResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
+          const patchResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], instance, accounts, "PATCH", false, JSON.stringify(patchData))
           const patchOut = await patchResult.json()
           console.log("OUTPUT", patchOut)
         }
@@ -269,6 +272,7 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
 }
 
 function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: string, selectedSchedule: scheduleType) => void}) {
+  const { instance, accounts } = useMsal();
   const microsoftAccessToken = useContext(accessTokenContent);
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolDays, setSchoolDays] =  useState<string[]>([])
@@ -276,7 +280,7 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
   const [isPickingSchoolDay, setIsPickingSchoolDay] = useState<boolean>(true)
   const [selectedSchoolDay, setSelectedSchoolDay] = useState<string | undefined>(undefined)
   async function loadData() {
-    const result = await getTimetable(microsoftAccessToken.accessToken, timetableId)
+    const result = await getTimetable(microsoftAccessToken.accessToken, timetableId, instance, accounts)
     if (result.result === loadingStateEnum.success && result.timetable !== undefined) {
       setSchoolDays(result.timetable.days)
       setSchedules(result.timetable.schedules)
@@ -325,26 +329,32 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
 
 function SchoolYearsSelect({width, height, onSelect}:{width: number, height: number, onSelect: (item: eventType) => void}) {
   const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   const fullStore = useSelector((state: RootState) => state)
+  const dispatch = useDispatch()
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   async function getData() {
-    const result = await getOrgWideEvents(microsoftAccessToken.accessToken, true, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
+    const result = await getGraphEvents(microsoftAccessToken.accessToken, true, instance, accounts, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
     if (result.result === loadingStateEnum.success) {
       setLoadingState(loadingStateEnum.success)
-      var outPutEvents: eventType[] = []
+      var outputEvents: eventType[] = result.events
       var url: string = (result.nextLink !== undefined) ? result.nextLink:""
       var notFound: boolean = (result.nextLink !== undefined) ? true:false
       while (notFound) {
-        const furtherResult = await getOrgWideEvents(microsoftAccessToken.accessToken, true, url)
+        const furtherResult = await getGraphEvents(microsoftAccessToken.accessToken, true, instance, accounts, url)
         if (furtherResult.result === loadingStateEnum.success) {
-          outPutEvents = [...outPutEvents, ...furtherResult.events]
+          outputEvents = [...outputEvents, ...furtherResult.events]
           url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
           notFound = (furtherResult.nextLink !== undefined) ? true:false
         } else {
           notFound = false
         }
       }
-      
+      var outputEventsString: string[] = []
+      for (var index = 0; index < outputEvents.length; index++) {
+        outputEventsString.push(JSON.stringify(outputEvents[index]))
+      }
+      dispatch(currentEventsSchoolYearSlice.actions.setCurrentEventsSchoolYear(outputEventsString))
     } else {
       setLoadingState(loadingStateEnum.failed)
     }
