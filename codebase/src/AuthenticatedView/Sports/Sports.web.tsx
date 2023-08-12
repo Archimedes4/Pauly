@@ -11,6 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useMsal } from '@azure/msal-react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
+import { loadingStateEnum } from '../../types'
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');

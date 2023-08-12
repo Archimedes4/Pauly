@@ -20,7 +20,8 @@ declare global{
         id: string
     }
     type scheduleType = {
-        name: string
+        properName:string
+        descriptiveName: string
         periods: periodType[]
         id: string
     }
@@ -37,22 +38,26 @@ export default function GovernmentSchedule() {
     const [scheduleProperName, setScheduleProperName] = useState<string>("")
     const [scheduleDescriptiveName, setScheduleDescriptiveName] = useState<string>("")
     const [newPeriods, setNewPeriods] = useState<periodType[]>([])
-    const [selectedDefaultPeriod, setSelectedDefaultPeriod] = useState<periodType | undefined>(undefined)
+    const [createScheduleLoadingState, setCreateScheduleLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
     async function submitSchedule() {
+        setCreateScheduleLoadingState(loadingStateEnum.loading)
         const data = {
             "fields": {
                 "Title":scheduleProperName,
                 "scheduleId":create_UUID(),
                 "scheduleProperName":scheduleProperName,
                 "scheduleDescriptiveName":scheduleDescriptiveName,
-                "scheduleData":JSON.stringify(newPeriods),
-                "scheduleDefaultPeriodId":selectedDefaultPeriod
+                "scheduleData":JSON.stringify(newPeriods)
             }
         }
         const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items", instance, accounts, "POST", false, JSON.stringify(data))
-        console.log(result)
-        const dataResult = await result.json()
-        console.log(dataResult)
+        if (result.ok){
+            const dataResult = await result.json()
+            console.log(dataResult)
+            setCreateScheduleLoadingState(loadingStateEnum.success)
+        } else {
+            setCreateScheduleLoadingState(loadingStateEnum.failed)
+        }
     }
     useEffect(() => {console.log("This", newPeriods)}, [newPeriods])
   return (
@@ -61,30 +66,35 @@ export default function GovernmentSchedule() {
                 <Text>Back</Text>
             </Link>
             <Text>Create Schedule</Text>
-            <View style={{flexDirection: "row"}}>
-                <Text>Proper Name:</Text>
-                <TextInput value={scheduleProperName} onChangeText={setScheduleProperName} placeholder='Proper Name ex. Schedule One'/>
+            <View style={{height: microsoftAccessToken.dimensions.window.height * 0.3}}>
+                <View style={{flexDirection: "row"}}>
+                    <Text>Proper Name:</Text>
+                    <TextInput value={scheduleProperName} onChangeText={setScheduleProperName} placeholder='Proper Name ex. Schedule One'/>
+                </View>
+                <View style={{flexDirection: "row"}}>
+                    <Text>Descriptive Name:</Text>
+                    <TextInput value={scheduleDescriptiveName} onChangeText={setScheduleDescriptiveName} placeholder='Descriptive Name ex. Regular Schedule'/>
+                </View>
+                <Text>Keep descriptive name short as it is used in the calendar widget</Text>
             </View>
-            <View style={{flexDirection: "row"}}>
-                <Text>Descriptive Name:</Text>
-                <TextInput value={scheduleDescriptiveName} onChangeText={setScheduleDescriptiveName} placeholder='Descriptive Name ex. Regular Schedule'/>
-            </View>
-            <Text>Keep descriptive name short as it is used in the calendar widget</Text>
+            <Text>New Periods</Text>
+            <View style={{height: microsoftAccessToken.dimensions.window.height * 0.5}}>
             {newPeriods.map((period) => (
                 <PeriodBlock period={period} newPeriods={newPeriods} onSetNewPeriods={(out) => {
                     console.log("This is out", out)
                     setNewPeriods([...out])
-                }} onSetSelectedPeriod={setSelectedDefaultPeriod}/>
+                }}/>
             ))}
+            </View>
             <TimePicker selectedHourMilitary={newPeriodHourStart} selectedMinuteMilitary={newPeriodMinuteStart} onSetSelectedHourMilitary={setNewPeriodHourStart} onSetSelectedMinuteMilitary={setNewPeriodMinuteStart}/>
             <TimePicker selectedHourMilitary={newPeriodHourEnd} selectedMinuteMilitary={newPeriodMinuteEnd} onSetSelectedHourMilitary={setNewPeriodHourEnd} onSetSelectedMinuteMilitary={setNewPeriodMinuteEnd}/>
-            <Button title="add period" onPress={() => {setNewPeriods([...newPeriods, {startHour: newPeriodHourStart, startMinute: newPeriodMinuteStart, endHour: newPeriodHourEnd, endMinute: newPeriodMinuteEnd, id: create_UUID()}])}}/>
-            <Button title="Post Schedule" onPress={() => {submitSchedule()}} />
+            <Button title="Add Period" onPress={() => {setNewPeriods([...newPeriods, {startHour: newPeriodHourStart, startMinute: newPeriodMinuteStart, endHour: newPeriodHourEnd, endMinute: newPeriodMinuteEnd, id: create_UUID()}])}}/>
+            <Button title={(createScheduleLoadingState === loadingStateEnum.notStarted) ? "Create Schedule":(createScheduleLoadingState === loadingStateEnum.loading) ? "Loading":(createScheduleLoadingState === loadingStateEnum.success) ? "Success":"Failed"} onPress={() => {if (createScheduleLoadingState === loadingStateEnum.notStarted) {submitSchedule()}}} />
         </View>
   )
 }
 
-function PeriodBlock({period, newPeriods, onSetNewPeriods, onSetSelectedPeriod}:{period: periodType, newPeriods: periodType[], onSetNewPeriods: (item: periodType[]) => void, onSetSelectedPeriod: (item: periodType) => void}) {
+function PeriodBlock({period, newPeriods, onSetNewPeriods}:{period: periodType, newPeriods: periodType[], onSetNewPeriods: (item: periodType[]) => void}) {
     function deleteItem(period: periodType) {
         var newNewPeriodsArray: periodType[] = newPeriods
         if (newNewPeriodsArray.length === 1){
@@ -107,7 +117,6 @@ function PeriodBlock({period, newPeriods, onSetNewPeriods, onSetSelectedPeriod}:
             <Button title='remove' onPress={() => {
                 deleteItem(period)
             }}/>
-            <Button title="setAsDefault"/>
         </View>
     )
 }

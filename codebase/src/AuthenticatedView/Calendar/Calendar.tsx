@@ -57,7 +57,8 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [selectedEvent, setSelectedEvent] = useState<eventType | undefined>(undefined)
-  const fullStore = useSelector((state: RootState) => state)
+  // const fullStore = useSelector((state: RootState) => state)
+  const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const dispatch = useDispatch()
   
   const [fontsLoaded] = useFonts({
@@ -71,9 +72,9 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   }, [fontsLoaded]);
 
   async function getEvents() {
-    const selectedDate = new Date(JSON.parse(fullStore.selectedDate))
-    const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
-    const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
+    const selectedDateOut = new Date(JSON.parse(selectedDate))
+    const startDate = new Date(selectedDateOut.getFullYear(), selectedDateOut.getMonth(), 1)
+    const endDate = new Date(selectedDateOut.getFullYear(), selectedDateOut.getMonth() + 1, 0)
     //PersonalCalendar
     var outputEvents: eventType[] = []
     const personalCalendarResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=" + startDate.toISOString() +"&endDateTime=" + endDate.toISOString(), "https://graph.microsoft.com/v1.0/me/events/")
@@ -121,7 +122,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
 
   useEffect(() => {
     getEvents()
-  }, [fullStore.selectedDate])
+  }, [selectedDate])
 
   if (!fontsLoaded) {
     return null;
@@ -171,7 +172,10 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
 function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEvent}:{width: number, height: number, setAddDate: (addDate: boolean) => void, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void}) {
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
-  const fullStore = useSelector((state: RootState) => state)
+  // const fullStore = useSelector((state: RootState) => state)
+  const currentEvents = useSelector((state: RootState) => state.currentEvents)
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+  
   const dispatch = useDispatch()
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
@@ -193,8 +197,8 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
         //In the current month
         var events: eventType[] = []
         const check: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1))
-        for (var indexEvent = 0; indexEvent < fullStore.currentEvents.length; indexEvent++) {
-          const event: eventType = getEventFromJSON(fullStore.currentEvents[indexEvent])
+        for (var indexEvent = 0; indexEvent < currentEvents.length; indexEvent++) {
+          const event: eventType = getEventFromJSON(currentEvents[indexEvent])
           const startTimeDate = new Date(event.startTime.getFullYear(), event.startTime.getMonth(), event.startTime.getDate())
           const endTimeDate = new Date(event.endTime.getFullYear(), event.endTime.getMonth(), event.endTime.getDate())
           if (check >= startTimeDate && check <= endTimeDate) {
@@ -210,9 +214,14 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
     setMonthData(monthDataResult)
   }
 
+  const selectedDateRedux: string =  useSelector((state: RootState) => state.selectedDate)
   useEffect(() => {
-    getMonthData(new Date(JSON.parse(fullStore.selectedDate)))
-  }, [fullStore.selectedDate, fullStore.currentEvents])
+    setSelectedDate(new Date(JSON.parse(selectedDateRedux)))
+  }, [selectedDateRedux])
+
+  useEffect(() => {
+    getMonthData(selectedDate)
+  }, [selectedDate, currentEvents])
 
   if (!fontsLoaded) {
     return null;
@@ -223,10 +232,10 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
       <View style={{height: height/8, width: width}}>
         <View style={{flexDirection: "row"}}>
           <View style={{width: width * 0.2, flexDirection: "row"}}>
-            <Text style={{}}>{new Date(JSON.parse(fullStore.selectedDate)).toLocaleString("en-us", { month: "long" })}</Text><Text> {new Date(JSON.parse(fullStore.selectedDate)).getFullYear()}</Text>{/*leading, title, white*/}
+            <Text style={{}}>{selectedDate.toLocaleString("en-us", { month: "long" })}</Text><Text> {selectedDate.getFullYear()}</Text>{/*leading, title, white*/}
           </View>
           <View>
-            {(new Date(JSON.parse(fullStore.selectedDate)).getFullYear() != new Date().getFullYear() || new Date(JSON.parse(fullStore.selectedDate)).getMonth() != new Date().getMonth()) ?
+            {(selectedDate.getFullYear() !== new Date().getFullYear() || selectedDate.getMonth() != new Date().getMonth()) ?
               <View style={{width: width * 0.2}}>
                 <Pressable onPress={() => {
                   dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(new Date())))
@@ -239,7 +248,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
           {/*This is left chevron*/}
           <Pressable onPress={() => {
             const d = new Date();
-            d.setFullYear((new Date(JSON.parse(fullStore.selectedDate)).getMonth() === 1) ? new Date(JSON.parse(fullStore.selectedDate)).getFullYear() - 1:new Date(JSON.parse(fullStore.selectedDate)).getFullYear(), (new Date(JSON.parse(fullStore.selectedDate)).getMonth() === 1) ? 12:new Date(JSON.parse(fullStore.selectedDate)).getMonth() - 1, new Date(JSON.parse(fullStore.selectedDate)).getDay());
+            d.setFullYear((selectedDate.getMonth() === 1) ? selectedDate.getFullYear() - 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 1) ? 12:selectedDate.getMonth() - 1, selectedDate.getDay());
             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
           }} >
             <ChevronLeft width={14} height={14}/>
@@ -247,7 +256,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
           {/*This is right chevron*/}
           <Pressable onPress={() => {
             const d = new Date();
-            d.setFullYear((new Date(JSON.parse(fullStore.selectedDate)).getMonth() === 12) ? new Date(JSON.parse(fullStore.selectedDate)).getFullYear() + 1:new Date(JSON.parse(fullStore.selectedDate)).getFullYear(), (new Date(JSON.parse(fullStore.selectedDate)).getMonth() === 12) ? 1:new Date(JSON.parse(fullStore.selectedDate)).getMonth() + 1, new Date(JSON.parse(fullStore.selectedDate)).getDay());
+            d.setFullYear((selectedDate.getMonth() === 12) ? selectedDate.getFullYear() + 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 12) ? 1:selectedDate.getMonth() + 1, selectedDate.getDay());
             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
           }}>
             <ChevronRight width={14} height={14}/>
@@ -272,7 +281,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
                         { value.showing ?
                           <Pressable onPress={() => {
                             const d = new Date();
-                            d.setFullYear(new Date(JSON.parse(fullStore.selectedDate)).getFullYear(), new Date(JSON.parse(fullStore.selectedDate)).getMonth(), value.dayData);
+                            d.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), value.dayData);
                             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
                           }} key={value.id}>
                             <CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}  setAddDate={setAddDate}/>

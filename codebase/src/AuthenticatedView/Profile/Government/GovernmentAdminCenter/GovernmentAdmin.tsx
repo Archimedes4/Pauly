@@ -5,12 +5,14 @@ import { useMsal } from '@azure/msal-react';
 import { accessTokenContent } from '../../../../../App';
 import { siteID } from '../../../../PaulyConfig';
 import { loadingStateEnum } from '../../../../types';
+import { Link } from 'react-router-native';
 
 export default function GovernmentAdmin() {
   const microsoftAccessToken = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
   const [initilizePaulyLoadingResult, setInitilizePaulyLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   async function InitilizePauly() {
+    setInitilizePaulyLoadingResult(loadingStateEnum.loading)
     const PaulyListData = {
       "displayName": "PaulyList",
       "columns": [
@@ -124,7 +126,7 @@ export default function GovernmentAdmin() {
       "displayName": "Schedule",
       "columns": [
         {
-          "name":"ScheduleId",
+          "name":"scheduleId",
           "text":{ },
           "required": true,
           "indexed": true,
@@ -144,12 +146,6 @@ export default function GovernmentAdmin() {
           "name":"scheduleData",
           "text":{"allowMultipleLines": true},
           "required": true
-        },
-        {
-          "name":"scheduleDefaultPeriodId",
-          "text":{ },
-          "required": true,
-          "enforceUniqueValues": true
         }
       ],
       "list": {
@@ -255,6 +251,11 @@ export default function GovernmentAdmin() {
           "name":"timetableDataSchedules",
           "text":{"allowMultipleLines": true},
           "required": true
+        },
+        {
+          "name":"timetableDefaultScheduleId",
+          "text":{ },
+          "required": true
         }
       ],
       "list": {
@@ -295,36 +296,51 @@ export default function GovernmentAdmin() {
                     const paulyListResultData = await paulyListResult.json()
                     const addPaulyListResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyListResultData["id"] + "/items", instance, accounts, "POST", false, JSON.stringify(PaulyListNewData))
                     if (addPaulyListResult.ok){
+                      setInitilizePaulyLoadingResult(loadingStateEnum.success)
                       console.log("Yeah")
                       console.log(PaulyListNewData)
                     } else {
+                      setInitilizePaulyLoadingResult(loadingStateEnum.failed)
                       console.log("Add Pauly List Result Failed")
                     }
+                  } else {
+                    setInitilizePaulyLoadingResult(loadingStateEnum.failed)
                   }
                 } else {
                   console.log("Timetable Failed")
                 }
               } else {
+                setInitilizePaulyLoadingResult(loadingStateEnum.failed)
                 console.log("Sports Submissions Failed")
               }
             } else {
+              setInitilizePaulyLoadingResult(loadingStateEnum.failed)
               console.log("Sports Approval Failed")
             }
           } else {
+            setInitilizePaulyLoadingResult(loadingStateEnum.failed)
             console.log("Sports Failed")
           }
         } else {
+          setInitilizePaulyLoadingResult(loadingStateEnum.failed)
           console.log("Schedule Failed")
+          const scheduleData = await scheduleResult.json()
+          console.log(scheduleData)
         }
       } else {
+        setInitilizePaulyLoadingResult(loadingStateEnum.failed)
         console.log("Pauly Data Failed")
       }
     } else {
+      setInitilizePaulyLoadingResult(loadingStateEnum.failed)
       console.log("Commissions Failed")
     }
   }
   return (
     <View>
+      <Link to="/profile/government">
+        <Text>Back</Text>
+      </Link>
       <Button title={(initilizePaulyLoadingResult === loadingStateEnum.notStarted) ? "Initilize Pauly on New Tenant":(initilizePaulyLoadingResult ===  loadingStateEnum.loading) ? "Loading":(initilizePaulyLoadingResult === loadingStateEnum.success) ? "Success":"Failed"} onPress={() => {if (initilizePaulyLoadingResult === loadingStateEnum.notStarted) {InitilizePauly()}}}/>
     </View>
   )

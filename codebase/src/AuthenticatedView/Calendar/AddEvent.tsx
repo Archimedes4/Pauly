@@ -17,6 +17,7 @@ import SelectTimetable from "./SelectTimetable";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useMsal } from "@azure/msal-react";
+import { loadingStateEnum } from "../../types";
 
 enum reocurringType {
     daily,
@@ -33,15 +34,16 @@ interface schoolDayDataInteface {
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
     const microsoftAccessToken = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
-    const fullStore = useSelector((state: RootState) => state)
+    const selectedDate = useSelector((state: RootState) => state.selectedDate)
+    const currentEvents = useSelector((state: RootState) => state.currentEvents)
     const dispatch = useDispatch()
 
     //Calendar
     const [eventName, setEventName] = useState<string>(editing ? editData.name:"")
     const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
     const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>((editing) ? editData.startTime:new Date(JSON.parse(fullStore.selectedDate)))
-    const [endDate, setEndDate] = useState<Date>((editing) ? editData.endTime:new Date(JSON.parse(fullStore.selectedDate)))
+    const [startDate, setStartDate] = useState<Date>((editing) ? editData.startTime:new Date(JSON.parse(selectedDate)))
+    const [endDate, setEndDate] = useState<Date>((editing) ? editData.endTime:new Date(JSON.parse(selectedDate)))
     const [allDay, setAllDay] = useState<boolean>(false)
 
     //Recurring
@@ -76,7 +78,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
         newEndDate.setDate(startDate.getDate() + 1)
         data["end"]["dateTime"] = newEndDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         data["isAllDay"] = true
-        data["subject"] = selectedSchoolDayData.schoolDay + " " + selectedSchoolDayData.schedule.name
+        data["subject"] = selectedSchoolDayData.schoolDay + " " + selectedSchoolDayData.schedule.properName
       } else if (allDay) {
         data["start"]["dateTime"] = startDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         data["end"]["dateTime"] = endDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
@@ -124,8 +126,8 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
         const deleteEvent = await callMsGraph(microsoftAccessToken.accessToken, editData.microsoftReference, instance, accounts, "DELETE")
         if (deleteEvent.ok){
           var currentEvents = []
-          for (var index = 0; index< fullStore.currentEvents.length; index++){
-            var result = getEventFromJSON(fullStore.currentEvents[index])
+          for (var index = 0; index < currentEvents.length; index++){
+            var result = getEventFromJSON(currentEvents[index])
             if (result.id !== editData.id){
               currentEvents.push(result)
             }
@@ -342,7 +344,7 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
                   {schedules.map((schedule) => (
                     <Pressable onPress={() => {onSelect(selectedSchoolDay, schedule)}}>
                       <View>
-                        <Text>{schedule.name}</Text>
+                        <Text>{schedule.properName}</Text>
                       </View>
                     </Pressable>
                   ))}

@@ -1,13 +1,14 @@
 import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
 import { orgWideGroupID, siteID } from "../PaulyConfig";
 import callMsGraph from "./microsoftAssets";
+import { loadingStateEnum } from "../types";
+import store from "../Redux/store";
 
 //Defaults to org wide events
 export async function getGraphEvents(accessToken: string, schoolYear: boolean, instance: IPublicClientApplication, accounts: AccountInfo[], url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
   const result = await callMsGraph(accessToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", instance, accounts, "GET", true)
   if (result.ok){
     const data = await result.json()
-    console.log(data)
     var newEvents: eventType[] = []
     for(var index = 0; index < data["value"].length; index++) {
       if (schoolYear) {
@@ -45,15 +46,16 @@ export async function getGraphEvents(accessToken: string, schoolYear: boolean, i
   }
 }
   
-async function getSchedule(accessToken: string, id: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
-  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'", instance, accounts)//TO DO fix site id
+export async function getSchedule(accessToken: string, id: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
+  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'", instance, accounts)//TO DO fix site id
   if (result.ok) {
     const data = await result.json()
     console.log(data)
     if (data["value"].length !== undefined) {
       if (data["value"].length === 1) {
         const resultSchedule: scheduleType = {
-          name: data["value"][0]["fields"]["name"],
+          properName: data["value"][0]["fields"]["scheduleProperName"],
+          descriptiveName: data["value"][0]["fields"]["scheduleDescriptiveName"],
           periods: JSON.parse(data["value"][0]["fields"]["scheduleData"]) as periodType[],
           id: data["value"][0]["fields"]["scheduleId"]
         }
@@ -72,7 +74,7 @@ async function getSchedule(accessToken: string, id: string, instance: IPublicCli
 }
   
 export async function getTimetable(accessToken: string, timetableId: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/72367e66-6d0f-4beb-8b91-bb6e9be9b433/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'", instance, accounts)//TO DO fix site id
+  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'", instance, accounts)//TO DO fix site id
   if (result.ok) {
     console.log(result)
     const data = await result.json()
@@ -90,6 +92,7 @@ export async function getTimetable(accessToken: string, timetableId: string, ins
               return {result: loadingStateEnum.failed}
             }
           }
+          console.log("This is timetable Days", JSON.parse(data["value"][0]["fields"]["timetableDataDays"]))
           const resultingTimetable: timetableType = {
             name: data["value"][0]["fields"]["timetableName"],
             id: data["value"][0]["fields"]["timetableId"],
