@@ -9,15 +9,13 @@ enum loadingStateEnum {
 }
 
 //Defaults to org wide events
-export async function getGraphEvents(accessToken: string, schoolYear: boolean, instance: IPublicClientApplication, accounts: AccountInfo[], url?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
+export async function getGraphEvents(accessToken: string, schoolYear: boolean, instance: IPublicClientApplication, accounts: AccountInfo[], url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
   const result = await callMsGraph(accessToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", instance, accounts, "GET", true)
   if (result.ok){
     const data = await result.json()
     console.log(data)
     var newEvents: eventType[] = []
-    console.log("Value", data["value"].length)
     for(var index = 0; index < data["value"].length; index++) {
-      console.log("Loop")
       if (schoolYear) {
         //TO DO update extention value
         if (data["value"][index]["ext9u07b055_paulyEvents"] !== undefined) {
@@ -28,25 +26,25 @@ export async function getGraphEvents(accessToken: string, schoolYear: boolean, i
               startTime: new Date(data["value"][index]["start"]["dateTime"]),
               endTime: new Date(data["value"][index]["end"]["dateTime"]),
               eventColor: "white",
-              schoolYearData: data["value"][index]["ext9u07b055_paulyEvents"]["eventData"]
+              schoolYearData: data["value"][index]["ext9u07b055_paulyEvents"]["eventData"],
+              microsoftEvent: true,
+              microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
             })
           }
         }
       } else {
-        console.log("Loop Here")
-        const newEvent = {
+        const newEvent: eventType = {
           id: data["value"][index]["id"],
           name: data["value"][index]["subject"],
           startTime: new Date(data["value"][index]["start"]["dateTime"]),
           endTime: new Date(data["value"][index]["end"]["dateTime"]),
-          eventColor: "white"
+          eventColor: "white",
+          microsoftEvent: true,
+          microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
         }
-        console.log("Pusshing", newEvent)
         newEvents.push(newEvent)
-
       }
     }
-    console.log("Bedfore", newEvents)
     return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
   } else {
     return {result: loadingStateEnum.failed}

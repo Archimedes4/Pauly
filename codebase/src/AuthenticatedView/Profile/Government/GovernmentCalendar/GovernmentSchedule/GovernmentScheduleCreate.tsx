@@ -36,7 +36,7 @@ export default function GovernmentSchedule() {
     async function submitSchedule() {
         const data = {
             "fields": {
-                "Title":scheduleDescriptiveName,
+                "Title":scheduleProperName,
                 "scheduleId":create_UUID(),
                 "scheduleProperName":scheduleProperName,
                 "scheduleDescriptiveName":scheduleDescriptiveName,
@@ -57,12 +57,13 @@ export default function GovernmentSchedule() {
             <Text>Create Schedule</Text>
             <View style={{flexDirection: "row"}}>
                 <Text>Proper Name:</Text>
-                <TextInput value={scheduleProperName} onChangeText={setScheduleProperName}/>
+                <TextInput value={scheduleProperName} onChangeText={setScheduleProperName} placeholder='Proper Name ex. Schedule One'/>
             </View>
             <View style={{flexDirection: "row"}}>
                 <Text>Descriptive Name:</Text>
-                <TextInput value={scheduleDescriptiveName} onChangeText={setScheduleDescriptiveName}/>
+                <TextInput value={scheduleDescriptiveName} onChangeText={setScheduleDescriptiveName} placeholder='Descriptive Name ex. Regular Schedule'/>
             </View>
+            <Text>Keep descriptive name short as it is used in the calendar widget</Text>
             {newPeriods.map((period) => (
                 <PeriodBlock period={period} newPeriods={newPeriods} onSetNewPeriods={(out) => {
                     console.log("This is out", out)

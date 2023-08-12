@@ -40,14 +40,6 @@ declare global {
         selectedDay?: number
         dueDate?: Date
     }
-    type eventType = {
-        id: string
-        name: string
-        startTime: Date
-        endTime: Date
-        eventColor: string
-        schoolYearData?: string
-    }
 }
 
 export default function DayView({width, height}:{width: number, height: number}) {

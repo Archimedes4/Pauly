@@ -4,3 +4,5 @@ export const siteID: string = "8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c
 //This allows pauly to access calendar information that is common (an event that is set out by admin) among users.
 
 export const orgWideGroupID: string = "5f1ea797-addb-45b7-915e-9b4cc4a8aad6"
+
+export const mainListID: string = "a0f2741b-7681-4c0a-b521-dc036a19327f"

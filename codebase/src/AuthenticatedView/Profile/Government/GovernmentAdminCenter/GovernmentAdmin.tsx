@@ -16,40 +16,40 @@ export default function GovernmentAdmin() {
   const { instance, accounts } = useMsal();
   async function InitilizePauly() {
     const PaulyListData = {
-      "displayName": "Commissions",
+      "displayName": "PaulyList",
       "columns": [
         {
-          "name":"CommissionListId",
+          "name":"commissionListId",
           "text":{},
           "required": true
         },
         {
-          "name":"PaulyDataListId",
+          "name":"paulyDataListId",
           "text":{},
           "required": true
         },
         {
-          "name":"ScheduleListId",
+          "name":"scheduleListId",
           "text":{},
           "required": true
         },
         {
-          "name":"SportsListId",
+          "name":"sportsListId",
           "text":{},
           "required": true
         },
         {
-          "name":"SportsApprovedSubmissionsListId",
+          "name":"sportsApprovedSubmissionsListId",
           "text":{},
           "required": true
         },
         {
-          "name":"SportsSubmissionsListId",
+          "name":"sportsSubmissionsListId",
           "text":{},
           "required": true
         },
         {
-          "name":"TimetablesListId",
+          "name":"timetablesListId",
           "text":{},
           "required": true
         }
@@ -259,38 +259,39 @@ export default function GovernmentAdmin() {
         "template": "genericList"
       }
     }
-    var PaulyListNewData = {}
+    var PaulyListNewData = {"fields":{"Title":"Main"}}
     const commissionsResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(commissionsData))
     if (commissionsResult.ok) {
       const commissionsResultData = await commissionsResult.json()
-      PaulyListNewData["CommissionListId"] = commissionsResultData["fields"]["id"]
+      PaulyListNewData["fields"]["commissionListId"] = commissionsResultData["id"]
       const paulyDataResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(paulyDataData))
       if (paulyDataResult.ok) {
         const paulyDataResultData = await paulyDataResult.json()
-        PaulyListNewData["PaulyDataListId"] = paulyDataResultData["fields"]["id"]
+        PaulyListNewData["fields"]["paulyDataListId"] = paulyDataResultData["id"]
         const scheduleResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(scheduleData))
         if (scheduleResult.ok) {
           const scheduleResultData = await scheduleResult.json()
-          PaulyListNewData["ScheduleListId"] = scheduleResultData["fields"]["id"]
+          PaulyListNewData["fields"]["scheduleListId"] = scheduleResultData["id"]
           const sportsResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsData))
           if (sportsResult.ok) {
             const sportsResultData = await sportsResult.json()
-            PaulyListNewData["SportsListId"] = sportsResultData["fields"]["id"]
+            PaulyListNewData["fields"]["sportsListId"] = sportsResultData["id"]
             const sportsApprovedSubmissionsResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsApprovedSubmissionsData))
             if (sportsApprovedSubmissionsResult.ok) {
               const sportsApprovedSubmissionsResultData = await sportsApprovedSubmissionsResult.json()
-              PaulyListNewData["SportsApprovedSubmissionsListId"] = sportsApprovedSubmissionsResultData["fields"]["id"]
+              PaulyListNewData["fields"]["sportsApprovedSubmissionsListId"] = sportsApprovedSubmissionsResultData["id"]
               const sportsSubmissionsResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsSubmissionsData))
               if (sportsSubmissionsResult.ok) {
                 const sportsSubmissionsResultData = await sportsSubmissionsResult.json()
-                PaulyListNewData["SportsSubmissionsListId"] = sportsSubmissionsResultData["fields"]["id"]
+                PaulyListNewData["fields"]["sportsSubmissionsListId"] = sportsSubmissionsResultData["id"]
                 const timetableResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(timetablesData))
                 if (timetableResult.ok) {
                   const timetableResultData = await timetableResult.json()
-                  PaulyListNewData["TimetablesListId"] = timetableResultData["fields"]["id"]
+                  PaulyListNewData["fields"]["timetablesListId"] = timetableResultData["id"]
                   const paulyListResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(PaulyListData))
                   if (paulyListResult.ok){
-                    const addPaulyListResult = await callMsGraph(microsoftAccessToken.accessToken, "", instance, accounts)
+                    const paulyListResultData = await paulyListResult.json()
+                    const addPaulyListResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyListResultData["id"] + "/items", instance, accounts, "POST", false, JSON.stringify(PaulyListNewData))
                     if (addPaulyListResult.ok){
                       console.log("Yeah")
                       console.log(PaulyListNewData)

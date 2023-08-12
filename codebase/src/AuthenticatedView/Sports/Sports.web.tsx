@@ -8,6 +8,7 @@ import callMsGraph from '../../Functions/microsoftAssets'
 import getFileWithShareID from '../../Functions/getFileWithShareID'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { useMsal } from '@azure/msal-react'
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -35,18 +36,19 @@ declare global {
 
 export default function Sports() {
   const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
   const [loadingResult, setLoadingResult] = useState<loadingResultEnum>(loadingResultEnum.loading)
 
   async function getSportsContent() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/d10e9373-7e8b-4400-98f1-62ba95e4cd34/items?expand=fields")
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/d10e9373-7e8b-4400-98f1-62ba95e4cd34/items?expand=fields", instance, accounts)
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined){
         var newSportsPosts: sportPost[] = []
         for (let index = 0; index < dataResult["value"].length; index++){
           try{
-            const shareResult = await getFileWithShareID(dataResult["value"][index]["fields"]["FileId"], microsoftAccessToken.accessToken)
+            const shareResult = await getFileWithShareID(dataResult["value"][index]["fields"]["FileId"], microsoftAccessToken.accessToken, instance, accounts)
             newSportsPosts.push({
               caption: dataResult["value"][index]["fields"]["Caption"],
               fileID: shareResult.url,

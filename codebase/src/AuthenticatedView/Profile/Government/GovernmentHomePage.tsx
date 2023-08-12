@@ -4,16 +4,19 @@ import { accessTokenContent } from '../../../../App';
 import callMsGraph from '../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import MicrosoftFilePicker from '../../../UI/microsoftFilePicker';
+import { siteID } from '../../../PaulyConfig';
+import { useMsal } from '@azure/msal-react';
 
 export default function GovernmentHomePage() {
     const microsoftAccessToken = useContext(accessTokenContent);
+    const { instance, accounts } = useMsal();
     const [newMessageText, setNewMessageText] = useState("")
     const [newAnimationSpeed, setNewAnnimationSpeed] = useState(0)
     async function updateText(){
         const data = {
             "Message":newMessageText
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1/fields", "PATCH", JSON.stringify(data))//TO DO fix list ids
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1/fields", instance, accounts, "PATCH", false, JSON.stringify(data))//TO DO fix list ids
         if (result.ok){
             const data = await result.json()
             console.log(data)
@@ -25,13 +28,13 @@ export default function GovernmentHomePage() {
         const data = {
             "AnimationSpeed":newAnimationSpeed
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1fields", "PATCH", JSON.stringify(data)) //TO DO fix id
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1fields", instance, accounts, "PATCH", false, JSON.stringify(data)) //TO DO fix id
         console.log(result)
         const resultData = await result.json()
         console.log(resultData)
     }
     async function getCurrentTextAndAnimationSpeed() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1/fields")//TO DO fix list ids
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1/fields", instance, accounts)//TO DO fix list ids
         if (result.ok){
             const data: Record<string, any> = await result.json()
             console.log(data)

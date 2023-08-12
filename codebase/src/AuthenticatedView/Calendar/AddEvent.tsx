@@ -3,6 +3,7 @@ import { Pressable, View, Text, Switch, TextInput, Button } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
 import { currentEventsSchoolYearSlice } from "../../Redux/reducers/currentEventSchoolYearReducer";
+import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
 import { accessTokenContent } from "../../../App";
 import { orgWideGroupID, siteID } from "../../PaulyConfig";
 import DatePicker from "../../UI/DateTimePicker/DatePicker";
@@ -39,13 +40,14 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
     const microsoftAccessToken = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
     const fullStore = useSelector((state: RootState) => state)
+    const dispatch = useDispatch()
 
     //Calendar
-    const [eventName, setEventName] = useState<string>("")
+    const [eventName, setEventName] = useState<string>(editing ? editData.name:"")
     const [isPickingStartDate, setIsPickingStartDate] = useState<boolean>(false)
     const [isPickingEndDate, setIsPickingEndDate] = useState<boolean>(false)
-    const [startDate, setStartDate] = useState<Date>(new Date(JSON.parse(fullStore.selectedDate)))
-    const [endDate, setEndDate] = useState<Date>(new Date(JSON.parse(fullStore.selectedDate)))
+    const [startDate, setStartDate] = useState<Date>((editing) ? editData.startTime:new Date(JSON.parse(fullStore.selectedDate)))
+    const [endDate, setEndDate] = useState<Date>((editing) ? editData.endTime:new Date(JSON.parse(fullStore.selectedDate)))
     const [allDay, setAllDay] = useState<boolean>(false)
 
     //Recurring
@@ -119,6 +121,31 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
       } else {
         const dataOut = await result.json()
         console.log(dataOut)
+      }
+    }
+
+    async function deleteEvent() {
+      if (editData !== undefined && editData.microsoftEvent && editData.microsoftReference !== undefined){
+        console.log(editData.microsoftReference)
+        const deleteEvent = await callMsGraph(microsoftAccessToken.accessToken, editData.microsoftReference, instance, accounts, "DELETE")
+        if (deleteEvent.ok){
+          var currentEvents = []
+          for (var index = 0; index< fullStore.currentEvents.length; index++){
+            var result = getEventFromJSON(fullStore.currentEvents[index])
+            if (result.id !== editData.id){
+              currentEvents.push(result)
+            }
+          }
+          var outputEvents: string[] = []
+          for (var index = 0; index < currentEvents.length; index++){
+            outputEvents.push(JSON.stringify(currentEvents[index]))
+          }
+          console.log(currentEvents)
+          dispatch(currentEventsSlice.actions.setCurrentEvents(outputEvents))
+          setIsShowingAddDate(false)
+        } else {
+          //TO DO throw error
+        }
       }
     }
 
@@ -268,7 +295,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
             { editing ? 
               <Pressable onPress={() => {
                 setIsShowingAddDate(false); 
-                createEvent()
+                deleteEvent()
               }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
                 <Text style={{zIndex: -1}}>Delete</Text>
               </Pressable>:null

@@ -62,6 +62,7 @@ import Testing from './src/AuthenticatedView/Profile/Government/Testing';
 import store from './src/Redux/store';
 import PageNotFound from './src/AuthenticatedView/404Page';
 import GovernmentAdmin from './src/AuthenticatedView/Profile/Government/GovernmentAdminCenter/GovernmentAdmin';
+import getPaulyLists from './src/Functions/getPaulyLists';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -118,6 +119,7 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
         account: accounts[0],
     })
     .then((response) => {
+      getPaulyLists(response.accessToken, instance, accounts)
       getUserProfile(response.accessToken)
     }).catch(() => {
       console.log("Error occured")
