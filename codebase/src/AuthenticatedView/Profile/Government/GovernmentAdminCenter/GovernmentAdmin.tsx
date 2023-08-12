@@ -1,19 +1,15 @@
 import { View, Text, Button } from 'react-native'
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { useMsal } from '@azure/msal-react';
 import { accessTokenContent } from '../../../../../App';
 import { siteID } from '../../../../PaulyConfig';
-
-enum loadingStateEnum {
-  loading,
-  success,
-  failed
-}
+import { loadingStateEnum } from '../../../../types';
 
 export default function GovernmentAdmin() {
   const microsoftAccessToken = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
+  const [initilizePaulyLoadingResult, setInitilizePaulyLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   async function InitilizePauly() {
     const PaulyListData = {
       "displayName": "PaulyList",
@@ -145,10 +141,16 @@ export default function GovernmentAdmin() {
           "required": true
         },
         {
-          "name":"ScheduleData",
+          "name":"scheduleData",
           "text":{"allowMultipleLines": true},
           "required": true
         },
+        {
+          "name":"scheduleDefaultPeriodId",
+          "text":{ },
+          "required": true,
+          "enforceUniqueValues": true
+        }
       ],
       "list": {
         "template": "genericList"
@@ -321,12 +323,9 @@ export default function GovernmentAdmin() {
       console.log("Commissions Failed")
     }
   }
-  async function checkIfListIdValid(listId: string): Promise<{ result: loadingStateEnum; success?: boolean }> {
-    return {result: loadingStateEnum.failed}
-  }
   return (
     <View>
-      <Button title="Initilize Pauly on New Tenant" onPress={() => {InitilizePauly()}}/>
+      <Button title={(initilizePaulyLoadingResult === loadingStateEnum.notStarted) ? "Initilize Pauly on New Tenant":(initilizePaulyLoadingResult ===  loadingStateEnum.loading) ? "Loading":(initilizePaulyLoadingResult === loadingStateEnum.success) ? "Success":"Failed"} onPress={() => {if (initilizePaulyLoadingResult === loadingStateEnum.notStarted) {InitilizePauly()}}}/>
     </View>
   )
 }

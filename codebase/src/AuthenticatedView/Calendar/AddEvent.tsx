@@ -25,12 +25,6 @@ enum reocurringType {
     yearly
 }
 
-enum loadingStateEnum {
-  loading,
-  success,
-  failed
-}
-
 interface schoolDayDataInteface {
   schoolDay: string
   schedule: scheduleType

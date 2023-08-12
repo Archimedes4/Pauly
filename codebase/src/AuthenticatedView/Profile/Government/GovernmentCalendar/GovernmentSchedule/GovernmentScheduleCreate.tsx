@@ -7,6 +7,9 @@ import { accessTokenContent } from '../../../../../../App'
 import create_UUID from '../../../../../Functions/CreateUUID'
 import { siteID } from '../../../../../PaulyConfig'
 import { useMsal } from '@azure/msal-react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../../../Redux/store'
+import { loadingStateEnum } from '../../../../../types'
 
 declare global{
     type periodType = {
@@ -26,6 +29,7 @@ declare global{
 export default function GovernmentSchedule() {
     const microsoftAccessToken = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
+    const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
     const [newPeriodHourStart, setNewPeriodHourStart] = useState<number>(12)
     const [newPeriodMinuteStart, setNewPeriodMinuteStart] = useState<number>(0)
     const [newPeriodHourEnd, setNewPeriodHourEnd] = useState<number>(12)
@@ -33,6 +37,7 @@ export default function GovernmentSchedule() {
     const [scheduleProperName, setScheduleProperName] = useState<string>("")
     const [scheduleDescriptiveName, setScheduleDescriptiveName] = useState<string>("")
     const [newPeriods, setNewPeriods] = useState<periodType[]>([])
+    const [selectedDefaultPeriod, setSelectedDefaultPeriod] = useState<periodType | undefined>(undefined)
     async function submitSchedule() {
         const data = {
             "fields": {
@@ -40,10 +45,11 @@ export default function GovernmentSchedule() {
                 "scheduleId":create_UUID(),
                 "scheduleProperName":scheduleProperName,
                 "scheduleDescriptiveName":scheduleDescriptiveName,
-                "scheduleData":JSON.stringify(newPeriods)
+                "scheduleData":JSON.stringify(newPeriods),
+                "scheduleDefaultPeriodId":selectedDefaultPeriod
             }
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items", instance, accounts, "POST", false, JSON.stringify(data))
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items", instance, accounts, "POST", false, JSON.stringify(data))
         console.log(result)
         const dataResult = await result.json()
         console.log(dataResult)
@@ -68,7 +74,7 @@ export default function GovernmentSchedule() {
                 <PeriodBlock period={period} newPeriods={newPeriods} onSetNewPeriods={(out) => {
                     console.log("This is out", out)
                     setNewPeriods([...out])
-                }}/>
+                }} onSetSelectedPeriod={setSelectedDefaultPeriod}/>
             ))}
             <TimePicker selectedHourMilitary={newPeriodHourStart} selectedMinuteMilitary={newPeriodMinuteStart} onSetSelectedHourMilitary={setNewPeriodHourStart} onSetSelectedMinuteMilitary={setNewPeriodMinuteStart}/>
             <TimePicker selectedHourMilitary={newPeriodHourEnd} selectedMinuteMilitary={newPeriodMinuteEnd} onSetSelectedHourMilitary={setNewPeriodHourEnd} onSetSelectedMinuteMilitary={setNewPeriodMinuteEnd}/>
@@ -78,7 +84,7 @@ export default function GovernmentSchedule() {
   )
 }
 
-function PeriodBlock({period, newPeriods, onSetNewPeriods}:{period: periodType, newPeriods: periodType[], onSetNewPeriods: (item: periodType[]) => void}) {
+function PeriodBlock({period, newPeriods, onSetNewPeriods, onSetSelectedPeriod}:{period: periodType, newPeriods: periodType[], onSetNewPeriods: (item: periodType[]) => void, onSetSelectedPeriod: (item: periodType) => void}) {
     function deleteItem(period: periodType) {
         var newNewPeriodsArray: periodType[] = newPeriods
         if (newNewPeriodsArray.length === 1){
@@ -101,6 +107,7 @@ function PeriodBlock({period, newPeriods, onSetNewPeriods}:{period: periodType, 
             <Button title='remove' onPress={() => {
                 deleteItem(period)
             }}/>
+            <Button title="setAsDefault"/>
         </View>
     )
 }

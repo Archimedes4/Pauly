@@ -2,12 +2,6 @@ import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
 import { orgWideGroupID, siteID } from "../PaulyConfig";
 import callMsGraph from "./microsoftAssets";
 
-enum loadingStateEnum {
-  loading,
-  success,
-  failed
-}
-
 //Defaults to org wide events
 export async function getGraphEvents(accessToken: string, schoolYear: boolean, instance: IPublicClientApplication, accounts: AccountInfo[], url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
   const result = await callMsGraph(accessToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", instance, accounts, "GET", true)

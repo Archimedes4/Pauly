@@ -8,6 +8,8 @@ import callMsGraph from '../Functions/microsoftAssets';
 import { accessTokenContent } from '../../App';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { siteID } from '../PaulyConfig';
+import { useSelector } from 'react-redux';
+import { RootState } from '../Redux/store';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -22,11 +24,12 @@ declare global {
 }
 
 export default function HomePage() {
+    const microsoftAccessToken = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
     const navigate = useNavigate()
+    const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
     const [messageText, setMessageText] = useState("")
     const [animationSpeed, setAnnimationSpeed] = useState(0)
-    const microsoftAccessToken = useContext(accessTokenContent);
     const [dimensions, setDimensions] = useState({
         window: windowDimensions,
         screen: screenDimensions,
@@ -43,7 +46,7 @@ export default function HomePage() {
     });
 
     async function getCurrentTextAndAnimationSpeed() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1/fields", instance, accounts)//TO DO fix list ids
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", instance, accounts)//TO DO fix list ids
         if (result.ok){
             const data: Record<string, any> = await result.json()
             console.log(data)
@@ -54,23 +57,19 @@ export default function HomePage() {
                 //TO DO handle error
             }
         } else {
-
+            console.log("Error")
         }
     }
 
     useEffect(() => {
         if (microsoftAccessToken.accessToken !== ""){
-            getUser()
             getCurrentTextAndAnimationSpeed()
         }
     }, [microsoftAccessToken])
 
-    async function getUser(){
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/", instance, accounts)
-        console.log(result)
-    }
     useEffect(() => {
-        if (dimensions.window.width > 576){
+        console.log("THis is breakpoint", microsoftAccessToken.currentBreakPointMode)
+        if (microsoftAccessToken.currentBreakPointMode > 0){
             navigate("/notifications")
         }
     }, [dimensions.window])

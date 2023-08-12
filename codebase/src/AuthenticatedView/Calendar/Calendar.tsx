@@ -19,6 +19,7 @@ import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
 import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
 import { useMsal } from '@azure/msal-react';
+import { loadingStateEnum } from '../../types';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -28,13 +29,6 @@ enum calendarMode {
   week,
   day
 }
-
-enum loadingStateEnum {
-  loading,
-  success,
-  failed
-}
-
 declare global {
   type monthDataType = {
     id: string
@@ -142,7 +136,6 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
               <View style={{flexDirection: "row"}}>
                 <ChevronLeft width={14} height={14}/>
                 <Text>Back</Text>
-                <Text>{microsoftAccessToken.currentBreakPointMode}</Text>
               </View>
             </Link>
           } 

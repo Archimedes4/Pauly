@@ -5,20 +5,23 @@ import { siteID } from '../../../../../PaulyConfig';
 import callMsGraph from '../../../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
-
-enum loadingStateEnum {
-  loading,
-  success,
-  failed
-}
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../../Redux/store';
+import { loadingStateEnum } from '../../../../../types';
+// enum loadingStateEnum {
+//   loading,
+//   success,
+//   failed
+// }
 
 export default function GovernmentSchedule() {
   const microsoftAccessToken = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
+  const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   async function getSchedules() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/b2250d2c-0301-4605-87fe-0b65ccf635e9/items?expand=fields", instance, accounts)
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId +"/items?expand=fields", instance, accounts)
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){

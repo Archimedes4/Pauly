@@ -9,8 +9,12 @@ export default async function getPaulyLists(accessToken: string, instance: IPubl
     if (paulyListResult.ok){
         const paulyListResultData = await paulyListResult.json()
         console.log(paulyListResultData)
-        store.dispatch(paulyListSlice.actions.setPaulyList({commissionListId: string, paulyDataListId: string, scheduleListId: string, sportsListId: string, sportsApprovedSubmissionsListId: string, sportsSubmissionsListId: string, timetablesListId: string}))
+        //TO DO make the value secure meaning that others cannot add to the pauly list
+        store.dispatch(paulyListSlice.actions.setPaulyList({commissionListId: paulyListResultData["value"][0]["fields"]["commissionListId"], paulyDataListId: paulyListResultData["value"][0]["fields"]["paulyDataListId"], scheduleListId: paulyListResultData["value"][0]["fields"]["scheduleListId"], sportsListId: paulyListResultData["value"][0]["fields"]["sportsListId"], sportsApprovedSubmissionsListId: paulyListResultData["value"][0]["fields"]["sportsApprovedSubmissionsListId"], sportsSubmissionsListId: paulyListResultData["value"][0]["fields"]["sportsSubmissionsListId"], timetablesListId: paulyListResultData["value"][0]["fields"]["timetablesListId"]}))
     } else {
+        const paulyListResultData = await paulyListResult.json()
+        console.log(paulyListResultData)
+        console.log("Error")
         //TO DO THIS IS A BIG PROBLEM SHUT DOWN APP BC most of it don't work lost connection to server
     }
 }

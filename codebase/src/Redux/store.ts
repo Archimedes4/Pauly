@@ -9,13 +9,15 @@ import currentEventsReducer from './reducers/currentEventReducer';
 import currentEventsSchoolYearReducer from './reducers/currentEventSchoolYearReducer'
 import currentEventsLastCalledReducer from './reducers/currentEventLastCalledReducer';
 import selectedDateReducer from './reducers/selectedDateReducer';
+import paulyListReducer from './reducers/paulyListReducer';
 
 const store = configureStore({
   reducer: {
     currentEvents: currentEventsReducer,
     currentEventsSchoolYear: currentEventsSchoolYearReducer,
     currentEventsLastCalled: currentEventsLastCalledReducer,
-    selectedDate: selectedDateReducer
+    selectedDate: selectedDateReducer,
+    paulyList: paulyListReducer
   }
 });
 

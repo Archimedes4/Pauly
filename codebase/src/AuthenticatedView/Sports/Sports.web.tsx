@@ -9,6 +9,8 @@ import getFileWithShareID from '../../Functions/getFileWithShareID'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useMsal } from '@azure/msal-react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../Redux/store'
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -19,12 +21,12 @@ enum dataContentTypeOptions {
   unknown
 }
 
-enum loadingResultEnum {
-  loading,
-  success,
-  failure,
-  unauthorized
-}
+// enum loadingResultEnum {
+//   loading,
+//   success,
+//   failure,
+//   unauthorized
+// }
 
 declare global {
   type sportPost = {
@@ -37,11 +39,12 @@ declare global {
 export default function Sports() {
   const microsoftAccessToken = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
+  const {sportsApprovedSubmissionsListId} = useSelector((state: RootState) => state.paulyList)
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
-  const [loadingResult, setLoadingResult] = useState<loadingResultEnum>(loadingResultEnum.loading)
+  const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getSportsContent() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/d10e9373-7e8b-4400-98f1-62ba95e4cd34/items?expand=fields", instance, accounts)
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + sportsApprovedSubmissionsListId + "/items?expand=fields", instance, accounts)
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined){
@@ -59,16 +62,12 @@ export default function Sports() {
           }
         }
         setSportsPosts(newSportsPosts)
-        setLoadingResult(loadingResultEnum.success)
+        setLoadingResult(loadingStateEnum.success)
       } else {
-        setLoadingResult(loadingResultEnum.failure)
+        setLoadingResult(loadingStateEnum.failed)
       }
     } else {
-      if (result.status === 401){
-        setLoadingResult(loadingResultEnum.unauthorized)
-      } else {
-        setLoadingResult(loadingResultEnum.failure)
-      }
+      setLoadingResult(loadingStateEnum.failed)
     }
   }
   useEffect(() => {
@@ -102,12 +101,12 @@ export default function Sports() {
         <Text style={{fontFamily: "BukhariScript"}}>Sports</Text>
       </View>
       
-      { (loadingResult === loadingResultEnum.loading) ?
+      { (loadingResult === loadingStateEnum.loading) ?
         <View>
           <Text>Loading</Text>
         </View>:
         <View> 
-          { (loadingResult === loadingResultEnum.success) ?
+          { (loadingResult === loadingStateEnum.success) ?
             <View>
               { sportsPosts.map((item) => (
                 <View style={{marginTop: microsoftAccessToken.dimensions.window.height * 0.05}}>
@@ -122,13 +121,10 @@ export default function Sports() {
               }
             </View>:
             <View>
-              { (loadingResult === loadingResultEnum.unauthorized) ? 
-                <View>
-                  <Text>Uh Oh something went wrong. It seams that you don't have access</Text>
-                </View>:
+              { (loadingResult === loadingStateEnum.failed) ?
                 <View>
                   <Text>Something went wrong</Text>
-                </View>
+                </View>:null
               }
             </View>
           }

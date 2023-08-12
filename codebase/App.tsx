@@ -85,12 +85,12 @@ enum breakPointMode {
 
 export const accessTokenContent = React.createContext<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}, currentBreakPointMode: breakPointMode.xSmall});
 
-function AuthenticatedView({dimensions, width}:{dimensions: {
+function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimensions: {
   window: ScaledSize,
   screen: ScaledSize
-}, width: number}) {
+}, width: number, currentBreakPointMode: breakPointMode}) {
   const { instance, accounts } = useMsal();
-  const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: dimensions, currentBreakPointMode: breakPointMode.xSmall})
+  const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: dimensions, currentBreakPointMode: currentBreakPointMode})
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
 
   async function getUserProfile(microsoftAccessToken: string) {
@@ -107,7 +107,7 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
           newDimentions.window.width = width * 0.9
         }
         console.log("Out Dimentions", newDimentions.window.width, dimensions.window.width)
-        setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: microsoftAccessToken, dimensions: newDimentions, currentBreakPointMode: breakPointMode.xSmall})
+        setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: microsoftAccessToken, dimensions: newDimentions, currentBreakPointMode: currentBreakPointMode})
       }
     }
   }
@@ -155,27 +155,11 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
     newContext.dimensions.window.height = dimensions.window.height 
     newContext.dimensions.window.scale = dimensions.window.scale
     newContext.dimensions.window.fontScale = dimensions.window.fontScale
-    if (width >= 1200) {
-      //extraLarge ≥1200px
-      newContext.currentBreakPointMode = breakPointMode.xLarge
-    } else if (width >= 992) {
-      //large, ≥992px
-      newContext.currentBreakPointMode = breakPointMode.large
-    } else if (width >= 768) {
-      //medium, ≥768px
-      newContext.currentBreakPointMode = breakPointMode.medium
-    } else if (width >= 576) {
-      //small, ≥576px
-      newContext.currentBreakPointMode = breakPointMode.small
-    } else if (width < 576) {
-      //xSmall,	<576px
-      newContext.currentBreakPointMode = breakPointMode.xSmall
-    }
+    newContext.currentBreakPointMode = currentBreakPointMode
     setContext(newContext)
-  }, [dimensions])
+  }, [dimensions, currentBreakPointMode])
 
   useEffect(() => {
-    console.log("Ran")
     var newContext = {...context}
     if (width >= 576){
       if (expandedMode){
@@ -254,6 +238,8 @@ function App() {
     screen: screenDimensions,
   });
 
+  const [currentBreakPointMode, setCurerentBreakPointMode] = useState<breakPointMode>(breakPointMode.xSmall)
+
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
       'change',
@@ -265,14 +251,32 @@ function App() {
     return () => subscription?.remove();
   });
 
-  useEffect(() => {console.log("Main Dimentions", dimensions.window.width, "90%", dimensions.window.width * 0.9)}, [dimensions.window.width])
+  useEffect(() => {
+    console.log("Main Chnaged", dimensions.window.width)
+    if (dimensions.window.width >= 1200) {
+      //extraLarge ≥1200px
+      setCurerentBreakPointMode(breakPointMode.xLarge)
+    } else if (dimensions.window.width  >= 992) {
+      //large, ≥992px
+      setCurerentBreakPointMode(breakPointMode.large)
+    } else if (dimensions.window.width  >= 768) {
+      //medium, ≥768px
+      setCurerentBreakPointMode(breakPointMode.medium)
+    } else if (dimensions.window.width  >= 576) {
+      //small, ≥576px
+      setCurerentBreakPointMode(breakPointMode.small)
+    } else if (dimensions.window.width  < 576) {
+      //xSmall,	<576px
+      setCurerentBreakPointMode(breakPointMode.xSmall)
+    }
+  }, [dimensions.window.width])
 
   return (
     <Provider store={store}>
       <SafeAreaView>
         <MsalProvider instance={msalInstance}>
           <AuthenticatedTemplate>
-            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width}/>
+            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode}/>
           </AuthenticatedTemplate>
           <UnauthenticatedTemplate>
             <Login />

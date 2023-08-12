@@ -6,12 +6,6 @@ import callMsGraph from '../../../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import SelectTimetable from '../../../../Calendar/SelectTimetable';
 
-enum loadingStateEnum {
-  loading,
-  success,
-  failed
-}
-
 export default function GovernmentTimetable() {
 
   return (
