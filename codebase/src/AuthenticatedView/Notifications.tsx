@@ -1,31 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, Dimensions } from 'react-native'
-import NavBarComponent from '../UI/NavComponent';
-
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
+import { accessTokenContent } from '../../App';
+import { getSchoolDayOnSelectedDay } from '../Functions/calendarFunctionsGraph';
+import { useMsal } from '@azure/msal-react';
 
 export default function Notifications() {
-  const [dimensions, setDimensions] = useState({
-      window: windowDimensions,
-      screen: screenDimensions,
-  });
-
+  const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   useEffect(() => {
-      const subscription = Dimensions.addEventListener(
-        'change',
-        ({window, screen}) => {
-          setDimensions({window, screen});
-        },
-      );
-      return () => subscription?.remove();
-  });
-
+    getSchoolDayOnSelectedDay(microsoftAccessToken.accessToken, new Date(), instance, accounts)
+  }, [])
   return (
     <View>
       <Text>Notifications</Text>
       <View>
-        
+        <Text></Text>
       </View>
     </View>
   )

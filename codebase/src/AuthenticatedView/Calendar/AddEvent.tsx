@@ -27,7 +27,7 @@ enum reocurringType {
 }
 
 interface schoolDayDataInteface {
-  schoolDay: string
+  schoolDay: schoolDayType
   schedule: scheduleType
 }
 
@@ -78,7 +78,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
         newEndDate.setDate(startDate.getDate() + 1)
         data["end"]["dateTime"] = newEndDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         data["isAllDay"] = true
-        data["subject"] = selectedSchoolDayData.schoolDay + " " + selectedSchoolDayData.schedule.properName
+        data["subject"] = selectedSchoolDayData.schoolDay.name + " " + selectedSchoolDayData.schedule.properName
       } else if (allDay) {
         data["start"]["dateTime"] = startDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         data["end"]["dateTime"] = endDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
@@ -270,6 +270,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
             </View>
             { isSchoolDay ?
               <View style={{width: 100, height: 100}}>
+                <Text>Selected School Year:</Text>
                 { (selectedSchoolYear === undefined) ?
                   <SchoolYearsSelect width={100} height={100} onSelect={(e) => {setSelectedSchoolYear(e)}}/>:
                   <SchoolDaySelect width={100} height={100} timetableId={selectedSchoolYear.schoolYearData} onSelect={(day, schedule) => {setSelectedSchoolDayData({schoolDay: day, schedule: schedule})}}/>
@@ -302,14 +303,14 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
     )
 }
 
-function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: string, selectedSchedule: scheduleType) => void}) {
+function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: schoolDayType, selectedSchedule: scheduleType) => void}) {
   const { instance, accounts } = useMsal();
   const microsoftAccessToken = useContext(accessTokenContent);
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const [schoolDays, setSchoolDays] =  useState<string[]>([])
+  const [schoolDays, setSchoolDays] =  useState<schoolDayType[]>([])
   const [schedules, setSchedules] = useState<scheduleType[]>([])
   const [isPickingSchoolDay, setIsPickingSchoolDay] = useState<boolean>(true)
-  const [selectedSchoolDay, setSelectedSchoolDay] = useState<string | undefined>(undefined)
+  const [selectedSchoolDay, setSelectedSchoolDay] = useState<schoolDayType | undefined>(undefined)
   async function loadData() {
     const result = await getTimetable(microsoftAccessToken.accessToken, timetableId, instance, accounts)
     if (result.result === loadingStateEnum.success && result.timetable !== undefined) {
@@ -335,7 +336,7 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
                   {schoolDays.map((day) => (
                     <Pressable onPress={() => {setIsPickingSchoolDay(false); setSelectedSchoolDay(day)}}>
                       <View>
-                        <Text>{day}</Text>
+                        <Text>{day.name}</Text>
                       </View>
                     </Pressable>
                   ))}

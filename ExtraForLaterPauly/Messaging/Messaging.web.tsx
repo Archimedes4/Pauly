@@ -1,13 +1,13 @@
 import { View, Text, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Button, Pressable, ScrollView, TextInput, TextInputKeyPressEventData, Image } from 'react-native'
 import React, { useEffect, useRef, useState, useContext } from 'react'
 import { Link } from 'react-router-native'
-import NavBarComponent from '../../UI/NavComponent';
-import { accessTokenContent } from '../../../App';
-import callMsGraph from '../../Functions/microsoftAssets';
+import NavBarComponent from '../src/UI/NavComponent';
+import { accessTokenContent } from '../App';
+import callMsGraph from '../src/Functions/microsoftAssets';
 import SendMessageComponent from './SendMessageComponent';
-import SanatizeHTML from '../../UI/SanatizeHTML/SanatizeHTML.web';
+import SanatizeHTML from '../src/UI/SanatizeHTML/SanatizeHTML.web';
 import { create } from 'react-test-renderer';
-import create_UUID from '../../Functions/CreateUUID';
+import create_UUID from '../src/Functions/CreateUUID';
 
 declare global {
   type ChatMessageMode = "oneOnOne" | "group"

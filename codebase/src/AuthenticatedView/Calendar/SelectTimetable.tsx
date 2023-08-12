@@ -20,7 +20,7 @@ declare global {
       name: string,
       id: string,
       schedules: scheduleType[],
-      days: string[]
+      days: schoolDayType[]
     }
 }  
 

@@ -3,6 +3,7 @@ import { orgWideGroupID, siteID } from "../PaulyConfig";
 import callMsGraph from "./microsoftAssets";
 import { loadingStateEnum } from "../types";
 import store from "../Redux/store";
+import { Data } from "@react-google-maps/api";
 
 //Defaults to org wide events
 export async function getGraphEvents(accessToken: string, schoolYear: boolean, instance: IPublicClientApplication, accounts: AccountInfo[], url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
@@ -112,6 +113,27 @@ export async function getTimetable(accessToken: string, timetableId: string, ins
   } else {
     const data = await result.json()
     console.log(data)
+    return {result: loadingStateEnum.failed}
+  }
+}
+
+export async function getSchoolDayOnSelectedDay(accessToken: string, selectedDate: Date, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{ result: loadingStateEnum; event?: eventType; }> {
+  const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+  const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1)
+  console.log(startDate, endDate)
+  console.log(startDate.toISOString(), endDate.toISOString())
+  //?$filter=start/dateTime%20ge%20'" + startDate.toISOString() + "'%20and%20end/dateTime%20lt%20'" + endDate.toISOString() + "'"
+  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", instance, accounts)
+  if (result.ok) {
+    const data = await result.json()
+    console.log("Org Data", data)
+    for(var index = 0; index < data["value"].length; index++){
+      if (result["value"]["index"][index]) {
+
+      }
+    }
+    return {result: loadingStateEnum.success}
+  } else {
     return {result: loadingStateEnum.failed}
   }
 }

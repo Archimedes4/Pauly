@@ -203,7 +203,9 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
           const endTimeDate = new Date(event.endTime.getFullYear(), event.endTime.getMonth(), event.endTime.getDate())
           if (check >= startTimeDate && check <= endTimeDate) {
             //Event is on the date
-            events.push(event)
+            if (check.getTime() !== event.endTime.getTime()) {
+              events.push(event)
+            }
           }
         }
         monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID(), events: events})
@@ -276,7 +278,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
               <View key={"Row_"+valueRow+"_"+create_UUID()} style={{flexDirection: "row"}}>
                 { monthData.map((value, id) => (
                   <View key={value.id}>
-                    { (id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
+                    {(id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
                       <View>
                         { value.showing ?
                           <Pressable onPress={() => {

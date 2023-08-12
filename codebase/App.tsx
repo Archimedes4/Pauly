@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux'
 import HomePage from './src/AuthenticatedView/HomePage';
-import Commissions from './src/AuthenticatedView/Profile/Commissions/Commissions';
+import Commissions from './src/AuthenticatedView/Commissions/Commissions';
 import { NativeRouter, Route, Routes } from 'react-router-native';
 import { msalConfig } from './src/authConfig.js';
 import { PublicClientApplication } from '@azure/msal-browser';
@@ -32,8 +32,8 @@ import MicrosoftGraphOverview from './src/AuthenticatedView/Profile/Government/M
 import MicrosoftGraphCreateList from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphCreateList';
 import GovernmentCommissions from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentCommissions';
 import CreateNewCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/CreateNewCommission';
-import Messaging from './src/AuthenticatedView/Messaging/Messaging.web';
-import QuizView from './src/AuthenticatedView/Quiz/Quiz';
+import Messaging from '../ExtraForLaterPauly/Messaging/Messaging.web';
+import QuizView from '../ExtraForLaterPauly/Quiz/Quiz';
 import Sports from './src/AuthenticatedView/Sports/Sports.web';
 import Calendar from './src/AuthenticatedView/Calendar/Calendar';
 import GovernmentSports from './src/AuthenticatedView/Profile/Government/GovernmentSports/GovernmentSports';
@@ -52,7 +52,7 @@ import GovernmentScheduleEdit from './src/AuthenticatedView/Profile/Government/G
 import GovernmentClasses from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClasses';
 import GovernmentClassesCreateRoot from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesCreateRoot';
 import GovernmentClassesCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesCreate';
-import CommissionsView from './src/AuthenticatedView/Profile/Commissions/CommissionsView';
+import CommissionsView from './src/AuthenticatedView/Commissions/CommissionsView';
 import GovernmentHomePage from './src/AuthenticatedView/Profile/Government/GovernmentHomePage';
 import GovernmentEvents from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentEvents/GovernmentEvents';
 import callMsGraph from './src/Functions/microsoftAssets';

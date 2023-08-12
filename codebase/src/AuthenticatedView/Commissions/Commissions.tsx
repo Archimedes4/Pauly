@@ -2,10 +2,10 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button, Dimensions, Platform, Text, View } from 'react-native'
 import Geolocation from '@react-native-community/geolocation';
 import { Link } from 'react-router-native';
-import callMsGraph from '../../../Functions/microsoftAssets';
-import { accessTokenContent } from '../../../../App';
-import NavBarComponent from '../../../UI/NavComponent';
-import { siteID } from '../../../PaulyConfig';
+import callMsGraph from '../../Functions/microsoftAssets';
+import { accessTokenContent } from '../../../App';
+import NavBarComponent from '../../UI/NavComponent';
+import { siteID } from '../../PaulyConfig';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useMsal } from '@azure/msal-react';
