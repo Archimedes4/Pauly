@@ -5,12 +5,9 @@ import { siteID } from '../../PaulyConfig';
 import callMsGraph from '../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
-
-enum loadingStateEnum {
-  loading,
-  success,
-  failed
-}
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/store';
+import { loadingStateEnum } from '../../types';
 
 declare global {
     type timetableStringType = {
@@ -30,10 +27,11 @@ declare global {
 export default function SelectTimetable({governmentMode, onSelect}:{governmentMode: boolean, onSelect?: (item: timetableStringType) => void}) {
   const microsoftAccessToken = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
+  const {timetablesListId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedTimetables, setLoadedTimetables] = useState<timetableStringType[]>([])
   async function getTimetables() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + "72367e66-6d0f-4beb-8b91-bb6e9be9b433" + "/items?expand=fields", instance, accounts)
+    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + timetablesListId+ "/items?expand=fields", instance, accounts)
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
