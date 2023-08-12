@@ -30,14 +30,16 @@ export default function GovernmentSchedule() {
     const [newPeriodMinuteStart, setNewPeriodMinuteStart] = useState<number>(0)
     const [newPeriodHourEnd, setNewPeriodHourEnd] = useState<number>(12)
     const [newPeriodMinuteEnd, setNewPeriodMinuteEnd] = useState<number>(0)
-    const [scheduleName, setScheduleName] = useState<string>("")
+    const [scheduleProperName, setScheduleProperName] = useState<string>("")
+    const [scheduleDescriptiveName, setScheduleDescriptiveName] = useState<string>("")
     const [newPeriods, setNewPeriods] = useState<periodType[]>([])
     async function submitSchedule() {
         const data = {
             "fields": {
-                "Title":scheduleName,
+                "Title":scheduleDescriptiveName,
                 "scheduleId":create_UUID(),
-                "name":scheduleName,
+                "scheduleProperName":scheduleProperName,
+                "scheduleDescriptiveName":scheduleDescriptiveName,
                 "scheduleData":JSON.stringify(newPeriods)
             }
         }
@@ -52,8 +54,15 @@ export default function GovernmentSchedule() {
             <Link to="/profile/government/calendar">
                 <Text>Back</Text>
             </Link>
-            <Text>Government Schedule</Text>
-            <TextInput value={scheduleName} onChangeText={setScheduleName}/>
+            <Text>Create Schedule</Text>
+            <View style={{flexDirection: "row"}}>
+                <Text>Proper Name:</Text>
+                <TextInput value={scheduleProperName} onChangeText={setScheduleProperName}/>
+            </View>
+            <View style={{flexDirection: "row"}}>
+                <Text>Descriptive Name:</Text>
+                <TextInput value={scheduleDescriptiveName} onChangeText={setScheduleDescriptiveName}/>
+            </View>
             {newPeriods.map((period) => (
                 <PeriodBlock period={period} newPeriods={newPeriods} onSetNewPeriods={(out) => {
                     console.log("This is out", out)

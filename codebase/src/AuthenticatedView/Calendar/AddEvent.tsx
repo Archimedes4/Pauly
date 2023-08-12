@@ -35,7 +35,7 @@ interface schoolDayDataInteface {
   schedule: scheduleType
 }
 
-export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number}) {
+export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
     const microsoftAccessToken = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
     const fullStore = useSelector((state: RootState) => state)
@@ -263,8 +263,16 @@ export default function AddEvent({setIsShowingAddDate, width, height}:{setIsShow
               setIsShowingAddDate(false); 
               createEvent()
             }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
-              <Text style={{zIndex: -1}}>Create</Text>
+              <Text style={{zIndex: -1}}>{editing ? "Save":"Create"}</Text>
             </Pressable>
+            { editing ? 
+              <Pressable onPress={() => {
+                setIsShowingAddDate(false); 
+                createEvent()
+              }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
+                <Text style={{zIndex: -1}}>Delete</Text>
+              </Pressable>:null
+            }
           </View>
         }
       </View>

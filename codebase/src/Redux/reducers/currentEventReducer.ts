@@ -18,7 +18,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initalCalendarState: string[] = []
 
-export const calendarEventsSlice = createSlice({
+export const currentEventsSlice = createSlice({
     name: "currentEvents",
     initialState: initalCalendarState,
     reducers: {
@@ -29,7 +29,7 @@ export const calendarEventsSlice = createSlice({
 })
 
 
-export default calendarEventsSlice.reducer
+export default currentEventsSlice.reducer
 
 
 // import { createSlice } from '@reduxjs/toolkit'

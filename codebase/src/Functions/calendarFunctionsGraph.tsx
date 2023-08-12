@@ -15,7 +15,9 @@ export async function getGraphEvents(accessToken: string, schoolYear: boolean, i
     const data = await result.json()
     console.log(data)
     var newEvents: eventType[] = []
+    console.log("Value", data["value"].length)
     for(var index = 0; index < data["value"].length; index++) {
+      console.log("Loop")
       if (schoolYear) {
         //TO DO update extention value
         if (data["value"][index]["ext9u07b055_paulyEvents"] !== undefined) {
@@ -31,19 +33,22 @@ export async function getGraphEvents(accessToken: string, schoolYear: boolean, i
           }
         }
       } else {
-        newEvents.push({
+        console.log("Loop Here")
+        const newEvent = {
           id: data["value"][index]["id"],
           name: data["value"][index]["subject"],
           startTime: new Date(data["value"][index]["start"]["dateTime"]),
           endTime: new Date(data["value"][index]["end"]["dateTime"]),
           eventColor: "white"
-        })
+        }
+        console.log("Pusshing", newEvent)
+        newEvents.push(newEvent)
+
       }
     }
+    console.log("Bedfore", newEvents)
     return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
   } else {
-    const data = await result.json()
-    console.log(data)
     return {result: loadingStateEnum.failed}
   }
 }

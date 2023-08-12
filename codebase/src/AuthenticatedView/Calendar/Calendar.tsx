@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../Functions/microsoftAssets';
 import { accessTokenContent } from '../../../App';
-import { findFirstDayinMonth } from '../../Functions/calendarFunctions';
+import { findFirstDayinMonth, getEventFromJSON } from '../../Functions/calendarFunctions';
 import { getGraphEvents } from '../../Functions/calendarFunctionsGraph';
 import create_UUID from '../../Functions/CreateUUID';
 import DayView from "./DayView"
@@ -17,6 +17,7 @@ import { AddIcon, ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
+import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
 import { useMsal } from '@azure/msal-react';
 
 const windowDimensions = Dimensions.get('window');
@@ -50,6 +51,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
   const { instance, accounts } = useMsal();
   const [selectedCalendarMode, setSelectedCalendarMode] = useState<calendarMode>(calendarMode.month)
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
   const fullStore = useSelector((state: RootState) => state)
   const dispatch = useDispatch()
   
@@ -62,13 +64,6 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
-
-  async function getPersonalCalendar(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/calendars", instance, accounts, "GET", true)
-    console.log(result)
-    const data = await result.json()
-    console.log(data)
-  }
 
   async function getEvents() {
     const selectedDate = new Date(JSON.parse(fullStore.selectedDate))
@@ -83,7 +78,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
       var url: string = (personalCalendarResult.nextLink !== undefined) ? personalCalendarResult.nextLink:""
       var notFound: boolean = (personalCalendarResult.nextLink !== undefined) ? true:false
       while (notFound) {
-        const furtherResult = await getGraphEvents(microsoftAccessToken.accessToken, true, instance, accounts, url)
+        const furtherResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, url)
         if (furtherResult.result === loadingStateEnum.success) {
           outputEvents = [...outputEvents, ...furtherResult.events]
           url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
@@ -94,7 +89,30 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
       }
     }
     //OrgWideEvents
-    const orgEventsResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start" + startDate.toISOString() + "&endDateTime=" + endDate.toISOString())
+    const orgEventsResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20ge%20'" + startDate.toISOString() + "'%20and%20end/dateTime%20le%20'" + endDate.toISOString() + "'")
+    if (orgEventsResult.result === loadingStateEnum.success) {
+      outputEvents = [...outputEvents, ...orgEventsResult.events]
+      //This code is pulled from add events School Years Select
+      var url: string = (orgEventsResult.nextLink !== undefined) ? orgEventsResult.nextLink:""
+      var notFound: boolean = (orgEventsResult.nextLink !== undefined) ? true:false
+      while (notFound) {
+        console.log("Running Again")
+        const furtherResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, url)
+        console.log(furtherResult)
+        if (furtherResult.result === loadingStateEnum.success) {
+          outputEvents = [...outputEvents, ...furtherResult.events]
+          url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
+          notFound = (furtherResult.nextLink !== undefined) ? true:false
+        } else {
+          notFound = false
+        }
+      }
+    }
+    var outputEventsString: string[] = []
+    for (var index = 0; index < outputEvents.length; index++) {
+      outputEventsString.push(JSON.stringify(outputEvents[index]))
+    }
+    dispatch(currentEventsSlice.actions.setCurrentEvents(outputEventsString))
   }
 
   useEffect(() => {
@@ -129,7 +147,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
       </View> 
       <View style={{height: microsoftAccessToken.dimensions.window.height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
-        <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} setAddDate={setIsShowingAddDate} />: null
+        <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing}/>: null
       }
       { (selectedCalendarMode === calendarMode.week) ?
         <Week width={microsoftAccessToken.dimensions.window.width * 1.0} height={microsoftAccessToken.dimensions.window.height * 0.9} />:null
@@ -140,14 +158,14 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
       </View>
       { isShowingAddDate ?
         <View style={{zIndex: 2, position: "absolute", left: microsoftAccessToken.dimensions.window.width * 0.2, top: microsoftAccessToken.dimensions.window.height * 0.1}}>
-          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={microsoftAccessToken.dimensions.window.width * 0.6} height={microsoftAccessToken.dimensions.window.height * 0.8} />
+          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={microsoftAccessToken.dimensions.window.width * 0.6} height={microsoftAccessToken.dimensions.window.height * 0.8} editing={isEditing} />
         </View>:null
       }
     </View>
   )
 }
 
-function MonthViewMain({width, height, setAddDate}:{width: number, height: number, setAddDate: (addDate: boolean) => void}) {
+function MonthViewMain({width, height, setAddDate, setIsEditing}:{width: number, height: number, setAddDate: (addDate: boolean) => void, setIsEditing: (isEditing: boolean) => void}) {
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
   const fullStore = useSelector((state: RootState) => state)
@@ -170,7 +188,18 @@ function MonthViewMain({width, height, setAddDate}:{width: number, height: numbe
     for (let index = 0; index < 42; index++) {
       if (index >= firstDayWeek && (index - firstDayWeek) < (lastDay.getDate())){
         //In the current month
-        monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID(), events: []})
+        var events: eventType[] = []
+        const check: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1))
+        for (var indexEvent = 0; indexEvent < fullStore.currentEvents.length; indexEvent++) {
+          const event: eventType = getEventFromJSON(fullStore.currentEvents[indexEvent])
+          const startTimeDate = new Date(event.startTime.getFullYear(), event.startTime.getMonth(), event.startTime.getDate())
+          const endTimeDate = new Date(event.endTime.getFullYear(), event.endTime.getMonth(), event.endTime.getDate())
+          if (check >= startTimeDate && check <= endTimeDate) {
+            //Event is on the date
+            events.push(event)
+          }
+        }
+        monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID(), events: events})
       } else {
         monthDataResult.push({showing: false, dayData: 0, id: create_UUID(), events: []})
       }
@@ -180,7 +209,7 @@ function MonthViewMain({width, height, setAddDate}:{width: number, height: numbe
 
   useEffect(() => {
     getMonthData(new Date(JSON.parse(fullStore.selectedDate)))
-  }, [fullStore.selectedDate])
+  }, [fullStore.selectedDate, fullStore.currentEvents])
 
   if (!fontsLoaded) {
     return null;
@@ -240,7 +269,7 @@ function MonthViewMain({width, height, setAddDate}:{width: number, height: numbe
                         { value.showing ?
                           <Pressable onPress={() => {
                             const d = new Date();
-                            d.setFullYear(JSON.parse(fullStore.selectedDate).getFullYear(), JSON.parse(fullStore.selectedDate).getMonth(), value.dayData);
+                            d.setFullYear(new Date(JSON.parse(fullStore.selectedDate)).getFullYear(), new Date(JSON.parse(fullStore.selectedDate)).getMonth(), value.dayData);
                             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
                           }} key={value.id}>
                             <CalendarCardView width={width/7} height={height/8} value={value}/>
@@ -264,6 +293,13 @@ function CalendarCardView({value, width, height}:{value: monthDataType, width: n
       { (value.showing) ?
         <View style={{width: width, height: height}}>
           <Text style={{color: "black"}}>{value.dayData}</Text>
+          <View style={{width: width, height: height * 0.8, overflow: "scroll"}}>
+            {value.events.map((event) => (
+              <View>
+                <Text>{event.name}</Text>
+              </View>
+            ))}
+          </View>
         </View>:<View style={{width: width, height: height}}></View>
       }
     </View>

@@ -57,6 +57,9 @@ export default function Government() {
       <Link to="/profile/government/classes">
         <Block width={100} height={100} text="Classes" />
       </Link>
+      <Link to="/profile/government/admin">
+        <Block width={100} height={100} text="Admin" />
+      </Link>
     </View>
   )
 }

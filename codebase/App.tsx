@@ -61,6 +61,7 @@ import GovernmentTimetableCreate from './src/AuthenticatedView/Profile/Governmen
 import Testing from './src/AuthenticatedView/Profile/Government/Testing';
 import store from './src/Redux/store';
 import PageNotFound from './src/AuthenticatedView/404Page';
+import GovernmentAdmin from './src/AuthenticatedView/Profile/Government/GovernmentAdminCenter/GovernmentAdmin';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -204,6 +205,7 @@ function AuthenticatedView({dimensions, width}:{dimensions: {
                   <Route path="/profile/commissions/:id" element={<CommissionsView/>}/>
                   <Route path="/profile/settings" element={<Settings/>}/>
                   <Route path="/profile/government" element={<Government />}/>
+                  <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
                   <Route path="/profile/government/graph" element={<MicrosoftGraphOverview/>}/>
                   <Route path="/profile/government/graph/create" element={<MicrosoftGraphCreateList/>}/>
                   <Route path="/profile/government/graph/edit/:listId" element={<MicrosoftGraphEditList />} />

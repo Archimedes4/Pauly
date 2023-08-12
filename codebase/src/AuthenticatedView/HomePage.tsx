@@ -7,6 +7,7 @@ import { loginRequest } from '../authConfig';
 import callMsGraph from '../Functions/microsoftAssets';
 import { accessTokenContent } from '../../App';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
+import { siteID } from '../PaulyConfig';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -42,7 +43,7 @@ export default function HomePage() {
     });
 
     async function getCurrentTextAndAnimationSpeed() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1/fields")//TO DO fix list ids
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1/fields", instance, accounts)//TO DO fix list ids
         if (result.ok){
             const data: Record<string, any> = await result.json()
             console.log(data)
@@ -65,7 +66,7 @@ export default function HomePage() {
     }, [microsoftAccessToken])
 
     async function getUser(){
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/")
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/", instance, accounts)
         console.log(result)
     }
     useEffect(() => {
