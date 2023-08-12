@@ -13,10 +13,36 @@ Commissions are organized into documents that are named with there commission id
 4. Points (what the commission is worth)
 5. Selected Page (which page is shown)
 6. Value (the type of commission it is)
-      1. This is a test
+      1. Approved by issuer
+      2. Location
+      3. Image
+      4. Image and Location
+      5. QR Code
+
 
 ## Setup
 Pauly has a config file named PaulyConfig which contains threee values 
       1. Site Id
       2. Org Id (This is the value of the teams site which will be used for the calendar)
       3. Site List Id (This value can be found by pauly and doesn't need to be set)
+
+### extentions
+Extensions
+{
+    "id": "paulyEvents",
+    "description": "Pauly Event Data",
+    "targetTypes": [
+        "Event"
+    ],
+    "owner": "08624b03-1aa6-40c4-8fb3-149c39026dff", <- application id
+    "properties": [
+        {
+            "name": "eventType",
+            "type": "String"
+        },
+        {
+            "name": "eventData",
+            "type": "String"
+        }
+    ]
+}
