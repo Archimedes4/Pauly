@@ -4,6 +4,7 @@ import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../App'
 import { siteID } from '../../../../PaulyConfig'
+import { useMsal } from '@azure/msal-react'
 
 declare global {
     type mediaSubmissionType = {
@@ -18,9 +19,10 @@ declare global {
 
 export default function GovernmentHandleFileSubmissions() {
     const microsoftAccessToken = useContext(accessTokenContent);
+    const { instance, accounts } = useMsal();
     const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([])
     async function getSubmissions() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/bf26e642-f655-47db-a037-188189b0d378/items?expand=fields")//TO DO fix id
+        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/bf26e642-f655-47db-a037-188189b0d378/items?expand=fields", instance, accounts)//TO DO fix id
         if (result.ok){
             const data = await result.json()
             console.log(data)

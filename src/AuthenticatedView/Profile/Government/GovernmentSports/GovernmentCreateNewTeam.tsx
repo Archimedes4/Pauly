@@ -7,33 +7,22 @@ import callMsGraph from '../../../../Functions/microsoftAssets';
 import create_UUID from '../../../../Functions/CreateUUID';
 import { accessTokenContent } from '../../../../../App';
 import { siteID } from '../../../../PaulyConfig';
-
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
+import { useMsal } from '@azure/msal-react';
+import { loadingStateEnum } from '../../../../types';
 
 export default function GovernmentCreateNewTeam() {
-  const [dimensions, setDimensions] = useState({
-    window: windowDimensions,
-    screen: screenDimensions,
-  });
+  const microsoftAccessToken = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
+  const { sport, id } = useParams()
 
-  useEffect(() => {
-      const subscription = Dimensions.addEventListener(
-        'change',
-        ({window, screen}) => {
-          setDimensions({window, screen});
-        },
-      );
-      return () => subscription?.remove();
-  });
+  const [createTeamLoadingState, setCreateTeamLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+
+  //New Team Data
   const [teamName, setTeamName] = useState<string>("")
   const [season, setSeason] = useState<number>(new Date().getFullYear())
-  const { sport, id } = useParams()
-  useEffect(() => {
-    console.log(id)
-  }, [])
-  const microsoftAccessToken = useContext(accessTokenContent);
+
   async function createTeam() {
+    setCreateTeamLoadingState(loadingStateEnum.loading)
     const newTeamRosterID: string = create_UUID()
     const listData = {
       "displayName":newTeamRosterID,
@@ -58,11 +47,19 @@ export default function GovernmentCreateNewTeam() {
         teamID: newTeamRosterID
       }
     }
-    const resultList = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists" , "POST", JSON.stringify(listData))
-    const result= await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/" + id + "/items", "POST", JSON.stringify(data))//TO DO fix id
-    console.log(resultList)
-    console.log(result)
+    const resultList = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists", instance, accounts, "POST", false, JSON.stringify(listData))
+    if (resultList.ok){
+      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/" + id + "/items", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix id (this isn't really important because it will work anyway it might be better to call for the id though)
+      if (result.ok){
+        setCreateTeamLoadingState(loadingStateEnum.success)
+      } else {
+        setCreateTeamLoadingState(loadingStateEnum.failed)
+      }
+    } else {
+      setCreateTeamLoadingState(loadingStateEnum.failed)
+    }
   }
+
   return (
     <View>
       <Link to={"/profile/government/sports/team/" + sport + "/" + id}>
@@ -73,6 +70,7 @@ export default function GovernmentCreateNewTeam() {
       <TextInput
         value={teamName}
         onChangeText={text => setTeamName(text)}
+        placeholder='Team Name'
       />
       <Text>Season</Text>
       <Text>{convertYearToSchoolYear(season)}</Text>
@@ -88,7 +86,7 @@ export default function GovernmentCreateNewTeam() {
         value={season.toString()}
         maxLength={10}  //setting limit of input
       />
-      <Button title="create team" onPress={() => {createTeam()}}/>
+      <Button title={(createTeamLoadingState === loadingStateEnum.notStarted) ? "CREATE TEAM":(createTeamLoadingState === loadingStateEnum.loading) ? "LOADING":(createTeamLoadingState === loadingStateEnum.success) ? "SUCCESS":"FAILED"} onPress={() => {if (createTeamLoadingState === loadingStateEnum.notStarted) {createTeam()} else if (createTeamLoadingState === loadingStateEnum.failed) {setCreateTeamLoadingState(loadingStateEnum.notStarted)}}}/>
     </View>
   )
 }

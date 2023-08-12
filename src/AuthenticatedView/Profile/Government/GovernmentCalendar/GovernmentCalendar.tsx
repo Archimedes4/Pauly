@@ -15,9 +15,6 @@ export default function GovernmentCalendar() {
       <Link to="/profile/government/calendar/timetable">
         <Text>Timetables</Text>
       </Link>
-      <Link to="/profile/government/calendar/events">
-        <Text>Events</Text>
-      </Link>
     </View>
   )
 }

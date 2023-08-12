@@ -32,8 +32,6 @@ import MicrosoftGraphOverview from './src/AuthenticatedView/Profile/Government/M
 import MicrosoftGraphCreateList from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphCreateList';
 import GovernmentCommissions from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentCommissions';
 import CreateNewCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/CreateNewCommission';
-import Messaging from '../ExtraForLaterPauly/Messaging/Messaging.web';
-import QuizView from '../ExtraForLaterPauly/Quiz/Quiz';
 import Sports from './src/AuthenticatedView/Sports/Sports.web';
 import Calendar from './src/AuthenticatedView/Calendar/Calendar';
 import GovernmentSports from './src/AuthenticatedView/Profile/Government/GovernmentSports/GovernmentSports';
@@ -54,7 +52,6 @@ import GovernmentClassesCreateRoot from './src/AuthenticatedView/Profile/Governm
 import GovernmentClassesCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesCreate';
 import CommissionsView from './src/AuthenticatedView/Commissions/CommissionsView';
 import GovernmentHomePage from './src/AuthenticatedView/Profile/Government/GovernmentHomePage';
-import GovernmentEvents from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentEvents/GovernmentEvents';
 import callMsGraph from './src/Functions/microsoftAssets';
 import NavBarComponent from './src/UI/NavComponent';
 import GovernmentTimetableCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableCreate';
@@ -63,6 +60,7 @@ import store from './src/Redux/store';
 import PageNotFound from './src/AuthenticatedView/404Page';
 import GovernmentAdmin from './src/AuthenticatedView/Profile/Government/GovernmentAdminCenter/GovernmentAdmin';
 import getPaulyLists from './src/Functions/getPaulyLists';
+import GovernmentTimetableEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -181,14 +179,13 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
               <View style={{width: context.dimensions.window.width}}>
                 <Routes>
                   <Route path="/" element={<HomePage/>}/>
-                  <Route path="/quiz" element={<QuizView/>}/>
                   <Route path="/sports" element={<Sports/>}/>
                   <Route path="/notifications" element={<Notifications/>}/>
                   <Route path="/calendar" element={<Calendar governmentMode={false} />}/>
                   <Route path="/resources" element={<Resources/>}/>
                   <Route path="/commissions" element={<Commissions/>}/>
+                  <Route path="/commissions/:id" element={<CommissionsView/>}/>
                   <Route path="/profile/" element={<Profile/>}/>
-                  <Route path="/profile/commissions/:id" element={<CommissionsView/>}/>
                   <Route path="/profile/settings" element={<Settings/>}/>
                   <Route path="/profile/government" element={<Government />}/>
                   <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
@@ -202,12 +199,11 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
                   <Route path="/profile/government/classes/main/create" element={<GovernmentClassesCreate />} />
                   <Route path="/profile/government/classes/root/create" element={<GovernmentClassesCreateRoot />} />
                   <Route path="/profile/government/calendar" element={<GovernmentCalendar />} />
-                  <Route path="/profile/government/calendar/events" element={<GovernmentEvents isCreatingEvent={false}/>} />
-                  <Route path="/profile/government/calendar/events/create" element={<GovernmentEvents isCreatingEvent={true}/>} />
                   <Route path="/profile/government/calendar/schedule" element={<GovernmentSchedual />} />
                   <Route path="/profile/government/calendar/schedule/create" element={<GovernmentScheduleCreate />} />
                   <Route path="/profile/government/calendar/schedule/edit/:scheduleId" element={<GovernmentScheduleEdit />} />
                   <Route path="/profile/government/calendar/timetable" element={<GovernmentTimetable />} />
+                  <Route path="/profile/government/calendar/timetable/edit/:timetableId" element={<GovernmentTimetableEdit/>} />
                   <Route path="/profile/government/calendar/timetable/create" element={<GovernmentTimetableCreate />} />
                   <Route path="/profile/government/sports" element={<GovernmentSports/>}/>
                   <Route path="/profile/government/sports/create" element={<GovernmentCreateNewSport/>}/>

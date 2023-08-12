@@ -76,7 +76,7 @@ export default function Commissions() {
   }, [])
 
   const [fontsLoaded] = useFonts({
-    'BukhariScript': require('../../../../assets/fonts/BukhariScript.ttf'),
+    'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -98,7 +98,7 @@ export default function Commissions() {
       }
       <Text>Commissions</Text>
       { currentCommissions.map((item: commissionType) => (
-        <Link to={"/profile/commissions/" + item.commissionId}>
+        <Link to={"/commissions/" + item.commissionId}>
           <View key={item.commissionId}>
             <Text>{item.title}</Text>
           </View>
