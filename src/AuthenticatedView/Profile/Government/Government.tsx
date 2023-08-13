@@ -32,7 +32,6 @@ export default function Government() {
   useEffect(() => {
     const fivePercent = pageData.dimensions.window.width * 0.05
     const remainder = pageData.dimensions.window.width * 0.8%(100 + fivePercent)
-    console.log(remainder)
     setMainWidth((pageData.dimensions.window.width * 0.8) - remainder - fivePercent)
   }, [pageData.dimensions.window.width])
   if (!fontsLoaded) {

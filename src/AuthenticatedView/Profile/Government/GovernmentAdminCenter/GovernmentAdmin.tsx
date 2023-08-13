@@ -6,13 +6,16 @@ import { accessTokenContent } from '../../../../../App';
 import { siteID } from '../../../../PaulyConfig';
 import { loadingStateEnum } from '../../../../types';
 import { Link } from 'react-router-native';
+import initilizePauly from '../../../../Functions/initilizePauly';
 
 export default function GovernmentAdmin() {
   const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
   const [initilizePaulyLoadingResult, setInitilizePaulyLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
-  function InitilizePauly() {
+  async function InitilizePauly() {
     setInitilizePaulyLoadingResult(loadingStateEnum.loading)
+    const result = await initilizePauly(pageData.accessToken, instance, accounts)
+    setInitilizePaulyLoadingResult(result)
   }
   return (
     <View>

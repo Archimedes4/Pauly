@@ -17,7 +17,7 @@ function NavBarBlock({des, expandedMode, iconLength, blockLength, children, text
                     </React.Fragment>
                 </View>
                 { expandedMode ? 
-                    <Text style={{position: "absolute", left: blockLength}}>{text}</Text>:null
+                    <Text style={{position: "absolute", left: blockLength, color: "white"}}>{text}</Text>:null
                 }
             </View>
         </Link>

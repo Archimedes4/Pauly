@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput } from 'react-native'
+import { View, Text, Pressable, TextInput, Button } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { accessTokenContent } from '../../../../App';
 import callMsGraph from '../../../Functions/microsoftAssets';
@@ -24,9 +24,10 @@ export default function GovernmentHomePage() {
     const [newAnimationSpeed, setNewAnnimationSpeed] = useState(0)
     const [selectedPowerpoint, setSelectedPowerpoint] = useState<microsoftFileType | undefined>(undefined)
 
-    async function loadCurrentPaultDay() {
+    async function loadCurrentPaultData() {
         const result = await getCurrentPaulyData(pageData.accessToken, instance, accounts)
         if (result.result === loadingStateEnum.success && result.data !== undefined) {
+            console.log("This went well", result)
             setNewAnnimationSpeed(result.data.animationSpeed)
             setNewMessageText(result.data.message)
             setLoadContentLoadingState(loadingStateEnum.success)
@@ -46,7 +47,7 @@ export default function GovernmentHomePage() {
         }
     }
     useEffect(() => {
-        loadCurrentPaultDay()
+        loadCurrentPaultData()
     }, [])
 
     return (
@@ -61,9 +62,12 @@ export default function GovernmentHomePage() {
                     <Text>Update Text</Text>
                 </Pressable>
             </View>
-            <Text>Select Powerpoint</Text>
+            <Text>Select Powerpoint: {selectedPowerpoint?.name}</Text>
             <MicrosoftFilePicker height={pageData.dimensions.window.height * 0.6} width={pageData.dimensions.window.width} onSelectedFile={(selectedFile) => {
                 setSelectedPowerpoint(selectedFile)
+            }}/>
+            <Button title='Save Changes' onPress={() => {
+                updatePaulyData("powerpointId", selectedPowerpoint.id)
             }}/>
         </View>
     )

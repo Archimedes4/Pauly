@@ -188,8 +188,8 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
                   <Route path="/profile/government" element={<Government />}/>
                   <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
                   <Route path="/profile/government/graph" element={<MicrosoftGraphOverview/>}/>
-                  <Route path="/profile/government/graph/create" element={<MicrosoftGraphCreateList/>}/>
-                  <Route path="/profile/government/graph/edit/:listId" element={<MicrosoftGraphEditList />} />
+                  <Route path="/profile/government/graph/list/create" element={<MicrosoftGraphCreateList/>}/>
+                  <Route path="/profile/government/graph/list/edit/:listId" element={<MicrosoftGraphEditList />} />
                   <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
                   <Route path="/profile/government/commissions/create" element={<CreateNewCommission/>}/>
                   <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />

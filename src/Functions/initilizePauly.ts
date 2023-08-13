@@ -1,8 +1,9 @@
 import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser"
 import { loadingStateEnum } from "../types"
 import callMsGraph from "./microsoftAssets"
+import { clientId } from "../authConfig"
 
-async function initilizePauly(accessToken: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<loadingStateEnum> {
+export default async function initilizePauly(accessToken: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<loadingStateEnum> {
     const PaulyListData = {
       "displayName": "PaulyList",
       "columns": [
@@ -98,7 +99,7 @@ async function initilizePauly(accessToken: string, instance: IPublicClientApplic
       "displayName": "PaulyData",
       "columns": [
         {
-          "name":"animatedSpeed",
+          "name":"animationSpeed",
           "number":{ },
           "required": true
         },
@@ -257,121 +258,150 @@ async function initilizePauly(accessToken: string, instance: IPublicClientApplic
         "template": "genericList"
       }
     }
-    const createGroupData = {
-      "description": "Pauly's Team Containing all it's data",
-      "displayName": "Pauly",
-      "groupTypes": [
-        "Unified", "DynamicMembership"
-      ],
-      "mailEnabled": true,
-      "mailNickname": "pauly",
-      "visibility":"HiddenMembership",
-      "membershipRule": "(user.accountEnabled -eq true)",
-      "membershipRuleProcessingState": "on",
-      "owners@odata.bind": [
-        "https://graph.microsoft.com/v1.0/users/26be1845-4119-4801-a799-aea79d09f1a2"
-      ],
-      "securityEnabled": false
+
+    //Extentions
+    const paulyEventExtentionPlaceholder = {
+        "id": "paulyEvents",
+        "description": "Pauly Event Data",
+        "targetTypes": [
+            "Event"
+        ],
+        "owner": clientId,
+        "properties": [
+            {
+                "name": "eventType",
+                "type": "String"
+            },
+            {
+                "name": "eventData",
+                "type": "String"
+            }
+        ]
     }
-    const createGroupResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups", instance, accounts, "POST", false, JSON.stringify(createGroupData))
-    if (createGroupResult.ok){
-      const createGroupResultData = await createGroupResult.json()
-      const getRootSiteIdResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + createGroupResultData["id"] + "/sites/root", instance, accounts)
-      if (getRootSiteIdResult.ok){
-        const getRootSiteIdResultData = await getRootSiteIdResult.json()
-        var PaulyListNewData = {"fields":{"Title":"Main"}}
-        const commissionsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(commissionsData))
-        if (commissionsResult.ok) {
-          const commissionsResultData = await commissionsResult.json()
-          PaulyListNewData["fields"]["commissionListId"] = commissionsResultData["id"]
-          const paulyDataResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(paulyDataData))
-          if (paulyDataResult.ok) {
-            const paulyDataResultData = await paulyDataResult.json()
-            PaulyListNewData["fields"]["paulyDataListId"] = paulyDataResultData["id"]
-            const scheduleResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(scheduleData))
-            if (scheduleResult.ok) {
-              const scheduleResultData = await scheduleResult.json()
-              PaulyListNewData["fields"]["scheduleListId"] = scheduleResultData["id"]
-              const sportsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsData))
-              if (sportsResult.ok) {
-                const sportsResultData = await sportsResult.json()
-                PaulyListNewData["fields"]["sportsListId"] = sportsResultData["id"]
-                const sportsApprovedSubmissionsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsApprovedSubmissionsData))
-                if (sportsApprovedSubmissionsResult.ok) {
-                  const sportsApprovedSubmissionsResultData = await sportsApprovedSubmissionsResult.json()
-                  PaulyListNewData["fields"]["sportsApprovedSubmissionsListId"] = sportsApprovedSubmissionsResultData["id"]
-                  const sportsSubmissionsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsSubmissionsData))
-                  if (sportsSubmissionsResult.ok) {
-                    const sportsSubmissionsResultData = await sportsSubmissionsResult.json()
-                    PaulyListNewData["fields"]["sportsSubmissionsListId"] = sportsSubmissionsResultData["id"]
-                    const timetableResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(timetablesData))
-                    if (timetableResult.ok) {
-                      const timetableResultData = await timetableResult.json()
-                      PaulyListNewData["fields"]["timetablesListId"] = timetableResultData["id"]
-                      const paulyListResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(PaulyListData))
-                      if (paulyListResult.ok){
-                        const paulyListResultData = await paulyListResult.json()
-                        const addPaulyListResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/" + paulyListResultData["id"] + "/items", instance, accounts, "POST", false, JSON.stringify(PaulyListNewData))
-                        if (addPaulyListResult.ok){
-                          const paulyDataNewData = {
-                            "fields": {
-                              "Title":"Main",
-                              "animatedSpeed":10,
-                              "message":"Pauly",
-                              "powerpointId":"unset"
+    const currentUsersIdResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/me", instance, accounts, "GET")
+    if (currentUsersIdResult.ok) {
+      const currentUsersIdResultData = await currentUsersIdResult.json()
+      const createGroupData = {
+        "description": "Pauly's Team Containing all it's data",
+        "displayName": "Pauly",
+        "groupTypes": [
+          "Unified", "DynamicMembership"
+        ],
+        "mailEnabled": true,
+        "mailNickname": "pauly",
+        "visibility":"HiddenMembership",
+        "membershipRule": "(user.accountEnabled -eq true)",
+        "membershipRuleProcessingState": "on",
+        "owners@odata.bind": [
+          "https://graph.microsoft.com/v1.0/users/" + currentUsersIdResultData["id"]
+        ],
+        "securityEnabled": false
+      }
+      const createGroupResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups", instance, accounts, "POST", false, JSON.stringify(createGroupData))
+      if (createGroupResult.ok){
+        const createGroupResultData = await createGroupResult.json()
+        console.log(createGroupResultData)
+        const getRootSiteIdResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + createGroupResultData["id"] + "/sites/root", instance, accounts)
+        if (getRootSiteIdResult.ok){
+          const getRootSiteIdResultData = await getRootSiteIdResult.json()
+          const createTeamResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + createGroupResultData["id"] + "/team", instance, accounts, "PUT")
+          const createTeamResultData = await createTeamResult.json()
+          console.log("This < ------ ", createTeamResultData)
+          var PaulyListNewData = {"fields":{"Title":"Main"}}
+          const commissionsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(commissionsData))
+          if (commissionsResult.ok) {
+            const commissionsResultData = await commissionsResult.json()
+            PaulyListNewData["fields"]["commissionListId"] = commissionsResultData["id"]
+            const paulyDataResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(paulyDataData))
+            if (paulyDataResult.ok) {
+              const paulyDataResultData = await paulyDataResult.json()
+              PaulyListNewData["fields"]["paulyDataListId"] = paulyDataResultData["id"]
+              const scheduleResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(scheduleData))
+              if (scheduleResult.ok) {
+                const scheduleResultData = await scheduleResult.json()
+                PaulyListNewData["fields"]["scheduleListId"] = scheduleResultData["id"]
+                const sportsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsData))
+                if (sportsResult.ok) {
+                  const sportsResultData = await sportsResult.json()
+                  PaulyListNewData["fields"]["sportsListId"] = sportsResultData["id"]
+                  const sportsApprovedSubmissionsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsApprovedSubmissionsData))
+                  if (sportsApprovedSubmissionsResult.ok) {
+                    const sportsApprovedSubmissionsResultData = await sportsApprovedSubmissionsResult.json()
+                    PaulyListNewData["fields"]["sportsApprovedSubmissionsListId"] = sportsApprovedSubmissionsResultData["id"]
+                    const sportsSubmissionsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(sportsSubmissionsData))
+                    if (sportsSubmissionsResult.ok) {
+                      const sportsSubmissionsResultData = await sportsSubmissionsResult.json()
+                      PaulyListNewData["fields"]["sportsSubmissionsListId"] = sportsSubmissionsResultData["id"]
+                      const timetableResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(timetablesData))
+                      if (timetableResult.ok) {
+                        const timetableResultData = await timetableResult.json()
+                        PaulyListNewData["fields"]["timetablesListId"] = timetableResultData["id"]
+                        const paulyListResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(PaulyListData))
+                        if (paulyListResult.ok){
+                          const paulyListResultData = await paulyListResult.json()
+                          const addPaulyListResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/" + paulyListResultData["id"] + "/items", instance, accounts, "POST", false, JSON.stringify(PaulyListNewData))
+                          if (addPaulyListResult.ok){
+                            const paulyDataNewData = {
+                              "fields": {
+                                "Title":"Main",
+                                "animatedSpeed":10,
+                                "message":"Pauly",
+                                "powerpointId":"unset"
+                              }
                             }
-                          }
-                          const setPaulyDataNewDataResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/"  +getRootSiteIdResultData["id"] + "/lists/" + paulyDataResultData["id"] + "/items", instance, accounts, "POST", false, JSON.stringify(paulyDataNewData))
-                          if (setPaulyDataNewDataResult.ok) {
-                            return loadingStateEnum.success
-                            console.log("Yeah")
-                            console.log(PaulyListNewData)
+                            const setPaulyDataNewDataResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/"  +getRootSiteIdResultData["id"] + "/lists/" + paulyDataResultData["id"] + "/items", instance, accounts, "POST", false, JSON.stringify(paulyDataNewData))
+                            if (setPaulyDataNewDataResult.ok) {
+                              console.log("Yeah")
+                              console.log(PaulyListNewData)
+                              return loadingStateEnum.success
+                            } else {
+                              console.log("Add Pauly List Data Result Failed")
+                              return loadingStateEnum.failed
+                            }
                           } else {
+                            console.log("Add Pauly List Result Failed")
                             return loadingStateEnum.failed
-                            
-                            console.log("Add Pauly List Data Result Failed")
                           }
                         } else {
-                          console.log("Add Pauly List Result Failed")
                           return loadingStateEnum.failed
                         }
                       } else {
+                        console.log("Timetable Failed")
                         return loadingStateEnum.failed
                       }
                     } else {
-                      console.log("Timetable Failed")
+                      console.log("Sports Submissions Failed")
                       return loadingStateEnum.failed
                     }
                   } else {
-                    console.log("Sports Submissions Failed")
+                    console.log("Sports Approval Failed")
                     return loadingStateEnum.failed
                   }
                 } else {
-                  console.log("Sports Approval Failed")
+                  console.log("Sports Failed")
                   return loadingStateEnum.failed
                 }
               } else {
-                console.log("Sports Failed")
+                console.log("Schedule Failed")
+                const scheduleData = await scheduleResult.json()
+                console.log(scheduleData)
                 return loadingStateEnum.failed
               }
             } else {
-              console.log("Schedule Failed")
-              const scheduleData = await scheduleResult.json()
-              console.log(scheduleData)
+              console.log("Pauly Data Failed")
               return loadingStateEnum.failed
             }
           } else {
-            console.log("Pauly Data Failed")
+            console.log("Commissions Failed")
             return loadingStateEnum.failed
           }
         } else {
-          console.log("Commissions Failed")
           return loadingStateEnum.failed
         }
       } else {
         return loadingStateEnum.failed
       }
     } else {
-        return loadingStateEnum.failed
+      return loadingStateEnum.failed
     }
   }

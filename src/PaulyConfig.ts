@@ -5,4 +5,4 @@ export const siteID: string = "8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c
 
 export const orgWideGroupID: string = "5f1ea797-addb-45b7-915e-9b4cc4a8aad6"
 
-export const mainListID: string = "c26d17be-13bc-46c2-a82f-a09be18b508f"
+export const mainListID: string = "22d1ddc7-e479-4a07-9aba-79e21d5568b1"

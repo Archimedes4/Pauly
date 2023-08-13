@@ -9,9 +9,10 @@ export default async function getCurrentPaulyData(accessToken: string, instance:
     if (result.ok){
         const data = await result.json()
         console.log(data)
-        if (data["value"][0]["fields"]["animationSpeed"] !== undefined && data["value"][0]["fields"]["message"] !== undefined && data["value"][0]["fields"]["powerpointId"] !== undefined) {
+        if (data["animationSpeed"] !== undefined && data["message"] !== undefined && data["powerpointId"] !== undefined) {
             return {result: loadingStateEnum.success, data: {powerpointId: data["value"][0]["fields"]["powerpointId"], message: data["value"][0]["fields"]["message"], animationSpeed: data["value"][0]["fields"]["animationSpeed"]}}
         } else {
+            console.log("Herer")
             return {result: loadingStateEnum.failed}
         }
     } else {

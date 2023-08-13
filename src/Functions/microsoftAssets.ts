@@ -2,7 +2,7 @@ import { useMsal } from "@azure/msal-react";
 import { loginRequest } from "../authConfig";
 import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
 
-export default async function callMsGraph(accessToken: string, url: string, instance: IPublicClientApplication, accounts: AccountInfo[], method?: "GET" | "POST" | "PATCH" | "DELETE", perfer?: boolean, body?: string, secondAuth?: boolean): Promise<Response> {
+export default async function callMsGraph(accessToken: string, url: string, instance: IPublicClientApplication, accounts: AccountInfo[], method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean): Promise<Response> {
     const headers = new Headers();
     const bearer = `Bearer ${accessToken}`;
 

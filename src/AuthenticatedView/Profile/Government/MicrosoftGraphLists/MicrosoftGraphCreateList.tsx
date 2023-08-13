@@ -15,6 +15,8 @@ import callMsGraph from '../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../App';
 import NavBarComponent from '../../../../UI/NavComponent';
 import { Link } from 'react-router-native';
+import { siteID } from '../../../../PaulyConfig';
+import { useMsal } from '@azure/msal-react';
 
 type MicrosoftGraphColumnDefinitions = "text" | "number" | "boolean" | "calculated" | "choice" | "columnGroup" | "contentApprovalStatus" | "currency" | "dateTime" | "defaultValue" | "description" | "displayName" | "enforceUniqueValues" | "geolocation" | "hidden"  
 
@@ -24,26 +26,10 @@ type ColumnItem = {
   data: any
 }
 
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
 
 export default function MicrosoftGraphCreateList() {
-  const [dimensions, setDimensions] = useState({
-    window: windowDimensions,
-    screen: screenDimensions,
-  });
-
-  useEffect(() => {
-      const subscription = Dimensions.addEventListener(
-        'change',
-        ({window, screen}) => {
-          setDimensions({window, screen});
-        },
-      );
-      return () => subscription?.remove();
-  });
-
   const pageData = useContext(accessTokenContent);
+  const { instance, accounts } = useMsal();
   const [columns, setColumns] = useState<ColumnItem[]>([])
 
   const [listName, setListName] = useState<string>("")
@@ -57,10 +43,6 @@ export default function MicrosoftGraphCreateList() {
   const [columnDescription, setColumnDescription] = useState<string>("")
   const [newColumnName, setNewColumnName] = useState<string>("")
 
-  async function getUser(){
-      const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304")//sites/8td1tk.onmicrosoft.com/sites
-      console.log(result)
-  }
   async function createList(){
     var columnData: object[] = []
 
@@ -83,13 +65,13 @@ export default function MicrosoftGraphCreateList() {
         "template": " genericList"
       }
     }
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists", "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
     console.log(result)
     const data = await result.json()
     console.log(data)
   }
   return (
-    <View style={{width: (dimensions.window.width > 576) ? dimensions.window.width * 0.9:dimensions.window.width}}>
+    <View style={{width: pageData.dimensions.window.width}}>
       <Link to="/profile/government/graph">
         <Text>Back</Text>
       </Link>
@@ -99,7 +81,7 @@ export default function MicrosoftGraphCreateList() {
         value={listName}
         onChangeText={text => setListName(text)}
       />
-      <View style={{height: dimensions.window.height * 0.75}}>
+      <View style={{height: pageData.dimensions.window.height * 0.75}}>
         <View style={{flexDirection: "row"}}>
           <Text>Name</Text>
           <Text>Type</Text>

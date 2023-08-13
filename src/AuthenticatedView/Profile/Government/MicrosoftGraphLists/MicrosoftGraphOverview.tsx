@@ -1,9 +1,12 @@
-import { View, Text, Button, Dimensions } from 'react-native'
+import { View, Text, Button, Dimensions, ScrollView } from 'react-native'
 import React, {useContext, useEffect, useState} from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../App';
 import { Link } from 'react-router-native';
 import NavBarComponent from '../../../../UI/NavComponent';
+import { useMsal } from '@azure/msal-react';
+import PickerWrapper from '../../../../UI/Picker/Picker';
+import { loadingStateEnum } from '../../../../types';
 
 type ListType = {
   displayName: string
@@ -11,48 +14,80 @@ type ListType = {
   name: string
 }
 
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
+type groupType = {
+  name: string,
+  id: string
+}
+
+enum graphMode {
+  list,
+  group
+}
 
 export default function MicrosoftGraphOverview() {
   const [lists, setLists] = useState<ListType[]>([])
+  const [groups, setGroups] = useState<groupType[]>([])
+  const [searchText, setSearchText] = useState<string>("")
+  const [selectedGraphMode, setSelectedGraphMode] =  useState<graphMode>(graphMode.list)
   const pageData = useContext(accessTokenContent);
-  const [dimensions, setDimensions] = useState({
-    window: windowDimensions,
-    screen: screenDimensions,
-  });
+  const { instance, accounts } = useMsal();
 
-  useEffect(() => {
-      const subscription = Dimensions.addEventListener(
-        'change',
-        ({window, screen}) => {
-          setDimensions({window, screen});
-        },
-      );
-      return () => subscription?.remove();
-  });
+  //loading states
+  const [groupLoadingState, setGroupLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [listLoadingState, setListLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getLists(){
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists")//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists", instance, accounts)//sites/8td1tk.onmicrosoft.com/sites
     if (result.ok){
       const data = await result.json()
-      console.log(data)
-      var incomingLists: ListType[] = []
-      for(let index = 0; index < data["value"].length; index++){
-        incomingLists.push({
-          displayName: data["value"][index]["displayName"],
-          listId: data["value"][index]["id"],
-          name: data["value"][index]["name"]
-        })
+      if (data["value"] !== undefined){
+        var incomingLists: ListType[] = []
+        for(let index = 0; index < data["value"].length; index++){
+          incomingLists.push({
+            displayName: data["value"][index]["displayName"],
+            listId: data["value"][index]["id"],
+            name: data["value"][index]["name"]
+          })
+        }
+        setLists(incomingLists)
+        setListLoadingState(loadingStateEnum.success)
+      } else {
+        setListLoadingState(loadingStateEnum.failed)
       }
-      console.log(incomingLists)
-      setLists(incomingLists)
     } else {
-      //TO DO handle error
+      setListLoadingState(loadingStateEnum.failed)
     }
   }
+
+  async function searchGroups(search: string) {
+    const groupResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups?$filter=startswith(displayName,'" + search +"')", instance, accounts)
+  }
+
+  async function getGroups() {
+    const groupResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups", instance, accounts)
+    if (groupResult.ok) {
+      const groupResultData = await groupResult.json()
+      if (groupResultData["value"] !== undefined){
+        var outputData: groupType[] = []
+        for(var index = 0; index < groupResultData["value"].length; index++) {
+          outputData.push({
+            name: groupResultData["value"][index]["displayName"],
+            id: groupResultData["value"][index]["id"]
+          })
+        }
+        setGroups(outputData)
+        setGroupLoadingState(loadingStateEnum.success)
+      } else {
+        setGroupLoadingState(loadingStateEnum.failed)
+      }
+    } else {
+      setGroupLoadingState(loadingStateEnum.failed)
+    }
+  }
+
   useEffect(() => {
     getLists()
+    getGroups()
   }, [])
   return (
     <View>
@@ -60,23 +95,59 @@ export default function MicrosoftGraphOverview() {
         <Text>Back</Text>
       </Link>
       <Text>Microsoft Graph Overview</Text>
-      <View>
-        { lists.map((item: ListType) => (
-          <Link key={item.listId + "Link"} to={"/profile/government/graph/edit/" + item.listId}>
-            <View key={item.listId}>
-              { //TO DO PRODuction fix these ids
-                (item.listId !== "2b86ba89-0262-4906-9247-bfd1260fb68e" && item.listId != "1f4cd053-dd6b-4e40-bb9b-803cbc74e872") ? 
-                <View style={{marginBottom: 5, borderColor: "black", borderWidth: 5}}>
-                  <Text>{item.displayName}</Text>
-                  <Text>{item.listId}</Text>
-                </View>:null 
-              }
-            </View>
-          </Link>
-        ))}
-      </View>
-      <Link to={"/profile/government/graph/create"}>
-          <Text>Create List</Text>
+      <PickerWrapper selectedIndex={selectedGraphMode} onSetSelectedIndex={setSelectedGraphMode} width={pageData.dimensions.window.width} height={30}>
+        <Text>Lists</Text>
+        <Text>Groups</Text>
+      </PickerWrapper>
+      <ScrollView style={{height: pageData.dimensions.window.height * 0.6}}>
+        { (selectedGraphMode === graphMode.list) ?
+          <View>
+            { (listLoadingState === loadingStateEnum.loading) ?
+              <Text>Loading</Text>:
+              <View>
+                { (listLoadingState === loadingStateEnum.success) ?
+                  <View>
+                    { lists.map((item: ListType) => (
+                      <Link key={item.listId + "Link"} to={"/profile/government/graph/list/edit/" + item.listId}>
+                        <View key={item.listId}>
+                          { //TO DO PRODuction fix these ids
+                            (item.listId !== "2b86ba89-0262-4906-9247-bfd1260fb68e" && item.listId != "1f4cd053-dd6b-4e40-bb9b-803cbc74e872") ? 
+                            <View style={{marginBottom: 5, borderColor: "black", borderWidth: 5}}>
+                              <Text>{item.displayName}</Text>
+                              <Text>{item.listId}</Text>
+                            </View>:null 
+                          }
+                        </View>
+                      </Link>
+                    ))}
+                  </View>:<Text>Failed</Text>
+                }
+              </View>
+
+            }
+          </View>:null
+        }
+        { (selectedGraphMode === graphMode.group) ?
+          <View>
+            { (groupLoadingState === loadingStateEnum.loading) ?
+              <Text>Loading</Text>:
+              <View>
+                { (groupLoadingState === loadingStateEnum.success) ?
+                  <View>
+                    {groups.map((group) => (
+                      <View>
+                        <Text>{group.name}</Text>
+                      </View>
+                    ))}
+                  </View>:<Text>Failed</Text>
+                }
+              </View>
+            }
+          </View>:null
+        }
+      </ScrollView>
+      <Link to={"/profile/government/graph/list/create"}>
+        <Text>Create List</Text>
       </Link>
     </View>
   )
