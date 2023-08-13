@@ -28,6 +28,16 @@ export default function MicrosoftGraphEditGroup() {
             setGroupLoadingState(loadingStateEnum.failed)
         }
     }
+
+    async function deleteGroup() {
+        const deleteGroupResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups/" + groupId, instance, accounts, "DELETE")
+        if (deleteGroupResult.ok) {
+
+        } else {
+            //TO DO handle 
+        }
+    }
+
     useEffect(() => {getListItems()}, [])
     return (
         <View style={{overflow: "hidden"}}>
@@ -46,6 +56,7 @@ export default function MicrosoftGraphEditGroup() {
                     </Pressable>
                 }
             </View>
+            <Button title="Delete Group" onPress={() => {deleteGroup()}}/>
         </View>
     )
 }
