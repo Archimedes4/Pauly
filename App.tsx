@@ -100,6 +100,7 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
       const profileResult = await callMsGraph(pageData, "https://graph.microsoft.com/v1.0/me", instance, accounts)
       if (profileResult.ok){
         const profileData = await profileResult.json()
+        console.log(profileData)
         var newDimentions: {window: ScaledSize, screen: ScaledSize} = dimensions
         if (width >= 576) {
           newDimentions.window.width = width * 0.9

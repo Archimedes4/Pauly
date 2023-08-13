@@ -11,9 +11,11 @@ import { LogLevel } from "@azure/msal-browser";
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md 
  */
 
+export const clientId = "08624b03-1aa6-40c4-8fb3-149c39026dff"
+
 export const msalConfig = {
     auth: {
-        clientId: "08624b03-1aa6-40c4-8fb3-149c39026dff",
+        clientId: clientId,
         authority: "https://login.microsoftonline.com/551df04d-543a-4d61-955e-e4294c4cf950",
         redirectUri: "http://localhost:19006",
     },
