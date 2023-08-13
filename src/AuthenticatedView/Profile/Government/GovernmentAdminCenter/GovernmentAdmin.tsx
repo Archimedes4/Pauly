@@ -108,15 +108,20 @@ export default function GovernmentAdmin() {
       "displayName": "PaulyData",
       "columns": [
         {
-          "name":"AnimatedSpeed",
+          "name":"animatedSpeed",
           "number":{ },
           "required": true
         },
         {
-          "name":"Message",
+          "name":"message",
           "text":{ },
           "required": true
         },
+        {
+          "name":"powerpointId",
+          "text":{ },
+          "required": true
+        }
       ],
       "list": {
         "template": "genericList"

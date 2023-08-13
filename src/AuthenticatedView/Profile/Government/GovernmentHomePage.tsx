@@ -8,53 +8,47 @@ import { siteID } from '../../../PaulyConfig';
 import { useMsal } from '@azure/msal-react';
 import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
+import getCurrentPaulyData from '../../../Functions/getCurrentPaulyData';
+import { loadingStateEnum } from '../../../types';
 
 export default function GovernmentHomePage() {
     const pageData = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
     const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
+
+    //Loading States
+    const [loadContentLoadingState, setLoadContentLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+
+    //New Data 
     const [newMessageText, setNewMessageText] = useState("")
     const [newAnimationSpeed, setNewAnnimationSpeed] = useState(0)
     const [selectedPowerpoint, setSelectedPowerpoint] = useState<microsoftFileType | undefined>(undefined)
-    async function updateText(){
-        const data = {
-            "Message":newMessageText
+
+    async function loadCurrentPaultDay() {
+        const result = await getCurrentPaulyData(pageData.accessToken, instance, accounts)
+        if (result.result === loadingStateEnum.success && result.data !== undefined) {
+            setNewAnnimationSpeed(result.data.animationSpeed)
+            setNewMessageText(result.data.message)
+            setLoadContentLoadingState(loadingStateEnum.success)
+        } else {
+            setLoadContentLoadingState(loadingStateEnum.failed)
         }
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1/fields", instance, accounts, "PATCH", false, JSON.stringify(data))//TO DO fix list ids
-        if (result.ok){
+    }
+    async function updatePaulyData(key: string, data: string){
+        const dataOut = {
+            key:data
+        }
+        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", instance, accounts, "PATCH", false, JSON.stringify(dataOut))//TO DO fix list ids
+        if (result.ok){ 
             const data = await result.json()
-            console.log(data)
         } else {
             //TO DO handle error
         }
     }
-    async function updateAnimationSpeed() {
-        const data = {
-            "AnimationSpeed":newAnimationSpeed
-        }
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists/eb90cf62-9f67-4d08-b0ce-78846ae4fb52/items/1fields", instance, accounts, "PATCH", false, JSON.stringify(data)) //TO DO fix id
-        console.log(result)
-        const resultData = await result.json()
-        console.log(resultData)
-    }
-    async function getCurrentTextAndAnimationSpeed() {
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", instance, accounts)//TO DO fix list ids
-        if (result.ok){
-            const data: Record<string, any> = await result.json()
-            console.log(data)
-            if (data.hasOwnProperty("AnimationSpeed") && data.hasOwnProperty("Message")) {
-                setNewAnnimationSpeed(data["AnimationSpeed"])
-                setNewMessageText(data["Message"])
-            } else {
-                //TO DO handle error
-            }
-        } else {
-
-        }
-    }
     useEffect(() => {
-        getCurrentTextAndAnimationSpeed()
+        loadCurrentPaultDay()
     }, [])
+
     return (
         <View>
             <Link to="/profile/government/">
@@ -63,7 +57,7 @@ export default function GovernmentHomePage() {
             <Text>Home Page</Text>
             <View>
                 <TextInput value={newMessageText} onChangeText={setNewMessageText}/>
-                <Pressable onPress={() => {updateText()}}>
+                <Pressable onPress={() => {updatePaulyData("message", newMessageText)}}>
                     <Text>Update Text</Text>
                 </Pressable>
             </View>
