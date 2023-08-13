@@ -301,12 +301,12 @@ export default async function initilizePauly(accessToken: string, instance: IPub
       if (createGroupResult.ok){
         const createGroupResultData = await createGroupResult.json()
         console.log(createGroupResultData)
+        const createTeamResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + createGroupResultData["id"] + "/team", instance, accounts, "PUT")
+        const createTeamResultData = await createTeamResult.json()
+        console.log("This < ------ ", createTeamResultData)
         const getRootSiteIdResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + createGroupResultData["id"] + "/sites/root", instance, accounts)
         if (getRootSiteIdResult.ok){
           const getRootSiteIdResultData = await getRootSiteIdResult.json()
-          const createTeamResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + createGroupResultData["id"] + "/team", instance, accounts, "PUT")
-          const createTeamResultData = await createTeamResult.json()
-          console.log("This < ------ ", createTeamResultData)
           var PaulyListNewData = {"fields":{"Title":"Main"}}
           const commissionsResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", instance, accounts, "POST", false, JSON.stringify(commissionsData))
           if (commissionsResult.ok) {

@@ -61,6 +61,7 @@ import PageNotFound from './src/AuthenticatedView/404Page';
 import GovernmentAdmin from './src/AuthenticatedView/Profile/Government/GovernmentAdminCenter/GovernmentAdmin';
 import getPaulyLists from './src/Functions/getPaulyLists';
 import GovernmentTimetableEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
+import MicrosoftGraphEditGroup from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditGroup';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -190,6 +191,7 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
                   <Route path="/profile/government/graph" element={<MicrosoftGraphOverview/>}/>
                   <Route path="/profile/government/graph/list/create" element={<MicrosoftGraphCreateList/>}/>
                   <Route path="/profile/government/graph/list/edit/:listId" element={<MicrosoftGraphEditList />} />
+                  <Route path="/profile/government/graph/group/edit/:groupId" element={<MicrosoftGraphEditGroup />} />
                   <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
                   <Route path="/profile/government/commissions/create" element={<CreateNewCommission/>}/>
                   <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />

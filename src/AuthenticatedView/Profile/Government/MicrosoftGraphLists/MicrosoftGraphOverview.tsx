@@ -135,9 +135,11 @@ export default function MicrosoftGraphOverview() {
                 { (groupLoadingState === loadingStateEnum.success) ?
                   <View>
                     {groups.map((group) => (
-                      <View>
-                        <Text>{group.name}</Text>
-                      </View>
+                      <Link to={"/profile/government/graph/group/edit/" + group.id} key={"group_" + group.id}>
+                        <View>
+                          <Text>{group.name}</Text>
+                        </View>
+                      </Link>
                     ))}
                   </View>:<Text>Failed</Text>
                 }
