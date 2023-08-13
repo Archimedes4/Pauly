@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Button, Dimensions, Platform, Text, View } from 'react-native'
-import Geolocation from '@react-native-community/geolocation';
+import { Dimensions, Text, View } from 'react-native'
 import { Link } from 'react-router-native';
 import callMsGraph from '../../Functions/microsoftAssets';
 import { accessTokenContent } from '../../../App';
-import NavBarComponent from '../../UI/NavComponent';
 import { siteID } from '../../PaulyConfig';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useMsal } from '@azure/msal-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/store';
 
 enum CommissionMode{
   Before,
@@ -16,41 +16,14 @@ enum CommissionMode{
   Upcoming
 }
 
-
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
-
 export default function Commissions() {
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
+  const {commissionListId} = useSelector((state: RootState) => state.paulyList)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
-  const [dimensions, setDimensions] = useState({
-    window: windowDimensions,
-    screen: screenDimensions,
-  });
 
-  useEffect(() => {
-      const subscription = Dimensions.addEventListener(
-        'change',
-        ({window, screen}) => {
-          setDimensions({window, screen});
-        },
-      );
-      return () => subscription?.remove();
-  });
-  
-  useEffect(() => {
-    setDimensions({
-        window: Dimensions.get('window'),
-        screen: Dimensions.get('screen')
-    })
-  }, [])
-
-  async function getUsersLocation(){
-    Geolocation.getCurrentPosition(info => console.log(info))
-  }
   async function getCommissions(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields", instance, accounts)//TO DO list id
+    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionListId + "/items?expand=fields", instance, accounts)//TO DO list id
     if (result.ok) {
       const data = await result.json()
       console.log(data)
@@ -91,7 +64,7 @@ export default function Commissions() {
   
   return (
     <View>
-      { (dimensions.window.width > 576) ?
+      { (pageData.currentBreakPointMode === 0) ?
         <Link to="/profile/">
           <Text>Back</Text>
         </Link>:null

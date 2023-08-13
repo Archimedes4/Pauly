@@ -15,13 +15,13 @@ import { loadingStateEnum } from '../../../../../types';
 // }
 
 export default function GovernmentSchedule() {
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
   const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   async function getSchedules() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId +"/items?expand=fields", instance, accounts)
+    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId +"/items?expand=fields", instance, accounts)
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
@@ -31,7 +31,8 @@ export default function GovernmentSchedule() {
             const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[]
             console.log(scheduleData)
             newLoadedSchedules.push({
-              name: dataResult["value"][index]["fields"]["name"],
+              properName: dataResult["value"][index]["fields"]["scheduleProperName"],
+              descriptiveName: dataResult["value"][index]["fields"]["scheduleDescriptiveName"],
               id: dataResult["value"][index]["fields"]["scheduleId"],
               periods: scheduleData
             })
@@ -63,7 +64,7 @@ export default function GovernmentSchedule() {
           { loadedSchedules.map((schedule) => (
             <Link to={"/profile/government/calendar/schedule/edit/" + schedule.id} key={schedule.id}>
               <View>
-                <Text>{schedule.name}</Text>
+                <Text>{schedule.properName}</Text>
               </View>
             </Link>
           ))

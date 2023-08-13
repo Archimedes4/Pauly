@@ -22,11 +22,11 @@ declare global {
 }
 
 export default function GovernmentCommissions() {
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
   const [commissions, setCommissions] = useState<commissionType[]>([])
   async function getCommissions(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields", instance, accounts)
+    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields", instance, accounts)
     if (result.ok){
       const data = await result.json()
       console.log(data)

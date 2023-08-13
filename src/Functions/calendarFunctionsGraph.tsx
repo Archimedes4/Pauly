@@ -22,7 +22,8 @@ export async function getGraphEvents(accessToken: string, schoolYear: boolean, i
               startTime: new Date(data["value"][index]["start"]["dateTime"]),
               endTime: new Date(data["value"][index]["end"]["dateTime"]),
               eventColor: "white",
-              schoolYearData: data["value"][index]["ext9u07b055_paulyEvents"]["eventData"],
+              paulyEventType: data["value"][index]["ext9u07b055_paulyEvents"]["eventType"],
+              paulyEventData: data["value"][index]["ext9u07b055_paulyEvents"]["eventData"],
               microsoftEvent: true,
               microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
             })
@@ -118,21 +119,28 @@ export async function getTimetable(accessToken: string, timetableId: string, ins
 }
 
 export async function getSchoolDayOnSelectedDay(accessToken: string, selectedDate: Date, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{ result: loadingStateEnum; event?: eventType; }> {
-  const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
-  const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1)
-  console.log(startDate, endDate)
-  console.log(startDate.toISOString(), endDate.toISOString())
-  //?$filter=start/dateTime%20ge%20'" + startDate.toISOString() + "'%20and%20end/dateTime%20lt%20'" + endDate.toISOString() + "'"
-  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", instance, accounts)
+  const startDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0)).toISOString().slice(0, -1) + "0000"
+  const endDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 0)).toISOString().slice(0, -1) + "0000"
+  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20eq%20'" + startDate + "'%20and%20end/dateTime%20eq%20'" + endDate + "'&$select=ext9u07b055_paulyEvents", instance, accounts, "GET", true)
   if (result.ok) {
     const data = await result.json()
-    console.log("Org Data", data)
     for(var index = 0; index < data["value"].length; index++){
-      if (result["value"]["index"][index]) {
-
+      if (data["value"][index]["ext9u07b055_paulyEvents"] !== undefined) {
+        const event: eventType = {
+          id: data["value"][index]["id"],
+          name: data["value"][index]["subject"],
+          startTime: new Date(data["value"][index]["start"]["dateTime"]),
+          endTime: new Date(data["value"][index]["end"]["dateTime"]),
+          eventColor: "white",
+          microsoftEvent: true,
+          microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],
+          paulyEventType: data["value"][index]["ext9u07b055_paulyEvents"]["eventType"],
+          paulyEventData: data["value"][index]["ext9u07b055_paulyEvents"]["eventData"]
+        }
+        return {result: loadingStateEnum.success, event: event}
       }
     }
-    return {result: loadingStateEnum.success}
+    return {result: loadingStateEnum.failed}
   } else {
     return {result: loadingStateEnum.failed}
   }

@@ -11,7 +11,7 @@ import { useMsal } from '@azure/msal-react';
 import { loadingStateEnum } from '../../../../types';
 
 export default function GovernmentCreateNewTeam() {
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
   const { sport, id } = useParams()
 
@@ -47,9 +47,9 @@ export default function GovernmentCreateNewTeam() {
         teamID: newTeamRosterID
       }
     }
-    const resultList = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists", instance, accounts, "POST", false, JSON.stringify(listData))
+    const resultList = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists", instance, accounts, "POST", false, JSON.stringify(listData))
     if (resultList.ok){
-      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/" + id + "/items", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix id (this isn't really important because it will work anyway it might be better to call for the id though)
+      const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/" + id + "/items", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix id (this isn't really important because it will work anyway it might be better to call for the id though)
       if (result.ok){
         setCreateTeamLoadingState(loadingStateEnum.success)
       } else {

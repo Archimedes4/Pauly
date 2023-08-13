@@ -16,7 +16,7 @@ const screenDimensions = Dimensions.get('screen');
 
 export default function MicrosoftGraphOverview() {
   const [lists, setLists] = useState<ListType[]>([])
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const [dimensions, setDimensions] = useState({
     window: windowDimensions,
     screen: screenDimensions,
@@ -33,7 +33,7 @@ export default function MicrosoftGraphOverview() {
   });
 
   async function getLists(){
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists")//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists")//sites/8td1tk.onmicrosoft.com/sites
     if (result.ok){
       const data = await result.json()
       console.log(data)

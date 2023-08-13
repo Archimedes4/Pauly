@@ -91,21 +91,20 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
   const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: dimensions, currentBreakPointMode: currentBreakPointMode})
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
 
-  async function getUserProfile(microsoftAccessToken: string) {
+  async function getUserProfile(pageData: string) {
     //TO DO check if ok
-    const result = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me/photo/$value", instance, accounts)
+    const result = await callMsGraph(pageData, "https://graph.microsoft.com/v1.0/me/photo/$value", instance, accounts)
     if (result.ok){
       const dataBlob = await result.blob()
       const urlOut = URL.createObjectURL(dataBlob)
-      const profileResult = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/me", instance, accounts)
+      const profileResult = await callMsGraph(pageData, "https://graph.microsoft.com/v1.0/me", instance, accounts)
       if (profileResult.ok){
         const profileData = await profileResult.json()
         var newDimentions: {window: ScaledSize, screen: ScaledSize} = dimensions
         if (width >= 576) {
           newDimentions.window.width = width * 0.9
         }
-        console.log("Out Dimentions", newDimentions.window.width, dimensions.window.width)
-        setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: microsoftAccessToken, dimensions: newDimentions, currentBreakPointMode: currentBreakPointMode})
+        setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: pageData, dimensions: newDimentions, currentBreakPointMode: currentBreakPointMode})
       }
     }
   }
@@ -133,13 +132,11 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
     if (width >= 576) {
       newContext.dimensions.window.width = width * 0.9
     }
-    console.log("Inital Context", newContext.dimensions.window.width, dimensions.window.width, "90%", dimensions.window.width * 0.9)
     setContext(newContext)
     getMicrosoftAccessToken()
   }, [])
 
   useEffect(() => {
-    console.error("DIMENTIONS CHANGED", dimensions.window.width)
     var newContext = {...context}
     if (width >= 576){
       if (expandedMode){
@@ -248,7 +245,6 @@ function App() {
   });
 
   useEffect(() => {
-    console.log("Main Chnaged", dimensions.window.width)
     if (dimensions.window.width >= 1200) {
       //extraLarge ≥1200px
       setCurerentBreakPointMode(breakPointMode.xLarge)
@@ -282,11 +278,5 @@ function App() {
     </Provider>
   );
 }
-
-// function AuthenticatedViewRedux({dimensions}:{dimensions: {window: ScaledSize, screen: ScaledSize}}) {
-//   return (
-      
-//   )
-// }
 
 export default App;

@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import Svg, { G, Path, Polygon } from 'react-native-svg'
+import Svg, { G, Path, Polygon, Rect } from 'react-native-svg'
 
 interface iconProps {
   width: number;
@@ -142,6 +142,32 @@ export function ChevronRight({width, height}:iconProps) {
         </Svg>
     </View>
   )
+}
+
+export function FolderIcon({width, height}: iconProps) {
+  return (
+    <View>
+      <Svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 48 48" height={height} width={width}>
+        <Path fill="#FFA000" d="M40,12H22l-4-4H8c-2.2,0-4,1.8-4,4v8h40v-4C44,13.8,42.2,12,40,12z" />
+        <Path fill="#FFCA28" d="M40,12H8c-2.2,0-4,1.8-4,4v20c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V16C44,13.8,42.2,12,40,12z" />
+      </Svg>
+    </View>
+  )
+}
+
+export function DocumentIcon({width, height}: iconProps) {
+ return (
+    <Svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 48 48" height={height} width={width}>
+      <Polygon fill="#90CAF9" points="40,45 8,45 8,3 30,3 40,13" />
+      <Polygon fill="#E1F5FE" points="38.5,14 29,14 29,4.5"/>
+      <G fill="#1976D2">
+        <Rect x="16" y="21" width="17" height="2" />
+        <Rect x="16" y="25" width="13" height="2" />
+        <Rect x="16" y="29" width="17" height="2" />
+        <Rect x="16" y="33" width="13" height="2" />
+      </G>
+    </Svg>
+ )
 }
 
 //function MessagingIcon() {

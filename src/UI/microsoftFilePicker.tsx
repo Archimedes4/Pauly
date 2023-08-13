@@ -7,6 +7,7 @@ import Svg, { Polygon, Rect, G, Path } from 'react-native-svg';
 import Picker from "./Picker/Picker"
 import callMsGraph from '../Functions/microsoftAssets';
 import { useMsal } from '@azure/msal-react';
+import { DocumentIcon, FolderIcon } from './Icons/Icons';
 
 enum MicrosoftUploadModeType {
     ShareLink,
@@ -19,7 +20,6 @@ declare global{
         TeamId: string
         TeamDescription: string
     }
-    
     
     type microsoftFileType = {
         name: string
@@ -35,33 +35,35 @@ declare global{
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
-export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, onSelectedFile }:{
-    onSetIsShowingUpload: (item: boolean) => void,
-    onSetIsShowingMicrosoftUpload: (item: boolean) => void,
+export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, onSelectedFile, height, width}:{
+    height: number,
+    width: number,
+    onSetIsShowingUpload?: (item: boolean) => void,
+    onSetIsShowingMicrosoftUpload?: (item: boolean) => void,
     onSelectedFile: (item: microsoftFileType) => void
 }) {
     const { instance, accounts } = useMsal();
-    const microsoftAccessToken = useContext(accessTokenContent);
+    const pageData = useContext(accessTokenContent);
     const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
     const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
     const [microsoftPath, setMicrosoftPath] = useState<string>("https://graph.microsoft.com/v1.0/me/drive/root/children")
     const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
     const [fileBackAvaliable, setFilesBackAvaliable] = useState<boolean>(false)
     const [shareLinkString, setShareLinkString] = useState<string>("")
-    const [dimensions, setDimensions] = useState({
-        window: windowDimensions,
-        screen: screenDimensions,
-    });
+    // const [dimensions, setDimensions] = useState({
+    //     window: windowDimensions,
+    //     screen: screenDimensions,
+    // });
 
-    useEffect(() => {
-        const subscription = Dimensions.addEventListener(
-            'change',
-            ({window, screen}) => {
-                setDimensions({window, screen});
-            },
-        );
-        return () => subscription?.remove();
-    });
+    // useEffect(() => {
+    //     const subscription = Dimensions.addEventListener(
+    //         'change',
+    //         ({window, screen}) => {
+    //             setDimensions({window, screen});
+    //         },
+    //     );
+    //     return () => subscription?.remove();
+    // });
 
     useEffect(() => {
         getUserMicrosoftFiles(microsoftPath)
@@ -69,49 +71,48 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     }, [])
 
     async function getUserMicrosoftFiles(path: string) {
-        fetch(path, {method: "Get", headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + microsoftAccessToken
-        },})
-        .then(response => response.json())
-        .then(data => {
-          console.log(data)
-          if (data["error"] === undefined){
-            var newFiles: microsoftFileType [] = []
-            for(var index = 0; index <= data["value"].length; index++){
-                if (data['value'][index] !== undefined){
-                    if ("@microsoft.graph.downloadUrl" in data["value"][index]){
-                        newFiles.push(
-                        {
-                            name: data["value"][index]["name"], 
-                            id: data["value"][index]["id"], 
-                            lastModified: data["value"][index]["lastModifiedDateTime"], 
-                            folder: false, 
-                            parentDriveId: data["value"][index]["parentReference"]["driveId"], 
-                            parentPath: data["value"][index]["parentReference"]["path"],
-                            itemGraphPath: path
-                        })
-                    } else {
-                        newFiles.push(
-                        {
-                            name: data["value"][index]["name"], 
-                            id: data["value"][index]["id"], 
-                            lastModified: data["value"][index]["lastModifiedDateTime"], 
-                            folder: true, 
-                            parentDriveId: data["value"][index]["parentReference"]["driveId"],
-                            parentPath: data["value"][index]["parentReference"]["path"],
-                            itemGraphPath: "FOLDER"
-                        })
-                    }
-                }
+        const result = await callMsGraph(pageData.accessToken, path, instance, accounts)
+        if (result.ok){
+            const data = await result.json()
+            console.log(data)
+            if (data["error"] === undefined){
+              var newFiles: microsoftFileType [] = []
+              for(var index = 0; index <= data["value"].length; index++){
+                  if (data['value'][index] !== undefined){
+                      if ("@microsoft.graph.downloadUrl" in data["value"][index]){
+                          newFiles.push(
+                          {
+                              name: data["value"][index]["name"], 
+                              id: data["value"][index]["id"], 
+                              lastModified: data["value"][index]["lastModifiedDateTime"], 
+                              folder: false, 
+                              parentDriveId: data["value"][index]["parentReference"]["driveId"], 
+                              parentPath: data["value"][index]["parentReference"]["path"],
+                              itemGraphPath: path
+                          })
+                      } else {
+                          newFiles.push(
+                          {
+                              name: data["value"][index]["name"], 
+                              id: data["value"][index]["id"], 
+                              lastModified: data["value"][index]["lastModifiedDateTime"], 
+                              folder: true, 
+                              parentDriveId: data["value"][index]["parentReference"]["driveId"],
+                              parentPath: data["value"][index]["parentReference"]["path"],
+                              itemGraphPath: "FOLDER"
+                          })
+                      }
+                  }
+              }
+              setUsersFies(newFiles)
             }
-            setUsersFies(newFiles)
-          }
-        })
+        } else {
+            //TO DO handle error
+        }
     }
 
     async function getUserTeams() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me/joinedTeams", instance, accounts)//TO DO make sure this works on live tenancy
+        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/me/joinedTeams", instance, accounts)//TO DO make sure this works on live tenancy
         if (result.ok){
             const data = await result.json()
             console.log("This is teams data", data)
@@ -130,7 +131,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     
     async function getShareFile(ShareLink: string) {
         console.log("This https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl", instance, accounts)
+        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl", instance, accounts)
         console.log(result)
         if (result.ok){
             const data = await result.json()
@@ -138,10 +139,12 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
         }
     }
     return (
-        <View>
+        <View style={{height: height, width: width}}>
             <View style={{flexDirection: "row"}}>
                 <Text style={{textAlign: "left"}}>Upload File From Microsoft</Text>
-                <Pressable onPress={() => {onSetIsShowingUpload(false); onSetIsShowingMicrosoftUpload(false)}}><View><Text>Back</Text></View></Pressable>
+                { (onSetIsShowingMicrosoftUpload === undefined || onSetIsShowingUpload === undefined) ?
+                    null:<Pressable onPress={() => {onSetIsShowingUpload(false); onSetIsShowingMicrosoftUpload(false)}}><View><Text>Back</Text></View></Pressable>
+                }
             </View>
             <View>
             <View style={{width: 500}}>
@@ -179,10 +182,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
                                     setFilesBackAvaliable(true)
                                 }}>
                                     <View style={{flexDirection: "row"}}>
-                                        <Svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em">
-                                            <Path fill="#FFA000" d="M40,12H22l-4-4H8c-2.2,0-4,1.8-4,4v8h40v-4C44,13.8,42.2,12,40,12z" />
-                                            <Path fill="#FFCA28" d="M40,12H8c-2.2,0-4,1.8-4,4v20c0,2.2,1.8,4,4,4h32c2.2,0,4-1.8,4-4V16C44,13.8,42.2,12,40,12z" />
-                                        </Svg>
+                                        <FolderIcon width={20} height={20}/>
                                         <Text style={{padding: 0, margin: 0}}>{file.name}</Text>
                                     </View>
                                 </Pressable>:
@@ -190,16 +190,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
                                     onSelectedFile(file)
                                 }}>
                                     <View style={{flexDirection: "row"}}>
-                                        <Svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 48 48" enable-background="new 0 0 48 48" height="1em" width="1em">
-                                            <Polygon fill="#90CAF9" points="40,45 8,45 8,3 30,3 40,13" />
-                                            <Polygon fill="#E1F5FE" points="38.5,14 29,14 29,4.5"/>
-                                            <G fill="#1976D2">
-                                                <Rect x="16" y="21" width="17" height="2" />
-                                                <Rect x="16" y="25" width="13" height="2" />
-                                                <Rect x="16" y="29" width="17" height="2" />
-                                                <Rect x="16" y="33" width="13" height="2" />
-                                            </G>
-                                        </Svg>
+                                        <DocumentIcon width={20} height={20}/>
                                         <Text style={{padding: 0, margin: 0}}>{file.name}</Text>
                                     </View>
                                 </Pressable>
@@ -227,7 +218,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
                 </View>:null
             }
             { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Site) ? 
-                <View style={{height: dimensions.window.height * 0.6, overflow: "scroll"}}>
+                <View style={{height: height * 0.8, overflow: "scroll"}}>
                     { usersTeams.map((team) => (
                         <View>
                             { (team.TeamName !== "Student Password Policy" && team.TeamName !== "St Paul's High School" && team.TeamName !== "Adobe_Student" && team.TeamName !== "O365 Student A3 License Assignment" && team.TeamName !== "Student") ?

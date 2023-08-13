@@ -1,11 +1,12 @@
 import { View, Text, Dimensions, Image, ImageSourcePropType } from 'react-native'
 import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
-import NavBarComponent from '../../../UI/NavComponent'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { accessTokenContent } from '../../../../App';
 import { CalendarIcon, MedalIcon } from '../../../UI/Icons/Icons';
+import { RootState } from '../../../Redux/store';
+import { useSelector } from 'react-redux';
 
 function Block({height, width, text, imageSource, children}:{height: number, width: number, text: string, imageSource?: ImageSourcePropType, children?: ReactNode}) {
   return (
@@ -43,7 +44,7 @@ export default function Government() {
         <Text style={{fontFamily: "BukhariScript", fontSize: 100}}>Government</Text>
       </View>
       <View style={{height: pageData.dimensions.window.height * 0.75, width: pageData.dimensions.window.width, alignContent: "center", justifyContent: "center", alignItems: "center", marginTop: pageData.dimensions.window.height * 0.05}}>
-        <View style={{height: pageData.dimensions.window.height * 0.75, width: mainWidth, flexDirection: "row", alignContent: "flex-start",  flexWrap: "wrap", rowGap: (pageData.dimensions.window.height) * 0.05, columnGap: (pageData.dimensions.window.width ) * 0.05}}>
+        <View style={{height: pageData.dimensions.window.height * 0.75, width: mainWidth, flexDirection: "row", alignContent: "flex-start",  flexWrap: "wrap", rowGap: (pageData.dimensions.window.height) * 0.05, columnGap: (pageData.dimensions.window.width) * 0.05}}>
           <Link to="/profile/government/graph">
             <Block width={100} height={100} text='Graph' imageSource={require('../../../../assets/images/GraphAPILogo.png')} />
           </Link>
@@ -55,8 +56,8 @@ export default function Government() {
           <Link to="/profile/government/sports">
             <Block width={100} height={100} text='Sports' imageSource={require('../../../../assets/images/Football.png')} />
           </Link>
-          <Link to="/profile/government/president">
-            <Block width={100} height={100} text="President" />
+          <Link to="/profile/government/homepage">
+            <Block width={100} height={100} text="Homepage" />
           </Link>
           <Link to="/profile/government/calendar">
             <Block width={100} height={100} text='Calendar'>

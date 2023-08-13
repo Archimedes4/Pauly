@@ -7,8 +7,8 @@ enum dataContentTypeOptions {
     unknown
 }
 
-export default async function getFileWithShareID(shareID: string, microsoftAccessToken: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{ url: string; contentType: dataContentTypeOptions }> {
-    const result = await callMsGraph(microsoftAccessToken, "https://graph.microsoft.com/v1.0/shares/" + shareID + "/driveItem", instance, accounts)
+export default async function getFileWithShareID(shareID: string, pageData: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{ url: string; contentType: dataContentTypeOptions }> {
+    const result = await callMsGraph(pageData, "https://graph.microsoft.com/v1.0/shares/" + shareID + "/driveItem", instance, accounts)
     console.log(result)
     if (result.ok){
         const data = await result.json()

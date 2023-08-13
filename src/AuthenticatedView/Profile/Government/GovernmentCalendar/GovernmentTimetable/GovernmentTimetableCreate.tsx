@@ -19,7 +19,7 @@ declare global {
 }
 
 export default function GovernmentTimetableCreate() {
-    const microsoftAccessToken = useContext(accessTokenContent);
+    const pageData = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
     const {timetablesListId, scheduleListId} = useSelector((state: RootState) => state.paulyList)
 
@@ -51,7 +51,7 @@ export default function GovernmentTimetableCreate() {
             "timetableDefaultScheduleId":selectedDefaultSchedule.id
           }
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + timetablesListId +"/items?expand=fields", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix site id
+        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + timetablesListId +"/items?expand=fields", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix site id
         if (result.ok){
           setCreateTimetableLoadingState(loadingStateEnum.success)
         } else {
@@ -60,7 +60,7 @@ export default function GovernmentTimetableCreate() {
       }
     }
     async function getSchedules() {
-      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items?expand=fields", instance, accounts)
+      const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items?expand=fields", instance, accounts)
       if (result.ok){
         const dataResult = await result.json()
         if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
@@ -91,7 +91,7 @@ export default function GovernmentTimetableCreate() {
       getSchedules()
     }, [])
   return (
-    <View style={{height: microsoftAccessToken.dimensions.window.height, width: microsoftAccessToken.dimensions.window.width, overflow: "scroll"}}>
+    <View style={{height: pageData.dimensions.window.height, width: pageData.dimensions.window.width, overflow: "scroll"}}>
       <Link to="/profile/government/calendar/timetable/">
         <Text>Back</Text>
       </Link>
@@ -99,12 +99,12 @@ export default function GovernmentTimetableCreate() {
       <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}}/>
       <Text>Scheduals</Text>
       <Text>Selected Schedules</Text>
-      <View style={{height: microsoftAccessToken.dimensions.window.height * 0.4, overflow: "scroll"}}>
+      <View style={{height: pageData.dimensions.window.height * 0.4, overflow: "scroll"}}>
       {selectedSchedules.map((item) => (
-        <View style={{height: microsoftAccessToken.dimensions.window.height * 0.05}} key={"SelectedSchedule_" + item.id}>
+        <View style={{height: pageData.dimensions.window.height * 0.05}} key={"SelectedSchedule_" + item.id}>
           <Text>{item.properName}</Text>
           { (selectedDefaultSchedule.id !== item.id) ?
-          <Pressable style={{backgroundColor: "blue", height: microsoftAccessToken.dimensions.window.height * 0.02}}>
+          <Pressable style={{backgroundColor: "blue", height: pageData.dimensions.window.height * 0.02}}>
             <Text>Select As Default</Text>
           </Pressable>:null
           }
@@ -112,7 +112,7 @@ export default function GovernmentTimetableCreate() {
       ))}
       </View>
       <Text>Other Schedules</Text>
-      <View style={{height: microsoftAccessToken.dimensions.window.height * 0.4, overflow: "scroll"}}>
+      <View style={{height: pageData.dimensions.window.height * 0.4, overflow: "scroll"}}>
         { (loadingState === loadingStateEnum.loading) ?
           <Text>Loading</Text>:null
         }
@@ -132,7 +132,7 @@ export default function GovernmentTimetableCreate() {
         }
       </View>
       <Text>School Days</Text>
-      <View style={{height: microsoftAccessToken.dimensions.window.height * 0.2}}>
+      <View style={{height: pageData.dimensions.window.height * 0.2}}>
         {schoolDays.map((item, index) => (
           <View style={{flexDirection: "row"}}>
             <Text>{item.name}</Text>

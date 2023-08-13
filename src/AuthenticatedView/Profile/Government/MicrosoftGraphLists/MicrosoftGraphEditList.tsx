@@ -45,11 +45,11 @@ export default function MicrosoftGraphEditList() {
             screen: Dimensions.get('screen')
         })
     }, [])
-    const microsoftAccessToken = useContext(accessTokenContent);
+    const pageData = useContext(accessTokenContent);
     const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([])
     const { listId } = useParams()
     async function getListItems() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken,"https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/" + listId + "/items?expand=fields")
+        const result = await callMsGraph(pageData.accessToken,"https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/" + listId + "/items?expand=fields")
         if (result.ok) {
             const data = await result.json()
             console.log(data)
@@ -61,7 +61,7 @@ export default function MicrosoftGraphEditList() {
         const data = {
             "indexed": "true" 
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/"+ listId + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
+        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/"+ listId + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
         console.log(result)
         if (result.ok){
             const data = await result.json()
@@ -77,7 +77,7 @@ export default function MicrosoftGraphEditList() {
         }
     }
     async function getColumns() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken,"https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/" + listId + "/columns")
+        const result = await callMsGraph(pageData.accessToken,"https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/" + listId + "/columns")
         if (result.ok) {
             const data = await result.json()
             console.log(data)

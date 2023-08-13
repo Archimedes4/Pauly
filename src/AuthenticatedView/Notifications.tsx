@@ -5,10 +5,14 @@ import { getSchoolDayOnSelectedDay } from '../Functions/calendarFunctionsGraph';
 import { useMsal } from '@azure/msal-react';
 
 export default function Notifications() {
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
+  async function loadData() {
+    const result = await getSchoolDayOnSelectedDay(pageData.accessToken, new Date(), instance, accounts)
+    console.log(result)
+  }
   useEffect(() => {
-    getSchoolDayOnSelectedDay(microsoftAccessToken.accessToken, new Date(), instance, accounts)
+    loadData()
   }, [])
   return (
     <View>

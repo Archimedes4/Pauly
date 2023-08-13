@@ -28,7 +28,7 @@ declare global{
 }
 
 export default function GovernmentSchedule() {
-    const microsoftAccessToken = useContext(accessTokenContent);
+    const pageData = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
     const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
     const [newPeriodHourStart, setNewPeriodHourStart] = useState<number>(12)
@@ -50,7 +50,7 @@ export default function GovernmentSchedule() {
                 "scheduleData":JSON.stringify(newPeriods)
             }
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items", instance, accounts, "POST", false, JSON.stringify(data))
+        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items", instance, accounts, "POST", false, JSON.stringify(data))
         if (result.ok){
             const dataResult = await result.json()
             console.log(dataResult)
@@ -66,7 +66,7 @@ export default function GovernmentSchedule() {
                 <Text>Back</Text>
             </Link>
             <Text>Create Schedule</Text>
-            <View style={{height: microsoftAccessToken.dimensions.window.height * 0.3}}>
+            <View style={{height: pageData.dimensions.window.height * 0.3}}>
                 <View style={{flexDirection: "row"}}>
                     <Text>Proper Name:</Text>
                     <TextInput value={scheduleProperName} onChangeText={setScheduleProperName} placeholder='Proper Name ex. Schedule One'/>
@@ -78,7 +78,7 @@ export default function GovernmentSchedule() {
                 <Text>Keep descriptive name short as it is used in the calendar widget</Text>
             </View>
             <Text>New Periods</Text>
-            <View style={{height: microsoftAccessToken.dimensions.window.height * 0.5}}>
+            <View style={{height: pageData.dimensions.window.height * 0.5}}>
             {newPeriods.map((period) => (
                 <PeriodBlock period={period} newPeriods={newPeriods} onSetNewPeriods={(out) => {
                     console.log("This is out", out)

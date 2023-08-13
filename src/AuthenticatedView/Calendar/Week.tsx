@@ -5,7 +5,7 @@ import DayView from './DayView';
 import create_UUID from '../../Functions/CreateUUID';
 
 export default function Week({width, height}:{width: number, height: number}) {
-  //const microsoftAccessToken = useContext(accessTokenContent);
+  //const pageData = useContext(accessTokenContent);
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([])
   function getDOW(selectedDate: Date) {
     var week: Date[] = []

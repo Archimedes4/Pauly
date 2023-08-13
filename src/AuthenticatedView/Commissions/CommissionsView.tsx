@@ -5,14 +5,15 @@ import { accessTokenContent } from '../../../App';
 import { siteID } from '../../PaulyConfig';
 import { useParams } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
+import * as Location from 'expo-location';
 
 export default function CommissionsView() {
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
   const [commissionData, setCommissionData] = useState<commissionType | undefined>(undefined)
   const { id } = useParams()
   async function getCommissionInformation() {
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields&filter=fields/CommissionID%20eq%20'"+ id +"'", instance, accounts)
+    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields&filter=fields/CommissionID%20eq%20'"+ id +"'", instance, accounts)
     if (result.ok){
       const data = await result.json()
       console.log(data)
@@ -34,7 +35,7 @@ export default function CommissionsView() {
   }
   async function claimCommission() {
     if (commissionData !== undefined) {
-      const userResult = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/me", instance, accounts)
+      const userResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/me", instance, accounts)
       if (userResult.ok){
         const userData = await userResult.json()
         const currentTime = new Date
@@ -45,11 +46,21 @@ export default function CommissionsView() {
             "UserID":userData["id"]
           }
         }
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionData.commissionId + "/items", instance, accounts, "POST", false, JSON.stringify(data))
+        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionData.commissionId + "/items", instance, accounts, "POST", false, JSON.stringify(data))
         
       }
     }
   }
+  async function getUsersLocation(){
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Permission to access location was denied')
+      return;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+  }
+
   useEffect(() => {getCommissionInformation()}, [id])
   return (
     <View>

@@ -8,14 +8,14 @@ import MapWeb from '../../../../UI/Map/Map.web';
 import callMsGraph from '../../../../Functions/microsoftAssets';
 import { accessTokenContent } from '../../../../../App';
 import create_UUID from '../../../../Functions/CreateUUID';
-import "./ReactCalendarCss.web.css"
+// import "./ReactCalendarCss.web.css"
 import { useMsal } from '@azure/msal-react';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
 export default function CreateNewCommission() {
-    const microsoftAccessToken = useContext(accessTokenContent);
+    const pageData = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
     const [commissionName, setCommissionName] = useState<string>("")
     const [proximity, setProximity] = useState<number>(0)
@@ -80,9 +80,9 @@ export default function CreateNewCommission() {
               "template": " genericList"
             }
         }
-        const resultList = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists", instance, accounts, "POST", false, JSON.stringify(listData))
+        const resultList = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists", instance, accounts, "POST", false, JSON.stringify(listData))
         if (resultList.ok){
-            const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/15357035-e94e-4664-b6a4-26e641f0f509/items", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix this id
+            const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/15357035-e94e-4664-b6a4-26e641f0f509/items", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix this id
             if (result.ok){
                 setSubmitButtonText("Success")
             } else {

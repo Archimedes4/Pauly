@@ -8,7 +8,7 @@ import { Link } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
 
 export default function GovernmentClassesCreate() {
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
   const [selectedGrades, setSelectedGrades] = useState<number[]>([])
   const [newClassName, setNewClassName] = useState<string>("")
@@ -22,7 +22,7 @@ export default function GovernmentClassesCreate() {
         "gradeData":selectedGrades.toString()
       }
     }
-    const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/800202d8-1f51-4df4-ac39-08da7357ca89/items", instance, accounts, "POST", false, JSON.stringify(data))
+    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/800202d8-1f51-4df4-ac39-08da7357ca89/items", instance, accounts, "POST", false, JSON.stringify(data))
     if (result.ok){
       //TO DO add success notifiation
       console.log("All Good")

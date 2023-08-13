@@ -11,9 +11,6 @@ import { siteID } from '../PaulyConfig';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
-
 declare global {
     type DateProperty = {
         Date: number
@@ -24,29 +21,15 @@ declare global {
 }
 
 export default function HomePage() {
-    const microsoftAccessToken = useContext(accessTokenContent);
+    const pageData = useContext(accessTokenContent);
     const { instance, accounts } = useMsal();
     const navigate = useNavigate()
     const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
     const [messageText, setMessageText] = useState("")
     const [animationSpeed, setAnnimationSpeed] = useState(0)
-    const [dimensions, setDimensions] = useState({
-        window: windowDimensions,
-        screen: screenDimensions,
-    });
-
-    useEffect(() => {
-        const subscription = Dimensions.addEventListener(
-          'change',
-          ({window, screen}) => {
-            setDimensions({window, screen});
-          },
-        );
-        return () => subscription?.remove();
-    });
 
     async function getCurrentTextAndAnimationSpeed() {
-        const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", instance, accounts)//TO DO fix list ids
+        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", instance, accounts)//TO DO fix list ids
         if (result.ok){
             const data: Record<string, any> = await result.json()
             console.log(data)
@@ -62,62 +45,62 @@ export default function HomePage() {
     }
 
     useEffect(() => {
-        if (microsoftAccessToken.accessToken !== ""){
+        if (pageData.accessToken !== ""){
             getCurrentTextAndAnimationSpeed()
         }
-    }, [microsoftAccessToken])
+    }, [pageData])
 
     useEffect(() => {
-        console.log("THis is breakpoint", microsoftAccessToken.currentBreakPointMode)
-        if (microsoftAccessToken.currentBreakPointMode > 0){
+        if (pageData.currentBreakPointMode > 0){
             navigate("/notifications")
         }
-    }, [dimensions.window])
+    }, [pageData.currentBreakPointMode])
+
   return (
     <View style={{backgroundColor: "#793033", overflow: "hidden"}}>
         {/* <Link to="/notifications">
         </Link> */}
-        <View style={{width: dimensions.window.width * 1.0, height: dimensions.window.height * 0.08}}>
+        <View style={{width: pageData.dimensions.window.width * 1.0, height: pageData.dimensions.window.height * 0.08}}>
             { (messageText !== "") ?
-                <ScrollingTextAnimation width={dimensions.window.width * 1.0} height={dimensions.window.height * 0.08}>
+                <ScrollingTextAnimation width={pageData.dimensions.window.width * 1.0} height={pageData.dimensions.window.height * 0.08}>
                     <View>
-                        <Text numberOfLines={1} style={{fontSize: dimensions.window.height * 0.07, height: dimensions.window.height * 0.07}}>{messageText}</Text>
+                        <Text numberOfLines={1} style={{fontSize: pageData.dimensions.window.height * 0.07, height: pageData.dimensions.window.height * 0.07}}>{messageText}</Text>
                     </View>
                 </ScrollingTextAnimation>:null
             }
         </View>
-        <Pressable style={{width: dimensions.window.width * 0.999, height: dimensions.window.height * 0.42}} onPress={() => {//TO DO Naviate to Calendar
+        <Pressable style={{width: pageData.dimensions.window.width * 0.999, height: pageData.dimensions.window.height * 0.42}} onPress={() => {//TO DO Naviate to Calendar
         }}>
             <View>
-                <Text style={{margin: "auto", width: dimensions.window.width * 1.0, height: dimensions.window.height * 0.05}}>Calendar</Text>
-                <MonthView width={dimensions.window.width * 1.0} height={dimensions.window.height * 0.37}/>
+                <Text style={{margin: "auto", width: pageData.dimensions.window.width * 1.0, height: pageData.dimensions.window.height * 0.05}}>Calendar</Text>
+                <MonthView width={pageData.dimensions.window.width * 1.0} height={pageData.dimensions.window.height * 0.37}/>
             </View>
         </Pressable>
-        <View style={{flexDirection: 'row', width: dimensions.window.width * 1.0, height: dimensions.window.height * 0.25}}>
+        <View style={{flexDirection: 'row', width: pageData.dimensions.window.width * 1.0, height: pageData.dimensions.window.height * 0.25}}>
             <Link to={'/quiz'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: dimensions.window.width * 0.5, height: dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
-                    <Image source={require("../../assets/images/QuizIcon.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <View style={{backgroundColor: "#793033", width: pageData.dimensions.window.width * 0.5, height: pageData.dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
+                    <Image source={require("../../assets/images/QuizIcon.png")} resizeMode='contain' width={pageData.dimensions.window.width * 0.5} height={pageData.dimensions.window.height * 0.25} style={{zIndex: 2, height: pageData.dimensions.window.height * 0.25, width: pageData.dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
             <Link to={'/sports'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: dimensions.window.width * 0.5, height: dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-                    <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={dimensions.window.width * 0.3} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <View style={{backgroundColor: "#793033", width: pageData.dimensions.window.width * 0.5, height: pageData.dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
+                    <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={pageData.dimensions.window.width * 0.3} height={pageData.dimensions.window.height * 0.25} style={{zIndex: 2, height: pageData.dimensions.window.height * 0.25, width: pageData.dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
         </View>
-        <View style={{flexDirection: 'row', width: dimensions.window.width * 1.0, height: dimensions.window.height * 0.25}}>
+        <View style={{flexDirection: 'row', width: pageData.dimensions.window.width * 1.0, height: pageData.dimensions.window.height * 0.25}}>
             <Link to={'/messaging'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: dimensions.window.width * 0.5, height: dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-                    <Image source={require("../../assets/images/MessagingIcon.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <View style={{backgroundColor: "#793033", width: pageData.dimensions.window.width * 0.5, height: pageData.dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
+                    <Image source={require("../../assets/images/MessagingIcon.png")} resizeMode='contain' width={pageData.dimensions.window.width * 0.5} height={pageData.dimensions.window.height * 0.25} style={{zIndex: 2, height: pageData.dimensions.window.height * 0.25, width: pageData.dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link >
             <Link to={'/profile'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: dimensions.window.width * 0.5, height: dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
-                    <Image source={require("../../assets/images/Books.png")} resizeMode='contain' width={dimensions.window.width * 0.5} height={dimensions.window.height * 0.25} style={{zIndex: 2, height: dimensions.window.height * 0.25, width: dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <View style={{backgroundColor: "#793033", width: pageData.dimensions.window.width * 0.5, height: pageData.dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
+                    <Image source={require("../../assets/images/Books.png")} resizeMode='contain' width={pageData.dimensions.window.width * 0.5} height={pageData.dimensions.window.height * 0.25} style={{zIndex: 2, height: pageData.dimensions.window.height * 0.25, width: pageData.dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
         </View>

@@ -12,7 +12,7 @@ const screenDimensions = Dimensions.get('screen');
 
 export default function GovernmentCreateNewSport() {
   const [sportName, setSportName] = useState<string>("")
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   async function createSport() {
     const newSportID: string = create_UUID()
     const data = {
@@ -45,9 +45,9 @@ export default function GovernmentCreateNewSport() {
         "template": " genericList"
       }
     }
-    const resultList = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" +siteID + "/lists", "POST", JSON.stringify(listData))
+    const resultList = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" +siteID + "/lists", "POST", JSON.stringify(listData))
     if (resultList.ok){
-      const result = await callMsGraph(microsoftAccessToken.accessToken, "https://graph.microsoft.com/v1.0/sites/" +siteID + "/lists/af29f01a-df11-4e9d-85c8-7461ca4dc6e9/items", "POST", JSON.stringify(data))//TO DO fix this id
+      const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" +siteID + "/lists/af29f01a-df11-4e9d-85c8-7461ca4dc6e9/items", "POST", JSON.stringify(data))//TO DO fix this id
     }
     console.log(resultList)
   }

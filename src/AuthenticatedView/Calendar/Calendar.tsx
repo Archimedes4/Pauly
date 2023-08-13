@@ -43,7 +43,8 @@ declare global {
     endTime: Date
     eventColor: string
     microsoftEvent: boolean
-    schoolYearData?: string
+    paulyEventType?: "schoolDay" | "schoolYear"
+    paulyEventData?: string
     microsoftReference?: string
   }
 }
@@ -51,7 +52,7 @@ declare global {
 const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 
 export default function Calendar({governmentMode}:{governmentMode: boolean}) {
-  const microsoftAccessToken = useContext(accessTokenContent);
+  const pageData = useContext(accessTokenContent);
   const { instance, accounts } = useMsal();
   const [selectedCalendarMode, setSelectedCalendarMode] = useState<calendarMode>(calendarMode.month)
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
@@ -77,14 +78,14 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
     const endDate = new Date(selectedDateOut.getFullYear(), selectedDateOut.getMonth() + 1, 0)
     //PersonalCalendar
     var outputEvents: eventType[] = []
-    const personalCalendarResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=" + startDate.toISOString() +"&endDateTime=" + endDate.toISOString(), "https://graph.microsoft.com/v1.0/me/events/")
+    const personalCalendarResult = await getGraphEvents(pageData.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=" + startDate.toISOString() +"&endDateTime=" + endDate.toISOString(), "https://graph.microsoft.com/v1.0/me/events/")
     if (personalCalendarResult.result === loadingStateEnum.success){
       outputEvents = personalCalendarResult.events
       //This code is pulled from add events School Years Select
       var url: string = (personalCalendarResult.nextLink !== undefined) ? personalCalendarResult.nextLink:""
       var notFound: boolean = (personalCalendarResult.nextLink !== undefined) ? true:false
       while (notFound) {
-        const furtherResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, url, "https://graph.microsoft.com/v1.0/me/events/")
+        const furtherResult = await getGraphEvents(pageData.accessToken, false, instance, accounts, url, "https://graph.microsoft.com/v1.0/me/events/")
         if (furtherResult.result === loadingStateEnum.success) {
           outputEvents = [...outputEvents, ...furtherResult.events]
           url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
@@ -95,7 +96,7 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
       }
     }
     //OrgWideEvents
-    const orgEventsResult = await getGraphEvents(microsoftAccessToken.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20ge%20'" + startDate.toISOString() + "'%20and%20end/dateTime%20le%20'" + endDate.toISOString() + "'", "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/")
+    const orgEventsResult = await getGraphEvents(pageData.accessToken, false, instance, accounts, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20ge%20'" + startDate.toISOString() + "'%20and%20end/dateTime%20le%20'" + endDate.toISOString() + "'", "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/")
     if (orgEventsResult.result === loadingStateEnum.success) {
       outputEvents = [...outputEvents, ...orgEventsResult.events]
       //This code is pulled from add events School Years Select
@@ -130,9 +131,9 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
 
   return (
     <View>
-      <View style={{height: microsoftAccessToken.dimensions.window.height * 0.1, backgroundColor: '#444444'}}>
+      <View style={{height: pageData.dimensions.window.height * 0.1, backgroundColor: '#444444'}}>
         <View style={{flexDirection: "row"}}>
-          { (microsoftAccessToken.currentBreakPointMode >= 1) ?
+          { (pageData.currentBreakPointMode >= 1) ?
             null:<Link to="/">
               <View style={{flexDirection: "row"}}>
                 <ChevronLeft width={14} height={14}/>
@@ -141,28 +142,28 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
             </Link>
           } 
         </View>
-        <View style={{flexDirection: "row", alignItems: "center", height: microsoftAccessToken.dimensions.window.height * 0.1}}>
-          <Text style={{fontFamily: "BukhariScript", fontSize: Math.sqrt(((microsoftAccessToken.dimensions.window.width * 0.4)*(microsoftAccessToken.dimensions.window.height * 0.1))/8), color: "white", marginLeft: microsoftAccessToken.dimensions.window.width * 0.05, marginRight: (microsoftAccessToken.dimensions.window.width * 0.00316227766017) * (microsoftAccessToken.dimensions.window.width * 0.0316227766017)}}>Calendar</Text>
-          <CalendarTypePicker setSelectedCalendarMode={setSelectedCalendarMode} selectedIndex={selectedCalendarMode} width={microsoftAccessToken.dimensions.window.width * 0.5} height={microsoftAccessToken.dimensions.window.height * 0.05}/>
-          <Pressable onPress={() => {setIsShowingAddDate(true); setIsEditing(false); setSelectedEvent(undefined)}} style={{height: microsoftAccessToken.dimensions.window.height * 0.05, width: microsoftAccessToken.dimensions.window.height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1, marginLeft: microsoftAccessToken.dimensions.window.width * 0.005}}>
-            <AddIcon width={microsoftAccessToken.dimensions.window.height * 0.03} height={microsoftAccessToken.dimensions.window.height * 0.03}/>
+        <View style={{flexDirection: "row", alignItems: "center", height: pageData.dimensions.window.height * 0.1}}>
+          <Text style={{fontFamily: "BukhariScript", fontSize: Math.sqrt(((pageData.dimensions.window.width * 0.4)*(pageData.dimensions.window.height * 0.1))/8), color: "white", marginLeft: pageData.dimensions.window.width * 0.05, marginRight: (pageData.dimensions.window.width * 0.00316227766017) * (pageData.dimensions.window.width * 0.0316227766017)}}>Calendar</Text>
+          <CalendarTypePicker setSelectedCalendarMode={setSelectedCalendarMode} selectedIndex={selectedCalendarMode} width={pageData.dimensions.window.width * 0.5} height={pageData.dimensions.window.height * 0.05}/>
+          <Pressable onPress={() => {setIsShowingAddDate(true); setIsEditing(false); setSelectedEvent(undefined)}} style={{height: pageData.dimensions.window.height * 0.05, width: pageData.dimensions.window.height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1, marginLeft: pageData.dimensions.window.width * 0.005}}>
+            <AddIcon width={pageData.dimensions.window.height * 0.03} height={pageData.dimensions.window.height * 0.03}/>
           </Pressable>
         </View>
       </View> 
-      <View style={{height: microsoftAccessToken.dimensions.window.height * 0.9}}>
+      <View style={{height: pageData.dimensions.window.height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
-        <MonthViewMain width={microsoftAccessToken.dimensions.window.width * 0.8} height={microsoftAccessToken.dimensions.window.height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>: null
+        <MonthViewMain width={pageData.dimensions.window.width * 0.8} height={pageData.dimensions.window.height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>: null
       }
       { (selectedCalendarMode === calendarMode.week) ?
-        <Week width={microsoftAccessToken.dimensions.window.width * 1.0} height={microsoftAccessToken.dimensions.window.height * 0.9} />:null
+        <Week width={pageData.dimensions.window.width * 1.0} height={pageData.dimensions.window.height * 0.9} />:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
-        <DayView width={microsoftAccessToken.dimensions.window.width * 0.9} height={microsoftAccessToken.dimensions.window.height * 0.9} />:null
+        <DayView width={pageData.dimensions.window.width * 0.9} height={pageData.dimensions.window.height * 0.9} />:null
       }
       </View>
       { isShowingAddDate ?
-        <View style={{zIndex: 2, position: "absolute", left: microsoftAccessToken.dimensions.window.width * 0.2, top: microsoftAccessToken.dimensions.window.height * 0.1}}>
-          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={microsoftAccessToken.dimensions.window.width * 0.6} height={microsoftAccessToken.dimensions.window.height * 0.8} editing={isEditing} editData={selectedEvent} />
+        <View style={{zIndex: 2, position: "absolute", left: pageData.dimensions.window.width * 0.2, top: pageData.dimensions.window.height * 0.1}}>
+          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={pageData.dimensions.window.width * 0.6} height={pageData.dimensions.window.height * 0.8} editing={isEditing} editData={selectedEvent} />
         </View>:null
       }
     </View>

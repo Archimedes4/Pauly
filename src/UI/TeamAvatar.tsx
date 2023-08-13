@@ -10,7 +10,7 @@ enum loadingResult {
 }
 
 export default function TeamAvatar({teamId}:{teamId: string}) {
-    const microsoftAccessToken = useContext(accessTokenContent);
+    const pageData = useContext(accessTokenContent);
     const [teamAvatarDataUrl, setTeamAvatarDataUrl] = useState("")
     const [currentLoadingResult, setCurrentLoadingResult] = useState<loadingResult>(loadingResult.loading)
 
@@ -18,7 +18,7 @@ export default function TeamAvatar({teamId}:{teamId: string}) {
         try{
             const response = await fetch("https://graph.microsoft.com/v1.0/teams/"+teamId+"/photo/$value", {method: "Get", headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer " + microsoftAccessToken
+                "Authorization": "Bearer " + pageData
                 },})
             if (response.ok){
                 const dataBlob = await response.blob()
