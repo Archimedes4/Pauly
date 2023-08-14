@@ -4,7 +4,6 @@ import { Link } from 'react-router-native'
 import { useMsal } from "@azure/msal-react";
 
 export default function Settings() {
-  const { instance } = useMsal();
   return (
     <View>
         <Link to="/profile/">

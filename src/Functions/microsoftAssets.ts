@@ -1,10 +1,8 @@
-import { useMsal } from "@azure/msal-react";
-import { loginRequest } from "../authConfig";
-import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
+import store from "../Redux/store";
 
-export default async function callMsGraph(accessToken: string, url: string, instance: IPublicClientApplication, accounts: AccountInfo[], method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean): Promise<Response> {
+export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean): Promise<Response> {
     const headers = new Headers();
-    const bearer = `Bearer ${accessToken}`;
+    const bearer = `Bearer ${store.getState().authenticationToken}`;
 
     headers.append("Authorization", bearer);
     headers.append("Content-Type", "application/json")
@@ -23,11 +21,12 @@ export default async function callMsGraph(accessToken: string, url: string, inst
     if (response.status === 401) {
         if (secondAuth === undefined){
             try{
+                
                 const tokenResponse = await instance.acquireTokenSilent({
                     ...loginRequest,
                     account: accounts[0],
                 })
-                const secondResult = await callMsGraph(tokenResponse.accessToken, url, instance, accounts, method, perfer, body, true)
+                const secondResult = await callMsGraph(tokenResponse.accessToken, url, method, perfer, body, true)
                 return secondResult
             } catch {
                 instance.logoutPopup({
