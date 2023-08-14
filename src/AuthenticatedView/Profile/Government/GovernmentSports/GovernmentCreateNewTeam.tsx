@@ -12,7 +12,6 @@ import { loadingStateEnum } from '../../../../types';
 
 export default function GovernmentCreateNewTeam() {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   const { sport, id } = useParams()
 
   const [createTeamLoadingState, setCreateTeamLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
@@ -47,9 +46,9 @@ export default function GovernmentCreateNewTeam() {
         teamID: newTeamRosterID
       }
     }
-    const resultList = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists", instance, accounts, "POST", false, JSON.stringify(listData))
+    const resultList = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists", "POST", false, JSON.stringify(listData))
     if (resultList.ok){
-      const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/" + id + "/items", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix id (this isn't really important because it will work anyway it might be better to call for the id though)
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/" + id + "/items", "POST", false, JSON.stringify(data))//TO DO fix id (this isn't really important because it will work anyway it might be better to call for the id though)
       if (result.ok){
         setCreateTeamLoadingState(loadingStateEnum.success)
       } else {

@@ -10,11 +10,10 @@ import initilizePauly from '../../../../Functions/initilizePauly';
 
 export default function GovernmentAdmin() {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   const [initilizePaulyLoadingResult, setInitilizePaulyLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   async function InitilizePauly() {
     setInitilizePaulyLoadingResult(loadingStateEnum.loading)
-    const result = await initilizePauly(pageData.accessToken, instance, accounts)
+    const result = await initilizePauly()
     setInitilizePaulyLoadingResult(result)
   }
   return (

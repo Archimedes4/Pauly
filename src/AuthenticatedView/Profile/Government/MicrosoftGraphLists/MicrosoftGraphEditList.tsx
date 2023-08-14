@@ -25,13 +25,13 @@ declare global {
 
 export default function MicrosoftGraphEditList() {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
+
     const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([])
     const { listId } = useParams()
     const [isCoppiedToClipboard, setIsCoppiedToClipboard] = useState<boolean>(false)
 
     async function getListItems() {
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists/" + listId + "/items?expand=fields", instance, accounts)
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists/" + listId + "/items?expand=fields")
         if (result.ok) {
             const data = await result.json()
             console.log(data)
@@ -43,7 +43,7 @@ export default function MicrosoftGraphEditList() {
         const data = {
             "indexed": "true" 
         }
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/"+ listId + "/columns/" + columnId, instance, accounts, "PATCH", false, JSON.stringify(data))//TO DO fix ids
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/"+ listId + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
         console.log(result)
         if (result.ok){
             const data = await result.json()
@@ -59,7 +59,7 @@ export default function MicrosoftGraphEditList() {
         }
     }
     async function getColumns() {
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists/" + listId + "/columns", instance, accounts)
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists/" + listId + "/columns")
         if (result.ok) {
             const data = await result.json()
             console.log(data)

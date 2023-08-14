@@ -26,12 +26,11 @@ declare global {
 
 export default function SelectTimetable({governmentMode, onSelect}:{governmentMode: boolean, onSelect?: (item: timetableStringType) => void}) {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   const {timetablesListId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedTimetables, setLoadedTimetables] = useState<timetableStringType[]>([])
   async function getTimetables() {
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + timetablesListId + "/items?expand=fields", instance, accounts)
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + timetablesListId + "/items?expand=fields")
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){

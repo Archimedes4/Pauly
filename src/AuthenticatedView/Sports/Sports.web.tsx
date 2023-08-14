@@ -39,20 +39,19 @@ declare global {
 
 export default function Sports() {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   const {sportsApprovedSubmissionsListId} = useSelector((state: RootState) => state.paulyList)
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getSportsContent() {
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + sportsApprovedSubmissionsListId + "/items?expand=fields", instance, accounts)
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + sportsApprovedSubmissionsListId + "/items?expand=fields")
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined){
         var newSportsPosts: sportPost[] = []
         for (let index = 0; index < dataResult["value"].length; index++){
           try{
-            const shareResult = await getFileWithShareID(dataResult["value"][index]["fields"]["FileId"], pageData.accessToken, instance, accounts)
+            const shareResult = await getFileWithShareID(dataResult["value"][index]["fields"]["FileId"])
             newSportsPosts.push({
               caption: dataResult["value"][index]["fields"]["Caption"],
               fileID: shareResult.url,

@@ -29,7 +29,7 @@ declare global{
 
 export default function GovernmentSchedule() {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
+
     const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
     const [newPeriodHourStart, setNewPeriodHourStart] = useState<number>(12)
     const [newPeriodMinuteStart, setNewPeriodMinuteStart] = useState<number>(0)
@@ -50,7 +50,7 @@ export default function GovernmentSchedule() {
                 "scheduleData":JSON.stringify(newPeriods)
             }
         }
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items", instance, accounts, "POST", false, JSON.stringify(data))
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items", "POST", false, JSON.stringify(data))
         if (result.ok){
             const dataResult = await result.json()
             console.log(dataResult)

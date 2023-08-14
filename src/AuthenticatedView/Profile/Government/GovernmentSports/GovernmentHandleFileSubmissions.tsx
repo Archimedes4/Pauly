@@ -19,10 +19,10 @@ declare global {
 
 export default function GovernmentHandleFileSubmissions() {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
+
     const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([])
     async function getSubmissions() {
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/bf26e642-f655-47db-a037-188189b0d378/items?expand=fields", instance, accounts)//TO DO fix id
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"+siteID+"/lists/bf26e642-f655-47db-a037-188189b0d378/items?expand=fields")//TO DO fix id
         if (result.ok){
             const data = await result.json()
             console.log(data)

@@ -13,7 +13,7 @@ import { loadingStateEnum } from '../../../types';
 
 export default function GovernmentHomePage() {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
+
     const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
 
     //Loading States
@@ -25,7 +25,7 @@ export default function GovernmentHomePage() {
     const [selectedPowerpoint, setSelectedPowerpoint] = useState<microsoftFileType | undefined>(undefined)
 
     async function loadCurrentPaultData() {
-        const result = await getCurrentPaulyData(pageData.accessToken, instance, accounts)
+        const result = await getCurrentPaulyData()
         if (result.result === loadingStateEnum.success && result.data !== undefined) {
             console.log("This went well", result)
             setNewAnnimationSpeed(result.data.animationSpeed)
@@ -39,7 +39,7 @@ export default function GovernmentHomePage() {
         const dataOut = {
             key:data
         }
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", instance, accounts, "PATCH", false, JSON.stringify(dataOut))//TO DO fix list ids
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", "PATCH", false, JSON.stringify(dataOut))//TO DO fix list ids
         if (result.ok){ 
             const data = await result.json()
         } else {

@@ -3,13 +3,12 @@ import { Dimensions, View, Text, Image, Pressable } from 'react-native';
 import MonthView from './MonthView';
 import { Link, Navigate, useNavigate } from 'react-router-native';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
-import { loginRequest } from '../authConfig';
 import callMsGraph from '../Functions/microsoftAssets';
 import { accessTokenContent } from '../../App';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { siteID } from '../PaulyConfig';
 import { useSelector } from 'react-redux';
-import { RootState } from '../Redux/store';
+import store, { RootState } from '../Redux/store';
 
 declare global {
     type DateProperty = {
@@ -22,14 +21,13 @@ declare global {
 
 export default function HomePage() {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
     const navigate = useNavigate()
     const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
     const [messageText, setMessageText] = useState("")
     const [animationSpeed, setAnnimationSpeed] = useState(0)
 
     async function getCurrentTextAndAnimationSpeed() {
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", instance, accounts)//TO DO fix list ids
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields")//TO DO fix list ids
         if (result.ok){
             const data: Record<string, any> = await result.json()
             console.log(data)
@@ -45,7 +43,7 @@ export default function HomePage() {
     }
 
     useEffect(() => {
-        if (pageData.accessToken !== ""){
+        if (store.getState().authenticationToken !== ""){
             getCurrentTextAndAnimationSpeed()
         }
     }, [pageData])

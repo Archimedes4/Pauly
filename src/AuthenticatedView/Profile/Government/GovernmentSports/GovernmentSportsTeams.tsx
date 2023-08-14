@@ -21,11 +21,11 @@ type sportTeamType = {
 export default function GovernmentSportsTeams() {
     const { sport, id } = useParams()
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
+
     const [dataResult, setDataResult] = useState<currentDataResult>(currentDataResult.loading)
     const [currentTeams, setCurrentTeams] = useState<sportTeamType[]>([])
     async function getTeams(){
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + id +"/items?expand=fields", instance, accounts)//TO DO list id
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + id +"/items?expand=fields")//TO DO list id
         if (result.ok) {
           const data = await result.json()
           console.log(data)

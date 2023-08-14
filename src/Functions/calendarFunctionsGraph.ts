@@ -1,4 +1,3 @@
-import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
 import { orgWideGroupID, siteID } from "../PaulyConfig";
 import callMsGraph from "./microsoftAssets";
 import { loadingStateEnum } from "../types";
@@ -6,8 +5,8 @@ import store from "../Redux/store";
 import { Data } from "@react-google-maps/api";
 
 //Defaults to org wide events
-export async function getGraphEvents(accessToken: string, schoolYear: boolean, instance: IPublicClientApplication, accounts: AccountInfo[], url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
-  const result = await callMsGraph(accessToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", instance, accounts, "GET", true)
+export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
+  const result = await callMsGraph(store.getState().authenticationToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", "GET", true)
   if (result.ok){
     const data = await result.json()
     var newEvents: eventType[] = []
@@ -48,8 +47,8 @@ export async function getGraphEvents(accessToken: string, schoolYear: boolean, i
   }
 }
   
-export async function getSchedule(accessToken: string, id: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
-  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'", instance, accounts)//TO DO fix site id
+export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
+  const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
   if (result.ok) {
     const data = await result.json()
     console.log(data)
@@ -75,8 +74,8 @@ export async function getSchedule(accessToken: string, id: string, instance: IPu
   }
 }
   
-export async function getTimetable(accessToken: string, timetableId: string, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'", instance, accounts)//TO DO fix site id
+export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
+  const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
   if (result.ok) {
     console.log(result)
     const data = await result.json()
@@ -87,7 +86,7 @@ export async function getTimetable(accessToken: string, timetableId: string, ins
           const scheduleData: string[] = JSON.parse(data["value"][0]["fields"]["timetableDataSchedules"])
           var newSchedules: scheduleType[] = []
           for (var index = 0; index < scheduleData.length; index++) {
-            const result = await getSchedule(accessToken, scheduleData[index], instance, accounts)
+            const result = await getSchedule(scheduleData[index])
             if (result.result === loadingStateEnum.success && result.schedule !== undefined) {
               newSchedules.push(result.schedule)
             } else {
@@ -118,10 +117,10 @@ export async function getTimetable(accessToken: string, timetableId: string, ins
   }
 }
 
-export async function getSchoolDayOnSelectedDay(accessToken: string, selectedDate: Date, instance: IPublicClientApplication, accounts: AccountInfo[]): Promise<{ result: loadingStateEnum; event?: eventType; }> {
+export async function getSchoolDayOnSelectedDay(selectedDate: Date): Promise<{ result: loadingStateEnum; event?: eventType; }> {
   const startDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0)).toISOString().slice(0, -1) + "0000"
   const endDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 0)).toISOString().slice(0, -1) + "0000"
-  const result = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20eq%20'" + startDate + "'%20and%20end/dateTime%20eq%20'" + endDate + "'&$select=ext9u07b055_paulyEvents", instance, accounts, "GET", true)
+  const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20eq%20'" + startDate + "'%20and%20end/dateTime%20eq%20'" + endDate + "'&$select=ext9u07b055_paulyEvents", "GET", true)
   if (result.ok) {
     const data = await result.json()
     for(var index = 0; index < data["value"].length; index++){

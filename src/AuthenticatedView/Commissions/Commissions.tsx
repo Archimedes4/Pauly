@@ -18,12 +18,11 @@ enum CommissionMode{
 
 export default function Commissions() {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   const {commissionListId} = useSelector((state: RootState) => state.paulyList)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
 
   async function getCommissions(){
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionListId + "/items?expand=fields", instance, accounts)//TO DO list id
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionListId + "/items?expand=fields")//TO DO list id
     if (result.ok) {
       const data = await result.json()
       console.log(data)

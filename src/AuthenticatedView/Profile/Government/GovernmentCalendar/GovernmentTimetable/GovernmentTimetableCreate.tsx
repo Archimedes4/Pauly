@@ -20,7 +20,7 @@ declare global {
 
 export default function GovernmentTimetableCreate() {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
+
     const {timetablesListId, scheduleListId} = useSelector((state: RootState) => state.paulyList)
 
     //Loading States
@@ -51,7 +51,7 @@ export default function GovernmentTimetableCreate() {
             "timetableDefaultScheduleId":selectedDefaultSchedule.id
           }
         }
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + timetablesListId +"/items?expand=fields", instance, accounts, "POST", false, JSON.stringify(data))//TO DO fix site id
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + timetablesListId +"/items?expand=fields", "POST", false, JSON.stringify(data))//TO DO fix site id
         if (result.ok){
           setCreateTimetableLoadingState(loadingStateEnum.success)
         } else {
@@ -60,7 +60,7 @@ export default function GovernmentTimetableCreate() {
       }
     }
     async function getSchedules() {
-      const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items?expand=fields", instance, accounts)
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items?expand=fields")
       if (result.ok){
         const dataResult = await result.json()
         if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){

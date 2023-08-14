@@ -1,11 +1,10 @@
-import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser";
 import callMsGraph from "./microsoftAssets";
 import { mainListID, siteID } from "../PaulyConfig";
 import store from "../Redux/store";
 import { paulyListSlice } from "../Redux/reducers/paulyListReducer";
 
-export default async function getPaulyLists(accessToken: string, instance: IPublicClientApplication, accounts: AccountInfo[]) {
-    const paulyListResult = await callMsGraph(accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + mainListID + "/items?expand=fields", instance, accounts)
+export default async function getPaulyLists() {
+    const paulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + mainListID + "/items?expand=fields")
     if (paulyListResult.ok){
         const paulyListResultData = await paulyListResult.json()
         console.log(paulyListResultData)

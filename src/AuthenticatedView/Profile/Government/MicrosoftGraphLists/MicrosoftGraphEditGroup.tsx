@@ -8,18 +8,18 @@ import { siteID } from '../../../../PaulyConfig';
 import { CopyIcon } from '../../../../UI/Icons/Icons';
 import * as Clipboard from 'expo-clipboard';
 import { loadingStateEnum } from '../../../../types';
+import store from '../../../../Redux/store';
 
 
 export default function MicrosoftGraphEditGroup() {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
     const { groupId } = useParams()
 
     const [isCoppiedToClipboard, setIsCoppiedToClipboard] = useState<boolean>(false)
     const [groupLoadingState, setGroupLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
     async function getListItems() {
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups/" + groupId, instance, accounts)
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + groupId)
         if (result.ok) {
             const data = await result.json()
             console.log(data)
@@ -30,7 +30,7 @@ export default function MicrosoftGraphEditGroup() {
     }
 
     async function deleteGroup() {
-        const deleteGroupResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups/" + groupId, instance, accounts, "DELETE")
+        const deleteGroupResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + groupId, "DELETE")
         if (deleteGroupResult.ok) {
 
         } else {

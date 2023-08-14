@@ -16,12 +16,11 @@ import { loadingStateEnum } from '../../../../../types';
 
 export default function GovernmentSchedule() {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   async function getSchedules() {
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId +"/items?expand=fields", instance, accounts)
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId +"/items?expand=fields")
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){

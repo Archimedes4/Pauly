@@ -30,14 +30,13 @@ export default function MicrosoftGraphOverview() {
   const [searchText, setSearchText] = useState<string>("")
   const [selectedGraphMode, setSelectedGraphMode] =  useState<graphMode>(graphMode.list)
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
 
   //loading states
   const [groupLoadingState, setGroupLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [listLoadingState, setListLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getLists(){
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists", instance, accounts)//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists")//sites/8td1tk.onmicrosoft.com/sites
     if (result.ok){
       const data = await result.json()
       if (data["value"] !== undefined){
@@ -60,11 +59,11 @@ export default function MicrosoftGraphOverview() {
   }
 
   async function searchGroups(search: string) {
-    const groupResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups?$filter=startswith(displayName,'" + search +"')", instance, accounts)
+    const groupResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups?$filter=startswith(displayName,'" + search +"')")
   }
 
   async function getGroups() {
-    const groupResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups", instance, accounts)
+    const groupResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups")
     if (groupResult.ok) {
       const groupResultData = await groupResult.json()
       if (groupResultData["value"] !== undefined){

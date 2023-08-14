@@ -8,6 +8,7 @@ import Picker from "./Picker/Picker"
 import callMsGraph from '../Functions/microsoftAssets';
 import { useMsal } from '@azure/msal-react';
 import { DocumentIcon, FolderIcon } from './Icons/Icons';
+import store from '../Redux/store';
 
 enum MicrosoftUploadModeType {
     ShareLink,
@@ -42,7 +43,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     onSetIsShowingMicrosoftUpload?: (item: boolean) => void,
     onSelectedFile: (item: microsoftFileType) => void
 }) {
-    const { instance, accounts } = useMsal();
+
     const pageData = useContext(accessTokenContent);
     const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
     const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
@@ -71,7 +72,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     }, [])
 
     async function getUserMicrosoftFiles(path: string) {
-        const result = await callMsGraph(pageData.accessToken, path, instance, accounts)
+        const result = await callMsGraph(store.getState().authenticationToken, path)
         if (result.ok){
             const data = await result.json()
             console.log(data)
@@ -112,7 +113,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     }
 
     async function getUserTeams() {
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/me/joinedTeams", instance, accounts)//TO DO make sure this works on live tenancy
+        const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/me/joinedTeams")//TO DO make sure this works on live tenancy
         if (result.ok){
             const data = await result.json()
             console.log("This is teams data", data)
@@ -131,7 +132,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     
     async function getShareFile(ShareLink: string) {
         console.log("This https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl", instance, accounts)
+        const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
         console.log(result)
         if (result.ok){
             const data = await result.json()

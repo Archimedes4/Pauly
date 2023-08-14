@@ -10,6 +10,7 @@ import currentEventsSchoolYearReducer from './reducers/currentEventSchoolYearRed
 import currentEventsLastCalledReducer from './reducers/currentEventLastCalledReducer';
 import selectedDateReducer from './reducers/selectedDateReducer';
 import paulyListReducer from './reducers/paulyListReducer';
+import authenticationTokenReducer from './reducers/authenticationTokenReducer';
 
 const store = configureStore({
   reducer: {
@@ -17,7 +18,8 @@ const store = configureStore({
     currentEventsSchoolYear: currentEventsSchoolYearReducer,
     currentEventsLastCalled: currentEventsLastCalledReducer,
     selectedDate: selectedDateReducer,
-    paulyList: paulyListReducer
+    paulyList: paulyListReducer,
+    authenticationToken: authenticationTokenReducer
   }
 });
 

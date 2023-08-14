@@ -6,6 +6,8 @@ import callMsGraph from '../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../App'
 import { siteID } from '../../../../PaulyConfig'
 import { useMsal } from '@azure/msal-react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../../Redux/store'
 
 declare global {
   type commissionType = {
@@ -23,10 +25,10 @@ declare global {
 
 export default function GovernmentCommissions() {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
+  const {commissionListId} = useSelector((state: RootState) => state.paulyList)
   const [commissions, setCommissions] = useState<commissionType[]>([])
   async function getCommissions(){
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/15357035-e94e-4664-b6a4-26e641f0f509/items?expand=fields", instance, accounts)
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionListId + "/items?expand=fields")
     if (result.ok){
       const data = await result.json()
       console.log(data)

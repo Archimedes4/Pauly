@@ -16,7 +16,6 @@ import { getGraphEvents, getTimetable } from "../../Functions/calendarFunctionsG
 import SelectTimetable from "./SelectTimetable";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useMsal } from "@azure/msal-react";
 import { loadingStateEnum } from "../../types";
 
 enum reocurringType {
@@ -33,7 +32,7 @@ interface schoolDayDataInteface {
 
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
+
     const selectedDate = useSelector((state: RootState) => state.selectedDate)
     const currentEvents = useSelector((state: RootState) => state.currentEvents)
     const dispatch = useDispatch()
@@ -86,7 +85,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
       }
       if (recurringEvent) {
       }
-      const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", instance, accounts, "POST", true, JSON.stringify(data))
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", true, JSON.stringify(data))
       console.log(result)
       if (result.ok){
         const dataOut = await result.json()
@@ -99,7 +98,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
               "eventData":selectedTimetable.id
             }
           }
-          const patchResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], instance, accounts, "PATCH", false, JSON.stringify(patchData))
+          const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
           const patchOut = await patchResult.json()
           console.log("OUTPUT", patchOut)
         } else if (isSchoolDay && selectedSchoolDayData !== undefined) {
@@ -110,7 +109,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
               "eventData":JSON.stringify(selectedSchoolDayData)
             }
           }
-          const patchResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], instance, accounts, "PATCH", false, JSON.stringify(patchData))
+          const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
           const patchOut = await patchResult.json()
           console.log("OUTPUT", patchOut)
         }
@@ -123,7 +122,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
     async function deleteEvent() {
       if (editData !== undefined && editData.microsoftEvent && editData.microsoftReference !== undefined){
         console.log(editData.microsoftReference)
-        const deleteEvent = await callMsGraph(pageData.accessToken, editData.microsoftReference, instance, accounts, "DELETE")
+        const deleteEvent = await callMsGraph(editData.microsoftReference, "DELETE")
         if (deleteEvent.ok){
           var currentEvents = []
           for (var index = 0; index < currentEvents.length; index++){
@@ -304,7 +303,6 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
 }
 
 function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: schoolDayType, selectedSchedule: scheduleType) => void}) {
-  const { instance, accounts } = useMsal();
   const pageData = useContext(accessTokenContent);
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolDays, setSchoolDays] =  useState<schoolDayType[]>([])
@@ -312,7 +310,7 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
   const [isPickingSchoolDay, setIsPickingSchoolDay] = useState<boolean>(true)
   const [selectedSchoolDay, setSelectedSchoolDay] = useState<schoolDayType | undefined>(undefined)
   async function loadData() {
-    const result = await getTimetable(pageData.accessToken, timetableId, instance, accounts)
+    const result = await getTimetable(timetableId)
     if (result.result === loadingStateEnum.success && result.timetable !== undefined) {
       setSchoolDays(result.timetable.days)
       setSchedules(result.timetable.schedules)
@@ -361,19 +359,18 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
 
 function SchoolYearsSelect({width, height, onSelect}:{width: number, height: number, onSelect: (item: eventType) => void}) {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   const fullStore = useSelector((state: RootState) => state)
   const dispatch = useDispatch()
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   async function getData() {
-    const result = await getGraphEvents(pageData.accessToken, true, instance, accounts, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
+    const result = await getGraphEvents(true, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
     if (result.result === loadingStateEnum.success) {
       setLoadingState(loadingStateEnum.success)
       var outputEvents: eventType[] = result.events
       var url: string = (result.nextLink !== undefined) ? result.nextLink:""
       var notFound: boolean = (result.nextLink !== undefined) ? true:false
       while (notFound) {
-        const furtherResult = await getGraphEvents(pageData.accessToken, true, instance, accounts, url)
+        const furtherResult = await getGraphEvents(true, url)
         if (furtherResult.result === loadingStateEnum.success) {
           outputEvents = [...outputEvents, ...furtherResult.events]
           url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""

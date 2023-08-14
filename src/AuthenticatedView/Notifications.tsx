@@ -6,9 +6,8 @@ import { useMsal } from '@azure/msal-react';
 
 export default function Notifications() {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   async function loadData() {
-    const result = await getSchoolDayOnSelectedDay(pageData.accessToken, new Date(), instance, accounts)
+    const result = await getSchoolDayOnSelectedDay(new Date())
     console.log(result)
   }
   useEffect(() => {

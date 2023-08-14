@@ -20,7 +20,7 @@ export default function GovernmentReviewFileSubmission() {
     const [dataContentType, setDataContentType] = useState<dataContentTypeOptions>(dataContentTypeOptions.unknown)
     const [currentSubmissionInfomration, setCurrentSubmissionInformation] = useState<mediaSubmissionType | undefined>(undefined)
     async function deleteSubmission(itemID: string): Promise<boolean> {
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/bf26e642-f655-47db-a037-188189b0d378/items/" + itemID, "DELETE")//TO DO fix list ids
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/bf26e642-f655-47db-a037-188189b0d378/items/" + itemID, "DELETE")//TO DO fix list ids
         if (result.ok){
             return true
         } else {
@@ -28,7 +28,7 @@ export default function GovernmentReviewFileSubmission() {
         }
     }
     async function getSubmissionInformation(submissionID: string) { //TO handle errors
-        const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/bf26e642-f655-47db-a037-188189b0d378/items?expand=fields&filter=fields/SubmissionID%20eq%20'"+ submissionID +"'")//TO DO deal wth id
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/bf26e642-f655-47db-a037-188189b0d378/items?expand=fields&filter=fields/SubmissionID%20eq%20'"+ submissionID +"'")//TO DO deal wth id
         if (result.ok) {
             const data = await result.json()
             if (data["value"].length !== undefined){
@@ -71,7 +71,7 @@ export default function GovernmentReviewFileSubmission() {
                     Caption: currentSubmissionInfomration.Title
                 }
             }
-            const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/d10e9373-7e8b-4400-98f1-62ba95e4cd34/items", "POST", JSON.stringify(data))
+            const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/d10e9373-7e8b-4400-98f1-62ba95e4cd34/items", "POST", false, JSON.stringify(data))
             console.log(result)
             const dataResult = await result.json()
             console.log(dataResult)
@@ -84,7 +84,7 @@ export default function GovernmentReviewFileSubmission() {
     }, [])
     useEffect(() => {
         if (currentSubmissionInfomration !== undefined){
-            getFileWithShareID(currentSubmissionInfomration.FileId, pageData.accessToken)
+            getFileWithShareID(currentSubmissionInfomration.FileId)
         }
     }, [currentSubmissionInfomration])
   return (

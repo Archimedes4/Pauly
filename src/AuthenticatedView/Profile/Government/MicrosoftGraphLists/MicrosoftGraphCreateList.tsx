@@ -29,7 +29,6 @@ type ColumnItem = {
 
 export default function MicrosoftGraphCreateList() {
   const pageData = useContext(accessTokenContent);
-  const { instance, accounts } = useMsal();
   const [columns, setColumns] = useState<ColumnItem[]>([])
 
   const [listName, setListName] = useState<string>("")
@@ -65,7 +64,7 @@ export default function MicrosoftGraphCreateList() {
         "template": " genericList"
       }
     }
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", instance, accounts, "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
     console.log(result)
     const data = await result.json()
     console.log(data)

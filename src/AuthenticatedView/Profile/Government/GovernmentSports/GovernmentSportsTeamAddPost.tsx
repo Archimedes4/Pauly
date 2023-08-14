@@ -6,6 +6,7 @@ import callMsGraph from '../../../../Functions/microsoftAssets'
 import { accessTokenContent } from '../../../../../App'
 import create_UUID from '../../../../Functions/CreateUUID'
 import { useMsal } from '@azure/msal-react'
+import { siteID } from '../../../../PaulyConfig'
 
 enum postSubmissionResultType {
     notLoading,
@@ -16,7 +17,7 @@ enum postSubmissionResultType {
 
 export default function GovernmentSportsTeamAddPost() {
     const pageData = useContext(accessTokenContent);
-    const { instance, accounts } = useMsal();
+
     const [selectedShareID, setSelectedShareID] = useState<string>("")
     const [postName, setPostName] = useState<string>("")
     const [postSubmissionResult, setPostSubmissionResult] = useState<postSubmissionResultType>(postSubmissionResultType.notLoading)
@@ -31,7 +32,7 @@ export default function GovernmentSportsTeamAddPost() {
                     "scope": "organization"
                 }
                 console.log( newItemPath + item.id + "/createLink")
-                const result = await callMsGraph(pageData.accessToken,   "https://graph.microsoft.com/v1.0/drives/" + item.parentDriveId + "/items/" + item.id + "/createLink", instance, accounts, "POST", false, JSON.stringify(data))
+                const result = await callMsGraph("https://graph.microsoft.com/v1.0/drives/" + item.parentDriveId + "/items/" + item.id + "/createLink", "POST", false, JSON.stringify(data))
                 console.log(result)
                 if (result.ok){
                     const data = await result.json()
@@ -48,8 +49,8 @@ export default function GovernmentSportsTeamAddPost() {
     }
     async function createFileSubmission(fileID: string) {
         setPostSubmissionResult(postSubmissionResultType.loading)
-        const userIdResult = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/me", instance, accounts) 
-        const resultOne = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/bf26e642-f655-47db-a037-188189b0d378/columns", instance, accounts) //TO DO fix id
+        const userIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/me") 
+        const resultOne = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/bf26e642-f655-47db-a037-188189b0d378/columns") //TO DO fix id
         const dataOne = await resultOne.json()
         console.log(dataOne)
         console.log(fileID.length)
@@ -67,7 +68,7 @@ export default function GovernmentSportsTeamAddPost() {
                 }
             }
             console.log(data)
-            const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists/bf26e642-f655-47db-a037-188189b0d378/items", instance, accounts, "POST", false, JSON.stringify(data)) //TO DO fix id
+            const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/bf26e642-f655-47db-a037-188189b0d378/items", "POST", false, JSON.stringify(data)) //TO DO fix id
             if (result.ok){
                 const data = await result.json()
                 console.log(data, result)
@@ -90,14 +91,7 @@ export default function GovernmentSportsTeamAddPost() {
         <Text>GovernmentSportsTeamAddPost</Text>
         <TextInput value={postName} onChangeText={(e) => {setPostName(e)}}/>
         <View>
-            <MicrosoftFilePicker onSetIsShowingUpload={function (item: boolean): void {
-                    throw new Error('Function not implemented.')
-                } } onSetIsShowingMicrosoftUpload={function (item: boolean): void {
-                    throw new Error('Function not implemented.')
-                } } onSelectedFile={(item: microsoftFileType) => {
-                    console.log(item)
-                    getShareLink(item)
-                }} />
+            <MicrosoftFilePicker onSelectedFile={(item: microsoftFileType) => {getShareLink(item)}} height={100} width={100} />
         </View>
         { (selectedShareID !== "") && 
             <Pressable onPress={() => {

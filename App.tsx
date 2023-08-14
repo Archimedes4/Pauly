@@ -1,28 +1,29 @@
 /**
- * Sample React Native App
+ * Pauly React Native App
  * https://github.com/facebook/react-native
  *
  * @format
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   Dimensions,
-  StyleSheet,
-  useColorScheme,
+  Text,
+  Pressable,
   View,
   ScaledSize
 } from 'react-native';
 import { Provider } from 'react-redux'
+import { NativeRouter, Route, Routes } from 'react-router-native';
+import * as WebBrowser from 'expo-web-browser'
+import * as AuthSession from "expo-auth-session"
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+
+//Views
 import HomePage from './src/AuthenticatedView/HomePage';
 import Commissions from './src/AuthenticatedView/Commissions/Commissions';
-import { NativeRouter, Route, Routes } from 'react-router-native';
-import { msalConfig } from './src/authConfig.js';
-import { PublicClientApplication } from '@azure/msal-browser';
-import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
-import Login from './src/Login';
-import { loginRequest } from './src/authConfig';
 import Notifications from './src/AuthenticatedView/Notifications';
 import Resources from './src/AuthenticatedView/Resources';
 import Settings from './src/AuthenticatedView/Profile/Settings';
@@ -63,14 +64,14 @@ import getPaulyLists from './src/Functions/getPaulyLists';
 import GovernmentTimetableEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
 import MicrosoftGraphEditGroup from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditGroup';
 
-const msalInstance = new PublicClientApplication(msalConfig);
+import { clientId, tenantId } from './src/PaulyConfig';
+import { loadingStateEnum } from './src/types';
 
 interface contextInterface {
   uri: string;
   displayName: string;
-  accessToken: string;
   dimensions: {window: ScaledSize, screen: ScaledSize};
-  currentBreakPointMode: breakPointMode
+  currentBreakPointMode: breakPointMode,
 }
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
@@ -82,100 +83,20 @@ enum breakPointMode {
   xLarge //≥1200px
 }
 
-export const accessTokenContent = React.createContext<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}, currentBreakPointMode: breakPointMode.xSmall});
+export const accessTokenContent = React.createContext<contextInterface>({uri: "", displayName: "", dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}, currentBreakPointMode: breakPointMode.xSmall});
 
-function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimensions: {
+function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{dimensions: {
   window: ScaledSize,
   screen: ScaledSize
-}, width: number, currentBreakPointMode: breakPointMode}) {
-  const { instance, accounts } = useMsal();
-  const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", accessToken: "", dimensions: dimensions, currentBreakPointMode: currentBreakPointMode})
-  const [expandedMode, setExpandedMode] = useState<boolean>(false)
-
-  async function getUserProfile(pageData: string) {
-    //TO DO check if ok
-    const result = await callMsGraph(pageData, "https://graph.microsoft.com/v1.0/me/photo/$value", instance, accounts)
-    if (result.ok){
-      const dataBlob = await result.blob()
-      const urlOut = URL.createObjectURL(dataBlob)
-      const profileResult = await callMsGraph(pageData, "https://graph.microsoft.com/v1.0/me", instance, accounts)
-      if (profileResult.ok){
-        const profileData = await profileResult.json()
-        console.log(profileData)
-        var newDimentions: {window: ScaledSize, screen: ScaledSize} = dimensions
-        if (width >= 576) {
-          newDimentions.window.width = width * 0.9
-        }
-        setContext({uri: urlOut, displayName: profileData["displayName"], accessToken: pageData, dimensions: newDimentions, currentBreakPointMode: currentBreakPointMode})
-      }
-    }
-  }
-
-  function getMicrosoftAccessToken() {
-    instance
-    .acquireTokenSilent({
-        ...loginRequest,
-        account: accounts[0],
-    })
-    .then((response) => {
-      getPaulyLists(response.accessToken, instance, accounts)
-      getUserProfile(response.accessToken)
-    }).catch(() => {
-      console.log("Error occured")
-      instance.logoutPopup({
-        postLogoutRedirectUri: "/",
-        mainWindowRedirectUri: "/",
-      });
-    })
-  }
-
-  useEffect(() => {
-    var newContext = context
-    if (width >= 576) {
-      newContext.dimensions.window.width = width * 0.9
-    }
-    setContext(newContext)
-    getMicrosoftAccessToken()
-  }, [])
-
-  useEffect(() => {
-    var newContext = {...context}
-    if (width >= 576){
-      if (expandedMode){
-        newContext.dimensions.window.width = width * 0.75
-      } else {
-        newContext.dimensions.window.width = width * 0.9
-      }
-    } else {
-      newContext.dimensions.window.width = dimensions.window.width
-    }
-    newContext.dimensions.window.height = dimensions.window.height 
-    newContext.dimensions.window.scale = dimensions.window.scale
-    newContext.dimensions.window.fontScale = dimensions.window.fontScale
-    newContext.currentBreakPointMode = currentBreakPointMode
-    setContext(newContext)
-  }, [dimensions, currentBreakPointMode])
-
-  useEffect(() => {
-    var newContext = {...context}
-    if (width >= 576){
-      if (expandedMode){
-        newContext.dimensions.window.width = width * 0.75
-      } else {
-        newContext.dimensions.window.width = width * 0.9
-      }
-    } 
-    setContext(newContext)
-  }, [expandedMode])
+}, width: number, currentBreakPointMode: breakPointMode, expandedMode: boolean, setExpandedMode: (item: boolean) => void}) {
   return (
     <View style={{width: width}}>
-      <accessTokenContent.Provider value={context}>
         <NativeRouter>
           <View style={{flexDirection: "row", overflow: "hidden", width: width}}>
               { (width >= 576) ?
                   <NavBarComponent width={width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />:null
               }
-              <View style={{width: context.dimensions.window.width}}>
+              <View style={{width: dimensions.window.width}}>
                 <Routes>
                   <Route path="/" element={<HomePage/>}/>
                   <Route path="/sports" element={<Sports/>}/>
@@ -215,12 +136,10 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
                   <Route path="*" element={<PageNotFound />} />
                   {/* TO DO remove went development complete and move to production */}
                   <Route path="/testing" element={<Testing />} />
-
                 </Routes>
               </View>
           </View>
         </NativeRouter>
-      </accessTokenContent.Provider>
     </View>
   )
 }
@@ -228,7 +147,10 @@ function AuthenticatedView({dimensions, width, currentBreakPointMode}:{dimension
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
+WebBrowser.maybeCompleteAuthSession();
+
 function App() {
+  //Dimentions
   const [dimensions, setDimensions] = useState({
     window: windowDimensions,
     screen: screenDimensions,
@@ -266,17 +188,156 @@ function App() {
     }
   }, [dimensions.window.width])
 
+  //Context
+  const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", dimensions: {window: windowDimensions, screen: screenDimensions,}, currentBreakPointMode: breakPointMode.xSmall})
+
+  const [expandedMode, setExpandedMode] = useState<boolean>(false)
+
+  useEffect(() => {
+    var newContext = context
+    if (dimensions.window.width >= 576) {
+      newContext.dimensions.window.width = dimensions.window.width * 0.9
+    }
+    setContext(newContext)
+  }, [])
+
+  useEffect(() => {
+    var newContext = {...context}
+    if (dimensions.window.width >= 576){
+      if (expandedMode){
+        newContext.dimensions.window.width = dimensions.window.width * 0.75
+      } else {
+        newContext.dimensions.window.width = dimensions.window.width * 0.9
+      }
+    } else {
+      newContext.dimensions.window.width = dimensions.window.width
+    }
+    newContext.dimensions.window.height = dimensions.window.height 
+    newContext.dimensions.window.scale = dimensions.window.scale
+    newContext.dimensions.window.fontScale = dimensions.window.fontScale
+    newContext.currentBreakPointMode = currentBreakPointMode
+    setContext(newContext)
+  }, [dimensions, currentBreakPointMode])
+
+  useEffect(() => {
+    var newContext = {...context}
+    if (dimensions.window.width >= 576){
+      if (expandedMode){
+        newContext.dimensions.window.width = dimensions.window.width * 0.75
+      } else {
+        newContext.dimensions.window.width = dimensions.window.width * 0.9
+      }
+    } 
+    setContext(newContext)
+  }, [expandedMode])
+
+  //Authentication
+  async function getUserProfile() {
+    //TO DO check if ok
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/photo/$value")
+    if (result.ok){
+      const dataBlob = await result.blob()
+      const urlOut = URL.createObjectURL(dataBlob)
+      const profileResult = await callMsGraph("https://graph.microsoft.com/v1.0/me")
+      if (profileResult.ok){
+        const profileData = await profileResult.json()
+        console.log(profileData)
+        var newDimentions: {window: ScaledSize, screen: ScaledSize} = dimensions
+        if (dimensions.window.width >= 576) {
+          newDimentions.window.width = dimensions.window.width * 0.9
+        }
+        setContext({uri: urlOut, displayName: profileData["displayName"], dimensions: newDimentions, currentBreakPointMode: currentBreakPointMode})
+      }
+    }
+  }
+
+  const discovery = AuthSession.useAutoDiscovery(
+    'https://login.microsoftonline.com/' + tenantId +'/v2.0',
+  );
+
+  const redirectUri = AuthSession.makeRedirectUri({
+    scheme: undefined,
+    path: 'auth',
+  });
+
+  // Request
+  const [request, result, promptAsync] = AuthSession.useAuthRequest(
+    {
+      clientId,
+      scopes: ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All"],
+      redirectUri,
+    },
+    discovery,
+  );
+
+  async function getAuthToken() {
+    promptAsync().then((codeResponse) => {
+      if (request && codeResponse?.type === 'success' && discovery) {
+        AuthSession.exchangeCodeAsync(
+          {
+            clientId,
+            code: codeResponse.params.code,
+            extraParams: request.codeVerifier
+              ? { code_verifier: request.codeVerifier }
+              : undefined,
+            redirectUri,
+          },
+          discovery,
+        ).then((response) => {
+          getPaulyLists()
+          getUserProfile()
+        });
+      }
+    });
+  }
+
+  // useEffect(() => {
+  //   refreshAuthToken()
+  // }, [])
+
+  // Font
+  useEffect(() => {
+    console.log("Request Changed", result)
+    console.log()
+    if (!request) {
+      console.log("True")
+    } else {
+      console.log("Not True")
+    }
+  }, [result])
+
+  const [fontsLoaded] = useFonts({
+    'BukhariScript': require('./assets/fonts/BukhariScript.ttf'),
+  });
+  
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <Provider store={store}>
       <SafeAreaView>
-        <MsalProvider instance={msalInstance}>
-          <AuthenticatedTemplate>
-            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode}/>
-          </AuthenticatedTemplate>
-          <UnauthenticatedTemplate>
-            <Login />
-          </UnauthenticatedTemplate>
-        </MsalProvider>
+        { (result) ?
+          <View>
+            <accessTokenContent.Provider value={context}>
+              <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
+            </accessTokenContent.Provider>
+          </View>:
+          <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
+            <Text style={{fontFamily: "BukhariScript", fontSize: 150, textShadowColor: "white", textShadowRadius: 10}}>Pauly</Text>
+            <Pressable onPress={async () => {
+              getAuthToken()
+            }} style={{height: dimensions.window.height * 0.2, width: dimensions.window.width * 0.5, borderRadius: 25, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+              <Text style={{textAlign: "center"}}>LOGIN</Text>
+            </Pressable>
+          </View>
+        }
       </SafeAreaView>
     </Provider>
   );
