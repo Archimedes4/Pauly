@@ -25,7 +25,7 @@ function NavBarBlock({des, expandedMode, iconLength, blockLength, children, text
 }
 
 export default function NavBarComponent({width, height, expandedMode, onSetExpandedMode}:{width: number, height: number, expandedMode: boolean, onSetExpandedMode: (item: boolean) => void}) {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
     const [blockLength, setBlockLength] = useState<number>(0)
     const [iconLength, setIconLength] = useState<number>(0)
     useEffect(() => {

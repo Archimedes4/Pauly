@@ -12,7 +12,7 @@
 import { View, Text, Button, TextInput, Pressable, Dimensions } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import NavBarComponent from '../../../../UI/NavComponent';
 import { Link } from 'react-router-native';
 import { siteID } from '../../../../PaulyConfig';
@@ -28,7 +28,7 @@ type ColumnItem = {
 
 
 export default function MicrosoftGraphCreateList() {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const [columns, setColumns] = useState<ColumnItem[]>([])
 
   const [listName, setListName] = useState<string>("")

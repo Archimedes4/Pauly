@@ -1,9 +1,3 @@
-import { currentEventsLastCalled } from './reducers/currentEventLastCalledReducer';
-// import { configureStore } from '@reduxjs/toolkit'
-// import {calendarEventsReducer} from './Reducers';
-
-// export default configureStore({reducer: {calendarEventsReducer, }, })
-
 import { configureStore } from '@reduxjs/toolkit';
 import currentEventsReducer from './reducers/currentEventReducer';
 import currentEventsSchoolYearReducer from './reducers/currentEventSchoolYearReducer'
@@ -11,6 +5,7 @@ import currentEventsLastCalledReducer from './reducers/currentEventLastCalledRed
 import selectedDateReducer from './reducers/selectedDateReducer';
 import paulyListReducer from './reducers/paulyListReducer';
 import authenticationTokenReducer from './reducers/authenticationTokenReducer';
+import authenticationCallReducer from './reducers/authenticationCallReducer';
 
 const store = configureStore({
   reducer: {
@@ -19,7 +14,8 @@ const store = configureStore({
     currentEventsLastCalled: currentEventsLastCalledReducer,
     selectedDate: selectedDateReducer,
     paulyList: paulyListReducer,
-    authenticationToken: authenticationTokenReducer
+    authenticationToken: authenticationTokenReducer,
+    authenticationCall: authenticationCallReducer
   }
 });
 

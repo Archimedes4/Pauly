@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App'
+import { pageDataContext } from '../../../../Redux/AccessTokenContext'
 import { siteID } from '../../../../PaulyConfig'
 import { useMsal } from '@azure/msal-react'
 
@@ -18,7 +18,7 @@ declare global {
 }
 
 export default function GovernmentHandleFileSubmissions() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
 
     const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([])
     async function getSubmissions() {

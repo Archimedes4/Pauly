@@ -25,6 +25,7 @@
     },
     "web": {
       "favicon": "./assets/icon.png"
-    }
+    },
+    "scheme":"Archimedes4.Pauly"
   }
 }

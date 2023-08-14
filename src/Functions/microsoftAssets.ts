@@ -1,8 +1,20 @@
+import { authenticationCallSlice } from "../Redux/reducers/authenticationCallReducer";
 import store from "../Redux/store";
 
-export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean): Promise<Response> {
+// declare global {
+//     type callMsGraphType = {
+//         url: string
+//         method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT"
+//         perfer?: boolean
+//         body?: string
+//         secondAuth?: boolean
+//         authenticationToken?: string
+//     }
+// }
+
+export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string): Promise<Response> {
     const headers = new Headers();
-    const bearer = `Bearer ${store.getState().authenticationToken}`;
+    const bearer = "Bearer " + (authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken
 
     headers.append("Authorization", bearer);
     headers.append("Content-Type", "application/json")
@@ -20,21 +32,29 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
     const response  = await fetch(url, options)
     if (response.status === 401) {
         if (secondAuth === undefined){
-            try{
-                
-                const tokenResponse = await instance.acquireTokenSilent({
-                    ...loginRequest,
-                    account: accounts[0],
-                })
-                const secondResult = await callMsGraph(tokenResponse.accessToken, url, method, perfer, body, true)
-                return secondResult
-            } catch {
-                instance.logoutPopup({
-                    postLogoutRedirectUri: "/",
-                    mainWindowRedirectUri: "/",
+            // var secondResultOut: Response | null = null
+            // const getNewResult = async function () {
+            //     if (previousValue !== store.getState().authenticationToken){
+            //         const secondResult = await callMsGraph(url, method, perfer, body, secondAuth, authenticationToken)
+            //         secondResultOut = secondResult
+            //         return unsubscribe()
+            //     }
+            // }
+            // const unsubscribe = store.subscribe(getNewResult)
+            store.dispatch(authenticationCallSlice.actions.setAuthenticationCallIncrement())
+            const previousValue: string = store.getState().authenticationToken
+            return new Promise((resolve) => {
+                const unsubscribe = store.subscribe(async () => {
+                    
+                  const newValue = store.getState().authenticationToken;
+                  console.log("Subscribe Fired", newValue, authenticationToken)
+                  if (newValue !== previousValue) {
+                    const result = await callMsGraph(url, method, perfer, body, true, authenticationToken)
+                    resolve(result)
+                    unsubscribe(); // Unsubscribe after getting the new result
+                  }
                 });
-                return response
-            }
+            });
         } else {
             return response
         }

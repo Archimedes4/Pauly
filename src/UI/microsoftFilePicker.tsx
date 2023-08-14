@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 // import { Card, Stack, Button, Form } from 'react-bootstrap';
-import { accessTokenContent } from '../../App';
+import { pageDataContext } from '../Redux/AccessTokenContext';
 import { Button, Pressable, View, Text, TextInput, Dimensions } from 'react-native';
 import Svg, { Polygon, Rect, G, Path } from 'react-native-svg';
 // import {FcFolder, FcDocument} from "react-icons/fc"
@@ -44,7 +44,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     onSelectedFile: (item: microsoftFileType) => void
 }) {
 
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
     const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
     const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
     const [microsoftPath, setMicrosoftPath] = useState<string>("https://graph.microsoft.com/v1.0/me/drive/root/children")
@@ -72,7 +72,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     }, [])
 
     async function getUserMicrosoftFiles(path: string) {
-        const result = await callMsGraph(store.getState().authenticationToken, path)
+        const result = await callMsGraph(path)
         if (result.ok){
             const data = await result.json()
             console.log(data)
@@ -113,7 +113,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     }
 
     async function getUserTeams() {
-        const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/me/joinedTeams")//TO DO make sure this works on live tenancy
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/joinedTeams")//TO DO make sure this works on live tenancy
         if (result.ok){
             const data = await result.json()
             console.log("This is teams data", data)
@@ -132,7 +132,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     
     async function getShareFile(ShareLink: string) {
         console.log("This https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
-        const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
         console.log(result)
         if (result.ok){
             const data = await result.json()

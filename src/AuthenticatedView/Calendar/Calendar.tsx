@@ -2,7 +2,7 @@ import { View, Text, Dimensions, Pressable, TextInput, Switch } from 'react-nati
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../Functions/microsoftAssets';
-import { accessTokenContent } from '../../../App';
+import { pageDataContext } from '../../Redux/AccessTokenContext';
 import { findFirstDayinMonth, getEventFromJSON } from '../../Functions/calendarFunctions';
 import { getGraphEvents } from '../../Functions/calendarFunctionsGraph';
 import create_UUID from '../../Functions/CreateUUID';
@@ -52,7 +52,7 @@ declare global {
 const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 
 export default function Calendar({governmentMode}:{governmentMode: boolean}) {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const [selectedCalendarMode, setSelectedCalendarMode] = useState<calendarMode>(calendarMode.month)
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)

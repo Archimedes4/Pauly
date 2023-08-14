@@ -6,7 +6,7 @@ import { Link } from 'react-router-native'
 import MapWeb from '../../../../UI/Map/Map.web';
 // import {Calendar, LocaleConfig} from 'react-native-calendars';
 import callMsGraph from '../../../../Functions/microsoftAssets';
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import create_UUID from '../../../../Functions/CreateUUID';
 // import "./ReactCalendarCss.web.css"
 import { useMsal } from '@azure/msal-react';
@@ -15,7 +15,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 
 export default function CreateNewCommission() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
     const {commissionListId} = useSelector((state: RootState) => state.paulyList)
     
     const [commissionName, setCommissionName] = useState<string>("")

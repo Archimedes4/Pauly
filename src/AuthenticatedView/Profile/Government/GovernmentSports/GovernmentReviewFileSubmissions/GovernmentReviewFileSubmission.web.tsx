@@ -1,7 +1,7 @@
 import { View, Text, Image, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../../App';
+import { pageDataContext } from '../../../../../Redux/AccessTokenContext';
 import { Link, useParams } from 'react-router-native';
 import { siteID } from '../../../../../PaulyConfig';
 import getFileWithShareID from '../../../../../Functions/getFileWithShareID';
@@ -14,7 +14,7 @@ enum dataContentTypeOptions {
 }
 
 export default function GovernmentReviewFileSubmission() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
     const { submissionID } = useParams()
     const [dataURL, setDataURL] = useState<string>("")
     const [dataContentType, setDataContentType] = useState<dataContentTypeOptions>(dataContentTypeOptions.unknown)

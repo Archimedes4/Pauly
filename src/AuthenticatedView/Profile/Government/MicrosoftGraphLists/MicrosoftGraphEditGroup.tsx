@@ -2,7 +2,7 @@ import { View, Text, Dimensions, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { useMsal } from '@azure/msal-react';
 import { siteID } from '../../../../PaulyConfig';
 import { CopyIcon } from '../../../../UI/Icons/Icons';
@@ -12,7 +12,7 @@ import store from '../../../../Redux/store';
 
 
 export default function MicrosoftGraphEditGroup() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
     const { groupId } = useParams()
 
     const [isCoppiedToClipboard, setIsCoppiedToClipboard] = useState<boolean>(false)

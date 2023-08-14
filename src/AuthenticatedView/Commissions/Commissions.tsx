@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Dimensions, Text, View } from 'react-native'
 import { Link } from 'react-router-native';
 import callMsGraph from '../../Functions/microsoftAssets';
-import { accessTokenContent } from '../../../App';
+import { pageDataContext } from '../Redux/AccessTokenContext';
 import { siteID } from '../../PaulyConfig';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -17,7 +17,7 @@ enum CommissionMode{
 }
 
 export default function Commissions() {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const {commissionListId} = useSelector((state: RootState) => state.paulyList)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
 

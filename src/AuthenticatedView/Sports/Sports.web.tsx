@@ -38,7 +38,7 @@ declare global {
 }
 
 export default function Sports() {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const {sportsApprovedSubmissionsListId} = useSelector((state: RootState) => state.paulyList)
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)

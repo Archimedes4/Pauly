@@ -1,11 +1,11 @@
 import { View, Text, Dimensions, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { accessTokenContent } from '../../../App';
+import { pageDataContext } from '../Redux/AccessTokenContext';
 import DayView from './DayView';
 import create_UUID from '../../Functions/CreateUUID';
 
 export default function Week({width, height}:{width: number, height: number}) {
-  //const pageData = useContext(accessTokenContent);
+  //const pageData = useContext(pageDataContext);
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([])
   function getDOW(selectedDate: Date) {
     var week: Date[] = []

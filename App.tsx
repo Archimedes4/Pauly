@@ -14,7 +14,7 @@ import {
   View,
   ScaledSize
 } from 'react-native';
-import { Provider } from 'react-redux'
+import { Provider, useSelector } from 'react-redux'
 import { NativeRouter, Route, Routes } from 'react-router-native';
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from "expo-auth-session"
@@ -57,7 +57,7 @@ import callMsGraph from './src/Functions/microsoftAssets';
 import NavBarComponent from './src/UI/NavComponent';
 import GovernmentTimetableCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableCreate';
 import Testing from './src/AuthenticatedView/Profile/Government/Testing';
-import store from './src/Redux/store';
+import store, { RootState } from './src/Redux/store';
 import PageNotFound from './src/AuthenticatedView/404Page';
 import GovernmentAdmin from './src/AuthenticatedView/Profile/Government/GovernmentAdminCenter/GovernmentAdmin';
 import getPaulyLists from './src/Functions/getPaulyLists';
@@ -66,13 +66,8 @@ import MicrosoftGraphEditGroup from './src/AuthenticatedView/Profile/Government/
 
 import { clientId, tenantId } from './src/PaulyConfig';
 import { loadingStateEnum } from './src/types';
-
-interface contextInterface {
-  uri: string;
-  displayName: string;
-  dimensions: {window: ScaledSize, screen: ScaledSize};
-  currentBreakPointMode: breakPointMode,
-}
+import authenticationTokenReducer, { authenticationTokenSlice } from './src/Redux/reducers/authenticationTokenReducer';
+import { pageDataContext, contextInterface } from './src/Redux/AccessTokenContext';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -82,8 +77,6 @@ enum breakPointMode {
   large, //≥992px
   xLarge //≥1200px
 }
-
-export const accessTokenContent = React.createContext<contextInterface>({uri: "", displayName: "", dimensions: {window: {width: 0, height: 0, fontScale: 0, scale: 0}, screen: {width: 0, height: 0, fontScale: 0, scale: 0}}, currentBreakPointMode: breakPointMode.xSmall});
 
 function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{dimensions: {
   window: ScaledSize,
@@ -149,7 +142,7 @@ const screenDimensions = Dimensions.get('screen');
 
 WebBrowser.maybeCompleteAuthSession();
 
-function App() {
+function AppMain() {
   //Dimentions
   const [dimensions, setDimensions] = useState({
     window: windowDimensions,
@@ -252,7 +245,7 @@ function App() {
   }
 
   const discovery = AuthSession.useAutoDiscovery(
-    'https://login.microsoftonline.com/' + tenantId +'/v2.0',
+    'https://login.microsoftonline.com/' + tenantId +'/oauth2/v2.0',
   );
 
   const redirectUri = AuthSession.makeRedirectUri({
@@ -284,6 +277,8 @@ function App() {
           },
           discovery,
         ).then((response) => {
+          console.log("Auth Token")
+          store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
           getPaulyLists()
           getUserProfile()
         });
@@ -291,21 +286,34 @@ function App() {
     });
   }
 
+  async function refreshAuthToken() {
+    promptAsync().then((codeResponse) => {
+      if (request && codeResponse?.type === 'success' && discovery) {
+        AuthSession.exchangeCodeAsync(
+          {
+            clientId,
+            code: codeResponse.params.code,
+            extraParams: request.codeVerifier
+              ? { code_verifier: request.codeVerifier }
+              : undefined,
+            redirectUri,
+          },
+          discovery,
+        ).then((response) => {
+          store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
+        });
+      }
+    });
+  }
+  
+  const callsCount = useSelector((state: RootState) => state.authenticationCall)
   // useEffect(() => {
-  //   refreshAuthToken()
-  // }, [])
+  //   if (callsCount !== 0){
+  //     refreshAuthToken()
+  //   }
+  // }, [callsCount])
 
-  // Font
-  useEffect(() => {
-    console.log("Request Changed", result)
-    console.log()
-    if (!request) {
-      console.log("True")
-    } else {
-      console.log("Not True")
-    }
-  }, [result])
-
+  // Fonti
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('./assets/fonts/BukhariScript.ttf'),
   });
@@ -321,26 +329,32 @@ function App() {
   }
 
   return (
-    <Provider store={store}>
-      <SafeAreaView>
-        { (result) ?
-          <View>
-            <accessTokenContent.Provider value={context}>
-              <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
-            </accessTokenContent.Provider>
-          </View>:
-          <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
-            <Text style={{fontFamily: "BukhariScript", fontSize: 150, textShadowColor: "white", textShadowRadius: 10}}>Pauly</Text>
-            <Pressable onPress={async () => {
-              getAuthToken()
-            }} style={{height: dimensions.window.height * 0.2, width: dimensions.window.width * 0.5, borderRadius: 25, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
-              <Text style={{textAlign: "center"}}>LOGIN</Text>
-            </Pressable>
-          </View>
-        }
-      </SafeAreaView>
-    </Provider>
+    <SafeAreaView>
+      { (result) ?
+        <View>
+          <pageDataContext.Provider value={context}>
+            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
+          </pageDataContext.Provider>
+        </View>:
+        <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
+          <Text style={{fontFamily: "BukhariScript", fontSize: (200 * dimensions.window.width/360), textShadowColor: "white", textShadowRadius: 10}}>Pauly</Text>
+          <Pressable onPress={async () => {
+            getAuthToken()
+          }} style={{height: dimensions.window.height * 0.2, width: dimensions.window.width * 0.5, borderRadius: 25, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+            <Text style={{textAlign: "center"}}>LOGIN</Text>
+          </Pressable>
+        </View>
+      }
+    </SafeAreaView>
   );
+}
+
+function App() {
+  return (
+    <Provider store={store}>
+      <AppMain />
+    </Provider>
+  )
 }
 
 export default App;

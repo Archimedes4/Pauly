@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { accessTokenContent } from '../../../App';
+import { pageDataContext } from '../Redux/AccessTokenContext';
 import { siteID } from '../../PaulyConfig';
 import callMsGraph from '../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
@@ -25,7 +25,7 @@ declare global {
 }  
 
 export default function SelectTimetable({governmentMode, onSelect}:{governmentMode: boolean, onSelect?: (item: timetableStringType) => void}) {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const {timetablesListId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedTimetables, setLoadedTimetables] = useState<timetableStringType[]>([])

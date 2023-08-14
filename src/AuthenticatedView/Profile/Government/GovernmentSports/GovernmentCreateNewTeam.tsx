@@ -5,13 +5,13 @@ import {convertYearToSchoolYear} from '../../../../Functions/calendarFunctions'
 import NavBarComponent from '../../../../UI/NavComponent';
 import callMsGraph from '../../../../Functions/microsoftAssets';
 import create_UUID from '../../../../Functions/CreateUUID';
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { siteID } from '../../../../PaulyConfig';
 import { useMsal } from '@azure/msal-react';
 import { loadingStateEnum } from '../../../../types';
 
 export default function GovernmentCreateNewTeam() {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const { sport, id } = useParams()
 
   const [createTeamLoadingState, setCreateTeamLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)

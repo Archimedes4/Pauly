@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App'
+import { pageDataContext } from '../../../../Redux/AccessTokenContext'
 import { siteID } from '../../../../PaulyConfig'
 import { useMsal } from '@azure/msal-react'
 
@@ -20,7 +20,7 @@ type sportTeamType = {
 
 export default function GovernmentSportsTeams() {
     const { sport, id } = useParams()
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
 
     const [dataResult, setDataResult] = useState<currentDataResult>(currentDataResult.loading)
     const [currentTeams, setCurrentTeams] = useState<sportTeamType[]>([])

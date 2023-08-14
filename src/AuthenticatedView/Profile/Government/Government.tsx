@@ -27,7 +27,7 @@ export default function Government() {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const [mainWidth, setMainWidth] = useState<number>(0)
   useEffect(() => {
     const fivePercent = pageData.dimensions.window.width * 0.05

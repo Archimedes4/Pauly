@@ -12,9 +12,8 @@ export default function Settings() {
       <Text>Settings</Text>
       
       <Button title='Logout' onPress={() => {
-        instance.logoutPopup({
-          mainWindowRedirectUri: '/', // redirects the top level app after logout
-      });
+        // instance.logoutPopup({
+        //   mainWindowRedirectUri: '/', // redirects the top level app after logout
       }}></Button>
     </View>
   )

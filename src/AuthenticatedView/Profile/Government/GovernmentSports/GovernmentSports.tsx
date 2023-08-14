@@ -2,7 +2,7 @@ import { View, Text, Dimensions, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets';
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../../App';
 import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
 import { siteID } from '../../../../PaulyConfig';
 import { loadingStateEnum } from '../../../../types';
@@ -13,7 +13,7 @@ type sportType = {
 }
 
 export default function GovernmentSports() {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const [currentSports, setCurrentSports] = useState<sportType[]>([])
   const [dataResult, setDataResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
 

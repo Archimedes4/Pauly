@@ -2,14 +2,14 @@ import { View, Text, Button } from 'react-native'
 import React, { useContext, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { useMsal } from '@azure/msal-react';
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { siteID } from '../../../../PaulyConfig';
 import { loadingStateEnum } from '../../../../types';
 import { Link } from 'react-router-native';
 import initilizePauly from '../../../../Functions/initilizePauly';
 
 export default function GovernmentAdmin() {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const [initilizePaulyLoadingResult, setInitilizePaulyLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   async function InitilizePauly() {
     setInitilizePaulyLoadingResult(loadingStateEnum.loading)

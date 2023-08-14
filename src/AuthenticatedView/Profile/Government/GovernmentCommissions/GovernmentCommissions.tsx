@@ -24,7 +24,7 @@ declare global {
 }
 
 export default function GovernmentCommissions() {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const {commissionListId} = useSelector((state: RootState) => state.paulyList)
   const [commissions, setCommissions] = useState<commissionType[]>([])
   async function getCommissions(){

@@ -4,12 +4,11 @@ import MonthView from './MonthView';
 import { Link, Navigate, useNavigate } from 'react-router-native';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
 import callMsGraph from '../Functions/microsoftAssets';
-import { accessTokenContent } from '../../App';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { siteID } from '../PaulyConfig';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
-
+import { pageDataContext } from '../Redux/AccessTokenContext';
 declare global {
     type DateProperty = {
         Date: number
@@ -20,7 +19,7 @@ declare global {
 }
 
 export default function HomePage() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
     const navigate = useNavigate()
     const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
     const [messageText, setMessageText] = useState("")

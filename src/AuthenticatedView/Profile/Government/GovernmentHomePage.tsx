@@ -1,6 +1,5 @@
 import { View, Text, Pressable, TextInput, Button } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { accessTokenContent } from '../../../../App';
 import callMsGraph from '../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import MicrosoftFilePicker from '../../../UI/microsoftFilePicker';
@@ -10,9 +9,10 @@ import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 import getCurrentPaulyData from '../../../Functions/getCurrentPaulyData';
 import { loadingStateEnum } from '../../../types';
+import { pageDataContext } from '../../../Redux/AccessTokenContext';
 
 export default function GovernmentHomePage() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
 
     const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
 

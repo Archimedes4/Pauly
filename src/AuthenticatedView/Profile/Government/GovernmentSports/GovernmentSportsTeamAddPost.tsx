@@ -3,7 +3,7 @@ import React, { useContext, useState } from 'react'
 import MicrosoftFilePicker from '../../../../UI/microsoftFilePicker'
 import { Link, useSearchParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App'
+import { pageDataContext } from '../../../../Redux/AccessTokenContext'
 import create_UUID from '../../../../Functions/CreateUUID'
 import { useMsal } from '@azure/msal-react'
 import { siteID } from '../../../../PaulyConfig'
@@ -16,7 +16,7 @@ enum postSubmissionResultType {
 }
 
 export default function GovernmentSportsTeamAddPost() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
 
     const [selectedShareID, setSelectedShareID] = useState<string>("")
     const [postName, setPostName] = useState<string>("")

@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Button, Dimensions } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { Link } from 'react-router-native';
 import NavBarComponent from '../../../../UI/NavComponent';
 import create_UUID from '../../../../Functions/CreateUUID';
@@ -12,7 +12,7 @@ const screenDimensions = Dimensions.get('screen');
 
 export default function GovernmentCreateNewSport() {
   const [sportName, setSportName] = useState<string>("")
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   async function createSport() {
     const newSportID: string = create_UUID()
     const data = {

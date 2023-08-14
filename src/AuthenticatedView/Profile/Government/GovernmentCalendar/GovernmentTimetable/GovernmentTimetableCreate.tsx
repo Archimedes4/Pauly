@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../../App';
+import { pageDataContext } from '../../../../../Redux/AccessTokenContext';
 import { siteID } from '../../../../../PaulyConfig';
 import create_UUID from '../../../../../Functions/CreateUUID';
 import { Link } from 'react-router-native';
@@ -19,7 +19,7 @@ declare global {
 }
 
 export default function GovernmentTimetableCreate() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
 
     const {timetablesListId, scheduleListId} = useSelector((state: RootState) => state.paulyList)
 

@@ -2,7 +2,7 @@ import { View, Text, Dimensions, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { useMsal } from '@azure/msal-react';
 import { siteID } from '../../../../PaulyConfig';
 import { CopyIcon } from '../../../../UI/Icons/Icons';
@@ -24,7 +24,7 @@ declare global {
 }
 
 export default function MicrosoftGraphEditList() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
 
     const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([])
     const { listId } = useParams()

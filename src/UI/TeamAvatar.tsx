@@ -1,6 +1,6 @@
 import { View, Text, Image } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { accessTokenContent } from '../../App';
+import { pageDataContext } from '../Redux/AccessTokenContext';
 
 enum loadingResult {
     loading,
@@ -10,7 +10,7 @@ enum loadingResult {
 }
 
 export default function TeamAvatar({teamId}:{teamId: string}) {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
     const [teamAvatarDataUrl, setTeamAvatarDataUrl] = useState("")
     const [currentLoadingResult, setCurrentLoadingResult] = useState<loadingResult>(loadingResult.loading)
 

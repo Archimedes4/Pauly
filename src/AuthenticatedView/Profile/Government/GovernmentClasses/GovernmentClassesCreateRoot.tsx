@@ -1,14 +1,14 @@
 import { View, Text, Pressable, TextInput } from 'react-native'
 import React, { useContext, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App';
+import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { siteID } from '../../../../PaulyConfig';
 import create_UUID from '../../../../Functions/CreateUUID';
 import { Link } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
 
 export default function GovernmentClassesCreate() {
-  const pageData = useContext(accessTokenContent);
+  const pageData = useContext(pageDataContext);
   const [selectedGrades, setSelectedGrades] = useState<number[]>([])
   const [newClassName, setNewClassName] = useState<string>("")
   async function createRootClass() {

@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import TimePicker from '../../../../../UI/DateTimePicker/TimePicker'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../../App'
+import { pageDataContext } from '../../../../../Redux/AccessTokenContext';
 import create_UUID from '../../../../../Functions/CreateUUID'
 import { siteID } from '../../../../../PaulyConfig'
 import { useMsal } from '@azure/msal-react'
@@ -28,7 +28,7 @@ declare global{
 }
 
 export default function GovernmentSchedule() {
-    const pageData = useContext(accessTokenContent);
+    const pageData = useContext(pageDataContext);
 
     const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
     const [newPeriodHourStart, setNewPeriodHourStart] = useState<number>(12)
