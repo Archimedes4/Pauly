@@ -1,13 +1,9 @@
 import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { pageDataContext } from '../../../../../Redux/AccessTokenContext';
-import { siteID } from '../../../../../PaulyConfig';
-import callMsGraph from '../../../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import SelectTimetable from '../../../../Calendar/SelectTimetable';
 
 export default function GovernmentTimetable() {
-
   return (
     <View>
       <Link to="/profile/government/calendar/">

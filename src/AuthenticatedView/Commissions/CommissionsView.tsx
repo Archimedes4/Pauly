@@ -1,7 +1,6 @@
 import { View, Text, Button } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../Functions/microsoftAssets'
-import { pageDataContext } from '../Redux/AccessTokenContext';
 import { siteID } from '../../PaulyConfig';
 import { useParams } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
@@ -10,7 +9,6 @@ import { RootState } from '../../Redux/store';
 import { useSelector } from 'react-redux';
 
 export default function CommissionsView() {
-  const pageData = useContext(pageDataContext);
   const {commissionListId} = useSelector((state: RootState) => state.paulyList)
   const [commissionData, setCommissionData] = useState<commissionType | undefined>(undefined)
   const { id } = useParams()

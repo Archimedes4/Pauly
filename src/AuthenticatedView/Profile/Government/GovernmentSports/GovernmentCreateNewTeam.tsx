@@ -2,16 +2,12 @@ import { View, Text, TextInput, Dimensions, Button } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import { Link, useParams } from 'react-router-native'
 import {convertYearToSchoolYear} from '../../../../Functions/calendarFunctions'
-import NavBarComponent from '../../../../UI/NavComponent';
 import callMsGraph from '../../../../Functions/microsoftAssets';
 import create_UUID from '../../../../Functions/CreateUUID';
-import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { siteID } from '../../../../PaulyConfig';
-import { useMsal } from '@azure/msal-react';
 import { loadingStateEnum } from '../../../../types';
 
 export default function GovernmentCreateNewTeam() {
-  const pageData = useContext(pageDataContext);
   const { sport, id } = useParams()
 
   const [createTeamLoadingState, setCreateTeamLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)

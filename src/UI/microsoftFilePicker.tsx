@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 // import { Card, Stack, Button, Form } from 'react-bootstrap';
-import { pageDataContext } from '../Redux/AccessTokenContext';
 import { Button, Pressable, View, Text, TextInput, Dimensions } from 'react-native';
 import Svg, { Polygon, Rect, G, Path } from 'react-native-svg';
 // import {FcFolder, FcDocument} from "react-icons/fc"
@@ -44,7 +43,6 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     onSelectedFile: (item: microsoftFileType) => void
 }) {
 
-    const pageData = useContext(pageDataContext);
     const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
     const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
     const [microsoftPath, setMicrosoftPath] = useState<string>("https://graph.microsoft.com/v1.0/me/drive/root/children")

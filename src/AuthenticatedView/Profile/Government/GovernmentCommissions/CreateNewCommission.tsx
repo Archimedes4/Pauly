@@ -1,21 +1,16 @@
 import { View, Text, Button, TextInput, Platform, Dimensions, ScrollView } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import Svg, { Path } from 'react-native-svg';
 import Slider from '../../../../UI/Slider/Slider';
 import { Link } from 'react-router-native'
 import MapWeb from '../../../../UI/Map/Map.web';
-// import {Calendar, LocaleConfig} from 'react-native-calendars';
 import callMsGraph from '../../../../Functions/microsoftAssets';
-import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import create_UUID from '../../../../Functions/CreateUUID';
-// import "./ReactCalendarCss.web.css"
-import { useMsal } from '@azure/msal-react';
 import { siteID } from '../../../../PaulyConfig';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 
 export default function CreateNewCommission() {
-    const pageData = useContext(pageDataContext);
+    const {width, height} = useSelector((state: RootState) => state.dimentions)
     const {commissionListId} = useSelector((state: RootState) => state.paulyList)
     
     const [commissionName, setCommissionName] = useState<string>("")
@@ -75,7 +70,7 @@ export default function CreateNewCommission() {
 
     return (
         <View style={{overflow: "hidden"}}>
-            <ScrollView style={{height: pageData.dimensions.window.height}}>
+            <ScrollView style={{height: height}}>
                 <Link to="/profile/government/commissions/">
                     <Text>Back</Text>
                 </Link>
@@ -87,8 +82,8 @@ export default function CreateNewCommission() {
                 value={commissionName}
                 onChangeText={text => setCommissionName(text)}
                 />
-                <View style={{width: pageData.dimensions.window.width, height: pageData.dimensions.window.height * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
-                    <MapWeb proximity={proximity} selectedPositionIn={selectedPositionIn} onSetSelectedPositionIn={setSelectedPositionIn} width={pageData.dimensions.window.width * 0.8} height={pageData.dimensions.window.height * 0.3}/>
+                <View style={{width: width, height: height * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+                    <MapWeb proximity={proximity} selectedPositionIn={selectedPositionIn} onSetSelectedPositionIn={setSelectedPositionIn} width={width * 0.8} height={height * 0.3}/>
                 </View>
                 <View style={{flexDirection: "row"}}>
                     <Text>Proximity</Text>
@@ -99,14 +94,14 @@ export default function CreateNewCommission() {
                         maxLength={10}  //setting limit of input
                     />
                 </View>
-                <View style={{width: pageData.dimensions.window.width, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-                    <Slider width={pageData.dimensions.window.width * 0.9} height={50} value={proximity/1000} onValueChange={(value) => {setProximity(value * 1000)}} containerWidth={pageData.dimensions.window.width}/>
+                <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                    <Slider width={width * 0.9} height={50} value={proximity/1000} onValueChange={(value) => {setProximity(value * 1000)}} containerWidth={width}/>
                 </View>
-                <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: pageData.dimensions.window.width}}>
+                <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
                     <Text>Start Date</Text>
                     {/* <Calendar onClickDay={setStartDate} value={startDate} /> */}
                 </View>
-                <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: pageData.dimensions.window.width}}>
+                <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
                     <Text>End Date</Text>
                     {/* <Calendar onClickDay={setEndDate} value={endDate} /> */}
                 </View>

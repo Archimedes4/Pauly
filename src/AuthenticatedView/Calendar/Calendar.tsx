@@ -1,8 +1,6 @@
 import { View, Text, Dimensions, Pressable, TextInput, Switch } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
-import callMsGraph from '../../Functions/microsoftAssets';
-import { pageDataContext } from '../../Redux/AccessTokenContext';
 import { findFirstDayinMonth, getEventFromJSON } from '../../Functions/calendarFunctions';
 import { getGraphEvents } from '../../Functions/calendarFunctionsGraph';
 import create_UUID from '../../Functions/CreateUUID';
@@ -51,8 +49,8 @@ declare global {
 
 const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 
-export default function Calendar({governmentMode}:{governmentMode: boolean}) {
-  const pageData = useContext(pageDataContext);
+export default function Calendar() {
+  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [selectedCalendarMode, setSelectedCalendarMode] = useState<calendarMode>(calendarMode.month)
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -130,9 +128,9 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
 
   return (
     <View>
-      <View style={{height: pageData.dimensions.window.height * 0.1, backgroundColor: '#444444'}}>
+      <View style={{height: height * 0.1, backgroundColor: '#444444'}}>
         <View style={{flexDirection: "row"}}>
-          { (pageData.currentBreakPointMode >= 1) ?
+          { (currentBreakPoint >= 1) ?
             null:<Link to="/">
               <View style={{flexDirection: "row"}}>
                 <ChevronLeft width={14} height={14}/>
@@ -141,28 +139,28 @@ export default function Calendar({governmentMode}:{governmentMode: boolean}) {
             </Link>
           } 
         </View>
-        <View style={{flexDirection: "row", alignItems: "center", height: pageData.dimensions.window.height * 0.1}}>
-          <Text style={{fontFamily: "BukhariScript", fontSize: Math.sqrt(((pageData.dimensions.window.width * 0.4)*(pageData.dimensions.window.height * 0.1))/8), color: "white", marginLeft: pageData.dimensions.window.width * 0.05, marginRight: (pageData.dimensions.window.width * 0.00316227766017) * (pageData.dimensions.window.width * 0.0316227766017)}}>Calendar</Text>
-          <CalendarTypePicker setSelectedCalendarMode={setSelectedCalendarMode} selectedIndex={selectedCalendarMode} width={pageData.dimensions.window.width * 0.5} height={pageData.dimensions.window.height * 0.05}/>
-          <Pressable onPress={() => {setIsShowingAddDate(true); setIsEditing(false); setSelectedEvent(undefined)}} style={{height: pageData.dimensions.window.height * 0.05, width: pageData.dimensions.window.height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1, marginLeft: pageData.dimensions.window.width * 0.005}}>
-            <AddIcon width={pageData.dimensions.window.height * 0.03} height={pageData.dimensions.window.height * 0.03}/>
+        <View style={{flexDirection: "row", alignItems: "center", height: height * 0.1}}>
+          <Text style={{fontFamily: "BukhariScript", fontSize: Math.sqrt(((width * 0.4)*(height * 0.1))/8), color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017)}}>Calendar</Text>
+          <CalendarTypePicker setSelectedCalendarMode={setSelectedCalendarMode} selectedIndex={selectedCalendarMode} width={width * 0.5} height={height * 0.05}/>
+          <Pressable onPress={() => {setIsShowingAddDate(true); setIsEditing(false); setSelectedEvent(undefined)}} style={{height: height * 0.05, width: height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1, marginLeft: width * 0.005}}>
+            <AddIcon width={height * 0.03} height={height * 0.03}/>
           </Pressable>
         </View>
       </View> 
-      <View style={{height: pageData.dimensions.window.height * 0.9}}>
+      <View style={{height: height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
-        <MonthViewMain width={pageData.dimensions.window.width * 0.8} height={pageData.dimensions.window.height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>: null
+        <MonthViewMain width={width * 0.8} height={height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>: null
       }
       { (selectedCalendarMode === calendarMode.week) ?
-        <Week width={pageData.dimensions.window.width * 1.0} height={pageData.dimensions.window.height * 0.9} />:null
+        <Week width={width * 1.0} height={height * 0.9} />:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
-        <DayView width={pageData.dimensions.window.width * 0.9} height={pageData.dimensions.window.height * 0.9} />:null
+        <DayView width={width * 0.9} height={height * 0.9} />:null
       }
       </View>
       { isShowingAddDate ?
-        <View style={{zIndex: 2, position: "absolute", left: pageData.dimensions.window.width * 0.2, top: pageData.dimensions.window.height * 0.1}}>
-          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={pageData.dimensions.window.width * 0.6} height={pageData.dimensions.window.height * 0.8} editing={isEditing} editData={selectedEvent} />
+        <View style={{zIndex: 2, position: "absolute", left: width * 0.2, top: height * 0.1}}>
+          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={width * 0.6} height={height * 0.8} editing={isEditing} editData={selectedEvent} />
         </View>:null
       }
     </View>

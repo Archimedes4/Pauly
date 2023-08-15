@@ -1,6 +1,5 @@
-import { View, Text, Dimensions, Pressable } from 'react-native'
+import { View, Text,Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { pageDataContext } from '../Redux/AccessTokenContext';
 import DayView from './DayView';
 import create_UUID from '../../Functions/CreateUUID';
 

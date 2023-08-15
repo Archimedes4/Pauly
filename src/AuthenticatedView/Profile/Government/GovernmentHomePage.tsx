@@ -9,12 +9,10 @@ import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 import getCurrentPaulyData from '../../../Functions/getCurrentPaulyData';
 import { loadingStateEnum } from '../../../types';
-import { pageDataContext } from '../../../Redux/AccessTokenContext';
 
 export default function GovernmentHomePage() {
-    const pageData = useContext(pageDataContext);
-
     const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
+    const {width, height} = useSelector((state: RootState) => state.dimentions)
 
     //Loading States
     const [loadContentLoadingState, setLoadContentLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
@@ -63,7 +61,7 @@ export default function GovernmentHomePage() {
                 </Pressable>
             </View>
             <Text>Select Powerpoint: {selectedPowerpoint?.name}</Text>
-            <MicrosoftFilePicker height={pageData.dimensions.window.height * 0.6} width={pageData.dimensions.window.width} onSelectedFile={(selectedFile) => {
+            <MicrosoftFilePicker height={height * 0.6} width={width} onSelectedFile={(selectedFile) => {
                 setSelectedPowerpoint(selectedFile)
             }}/>
             <Button title='Save Changes' onPress={() => {

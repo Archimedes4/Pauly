@@ -1,12 +1,10 @@
 import { View, Text, TextInput, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../../Functions/microsoftAssets'
-import { pageDataContext } from '../../../../../Redux/AccessTokenContext';
 import { siteID } from '../../../../../PaulyConfig';
 import create_UUID from '../../../../../Functions/CreateUUID';
 import { Link } from 'react-router-native';
 import { DownIcon, UpIcon } from '../../../../../UI/Icons/Icons';
-import { useMsal } from '@azure/msal-react';
 import { loadingStateEnum } from '../../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
@@ -19,9 +17,8 @@ declare global {
 }
 
 export default function GovernmentTimetableCreate() {
-    const pageData = useContext(pageDataContext);
-
     const {timetablesListId, scheduleListId} = useSelector((state: RootState) => state.paulyList)
+    const {width, height} = useSelector((state: RootState) => state.dimentions)
 
     //Loading States
     const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
@@ -91,7 +88,7 @@ export default function GovernmentTimetableCreate() {
       getSchedules()
     }, [])
   return (
-    <View style={{height: pageData.dimensions.window.height, width: pageData.dimensions.window.width, overflow: "scroll"}}>
+    <View style={{height: height, width: width, overflow: "scroll"}}>
       <Link to="/profile/government/calendar/timetable/">
         <Text>Back</Text>
       </Link>
@@ -99,12 +96,12 @@ export default function GovernmentTimetableCreate() {
       <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}}/>
       <Text>Scheduals</Text>
       <Text>Selected Schedules</Text>
-      <View style={{height: pageData.dimensions.window.height * 0.4, overflow: "scroll"}}>
+      <View style={{height: height * 0.4, overflow: "scroll"}}>
       {selectedSchedules.map((item) => (
-        <View style={{height: pageData.dimensions.window.height * 0.05}} key={"SelectedSchedule_" + item.id}>
+        <View style={{height: height * 0.05}} key={"SelectedSchedule_" + item.id}>
           <Text>{item.properName}</Text>
           { (selectedDefaultSchedule.id !== item.id) ?
-          <Pressable style={{backgroundColor: "blue", height: pageData.dimensions.window.height * 0.02}}>
+          <Pressable style={{backgroundColor: "blue", height: height * 0.02}}>
             <Text>Select As Default</Text>
           </Pressable>:null
           }
@@ -112,7 +109,7 @@ export default function GovernmentTimetableCreate() {
       ))}
       </View>
       <Text>Other Schedules</Text>
-      <View style={{height: pageData.dimensions.window.height * 0.4, overflow: "scroll"}}>
+      <View style={{height: height * 0.4, overflow: "scroll"}}>
         { (loadingState === loadingStateEnum.loading) ?
           <Text>Loading</Text>:null
         }
@@ -132,7 +129,7 @@ export default function GovernmentTimetableCreate() {
         }
       </View>
       <Text>School Days</Text>
-      <View style={{height: pageData.dimensions.window.height * 0.2}}>
+      <View style={{height: height * 0.2}}>
         {schoolDays.map((item, index) => (
           <View style={{flexDirection: "row"}}>
             <Text>{item.name}</Text>

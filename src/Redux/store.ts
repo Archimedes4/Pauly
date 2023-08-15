@@ -6,6 +6,7 @@ import selectedDateReducer from './reducers/selectedDateReducer';
 import paulyListReducer from './reducers/paulyListReducer';
 import authenticationTokenReducer from './reducers/authenticationTokenReducer';
 import authenticationCallReducer from './reducers/authenticationCallReducer';
+import dimentionsReducer from './reducers/dimentionsReducer';
 
 const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
     selectedDate: selectedDateReducer,
     paulyList: paulyListReducer,
     authenticationToken: authenticationTokenReducer,
-    authenticationCall: authenticationCallReducer
+    authenticationCall: authenticationCallReducer,
+    dimentions: dimentionsReducer
   }
 });
 

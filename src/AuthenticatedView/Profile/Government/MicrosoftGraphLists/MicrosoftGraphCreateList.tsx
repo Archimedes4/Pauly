@@ -1,22 +1,10 @@
-// import { View, Text } from 'react-native'
-// import React from 'react'
-
-// export default function MicrosoftGraphOverview() {
-//   return (
-//     <View>
-//       <Text>MicrosoftGraphOverview</Text>
-//     </View>
-//   )
-// }
-
 import { View, Text, Button, TextInput, Pressable, Dimensions } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { pageDataContext } from '../../../../Redux/AccessTokenContext';
-import NavBarComponent from '../../../../UI/NavComponent';
 import { Link } from 'react-router-native';
 import { siteID } from '../../../../PaulyConfig';
-import { useMsal } from '@azure/msal-react';
+import { RootState } from '../../../../Redux/store';
+import { useSelector } from 'react-redux';
 
 type MicrosoftGraphColumnDefinitions = "text" | "number" | "boolean" | "calculated" | "choice" | "columnGroup" | "contentApprovalStatus" | "currency" | "dateTime" | "defaultValue" | "description" | "displayName" | "enforceUniqueValues" | "geolocation" | "hidden"  
 
@@ -28,7 +16,8 @@ type ColumnItem = {
 
 
 export default function MicrosoftGraphCreateList() {
-  const pageData = useContext(pageDataContext);
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+
   const [columns, setColumns] = useState<ColumnItem[]>([])
 
   const [listName, setListName] = useState<string>("")
@@ -70,7 +59,7 @@ export default function MicrosoftGraphCreateList() {
     console.log(data)
   }
   return (
-    <View style={{width: pageData.dimensions.window.width}}>
+    <View style={{width: width}}>
       <Link to="/profile/government/graph">
         <Text>Back</Text>
       </Link>
@@ -80,7 +69,7 @@ export default function MicrosoftGraphCreateList() {
         value={listName}
         onChangeText={text => setListName(text)}
       />
-      <View style={{height: pageData.dimensions.window.height * 0.75}}>
+      <View style={{height: height * 0.75}}>
         <View style={{flexDirection: "row"}}>
           <Text>Name</Text>
           <Text>Type</Text>

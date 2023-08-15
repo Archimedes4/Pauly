@@ -1,9 +1,7 @@
 import { View, Text, TextInput, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { siteID } from '../../../../PaulyConfig';
-import { useMsal } from '@azure/msal-react';
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 
@@ -15,7 +13,6 @@ declare global {
 }
 
 export default function GovernmentClassesCreate() {
-    const pageData = useContext(pageDataContext);
     const {commissionListId} = useSelector((state: RootState) => state.paulyList)
 
     const [teacherNameSearch, setTeacherNameSearch] = useState<string>("")

@@ -3,7 +3,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { ChevronLeft } from '../../UI/Icons/Icons'
 import { siteID } from '../../PaulyConfig'
-import { accessTokenContent } from '../../../App'
 import callMsGraph from '../../Functions/microsoftAssets'
 import getFileWithShareID from '../../Functions/getFileWithShareID'
 import { useFonts } from 'expo-font';
@@ -12,9 +11,7 @@ import { useMsal } from '@azure/msal-react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
 import { loadingStateEnum } from '../../types'
-
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
+import { pageDataContext } from '../../Redux/AccessTokenContext'
 
 enum dataContentTypeOptions {
   video,

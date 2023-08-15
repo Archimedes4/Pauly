@@ -3,10 +3,10 @@ import React, { useContext, useState } from 'react'
 import MicrosoftFilePicker from '../../../../UI/microsoftFilePicker'
 import { Link, useSearchParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { pageDataContext } from '../../../../Redux/AccessTokenContext'
 import create_UUID from '../../../../Functions/CreateUUID'
-import { useMsal } from '@azure/msal-react'
 import { siteID } from '../../../../PaulyConfig'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../../Redux/store'
 
 enum postSubmissionResultType {
     notLoading,
@@ -16,7 +16,7 @@ enum postSubmissionResultType {
 }
 
 export default function GovernmentSportsTeamAddPost() {
-    const pageData = useContext(pageDataContext);
+    const {width, height} = useSelector((state: RootState) => state.dimentions)
 
     const [selectedShareID, setSelectedShareID] = useState<string>("")
     const [postName, setPostName] = useState<string>("")

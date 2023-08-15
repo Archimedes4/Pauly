@@ -3,10 +3,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import TimePicker from '../../../../../UI/DateTimePicker/TimePicker'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../../Functions/microsoftAssets'
-import { pageDataContext } from '../../../../../Redux/AccessTokenContext';
 import create_UUID from '../../../../../Functions/CreateUUID'
 import { siteID } from '../../../../../PaulyConfig'
-import { useMsal } from '@azure/msal-react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../../Redux/store'
 import { loadingStateEnum } from '../../../../../types'
@@ -28,8 +26,7 @@ declare global{
 }
 
 export default function GovernmentSchedule() {
-    const pageData = useContext(pageDataContext);
-
+    const {width, height} = useSelector((state: RootState) => state.dimentions)
     const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
     const [newPeriodHourStart, setNewPeriodHourStart] = useState<number>(12)
     const [newPeriodMinuteStart, setNewPeriodMinuteStart] = useState<number>(0)
@@ -66,7 +63,7 @@ export default function GovernmentSchedule() {
                 <Text>Back</Text>
             </Link>
             <Text>Create Schedule</Text>
-            <View style={{height: pageData.dimensions.window.height * 0.3}}>
+            <View style={{height: height * 0.3}}>
                 <View style={{flexDirection: "row"}}>
                     <Text>Proper Name:</Text>
                     <TextInput value={scheduleProperName} onChangeText={setScheduleProperName} placeholder='Proper Name ex. Schedule One'/>
@@ -78,7 +75,7 @@ export default function GovernmentSchedule() {
                 <Text>Keep descriptive name short as it is used in the calendar widget</Text>
             </View>
             <Text>New Periods</Text>
-            <View style={{height: pageData.dimensions.window.height * 0.5}}>
+            <View style={{height: height * 0.5}}>
             {newPeriods.map((period) => (
                 <PeriodBlock period={period} newPeriods={newPeriods} onSetNewPeriods={(out) => {
                     console.log("This is out", out)

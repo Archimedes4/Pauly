@@ -1,10 +1,8 @@
 import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { pageDataContext } from '../../../../../Redux/AccessTokenContext';
 import { siteID } from '../../../../../PaulyConfig';
 import callMsGraph from '../../../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
-import { useMsal } from '@azure/msal-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
 import { loadingStateEnum } from '../../../../../types';
@@ -15,7 +13,6 @@ import { loadingStateEnum } from '../../../../../types';
 // }
 
 export default function GovernmentSchedule() {
-  const pageData = useContext(pageDataContext);
   const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])

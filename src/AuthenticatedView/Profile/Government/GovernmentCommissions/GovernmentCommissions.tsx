@@ -1,11 +1,8 @@
 import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { Button } from 'react-native'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { accessTokenContent } from '../../../../../App'
 import { siteID } from '../../../../PaulyConfig'
-import { useMsal } from '@azure/msal-react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
 
@@ -24,7 +21,6 @@ declare global {
 }
 
 export default function GovernmentCommissions() {
-  const pageData = useContext(pageDataContext);
   const {commissionListId} = useSelector((state: RootState) => state.paulyList)
   const [commissions, setCommissions] = useState<commissionType[]>([])
   async function getCommissions(){

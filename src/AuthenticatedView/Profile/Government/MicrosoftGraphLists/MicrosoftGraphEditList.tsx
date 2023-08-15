@@ -2,11 +2,11 @@ import { View, Text, Dimensions, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { pageDataContext } from '../../../../Redux/AccessTokenContext';
-import { useMsal } from '@azure/msal-react';
 import { siteID } from '../../../../PaulyConfig';
 import { CopyIcon } from '../../../../UI/Icons/Icons';
 import * as Clipboard from 'expo-clipboard';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../Redux/store';
 
 declare global {
     type listColumnType = {
@@ -24,8 +24,7 @@ declare global {
 }
 
 export default function MicrosoftGraphEditList() {
-    const pageData = useContext(pageDataContext);
-
+    const {width, height} = useSelector((state: RootState) => state.dimentions)
     const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([])
     const { listId } = useParams()
     const [isCoppiedToClipboard, setIsCoppiedToClipboard] = useState<boolean>(false)
@@ -103,9 +102,9 @@ export default function MicrosoftGraphEditList() {
                     </Pressable>
                 }
             </View>
-            <View style={{flexDirection: "row", overflow: "scroll", height: pageData.dimensions.window.height * 0.4}}>
+            <View style={{flexDirection: "row", overflow: "scroll", height: height * 0.4}}>
             {currentColumns.map((item) => (
-                <View style={{width: pageData.dimensions.window.width * 0.3, height: pageData.dimensions.window.height * 0.4, borderColor: "black", borderWidth: 2}}>
+                <View style={{width: width * 0.3, height: height * 0.4, borderColor: "black", borderWidth: 2}}>
                     <Text>{item.displayName}</Text>
                     {(item.indexed === false) ? <Button title='Index This Propertie' onPress={() => {indexColumn(item.id)}}/>:<Text>Already Indexed</Text>
                     }

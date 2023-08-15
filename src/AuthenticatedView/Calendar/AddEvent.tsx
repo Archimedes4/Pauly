@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
 import { currentEventsSchoolYearSlice } from "../../Redux/reducers/currentEventSchoolYearReducer";
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
-import { accessTokenContent } from "../../../App";
 import { orgWideGroupID, siteID } from "../../PaulyConfig";
 import DatePicker from "../../UI/DateTimePicker/DatePicker";
 import Dropdown from "../../UI/Dropdown";
@@ -31,8 +30,6 @@ interface schoolDayDataInteface {
 }
 
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
-    const pageData = useContext(accessTokenContent);
-
     const selectedDate = useSelector((state: RootState) => state.selectedDate)
     const currentEvents = useSelector((state: RootState) => state.currentEvents)
     const dispatch = useDispatch()
@@ -303,7 +300,6 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
 }
 
 function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: schoolDayType, selectedSchedule: scheduleType) => void}) {
-  const pageData = useContext(accessTokenContent);
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolDays, setSchoolDays] =  useState<schoolDayType[]>([])
   const [schedules, setSchedules] = useState<scheduleType[]>([])
@@ -358,7 +354,6 @@ function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, 
 }
 
 function SchoolYearsSelect({width, height, onSelect}:{width: number, height: number, onSelect: (item: eventType) => void}) {
-  const pageData = useContext(accessTokenContent);
   const fullStore = useSelector((state: RootState) => state)
   const dispatch = useDispatch()
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)

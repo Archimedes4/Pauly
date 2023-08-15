@@ -67,7 +67,8 @@ import MicrosoftGraphEditGroup from './src/AuthenticatedView/Profile/Government/
 import { clientId, tenantId } from './src/PaulyConfig';
 import { loadingStateEnum } from './src/types';
 import authenticationTokenReducer, { authenticationTokenSlice } from './src/Redux/reducers/authenticationTokenReducer';
-import { pageDataContext, contextInterface } from './src/Redux/AccessTokenContext';
+import { microsoftProfileDataSlice } from './src/Redux/reducers/microsoftProfileDataReducer';
+import { dimentionsSlice } from './src/Redux/reducers/dimentionsReducer';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -144,12 +145,11 @@ WebBrowser.maybeCompleteAuthSession();
 
 function AppMain() {
   //Dimentions
-  const [dimensions, setDimensions] = useState({
-    window: windowDimensions,
-    screen: screenDimensions,
-  });
+  const [dimensions, setDimensions] = useState({window: windowDimensions, screen: screenDimensions});
 
   const [currentBreakPointMode, setCurerentBreakPointMode] = useState<breakPointMode>(breakPointMode.xSmall)
+
+  const [expandedMode, setExpandedMode] = useState<boolean>(false)
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
@@ -181,48 +181,54 @@ function AppMain() {
     }
   }, [dimensions.window.width])
 
-  //Context
-  const [context, setContext] = useState<contextInterface>({uri: "", displayName: "", dimensions: {window: windowDimensions, screen: screenDimensions,}, currentBreakPointMode: breakPointMode.xSmall})
-
-  const [expandedMode, setExpandedMode] = useState<boolean>(false)
-
   useEffect(() => {
-    var newContext = context
-    if (dimensions.window.width >= 576) {
-      newContext.dimensions.window.width = dimensions.window.width * 0.9
-    }
-    setContext(newContext)
-  }, [])
-
-  useEffect(() => {
-    var newContext = {...context}
-    if (dimensions.window.width >= 576){
-      if (expandedMode){
-        newContext.dimensions.window.width = dimensions.window.width * 0.75
+    console.log(dimensions.window.width)
+    const oldWidth = store.getState().dimentions.width
+    const oldCurrentBreakPointMode = store.getState().dimentions.currentBreakPoint
+    const height = store.getState().dimentions.height
+    const width = dimensions.window.width
+    if (oldWidth !== width && oldCurrentBreakPointMode !== currentBreakPointMode) {
+      if (width >= 576){
+        if (expandedMode){
+          store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width * 0.75, currentBreakPoint: currentBreakPointMode}))
+        } else {
+          store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width * 0.9, currentBreakPoint: currentBreakPointMode}))
+        }
       } else {
-        newContext.dimensions.window.width = dimensions.window.width * 0.9
+        store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width , currentBreakPoint: currentBreakPointMode}))
       }
-    } else {
-      newContext.dimensions.window.width = dimensions.window.width
+    } else if (oldWidth !== width){
+      if (width >= 576){
+        if (expandedMode){
+          store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.75))
+        } else {
+          store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.9))
+        }
+      } else {
+        store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width))
+      }
     }
-    newContext.dimensions.window.height = dimensions.window.height 
-    newContext.dimensions.window.scale = dimensions.window.scale
-    newContext.dimensions.window.fontScale = dimensions.window.fontScale
-    newContext.currentBreakPointMode = currentBreakPointMode
-    setContext(newContext)
+    if (height !== dimensions.screen.height) {
+      store.dispatch(dimentionsSlice.actions.setDimentionsHeight(height))
+    }
   }, [dimensions, currentBreakPointMode])
 
   useEffect(() => {
-    var newContext = {...context}
-    if (dimensions.window.width >= 576){
+    const width = dimensions.window.width
+    if (width >= 576){
       if (expandedMode){
-        newContext.dimensions.window.width = dimensions.window.width * 0.75
+        store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.75))
       } else {
-        newContext.dimensions.window.width = dimensions.window.width * 0.9
+        store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.9))
       }
-    } 
-    setContext(newContext)
+    }
   }, [expandedMode])
+
+  useEffect(() => {
+    if (dimensions.window.width < 576) {
+      store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: dimensions.window.width, currentBreakPoint: currentBreakPointMode}))
+    }
+  }, [])
 
   //Authentication
   async function getUserProfile() {
@@ -234,22 +240,17 @@ function AppMain() {
       const profileResult = await callMsGraph("https://graph.microsoft.com/v1.0/me")
       if (profileResult.ok){
         const profileData = await profileResult.json()
-        console.log(profileData)
-        var newDimentions: {window: ScaledSize, screen: ScaledSize} = dimensions
-        if (dimensions.window.width >= 576) {
-          newDimentions.window.width = dimensions.window.width * 0.9
-        }
-        setContext({uri: urlOut, displayName: profileData["displayName"], dimensions: newDimentions, currentBreakPointMode: currentBreakPointMode})
+        store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileData({uri: urlOut, displayName: profileData["displayName"]}))
       }
     }
   }
 
   const discovery = AuthSession.useAutoDiscovery(
-    'https://login.microsoftonline.com/' + tenantId +'/oauth2/v2.0',
+    'https://login.microsoftonline.com/' + tenantId +'/v2.0',
   );
 
   const redirectUri = AuthSession.makeRedirectUri({
-    scheme: undefined,
+    scheme: "Archimedes4.Pauly",
     path: 'auth',
   });
 
@@ -277,7 +278,6 @@ function AppMain() {
           },
           discovery,
         ).then((response) => {
-          console.log("Auth Token")
           store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
           getPaulyLists()
           getUserProfile()
@@ -313,7 +313,7 @@ function AppMain() {
   //   }
   // }, [callsCount])
 
-  // Fonti
+  // Font
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('./assets/fonts/BukhariScript.ttf'),
   });
@@ -329,18 +329,16 @@ function AppMain() {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
       { (result) ?
         <View>
-          <pageDataContext.Provider value={context}>
-            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
-          </pageDataContext.Provider>
+          <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
         </View>:
         <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
-          <Text style={{fontFamily: "BukhariScript", fontSize: (200 * dimensions.window.width/360), textShadowColor: "white", textShadowRadius: 10}}>Pauly</Text>
+          <Text style={{fontFamily: "BukhariScript", fontSize: (100 * dimensions.window.width/360), textShadowColor: "white", textShadowRadius: 10}}>Pauly</Text>
           <Pressable onPress={async () => {
             getAuthToken()
-          }} style={{height: dimensions.window.height * 0.2, width: dimensions.window.width * 0.5, borderRadius: 25, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+          }} style={{height: dimensions.window.height * 0.1, width: dimensions.window.width * 0.5, borderRadius: 50, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
             <Text style={{textAlign: "center"}}>LOGIN</Text>
           </Pressable>
         </View>
