@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useCallback } from 'react';
 import { Dimensions, View, Text, Image, Pressable } from 'react-native';
 import MonthView from './MonthView';
 import { Link, Navigate, useNavigate } from 'react-router-native';
@@ -7,6 +7,8 @@ import callMsGraph from '../Functions/microsoftAssets';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 declare global {
     type DateProperty = {
         Date: number
@@ -52,6 +54,22 @@ export default function HomePage() {
         }
     }, [currentBreakPoint])
 
+    // Font
+    const [fontsLoaded] = useFonts({
+        'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),
+        'Gochi Hand': require('../../assets/fonts/GochiHand-Regular.ttf')
+    });
+    
+    const onLayoutRootView = useCallback(async () => {
+        if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+        }
+    }, [fontsLoaded]);
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
   return (
     <View style={{backgroundColor: "#793033", overflow: "hidden"}}>
         {/* <Link to="/notifications">
@@ -65,15 +83,16 @@ export default function HomePage() {
                 </ScrollingTextAnimation>:null
             }
         </View>
-        <Pressable style={{width: width * 0.999, height: height * 0.42}} onPress={() => {//TO DO Naviate to Calendar
-        }}>
+        <Link style={{width: width * 0.999, height: height * 0.42}} to="/calendar">
             <View>
-                <Text style={{margin: "auto", width: width * 1.0, height: height * 0.05}}>Calendar</Text>
+                <View style={{width: width * 1.0, height: height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
+                    <Text style={{margin: "auto"}}>Calendar</Text>
+                </View>
                 <MonthView width={width * 1.0} height={height * 0.37}/>
             </View>
-        </Pressable>
+        </Link>
         <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
-            <Link to={'/quiz'}>
+            <Link to={'/commissions'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
                     <Image source={require("../../assets/images/QuizIcon.png")} resizeMode='contain' width={width * 0.5} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
@@ -87,7 +106,7 @@ export default function HomePage() {
             </Link>
         </View>
         <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
-            <Link to={'/messaging'}>
+            <Link to={'/resources'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
                     <Image source={require("../../assets/images/MessagingIcon.png")} resizeMode='contain' width={width * 0.5} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
@@ -103,27 +122,3 @@ export default function HomePage() {
     </View>
   )
 }
-
-{/* //        if width.width == 0.0 {
-            if ScrollText != ""{
-                ScrollView(.horizontal){
-                    <Text style={{fontSize: dimensions.window.height * 0.08, fontFamily: "Chalkboard SE", height: dimensions.window.height * 0.08}}>{ScrollText} </Text>
-                }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.99)
-                .padding(.bottom, 0.01)
-            } else {
-                ProgressView()
-                    .frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
-            }
-        } else {
-            Button{
-//                        WindowMode.SelectedWindowMode = .Announcment
-            } label: {
-                let size = geometry.size.width
-                InfiniteScroller(contentWidth: width.width * 2, AnimationDuration: $AnimationDuration) {
-                    HStack(spacing: 0) {
-                        SildingTileView(size: size, text: ScrollText, Width: $width.width, Height: geometry.size.height)
-                        SildingTileView(size: size, text: ScrollText, Width: $width.width, Height: geometry.size.height)
-                    }
-                }
-            }.frame(width: geometry.size.width * 1.0, height: geometry.size.height * 0.1)
-        } */}

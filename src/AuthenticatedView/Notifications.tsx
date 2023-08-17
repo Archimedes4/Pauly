@@ -6,7 +6,7 @@ import { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
 
 export default function Notifications() {
-  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   async function loadData() {
     const result = await getSchoolDayOnSelectedDay(new Date())
     console.log(result)
@@ -15,7 +15,7 @@ export default function Notifications() {
     loadData()
   }, [])
   return (
-    <View>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
       { (currentBreakPoint === 0) ?
         <Link to="/profile/">
           <Text>Back</Text>

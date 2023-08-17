@@ -1,4 +1,3 @@
-import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser"
 import store from "../Redux/store"
 import callMsGraph from "./microsoftAssets"
 import { loadingStateEnum } from "../types"

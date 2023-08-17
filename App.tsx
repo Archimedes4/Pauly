@@ -12,7 +12,8 @@ import {
   Text,
   Pressable,
   View,
-  ScaledSize
+  ScaledSize,
+  Image
 } from 'react-native';
 import { Provider, useSelector } from 'react-redux'
 import { NativeRouter, Route, Routes } from 'react-router-native';
@@ -315,6 +316,7 @@ function AppMain() {
   // Font
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('./assets/fonts/BukhariScript.ttf'),
+    'Gochi Hand': require('./assets/fonts/GochiHand-Regular.ttf')
   });
   
   const onLayoutRootView = useCallback(async () => {
@@ -328,23 +330,26 @@ function AppMain() {
   }
 
   return (
-    <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
-      { (result?.type === 'success') ?
-        <View>
-          <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
-        </View>:
-        <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
-          <View style={{height: (100 * dimensions.window.width/230)}} id='text outlinewr'>
-            <Text style={{fontFamily: "BukhariScript", fontSize: (100 * dimensions.window.width/360), textShadowColor: "black", textShadowRadius: 10, color: "white"}}>Pauly</Text>
+    <View style={{backgroundColor: "#793033"}}>
+      <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
+        { (result?.type === 'success') ?
+          <View>
+            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
+          </View>:
+          <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
+            <View style={{height: (100 * dimensions.window.width/230), width: dimensions.window.width, flexDirection: "row"}} id='text outlinewr'>
+              <Image source={require("./assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: (100 * dimensions.window.width/360), height: (100 * dimensions.window.width/360)}} />
+              <Text style={{position: "absolute", left: (100 * dimensions.window.width/600), fontFamily: "Gochi Hand", fontSize: (100 * dimensions.window.width/360), textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 1, height: 1}, textShadowRadius: 10, color: "white"}}>auly</Text>
+            </View>
+            <Pressable onPress={async () => {
+              getAuthToken()
+            }} style={{height: dimensions.window.height * 0.1, width: dimensions.window.width * 0.5, borderRadius: 50, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+              <Text style={{textAlign: "center"}}>LOGIN</Text>
+            </Pressable>
           </View>
-          <Pressable onPress={async () => {
-            getAuthToken()
-          }} style={{height: dimensions.window.height * 0.1, width: dimensions.window.width * 0.5, borderRadius: 50, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
-            <Text style={{textAlign: "center"}}>LOGIN</Text>
-          </Pressable>
-        </View>
-      }
-    </SafeAreaView>
+        }
+      </SafeAreaView>
+    </View>
   );
 }
 
