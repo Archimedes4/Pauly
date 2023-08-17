@@ -1,12 +1,11 @@
 import { View, Text, Button, Dimensions, ScrollView } from 'react-native'
 import React, {useContext, useEffect, useState} from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { pageDataContext } from '../../../../Redux/AccessTokenContext';
 import { Link } from 'react-router-native';
-import NavBarComponent from '../../../../UI/NavComponent';
-import { useMsal } from '@azure/msal-react';
 import PickerWrapper from '../../../../UI/Picker/Picker';
 import { loadingStateEnum } from '../../../../types';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../Redux/store';
 
 type ListType = {
   displayName: string
@@ -25,11 +24,11 @@ enum graphMode {
 }
 
 export default function MicrosoftGraphOverview() {
+  const {height, width} = useSelector((state: RootState) => state.dimentions)
   const [lists, setLists] = useState<ListType[]>([])
   const [groups, setGroups] = useState<groupType[]>([])
   const [searchText, setSearchText] = useState<string>("")
   const [selectedGraphMode, setSelectedGraphMode] =  useState<graphMode>(graphMode.list)
-  const pageData = useContext(pageDataContext);
 
   //loading states
   const [groupLoadingState, setGroupLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
@@ -94,11 +93,11 @@ export default function MicrosoftGraphOverview() {
         <Text>Back</Text>
       </Link>
       <Text>Microsoft Graph Overview</Text>
-      <PickerWrapper selectedIndex={selectedGraphMode} onSetSelectedIndex={setSelectedGraphMode} width={pageData.dimensions.window.width} height={30}>
+      <PickerWrapper selectedIndex={selectedGraphMode} onSetSelectedIndex={setSelectedGraphMode} width={width} height={30}>
         <Text>Lists</Text>
         <Text>Groups</Text>
       </PickerWrapper>
-      <ScrollView style={{height: pageData.dimensions.window.height * 0.6}}>
+      <ScrollView style={{height: height * 0.6}}>
         { (selectedGraphMode === graphMode.list) ?
           <View>
             { (listLoadingState === loadingStateEnum.loading) ?

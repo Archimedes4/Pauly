@@ -11,7 +11,6 @@ import { useMsal } from '@azure/msal-react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
 import { loadingStateEnum } from '../../types'
-import { pageDataContext } from '../../Redux/AccessTokenContext'
 
 enum dataContentTypeOptions {
   video,
@@ -35,7 +34,7 @@ declare global {
 }
 
 export default function Sports() {
-  const pageData = useContext(pageDataContext);
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {sportsApprovedSubmissionsListId} = useSelector((state: RootState) => state.paulyList)
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
@@ -85,9 +84,9 @@ export default function Sports() {
     return null;
   }
   return (
-    <View style={{height: pageData.dimensions.window.height, width: pageData.dimensions.window.width, backgroundColor: "white", overflow: "hidden"}}>
-      <View style={{height: pageData.dimensions.window.height * 0.075, width: pageData.dimensions.window.width, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-        { (pageData.dimensions.window.width > 576) ?
+    <View style={{height: height, width: width, backgroundColor: "white", overflow: "hidden"}}>
+      <View style={{height: height * 0.075, width: width, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        { (width > 576) ?
           null:<Link to="/">
             <View style={{flexDirection: "row"}}>
               <ChevronLeft width={14} height={14}/>
@@ -106,12 +105,12 @@ export default function Sports() {
           { (loadingResult === loadingStateEnum.success) ?
             <View>
               { sportsPosts.map((item) => (
-                <View style={{marginTop: pageData.dimensions.window.height * 0.05}}>
+                <View style={{marginTop: height * 0.05}}>
                 { (item.fileType === dataContentTypeOptions.image) ?
-                  <Image style={{width: pageData.dimensions.window.width * 0.9, height: pageData.dimensions.window.height * 0.6, marginLeft: pageData.dimensions.window.width * 0.05}} source={{uri: item.fileID}}/>:null
+                  <Image style={{width: width * 0.9, height: height * 0.6, marginLeft: width * 0.05}} source={{uri: item.fileID}}/>:null
                 }
                 { (item.fileType === dataContentTypeOptions.video) ?
-                  <video src={item.fileID} style={{width: pageData.dimensions.window.width * 0.9, height: pageData.dimensions.window.height * 0.6}} controls/>:null
+                  <video src={item.fileID} style={{width: width * 0.9, height: height * 0.6}} controls/>:null
                 }
                 </View>
               ))

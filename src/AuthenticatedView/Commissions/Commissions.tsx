@@ -1,11 +1,10 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Dimensions, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Link } from 'react-router-native';
 import callMsGraph from '../../Functions/microsoftAssets';
 import { siteID } from '../../PaulyConfig';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useMsal } from '@azure/msal-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 

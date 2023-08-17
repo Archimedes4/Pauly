@@ -8,7 +8,6 @@ import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { siteID } from '../PaulyConfig';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
-import { pageDataContext } from '../Redux/AccessTokenContext';
 declare global {
     type DateProperty = {
         Date: number
@@ -19,9 +18,10 @@ declare global {
 }
 
 export default function HomePage() {
-    const pageData = useContext(pageDataContext);
     const navigate = useNavigate()
     const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
+    const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
+    const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
     const [messageText, setMessageText] = useState("")
     const [animationSpeed, setAnnimationSpeed] = useState(0)
 
@@ -45,59 +45,59 @@ export default function HomePage() {
         if (store.getState().authenticationToken !== ""){
             getCurrentTextAndAnimationSpeed()
         }
-    }, [pageData])
+    }, [authenticationToken])
 
     useEffect(() => {
-        if (pageData.currentBreakPointMode > 0){
+        if (currentBreakPoint > 0){
             navigate("/notifications")
         }
-    }, [pageData.currentBreakPointMode])
+    }, [currentBreakPoint])
 
   return (
     <View style={{backgroundColor: "#793033", overflow: "hidden"}}>
         {/* <Link to="/notifications">
         </Link> */}
-        <View style={{width: pageData.dimensions.window.width * 1.0, height: pageData.dimensions.window.height * 0.08}}>
+        <View style={{width: width * 1.0, height: height * 0.08}}>
             { (messageText !== "") ?
-                <ScrollingTextAnimation width={pageData.dimensions.window.width * 1.0} height={pageData.dimensions.window.height * 0.08}>
+                <ScrollingTextAnimation width={width * 1.0} height={height * 0.08}>
                     <View>
-                        <Text numberOfLines={1} style={{fontSize: pageData.dimensions.window.height * 0.07, height: pageData.dimensions.window.height * 0.07}}>{messageText}</Text>
+                        <Text numberOfLines={1} style={{fontSize: height * 0.07, height: height * 0.07}}>{messageText}</Text>
                     </View>
                 </ScrollingTextAnimation>:null
             }
         </View>
-        <Pressable style={{width: pageData.dimensions.window.width * 0.999, height: pageData.dimensions.window.height * 0.42}} onPress={() => {//TO DO Naviate to Calendar
+        <Pressable style={{width: width * 0.999, height: height * 0.42}} onPress={() => {//TO DO Naviate to Calendar
         }}>
             <View>
-                <Text style={{margin: "auto", width: pageData.dimensions.window.width * 1.0, height: pageData.dimensions.window.height * 0.05}}>Calendar</Text>
-                <MonthView width={pageData.dimensions.window.width * 1.0} height={pageData.dimensions.window.height * 0.37}/>
+                <Text style={{margin: "auto", width: width * 1.0, height: height * 0.05}}>Calendar</Text>
+                <MonthView width={width * 1.0} height={height * 0.37}/>
             </View>
         </Pressable>
-        <View style={{flexDirection: 'row', width: pageData.dimensions.window.width * 1.0, height: pageData.dimensions.window.height * 0.25}}>
+        <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
             <Link to={'/quiz'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: pageData.dimensions.window.width * 0.5, height: pageData.dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
-                    <Image source={require("../../assets/images/QuizIcon.png")} resizeMode='contain' width={pageData.dimensions.window.width * 0.5} height={pageData.dimensions.window.height * 0.25} style={{zIndex: 2, height: pageData.dimensions.window.height * 0.25, width: pageData.dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
+                    <Image source={require("../../assets/images/QuizIcon.png")} resizeMode='contain' width={width * 0.5} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
             <Link to={'/sports'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: pageData.dimensions.window.width * 0.5, height: pageData.dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-                    <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={pageData.dimensions.window.width * 0.3} height={pageData.dimensions.window.height * 0.25} style={{zIndex: 2, height: pageData.dimensions.window.height * 0.25, width: pageData.dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
+                    <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={width * 0.3} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
         </View>
-        <View style={{flexDirection: 'row', width: pageData.dimensions.window.width * 1.0, height: pageData.dimensions.window.height * 0.25}}>
+        <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
             <Link to={'/messaging'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: pageData.dimensions.window.width * 0.5, height: pageData.dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-                    <Image source={require("../../assets/images/MessagingIcon.png")} resizeMode='contain' width={pageData.dimensions.window.width * 0.5} height={pageData.dimensions.window.height * 0.25} style={{zIndex: 2, height: pageData.dimensions.window.height * 0.25, width: pageData.dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
+                    <Image source={require("../../assets/images/MessagingIcon.png")} resizeMode='contain' width={width * 0.5} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link >
             <Link to={'/profile'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: pageData.dimensions.window.width * 0.5, height: pageData.dimensions.window.height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
-                    <Image source={require("../../assets/images/Books.png")} resizeMode='contain' width={pageData.dimensions.window.width * 0.5} height={pageData.dimensions.window.height * 0.25} style={{zIndex: 2, height: pageData.dimensions.window.height * 0.25, width: pageData.dimensions.window.width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
+                    <Image source={require("../../assets/images/Books.png")} resizeMode='contain' width={width * 0.5} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
                 </View>
             </Link>
         </View>

@@ -95,7 +95,7 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/" element={<HomePage/>}/>
                   <Route path="/sports" element={<Sports/>}/>
                   <Route path="/notifications" element={<Notifications/>}/>
-                  <Route path="/calendar" element={<Calendar governmentMode={false} />}/>
+                  <Route path="/calendar" element={<Calendar />}/>
                   <Route path="/resources" element={<Resources/>}/>
                   <Route path="/commissions" element={<Commissions/>}/>
                   <Route path="/commissions/:id" element={<CommissionsView/>}/>
@@ -182,7 +182,6 @@ function AppMain() {
   }, [dimensions.window.width])
 
   useEffect(() => {
-    console.log(dimensions.window.width)
     const oldWidth = store.getState().dimentions.width
     const oldCurrentBreakPointMode = store.getState().dimentions.currentBreakPoint
     const height = store.getState().dimentions.height
@@ -209,7 +208,7 @@ function AppMain() {
       }
     }
     if (height !== dimensions.screen.height) {
-      store.dispatch(dimentionsSlice.actions.setDimentionsHeight(height))
+      store.dispatch(dimentionsSlice.actions.setDimentionsHeight(dimensions.screen.height))
     }
   }, [dimensions, currentBreakPointMode])
 
@@ -231,13 +230,13 @@ function AppMain() {
   }, [])
 
   //Authentication
-  async function getUserProfile() {
+  async function getUserProfile(accessToken: string) {
     //TO DO check if ok
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/photo/$value")
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/photo/$value", "GET", false, undefined, undefined, accessToken)
     if (result.ok){
       const dataBlob = await result.blob()
       const urlOut = URL.createObjectURL(dataBlob)
-      const profileResult = await callMsGraph("https://graph.microsoft.com/v1.0/me")
+      const profileResult = await callMsGraph("https://graph.microsoft.com/v1.0/me", "GET", false, undefined, undefined, accessToken)
       if (profileResult.ok){
         const profileData = await profileResult.json()
         store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileData({uri: urlOut, displayName: profileData["displayName"]}))
@@ -279,8 +278,8 @@ function AppMain() {
           discovery,
         ).then((response) => {
           store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
-          getPaulyLists()
-          getUserProfile()
+          getPaulyLists(response.accessToken)
+          getUserProfile(response.accessToken)
         });
       }
     });
@@ -330,7 +329,7 @@ function AppMain() {
 
   return (
     <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
-      { (result) ?
+      { (result?.type === 'success') ?
         <View>
           <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
         </View>:

@@ -3,7 +3,6 @@ import React, { ReactNode, useCallback, useContext, useEffect, useState } from '
 import { Link } from 'react-router-native'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { accessTokenContent } from '../../../../App';
 import { CalendarIcon, MedalIcon } from '../../../UI/Icons/Icons';
 import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
@@ -19,6 +18,7 @@ function Block({height, width, text, imageSource, children}:{height: number, wid
 }
 
 export default function Government() {
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../../assets/fonts/BukhariScript.ttf'),
   });
@@ -27,23 +27,23 @@ export default function Government() {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
-  const pageData = useContext(pageDataContext);
+
   const [mainWidth, setMainWidth] = useState<number>(0)
   useEffect(() => {
-    const fivePercent = pageData.dimensions.window.width * 0.05
-    const remainder = pageData.dimensions.window.width * 0.8%(100 + fivePercent)
-    setMainWidth((pageData.dimensions.window.width * 0.8) - remainder - fivePercent)
-  }, [pageData.dimensions.window.width])
+    const fivePercent = width * 0.05
+    const remainder = width * 0.8%(100 + fivePercent)
+    setMainWidth((width * 0.8) - remainder - fivePercent)
+  }, [width])
   if (!fontsLoaded) {
     return null
   }
   return (
-    <View>
-      <View style={{height: pageData.dimensions.window.height * 0.2, width: pageData.dimensions.window.width, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+    <View style={{height: height}}>
+      <View style={{height: height * 0.2, width: width, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <Text style={{fontFamily: "BukhariScript", fontSize: 100}}>Government</Text>
       </View>
-      <View style={{height: pageData.dimensions.window.height * 0.75, width: pageData.dimensions.window.width, alignContent: "center", justifyContent: "center", alignItems: "center", marginTop: pageData.dimensions.window.height * 0.05}}>
-        <View style={{height: pageData.dimensions.window.height * 0.75, width: mainWidth, flexDirection: "row", alignContent: "flex-start",  flexWrap: "wrap", rowGap: (pageData.dimensions.window.height) * 0.05, columnGap: (pageData.dimensions.window.width) * 0.05}}>
+      <View style={{height: height * 0.75, width: width, alignContent: "center", justifyContent: "center", alignItems: "center", marginTop: height * 0.05}}>
+        <View style={{height: height * 0.75, width: mainWidth, flexDirection: "row", alignContent: "flex-start",  flexWrap: "wrap", rowGap: (height) * 0.05, columnGap: (width) * 0.05}}>
           <Link to="/profile/government/graph">
             <Block width={100} height={100} text='Graph' imageSource={require('../../../../assets/images/GraphAPILogo.png')} />
           </Link>

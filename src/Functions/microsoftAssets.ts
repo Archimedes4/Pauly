@@ -14,7 +14,7 @@ import store from "../Redux/store";
 
 export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string): Promise<Response> {
     const headers = new Headers();
-    const bearer = "Bearer " + (authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken
+    const bearer = `Bearer ${(authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken}`
 
     headers.append("Authorization", bearer);
     headers.append("Content-Type", "application/json")
@@ -28,6 +28,8 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
         headers: headers,
         body: body
     };
+
+    //console.log("THis is result for", url, "Auth:", `Bearer ${(authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken}`)
 
     const response  = await fetch(url, options)
     if (response.status === 401) {
@@ -45,9 +47,7 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
             const previousValue: string = store.getState().authenticationToken
             return new Promise((resolve) => {
                 const unsubscribe = store.subscribe(async () => {
-                    
                   const newValue = store.getState().authenticationToken;
-                  console.log("Subscribe Fired", newValue, authenticationToken)
                   if (newValue !== previousValue) {
                     const result = await callMsGraph(url, method, perfer, body, true, authenticationToken)
                     resolve(result)

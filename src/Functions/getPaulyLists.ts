@@ -3,8 +3,8 @@ import { mainListID, siteID } from "../PaulyConfig";
 import store from "../Redux/store";
 import { paulyListSlice } from "../Redux/reducers/paulyListReducer";
 
-export default async function getPaulyLists() {
-    const paulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + mainListID + "/items?expand=fields")
+export default async function getPaulyLists(authToken?: string) {
+    const paulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + mainListID + "/items?expand=fields", "GET", false, undefined, undefined, authToken)
     if (paulyListResult.ok){
         const paulyListResultData = await paulyListResult.json()
         console.log(paulyListResultData)

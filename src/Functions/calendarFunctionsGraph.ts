@@ -6,7 +6,7 @@ import { Data } from "@react-google-maps/api";
 
 //Defaults to org wide events
 export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
-  const result = await callMsGraph(store.getState().authenticationToken, (url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", "GET", true)
+  const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", "GET", true)
   if (result.ok){
     const data = await result.json()
     var newEvents: eventType[] = []
@@ -48,7 +48,7 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
 }
   
 export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
-  const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
   if (result.ok) {
     const data = await result.json()
     console.log(data)
@@ -75,7 +75,7 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
 }
   
 export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
   if (result.ok) {
     console.log(result)
     const data = await result.json()
@@ -120,7 +120,7 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
 export async function getSchoolDayOnSelectedDay(selectedDate: Date): Promise<{ result: loadingStateEnum; event?: eventType; }> {
   const startDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0)).toISOString().slice(0, -1) + "0000"
   const endDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 0)).toISOString().slice(0, -1) + "0000"
-  const result = await callMsGraph(store.getState().authenticationToken, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20eq%20'" + startDate + "'%20and%20end/dateTime%20eq%20'" + endDate + "'&$select=ext9u07b055_paulyEvents", "GET", true)
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20eq%20'" + startDate + "'%20and%20end/dateTime%20eq%20'" + endDate + "'&$select=ext9u07b055_paulyEvents", "GET", true)
   if (result.ok) {
     const data = await result.json()
     for(var index = 0; index < data["value"].length; index++){

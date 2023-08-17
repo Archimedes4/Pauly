@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../Functions/microsoftAssets'
 import { siteID } from '../../PaulyConfig';
 import { useParams } from 'react-router-native';
-import { useMsal } from '@azure/msal-react';
 import * as Location from 'expo-location';
 import { RootState } from '../../Redux/store';
 import { useSelector } from 'react-redux';

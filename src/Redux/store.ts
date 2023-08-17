@@ -1,3 +1,4 @@
+import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import currentEventsReducer from './reducers/currentEventReducer';
 import currentEventsSchoolYearReducer from './reducers/currentEventSchoolYearReducer'
@@ -17,7 +18,8 @@ const store = configureStore({
     paulyList: paulyListReducer,
     authenticationToken: authenticationTokenReducer,
     authenticationCall: authenticationCallReducer,
-    dimentions: dimentionsReducer
+    dimentions: dimentionsReducer,
+    microsoftProfileData: microsoftProfileDataReducer
   }
 });
 
