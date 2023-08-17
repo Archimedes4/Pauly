@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, Dimensions } from 'react-native'
-import { pageDataContext } from '../Redux/AccessTokenContext';
 import { getSchoolDayOnSelectedDay } from '../Functions/calendarFunctionsGraph';
-import { useMsal } from '@azure/msal-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../Redux/store';
+import { Link } from 'react-router-native';
 
 export default function Notifications() {
-  const pageData = useContext(pageDataContext);
+  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   async function loadData() {
     const result = await getSchoolDayOnSelectedDay(new Date())
     console.log(result)
@@ -15,6 +16,11 @@ export default function Notifications() {
   }, [])
   return (
     <View>
+      { (currentBreakPoint === 0) ?
+        <Link to="/profile/">
+          <Text>Back</Text>
+        </Link>:null
+      }
       <Text>Notifications</Text>
       <View>
         <Text></Text>
