@@ -2,7 +2,6 @@ import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { siteID } from '../../../../PaulyConfig'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
 
@@ -21,10 +20,10 @@ declare global {
 }
 
 export default function GovernmentCommissions() {
-  const {commissionListId} = useSelector((state: RootState) => state.paulyList)
+  const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [commissions, setCommissions] = useState<commissionType[]>([])
   async function getCommissions(){
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionListId + "/items?expand=fields")
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields")
     if (result.ok){
       const data = await result.json()
       console.log(data)

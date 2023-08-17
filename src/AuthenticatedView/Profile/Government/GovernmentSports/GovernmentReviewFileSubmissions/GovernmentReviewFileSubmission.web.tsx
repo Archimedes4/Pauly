@@ -2,8 +2,9 @@ import { View, Text, Image, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../../Functions/microsoftAssets'
 import { Link, useParams } from 'react-router-native';
-import { siteID } from '../../../../../PaulyConfig';
 import getFileWithShareID from '../../../../../Functions/getFileWithShareID';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../../Redux/store';
 // import Video from 'react-native-video';
 
 enum dataContentTypeOptions {
@@ -14,6 +15,7 @@ enum dataContentTypeOptions {
 
 export default function GovernmentReviewFileSubmission() {
     const { submissionID } = useParams()
+    const {siteId} = useSelector((state: RootState) => state.paulyList)
     const [dataURL, setDataURL] = useState<string>("")
     const [dataContentType, setDataContentType] = useState<dataContentTypeOptions>(dataContentTypeOptions.unknown)
     const [currentSubmissionInfomration, setCurrentSubmissionInformation] = useState<mediaSubmissionType | undefined>(undefined)
@@ -69,7 +71,7 @@ export default function GovernmentReviewFileSubmission() {
                     Caption: currentSubmissionInfomration.Title
                 }
             }
-            const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/d10e9373-7e8b-4400-98f1-62ba95e4cd34/items", "POST", false, JSON.stringify(data))
+            const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/d10e9373-7e8b-4400-98f1-62ba95e4cd34/items", "POST", false, JSON.stringify(data))
             console.log(result)
             const dataResult = await result.json()
             console.log(dataResult)

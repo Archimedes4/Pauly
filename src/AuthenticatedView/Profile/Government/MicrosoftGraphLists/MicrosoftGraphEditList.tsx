@@ -2,7 +2,6 @@ import { View, Text, Dimensions, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { siteID } from '../../../../PaulyConfig';
 import { CopyIcon } from '../../../../UI/Icons/Icons';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
@@ -25,12 +24,13 @@ declare global {
 
 export default function MicrosoftGraphEditList() {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
+    const {siteId} = useSelector((state: RootState) => state.paulyList)
     const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([])
     const { listId } = useParams()
     const [isCoppiedToClipboard, setIsCoppiedToClipboard] = useState<boolean>(false)
 
     async function getListItems() {
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists/" + listId + "/items?expand=fields")
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists/" + listId + "/items?expand=fields")
         if (result.ok) {
             const data = await result.json()
             console.log(data)
@@ -42,7 +42,7 @@ export default function MicrosoftGraphEditList() {
         const data = {
             "indexed": "true" 
         }
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/"+ listId + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/"+ listId + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
         console.log(result)
         if (result.ok){
             const data = await result.json()
@@ -58,7 +58,7 @@ export default function MicrosoftGraphEditList() {
         }
     }
     async function getColumns() {
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists/" + listId + "/columns")
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists/" + listId + "/columns")
         if (result.ok) {
             const data = await result.json()
             console.log(data)

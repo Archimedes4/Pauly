@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
 import { currentEventsSchoolYearSlice } from "../../Redux/reducers/currentEventSchoolYearReducer";
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
-import { orgWideGroupID, siteID } from "../../PaulyConfig";
+import { orgWideGroupID } from "../../PaulyConfig";
 import DatePicker from "../../UI/DateTimePicker/DatePicker";
 import Dropdown from "../../UI/Dropdown";
 import { CalendarIcon, CloseIcon } from "../../UI/Icons/Icons";

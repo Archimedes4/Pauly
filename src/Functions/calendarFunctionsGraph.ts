@@ -1,4 +1,4 @@
-import { orgWideGroupID, siteID } from "../PaulyConfig";
+import { orgWideGroupID } from "../PaulyConfig";
 import callMsGraph from "./microsoftAssets";
 import { loadingStateEnum } from "../types";
 import store from "../Redux/store";
@@ -48,7 +48,7 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
 }
   
 export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
   if (result.ok) {
     const data = await result.json()
     console.log(data)
@@ -75,7 +75,7 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
 }
   
 export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
   if (result.ok) {
     console.log(result)
     const data = await result.json()

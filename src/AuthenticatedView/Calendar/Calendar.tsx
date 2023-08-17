@@ -19,9 +19,6 @@ import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
 import { useMsal } from '@azure/msal-react';
 import { loadingStateEnum } from '../../types';
 
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
-
 enum calendarMode {
   month,
   week,

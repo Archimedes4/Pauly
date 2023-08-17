@@ -2,7 +2,6 @@ import { View, Text, Dimensions, Image } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { ChevronLeft } from '../../UI/Icons/Icons'
-import { siteID } from '../../PaulyConfig'
 import callMsGraph from '../../Functions/microsoftAssets'
 import getFileWithShareID from '../../Functions/getFileWithShareID'
 import { useFonts } from 'expo-font';
@@ -35,12 +34,12 @@ declare global {
 
 export default function Sports() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {sportsApprovedSubmissionsListId} = useSelector((state: RootState) => state.paulyList)
+  const {sportsApprovedSubmissionsListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getSportsContent() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + sportsApprovedSubmissionsListId + "/items?expand=fields")
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + sportsApprovedSubmissionsListId + "/items?expand=fields")
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined){

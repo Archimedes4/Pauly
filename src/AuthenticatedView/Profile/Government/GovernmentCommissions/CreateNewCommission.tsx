@@ -5,13 +5,12 @@ import { Link } from 'react-router-native'
 import MapWeb from '../../../../UI/Map/Map.web';
 import callMsGraph from '../../../../Functions/microsoftAssets';
 import create_UUID from '../../../../Functions/CreateUUID';
-import { siteID } from '../../../../PaulyConfig';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 
 export default function CreateNewCommission() {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
-    const {commissionListId} = useSelector((state: RootState) => state.paulyList)
+    const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
     
     const [commissionName, setCommissionName] = useState<string>("")
     const [proximity, setProximity] = useState<number>(0)
@@ -55,9 +54,9 @@ export default function CreateNewCommission() {
               "template": " genericList"
             }
         }
-        const resultList = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID +"/lists", "POST", false, JSON.stringify(listData))
+        const resultList = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists", "POST", false, JSON.stringify(listData))
         if (resultList.ok){
-            const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionListId + "/items", "POST", false, JSON.stringify(data))//TO DO fix this id
+            const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items", "POST", false, JSON.stringify(data))//TO DO fix this id
             if (result.ok){
                 setSubmitButtonText("Success")
             } else {

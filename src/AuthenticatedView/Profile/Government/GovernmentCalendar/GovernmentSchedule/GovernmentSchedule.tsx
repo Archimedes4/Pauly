@@ -1,6 +1,5 @@
 import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { siteID } from '../../../../../PaulyConfig';
 import callMsGraph from '../../../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
@@ -13,11 +12,11 @@ import { loadingStateEnum } from '../../../../../types';
 // }
 
 export default function GovernmentSchedule() {
-  const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
+  const {scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   async function getSchedules() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId +"/items?expand=fields")
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + scheduleListId +"/items?expand=fields")
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){

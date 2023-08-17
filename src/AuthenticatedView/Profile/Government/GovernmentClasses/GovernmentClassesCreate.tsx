@@ -1,7 +1,6 @@
 import { View, Text, TextInput, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { siteID } from '../../../../PaulyConfig';
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 
@@ -13,7 +12,7 @@ declare global {
 }
 
 export default function GovernmentClassesCreate() {
-    const {commissionListId} = useSelector((state: RootState) => state.paulyList)
+    const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
 
     const [teacherNameSearch, setTeacherNameSearch] = useState<string>("")
     const [teachers, setTeachers] = useState<microsoftUserType[]>([])
@@ -43,7 +42,7 @@ export default function GovernmentClassesCreate() {
         }
     }
     async function getRootClasses() {
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/800202d8-1f51-4df4-ac39-08da7357ca89/items?expand=field")
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/800202d8-1f51-4df4-ac39-08da7357ca89/items?expand=field")
         if (result.ok){
             const data = await result.json()
             console.log(data)

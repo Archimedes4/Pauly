@@ -2,7 +2,6 @@ import { View, Text, Button, TextInput, Pressable, Dimensions } from 'react-nati
 import React, { useContext, useState, useEffect } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { Link } from 'react-router-native';
-import { siteID } from '../../../../PaulyConfig';
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 
@@ -17,6 +16,7 @@ type ColumnItem = {
 
 export default function MicrosoftGraphCreateList() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const {siteId} = useSelector((state: RootState) => state.paulyList)
 
   const [columns, setColumns] = useState<ColumnItem[]>([])
 
@@ -53,7 +53,7 @@ export default function MicrosoftGraphCreateList() {
         "template": " genericList"
       }
     }
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists", "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists", "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
     console.log(result)
     const data = await result.json()
     console.log(data)

@@ -4,7 +4,6 @@ import TimePicker from '../../../../../UI/DateTimePicker/TimePicker'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../../Functions/microsoftAssets'
 import create_UUID from '../../../../../Functions/CreateUUID'
-import { siteID } from '../../../../../PaulyConfig'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../../Redux/store'
 import { loadingStateEnum } from '../../../../../types'
@@ -27,7 +26,7 @@ declare global{
 
 export default function GovernmentSchedule() {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
-    const {scheduleListId} = useSelector((state: RootState) => state.paulyList)
+    const {scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)
     const [newPeriodHourStart, setNewPeriodHourStart] = useState<number>(12)
     const [newPeriodMinuteStart, setNewPeriodMinuteStart] = useState<number>(0)
     const [newPeriodHourEnd, setNewPeriodHourEnd] = useState<number>(12)
@@ -47,7 +46,7 @@ export default function GovernmentSchedule() {
                 "scheduleData":JSON.stringify(newPeriods)
             }
         }
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + scheduleListId + "/items", "POST", false, JSON.stringify(data))
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + scheduleListId + "/items", "POST", false, JSON.stringify(data))
         if (result.ok){
             const dataResult = await result.json()
             console.log(dataResult)

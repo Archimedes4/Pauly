@@ -1,6 +1,5 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { siteID } from '../../PaulyConfig';
 import callMsGraph from '../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
@@ -24,11 +23,11 @@ declare global {
 }  
 
 export default function SelectTimetable({governmentMode, onSelect}:{governmentMode: boolean, onSelect?: (item: timetableStringType) => void}) {
-  const {timetablesListId} = useSelector((state: RootState) => state.paulyList)
+  const {timetablesListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedTimetables, setLoadedTimetables] = useState<timetableStringType[]>([])
   async function getTimetables() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + timetablesListId + "/items?expand=fields")
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + timetablesListId + "/items?expand=fields")
     if (result.ok){
       const dataResult = await result.json()
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){

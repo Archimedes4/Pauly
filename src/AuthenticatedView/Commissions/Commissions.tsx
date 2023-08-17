@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { Link } from 'react-router-native';
 import callMsGraph from '../../Functions/microsoftAssets';
-import { siteID } from '../../PaulyConfig';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSelector } from 'react-redux';
@@ -15,12 +14,12 @@ enum CommissionMode{
 }
 
 export default function Commissions() {
-  const {commissionListId} = useSelector((state: RootState) => state.paulyList)
+  const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
 
   async function getCommissions(){
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionListId + "/items?expand=fields")//TO DO list id
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields")//TO DO list id
     if (result.ok) {
       const data = await result.json()
       console.log(data)

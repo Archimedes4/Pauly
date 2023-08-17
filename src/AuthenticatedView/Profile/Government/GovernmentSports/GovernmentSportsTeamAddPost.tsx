@@ -4,7 +4,6 @@ import MicrosoftFilePicker from '../../../../UI/microsoftFilePicker'
 import { Link, useSearchParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import create_UUID from '../../../../Functions/CreateUUID'
-import { siteID } from '../../../../PaulyConfig'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
 
@@ -17,7 +16,7 @@ enum postSubmissionResultType {
 
 export default function GovernmentSportsTeamAddPost() {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
-
+    const {siteId} = useSelector((state: RootState) => state.paulyList)
     const [selectedShareID, setSelectedShareID] = useState<string>("")
     const [postName, setPostName] = useState<string>("")
     const [postSubmissionResult, setPostSubmissionResult] = useState<postSubmissionResultType>(postSubmissionResultType.notLoading)
@@ -50,7 +49,7 @@ export default function GovernmentSportsTeamAddPost() {
     async function createFileSubmission(fileID: string) {
         setPostSubmissionResult(postSubmissionResultType.loading)
         const userIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/me") 
-        const resultOne = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/bf26e642-f655-47db-a037-188189b0d378/columns") //TO DO fix id
+        const resultOne = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/bf26e642-f655-47db-a037-188189b0d378/columns") //TO DO fix id
         const dataOne = await resultOne.json()
         console.log(dataOne)
         console.log(fileID.length)
@@ -68,7 +67,7 @@ export default function GovernmentSportsTeamAddPost() {
                 }
             }
             console.log(data)
-            const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/bf26e642-f655-47db-a037-188189b0d378/items", "POST", false, JSON.stringify(data)) //TO DO fix id
+            const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/bf26e642-f655-47db-a037-188189b0d378/items", "POST", false, JSON.stringify(data)) //TO DO fix id
             if (result.ok){
                 const data = await result.json()
                 console.log(data, result)

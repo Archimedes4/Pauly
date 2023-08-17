@@ -334,7 +334,9 @@ function AppMain() {
           <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
         </View>:
         <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
-          <Text style={{fontFamily: "BukhariScript", fontSize: (100 * dimensions.window.width/360), textShadowColor: "white", textShadowRadius: 10}}>Pauly</Text>
+          <View style={{height: (100 * dimensions.window.width/230)}} id='text outlinewr'>
+            <Text style={{fontFamily: "BukhariScript", fontSize: (100 * dimensions.window.width/360), textShadowColor: "black", textShadowRadius: 10, color: "white"}}>Pauly</Text>
+          </View>
           <Pressable onPress={async () => {
             getAuthToken()
           }} style={{height: dimensions.window.height * 0.1, width: dimensions.window.width * 0.5, borderRadius: 50, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>

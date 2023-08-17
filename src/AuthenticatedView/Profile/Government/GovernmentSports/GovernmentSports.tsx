@@ -3,8 +3,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets';
 import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
-import { siteID } from '../../../../PaulyConfig';
 import { loadingStateEnum } from '../../../../types';
+import { RootState } from '../../../../Redux/store';
+import { useSelector } from 'react-redux';
 
 type sportType = {
   name: string
@@ -12,11 +13,13 @@ type sportType = {
 }
 
 export default function GovernmentSports() {
+  const {siteId} = useSelector((state: RootState) => state.paulyList)
+  
   const [currentSports, setCurrentSports] = useState<sportType[]>([])
   const [dataResult, setDataResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getSports(){
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites" + siteID + "/lists/af29f01a-df11-4e9d-85c8-7461ca4dc6e9/items?expand=fields")//TO DO list id
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites" + siteId + "/lists/af29f01a-df11-4e9d-85c8-7461ca4dc6e9/items?expand=fields")//TO DO list id
     if (result.ok) {
       const data = await result.json()
       console.log(data)

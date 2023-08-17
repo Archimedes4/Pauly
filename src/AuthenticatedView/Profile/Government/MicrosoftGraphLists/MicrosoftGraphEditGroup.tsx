@@ -5,7 +5,6 @@ import callMsGraph from '../../../../Functions/microsoftAssets'
 import { CopyIcon } from '../../../../UI/Icons/Icons';
 import * as Clipboard from 'expo-clipboard';
 import { loadingStateEnum } from '../../../../types';
-import store from '../../../../Redux/store';
 
 
 export default function MicrosoftGraphEditGroup() {

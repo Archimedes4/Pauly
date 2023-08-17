@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../Functions/microsoftAssets';
 import { Link } from 'react-router-native';
 import MicrosoftFilePicker from '../../../UI/microsoftFilePicker';
-import { siteID } from '../../../PaulyConfig';
 import { useMsal } from '@azure/msal-react';
 import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
@@ -11,7 +10,7 @@ import getCurrentPaulyData from '../../../Functions/getCurrentPaulyData';
 import { loadingStateEnum } from '../../../types';
 
 export default function GovernmentHomePage() {
-    const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
+    const {paulyDataListId, siteId} = useSelector((state: RootState) => state.paulyList)
     const {width, height} = useSelector((state: RootState) => state.dimentions)
 
     //Loading States
@@ -37,7 +36,7 @@ export default function GovernmentHomePage() {
         const dataOut = {
             key:data
         }
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields", "PATCH", false, JSON.stringify(dataOut))//TO DO fix list ids
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + paulyDataListId + "/items/1/fields", "PATCH", false, JSON.stringify(dataOut))//TO DO fix list ids
         if (result.ok){ 
             const data = await result.json()
         } else {

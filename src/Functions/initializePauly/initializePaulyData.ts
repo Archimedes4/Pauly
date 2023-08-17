@@ -1,5 +1,6 @@
 export const PaulyListData = {
     "displayName": "PaulyList",
+    "name":"PaulyList",
     "columns": [
         {
         "name":"commissionListId",

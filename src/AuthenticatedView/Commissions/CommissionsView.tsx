@@ -1,18 +1,17 @@
 import { View, Text, Button } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../Functions/microsoftAssets'
-import { siteID } from '../../PaulyConfig';
 import { useParams } from 'react-router-native';
 import * as Location from 'expo-location';
 import { RootState } from '../../Redux/store';
 import { useSelector } from 'react-redux';
 
 export default function CommissionsView() {
-  const {commissionListId} = useSelector((state: RootState) => state.paulyList)
+  const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [commissionData, setCommissionData] = useState<commissionType | undefined>(undefined)
   const { id } = useParams()
   async function getCommissionInformation() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionListId + "/items?expand=fields&filter=fields/CommissionID%20eq%20'"+ id +"'")
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields&filter=fields/CommissionID%20eq%20'"+ id +"'")
     if (result.ok){
       const data = await result.json()
       console.log(data)
@@ -45,7 +44,7 @@ export default function CommissionsView() {
             "UserID":userData["id"]
           }
         }
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + commissionData.commissionId + "/items", "POST", false, JSON.stringify(data))
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionData.commissionId + "/items", "POST", false, JSON.stringify(data))
         
       }
     }

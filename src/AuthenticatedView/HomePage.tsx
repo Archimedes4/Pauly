@@ -5,7 +5,6 @@ import { Link, Navigate, useNavigate } from 'react-router-native';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
 import callMsGraph from '../Functions/microsoftAssets';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
-import { siteID } from '../PaulyConfig';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 declare global {
@@ -19,14 +18,14 @@ declare global {
 
 export default function HomePage() {
     const navigate = useNavigate()
-    const {paulyDataListId} = useSelector((state: RootState) => state.paulyList)
+    const {paulyDataListId, siteId} = useSelector((state: RootState) => state.paulyList)
     const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
     const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
     const [messageText, setMessageText] = useState("")
     const [animationSpeed, setAnnimationSpeed] = useState(0)
 
     async function getCurrentTextAndAnimationSpeed() {
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + paulyDataListId + "/items/1/fields")//TO DO fix list ids
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + paulyDataListId + "/items/1/fields")//TO DO fix list ids
         if (result.ok){
             const data: Record<string, any> = await result.json()
             console.log(data)

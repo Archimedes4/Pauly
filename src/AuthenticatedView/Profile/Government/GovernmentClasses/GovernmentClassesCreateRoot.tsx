@@ -1,14 +1,14 @@
 import { View, Text, Pressable, TextInput } from 'react-native'
 import React, { useContext, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
-import { pageDataContext } from '../../../../Redux/AccessTokenContext';
-import { siteID } from '../../../../PaulyConfig';
 import create_UUID from '../../../../Functions/CreateUUID';
 import { Link } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
+import { RootState } from '../../../../Redux/store';
+import { useSelector } from 'react-redux';
 
 export default function GovernmentClassesCreate() {
-  const pageData = useContext(pageDataContext);
+  const {siteId} = useSelector((state: RootState) => state.paulyList)
   const [selectedGrades, setSelectedGrades] = useState<number[]>([])
   const [newClassName, setNewClassName] = useState<string>("")
   async function createRootClass() {
@@ -21,7 +21,7 @@ export default function GovernmentClassesCreate() {
         "gradeData":selectedGrades.toString()
       }
     }
-    const result = await callMsGraph(pageData.accessToken, "https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/800202d8-1f51-4df4-ac39-08da7357ca89/items", "POST", false, JSON.stringify(data))
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/800202d8-1f51-4df4-ac39-08da7357ca89/items", "POST", false, JSON.stringify(data))
     if (result.ok){
       //TO DO add success notifiation
       console.log("All Good")
