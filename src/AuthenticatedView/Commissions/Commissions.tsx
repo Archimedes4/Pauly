@@ -60,19 +60,25 @@ export default function Commissions() {
   
   return (
     <View>
-      { (currentBreakPoint === 0) ?
-        <Link to="/profile/">
-          <Text>Back</Text>
-        </Link>:null
-      }
-      <Text>Commissions</Text>
-      { currentCommissions.map((item: commissionType) => (
-        <Link to={"/commissions/" + item.commissionId}>
-          <View key={item.commissionId}>
-            <Text>{item.title}</Text>
-          </View>
-        </Link>
-      ))}
+      <View>
+        { (currentBreakPoint === 0) ?
+          <Link to="/profile/">
+            <View>
+              <Text>Back</Text>
+            </View>
+          </Link>:null
+        }
+        <Text style={{fontFamily: 'BukhariScript'}}>Commissions</Text>
+      </View>
+      <View>
+        { currentCommissions.map((item: commissionType) => (
+          <Link to={"/commissions/" + item.commissionId}>
+            <View key={item.commissionId} style={{borderRadius: 15, borderColor: "Black", borderWidth: 10, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5}}>
+              <Text>{item.title}</Text>
+            </View>
+          </Link>
+        ))}
+      </View>
     </View>
   )
 }

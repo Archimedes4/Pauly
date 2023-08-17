@@ -72,8 +72,6 @@ export default function HomePage() {
 
   return (
     <View style={{backgroundColor: "#793033", overflow: "hidden"}}>
-        {/* <Link to="/notifications">
-        </Link> */}
         <View style={{width: width * 1.0, height: height * 0.08}}>
             { (messageText !== "") ?
                 <ScrollingTextAnimation width={width * 1.0} height={height * 0.08}>

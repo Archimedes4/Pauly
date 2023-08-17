@@ -19,8 +19,6 @@ import { Provider, useSelector } from 'react-redux'
 import { NativeRouter, Route, Routes } from 'react-router-native';
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from "expo-auth-session"
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 
 //Views
 import HomePage from './src/AuthenticatedView/HomePage';
@@ -70,6 +68,7 @@ import { loadingStateEnum } from './src/types';
 import authenticationTokenReducer, { authenticationTokenSlice } from './src/Redux/reducers/authenticationTokenReducer';
 import { microsoftProfileDataSlice } from './src/Redux/reducers/microsoftProfileDataReducer';
 import { dimentionsSlice } from './src/Redux/reducers/dimentionsReducer';
+import Login from './src/login';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -83,7 +82,7 @@ enum breakPointMode {
 function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{dimensions: {
   window: ScaledSize,
   screen: ScaledSize
-}, width: number, currentBreakPointMode: breakPointMode, expandedMode: boolean, setExpandedMode: (item: boolean) => void}) {
+}, width: number, expandedMode: boolean, setExpandedMode: (item: boolean) => void}) {
   return (
     <View style={{width: width}}>
         <NativeRouter>
@@ -148,8 +147,6 @@ function AppMain() {
   //Dimentions
   const [dimensions, setDimensions] = useState({window: windowDimensions, screen: screenDimensions});
 
-  const [currentBreakPointMode, setCurerentBreakPointMode] = useState<breakPointMode>(breakPointMode.xSmall)
-
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
 
   useEffect(() => {
@@ -164,38 +161,49 @@ function AppMain() {
   });
 
   useEffect(() => {
-    if (dimensions.window.width >= 1200) {
-      //extraLarge ≥1200px
-      setCurerentBreakPointMode(breakPointMode.xLarge)
-    } else if (dimensions.window.width  >= 992) {
-      //large, ≥992px
-      setCurerentBreakPointMode(breakPointMode.large)
-    } else if (dimensions.window.width  >= 768) {
-      //medium, ≥768px
-      setCurerentBreakPointMode(breakPointMode.medium)
-    } else if (dimensions.window.width  >= 576) {
-      //small, ≥576px
-      setCurerentBreakPointMode(breakPointMode.small)
-    } else if (dimensions.window.width  < 576) {
-      //xSmall,	<576px
-      setCurerentBreakPointMode(breakPointMode.xSmall)
+    const width = dimensions.window.width
+    if (width >= 576){
+      if (expandedMode){
+        store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.75))
+      } else {
+        store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.9))
+      }
     }
-  }, [dimensions.window.width])
+  }, [expandedMode])
 
   useEffect(() => {
     const oldWidth = store.getState().dimentions.width
-    const oldCurrentBreakPointMode = store.getState().dimentions.currentBreakPoint
     const height = store.getState().dimentions.height
     const width = dimensions.window.width
-    if (oldWidth !== width && oldCurrentBreakPointMode !== currentBreakPointMode) {
-      if (width >= 576){
-        if (expandedMode){
-          store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width * 0.75, currentBreakPoint: currentBreakPointMode}))
+    if (oldWidth !== width) {
+      var oldCurrentBreakPointMode: breakPointMode = store.getState().dimentions.currentBreakPoint
+      var currentBreakPoint: breakPointMode = breakPointMode.xSmall
+      if (dimensions.window.width >= 1200) {
+        //extraLarge ≥1200px
+        currentBreakPoint = breakPointMode.xLarge
+      } else if (dimensions.window.width  >= 992) {
+        //large, ≥992px
+        currentBreakPoint = breakPointMode.large
+      } else if (dimensions.window.width  >= 768) {
+        //medium, ≥768px
+        currentBreakPoint = breakPointMode.medium
+      } else if (dimensions.window.width  >= 576) {
+        //small, ≥576px
+        currentBreakPoint = breakPointMode.small
+      } else if (dimensions.window.width  < 576) {
+        //xSmall,	<576px
+        currentBreakPoint = breakPointMode.xSmall
+      }
+      if (oldCurrentBreakPointMode !== currentBreakPoint){
+        if (width >= 576){
+          if (expandedMode){
+            store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width * 0.75, currentBreakPoint: currentBreakPoint}))
+          } else {
+            store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width * 0.9, currentBreakPoint: currentBreakPoint}))
+          }
         } else {
-          store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width * 0.9, currentBreakPoint: currentBreakPointMode}))
+          store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width , currentBreakPoint: currentBreakPoint}))
         }
-      } else {
-        store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width , currentBreakPoint: currentBreakPointMode}))
       }
     } else if (oldWidth !== width){
       if (width >= 576){
@@ -208,27 +216,10 @@ function AppMain() {
         store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width))
       }
     }
-    if (height !== dimensions.screen.height) {
-      store.dispatch(dimentionsSlice.actions.setDimentionsHeight(dimensions.screen.height))
+    if (height !== dimensions.window.height) {
+      store.dispatch(dimentionsSlice.actions.setDimentionsHeight(dimensions.window.height))
     }
-  }, [dimensions, currentBreakPointMode])
-
-  useEffect(() => {
-    const width = dimensions.window.width
-    if (width >= 576){
-      if (expandedMode){
-        store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.75))
-      } else {
-        store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.9))
-      }
-    }
-  }, [expandedMode])
-
-  useEffect(() => {
-    if (dimensions.window.width < 576) {
-      store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: dimensions.window.width, currentBreakPoint: currentBreakPointMode}))
-    }
-  }, [])
+  }, [dimensions])
 
   //Authentication
   async function getUserProfile(accessToken: string) {
@@ -313,40 +304,15 @@ function AppMain() {
   //   }
   // }, [callsCount])
 
-  // Font
-  const [fontsLoaded] = useFonts({
-    'BukhariScript': require('./assets/fonts/BukhariScript.ttf'),
-    'Gochi Hand': require('./assets/fonts/GochiHand-Regular.ttf')
-  });
-  
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
     <View style={{backgroundColor: "#793033"}}>
       <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
-        { (result?.type === 'success') ?
+        {/* { (result?.type === 'success') ? */}
+        { (true) ?
           <View>
-            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} currentBreakPointMode={currentBreakPointMode} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
+            <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
           </View>:
-          <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: dimensions.window.height, width: dimensions.window.width}}>
-            <View style={{height: (100 * dimensions.window.width/230), width: dimensions.window.width, flexDirection: "row"}} id='text outlinewr'>
-              <Image source={require("./assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: (100 * dimensions.window.width/360), height: (100 * dimensions.window.width/360)}} />
-              <Text style={{position: "absolute", left: (100 * dimensions.window.width/600), fontFamily: "Gochi Hand", fontSize: (100 * dimensions.window.width/360), textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 1, height: 1}, textShadowRadius: 10, color: "white"}}>auly</Text>
-            </View>
-            <Pressable onPress={async () => {
-              getAuthToken()
-            }} style={{height: dimensions.window.height * 0.1, width: dimensions.window.width * 0.5, borderRadius: 50, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
-              <Text style={{textAlign: "center"}}>LOGIN</Text>
-            </Pressable>
-          </View>
+          <Login onGetAuthToken={() => {getAuthToken()}} width={dimensions.window.width}/>
         }
       </SafeAreaView>
     </View>

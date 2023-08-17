@@ -3,5 +3,6 @@ export enum loadingStateEnum {
     success,
     failed,
     notStarted,
-    cannotStart
+    cannotStart,
+    offline
 }
