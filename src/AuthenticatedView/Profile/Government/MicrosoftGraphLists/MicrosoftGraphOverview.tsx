@@ -25,6 +25,7 @@ enum graphMode {
 
 export default function MicrosoftGraphOverview() {
   const {height, width} = useSelector((state: RootState) => state.dimentions)
+  const {siteId} = useSelector((state: RootState) => state.paulyList)
   const [lists, setLists] = useState<ListType[]>([])
   const [groups, setGroups] = useState<groupType[]>([])
   const [searchText, setSearchText] = useState<string>("")
@@ -35,7 +36,7 @@ export default function MicrosoftGraphOverview() {
   const [listLoadingState, setListLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getLists(){
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/8td1tk.sharepoint.com,b2ef509e-4511-48c3-b607-a8c2cddc0e35,091feb8c-a978-4e3f-a60f-ecdc319b2304/lists")//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +  "/lists")//sites/8td1tk.onmicrosoft.com/sites
     if (result.ok){
       const data = await result.json()
       if (data["value"] !== undefined){

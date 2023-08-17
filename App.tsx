@@ -307,8 +307,7 @@ function AppMain() {
   return (
     <View style={{backgroundColor: "#793033"}}>
       <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
-        {/* { (result?.type === 'success') ? */}
-        { (true) ?
+        { (result?.type === 'success') ?
           <View>
             <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
           </View>:

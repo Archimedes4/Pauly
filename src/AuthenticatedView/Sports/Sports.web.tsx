@@ -10,6 +10,7 @@ import { useMsal } from '@azure/msal-react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
 import { loadingStateEnum } from '../../types'
+import getSportsContent from '../../Functions/getSportsContent'
 
 enum dataContentTypeOptions {
   video,
@@ -38,35 +39,16 @@ export default function Sports() {
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
-  async function getSportsContent() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + sportsApprovedSubmissionsListId + "/items?expand=fields")
-    if (result.ok){
-      const dataResult = await result.json()
-      if (dataResult["value"].length !== undefined){
-        var newSportsPosts: sportPost[] = []
-        for (let index = 0; index < dataResult["value"].length; index++){
-          try{
-            const shareResult = await getFileWithShareID(dataResult["value"][index]["fields"]["FileId"])
-            newSportsPosts.push({
-              caption: dataResult["value"][index]["fields"]["Caption"],
-              fileID: shareResult.url,
-              fileType: shareResult.contentType
-            })
-          } catch {
-
-          }
-        }
-        setSportsPosts(newSportsPosts)
-        setLoadingResult(loadingStateEnum.success)
-      } else {
-        setLoadingResult(loadingStateEnum.failed)
-      }
-    } else {
-      setLoadingResult(loadingStateEnum.failed)
+  async function loadSportsContent() {
+    const result = await getSportsContent()
+    setLoadingResult(result.result)
+    if (result.result === loadingStateEnum.success) {
+      setSportsPosts(result.sports)
     }
   }
+
   useEffect(() => {
-    getSportsContent()
+    loadSportsContent()
   }, [])
 
   const [fontsLoaded] = useFonts({

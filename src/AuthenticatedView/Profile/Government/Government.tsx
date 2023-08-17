@@ -38,7 +38,7 @@ export default function Government() {
     return null
   }
   return (
-    <View style={{height: height}}>
+    <View style={{height: height, width: width, backgroundColor: "white"}}>
       <View style={{height: height * 0.2, width: width, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <Text style={{fontFamily: "BukhariScript", fontSize: 100}}>Government</Text>
       </View>
