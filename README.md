@@ -22,9 +22,14 @@ Commissions are organized into documents that are named with there commission id
 
 ## Setup
 Pauly has a config file named PaulyConfig which contains threee values 
-      1. Site Id
-      2. Org Id (This is the value of the teams site which will be used for the calendar)
-      3. Site List Id (This value can be found by pauly and doesn't need to be set)
+  1. Site Id
+  2. Org Id (This is the value of the teams site which will be used for the calendar)
+  3. Site List Id (This value can be found by pauly and doesn't need to be set)
+
+Commands to setup azure services
+```
+    az ad app create --display-name Pauly   
+```
 
 ### extentions
 Extensions
