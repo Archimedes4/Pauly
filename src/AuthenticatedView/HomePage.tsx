@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { BookIcon, MedalIcon, PersonIcon } from '../UI/Icons/Icons';
 declare global {
     type DateProperty = {
         Date: number
@@ -43,6 +44,7 @@ export default function HomePage() {
     }
 
     useEffect(() => {
+        console.log("This is width this is height", width, height)
         if (store.getState().authenticationToken !== ""){
             getCurrentTextAndAnimationSpeed()
         }
@@ -93,7 +95,7 @@ export default function HomePage() {
             <Link to={'/commissions'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
-                    <Image source={require("../../assets/images/QuizIcon.png")} resizeMode='contain' width={width * 0.5} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <MedalIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
                 </View>
             </Link>
             <Link to={'/sports'}>
@@ -107,13 +109,13 @@ export default function HomePage() {
             <Link to={'/resources'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-                    <Image source={require("../../assets/images/MessagingIcon.png")} resizeMode='contain' width={width * 0.5} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <BookIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
                 </View>
             </Link >
             <Link to={'/profile'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
                     <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
-                    <Image source={require("../../assets/images/Books.png")} resizeMode='contain' width={width * 0.5} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
+                    <PersonIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
                 </View>
             </Link>
         </View>

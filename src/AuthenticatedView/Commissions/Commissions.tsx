@@ -14,6 +14,7 @@ enum CommissionMode{
 }
 
 export default function Commissions() {
+  const {height, width} = useSelector((state: RootState) => state.dimentions)
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
@@ -59,8 +60,8 @@ export default function Commissions() {
   }
   
   return (
-    <View>
-      <View>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
+      <View style={{width: width, height: height * 0.1, backgroundColor: '#444444'}}>
         { (currentBreakPoint === 0) ?
           <Link to="/profile/">
             <View>

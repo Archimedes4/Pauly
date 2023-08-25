@@ -79,6 +79,9 @@ export default function Notifications() {
         <Text>Recent Files</Text>
         <Text>Popular Files</Text>
       </View>
+      <Link to="/WhatISTHISLINKGOINGTo">
+        <Text>This is to no where</Text>
+      </Link>
     </View>
   )
 }

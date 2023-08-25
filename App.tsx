@@ -204,19 +204,20 @@ function AppMain() {
         } else {
           store.dispatch(dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({width: width , currentBreakPoint: currentBreakPoint}))
         }
-      }
-    } else if (oldWidth !== width){
-      if (width >= 576){
-        if (expandedMode){
-          store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.75))
-        } else {
-          store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.9))
-        }
       } else {
-        store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width))
+        if (width >= 576){
+          if (expandedMode){
+            store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.75))
+          } else {
+            store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width * 0.9))
+          }
+        } else {
+          store.dispatch(dimentionsSlice.actions.setDimentionsWidth(width))
+        }
       }
     }
     if (height !== dimensions.window.height) {
+      console.log("height changed")
       store.dispatch(dimentionsSlice.actions.setDimentionsHeight(dimensions.window.height))
     }
   }, [dimensions])
@@ -298,26 +299,26 @@ function AppMain() {
   }
   
   const callsCount = useSelector((state: RootState) => state.authenticationCall)
-  // useEffect(() => {
-  //   if (callsCount !== 0){
-  //     refreshAuthToken()
-  //   }
-  // }, [callsCount])
+  useEffect(() => {
+    if (callsCount !== 0){
+      refreshAuthToken()
+    }
+  }, [callsCount])
 
   return (
     <View style={{backgroundColor: "#793033"}}>
       <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
-        { (result?.type === 'success') ?
+        { (true) ?
           <View>
             <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
           </View>:
-          <Login onGetAuthToken={() => {getAuthToken()}} width={dimensions.window.width}/>
+          <Login onGetAuthToken={() => {getAuthToken()}}/>
         }
       </SafeAreaView>
     </View>
   );
 }
-
+//result?.type === 'success'
 function App() {
   return (
     <Provider store={store}>
