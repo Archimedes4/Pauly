@@ -22,17 +22,37 @@ Commissions are organized into documents that are named with there commission id
 
 ## Setup
 Pauly has a config file named PaulyConfig which contains threee values 
-  1. Site Id
-  2. Org Id (This is the value of the teams site which will be used for the calendar)
-  3. Site List Id (This value can be found by pauly and doesn't need to be set)
+  1. tenant id
+  2. client id (the id of paulys application)
+  3. org id (the id of paulys group)
 
 Commands to setup azure services
+
+https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-create
+
 ```
     az ad app create --display-name Pauly   
 ```
 
-### extentions
-Extensions
+https://learn.microsoft.com/en-us/cli/azure/ad/signed-in-user?view=azure-cli-latest
+```
+    az ad signed-in-user show
+```
+
+https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#az-ad-app-owner-add
+
+```
+    az ad app owner add --id {app id} --owner-object-id {user id}
+```
+
+https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update 
+update azure ad app
+```
+    az ad app update --id 5f2e0030-a462-4f60-94d6-ce971df107d2 --web-redirect-uris exp://172.20.10.3:8081/--/auth http://localhost:19006/auth
+    az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['exp://172.20.10.3:8081/--/auth', 'http://localhost:19006/auth']}}"
+```
+### Extentions
+```
 {
     "id": "paulyEvents",
     "description": "Pauly Event Data",
@@ -51,3 +71,4 @@ Extensions
         }
     ]
 }
+```
