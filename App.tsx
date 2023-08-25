@@ -270,6 +270,7 @@ function AppMain() {
           },
           discovery,
         ).then((response) => {
+          console.log("This is response", response)
           store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
           getPaulyLists(response.accessToken)
           getUserProfile(response.accessToken)
@@ -308,7 +309,7 @@ function AppMain() {
   return (
     <View style={{backgroundColor: "#793033"}}>
       <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
-        { (true) ?
+        { (result?.type === 'success') ?
           <View>
             <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
           </View>:
@@ -318,7 +319,7 @@ function AppMain() {
     </View>
   );
 }
-//result?.type === 'success'
+
 function App() {
   return (
     <Provider store={store}>

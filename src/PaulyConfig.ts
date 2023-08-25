@@ -5,7 +5,5 @@
 
 export const orgWideGroupID: string = "9c92d5cf-2263-494e-9371-947696c8e7a7"
 
-// export const mainListID: string = "22d1ddc7-e479-4a07-9aba-79e21d5568b1"
-
-export const tenantId: string = "551df04d-543a-4d61-955e-e4294c4cf950"
-export const clientId: string = "08624b03-1aa6-40c4-8fb3-149c39026dff"
+export const tenantId: string = "8ca607b2-50f9-456f-97ef-fde0d5fbdb62"
+export const clientId: string = "6f1e349a-7320-4452-9f32-7e6633fe465b"
