@@ -1,11 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react'
-// import { Card, Stack, Button, Form } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react'
 import { Button, Pressable, View, Text, TextInput, Dimensions } from 'react-native';
-import Svg, { Polygon, Rect, G, Path } from 'react-native-svg';
-// import {FcFolder, FcDocument} from "react-icons/fc"
 import Picker from "./Picker/Picker"
 import callMsGraph from '../Functions/microsoftAssets';
-import { useMsal } from '@azure/msal-react';
 import { DocumentIcon, FolderIcon } from './Icons/Icons';
 import store from '../Redux/store';
 
@@ -32,9 +28,6 @@ declare global{
     }
 }
 
-const windowDimensions = Dimensions.get('window');
-const screenDimensions = Dimensions.get('screen');
-
 export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, onSelectedFile, height, width}:{
     height: number,
     width: number,
@@ -49,20 +42,6 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
     const [fileBackAvaliable, setFilesBackAvaliable] = useState<boolean>(false)
     const [shareLinkString, setShareLinkString] = useState<string>("")
-    // const [dimensions, setDimensions] = useState({
-    //     window: windowDimensions,
-    //     screen: screenDimensions,
-    // });
-
-    // useEffect(() => {
-    //     const subscription = Dimensions.addEventListener(
-    //         'change',
-    //         ({window, screen}) => {
-    //             setDimensions({window, screen});
-    //         },
-    //     );
-    //     return () => subscription?.remove();
-    // });
 
     useEffect(() => {
         getUserMicrosoftFiles(microsoftPath)
