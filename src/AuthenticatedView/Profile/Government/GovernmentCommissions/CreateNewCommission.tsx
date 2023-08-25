@@ -1,5 +1,5 @@
-import { View, Text, Button, TextInput, Platform, Dimensions, ScrollView } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, Button, TextInput, Platform, Dimensions, ScrollView, Animated, Pressable } from 'react-native'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Slider from '../../../../UI/Slider/Slider';
 import { Link } from 'react-router-native'
 import MapWeb from '../../../../UI/Map/Map.web';
@@ -7,10 +7,21 @@ import callMsGraph from '../../../../Functions/microsoftAssets';
 import create_UUID from '../../../../Functions/CreateUUID';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
+import SegmentedPicker from "../../../../UI/Pickers/SegmentedPicker"
+
+enum commissionTypeEnum {
+    Issued,
+    Location,
+    Image,
+    ImageLocation,
+    QRCode
+}
 
 export default function CreateNewCommission() {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
     const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
+
+    const [selectedCommissionType, setSeelctedCommissionType] = useState<commissionTypeEnum>(commissionTypeEnum.Issued)
     
     const [commissionName, setCommissionName] = useState<string>("")
     const [proximity, setProximity] = useState<number>(0)
@@ -68,7 +79,7 @@ export default function CreateNewCommission() {
     }
 
     return (
-        <View style={{overflow: "hidden"}}>
+        <View style={{overflow: "hidden", width: width, height: height, backgroundColor: "white"}}>
             <ScrollView style={{height: height}}>
                 <Link to="/profile/government/commissions/">
                     <Text>Back</Text>
@@ -76,10 +87,12 @@ export default function CreateNewCommission() {
                 <View style={{alignContent: "center", alignItems: "center", justifyContent: "center"}}>
                     <Text>Create New Commission</Text>
                 </View>
+                <SegmentedPicker selectedIndex={selectedCommissionType} setSelectedIndex={setSeelctedCommissionType} options={["Issued", "Location", "Image", "Image and Location", "QRCode"]} width={width * 0.8} height={height * 0.1} />
                 <Text>Commission Name</Text>
                 <TextInput 
-                value={commissionName}
-                onChangeText={text => setCommissionName(text)}
+                    value={commissionName}
+                    onChangeText={text => setCommissionName(text)}
+                    placeholder='Commission Name'
                 />
                 <View style={{width: width, height: height * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
                     <MapWeb proximity={proximity} selectedPositionIn={selectedPositionIn} onSetSelectedPositionIn={setSelectedPositionIn} width={width * 0.8} height={height * 0.3}/>

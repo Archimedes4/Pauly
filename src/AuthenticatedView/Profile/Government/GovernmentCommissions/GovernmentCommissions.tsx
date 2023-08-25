@@ -21,6 +21,7 @@ declare global {
 
 export default function GovernmentCommissions() {
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
+  const {height, width} = useSelector((state: RootState) => state.dimentions)
   const [commissions, setCommissions] = useState<commissionType[]>([])
   async function getCommissions(){
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields")
@@ -53,7 +54,7 @@ export default function GovernmentCommissions() {
   }
   useEffect(() => {getCommissions()}, [])
   return (
-    <View>
+    <View style={{height: height, width: width, backgroundColor: "white"}}>
       <View>
         <Link to="/profile/government">
           <Text>Back</Text>

@@ -12,7 +12,7 @@ enum calendarMode {
     month,
     week,
     day
-  }
+}
 
 export default function CalendarTypePicker({ selectedIndex, setSelectedCalendarMode, width, height }:PickerWrapperProps) {
     const pan = useRef(new Animated.Value(0)).current
