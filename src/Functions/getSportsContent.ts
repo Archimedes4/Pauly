@@ -17,9 +17,7 @@ export default async function getSportsContent(): Promise<{result: loadingStateE
               fileID: shareResult.url,
               fileType: shareResult.contentType
             })
-          } catch {
-
-          }
+          } catch { continue }
         }
         return {result: loadingStateEnum.success, sports: newSportsPosts}
       } else {

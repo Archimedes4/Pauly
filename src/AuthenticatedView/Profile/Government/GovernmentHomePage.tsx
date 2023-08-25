@@ -32,13 +32,18 @@ export default function GovernmentHomePage() {
             setLoadContentLoadingState(loadingStateEnum.failed)
         }
     }
-    async function createShareId(item: microsoftFileType) {
-        console.log(item.parentPath)
-        console.log(item)
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0" + item.parentPath + "/" + item.id + "/createLink")
-        console.log(result)
-        const data = await result.json()
-        console.log(data)
+    async function createShareId(item: microsoftFileType): Promise<string | undefined> {
+        const data = {
+            "type": "view",
+            "scope": "organization"
+        }
+        const result = await callMsGraph(item.callPath + "/createLink", "POST", false, JSON.stringify(data))
+        if (result.ok){
+            const data = await result.json()
+            return data["shareId"]
+        } else {
+            return undefined
+        }
     }
     async function updatePaulyData(key: string, data: string){
         var dataOut = {}
@@ -72,9 +77,9 @@ export default function GovernmentHomePage() {
             <MicrosoftFilePicker height={height * 0.6} width={width} onSelectedFile={(selectedFile) => {
                 setSelectedPowerpoint(selectedFile)
             }}/>
-            <Button title='Save Changes' onPress={() => {
-                createShareId(selectedPowerpoint)
-                updatePaulyData("powerpointId", selectedPowerpoint.id)
+            <Button title='Save Changes' onPress={async () => {
+                const shareId = await createShareId(selectedPowerpoint)
+                updatePaulyData("powerpointId", shareId)
             }}/>
         </View>
     )

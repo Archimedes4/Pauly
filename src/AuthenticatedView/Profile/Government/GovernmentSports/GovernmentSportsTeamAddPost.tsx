@@ -30,7 +30,7 @@ export default function GovernmentSportsTeamAddPost() {
                     "type": "view",
                     "scope": "organization"
                 }
-                console.log( newItemPath + item.id + "/createLink")
+                console.log(newItemPath + item.id + "/createLink")
                 const result = await callMsGraph("https://graph.microsoft.com/v1.0/drives/" + item.parentDriveId + "/items/" + item.id + "/createLink", "POST", false, JSON.stringify(data))
                 console.log(result)
                 if (result.ok){

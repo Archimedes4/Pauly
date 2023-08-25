@@ -8,6 +8,7 @@ import getCurrentPaulyData from '../Functions/getCurrentPaulyData';
 import { WebView } from 'react-native-webview';
 import { loadingStateEnum } from '../types';
 import getFileWithShareID from '../Functions/getFileWithShareID';
+import callMsGraph from '../Functions/microsoftAssets';
 
 export default function Notifications() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -18,12 +19,18 @@ export default function Notifications() {
   async function loadData() {
     if (siteId !== ""){
       const result = await getSchoolDayOnSelectedDay(new Date())
-      console.log(result)
 
       const dataResult = await getCurrentPaulyData(siteId)
       if (dataResult.result === loadingStateEnum.success) {
-        const fileResult = await getFileWithShareID(dataResult.data.powerpointId)
-        setPowerpointBlob(dataResult.data.powerpointId)
+        const fileResult = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + dataResult.data.powerpointId + "/driveItem/content?format=pdf")
+        if (fileResult.ok){
+          const dataBlob = await fileResult.blob()
+          const urlOut = URL.createObjectURL(dataBlob)
+          console.log(urlOut)
+          setPowerpointBlob(urlOut)
+        } else {
+
+        }
       } else {
 
       }
@@ -54,6 +61,7 @@ export default function Notifications() {
           Powerpoint
           Quick Access To files
         </Text>
+        
       </View>
       { (powerpointBlob !== "") ?
         <View>
@@ -62,7 +70,7 @@ export default function Notifications() {
               <embed src={powerpointBlob} width={width * 0.5 + 'px'} height={height * 0.2 + 'px'}/>:
               <WebView
                 style={{width: width * 0.5, height: height * 0.2}}
-                source={{ html: '<embed src="' + powerpointBlob + '" width="' + width * 0.5 + 'px" height="' +  height * 0.2 + 'px" />' }}
+                source={{ html: '<embed src="' + powerpointBlob + "#page=2"+ '" width="' + width * 0.5 + 'px" height="' +  height * 0.2 + 'px" />' }}
               />
           }
         </View>:<Text>Loading</Text>

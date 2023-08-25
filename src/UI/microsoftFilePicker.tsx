@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Pressable, View, Text, TextInput, Dimensions } from 'react-native';
+import { Button, Pressable, View, Text, TextInput } from 'react-native';
 import Picker from "./Picker/Picker"
 import callMsGraph from '../Functions/microsoftAssets';
 import { DocumentIcon, FolderIcon } from './Icons/Icons';
 import store from '../Redux/store';
+import { idText } from 'typescript';
 
 enum MicrosoftUploadModeType {
     ShareLink,
@@ -24,7 +25,8 @@ declare global{
         folder: boolean
         parentDriveId: string
         parentPath: string
-        itemGraphPath: string
+        itemGraphPath: string,
+        callPath: string
     }
 }
 
@@ -60,13 +62,14 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
                       if ("@microsoft.graph.downloadUrl" in data["value"][index]){
                           newFiles.push(
                           {
-                              name: data["value"][index]["name"], 
-                              id: data["value"][index]["id"], 
-                              lastModified: data["value"][index]["lastModifiedDateTime"], 
-                              folder: false, 
-                              parentDriveId: data["value"][index]["parentReference"]["driveId"], 
-                              parentPath: data["value"][index]["parentReference"]["path"],
-                              itemGraphPath: path
+                            name: data["value"][index]["name"], 
+                            id: data["value"][index]["id"], 
+                            lastModified: data["value"][index]["lastModifiedDateTime"], 
+                            folder: false, 
+                            parentDriveId: data["value"][index]["parentReference"]["driveId"], 
+                            parentPath: data["value"][index]["parentReference"]["path"],
+                            itemGraphPath: path,
+                            callPath: "https://graph.microsoft.com/v1.0/me/drives/" + data["value"][index]["parentReference"]["driveId"] + "/items/" + data["value"][index]["id"]
                           })
                       } else {
                           newFiles.push(
@@ -77,7 +80,8 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
                               folder: true, 
                               parentDriveId: data["value"][index]["parentReference"]["driveId"],
                               parentPath: data["value"][index]["parentReference"]["path"],
-                              itemGraphPath: "FOLDER"
+                              itemGraphPath: "FOLDER",
+                              callPath: ""
                           })
                       }
                   }
@@ -184,6 +188,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
                         <TextInput placeholder='Disabled input' value={shareLinkString} onChangeText={(e) => {setShareLinkString(e)}}/>
                     </View>
                     <Pressable onPress={() => {
+                        //TO DO make this work
                         var base64Value = btoa(shareLinkString)
                         base64Value.replace("/", "_")
                         base64Value.replace("+", "-")
