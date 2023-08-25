@@ -22,7 +22,7 @@ export default function GovernmentHomePage() {
     const [selectedPowerpoint, setSelectedPowerpoint] = useState<microsoftFileType | undefined>(undefined)
 
     async function loadCurrentPaultData() {
-        const result = await getCurrentPaulyData()
+        const result = await getCurrentPaulyData(siteId)
         if (result.result === loadingStateEnum.success && result.data !== undefined) {
             console.log("This went well", result)
             setNewAnnimationSpeed(result.data.animationSpeed)
@@ -32,14 +32,23 @@ export default function GovernmentHomePage() {
             setLoadContentLoadingState(loadingStateEnum.failed)
         }
     }
+    async function createShareId(item: microsoftFileType) {
+        console.log(item.parentPath)
+        console.log(item)
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0" + item.parentPath + "/" + item.id + "/createLink")
+        console.log(result)
+        const data = await result.json()
+        console.log(data)
+    }
     async function updatePaulyData(key: string, data: string){
-        const dataOut = {
-            key:data
-        }
+        var dataOut = {}
+        dataOut[key] = data
         const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + paulyDataListId + "/items/1/fields", "PATCH", false, JSON.stringify(dataOut))//TO DO fix list ids
         if (result.ok){ 
             const data = await result.json()
         } else {
+            const data = await result.json()
+            console.log(data)
             //TO DO handle error
         }
     }
@@ -64,6 +73,7 @@ export default function GovernmentHomePage() {
                 setSelectedPowerpoint(selectedFile)
             }}/>
             <Button title='Save Changes' onPress={() => {
+                createShareId(selectedPowerpoint)
                 updatePaulyData("powerpointId", selectedPowerpoint.id)
             }}/>
         </View>

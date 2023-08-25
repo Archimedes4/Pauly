@@ -9,21 +9,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useMsal } from '@azure/msal-react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
-import { loadingStateEnum } from '../../types'
+import { dataContentTypeOptions, loadingStateEnum } from '../../types'
 import getSportsContent from '../../Functions/getSportsContent'
-
-enum dataContentTypeOptions {
-  video,
-  image,
-  unknown
-}
-
-// enum loadingResultEnum {
-//   loading,
-//   success,
-//   failure,
-//   unauthorized
-// }
 
 declare global {
   type sportPost = {

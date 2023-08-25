@@ -15,17 +15,24 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.archimedes4.Pauly"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.archimedes4.Pauly"
     },
     "web": {
       "favicon": "./assets/icon.png"
     },
-    "scheme":"Archimedes4.Pauly"
+    "scheme": "Archimedes4.Pauly",
+    "extra": {
+      "eas": {
+        "projectId": "41b62420-4ae0-49b3-be2c-3eeb912dc208"
+      }
+    }
   }
 }

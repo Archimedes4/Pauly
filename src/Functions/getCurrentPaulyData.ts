@@ -8,7 +8,7 @@ export default async function getCurrentPaulyData(siteId: string): Promise<{resu
         const data = await result.json()
         console.log(data)
         if (data["animationSpeed"] !== undefined && data["message"] !== undefined && data["powerpointId"] !== undefined) {
-            return {result: loadingStateEnum.success, data: {powerpointId: data["value"][0]["fields"]["powerpointId"], message: data["value"][0]["fields"]["message"], animationSpeed: data["value"][0]["fields"]["animationSpeed"]}}
+            return {result: loadingStateEnum.success, data: {powerpointId: data["powerpointId"], message: data["message"], animationSpeed: data["animationSpeed"]}}
         } else {
             console.log("Herer")
             return {result: loadingStateEnum.failed}

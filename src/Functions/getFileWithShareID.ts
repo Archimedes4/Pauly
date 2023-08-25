@@ -1,17 +1,12 @@
+import { dataContentTypeOptions } from "../types";
 import callMsGraph from "./microsoftAssets"
 
-enum dataContentTypeOptions {
-    video,
-    image,
-    unknown
-}
-
-export default async function getFileWithShareID(shareID: string): Promise<{ url: string; contentType: dataContentTypeOptions }> {
+export default async function getFileWithShareID(shareID: string, downloadAsPdf?: "TRUE"): Promise<{ url: string; contentType: dataContentTypeOptions }> {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + shareID + "/driveItem")
-    console.log(result)
+    console.log("Result", result)
     if (result.ok){
         const data = await result.json()
-        console.log(data)
+        console.log("Data", data)
         if (data["@microsoft.graph.downloadUrl"] !== undefined && data["@microsoft.graph.downloadUrl"] !== null){
             if (data["file"]["mimeType"] === "image/gif") {
                 return {url: data["@microsoft.graph.downloadUrl"], contentType: dataContentTypeOptions.image}
@@ -24,6 +19,9 @@ export default async function getFileWithShareID(shareID: string): Promise<{ url
             throw "Error"
         }
     } else {
+        const data = await result.json()
+        console.log("Data", data)
         throw "Error"
     }
 }
+//(downloadAsPdf !== undefined) ? "/driveItem?format=pdf":""

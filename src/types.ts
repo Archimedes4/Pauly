@@ -6,3 +6,10 @@ export enum loadingStateEnum {
     cannotStart,
     offline
 }
+
+export enum dataContentTypeOptions {
+    video,
+    image,
+    pdf,
+    unknown
+}

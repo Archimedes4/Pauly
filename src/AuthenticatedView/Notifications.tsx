@@ -1,21 +1,33 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, Dimensions } from 'react-native'
+import { View, Text, Dimensions, Platform } from 'react-native'
 import { getSchoolDayOnSelectedDay } from '../Functions/calendarFunctionsGraph';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
 import getCurrentPaulyData from '../Functions/getCurrentPaulyData';
+import { WebView } from 'react-native-webview';
+import { loadingStateEnum } from '../types';
+import getFileWithShareID from '../Functions/getFileWithShareID';
 
 export default function Notifications() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const [messageText, setMessageText] = useState<string>("")
+  const [powerpointBlob, setPowerpointBlob] = useState<string>("")
 
   async function loadData() {
-    const result = await getSchoolDayOnSelectedDay(new Date())
-    console.log(result)
-    const data = await getCurrentPaulyData(siteId)
-    console.log(data)
+    if (siteId !== ""){
+      const result = await getSchoolDayOnSelectedDay(new Date())
+      console.log(result)
+
+      const dataResult = await getCurrentPaulyData(siteId)
+      if (dataResult.result === loadingStateEnum.success) {
+        const fileResult = await getFileWithShareID(dataResult.data.powerpointId)
+        setPowerpointBlob(dataResult.data.powerpointId)
+      } else {
+
+      }
+    }
   }
 
   useEffect(() => {
@@ -43,6 +55,18 @@ export default function Notifications() {
           Quick Access To files
         </Text>
       </View>
+      { (powerpointBlob !== "") ?
+        <View>
+          {
+            (Platform.OS === 'web') ?
+              <embed src={powerpointBlob} width={width * 0.5 + 'px'} height={height * 0.2 + 'px'}/>:
+              <WebView
+                style={{width: width * 0.5, height: height * 0.2}}
+                source={{ html: '<embed src="' + powerpointBlob + '" width="' + width * 0.5 + 'px" height="' +  height * 0.2 + 'px" />' }}
+              />
+          }
+        </View>:<Text>Loading</Text>
+      }
       <View>
         <Text>Recent Files</Text>
         <Text>Popular Files</Text>
