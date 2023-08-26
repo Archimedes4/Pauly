@@ -13,11 +13,11 @@ Commissions are organized into documents that are named with there commission id
 4. Points (what the commission is worth)
 5. Selected Page (which page is shown)
 6. Value (the type of commission it is)
-      1. Approved by issuer
-      2. Location
-      3. Image
-      4. Image and Location
-      5. QR Code
+    1. Approved by issuer
+    2. Location
+    3. Image
+    4. Image and Location
+    5. QR Code
 
 
 ## Setup
@@ -51,6 +51,8 @@ update azure ad app
     az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['exp://172.20.10.3:8081/--/auth', 'http://localhost:19006/auth']}}"
 ```
 ### Extentions
+> **NOTE**
+> Extentions are automatically setup in the initilization process
 ```
 {
     "id": "paulyEvents",
