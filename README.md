@@ -48,7 +48,6 @@ https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#a
 https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update 
 update azure ad app
 ```
-    az ad app update --id 5f2e0030-a462-4f60-94d6-ce971df107d2 --web-redirect-uris exp://172.20.10.3:8081/--/auth http://localhost:19006/auth
     az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['exp://172.20.10.3:8081/--/auth', 'http://localhost:19006/auth']}}"
 ```
 ### Extentions
@@ -59,7 +58,7 @@ update azure ad app
     "targetTypes": [
         "Event"
     ],
-    "owner": "08624b03-1aa6-40c4-8fb3-149c39026dff", <- application id
+    "owner": {application id},
     "properties": [
         {
             "name": "eventType",

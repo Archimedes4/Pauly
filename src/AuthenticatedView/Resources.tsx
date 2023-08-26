@@ -9,6 +9,7 @@ export default function Resources() {
             <Text>Back</Text>
         </Link>
       <Text>Resources</Text>
+      
     </View>
   )
 }
