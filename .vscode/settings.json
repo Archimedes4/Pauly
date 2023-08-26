@@ -1,5 +1,5 @@
 {
-    "azureFunctions.deploySubpath": "Pauly Functions",
+    "azureFunctions.deploySubpath": "Pauly Function Test",
     "azureFunctions.postDeployTask": "npm install (functions)",
     "azureFunctions.projectLanguage": "TypeScript",
     "azureFunctions.projectRuntime": "~4",
