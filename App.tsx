@@ -298,7 +298,7 @@ function AppMain() {
       }
     });
   }
-  
+
   const callsCount = useSelector((state: RootState) => state.authenticationCall)
   useEffect(() => {
     if (callsCount !== 0){

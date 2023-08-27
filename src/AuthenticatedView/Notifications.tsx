@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, Dimensions, Platform } from 'react-native'
+import { View, Text, Dimensions, Platform, Pressable } from 'react-native'
 import { getSchoolDayOnSelectedDay } from '../Functions/calendarFunctionsGraph';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
@@ -9,6 +9,7 @@ import { WebView } from 'react-native-webview';
 import { loadingStateEnum } from '../types';
 import getFileWithShareID from '../Functions/getFileWithShareID';
 import callMsGraph from '../Functions/microsoftAssets';
+import testApi from '../Functions/AzureFunctions/Test';
 
 export default function Notifications() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -82,6 +83,9 @@ export default function Notifications() {
       <Link to="/WhatISTHISLINKGOINGTo">
         <Text>This is to no where</Text>
       </Link>
+      <Pressable onPress={() => {testApi()}}>
+        <Text>Test Api</Text>
+      </Pressable>
     </View>
   )
 }
