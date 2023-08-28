@@ -13,3 +13,18 @@ export enum dataContentTypeOptions {
     pdf,
     unknown
 }
+
+export enum taskImportanceEnum {
+    low,
+    normal,
+    high
+}
+
+declare global {
+    type TaskType = {
+        name: string
+        id: string
+        listId: string
+        importance: taskImportanceEnum
+    }
+}

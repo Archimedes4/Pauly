@@ -250,7 +250,7 @@ function AppMain() {
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId,
-      scopes: ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All"],
+      scopes: ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Application.ReadWrite.All"],
       redirectUri,
     },
     discovery,

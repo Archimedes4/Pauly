@@ -32,6 +32,15 @@ export default function GovernmentTimetableCreate() {
     const [selectedDefaultSchedule, setSelectedDefaultSchedule] = useState<scheduleType | undefined>(undefined)
     async function createTimetable() {
       if (selectedDefaultSchedule !== undefined){
+        //Check to make sure all have the same number of periods 
+        for (var index = 0; index < selectedSchedules.length; index++){
+          if (selectedSchedules[index].periods.length !== selectedDefaultSchedule.periods.length){
+            setCreateTimetableLoadingState(loadingStateEnum.failed)
+            return
+          }
+        }
+
+        //Create Timetable
         setCreateTimetableLoadingState(loadingStateEnum.loading)
         var scheduals = []
         for (var index = 0; index < selectedSchedules.length; index++) {
@@ -118,11 +127,24 @@ export default function GovernmentTimetableCreate() {
         { (loadingState === loadingStateEnum.success) ?
           <View>
             {loadedSchedules.map((item, index) => (
-              <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
+              <View>
+              { (selectedSchedules.length === 0) ?
+                <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
+                  <View>
+                    <Text>{item.properName}</Text>
+                  </View>
+                </Pressable>:
                 <View>
-                  <Text>{item.properName}</Text>
+                  { (loadedSchedules[0].periods.length === item.periods.length) ?
+                    <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
+                      <View>
+                        <Text>{item.properName}</Text>
+                      </View>
+                    </Pressable>:null
+                  }
                 </View>
-              </Pressable>
+              }
+              </View>
             ))}
           </View>:null
         }

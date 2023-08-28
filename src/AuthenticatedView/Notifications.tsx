@@ -10,6 +10,7 @@ import { loadingStateEnum } from '../types';
 import getFileWithShareID from '../Functions/getFileWithShareID';
 import callMsGraph from '../Functions/microsoftAssets';
 import testApi from '../Functions/AzureFunctions/Test';
+import getUsersTasks from '../Functions/getUsersTasks';
 
 export default function Notifications() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -19,8 +20,10 @@ export default function Notifications() {
 
   async function loadData() {
     if (siteId !== ""){
+      //Calendar Data
       const result = await getSchoolDayOnSelectedDay(new Date())
 
+      //Pauly Data
       const dataResult = await getCurrentPaulyData(siteId)
       if (dataResult.result === loadingStateEnum.success) {
         const fileResult = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + dataResult.data.powerpointId + "/driveItem/content?format=pdf")
@@ -35,6 +38,9 @@ export default function Notifications() {
       } else {
 
       }
+
+      //List Data 
+      getUsersTasks()
     }
   }
 

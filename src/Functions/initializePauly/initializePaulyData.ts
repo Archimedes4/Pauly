@@ -1,84 +1,106 @@
-export const PaulyListData = {
-    "displayName": "PaulyList",
-    "name":"PaulyList",
-    "columns": [
-        {
-        "name":"commissionListId",
-        "text":{},
-        "required": true
-        },
-        {
-        "name":"paulyDataListId",
-        "text":{},
-        "required": true
-        },
-        {
-        "name":"scheduleListId",
-        "text":{},
-        "required": true
-        },
-        {
-        "name":"sportsListId",
-        "text":{},
-        "required": true
-        },
-        {
-        "name":"sportsApprovedSubmissionsListId",
-        "text":{},
-        "required": true
-        },
-        {
-        "name":"sportsSubmissionsListId",
-        "text":{},
-        "required": true
-        },
-        {
-        "name":"timetablesListId",
-        "text":{},
-        "required": true
-        }
-    ],
-    "list": {
-        "template": "genericList"
+import { clientId } from "../../PaulyConfig"
+
+export const paulyListData = {
+  "displayName": "PaulyList",
+  // "name":"PaulyList",
+  "columns": [
+    {
+      "name":"commissionListId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"paulyDataListId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"scheduleListId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"sportsListId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"sportsApprovedSubmissionsListId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"sportsSubmissionsListId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"timetablesListId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"classExtensionId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"eventExtensionId",
+      "text":{},
+      "required": true
     }
+  ],
+  "list": {
+    "template": "genericList"
+  }
 }
 export const commissionsData = {
     "displayName": "Commissions",
     "columns": [
       {
-        "name":"StartDate",
+        "name":"startDate",
         "text":{ },
         "required": true
       },
       {
-        "name":"EndDate",
+        "name":"endDate",
         "text":{ },
         "required": true
       },
       {
-        "name":"Points",
+        "name":"points",
         "number":{},
         "required": true
       },
       {
-        "name":"Proximity",
+        "name":"proximity",
         "number":{}
       },
       {
-        "name":"Hidden",
+        "name":"hidden",
         "boolean":{},
         "required": true
       },
       {
-        "name":"CoordinateLat",
+        "name":"maxNumberOfClaims",
+        "number":{},
+        "required": true
+      },
+      {
+        "name":"allowMultipleSubmissions",
+        "boolean":{},
+        "required": true
+      },
+      {
+        "name":"coordinateLat",
         "number":{}
       },
       {
-        "name":"CoordinateLng",
+        "name":"coordinateLng",
         "number":{}
       },
       {
-        "name":"CommissionID",
+        "name":"commissionID",
         "text":{ },
         "required": true,
         "indexed": true,
@@ -255,4 +277,50 @@ export const timetablesData = {
     "list": {
       "template": "genericList"
     }
+}
+
+export const paulyEventExtentionData = {
+  "id": "paulyEvents",
+  "description": "Pauly Event Data",
+  "targetTypes": [
+    "Event"
+  ],
+  "owner": clientId,
+  "properties": [
+    {
+      "name": "eventType",
+      "type": "String"
+    },
+    {
+      "name": "eventData",
+      "type": "String"
+    }
+  ]
+}
+
+export const paulyClassExtentionData = {
+  "id":"paulyClass",
+  "description":"Pauly Class Data",
+  "targetTypes": [
+    "Group"
+  ],
+  "owner":clientId,
+  "properties": [
+    {
+      "name":"className",
+      "type":"String"
+    },
+    {
+      "name":"teacherId",
+      "type":"String"
+    },
+    {
+      "name":"schoolYearEventId",
+      "type":"String"
+    },
+    {
+      "name":"periodData",
+      "type":"String" //An Array as long as the number of days in the cycle
+    }
+  ]
 }

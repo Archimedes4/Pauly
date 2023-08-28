@@ -13,7 +13,8 @@ enum initStage {
   partTwoLoad,
   partTwo,
   partThreeLoad,
-  partThree
+  partThree,
+  done
 }
 
 export default function GovernmentAdmin() {
@@ -22,9 +23,14 @@ export default function GovernmentAdmin() {
   const [currentUserId, setCurrentUserId] = useState<string>("")
   const [loadedUsers, setLoadedUsers] = useState<microsoftUserType[]>([])
   const [selectedUser, setSelectedUser] = useState<microsoftUserType | undefined>(undefined)
-  const [startTime, setStartTime] = useState<Date>(new Date())
   const [timeLeft, setTimeLeft] = useState<string>("")
+  const [timeElapsed, setTimeElapsed] = useState<string>("Not Started")
   const [createdGroupId, setCreatedGroupId] = useState<string>("")
+
+  //Start Times
+  const [startTime, setStartTime] = useState<Date>(new Date())
+  const [partOneStartTime, setPartOneStartTime] = useState<Date>(new Date())
+  const [partTwoStartTime, setPartTwoStartTime] = useState<Date>(new Date())
 
   //Result
   const [initResult, setInitResult] = useState<loadingStateEnum>(loadingStateEnum.cannotStart)
@@ -43,6 +49,7 @@ export default function GovernmentAdmin() {
         setCreatedGroupId(partOneResult.groupId)
         setInitTwoResult(loadingStateEnum.notStarted)
         setCurrentInitStage(initStage.partTwoLoad)
+        setPartOneStartTime(new Date())
         const partTwoResult = await new Promise<loadingStateEnum>((resolve) => {
           setTimeout(async () => {
             setCurrentInitStage(initStage.partTwo)
@@ -52,6 +59,7 @@ export default function GovernmentAdmin() {
         });
         if (partTwoResult === loadingStateEnum.success){
           setCurrentInitStage(initStage.partThreeLoad)
+          setPartTwoStartTime(new Date())
           const partThreeResult = await new Promise<loadingStateEnum>((resolve) => {
             setTimeout(async () => {
               setCurrentInitStage(initStage.partThree)
@@ -61,6 +69,7 @@ export default function GovernmentAdmin() {
           });
           if (partThreeResult === loadingStateEnum.success) {
             setInitResult(loadingStateEnum.success)
+            setCurrentInitStage(initStage.done)
           } else {
             setInitResult(loadingStateEnum.failed)
           }
@@ -126,8 +135,14 @@ export default function GovernmentAdmin() {
   useEffect(() => {
     if (currentInitStage === initStage.partTwoLoad || currentInitStage === initStage.partThreeLoad) {
       const interval = setInterval(() => {
-        const miliSecondsPassed = new Date().getTime() - startTime.getTime()
-        const miliSecondsLeft = 1800000 - miliSecondsPassed
+        var miliSecondsPassed = new Date().getTime() - startTime.getTime()
+        if (currentInitStage === initStage.partTwoLoad) {
+          miliSecondsPassed = new Date().getTime() - partOneStartTime.getTime()
+        } else if (currentInitStage === initStage.partThreeLoad) {
+          miliSecondsPassed = new Date().getTime() - partTwoStartTime.getTime()
+        }
+        
+        const miliSecondsLeft = 900000 - miliSecondsPassed
         const totalSecondsLeft = miliSecondsLeft/1000
         var minutesLeft: number = Math.floor(totalSecondsLeft/60)
         var secondsLeft: number = Math.ceil(totalSecondsLeft%60)
@@ -146,6 +161,39 @@ export default function GovernmentAdmin() {
         setTimeLeft(minutesLeftString + ":" + secondsLeftString)
         if (minutesLeft <= -1){
           setTimeLeft("0:0")
+          return clearInterval(interval);
+        }
+      }, 1000);
+  
+      return () => clearInterval(interval);
+    }
+    if (currentInitStage !== initStage.notStarted) {
+      const interval = setInterval(() => {
+        var miliSecondsPast = new Date().getTime() - startTime.getTime()
+        
+    
+        const totalSecondsLeft = miliSecondsPast/1000
+        var hoursPast: number = Math.floor(totalSecondsLeft/3600)
+        var minutesPast: number = Math.ceil(totalSecondsLeft%3600)
+        var secondsPast: number = Math.ceil(totalSecondsLeft%60)
+        if (secondsPast === 60){
+          minutesPast++
+          secondsPast = 0
+        }
+        var hoursLeftString: string = hoursPast.toString()
+        var minutesLeftString: string = minutesPast.toString()
+        var secondsLeftString: string = secondsPast.toString()
+        if (minutesPast <= 9){
+          minutesLeftString = "0" + minutesLeftString
+        }
+        if (secondsPast <= 9){
+          secondsLeftString = "0" + secondsPast
+        }
+        if (hoursPast <= 9){
+          hoursLeftString = "0" + hoursLeftString
+        }
+        setTimeElapsed(hoursLeftString + ":" + minutesLeftString + ":" + secondsLeftString)
+        if (currentInitStage === initStage.done){
           return clearInterval(interval);
         }
       }, 1000);
@@ -171,7 +219,7 @@ export default function GovernmentAdmin() {
       <Link to="/profile/government">
         <Text>Back</Text>
       </Link>
-      <View>
+      <View style={{height: height * 0.1}}>
         { (loadUsersResult === loadingStateEnum.loading) ?
           <Text>Loading</Text>:
           <View>
@@ -194,10 +242,23 @@ export default function GovernmentAdmin() {
         }
       </View>
       <TextInput value={createdGroupId} onChangeText={setCreatedGroupId} placeholder='Group Id'/>
-      <View>
-        <View style={{height: height * 0.1, width: height* 0.1}}/>
-        <View />
-        <View />
+      <Text>Time Elapsed: {timeElapsed}</Text>
+      <View style={{height: height * 0.25, width: height * 0.1, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+        <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partOne) ? "blue":"black", borderRadius: 50}}/>
+        <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
+          <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partTwoLoad) ? "blue":"black",}}/>
+          { (currentInitStage === initStage.partTwoLoad) ?
+            <Text style={{position: "absolute", left: height * 0.03, top: height * 0.012}}>{timeLeft}</Text>:null
+          }
+        </View>
+        <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partTwo) ? "blue":"black", borderRadius: 50}}/>
+        <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
+          <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partThreeLoad) ? "blue":"black",}}/>
+          { (currentInitStage === initStage.partThreeLoad) ?
+            <Text style={{position: "absolute", left: height * 0.03, top: height * 0.012}}>{timeLeft}</Text>:null
+          }
+        </View>
+        <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partThree) ? "blue":"black", borderRadius: 50}}/>
       </View>
       <Pressable onPress={() => {if (initResult === loadingStateEnum.notStarted) {initializePauly()}}}>
         <Text>{(initResult === loadingStateEnum.cannotStart) ?  "Please Pick a User":(initResult === loadingStateEnum.notStarted) ? "initialize Pauly on New Tenant":(initResult ===  loadingStateEnum.loading) ? "Loading " + timeLeft :(initResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>

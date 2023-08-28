@@ -14,7 +14,7 @@ export default function CommissionsView() {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields&filter=fields/CommissionID%20eq%20'"+ id +"'")
     if (result.ok){
       const data = await result.json()
-      console.log(data)
+      console.log(data)//TO DO make this safe
       setCommissionData({
         title: data["value"][0]["fields"]["Title"],
         startDate: new Date(data["value"][0]["fields"]["StartDate"]),

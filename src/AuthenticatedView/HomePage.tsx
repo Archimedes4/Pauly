@@ -94,7 +94,7 @@ export default function HomePage() {
         <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
             <Link to={'/commissions'}>
                 <View style={{borderColor: "black", borderWidth: 2}}>
-                    <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
+                    <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
                     <MedalIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
                 </View>
             </Link>
