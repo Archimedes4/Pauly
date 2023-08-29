@@ -86,7 +86,7 @@ export default function MicrosoftGraphEditList() {
     }
     useEffect(() => {getListItems(); getColumns()}, [])
     return (
-        <View style={{overflow: "hidden"}}>
+        <View style={{overflow: "hidden", width: width, height: height, backgroundColor: "white"}}>
             <Link to="/profile/government/graph">
                 <Text>Back</Text>
             </Link>

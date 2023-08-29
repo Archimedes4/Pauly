@@ -47,7 +47,6 @@ export default function GovernmentAdmin() {
       const partOneResult = await initializePaulyPartOne(selectedUser.id)
       if (partOneResult.result === loadingStateEnum.success && partOneResult.groupId !== undefined){
         setCreatedGroupId(partOneResult.groupId)
-        setInitTwoResult(loadingStateEnum.notStarted)
         setCurrentInitStage(initStage.partTwoLoad)
         setPartOneStartTime(new Date())
         const partTwoResult = await new Promise<loadingStateEnum>((resolve) => {
@@ -71,12 +70,15 @@ export default function GovernmentAdmin() {
             setInitResult(loadingStateEnum.success)
             setCurrentInitStage(initStage.done)
           } else {
+            setCurrentInitStage(initStage.done)
             setInitResult(loadingStateEnum.failed)
           }
         } else {
+          setCurrentInitStage(initStage.done)
           setInitResult(loadingStateEnum.failed) 
         }
       } else {
+        setCurrentInitStage(initStage.done)
         setInitResult(loadingStateEnum.failed) 
       }
     }
@@ -87,6 +89,7 @@ export default function GovernmentAdmin() {
       setInitTwoResult(loadingStateEnum.loading)      
       const secondResult = await initializePaulyPartTwo(createdGroupId)
       if (secondResult === loadingStateEnum.success) {
+        
         setInitTwoResult(loadingStateEnum.success)
       } else {
         setInitTwoResult(loadingStateEnum.failed)
@@ -96,12 +99,16 @@ export default function GovernmentAdmin() {
 
   async function initializePaulyFromPartThree() {
     if (createdGroupId !== "" && initThreeResult === loadingStateEnum.notStarted) {
+      setStartTime(new Date())
+      setCurrentInitStage(initStage.partThree)
       setInitThreeResult(loadingStateEnum.loading)
       const result = await initializePaulyPartThree(createdGroupId)
       if (result === loadingStateEnum.success) {
         setInitTwoResult(loadingStateEnum.success)
+        setCurrentInitStage(initStage.done)
       } else {
         setInitThreeResult(loadingStateEnum.failed)
+        setCurrentInitStage(initStage.done)
       }
     }
   }
@@ -167,14 +174,19 @@ export default function GovernmentAdmin() {
   
       return () => clearInterval(interval);
     }
+  }, [currentInitStage])
+
+  useEffect(() => {
+    console.log("Logged")
     if (currentInitStage !== initStage.notStarted) {
+      console.log("Logged 1")
       const interval = setInterval(() => {
         var miliSecondsPast = new Date().getTime() - startTime.getTime()
         
-    
         const totalSecondsLeft = miliSecondsPast/1000
-        var hoursPast: number = Math.floor(totalSecondsLeft/3600)
-        var minutesPast: number = Math.ceil(totalSecondsLeft%3600)
+        var totalMinutesPast: number = Math.floor(totalSecondsLeft/60)
+        var minutesPast: number = Math.ceil(totalMinutesPast%60)
+        var hoursPast: number = Math.floor(totalMinutesPast/60)
         var secondsPast: number = Math.ceil(totalSecondsLeft%60)
         if (secondsPast === 60){
           minutesPast++
@@ -193,11 +205,11 @@ export default function GovernmentAdmin() {
           hoursLeftString = "0" + hoursLeftString
         }
         setTimeElapsed(hoursLeftString + ":" + minutesLeftString + ":" + secondsLeftString)
-        if (currentInitStage === initStage.done){
-          return clearInterval(interval);
-        }
       }, 1000);
-  
+      if (currentInitStage === initStage.done) {
+        console.log("Cleared")
+        return clearInterval(interval);
+      }
       return () => clearInterval(interval);
     }
   }, [currentInitStage])
@@ -208,11 +220,11 @@ export default function GovernmentAdmin() {
   }, [])
 
   useEffect(() => {
-    if (createdGroupId !== ""){
+    if (createdGroupId !== "" && (initResult === loadingStateEnum.notStarted || initResult === loadingStateEnum.cannotStart || initResult === loadingStateEnum.failed)){
       setInitTwoResult(loadingStateEnum.notStarted)
       setInitThreeResult(loadingStateEnum.notStarted)
     }
-  }, [createdGroupId])
+  }, [createdGroupId, initResult])
 
   return (
     <View style={{height: height, width: width, backgroundColor: "white"}}>
@@ -248,14 +260,14 @@ export default function GovernmentAdmin() {
         <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
           <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partTwoLoad) ? "blue":"black",}}/>
           { (currentInitStage === initStage.partTwoLoad) ?
-            <Text style={{position: "absolute", left: height * 0.03, top: height * 0.012}}>{timeLeft}</Text>:null
+            <Text style={{position: "absolute", left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
           }
         </View>
         <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partTwo) ? "blue":"black", borderRadius: 50}}/>
         <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
           <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partThreeLoad) ? "blue":"black",}}/>
           { (currentInitStage === initStage.partThreeLoad) ?
-            <Text style={{position: "absolute", left: height * 0.03, top: height * 0.012}}>{timeLeft}</Text>:null
+            <Text style={{position: "absolute", left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
           }
         </View>
         <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partThree) ? "blue":"black", borderRadius: 50}}/>

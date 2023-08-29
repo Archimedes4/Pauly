@@ -44,7 +44,7 @@ export default function Government() {
       </View>
       <View style={{height: height * 0.75, width: width, alignContent: "center", justifyContent: "center", alignItems: "center", marginTop: height * 0.05}}>
         <View style={{height: height * 0.75, width: mainWidth, flexDirection: "row", alignContent: "flex-start",  flexWrap: "wrap", rowGap: (height) * 0.05, columnGap: (width) * 0.05}}>
-          <Link to="/profile/government/graph">
+          <Link to="/profile/government/graph/list">
             <Block width={100} height={100} text='Graph' imageSource={require('../../../../assets/images/GraphAPILogo.png')} />
           </Link>
           <Link to="/profile/government/commissions">

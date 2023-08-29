@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-native'
 
 //Resources
@@ -9,14 +9,25 @@ import { Link } from 'react-router-native'
 // -> School Events
 // -> Annoucments
 
+enum resourceMode {
+  home,
+  sports,
+  workVolenteer,
+  schedule,
+  schoolEvents,
+  annoucments,
+  files
+}
+
 export default function Resources() {
-  
+  const [selectedResourceMode, setSelectedResourceMode] = useState<resourceMode>(resourceMode.home)
   return (
     <View>
         <Link to="/profile/">
             <Text>Back</Text>
         </Link>
       <Text>Resources</Text>
+      <Text>Search</Text>
       <View>
         {
 

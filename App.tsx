@@ -62,6 +62,7 @@ import GovernmentAdmin from './src/AuthenticatedView/Profile/Government/Governme
 import getPaulyLists from './src/Functions/getPaulyLists';
 import GovernmentTimetableEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
 import MicrosoftGraphEditGroup from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditGroup';
+import MicrosoftGraphEditExtension from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditExtension';
 
 import { clientId, tenantId } from './src/PaulyConfig';
 import { loadingStateEnum } from './src/types';
@@ -69,6 +70,7 @@ import authenticationTokenReducer, { authenticationTokenSlice } from './src/Redu
 import { microsoftProfileDataSlice } from './src/Redux/reducers/microsoftProfileDataReducer';
 import { dimentionsSlice } from './src/Redux/reducers/dimentionsReducer';
 import Login from './src/login';
+import MicrosoftGraphEdit from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEdit';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -103,10 +105,9 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/settings" element={<Settings/>}/>
                   <Route path="/profile/government" element={<Government />}/>
                   <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
-                  <Route path="/profile/government/graph" element={<MicrosoftGraphOverview/>}/>
-                  <Route path="/profile/government/graph/list/create" element={<MicrosoftGraphCreateList/>}/>
-                  <Route path="/profile/government/graph/list/edit/:listId" element={<MicrosoftGraphEditList />} />
-                  <Route path="/profile/government/graph/group/edit/:groupId" element={<MicrosoftGraphEditGroup />} />
+                  <Route path="/profile/government/graph/:mode" element={<MicrosoftGraphOverview/>}/>
+                  <Route path="/profile/government/graph/:mode/edit/:id" element={<MicrosoftGraphEdit />}/>
+                  <Route path="/profile/government/graph/:mode/create" element={<MicrosoftGraphCreateList/>}/>
                   <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
                   <Route path="/profile/government/commissions/create" element={<CreateNewCommission/>}/>
                   <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />

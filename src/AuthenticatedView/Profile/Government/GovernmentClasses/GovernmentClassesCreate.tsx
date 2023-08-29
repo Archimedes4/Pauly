@@ -22,6 +22,7 @@ export default function GovernmentClassesCreate() {
             <Text>Name:</Text>
             <Text>School Year:</Text>
             <Text>Periods:</Text>
+            <Text>Semester:</Text>
         </View>
     </View>
   )
