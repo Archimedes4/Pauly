@@ -104,7 +104,7 @@ export default function GovernmentAdmin() {
       setInitThreeResult(loadingStateEnum.loading)
       const result = await initializePaulyPartThree(createdGroupId)
       if (result === loadingStateEnum.success) {
-        setInitTwoResult(loadingStateEnum.success)
+        setInitThreeResult(loadingStateEnum.success)
         setCurrentInitStage(initStage.done)
       } else {
         setInitThreeResult(loadingStateEnum.failed)

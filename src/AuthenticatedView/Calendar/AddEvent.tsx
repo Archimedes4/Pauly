@@ -29,6 +29,14 @@ interface schoolDayDataInteface {
   schedule: scheduleType
 }
 
+enum paulyEventType {
+  regular,
+  schoolDay,
+  schoolYear,
+  dressCode,
+  studentCouncil
+}
+
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
     const selectedDate = useSelector((state: RootState) => state.selectedDate)
     const currentEvents = useSelector((state: RootState) => state.currentEvents)
@@ -108,7 +116,6 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
           }
           const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
           const patchOut = await patchResult.json()
-          console.log("OUTPUT", patchOut)
         }
       } else {
         const dataOut = await result.json()

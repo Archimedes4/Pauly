@@ -3,7 +3,7 @@ import React, { ReactNode, useCallback, useContext, useEffect, useState } from '
 import { Link } from 'react-router-native'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { CalendarIcon, MedalIcon } from '../../../UI/Icons/Icons';
+import { BookIcon, CalendarIcon, MedalIcon } from '../../../UI/Icons/Icons';
 import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 
@@ -68,6 +68,11 @@ export default function Government() {
           </Link>
           <Link to="/profile/government/admin">
             <Block width={100} height={100} text="Admin" />
+          </Link>
+          <Link to="/profile/government/resources">
+            <Block width={100} height={100} text='Resources'>
+              <BookIcon width={50} height={50}/>
+            </Block>
           </Link>
         </View>
       </View>

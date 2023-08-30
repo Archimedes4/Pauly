@@ -19,7 +19,8 @@ const store = configureStore({
     authenticationToken: authenticationTokenReducer,
     authenticationCall: authenticationCallReducer,
     dimentions: dimentionsReducer,
-    microsoftProfileData: microsoftProfileDataReducer
+    microsoftProfileData: microsoftProfileDataReducer,
+    authenticationApiToken: authenticationTokenReducer
   }
 });
 

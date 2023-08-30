@@ -71,6 +71,7 @@ import { microsoftProfileDataSlice } from './src/Redux/reducers/microsoftProfile
 import { dimentionsSlice } from './src/Redux/reducers/dimentionsReducer';
 import Login from './src/login';
 import MicrosoftGraphEdit from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEdit';
+import GovernmentResources from './src/AuthenticatedView/Profile/Government/GovernmentResources';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -104,6 +105,7 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/" element={<Profile/>}/>
                   <Route path="/profile/settings" element={<Settings/>}/>
                   <Route path="/profile/government" element={<Government />}/>
+                  <Route path="/profile/government/resources" element={<GovernmentResources />} />
                   <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
                   <Route path="/profile/government/graph/:mode" element={<MicrosoftGraphOverview/>}/>
                   <Route path="/profile/government/graph/:mode/edit/:id" element={<MicrosoftGraphEdit />}/>
@@ -239,7 +241,7 @@ function AppMain() {
   }
 
   const discovery = AuthSession.useAutoDiscovery(
-    'https://login.microsoftonline.com/' + tenantId +'/v2.0',
+    'https://login.microsoftonline.com/' + tenantId +'/v2.0/',
   );
 
   const redirectUri = AuthSession.makeRedirectUri({
@@ -251,7 +253,7 @@ function AppMain() {
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId,
-      scopes: ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Application.ReadWrite.All"],
+      scopes: ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"],
       redirectUri,
     },
     discovery,

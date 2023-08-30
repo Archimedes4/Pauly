@@ -63,7 +63,7 @@ export default function Commissions() {
     <View style={{width: width, height: height, backgroundColor: "white"}}>
       <View style={{width: width, height: height * 0.1, backgroundColor: '#444444'}}>
         { (currentBreakPoint === 0) ?
-          <Link to="/profile/">
+          <Link to="/">
             <View>
               <Text>Back</Text>
             </View>

@@ -78,10 +78,6 @@ export const commissionsData = {
       "required": true
     },
     {
-      "name":"proximity",
-      "number":{}
-    },
-    {
       "name":"hidden",
       "boolean":{},
       "required": true
@@ -97,6 +93,18 @@ export const commissionsData = {
       "required": true
     },
     {
+      "name":"commissionID",
+      "text":{ },
+      "required": true,
+      "indexed": true,
+      "enforceUniqueValues": true
+    },
+    {
+      "name":"value",
+      "number": {},
+      "required":true
+    },
+    {
       "name":"coordinateLat",
       "number":{}
     },
@@ -105,12 +113,9 @@ export const commissionsData = {
       "number":{}
     },
     {
-      "name":"commissionID",
-      "text":{ },
-      "required": true,
-      "indexed": true,
-      "enforceUniqueValues": true
-    },
+      "name":"proximity",
+      "number":{}
+    }
   ],
   "list": {
     "template": "genericList"
@@ -273,6 +278,11 @@ export const timetablesData = {
       "name":"timetableDefaultScheduleId",
       "text":{ },
       "required": true
+    },
+    {
+      "name":"timetableDressCodeId",
+      "text":{ },
+      "required": true
     }
   ],
   "list": {
@@ -293,6 +303,30 @@ export const resourceData = {
       "text":{ },
       "required": true,
       "indexed": true
+    }
+  ],
+  "list": {
+    "template": "genericList"
+  }
+}
+export const dressCodeData = {
+  "displayName": "DressCode",
+  "columns": [
+    {
+      "name":"dressCodeId",
+      "text":{ },
+      "required": true,
+      "indexed": true
+    },
+    {
+      "name":"dressCodeData",
+      "text":{"allowMultipleLines": true},
+      "required": true
+    },
+    {
+      "name":"dressCodeIncentives",
+      "text":{"allowMultipleLines": true},
+      "required":true
     }
   ],
   "list": {

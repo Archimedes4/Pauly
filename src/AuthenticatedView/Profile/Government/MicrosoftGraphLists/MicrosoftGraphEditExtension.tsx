@@ -2,13 +2,13 @@ import { View, Text, Pressable } from 'react-native'
 import React, { useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { loadingStateEnum } from '../../../../types'
-import { useParams } from 'react-router-native'
+import { Link, useParams } from 'react-router-native'
 import { RootState } from '../../../../Redux/store'
 import { useSelector } from 'react-redux'
 
 export default function MicrosoftGraphEditExtension() {
     const {height, width} = useSelector((state: RootState) => state.dimentions)
-    const { id } = useParams()
+    const { mode, id } = useParams()
 
     const [extensionLoadingState, setExtensionLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
     const [deleteExtensionLoadingState, setDeleteExtensionLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
@@ -42,6 +42,9 @@ export default function MicrosoftGraphEditExtension() {
     }
   return (
     <View style={{overflow: "hidden", height: height, width: width, backgroundColor: "white"}}>
+        <Link to={"/profile/government/graph/" + mode}>
+            <Text>Back</Text>
+        </Link>
       <Text>MicrosoftGraphEditExtension</Text>
       <View>
 
