@@ -21,6 +21,8 @@ enum resourceMode {
 
 export default function Resources() {
   const [selectedResourceMode, setSelectedResourceMode] = useState<resourceMode>(resourceMode.home)
+  async function getResources() {
+  }
   return (
     <View>
         <Link to="/profile/">

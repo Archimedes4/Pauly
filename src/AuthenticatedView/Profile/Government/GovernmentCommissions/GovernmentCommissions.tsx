@@ -4,6 +4,7 @@ import { Link } from 'react-router-native'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
+import { loadingStateEnum } from '../../../../types'
 
 declare global {
   type commissionType = {
@@ -19,15 +20,20 @@ declare global {
   }
 }
 
+function CommissionPickerType() {
+  
+}
+
 export default function GovernmentCommissions() {
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {height, width} = useSelector((state: RootState) => state.dimentions)
   const [commissions, setCommissions] = useState<commissionType[]>([])
+  const [getCommissionsLoadingState, setGetCommissionsLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+
   async function getCommissions(){
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields")
     if (result.ok){
       const data = await result.json()
-      console.log(data)
       if (data["value"].length !== undefined){
         var newCommissions: commissionType[] = []
         for (let index = 0; index < data["value"].length; index++){
@@ -43,13 +49,13 @@ export default function GovernmentCommissions() {
             coordinateLng: data["value"][index]["fields"]["CoordinateLng"]
           })
         }
-        console.log(newCommissions)
         setCommissions(newCommissions)
+        setGetCommissionsLoadingState(loadingStateEnum.success)
       } else {
-        //TO DO this shouldn't happen graph broken
+        setGetCommissionsLoadingState(loadingStateEnum.failed)
       }
     } else {
-      //TO Do handle error
+      setGetCommissionsLoadingState(loadingStateEnum.failed)
     }
   }
   useEffect(() => {getCommissions()}, [])
@@ -60,12 +66,24 @@ export default function GovernmentCommissions() {
           <Text>Back</Text>
         </Link>
         <Text>GovernmentCommissions</Text>
-        {commissions.map((commission) => (
-          <View key={commission.commissionId}>
-            <Text>{commission.title}</Text>
-          </View>
-        ))
-        }
+        <View>
+          { (getCommissionsLoadingState === loadingStateEnum.loading) ?
+            <Text>Loading</Text>:
+            <View>
+              { (getCommissionsLoadingState === loadingStateEnum.success) ?
+                <View>
+                  {commissions.map((commission) => (
+                    <View key={commission.commissionId} style={{margin: 10, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+                      <View style={{margin: 10}}>
+                        <Text selectable={false}>{commission.title}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>:<Text>Failed</Text>
+              }
+            </View>
+          }
+        </View>
         <Link to="/profile/government/commissions/create">
           <Text>Create New Commission</Text>
         </Link>

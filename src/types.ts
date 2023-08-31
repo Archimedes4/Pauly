@@ -20,6 +20,12 @@ export enum taskImportanceEnum {
     high
 }
 
+export enum resourceResponce {
+    found,
+    notFound,
+    failed
+  }
+
 declare global {
     type TaskType = {
         name: string

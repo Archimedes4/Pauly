@@ -5,8 +5,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useSelector } from 'react-redux';
 import { RootState } from './Redux/store';
 
-export default function Login({onGetAuthToken}:{onGetAuthToken: () => void}) {
-  const {height, width} = useSelector((state: RootState) => state.dimentions)
+export default function Login({onGetAuthToken, width}:{onGetAuthToken: () => void, width: number}) {
+  const {height} = useSelector((state: RootState) => state.dimentions)
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false)
   const [fontSize, setFontSize] = useState<number>(0)
   useEffect(() => {

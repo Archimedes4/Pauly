@@ -72,6 +72,9 @@ import { dimentionsSlice } from './src/Redux/reducers/dimentionsReducer';
 import Login from './src/login';
 import MicrosoftGraphEdit from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEdit';
 import GovernmentResources from './src/AuthenticatedView/Profile/Government/GovernmentResources';
+import GovernmentDressCodeCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeCreate';
+import GovernmentDressCode from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
+import GovernmentDressCodeEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -91,7 +94,7 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
         <NativeRouter>
           <View style={{flexDirection: "row", overflow: "hidden", width: width}}>
               { (width >= 576) ?
-                  <NavBarComponent width={width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />:null
+                <NavBarComponent width={width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />:null
               }
               <View style={{width: dimensions.window.width}}>
                 <Routes>
@@ -130,6 +133,9 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/government/sports/team/edit/:sport/:id/:team/:teamId/:season" element={<GovernmentSportTeamEdit />} />
                   <Route path="/profile/government/sports/post/:sport/:id/:team/:teamId/:season" element={<GovernmentSportsTeamAddPost />} />
                   <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
+                  <Route path="/profile/government/calendar/dresscode" element={<GovernmentDressCode />} />
+                  <Route path="/profile/government/calendar/dresscode/edit/:dressCodeId" element={<GovernmentDressCodeEdit />} /> 
+                  <Route path="/profile/government/calendar/dresscode/create" element={<GovernmentDressCodeCreate />} />
                   <Route path="*" element={<PageNotFound />} />
                   {/* TO DO remove went development complete and move to production */}
                   <Route path="/testing" element={<Testing />} />
@@ -316,7 +322,7 @@ function AppMain() {
           <View>
             <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
           </View>:
-          <Login onGetAuthToken={() => {getAuthToken()}}/>
+          <Login onGetAuthToken={() => {getAuthToken()}} width={dimensions.window.width}/>
         }
       </SafeAreaView>
     </View>

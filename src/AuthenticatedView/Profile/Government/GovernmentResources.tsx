@@ -1,14 +1,19 @@
 import { View, Text, Pressable, Switch } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../../Redux/store'
+import store, { RootState } from '../../../Redux/store'
 import callMsGraph from '../../../Functions/microsoftAssets'
-import { loadingStateEnum } from '../../../types'
+import { loadingStateEnum, resourceResponce } from '../../../types'
+import { Link } from 'react-router-native'
+import ProgressView from '../../../UI/ProgressView'
+import getResource from '../../../Functions/getResource'
 
 type channelType = {
   id: string,
   displayName: string,
   selected: boolean,
+  loading: boolean,
+  error: boolean,
   description?: string
 }
 
@@ -21,21 +26,82 @@ type resourceGroupType = {
 
 function ChannelBlock({group, groups, groupIndex, setGroups, selectedGroup, channel, channelIndex}:{group: resourceGroupType, groups: resourceGroupType[], groupIndex: number, setGroups: (item: resourceGroupType[]) => void, selectedGroup: string, channel: channelType, channelIndex: number}) {
   const [isSelected, setIsSelected] = useState<boolean>(group.channels[channelIndex].selected)
+  const [isLoading, setIsLoading] = useState<boolean>(group.channels[channelIndex].loading)
+
+
+  async function addChannel() {
+    const data = {
+      "fields": {
+        "resourceGroupId":group.id,
+        "resourceConversationId":channel.id
+      }
+    }
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.resourceListId + "/items", "POST", false, JSON.stringify(data))
+    if (result.ok){
+      var outGroups: resourceGroupType[] = groups
+      outGroups[groupIndex].channels[channelIndex].selected = true
+      outGroups[groupIndex].channels[channelIndex].loading = false
+      setGroups(outGroups)
+      setIsSelected(true)
+      setIsLoading(false)
+    } else {
+      var outGroups: resourceGroupType[] = groups
+      outGroups[groupIndex].channels[channelIndex].loading = false
+      setGroups(outGroups)
+      setIsLoading(false)
+    }
+  }
+
+  async function removeChannel() {
+    const itemResult = await getResource(group.id, channel.id)
+    if (itemResult.result === resourceResponce.found && itemResult.itemId !== undefined) {
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.resourceListId + "/items/" + itemResult.itemId, "DELETE")
+      if (result.ok){
+        var outGroups: resourceGroupType[] = groups
+        outGroups[groupIndex].channels[channelIndex].selected = false
+        outGroups[groupIndex].channels[channelIndex].loading = false
+        setGroups(outGroups)
+        setIsSelected(false)
+        setIsLoading(false)
+      } else {
+        var outGroups: resourceGroupType[] = groups
+        outGroups[groupIndex].channels[channelIndex].loading = false
+        setGroups(outGroups)
+        setIsLoading(false)
+      }
+    } else {
+      var outGroups: resourceGroupType[] = groups
+      outGroups[groupIndex].channels[channelIndex].loading = false
+      setGroups(outGroups)
+      setIsLoading(false)
+    }
+  }
+
   return (
     <View key={"Team_" + group.id + "Channel_" + channel.id} style={{flexDirection: "row"}}>
-      { (selectedGroup === group.id) ?
-        <Switch
-          trackColor={{false: '#767577', true: '#81b0ff'}}
-          thumbColor={isSelected ? '#f5dd4b' : '#f4f3f4'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={(e) => {
-            var outGroups: resourceGroupType[] = groups
-            outGroups[groupIndex].channels[channelIndex].selected = e
-            setGroups(outGroups)
-            setIsSelected(e)
-          }}
-          value={isSelected}
-        />:<View style={{height: 12, width: 12, borderRadius: 50, backgroundColor: channel.selected ? "green":"blue"}}/>
+      { isLoading ?
+        <ProgressView width={12} height={12}/>:
+        <View>
+          { (selectedGroup === group.id) ?
+            <Switch
+              trackColor={{false: '#767577', true: '#81b0ff'}}
+              thumbColor={isSelected ? '#f5dd4b' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={(e) => {
+                var outGroups: resourceGroupType[] = groups
+                outGroups[groupIndex].channels[channelIndex].loading = true
+                setGroups(outGroups)
+                setIsLoading(true)
+                if (e === true) {
+                  addChannel()
+                } else {
+                  removeChannel()
+                }
+              }}
+              value={isSelected}
+            />:<View style={{height: 12, width: 12, borderRadius: 50, backgroundColor: channel.selected ? "green":"blue"}}/>
+          }
+        </View>
       }
       <Text>{channel.displayName}</Text>
     </View>
@@ -68,6 +134,7 @@ export default function GovernmentResources() {
   const [groups, setGroups] = useState<resourceGroupType[]>([])
   const [selectedGroup, setSelectedGroup] = useState<string>("")
   const [getTeamsState, setGetTeamsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  
   async function getTeams() {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups?$filter=resourceProvisioningOptions/Any(x:x eq 'Team')")
     if (!result.ok) {setGetTeamsState(loadingStateEnum.failed); return}
@@ -78,11 +145,14 @@ export default function GovernmentResources() {
       var channelResult: channelType[] = []
       if (getResult.ok) {
         const getResultData = await getResult.json()
-        for (var indexResult = 0; indexResult < getResultData["value"].length; indexResult++){
+        for (var indexResult = 0; indexResult < getResultData["value"].length; indexResult++) {
+          const channelGetResult = await getResource(data["value"][index]["id"], getResultData["value"][indexResult]["id"])
           channelResult.push({
             id: getResultData["value"][indexResult]["id"],
-            selected: false,
-            displayName: getResultData["value"][indexResult]["displayName"]
+            selected: (channelGetResult.result === resourceResponce.found) ? true:false,
+            loading: false,
+            displayName: getResultData["value"][indexResult]["displayName"],
+            error: (channelGetResult.result === resourceResponce.failed) ? true:false
           })
         }
       }
@@ -96,11 +166,17 @@ export default function GovernmentResources() {
     setGetTeamsState(loadingStateEnum.success)
     setGroups(resultGroups)
   }
+  async function updateResources() {
+
+  }
   useEffect(() => {
     getTeams()
   }, [])
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
+      <Link to="/profile/government">
+        <Text>Back</Text>
+      </Link>
       <Text>GovernmentResources</Text>
       <View>
         { (getTeamsState === loadingStateEnum.loading) ?
@@ -116,7 +192,6 @@ export default function GovernmentResources() {
           </View>
         }
       </View>
-      <Text>Teams Search Pages / channels</Text>
     </View>
   )
 }

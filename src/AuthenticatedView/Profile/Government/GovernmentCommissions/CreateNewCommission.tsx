@@ -10,6 +10,8 @@ import { RootState } from '../../../../Redux/store';
 import SegmentedPicker from "../../../../UI/Pickers/SegmentedPicker"
 import { loadingStateEnum } from '../../../../types';
 import DatePicker from '../../../../UI/DateTimePicker/DatePicker';
+import TimePicker from '../../../../UI/DateTimePicker/TimePicker';
+import TimePickerDate from '../../../../UI/DateTimePicker/TimePickerDate';
 
 enum commissionTypeEnum {
     Issued,
@@ -53,17 +55,25 @@ export default function CreateNewCommission() {
             const newCommissionID = create_UUID()
             const data = {
                 "fields": {
+                    //All Commissions
                     "Title": commissionName,
-                    "coordinateLat": selectedPositionIn.lat,
-                    "coordinateLng": selectedPositionIn.lng,
                     "startDate": startDate.toISOString().replace(/.\d+Z$/g, "Z"),
                     "endDate": endDate.toISOString().replace(/.\d+Z$/g, "Z"),
                     "points":points,
-                    "proximity":proximity,
+                    "hidden":isHidden,
+                    "maxNumberOfClaims":maxNumberOfClaims,
+                    "allowMultipleSubmissions":allowMultipleSubmissions,
                     "commissionID": newCommissionID,
-                    "value":selectedCommissionType
-                    
+                    "value":selectedCommissionType + 1
                 }
+            }
+            if (selectedCommissionType === commissionTypeEnum.Location || selectedCommissionType === commissionTypeEnum.ImageLocation) {
+                data["fields"]["proximity"] = proximity
+                data["fields"]["coordinateLat"] = selectedPositionIn.lat
+                data["fields"]["coordinateLng"] = selectedPositionIn.lng
+            }
+            if (selectedCommissionType === commissionTypeEnum.QRCode) {
+                data["fields"]["qrCodeData"] = "[]"
             }
             const listData = {
                 "displayName":newCommissionID,
@@ -90,6 +100,8 @@ export default function CreateNewCommission() {
                 if (result.ok){
                     setSubmitCommissionState(loadingStateEnum.success)
                 } else {
+                    const data = await result.json()
+                    console.log(data)
                     setSubmitCommissionState(loadingStateEnum.failed)
                 }
             } else {
@@ -138,12 +150,14 @@ export default function CreateNewCommission() {
                     }
                     <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
                         <Text>Start Date</Text>
+                        <TimePickerDate date={startDate} setDate={setStartDate} />
                         <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
                             <Text>Pick Start Date</Text>
                         </Pressable>
                     </View>
                     <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
                         <Text>End Date</Text>
+                        <TimePickerDate date={endDate} setDate={setEndDate} />
                         <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
                     </View>
                     <View style={{flexDirection: "row"}}>

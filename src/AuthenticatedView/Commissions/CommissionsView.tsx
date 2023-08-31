@@ -31,24 +31,6 @@ export default function CommissionsView() {
       console.log("Error occured")
     }
   }
-  async function claimCommission() {
-    if (commissionData !== undefined) {
-      const userResult = await callMsGraph("https://graph.microsoft.com/v1.0/me")
-      if (userResult.ok){
-        const userData = await userResult.json()
-        const currentTime = new Date
-        const data = {
-          "fields": {
-            "Title":userData["id"],
-            "Submitted":currentTime.toDateString(),
-            "UserID":userData["id"]
-          }
-        }
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionData.commissionId + "/items", "POST", false, JSON.stringify(data))
-        
-      }
-    }
-  }
   async function getUsersLocation(){
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -71,7 +53,7 @@ export default function CommissionsView() {
           <Text>{commissionData.title}</Text>
         </View>
       }
-      <Button title='Claim Commission' onPress={() => {claimCommission}}/>
+      <Button title='Claim Commission' onPress={() => {}}/>
     </View>
   )
 }

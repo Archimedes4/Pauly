@@ -12,6 +12,7 @@ import callMsGraph from '../Functions/microsoftAssets';
 import testApi from '../Functions/AzureFunctions/Test';
 import getUsersTasks from '../Functions/getUsersTasks';
 import CommissionClaim from './Commissions/CommissionClaim';
+import ProgressView from '../UI/ProgressView';
 
 export default function Notifications() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -91,6 +92,7 @@ export default function Notifications() {
         <Text>This is to no where</Text>
       </Link>
       <CommissionClaim />
+      <ProgressView width={100} height={100}/>
     </View>
   )
 }

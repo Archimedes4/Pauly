@@ -3,14 +3,14 @@ import React, { ReactNode, useCallback, useContext, useEffect, useState } from '
 import { Link } from 'react-router-native'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { BookIcon, CalendarIcon, MedalIcon } from '../../../UI/Icons/Icons';
+import { BookIcon, CalendarIcon, GearIcon, GraduationHatIcon, HomeIcon, MedalIcon } from '../../../UI/Icons/Icons';
 import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 
 function Block({height, width, text, imageSource, children}:{height: number, width: number, text: string, imageSource?: ImageSourcePropType, children?: ReactNode}) {
   return (
     <View style={{height: height, width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#444444", borderRadius: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 5}}>
-      { (imageSource !== undefined) && <Image source={imageSource} style={{width: width * 0.5, height: height * 0.5}}/>}
+      { (imageSource !== undefined) && <Image source={imageSource} style={{width: width * 0.5, height: height * 0.5}} resizeMode='center'/>}
       { (imageSource === undefined && children !== undefined) && <View style={{width: width * 0.5, height: height * 0.5}}><React.Fragment>{children}</React.Fragment></View> }
       <Text>{text}</Text>
     </View>
@@ -56,7 +56,9 @@ export default function Government() {
             <Block width={100} height={100} text='Sports' imageSource={require('../../../../assets/images/Football.png')} />
           </Link>
           <Link to="/profile/government/homepage">
-            <Block width={100} height={100} text="Homepage" />
+            <Block width={100} height={100} text="Homepage">
+              <HomeIcon width={50} height={50}/>
+            </Block>
           </Link>
           <Link to="/profile/government/calendar">
             <Block width={100} height={100} text='Calendar'>
@@ -64,10 +66,14 @@ export default function Government() {
             </Block>
           </Link>
           <Link to="/profile/government/classes">
-            <Block width={100} height={100} text="Classes" />
+            <Block width={100} height={100} text="Classes">
+              <GraduationHatIcon width={50} height={50}/>
+            </Block>
           </Link>
           <Link to="/profile/government/admin">
-            <Block width={100} height={100} text="Admin" />
+            <Block width={100} height={100} text="Admin">
+              <GearIcon width={50} height={50}/>
+            </Block>  
           </Link>
           <Link to="/profile/government/resources">
             <Block width={100} height={100} text='Resources'>

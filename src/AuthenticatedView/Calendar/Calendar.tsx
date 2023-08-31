@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, Pressable, TextInput, Switch } from 'react-native'
+import { View, Text, Dimensions, Pressable, TextInput, Switch, ScrollView } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { findFirstDayinMonth, getEventFromJSON } from '../../Functions/calendarFunctions';
@@ -302,13 +302,13 @@ function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent,
       { (value.showing) ?
         <View style={{width: width, height: height}}>
           <Text style={{color: "black"}}>{value.dayData}</Text>
-          <View style={{width: width, height: height * 0.8, overflow: "scroll"}}>
+          <ScrollView style={{width: width, height: height * 0.8}}>
             {value.events.map((event) => (
               <Pressable key={"Calendar_Event_" + event.id} onPress={() => {setIsEditing(true); setSelectedEvent(event); setAddDate(true)}}>
                 <Text>{event.name}</Text>
               </Pressable>
             ))}
-          </View>
+          </ScrollView>
         </View>:<View style={{width: width, height: height}}></View>
       }
     </View>

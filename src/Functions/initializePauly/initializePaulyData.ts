@@ -45,12 +45,22 @@ export const paulyListData = {
       "required":true
     },
     {
+      "name":"dressCodeListId",
+      "text":{},
+      "required":true
+    },
+    {
       "name":"classExtensionId",
       "text":{},
       "required": true
     },
     {
       "name":"eventExtensionId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"resourceExtensionId",
       "text":{},
       "required": true
     }
@@ -115,6 +125,10 @@ export const commissionsData = {
     {
       "name":"proximity",
       "number":{}
+    },
+    {
+      "name":"qrCodeData",
+      "text":{"allowMultipleLines": true}
     }
   ],
   "list": {
@@ -324,7 +338,7 @@ export const dressCodeData = {
       "required": true
     },
     {
-      "name":"dressCodeIncentives",
+      "name":"dressCodeIncentivesData",
       "text":{"allowMultipleLines": true},
       "required":true
     }

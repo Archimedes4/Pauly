@@ -1,14 +1,16 @@
-import { View, Text, TextInput, Button, Dimensions } from 'react-native'
+import { View, Text, TextInput, Button, Dimensions, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/microsoftAssets'
 import { Link } from 'react-router-native';
 import create_UUID from '../../../../Functions/CreateUUID';
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
+import { loadingStateEnum } from '../../../../types';
 
 export default function GovernmentCreateNewSport() {
   const [sportName, setSportName] = useState<string>("")
-  const {siteId} = useSelector((state: RootState) => state.paulyList)
+  const {siteId, sportsListId} = useSelector((state: RootState) => state.paulyList)
+  const [createSportLoadingState, setCreateSportLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   async function createSport() {
     const newSportID: string = create_UUID()
     const data = {
@@ -43,9 +45,15 @@ export default function GovernmentCreateNewSport() {
     }
     const resultList = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" +siteId + "/lists", "POST", false, JSON.stringify(listData))
     if (resultList.ok){
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" +siteId + "/lists/af29f01a-df11-4e9d-85c8-7461ca4dc6e9/items", "POST", false, JSON.stringify(data))//TO DO fix this id
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" +siteId + "/lists/" + sportsListId + "/items", "POST", false, JSON.stringify(data))
+      if (result.ok){
+        setCreateSportLoadingState(loadingStateEnum.success)
+      } else {
+        setCreateSportLoadingState(loadingStateEnum.failed)
+      }
+    } else {
+      setCreateSportLoadingState(loadingStateEnum.failed)
     }
-    console.log(resultList)
   }
   return (
     <View>
@@ -55,9 +63,9 @@ export default function GovernmentCreateNewSport() {
       <Text>GovernmentCreateNewSport</Text>
       <Text>Sport Name</Text>
       <TextInput value={sportName} onChangeText={setSportName}/>
-      <Button title='Create' onPress={() => {
-        createSport()
-      }}/>
+      <Pressable>
+        <Text>{(createSportLoadingState === loadingStateEnum.notStarted) ? "Create":(createSportLoadingState === loadingStateEnum.loading) ? "Loading":(createSportLoadingState === loadingStateEnum.success) ? "Created Sport!":"Failed to create sport."}</Text>
+      </Pressable>
     </View>
   )
 }

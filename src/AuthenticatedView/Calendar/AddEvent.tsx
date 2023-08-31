@@ -40,6 +40,7 @@ enum paulyEventType {
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
     const selectedDate = useSelector((state: RootState) => state.selectedDate)
     const currentEvents = useSelector((state: RootState) => state.currentEvents)
+    const {eventExtensionId} = useSelector((state: RootState) => state.paulyList)
     const dispatch = useDispatch()
 
     //Calendar
@@ -91,25 +92,20 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
       if (recurringEvent) {
       }
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", true, JSON.stringify(data))
-      console.log(result)
       if (result.ok){
         const dataOut = await result.json()
-        console.log(dataOut)
         if (isSchoolYear) {
           const patchData = {
-            //Be wear this extension name could change
-            "ext9u07b055_paulyEvents": {
+            eventExtensionId: {
               "eventType":"schoolYear",
               "eventData":selectedTimetable.id
             }
           }
           const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
           const patchOut = await patchResult.json()
-          console.log("OUTPUT", patchOut)
         } else if (isSchoolDay && selectedSchoolDayData !== undefined) {
           const patchData = {
-            //Be wear this extension name could change
-            "ext9u07b055_paulyEvents": {
+            eventExtensionId: {
               "eventType":"schoolDay",
               "eventData":JSON.stringify(selectedSchoolDayData)
             }

@@ -1,12 +1,29 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: {siteId, commissionListId: string, paulyDataListId: string, scheduleListId: string, sportsListId: string, sportsApprovedSubmissionsListId: string, sportsSubmissionsListId: string, timetablesListId: string} = {siteId: "", commissionListId: "", paulyDataListId: "", scheduleListId: "", sportsListId: "", sportsApprovedSubmissionsListId: "", sportsSubmissionsListId: "", timetablesListId: ""}
+declare global {
+    type paulyListType =  {
+        siteId: string, 
+        commissionListId: string,
+        paulyDataListId: string,
+        scheduleListId: string,
+        sportsListId: string,
+        sportsApprovedSubmissionsListId: string,
+        sportsSubmissionsListId: string,
+        timetablesListId: string,
+        resourceListId: string,
+        eventExtensionId: string,
+        classExtensionId: string,
+        resourceExtensionId: string
+    }
+}
+
+const initalState: paulyListType = {siteId: "", commissionListId: "", paulyDataListId: "", scheduleListId: "", sportsListId: "", sportsApprovedSubmissionsListId: "", sportsSubmissionsListId: "", timetablesListId: "", resourceListId: "", eventExtensionId: "", classExtensionId: "", resourceExtensionId: ""}
 
 export const paulyListSlice = createSlice({
     name: "paulyList",
     initialState: initalState,
     reducers: {
-        setPaulyList: (state, action) => {
+        setPaulyList: (state, action: PayloadAction<paulyListType>) => {
             return action.payload
         }
     }

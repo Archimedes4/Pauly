@@ -1,8 +1,6 @@
-import { AccountInfo, IPublicClientApplication } from "@azure/msal-browser"
 import { loadingStateEnum } from "../../types"
 import callMsGraph from "../microsoftAssets"
-import { clientId } from "../../PaulyConfig"
-import { paulyListData, commissionsData, paulyClassExtentionData, paulyDataData, paulyEventExtentionData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData } from "./initializePaulyData"
+import { paulyListData, commissionsData, paulyClassExtentionData, paulyDataData, paulyEventExtentionData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData, paulyResourceExtentionData, dressCodeData } from "./initializePaulyData"
 
 export async function initializePaulyPartOne(secondUserId: string): Promise<{result: loadingStateEnum, groupId?: string}> {  
   const currentUsersIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/me", "GET")
@@ -72,19 +70,19 @@ export async function initializePaulyPartThree(groupId: string): Promise<loading
   
   //Extentions
   const eventExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyEventExtentionData))
-  if (!eventExtensionResult.ok){
-    const eventExtensionData = await eventExtensionResult.json()
-    console.log(eventExtensionData)
-    return loadingStateEnum.failed
-  }
+  if (!eventExtensionResult.ok){return loadingStateEnum.failed}
   const eventExtensionData = await eventExtensionResult.json()
-  console.log(eventExtensionData)
   paulyListNewData["fields"]["eventExtensionId"] = eventExtensionData["id"]
 
   const classExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyClassExtentionData))
   if (!classExtensionResult.ok) {return loadingStateEnum.failed}
   const classExtensionData = await classExtensionResult.json()
   paulyListNewData["fields"]["classExtensionId"] = classExtensionData["id"]
+
+  const resourceExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyResourceExtentionData))
+  if (!resourceExtensionResult.ok) {return loadingStateEnum.failed}
+  const resourceExtensionData = await resourceExtensionResult.json()
+  paulyListNewData["fields"]["resourceExtensionId"] = resourceExtensionData["id"]
 
   const commissionsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(commissionsData))
   if (!commissionsResult.ok && commissionsResult.status !== 409) {return loadingStateEnum.failed}
@@ -131,13 +129,16 @@ export async function initializePaulyPartThree(groupId: string): Promise<loading
   const resourceResultData = await resourceResult.json()
   paulyListNewData["fields"]["resourceListId"] = resourceResultData["id"]
 
+  const dressCodeResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(dressCodeData))
+  if (!dressCodeResult.ok && dressCodeResult.status !== 409) {return loadingStateEnum.failed}
+  const dressCodeResultData = await dressCodeResult.json()
+  paulyListNewData["fields"]["dressCodeListId"] = dressCodeResultData["id"]
+
   const paulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(paulyListData))
   if (!paulyListResult.ok && paulyListResult.status !== 409) {return loadingStateEnum.failed}
 
   const addPaulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyList/items",  "POST", false, JSON.stringify(paulyListNewData))
-  if (!addPaulyListResult.ok) {
-    console.log("error 1"); 
-    const addPaulyListResultData = await addPaulyListResult.json(); console.log(addPaulyListResultData); return loadingStateEnum.failed}
+  if (!addPaulyListResult.ok) {return loadingStateEnum.failed}
 
   const paulyDataNewData = {
     "fields": {
@@ -148,7 +149,6 @@ export async function initializePaulyPartThree(groupId: string): Promise<loading
     }
   }
   const setPaulyDataNewDataResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"  +getRootSiteIdResultData["id"] + "/lists/" + paulyDataResultData["id"] + "/items", "POST", false, JSON.stringify(paulyDataNewData))
-  console.log(setPaulyDataNewDataResult)
   if (!setPaulyDataNewDataResult.ok) {return loadingStateEnum.failed}
   return loadingStateEnum.success
 }
