@@ -64,91 +64,122 @@ export async function initializePaulyPartThree(groupId: string): Promise<loading
   const getRootSiteIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + getTeamData["id"] + "/sites/root")
   if (!getRootSiteIdResult.ok){return loadingStateEnum.failed}
   const getRootSiteIdResultData = await getRootSiteIdResult.json()
-  console.log("Site Result", getRootSiteIdResultData)
   
   var paulyListNewData = {"fields":{"Title":"Main"}}
+
+  //Check if already data
+  var secondRun: boolean = false
+  const getPaulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyList/items/1?expand=fields")
+  if (!getPaulyListResult.ok){return loadingStateEnum.failed}
+  const getPaulyListResultData = await getPaulyListResult.json()
+  if (getPaulyListResultData["fields"] !== undefined){
+    secondRun = true
+    paulyListNewData["fields"]["eventExtensionId"] = getPaulyListResultData["fields"]["eventExtensionId"] 
+    paulyListNewData["fields"]["classExtensionId"] = getPaulyListResultData["fields"]["classExtensionId"]
+    paulyListNewData["fields"]["resourceExtensionId"] = getPaulyListResultData["fields"]["resourceExtensionId"]
+    paulyListNewData["fields"]["commissionListId"] = getPaulyListResultData["fields"]["commissionListId"]
+    paulyListNewData["fields"]["paulyDataListId"] = getPaulyListResultData["fields"]["paulyDataListId"]
+    paulyListNewData["fields"]["scheduleListId"] = getPaulyListResultData["fields"]["scheduleListId"]
+    paulyListNewData["fields"]["sportsListId"] = getPaulyListResultData["fields"]["sportsListId"]
+    paulyListNewData["fields"]["sportsApprovedSubmissionsListId"] = getPaulyListResultData["fields"]["sportsApprovedSubmissionsListId"]
+    paulyListNewData["fields"]["sportsSubmissionsListId"] = getPaulyListResultData["fields"]["sportsSubmissionsListId"]
+    paulyListNewData["fields"]["timetablesListId"] = getPaulyListResultData["fields"]["timetablesListId"]
+    paulyListNewData["fields"]["resourceListId"] = getPaulyListResultData["fields"]["resourceListId"]
+    paulyListNewData["fields"]["dressCodeListId"] = getPaulyListResultData["fields"]["dressCodeListId"]
+  }
   
   //Extentions
-  const eventExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyEventExtentionData))
-  if (!eventExtensionResult.ok){return loadingStateEnum.failed}
-  const eventExtensionData = await eventExtensionResult.json()
-  paulyListNewData["fields"]["eventExtensionId"] = eventExtensionData["id"]
-
-  const classExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyClassExtentionData))
-  if (!classExtensionResult.ok) {return loadingStateEnum.failed}
-  const classExtensionData = await classExtensionResult.json()
-  paulyListNewData["fields"]["classExtensionId"] = classExtensionData["id"]
-
-  const resourceExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyResourceExtentionData))
-  if (!resourceExtensionResult.ok) {return loadingStateEnum.failed}
-  const resourceExtensionData = await resourceExtensionResult.json()
-  paulyListNewData["fields"]["resourceExtensionId"] = resourceExtensionData["id"]
-
-  const commissionsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(commissionsData))
-  if (!commissionsResult.ok && commissionsResult.status !== 409) {return loadingStateEnum.failed}
-  const commissionsResultData = await commissionsResult.json()
-  paulyListNewData["fields"]["commissionListId"] = commissionsResultData["id"]
-
-  const paulyDataResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(paulyDataData))
-  if (!paulyDataResult.ok && paulyDataResult.status !== 409) {return loadingStateEnum.failed}
-  var paulyDataResultData: JSON = await paulyDataResult.json()
-  if (paulyDataResult.status === 409){
-    const paulyDataGetResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyData")
-    if (!paulyDataGetResult.ok) {return loadingStateEnum.failed}
-    paulyDataResultData = await paulyDataGetResult.json()
+  if (paulyListNewData["fields"]["eventExtensionId"] === undefined) {
+    const eventExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyEventExtentionData))
+    if (!eventExtensionResult.ok){return loadingStateEnum.failed}
+    const eventExtensionData = await eventExtensionResult.json()
+    paulyListNewData["fields"]["eventExtensionId"] = eventExtensionData["id"]
   }
-  paulyListNewData["fields"]["paulyDataListId"] = paulyDataResultData["id"]
 
-  const scheduleResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(scheduleData))        
-  if (!scheduleResult.ok && scheduleResult.status !== 409) {return loadingStateEnum.failed}
-  const scheduleResultData = await scheduleResult.json()
-  paulyListNewData["fields"]["scheduleListId"] = scheduleResultData["id"]
-  
-  const sportsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(sportsData))
-  if (!sportsResult.ok && sportsResult.status !== 409) {return loadingStateEnum.failed}
-  const sportsResultData = await sportsResult.json()
-  paulyListNewData["fields"]["sportsListId"] = sportsResultData["id"]
-  
-  const sportsApprovedSubmissionsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(sportsApprovedSubmissionsData))
-  if (!sportsApprovedSubmissionsResult.ok && sportsApprovedSubmissionsResult.status !== 409) {return loadingStateEnum.failed}
-  const sportsApprovedSubmissionsResultData = await sportsApprovedSubmissionsResult.json()
-  paulyListNewData["fields"]["sportsApprovedSubmissionsListId"] = sportsApprovedSubmissionsResultData["id"]
-  
-  const sportsSubmissionsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(sportsSubmissionsData))
-  if (!sportsSubmissionsResult.ok && sportsSubmissionsResult.status !== 409) {return loadingStateEnum.failed}
-  const sportsSubmissionsResultData = await sportsSubmissionsResult.json()
-  paulyListNewData["fields"]["sportsSubmissionsListId"] = sportsSubmissionsResultData["id"]
-
-  const timetableResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(timetablesData))
-  if (!timetableResult.ok && timetableResult.status !== 409) {return loadingStateEnum.failed}
-  const timetableResultData = await timetableResult.json()
-  paulyListNewData["fields"]["timetablesListId"] = timetableResultData["id"]
-
-  const resourceResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(resourceData))
-  if (!resourceResult.ok && resourceResult.status !== 409) {return loadingStateEnum.failed}
-  const resourceResultData = await resourceResult.json()
-  paulyListNewData["fields"]["resourceListId"] = resourceResultData["id"]
-
-  const dressCodeResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(dressCodeData))
-  if (!dressCodeResult.ok && dressCodeResult.status !== 409) {return loadingStateEnum.failed}
-  const dressCodeResultData = await dressCodeResult.json()
-  paulyListNewData["fields"]["dressCodeListId"] = dressCodeResultData["id"]
-
-  const paulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(paulyListData))
-  if (!paulyListResult.ok && paulyListResult.status !== 409) {return loadingStateEnum.failed}
-
-  const addPaulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyList/items",  "POST", false, JSON.stringify(paulyListNewData))
-  if (!addPaulyListResult.ok) {return loadingStateEnum.failed}
-
-  const paulyDataNewData = {
-    "fields": {
-      "Title":"Main",
-      "animationSpeed":10,
-      "message":"Pauly",
-      "powerpointId":"unset"
+  if (paulyListNewData["fields"]["classExtensionId"] === undefined) {
+    const classExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyClassExtentionData))
+    if (!classExtensionResult.ok) {return loadingStateEnum.failed}
+    const classExtensionData = await classExtensionResult.json()
+    paulyListNewData["fields"]["classExtensionId"] = classExtensionData["id"]
+  }
+  if (paulyListNewData["fields"]["resourceExtensionId"] === undefined) {
+    const resourceExtensionResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions", "POST", false, JSON.stringify(paulyResourceExtentionData))
+    if (!resourceExtensionResult.ok) {return loadingStateEnum.failed}
+    const resourceExtensionData = await resourceExtensionResult.json()
+    paulyListNewData["fields"]["resourceExtensionId"] = resourceExtensionData["id"]
+  }
+  if (paulyListNewData["fields"]["commissionListId"] === undefined) {
+    const commissionsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(commissionsData))
+    if (!commissionsResult.ok) {return loadingStateEnum.failed}
+    const commissionsResultData = await commissionsResult.json()
+    paulyListNewData["fields"]["commissionListId"] = commissionsResultData["id"]
+  }
+  if (paulyListNewData["fields"]["paulyDataListId"] === undefined) {
+    const paulyDataResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(paulyDataData))
+    if (!paulyDataResult.ok) {return loadingStateEnum.failed}
+    var paulyDataResultData = await paulyDataResult.json()
+    const paulyDataNewData = {
+      "fields": {
+        "Title":"Main",
+        "animationSpeed":10,
+        "message":"Pauly",
+        "powerpointId":"unset"
+      }
     }
+    const setPaulyDataNewDataResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"  +getRootSiteIdResultData["id"] + "/lists/" + paulyDataResultData["id"] + "/items", "POST", false, JSON.stringify(paulyDataNewData))
+    if (!setPaulyDataNewDataResult.ok) {return loadingStateEnum.failed}
+    paulyListNewData["fields"]["paulyDataListId"] = paulyDataResultData["id"]
   }
-  const setPaulyDataNewDataResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"  +getRootSiteIdResultData["id"] + "/lists/" + paulyDataResultData["id"] + "/items", "POST", false, JSON.stringify(paulyDataNewData))
-  if (!setPaulyDataNewDataResult.ok) {return loadingStateEnum.failed}
+  if (paulyListNewData["fields"]["scheduleListId"] === undefined) {
+    const scheduleResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(scheduleData))        
+    if (!scheduleResult.ok) {return loadingStateEnum.failed}
+    const scheduleResultData = await scheduleResult.json()
+    paulyListNewData["fields"]["scheduleListId"] = scheduleResultData["id"]
+  }
+  if (paulyListNewData["fields"]["sportsListId"] === undefined) {
+    const sportsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(sportsData))
+    if (!sportsResult.ok) {return loadingStateEnum.failed}
+    const sportsResultData = await sportsResult.json()
+    paulyListNewData["fields"]["sportsListId"] = sportsResultData["id"]
+  }
+  if (paulyListNewData["fields"]["sportsApprovedSubmissionsListId"] === undefined) {
+    const sportsApprovedSubmissionsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(sportsApprovedSubmissionsData))
+    if (!sportsApprovedSubmissionsResult.ok) {return loadingStateEnum.failed}
+    const sportsApprovedSubmissionsResultData = await sportsApprovedSubmissionsResult.json()
+    paulyListNewData["fields"]["sportsApprovedSubmissionsListId"] = sportsApprovedSubmissionsResultData["id"]
+  }
+  if (paulyListNewData["fields"]["sportsSubmissionsListId"] === undefined) {
+    const sportsSubmissionsResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(sportsSubmissionsData))
+    if (!sportsSubmissionsResult.ok) {return loadingStateEnum.failed}
+    const sportsSubmissionsResultData = await sportsSubmissionsResult.json()
+    paulyListNewData["fields"]["sportsSubmissionsListId"] = sportsSubmissionsResultData["id"]
+  }
+  if (paulyListNewData["fields"]["timetablesListId"] === undefined) {
+    const timetableResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(timetablesData))
+    if (!timetableResult.ok) {return loadingStateEnum.failed}
+    const timetableResultData = await timetableResult.json()
+    paulyListNewData["fields"]["timetablesListId"] = timetableResultData["id"]
+  }
+  if (paulyListNewData["fields"]["resourceListId"] === undefined) {
+    const resourceResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(resourceData))
+    if (!resourceResult.ok) {return loadingStateEnum.failed}
+    const resourceResultData = await resourceResult.json()
+    paulyListNewData["fields"]["resourceListId"] = resourceResultData["id"]
+  }
+  if (paulyListNewData["fields"]["dressCodeListId"] === undefined) {
+    const dressCodeResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(dressCodeData))
+    if (!dressCodeResult.ok) {return loadingStateEnum.failed}
+    const dressCodeResultData = await dressCodeResult.json()
+    paulyListNewData["fields"]["dressCodeListId"] = dressCodeResultData["id"]
+  }
+  if (secondRun === false) {
+    const paulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(paulyListData))
+    if (!paulyListResult.ok) {return loadingStateEnum.failed} 
+    const addPaulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyList/items",  "POST", false, JSON.stringify(paulyListNewData))
+    if (!addPaulyListResult.ok) {return loadingStateEnum.failed}
+  } else {
+    const addPaulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyList/items/1",  "PATCH", false, JSON.stringify(paulyListNewData))
+    if (!addPaulyListResult.ok) {return loadingStateEnum.failed}
+  }
   return loadingStateEnum.success
 }
