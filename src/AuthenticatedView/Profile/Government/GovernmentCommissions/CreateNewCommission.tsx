@@ -79,12 +79,31 @@ export default function CreateNewCommission() {
                 "displayName":newCommissionID,
                 "columns": [
                     {
-                        "name": "submitted",
+                        "name": "submittedTime",
+                        "required": true,
                         "text": { }
                     },
                     {
                         "name": "userID",
-                        "text": { }
+                        "text": { },
+                        "required": true,
+                        "indexed":true
+                    },
+                    {
+                        "name": "submissionId",
+                        "text": {},
+                        "required": true,
+                        "indexed": true,
+                        "enforceUniqueValues": true
+                    },
+                    {
+                        "name":"submissionApproved",
+                        "boolean": {},
+                        "required": true
+                    },
+                    {
+                        "name":"submissionData",
+                        "text": {"allowMultipleLines": true}
                     }
                 ],
                 "list":

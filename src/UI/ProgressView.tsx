@@ -23,7 +23,7 @@ function ChipView({d, index}:{d:string, index: number}) {
   });
   
   return (
-    <AnimatedPath id={"Chip_" + index} d={d} stroke="none" transform={"none"} fillRule="evenodd" animatedProps={animatedProp} onPress={() => {}}/>
+    <AnimatedPath key={"Chip_Key_" + index} id={"Chip_" + index} d={d} stroke="none" translate={[0]} fillRule="evenodd" animatedProps={animatedProp}/>
   )
 }
 

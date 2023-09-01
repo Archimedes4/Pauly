@@ -1,34 +1,44 @@
-import { View, Text, Button } from 'react-native'
+import { View, Text, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../Functions/microsoftAssets'
 import { useParams } from 'react-router-native';
 import * as Location from 'expo-location';
 import { RootState } from '../../Redux/store';
 import { useSelector } from 'react-redux';
+import { loadingStateEnum } from '../../types';
+import CommissionClaim from './CommissionClaim';
 
 export default function CommissionsView() {
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [commissionData, setCommissionData] = useState<commissionType | undefined>(undefined)
+  const [getCommissionLoadingState, setGetCommissionLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const { id } = useParams()
   async function getCommissionInformation() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields&filter=fields/CommissionID%20eq%20'"+ id +"'")
+    console.log("This is the id", id)
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields&filter=fields/commissionID%20eq%20'"+ id +"'")
     if (result.ok){
       const data = await result.json()
-      console.log(data)//TO DO make this safe
-      setCommissionData({
-        title: data["value"][0]["fields"]["Title"],
-        startDate: new Date(data["value"][0]["fields"]["StartDate"]),
-        endDate: new Date(data["value"][0]["fields"]["EndDate"]),
-        points: data["value"][0]["fields"]["Points"],
-        hidden: data["value"][0]["fields"]["Hidden"],
-        commissionId: data["value"][0]["fields"]["CommissionID"],
-        proximity: data["value"][0]["fields"]["Proximity"],
-        coordinateLat: data["value"][0]["fields"]["CoordinateLat"],
-        coordinateLng: data["value"][0]["fields"]["CoordinateLng"]
-      })
+      if (data["value"].length === 1){
+        //TO DO This might not be safe
+        setCommissionData({
+          title: data["value"][0]["fields"]["Title"],
+          startDate: new Date(data["value"][0]["fields"]["StartDate"]),
+          endDate: new Date(data["value"][0]["fields"]["EndDate"]),
+          points: data["value"][0]["fields"]["Points"],
+          hidden: data["value"][0]["fields"]["Hidden"],
+          commissionId: data["value"][0]["fields"]["CommissionID"],
+          proximity: data["value"][0]["fields"]["Proximity"],
+          coordinateLat: data["value"][0]["fields"]["CoordinateLat"],
+          coordinateLng: data["value"][0]["fields"]["CoordinateLng"]
+        })
+      } else {
+        setGetCommissionLoadingState(loadingStateEnum.failed)
+      }
     } else {
-      //TO DO error occured
-      console.log("Error occured")
+      const data = await result.json()
+      console.log(data)
+      setGetCommissionLoadingState(loadingStateEnum.failed)
     }
   }
   async function getUsersLocation(){
@@ -43,7 +53,7 @@ export default function CommissionsView() {
 
   useEffect(() => {getCommissionInformation()}, [id])
   return (
-    <View>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
       <Text>Commission</Text>
       { (commissionData === undefined) ?
         <View>
@@ -53,7 +63,7 @@ export default function CommissionsView() {
           <Text>{commissionData.title}</Text>
         </View>
       }
-      <Button title='Claim Commission' onPress={() => {}}/>
+      <CommissionClaim commissionId={id} />
     </View>
   )
 }

@@ -74,13 +74,16 @@ export const commissionsData = {
   "columns": [
     {
       "name":"startDate",
-      "text":{ },
-      "required": true
+      "text":{ }
     },
     {
       "name":"endDate",
-      "text":{ },
-      "required": true
+      "text":{ }
+    },
+    {
+      "name":"timed",
+      "boolean":{},
+      "required":true
     },
     {
       "name":"points",

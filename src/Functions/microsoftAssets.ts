@@ -1,17 +1,6 @@
 import { authenticationCallSlice } from "../Redux/reducers/authenticationCallReducer";
 import store from "../Redux/store";
 
-// declare global {
-//     type callMsGraphType = {
-//         url: string
-//         method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT"
-//         perfer?: boolean
-//         body?: string
-//         secondAuth?: boolean
-//         authenticationToken?: string
-//     }
-// }
-
 export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string): Promise<Response> {
     const headers = new Headers();
     const bearer = `Bearer ${(authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken}`

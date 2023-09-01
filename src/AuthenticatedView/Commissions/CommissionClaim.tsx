@@ -8,44 +8,40 @@ import store, { RootState } from '../../Redux/store';
 import { authenticationApiTokenSlice } from '../../Redux/reducers/authenticationApiToken';
 import { useSelector } from 'react-redux';
 
-export default function CommissionClaim() {
+export default function CommissionClaim({commissionId}:{commissionId: string}) {
     const authenticationApiToken = useSelector((state: RootState) => state.authenticationApiToken)
+    const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
     const bearer = `Bearer ${authenticationApiToken}`
     async function claimCommission() {
-        const body = {
-            orgWideGroupId: orgWideGroupID,
-            commissionId: ""
+      const result = await fetch("http://localhost:7071/api/SubmitCommission?orgWideGroupId="+orgWideGroupID+"&commissionId="+commissionId, {
+        headers: {
+          "Authorization":bearer
         }
-        const result = await fetch("http://localhost:7071/api/SubmitCommission", {
-            headers: {
-                "Authorization":bearer
-            }
-        })
-        console.log("This is result", result)
-        if (result.ok){
-            const data = await result.json()
-            
-        } else {
+      })
+      if (result.ok){
+        const data = await result.json()
+      } else {
 
-        }
+      }
     }
     const discovery: AuthSession.DiscoveryDocument = {
-        authorizationEndpoint: 'https://login.microsoftonline.com/' + tenantId + '/oauth2/v2.0/authorize',
-        tokenEndpoint: 'https://login.microsoftonline.com/' + tenantId + '/oauth2/v2.0/token',
-        revocationEndpoint: 'https://api.fitbit.com/oauth2/revoke',
+      authorizationEndpoint: 'https://login.microsoftonline.com/' + tenantId + '/oauth2/v2.0/authorize',
+      tokenEndpoint: 'https://login.microsoftonline.com/' + tenantId + '/oauth2/v2.0/token',
+      revocationEndpoint: 'https://api.fitbit.com/oauth2/revoke',
     }
     
     const redirectUri = AuthSession.makeRedirectUri({
-        scheme: "Archimedes4.Pauly",
-        path: 'auth',
+      scheme: "Archimedes4.Pauly",
+      path: 'auth',
     });
     
       // Request
     const [request, result, promptAsync] = AuthSession.useAuthRequest(
         {
           clientId,
-          extraParams: {scope: "api://6f1e349a-7320-4452-9f32-7e6633fe465b/api/Test", responceMode: "query"},
-          scopes: [],
+          //scope: "api://6f1e349a-7320-4452-9f32-7e6633fe465b/api/Test",
+          extraParams: {responceMode: "query", grant_type: "authorization_code"},
+          scopes: ["api://6f1e349a-7320-4452-9f32-7e6633fe465b/api/Test"],
           redirectUri,
           responseType: "code"
         },
@@ -53,24 +49,22 @@ export default function CommissionClaim() {
       );
     
       async function getAuthToken() {
-        promptAsync().then((codeResponse) => {
+        promptAsync().then(async (codeResponse) => {
           if (request && codeResponse?.type === 'success' && discovery) {
-            console.log(request)
-            console.log(codeResponse.params.code)
-            AuthSession.exchangeCodeAsync(
-              {
-                clientId,
-                code: codeResponse.params.code,
-                extraParams: request.codeVerifier
-                  ? { code_verifier: request.codeVerifier }
-                  : undefined,
-                redirectUri,
-              },
-              discovery,
-            ).then((response) => {
-                console.log(response)
-                store.dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(response.accessToken))
-            }).catch((e) => {console.log(e)})
+            const data: string = "client_id=" + clientId + "&scope=api://" + clientId + "/api/.default&code=" + codeResponse.params.code + "&redirect_uri=" + redirectUri + "&grant_type=authorization_code&code_verifier=" + request.codeVerifier
+            const result = await fetch('https://login.microsoftonline.com/' + tenantId + '/oauth2/v2.0/token', {
+              method: "POST",
+              body: data,
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+              }
+            })
+            if (!result.ok) {
+              const data = await result.json()
+            } else {
+              const data = await result.json()
+              store.dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(data["access_token"]))
+            }
           }
         });
     }
@@ -83,6 +77,10 @@ export default function CommissionClaim() {
       <Pressable onPress={() => {claimCommission()}}>
         <Text>Claim Commission</Text>
       </Pressable>
+      { (authenticationApiToken === authenticationToken) ? <Text>True</Text>:<Text>False</Text>}
+      <Text>{authenticationApiToken}</Text>
+      <Text>Break</Text>
+      <Text>{authenticationToken}</Text>
     </View>
   )
 }

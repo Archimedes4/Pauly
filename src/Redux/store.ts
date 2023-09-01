@@ -8,6 +8,7 @@ import paulyListReducer from './reducers/paulyListReducer';
 import authenticationTokenReducer from './reducers/authenticationTokenReducer';
 import authenticationCallReducer from './reducers/authenticationCallReducer';
 import dimentionsReducer from './reducers/dimentionsReducer';
+import authenticationApiTokenReducer from './reducers/authenticationApiToken';
 
 const store = configureStore({
   reducer: {
@@ -20,7 +21,7 @@ const store = configureStore({
     authenticationCall: authenticationCallReducer,
     dimentions: dimentionsReducer,
     microsoftProfileData: microsoftProfileDataReducer,
-    authenticationApiToken: authenticationTokenReducer
+    authenticationApiToken: authenticationApiTokenReducer
   }
 });
 

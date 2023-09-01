@@ -75,6 +75,7 @@ import GovernmentResources from './src/AuthenticatedView/Profile/Government/Gove
 import GovernmentDressCodeCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeCreate';
 import GovernmentDressCode from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
 import GovernmentDressCodeEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
+import GovernmentEditCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentEditCommission';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -115,6 +116,7 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/government/graph/:mode/create" element={<MicrosoftGraphCreateList/>}/>
                   <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
                   <Route path="/profile/government/commissions/create" element={<CreateNewCommission/>}/>
+                  <Route path="/profile/government/commissions/edit/:id" element={<GovernmentEditCommission/>}/>
                   <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />
                   <Route path="/profile/government/classes" element={<GovernmentClasses />} />
                   <Route path="/profile/government/classes/main/create" element={<GovernmentClassesCreate />} />

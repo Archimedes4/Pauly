@@ -1,6 +1,6 @@
 import { View, Text, StyleProp, ViewStyle } from 'react-native'
 import React from 'react'
-import Svg, { G, Path, Polygon, Rect } from 'react-native-svg'
+import Svg, { Circle, G, Path, Polygon, Rect } from 'react-native-svg'
 
 interface iconProps {
   width: number;
@@ -202,6 +202,16 @@ export function GraduationHatIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 24 24" fill="none">
       <Path d="M7.54004 11.77L12 14L19 10.5M7.54004 11.77V17.77M7.54004 11.77L12 9.54004M7.54004 11.77L5 10.5M7.54004 17.77V21M7.54004 17.77L12 20L19 16.5V10.5M7.54004 17.77L5 16.5V10.5M19 10.5L22 9L12 4L2 9L5 10.5" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </Svg>
+  )
+}
+
+export function WarningIcon({width, height, style, outlineColor}:{width: number, height: number, style?: StyleProp<ViewStyle>, outlineColor?: string}) {
+  return (
+    <Svg width={width} height={height} style={style} viewBox="0 0 24 24" fill="none">
+      <Circle cx="12" cy="17" r="1" fill="#000000"/>
+      <Path d="M12 10L12 14" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <Path d="M3.44722 18.1056L10.2111 4.57771C10.9482 3.10361 13.0518 3.10362 13.7889 4.57771L20.5528 18.1056C21.2177 19.4354 20.2507 21 18.7639 21H5.23607C3.7493 21 2.78231 19.4354 3.44722 18.1056Z" stroke={outlineColor ? outlineColor:"#000000"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </Svg>
   )
 }

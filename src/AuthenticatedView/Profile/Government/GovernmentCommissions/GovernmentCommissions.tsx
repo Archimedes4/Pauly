@@ -39,14 +39,14 @@ export default function GovernmentCommissions() {
         for (let index = 0; index < data["value"].length; index++){
           newCommissions.push({
             title: data["value"][index]["fields"]["Title"],
-            startDate: new Date(data["value"][index]["fields"]["StartDate"]),
-            endDate: new Date(data["value"][index]["fields"]["EndDate"]),
-            points: data["value"][index]["fields"]["Points"],
-            hidden: data["value"][index]["fields"]["Hidden"],
-            commissionId: data["value"][index]["fields"]["CommissionID"],
-            proximity: data["value"][index]["fields"]["Proximity"],
-            coordinateLat: data["value"][index]["fields"]["CoordinateLat"],
-            coordinateLng: data["value"][index]["fields"]["CoordinateLng"]
+            startDate: new Date(data["value"][index]["fields"]["startDate"]),
+            endDate: new Date(data["value"][index]["fields"]["endDate"]),
+            points: data["value"][index]["fields"]["points"],
+            hidden: data["value"][index]["fields"]["hidden"],
+            commissionId: data["value"][index]["fields"]["commissionID"],
+            proximity: data["value"][index]["fields"]["proximity"],
+            coordinateLat: data["value"][index]["fields"]["coordinateLat"],
+            coordinateLng: data["value"][index]["fields"]["coordinateLng"]
           })
         }
         setCommissions(newCommissions)
@@ -73,11 +73,11 @@ export default function GovernmentCommissions() {
               { (getCommissionsLoadingState === loadingStateEnum.success) ?
                 <View>
                   {commissions.map((commission) => (
-                    <View key={commission.commissionId} style={{margin: 10, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+                    <Link to={"/profile/government/commissions/edit/" + commission.commissionId} key={"Commission_" + commission.commissionId} style={{margin: 10, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
                       <View style={{margin: 10}}>
                         <Text selectable={false}>{commission.title}</Text>
                       </View>
-                    </View>
+                    </Link>
                   ))}
                 </View>:<Text>Failed</Text>
               }

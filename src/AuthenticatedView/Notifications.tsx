@@ -91,7 +91,6 @@ export default function Notifications() {
       <Link to="/WhatISTHISLINKGOINGTo">
         <Text>This is to no where</Text>
       </Link>
-      <CommissionClaim />
       <ProgressView width={100} height={100}/>
     </View>
   )

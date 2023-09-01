@@ -29,12 +29,12 @@ export default function Commissions() {
         for (let index = 0; index < data["value"].length; index++) {
           resultCommissions.push({
             title: data["value"][index]["fields"]["Title"],
-            startDate: new Date(data["value"][index]["fields"]["StartDate"]),
-            endDate:  new Date(data["value"][index]["fields"]["EndDate"]),
-            points:  data["value"][index]["fields"]["Points"] as number,
-            proximity: data["value"][index]["fields"]["Proximity"] as number,
-            commissionId: data["value"][index]["fields"]["CommissionID"] as string,
-            hidden: data["value"][index]["fields"]["Hidden"]
+            startDate: new Date(data["value"][index]["fields"]["startDate"]),
+            endDate:  new Date(data["value"][index]["fields"]["endDate"]),
+            points:  data["value"][index]["fields"]["points"] as number,
+            proximity: data["value"][index]["fields"]["proximity"] as number,
+            commissionId: data["value"][index]["fields"]["commissionID"] as string,
+            hidden: data["value"][index]["fields"]["hidden"]
           })
         }
         setCurrentCommissions(resultCommissions)
@@ -73,9 +73,10 @@ export default function Commissions() {
       </View>
       <View>
         { currentCommissions.map((item: commissionType) => (
-          <Link to={"/commissions/" + item.commissionId}>
+          <Link to={"/commissions/" + item.commissionId} key={"Link_" + item.commissionId}>
             <View key={item.commissionId} style={{borderRadius: 15, borderColor: "Black", borderWidth: 10, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5}}>
               <Text>{item.title}</Text>
+              <Text>{item.commissionId}</Text>
             </View>
           </Link>
         ))}
