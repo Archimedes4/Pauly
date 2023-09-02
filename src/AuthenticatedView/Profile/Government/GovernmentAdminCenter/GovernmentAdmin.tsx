@@ -6,6 +6,7 @@ import callMsGraph from '../../../../Functions/microsoftAssets';
 import { initializePaulyPartOne, initializePaulyPartThree, initializePaulyPartTwo } from '../../../../Functions/initializePauly/initializePauly'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
+import { addDataArray } from '../../../../Functions/initializePauly/initializePaulyData';
 
 enum initStage {
   notStarted,
@@ -26,6 +27,7 @@ export default function GovernmentAdmin() {
   const [timeLeft, setTimeLeft] = useState<string>("")
   const [timeElapsed, setTimeElapsed] = useState<string>("Not Started")
   const [createdGroupId, setCreatedGroupId] = useState<string>("")
+  const [selectedUpdates, setSelectedUpdates] = useState<string[]>([])
 
   //Start Times
   const [startTime, setStartTime] = useState<Date>(new Date())
@@ -102,7 +104,7 @@ export default function GovernmentAdmin() {
       setStartTime(new Date())
       setCurrentInitStage(initStage.partThree)
       setInitThreeResult(loadingStateEnum.loading)
-      const result = await initializePaulyPartThree(createdGroupId)
+      const result = await initializePaulyPartThree(createdGroupId, selectedUpdates)
       if (result === loadingStateEnum.success) {
         setInitThreeResult(loadingStateEnum.success)
         setCurrentInitStage(initStage.done)
@@ -281,9 +283,33 @@ export default function GovernmentAdmin() {
         </Pressable>:null
       }
       { (initThreeResult !== loadingStateEnum.cannotStart) ?
-        <Pressable onPress={() => {initializePaulyFromPartThree()}}>
-          <Text>{(initThreeResult === loadingStateEnum.notStarted) ? "Start From Part Three":(initThreeResult === loadingStateEnum.loading) ? "Loading":(initThreeResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
-        </Pressable>:null
+        <View>
+          {addDataArray.map((addData) => (
+            <View key={"Add_Data_" + addData.id}>
+              { (selectedUpdates.includes(addData.id)) ?
+                <Pressable style={{width: width * 0.7, backgroundColor: "blue"}} onPress={() => {
+                  var newSelectedUpdates = selectedUpdates
+                  newSelectedUpdates.filter((e) => {return e !== addData.id})
+                  setSelectedUpdates([...newSelectedUpdates])
+                }}>
+                  <View style={{margin: 5}}>
+                    <Text>{addData.id}</Text>
+                  </View>
+                </Pressable>:
+                <Pressable style={{width: width * 0.7, backgroundColor: "white"}} onPress={() => {
+                  setSelectedUpdates([...selectedUpdates, addData.id])
+                }}>
+                  <View style={{margin: 5}}>
+                    <Text>{addData.id}</Text>
+                  </View>
+                </Pressable>
+              }
+            </View>
+          ))}
+          <Pressable onPress={() => {initializePaulyFromPartThree()}}>
+            <Text>{(initThreeResult === loadingStateEnum.notStarted) ? "Start From Part Three":(initThreeResult === loadingStateEnum.loading) ? "Loading":(initThreeResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+          </Pressable>
+        </View>:null
       }
     </View>
   )

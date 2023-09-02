@@ -10,6 +10,11 @@ export const paulyListData = {
       "required": true
     },
     {
+      "name":"commissionSubmissionsListId",
+      "text":{},
+      "required": true
+    },
+    {
       "name":"paulyDataListId",
       "text":{},
       "required": true
@@ -61,6 +66,11 @@ export const paulyListData = {
     },
     {
       "name":"resourceExtensionId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"userExtensionId",
       "text":{},
       "required": true
     }
@@ -138,6 +148,26 @@ export const commissionsData = {
     "template": "genericList"
   }
 }
+export const commissionsSubmissionsData = {
+  "displayName": "CommissionsSubmissions",
+  "columns": [
+    {
+      "name":"userId",
+      "text":{ },
+      "required": true,
+      "indexed": true,
+      "enforceUniqueValues": true
+    },
+    {
+      "name":"claimedCommissions",
+      "required": true,
+      "text":{"allowMultipleLines": true}
+    }
+  ],
+  "list": {
+    "template": "genericList"
+  }
+}
 export const paulyDataData = {
   "displayName": "PaulyData",
   "columns": [
@@ -195,12 +225,12 @@ export const sportsData = {
   "displayName": "Sports",
   "columns": [
     {
-      "name":"SportsName",
+      "name":"sportName",
       "text":{ },
       "required": true
     },
     {
-      "name":"SportsID",
+      "name":"sportId",
       "text":{ },
       "required": true,
       "indexed": true,
@@ -352,7 +382,7 @@ export const dressCodeData = {
 }
 
 //Extensions
-export const paulyEventExtentionData = {
+export const paulyEventExtensionData = {
   "id": "paulyEvents",
   "description": "Pauly Event Data",
   "targetTypes": [
@@ -371,7 +401,7 @@ export const paulyEventExtentionData = {
   ]
 }
 
-export const paulyClassExtentionData = {
+export const paulyClassExtensionData = {
   "id":"paulyClass",
   "description":"Pauly Class Data",
   "targetTypes": [
@@ -398,11 +428,11 @@ export const paulyClassExtentionData = {
   ]
 }
 
-export const paulyResourceExtentionData = {
+export const paulyResourceExtensionData = {
   "id":"paulyResource",
   "description":"Pauly Resource Data",
   "targetTypes": [
-    "Post"
+    "post"
   ],
   "owner":clientId,
   "properties": [
@@ -412,3 +442,105 @@ export const paulyResourceExtentionData = {
     }
   ]
 }
+
+export const paulyUserExtensionData = {
+  "id":"paulyUser",
+  "description":"Pauly User Data. Holds Commissions",
+  "targetTypes": [
+    "user"
+  ],
+  "owner":clientId,
+  "properties": [
+    {
+      "name":"commissionData",
+      "type":"String"
+    }
+  ]
+}
+
+declare global {
+  type addDataType = {
+    data: object,
+    urlOne: string,
+    urlTwo?:string
+    id: string
+  }
+}
+
+//Add data array
+export const addDataArray: addDataType[] = [
+  {
+    data: paulyEventExtensionData,
+    urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
+    id: "eventExtensionId"
+  },
+  {
+    data: paulyClassExtensionData,
+    urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
+    id: "classExtensionId"
+  },
+  {
+    data: paulyResourceExtensionData,
+    urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
+    id: "resourceExtensionId"
+  },
+  {
+    data: paulyUserExtensionData,
+    urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
+    id: "userExtensionId"
+  },
+  {
+    data: commissionsData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "commissionListId"
+  },
+  {
+    data: commissionsSubmissionsData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "commissionSubmissionsListId"
+  },
+  {
+    data: scheduleData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "scheduleListId"
+  },
+  {
+    data: sportsData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "sportsListId"
+  },
+  {
+    data: sportsApprovedSubmissionsData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "sportsApprovedSubmissionsListId"
+  },
+  {
+    data: sportsSubmissionsData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "sportsSubmissionsListId"
+  },
+  {
+    data: timetablesData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "timetablesListId"
+  },
+  {
+    data: resourceData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "resourceListId"
+  },
+  {
+    data: dressCodeData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "dressCodeListId"
+  }
+]

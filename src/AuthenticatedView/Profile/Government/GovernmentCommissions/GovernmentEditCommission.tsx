@@ -4,7 +4,7 @@ import callMsGraph from '../../../../Functions/microsoftAssets'
 import { Link, useParams } from 'react-router-native'
 import { RootState } from '../../../../Redux/store'
 import { useSelector } from 'react-redux'
-import { loadingStateEnum } from '../../../../types'
+import { commissionTypeEnum, loadingStateEnum } from '../../../../types'
 
 export default function GovernmentEditCommission() {
     const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
@@ -13,6 +13,7 @@ export default function GovernmentEditCommission() {
 
     const [getCommissionResult, setGetCommissionResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
     const [deleteCommissionResult, setDeleteCommissionResult] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+    const [commissionValue, setCommissionValue] = useState<commissionTypeEnum>(commissionTypeEnum.Issued)
 
     const {id} = useParams()
     async function getCommission() {
@@ -26,6 +27,7 @@ export default function GovernmentEditCommission() {
             }
             setCommissionItemId(data["value"][0]["id"])
             const commissionData = data["value"][0]["fields"]
+            setCommissionValue(commissionData["value"])
             
         } else {
             setGetCommissionResult(loadingStateEnum.failed)
@@ -36,7 +38,12 @@ export default function GovernmentEditCommission() {
         setDeleteCommissionResult(loadingStateEnum.loading)
         const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items/" + commissionItemId, "DELETE")
         if (result.ok) {
-            setDeleteCommissionResult(loadingStateEnum.success)
+            const deleteList = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + `/lists/${id}`, "DELETE")
+            if (deleteList.ok){
+                setDeleteCommissionResult(loadingStateEnum.success)
+            } else {
+                setDeleteCommissionResult(loadingStateEnum.failed)
+            }
         } else {
             setDeleteCommissionResult(loadingStateEnum.failed)
         }
@@ -49,10 +56,17 @@ export default function GovernmentEditCommission() {
         <Link to="/profile/government/commissions">
             <Text>Back</Text>
         </Link>
-      <Text>Edit Commission</Text>
-      <Pressable onPress={() => {deleteCommission()}}>
-        <Text>{(deleteCommissionResult === loadingStateEnum.notStarted) ? "Delete Commission":(deleteCommissionResult === loadingStateEnum.loading) ? "Loading":(deleteCommissionResult === loadingStateEnum.success) ? "Deleted Commission":"Failed to Delete Commission"}</Text>
-      </Pressable>
+        <Text>Edit Commission</Text>
+        <View>
+            { (commissionValue === commissionTypeEnum.QRCode) ?
+                <View>
+                    <View></View>
+                </View>:null
+            }
+        </View>
+        <Pressable onPress={() => {deleteCommission()}}>
+            <Text>{(deleteCommissionResult === loadingStateEnum.notStarted) ? "Delete Commission":(deleteCommissionResult === loadingStateEnum.loading) ? "Loading":(deleteCommissionResult === loadingStateEnum.success) ? "Deleted Commission":"Failed to Delete Commission"}</Text>
+        </Pressable>
     </View>
   )
 }

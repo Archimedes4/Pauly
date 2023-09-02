@@ -20,7 +20,7 @@ export default function GovernmentSports() {
   const [dataResult, setDataResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getSports(){
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites" + siteId + "/lists/" + sportsListId + "/items?expand=fields")//TO DO list id
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + sportsListId + "/items?expand=fields")//TO DO list id
     if (result.ok) {
       const data = await result.json()
       if (data["value"] !== null && data["value"] !== undefined){

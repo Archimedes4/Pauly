@@ -24,7 +24,16 @@ export enum resourceResponce {
     found,
     notFound,
     failed
-  }
+}
+
+
+export enum commissionTypeEnum {
+    Issued,
+    Location,
+    Image,
+    ImageLocation,
+    QRCode
+}
 
 declare global {
     type TaskType = {

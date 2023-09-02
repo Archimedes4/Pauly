@@ -31,7 +31,7 @@ import Government from './src/AuthenticatedView/Profile/Government/Government';
 import MicrosoftGraphOverview from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphOverview';
 import MicrosoftGraphCreateList from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphCreateList';
 import GovernmentCommissions from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentCommissions';
-import CreateNewCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/CreateNewCommission';
+import CreateNewCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentCreateCommission';
 import Sports from './src/AuthenticatedView/Sports/Sports.web';
 import Calendar from './src/AuthenticatedView/Calendar/Calendar';
 import GovernmentSports from './src/AuthenticatedView/Profile/Government/GovernmentSports/GovernmentSports';

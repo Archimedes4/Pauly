@@ -26,11 +26,11 @@ export default function MicrosoftGraphEditList() {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
     const {siteId} = useSelector((state: RootState) => state.paulyList)
     const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([])
-    const { listId } = useParams()
+    const { id } = useParams()
     const [isCoppiedToClipboard, setIsCoppiedToClipboard] = useState<boolean>(false)
 
     async function getListItems() {
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists/" + listId + "/items?expand=fields")
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists/" + id + "/items?expand=fields")
         if (result.ok) {
             const data = await result.json()
             console.log(data)
@@ -42,7 +42,7 @@ export default function MicrosoftGraphEditList() {
         const data = {
             "indexed": "true" 
         }
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/"+ listId + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/"+ id + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
         console.log(result)
         if (result.ok){
             const data = await result.json()
@@ -58,7 +58,7 @@ export default function MicrosoftGraphEditList() {
         }
     }
     async function getColumns() {
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists/" + listId + "/columns")
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists/" + id + "/columns")
         if (result.ok) {
             const data = await result.json()
             console.log(data)
@@ -92,12 +92,12 @@ export default function MicrosoftGraphEditList() {
             </Link>
             <Text>MicrosoftGraphEditList</Text>
             <View style={{flexDirection: "row"}}>
-                <Text>{listId}</Text>
+                <Text>{id}</Text>
                 { isCoppiedToClipboard ?
-                    <Pressable onPress={async () => {await Clipboard.setStringAsync(listId)}}>
+                    <Pressable onPress={async () => {await Clipboard.setStringAsync(id)}}>
                         <Text>Copied To Clipboard!</Text>
                     </Pressable>:
-                    <Pressable onPress={async () => {await Clipboard.setStringAsync(listId); setIsCoppiedToClipboard(true)}}>
+                    <Pressable onPress={async () => {await Clipboard.setStringAsync(id); setIsCoppiedToClipboard(true)}}>
                         <CopyIcon width={14} height={14}/>
                     </Pressable>
                 }

@@ -16,6 +16,7 @@ import SelectTimetable from "./SelectTimetable";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { loadingStateEnum } from "../../types";
+import PickerWrapper from "../../UI/Pickers/Picker";
 
 enum reocurringType {
     daily,
@@ -50,18 +51,17 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
     const [startDate, setStartDate] = useState<Date>((editing) ? editData.startTime:new Date(JSON.parse(selectedDate)))
     const [endDate, setEndDate] = useState<Date>((editing) ? editData.endTime:new Date(JSON.parse(selectedDate)))
     const [allDay, setAllDay] = useState<boolean>(false)
+    const [selectedEventType, setSelectedEventType] = useState<paulyEventType>(paulyEventType.regular)
 
     //Recurring
     const [recurringEvent, setRecurringEvent] = useState<boolean>(false)
     const [selectedReocurringType, setSelectedReocurringType] = useState<reocurringType>(reocurringType.daily)
 
     //School Day
-    const [isSchoolDay, setIsSchoolDay] = useState<boolean>(false)
     const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
     const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<schoolDayDataInteface | undefined>(undefined)
 
     //School Year
-    const [isSchoolYear, setIsSchoolYear] = useState<boolean>(false)
     const [selectedTimetable, setSelectedTimetable] = useState<timetableStringType | undefined>(undefined)
 
     async function createEvent() {
@@ -76,7 +76,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
           "timeZone": "Central America Standard Time"
         }
       }
-      if (isSchoolDay) {
+      if (selectedEventType === paulyEventType.schoolDay) {
         if (selectedSchoolDayData === undefined) return
         data["start"]["dateTime"] = startDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         var newEndDate = startDate
@@ -94,7 +94,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", true, JSON.stringify(data))
       if (result.ok){
         const dataOut = await result.json()
-        if (isSchoolYear) {
+        if (selectedEventType === paulyEventType.schoolYear) {
           const patchData = {
             eventExtensionId: {
               "eventType":"schoolYear",
@@ -103,7 +103,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
           }
           const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
           const patchOut = await patchResult.json()
-        } else if (isSchoolDay && selectedSchoolDayData !== undefined) {
+        } else if ((selectedEventType === paulyEventType.schoolDay) && selectedSchoolDayData !== undefined) {
           const patchData = {
             eventExtensionId: {
               "eventType":"schoolDay",
@@ -161,13 +161,13 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
     return (
       <View style={{backgroundColor: "white", width: width, height: height, borderRadius: 5, borderWidth: 5}}>
         { (isPickingStartDate || isPickingEndDate) ?
-          <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}} allowedDatesRange={(isSchoolDay) ? {startDate: selectedSchoolYear.startTime, endDate: selectedSchoolYear.endTime}:undefined}/>:
+          <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); setIsPickingStartDate(false)} else {setEndDate(e);setIsPickingEndDate(false)}}} width={width} height={height} onCancel={() => {setIsPickingEndDate(false); setIsPickingStartDate(false)}} allowedDatesRange={(selectedEventType === paulyEventType.schoolDay) ? {startDate: selectedSchoolYear.startTime, endDate: selectedSchoolYear.endTime}:undefined}/>:
           <View>
             <Pressable onPress={() => {setIsShowingAddDate(false)}}>
               <CloseIcon width={10} height={10}/>
             </Pressable>
             <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
-            { isSchoolDay ?
+            { (selectedEventType === paulyEventType.schoolDay) ?
               null:
               <View>
                 <TextInput
@@ -188,7 +188,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
                 </View>
               </View>
             }
-            <Text>{(isSchoolDay) ? "":"Start "}Date</Text>
+            <Text>{(selectedEventType === paulyEventType.schoolDay) ? "":"Start "}Date</Text>
             <View style={{flexDirection: "row"}}>
               <Pressable onPress={() => {setIsPickingStartDate(true)}}>
                 <View style={{flexDirection: "row"}}>
@@ -200,7 +200,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
                 null:<TimePicker selectedHourMilitary={startDate.getHours()} selectedMinuteMilitary={startDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = startDate; newDate.setHours(e); setStartDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = startDate; newDate.setMinutes(e); setStartDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
               }
             </View>
-            { isSchoolDay ?
+            { (selectedEventType === paulyEventType.schoolDay) ?
               null:
               <View>
                 <Text>End Date</Text>
@@ -247,27 +247,14 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
                 </Dropdown>
               </View>:null
             }
-            <View style={{flexDirection: "row"}}>
-              <Text>School Day:</Text>
-              <Switch
-                trackColor={{false: '#767577', true: '#81b0ff'}}
-                thumbColor={isSchoolDay ? '#f5dd4b' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={(e) => {setIsSchoolDay(e); setIsSchoolYear(false); setAllDay(true)}}
-                value={isSchoolDay}
-              />
-            </View>
-            <View style={{flexDirection: "row"}}>
-              <Text>School Year:</Text>
-              <Switch
-                trackColor={{false: '#767577', true: '#81b0ff'}}
-                thumbColor={isSchoolYear ? '#f5dd4b' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={(e) => {setIsSchoolDay(false); setIsSchoolYear(e); setAllDay(true)}}
-                value={isSchoolYear}
-              />
-            </View>
-            { isSchoolDay ?
+            <PickerWrapper selectedIndex={selectedEventType} onSetSelectedIndex={setSelectedEventType} width={width} height={height * 0.05}>
+              <Text>Regular</Text>
+              <Text>School Day </Text>
+              <Text>School Year</Text>
+              <Text>Dress code</Text>
+              <Text>Student Council</Text>
+            </PickerWrapper>
+            { (selectedEventType === paulyEventType.schoolDay) ?
               <View style={{width: 100, height: 100}}>
                 <Text>Selected School Year:</Text>
                 { (selectedSchoolYear === undefined) ?
@@ -276,7 +263,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
                 }
               </View>:null
             }
-            { isSchoolYear ?
+            { (selectedEventType === paulyEventType.schoolYear) ?
               <View>
                 <Text>Selected Timetable: {(selectedTimetable) ? selectedTimetable.name:"Unselected"}</Text>
                 <SelectTimetable governmentMode={false} onSelect={(e) => {setSelectedTimetable(e)}}/>

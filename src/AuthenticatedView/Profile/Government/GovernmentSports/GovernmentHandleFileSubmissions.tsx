@@ -17,10 +17,10 @@ declare global {
 }
 
 export default function GovernmentHandleFileSubmissions() {
-    const {siteId} = useSelector((state: RootState) => state.paulyList)
+    const {siteId, sportsSubmissionsListId} = useSelector((state: RootState) => state.paulyList)
     const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([])
     async function getSubmissions() {
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"+siteId+"/lists/bf26e642-f655-47db-a037-188189b0d378/items?expand=fields")//TO DO fix id
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"+siteId+"/lists/"+sportsSubmissionsListId+"/items?expand=fields")//TO DO fix id
         if (result.ok){
             const data = await result.json()
             console.log(data)

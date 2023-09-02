@@ -8,18 +8,10 @@ import create_UUID from '../../../../Functions/CreateUUID';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 import SegmentedPicker from "../../../../UI/Pickers/SegmentedPicker"
-import { loadingStateEnum } from '../../../../types';
+import { commissionTypeEnum, loadingStateEnum } from '../../../../types';
 import DatePicker from '../../../../UI/DateTimePicker/DatePicker';
 import TimePicker from '../../../../UI/DateTimePicker/TimePicker';
 import TimePickerDate from '../../../../UI/DateTimePicker/TimePickerDate';
-
-enum commissionTypeEnum {
-    Issued,
-    Location,
-    Image,
-    ImageLocation,
-    QRCode
-}
 
 enum datePickingMode {
     none,
@@ -48,6 +40,7 @@ export default function CreateNewCommission() {
     const [selectedPositionIn, setSelectedPositionIn] = useState<{lat: number, lng: number}>({lat: 49.85663823299096, lng: -97.22659526509193})
     const [maxNumberOfClaims, setMaxNumberOfClaims] = useState<number>(1)
     const [allowMultipleSubmissions, setAllowMultipleSubmissions] = useState<boolean>(false)
+    const [isTimed, setIsTimed] = useState<boolean>(true)
 
     async function createCommission() {
         if (submitCommissionState === loadingStateEnum.failed || submitCommissionState === loadingStateEnum.notStarted){
@@ -57,8 +50,7 @@ export default function CreateNewCommission() {
                 "fields": {
                     //All Commissions
                     "Title": commissionName,
-                    "startDate": startDate.toISOString().replace(/.\d+Z$/g, "Z"),
-                    "endDate": endDate.toISOString().replace(/.\d+Z$/g, "Z"),
+                    "timed":isTimed,
                     "points":points,
                     "hidden":isHidden,
                     "maxNumberOfClaims":maxNumberOfClaims,
@@ -66,6 +58,10 @@ export default function CreateNewCommission() {
                     "commissionID": newCommissionID,
                     "value":selectedCommissionType + 1
                 }
+            }
+            if (isTimed) {
+                data["fields"]["startDate"] = startDate.toISOString().replace(/.\d+Z$/g, "Z")
+                data["fields"]["endDate"] = endDate.toISOString().replace(/.\d+Z$/g, "Z")
             }
             if (selectedCommissionType === commissionTypeEnum.Location || selectedCommissionType === commissionTypeEnum.ImageLocation) {
                 data["fields"]["proximity"] = proximity
@@ -84,7 +80,7 @@ export default function CreateNewCommission() {
                         "text": { }
                     },
                     {
-                        "name": "userID",
+                        "name": "userId",
                         "text": { },
                         "required": true,
                         "indexed":true
@@ -99,7 +95,8 @@ export default function CreateNewCommission() {
                     {
                         "name":"submissionApproved",
                         "boolean": {},
-                        "required": true
+                        "required": true,
+                        "indexed": true
                     },
                     {
                         "name":"submissionData",
@@ -167,18 +164,32 @@ export default function CreateNewCommission() {
                             </View>
                         </View>:null
                     }
-                    <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
-                        <Text>Start Date</Text>
-                        <TimePickerDate date={startDate} setDate={setStartDate} />
-                        <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
-                            <Text>Pick Start Date</Text>
-                        </Pressable>
+                    <View style={{flexDirection: "row"}}>
+                        <Text>Timed: </Text>
+                        <Switch
+                            trackColor={{false: '#767577', true: '#81b0ff'}}
+                            thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={(e) => {setIsTimed(e)}}
+                            value={isTimed}
+                        />
                     </View>
-                    <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
-                        <Text>End Date</Text>
-                        <TimePickerDate date={endDate} setDate={setEndDate} />
-                        <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
-                    </View>
+                    { isTimed ?
+                        <View>
+                            <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
+                                <Text>Start Date</Text>
+                                <TimePickerDate date={startDate} setDate={setStartDate} />
+                                <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
+                                    <Text>Pick Start Date</Text>
+                                </Pressable>
+                            </View>
+                            <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
+                                <Text>End Date</Text>
+                                <TimePickerDate date={endDate} setDate={setEndDate} />
+                                <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
+                            </View>
+                        </View>:null
+                    }
                     <View style={{flexDirection: "row"}}>
                         <Text>Points: </Text>
                         <TextInput 

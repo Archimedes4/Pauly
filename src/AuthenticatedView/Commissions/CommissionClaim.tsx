@@ -19,7 +19,7 @@ export default function CommissionClaim({commissionId}:{commissionId: string}) {
         }
       })
       if (result.ok){
-        const data = await result.json()
+        console.log("Success")
       } else {
 
       }
