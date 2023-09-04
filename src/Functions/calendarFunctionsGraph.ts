@@ -3,26 +3,27 @@ import callMsGraph from "./microsoftAssets";
 import { loadingStateEnum } from "../types";
 import store from "../Redux/store";
 import { Data } from "@react-google-maps/api";
+import getDressCode from "./getDressCode";
 
 //Defaults to org wide events
 export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
-  const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents", "GET", true)
+  const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=" + store.getState().paulyList.eventExtensionId, "GET", true)
   if (result.ok){
     const data = await result.json()
     var newEvents: eventType[] = []
     for(var index = 0; index < data["value"].length; index++) {
       if (schoolYear) {
-        //TO DO update extention value
-        if (data["value"][index]["ext9u07b055_paulyEvents"] !== undefined) {
-          if (data["value"][index]["ext9u07b055_paulyEvents"]["eventType"] === "schoolYear") {
+        const eventExtensionID = store.getState().paulyList.eventExtensionId
+        if (data["value"][index][eventExtensionID] !== undefined) {
+          if (data["value"][index][eventExtensionID]["eventType"] === "schoolYear") {
             newEvents.push({
               id: data["value"][index]["id"],
               name: data["value"][index]["subject"],
               startTime: new Date(data["value"][index]["start"]["dateTime"]),
               endTime: new Date(data["value"][index]["end"]["dateTime"]),
               eventColor: "white",
-              paulyEventType: data["value"][index]["ext9u07b055_paulyEvents"]["eventType"],
-              paulyEventData: data["value"][index]["ext9u07b055_paulyEvents"]["eventData"],
+              paulyEventType: data["value"][index][eventExtensionID]["eventType"],
+              paulyEventData: data["value"][index][eventExtensionID]["eventData"],
               microsoftEvent: true,
               microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
             })
@@ -93,14 +94,19 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
               return {result: loadingStateEnum.failed}
             }
           }
-          console.log("This is timetable Days", JSON.parse(data["value"][0]["fields"]["timetableDataDays"]))
-          const resultingTimetable: timetableType = {
-            name: data["value"][0]["fields"]["timetableName"],
-            id: data["value"][0]["fields"]["timetableId"],
-            schedules: newSchedules,
-            days: JSON.parse(data["value"][0]["fields"]["timetableDataDays"])
+          const dressCodeResult = await getDressCode(data["value"][0]["fields"]["timetableId"])
+          if (dressCodeResult.result === loadingStateEnum.success && dressCodeResult.data !== undefined){
+            const resultingTimetable: timetableType = {
+              name: data["value"][0]["fields"]["timetableName"],
+              id: data["value"][0]["fields"]["timetableId"],
+              schedules: newSchedules,
+              days: JSON.parse(data["value"][0]["fields"]["timetableDataDays"]),
+              dressCode: dressCodeResult.data
+            }
+            return {result: loadingStateEnum.success, timetable: resultingTimetable}
+          } else {
+            return {result: loadingStateEnum.failed}
           }
-          return {result: loadingStateEnum.success, timetable: resultingTimetable}
         } catch (e) {
           return {result: loadingStateEnum.failed}
         }
@@ -118,13 +124,15 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
 }
 
 export async function getSchoolDayOnSelectedDay(selectedDate: Date): Promise<{ result: loadingStateEnum; event?: eventType; }> {
+  const eventExtensionId = store.getState().paulyList.eventExtensionId
   const startDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0)).toISOString().slice(0, -1) + "0000"
   const endDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 0)).toISOString().slice(0, -1) + "0000"
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20eq%20'" + startDate + "'%20and%20end/dateTime%20eq%20'" + endDate + "'&$select=ext9u07b055_paulyEvents", "GET", true)
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20eq%20'" + startDate + "'%20and%20end/dateTime%20eq%20'" + endDate + "'&$select=" + eventExtensionId, "GET", true)
   if (result.ok) {
     const data = await result.json()
+    console.log(data)
     for(var index = 0; index < data["value"].length; index++){
-      if (data["value"][index]["ext9u07b055_paulyEvents"] !== undefined) {
+      if (data["value"][index][eventExtensionId] !== undefined) {
         const event: eventType = {
           id: data["value"][index]["id"],
           name: data["value"][index]["subject"],
@@ -133,8 +141,8 @@ export async function getSchoolDayOnSelectedDay(selectedDate: Date): Promise<{ r
           eventColor: "white",
           microsoftEvent: true,
           microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],
-          paulyEventType: data["value"][index]["ext9u07b055_paulyEvents"]["eventType"],
-          paulyEventData: data["value"][index]["ext9u07b055_paulyEvents"]["eventData"]
+          paulyEventType: data["value"][index][eventExtensionId]["eventType"],
+          paulyEventData: data["value"][index][eventExtensionId]["eventData"]
         }
         return {result: loadingStateEnum.success, event: event}
       }

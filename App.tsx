@@ -128,6 +128,9 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/government/calendar/timetable" element={<GovernmentTimetable />} />
                   <Route path="/profile/government/calendar/timetable/edit/:timetableId" element={<GovernmentTimetableEdit/>} />
                   <Route path="/profile/government/calendar/timetable/create" element={<GovernmentTimetableCreate />} />
+                  <Route path="/profile/government/calendar/dresscode" element={<GovernmentDressCode />} />
+                  <Route path="/profile/government/calendar/dresscode/edit/:id" element={<GovernmentDressCodeEdit />} /> 
+                  <Route path="/profile/government/calendar/dresscode/create" element={<GovernmentDressCodeCreate />} />
                   <Route path="/profile/government/sports" element={<GovernmentSports/>}/>
                   <Route path="/profile/government/sports/create" element={<GovernmentCreateNewSport/>}/>
                   <Route path="/profile/government/sports/team/:sport/:id" element={<GovernmentSportsTeams/>}/>
@@ -135,9 +138,6 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/government/sports/team/edit/:sport/:id/:team/:teamId/:season" element={<GovernmentSportTeamEdit />} />
                   <Route path="/profile/government/sports/post/:sport/:id/:team/:teamId/:season" element={<GovernmentSportsTeamAddPost />} />
                   <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
-                  <Route path="/profile/government/calendar/dresscode" element={<GovernmentDressCode />} />
-                  <Route path="/profile/government/calendar/dresscode/edit/:dressCodeId" element={<GovernmentDressCodeEdit />} /> 
-                  <Route path="/profile/government/calendar/dresscode/create" element={<GovernmentDressCodeCreate />} />
                   <Route path="*" element={<PageNotFound />} />
                   {/* TO DO remove went development complete and move to production */}
                   <Route path="/testing" element={<Testing />} />

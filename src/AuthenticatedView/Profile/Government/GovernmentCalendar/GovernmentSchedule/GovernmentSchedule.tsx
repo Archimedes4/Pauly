@@ -5,13 +5,9 @@ import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
 import { loadingStateEnum } from '../../../../../types';
-// enum loadingStateEnum {
-//   loading,
-//   success,
-//   failed
-// }
 
 export default function GovernmentSchedule() {
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
@@ -24,7 +20,6 @@ export default function GovernmentSchedule() {
         for (let index = 0; index < dataResult["value"].length; index++) {
           try {
             const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[]
-            console.log(scheduleData)
             newLoadedSchedules.push({
               properName: dataResult["value"][index]["fields"]["scheduleProperName"],
               descriptiveName: dataResult["value"][index]["fields"]["scheduleDescriptiveName"],
@@ -32,6 +27,7 @@ export default function GovernmentSchedule() {
               periods: scheduleData
             })
           } catch {
+            setLoadingState(loadingStateEnum.failed)
             //TO DO unimportant but this shouldn't be able to happen if this doesn't work most likly invalid data has somehow gotten into the schedule data column of the schedule list
           }
         }
@@ -46,11 +42,11 @@ export default function GovernmentSchedule() {
     getSchedules()
   }, [])
   return (
-    <View>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
       <Link to="/">
         <Text>Back</Text>
       </Link>
-      <Text>GovernmentSchedule</Text>
+      <Text>Schedules</Text>
       { (loadingState === loadingStateEnum.loading) ?
         <Text>Loading</Text>:null
       }

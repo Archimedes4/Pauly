@@ -18,7 +18,8 @@ declare global {
       name: string,
       id: string,
       schedules: scheduleType[],
-      days: schoolDayType[]
+      days: schoolDayType[],
+      dressCode: dressCodeType
     }
 }  
 

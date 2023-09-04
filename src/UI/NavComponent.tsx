@@ -34,6 +34,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
     const {uri, displayName} = useSelector((state: RootState) => state.microsoftProfileData)
     const [blockLength, setBlockLength] = useState<number>(0)
     const [iconLength, setIconLength] = useState<number>(0)
+    const navigation = useNavigate()
     useEffect(() => {
         console.log("Changed")
         if ((width * 0.6) > ((height * 0.6)/8)){ //checking to see if the width or the height is going to 
@@ -67,7 +68,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
         <View id="Main" style={{backgroundColor: "#793033", height: height, overflow: "hidden", width: (expandedMode) ? (width * 2.5):width, alignItems: "center"}}>
             {/* <View style={{height: height, width: (expandedMode) ? blockLength * 2.5:blockLength, alignItems: "center", position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined}}> */}
                 <Pressable style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? (width * 2.5):width, margin: 0, marginTop: blockLength * 0.4, marginBottom: blockLength * 0.4}]} onPress={() => {onSetExpandedMode(!expandedMode)}}>
-                    <View style={{flexDirection: "row", width: expandedMode ? blockLength * 2.5:blockLength, height: blockLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined}} pointerEvents='none'>
+                    <View style={{flexDirection: "row", width: expandedMode ? blockLength * 2.5:blockLength, height: blockLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined, pointerEvents: 'none'}}>
                         <View style={{position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined}}>
                             <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: blockLength, height:  blockLength}} />
                         </View>
@@ -99,7 +100,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
                 <NavBarBlock des='/profile/government' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Government'} width={width} setIsExpandedMode={() => {onSetExpandedMode(true)}}>
                     <GovernmentIcon width={iconLength} height={iconLength} />
                 </NavBarBlock>
-                <Link to="/profile"  style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? blockLength * 2.5:blockLength, margin: 0, position: "absolute", left: expandedMode ? (width - blockLength)/2:undefined, bottom: height * 0.05}]}>
+                <Pressable onPress={() => {navigation("/profile")}}  style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? blockLength * 2.5:blockLength, margin: 0, position: "absolute", left: expandedMode ? (width - blockLength)/2:undefined, bottom: height * 0.05}]}>
                     <View style={{width: (expandedMode) ? blockLength * 2.5:blockLength, height: iconLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined, flexDirection: "row"}}>
                         { (uri !== "") ?
                             <Image source={{uri: uri}} style={{width: iconLength, height: iconLength, borderRadius: iconLength/2}}/>:
@@ -111,7 +112,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
                             }  
                         </View>   
                     </View>
-                </Link>
+                </Pressable>
             </View>
         {/* </View> */}
     </Pressable>

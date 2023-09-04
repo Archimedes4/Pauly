@@ -63,7 +63,7 @@ export default function GovernmentCreateNewSport() {
       <Link to="/profile/government/sports">
         <Text>Back</Text>
       </Link>
-      <Text>GovernmentCreateNewSport</Text>
+      <Text>Create New Sport</Text>
       <Text>Sport Name</Text>
       <TextInput value={sportName} onChangeText={setSportName}/>
       <Pressable onPress={() => {createSport()}}>

@@ -1,37 +1,20 @@
 import { loadingStateEnum, taskImportanceEnum } from "../types";
 import callMsGraph from "./microsoftAssets";
 
-export default async function getUsersTasks(): Promise<{result: loadingStateEnum, data?: TaskType[]}> {
-    const listResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/todo/lists?$filter=displayName%20eq%20'Tasks'")
-    if (listResult.ok){
-        const listData = await listResult.json()
-        if (listData["value"].length <= 0) {
-            const taskListId = listData["value"][0]["id"]
-            const taskResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/todo/lists/" + taskListId + "/tasks")
-            if (taskResult.ok) {
-                const taskData = await taskResult.json()
-                var resultTasks: TaskType[] = []
-                for (var index = 0; index < taskData["value"].lengh; index++){
-                    resultTasks.push({
-                        name: taskData["value"][index]["title"],
-                        id: taskData["value"][index]["id"],
-                        listId: taskListId,
-                        importance: (taskData["value"][index]["importance"] === "high") ?  taskImportanceEnum.high:(taskData["value"][index]["importance"] === "low") ?  taskImportanceEnum.low:taskImportanceEnum.normal
-                    })
-                }
-                return {result: loadingStateEnum.success, data: resultTasks}
-            } else {
-                return {result: loadingStateEnum.failed}
-            }
-        } else {
-            const listResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/todo/lists")
+export default async function getUsersTasks(): Promise<{result: loadingStateEnum, data?: taskType[]}> {
+    const tasksResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks")
+    if (tasksResult.ok){
+        const taskData = await tasksResult.json()
+        var resultTasks: taskType[] = []
+        for (var index = 0; index < taskData["value"].length; index++){
+            resultTasks.push({
+                name: taskData["value"][index]["title"],
+                id: taskData["value"][index]["id"],
+                importance: (taskData["value"][index]["importance"] === "high") ?  taskImportanceEnum.high:(taskData["value"][index]["importance"] === "low") ?  taskImportanceEnum.low:taskImportanceEnum.normal
+            })
         }
-        console.log(listData)
-        return {result: loadingStateEnum.success}
+        return {result: loadingStateEnum.success, data: resultTasks}
     } else {
-        console.log("Something went wrong")
-        const listData = await listResult.json()
-        console.log(listData)
         return {result: loadingStateEnum.failed}
     }
 }

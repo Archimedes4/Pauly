@@ -1,7 +1,6 @@
 import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import currentEventsReducer from './reducers/currentEventReducer';
-import currentEventsSchoolYearReducer from './reducers/currentEventSchoolYearReducer'
 import currentEventsLastCalledReducer from './reducers/currentEventLastCalledReducer';
 import selectedDateReducer from './reducers/selectedDateReducer';
 import paulyListReducer from './reducers/paulyListReducer';
@@ -13,7 +12,6 @@ import authenticationApiTokenReducer from './reducers/authenticationApiToken';
 const store = configureStore({
   reducer: {
     currentEvents: currentEventsReducer,
-    currentEventsSchoolYear: currentEventsSchoolYearReducer,
     currentEventsLastCalled: currentEventsLastCalledReducer,
     selectedDate: selectedDateReducer,
     paulyList: paulyListReducer,

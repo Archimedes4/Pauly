@@ -36,10 +36,9 @@ export enum commissionTypeEnum {
 }
 
 declare global {
-    type TaskType = {
+    type taskType = {
         name: string
         id: string
-        listId: string
         importance: taskImportanceEnum
     }
 }

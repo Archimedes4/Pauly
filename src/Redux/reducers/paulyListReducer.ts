@@ -11,13 +11,14 @@ declare global {
         sportsSubmissionsListId: string,
         timetablesListId: string,
         resourceListId: string,
+        dressCodeListId: string,
         eventExtensionId: string,
         classExtensionId: string,
         resourceExtensionId: string
     }
 }
 
-const initalState: paulyListType = {siteId: "", commissionListId: "", paulyDataListId: "", scheduleListId: "", sportsListId: "", sportsApprovedSubmissionsListId: "", sportsSubmissionsListId: "", timetablesListId: "", resourceListId: "", eventExtensionId: "", classExtensionId: "", resourceExtensionId: ""}
+const initalState: paulyListType = {siteId: "", commissionListId: "", paulyDataListId: "", scheduleListId: "", sportsListId: "", sportsApprovedSubmissionsListId: "", sportsSubmissionsListId: "", timetablesListId: "", resourceListId: "", eventExtensionId: "", classExtensionId: "", resourceExtensionId: "", dressCodeListId: ""}
 
 export const paulyListSlice = createSlice({
     name: "paulyList",

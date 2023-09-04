@@ -3,7 +3,7 @@ import callMsGraph from "./microsoftAssets"
 import { loadingStateEnum } from "../types"
 
 export default async function getCurrentPaulyData(siteId: string): Promise<{result: loadingStateEnum, data?: {powerpointId: string, message: string, animationSpeed: number}}> {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + store.getState().paulyList.paulyDataListId + "/items/1/fields")//TO DO fix list ids
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + store.getState().paulyList.paulyDataListId + "/items/1/fields")
     if (result.ok){
         const data = await result.json()
         console.log(data)

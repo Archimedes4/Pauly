@@ -17,7 +17,6 @@ export default function GovernmentEditCommission() {
 
     const {id} = useParams()
     async function getCommission() {
-        console.log(id)
         const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + `/items?expand=fields&$filter=fields/commissionID%20eq%20'${id}'`)
         if (result.ok) {
             const data = await result.json()

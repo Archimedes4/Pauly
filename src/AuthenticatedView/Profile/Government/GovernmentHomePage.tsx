@@ -62,7 +62,7 @@ export default function GovernmentHomePage() {
     }, [])
 
     return (
-        <View>
+        <View style={{width: width, height: height, backgroundColor: "white"}}>
             <Link to="/profile/government/">
                 <Text>Back</Text>
             </Link>
@@ -77,10 +77,12 @@ export default function GovernmentHomePage() {
             <MicrosoftFilePicker height={height * 0.6} width={width} onSelectedFile={(selectedFile) => {
                 setSelectedPowerpoint(selectedFile)
             }}/>
-            <Button title='Save Changes' onPress={async () => {
+            <Pressable onPress={async () => {
                 const shareId = await createShareId(selectedPowerpoint)
                 updatePaulyData("powerpointId", shareId)
-            }}/>
+            }}>
+                <Text>Save Changes</Text>
+            </Pressable>
         </View>
     )
 }

@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { Pressable, View, Text, Switch, TextInput, Button } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
-import { currentEventsSchoolYearSlice } from "../../Redux/reducers/currentEventSchoolYearReducer";
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
 import { orgWideGroupID } from "../../PaulyConfig";
 import DatePicker from "../../UI/DateTimePicker/DatePicker";
@@ -17,24 +16,35 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { loadingStateEnum } from "../../types";
 import PickerWrapper from "../../UI/Pickers/Picker";
+import create_UUID from "../../Functions/CreateUUID";
+import SelectSchoolDayData from "./SelectSchoolDayData";
 
 enum reocurringType {
-    daily,
-    weekly,
-    monthly,
-    yearly
+  daily,
+  weekly,
+  monthly,
+  yearly
 }
 
-interface schoolDayDataInteface {
-  schoolDay: schoolDayType
-  schedule: scheduleType
+declare global {
+  type schoolDayDataCompressedType = {
+    schoolDayId: string,
+    scheduleId: string,
+    dressCodeId: string,
+    dressCodeIncentiveId: string
+  }
+  type schoolDayDataType = {
+    schoolDay: schoolDayType,
+    schedule: scheduleType,
+    dressCode: dressCodeDataType,
+    dressCodeIncentive?: dressCodeIncentiveType
+  }
 }
 
 enum paulyEventType {
   regular,
   schoolDay,
   schoolYear,
-  dressCode,
   studentCouncil
 }
 
@@ -43,6 +53,8 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
     const currentEvents = useSelector((state: RootState) => state.currentEvents)
     const {eventExtensionId} = useSelector((state: RootState) => state.paulyList)
     const dispatch = useDispatch()
+
+    const [createEventState, setCreateEventState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
 
     //Calendar
     const [eventName, setEventName] = useState<string>(editing ? editData.name:"")
@@ -59,12 +71,24 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
 
     //School Day
     const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
-    const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<schoolDayDataInteface | undefined>(undefined)
+    const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<schoolDayDataType>({
+      schoolDay: undefined,
+      schedule: undefined,
+      dressCode: undefined,
+      dressCodeIncentive: undefined
+    })
 
     //School Year
     const [selectedTimetable, setSelectedTimetable] = useState<timetableStringType | undefined>(undefined)
 
+    useEffect(() => {
+      if (selectedEventType === paulyEventType.schoolDay || selectedEventType === paulyEventType.schoolYear){
+        setAllDay(true)
+      }
+    }, [selectedEventType])
+
     async function createEvent() {
+      setCreateEventState(loadingStateEnum.loading)
       var data = {
         "subject": eventName,
         "start": {
@@ -95,27 +119,32 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
       if (result.ok){
         const dataOut = await result.json()
         if (selectedEventType === paulyEventType.schoolYear) {
-          const patchData = {
-            eventExtensionId: {
-              "eventType":"schoolYear",
-              "eventData":selectedTimetable.id
-            }
-          }
+          var patchData = {}
+          patchData[eventExtensionId] = {}
+          patchData[eventExtensionId]["eventType"] = "schoolYear"
+          patchData[eventExtensionId]["eventData"] = selectedTimetable.id
           const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
-          const patchOut = await patchResult.json()
-        } else if ((selectedEventType === paulyEventType.schoolDay) && selectedSchoolDayData !== undefined) {
-          const patchData = {
-            eventExtensionId: {
-              "eventType":"schoolDay",
-              "eventData":JSON.stringify(selectedSchoolDayData)
-            }
+          if (patchResult.ok){
+            setCreateEventState(loadingStateEnum.success)
+          } else {
+            setCreateEventState(loadingStateEnum.failed)
           }
-          const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
-          const patchOut = await patchResult.json()
+        } else if (selectedEventType === paulyEventType.schoolDay && selectedSchoolDayData !== undefined) {
+          var patchDataDay = {}
+          patchDataDay[eventExtensionId] = {}
+          patchDataDay[eventExtensionId]["eventType"] = "schoolDay"
+          patchDataDay[eventExtensionId]["eventData"] = JSON.stringify(selectedSchoolDayData)
+          const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchDataDay))
+          if (patchResult.ok){
+            setCreateEventState(loadingStateEnum.success)
+          } else {
+            setCreateEventState(loadingStateEnum.failed)
+          }
+        } else {
+          setCreateEventState(loadingStateEnum.success)
         }
       } else {
-        const dataOut = await result.json()
-        console.log(dataOut)
+        setCreateEventState(loadingStateEnum.failed)
       }
     }
 
@@ -135,7 +164,6 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
           for (var index = 0; index < currentEvents.length; index++){
             outputEvents.push(JSON.stringify(currentEvents[index]))
           }
-          console.log(currentEvents)
           dispatch(currentEventsSlice.actions.setCurrentEvents(outputEvents))
           setIsShowingAddDate(false)
         } else {
@@ -251,16 +279,12 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
               <Text>Regular</Text>
               <Text>School Day </Text>
               <Text>School Year</Text>
-              <Text>Dress code</Text>
               <Text>Student Council</Text>
             </PickerWrapper>
             { (selectedEventType === paulyEventType.schoolDay) ?
               <View style={{width: 100, height: 100}}>
                 <Text>Selected School Year:</Text>
-                { (selectedSchoolYear === undefined) ?
-                  <SchoolYearsSelect width={100} height={100} onSelect={(e) => {setSelectedSchoolYear(e)}}/>:
-                  <SchoolDaySelect width={100} height={100} timetableId={selectedSchoolYear.paulyEventData} onSelect={(day, schedule) => {setSelectedSchoolDayData({schoolDay: day, schedule: schedule})}}/>
-                }
+                  <SelectSchoolDayData width={100} height={100} selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={setSelectedSchoolYear} selectedSchoolDayData={selectedSchoolDayData} setSelectedSchoolDayData={setSelectedSchoolDayData} />:
               </View>:null
             }
             { (selectedEventType === paulyEventType.schoolYear) ?
@@ -270,10 +294,9 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
               </View>:null
             }
             <Pressable onPress={() => {
-              setIsShowingAddDate(false); 
               createEvent()
             }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
-              <Text style={{zIndex: -1}}>{editing ? "Save":"Create"}</Text>
+              <Text style={{zIndex: -1}}>{editing ? "Save":(createEventState === loadingStateEnum.notStarted) ? "Create":(createEventState === loadingStateEnum.loading) ? "Loading":(createEventState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
             </Pressable>
             { editing ? 
               <Pressable onPress={() => {
@@ -287,115 +310,4 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
         }
       </View>
     )
-}
-
-function SchoolDaySelect({width, height, timetableId, onSelect}:{width: number, height: number, timetableId: string, onSelect: (selectedSchoolDay: schoolDayType, selectedSchedule: scheduleType) => void}) {
-  const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const [schoolDays, setSchoolDays] =  useState<schoolDayType[]>([])
-  const [schedules, setSchedules] = useState<scheduleType[]>([])
-  const [isPickingSchoolDay, setIsPickingSchoolDay] = useState<boolean>(true)
-  const [selectedSchoolDay, setSelectedSchoolDay] = useState<schoolDayType | undefined>(undefined)
-  async function loadData() {
-    const result = await getTimetable(timetableId)
-    if (result.result === loadingStateEnum.success && result.timetable !== undefined) {
-      setSchoolDays(result.timetable.days)
-      setSchedules(result.timetable.schedules)
-      setLoadingState(loadingStateEnum.success)
-    } else {
-      setLoadingState(loadingStateEnum.failed)
-    }
-  }
-  useEffect(() => {
-    loadData()
-  }, [])
-  return (
-    <View>
-      { (loadingState === loadingStateEnum.loading) ?
-        <Text>Loading</Text>:
-        <View>
-          {(loadingState === loadingStateEnum.success) ?
-            <View>
-              { isPickingSchoolDay ? 
-                <View>
-                  {schoolDays.map((day) => (
-                    <Pressable onPress={() => {setIsPickingSchoolDay(false); setSelectedSchoolDay(day)}}>
-                      <View>
-                        <Text>{day.name}</Text>
-                      </View>
-                    </Pressable>
-                  ))}
-                </View>:
-                <View>
-                  {schedules.map((schedule) => (
-                    <Pressable onPress={() => {onSelect(selectedSchoolDay, schedule)}}>
-                      <View>
-                        <Text>{schedule.properName}</Text>
-                      </View>
-                    </Pressable>
-                  ))}
-                </View>
-              }
-            </View>:<Text>Failed</Text>
-          }
-        </View>
-      }
-    </View>
-  )
-}
-
-function SchoolYearsSelect({width, height, onSelect}:{width: number, height: number, onSelect: (item: eventType) => void}) {
-  const fullStore = useSelector((state: RootState) => state)
-  const dispatch = useDispatch()
-  const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  async function getData() {
-    const result = await getGraphEvents(true, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=ext9u07b055_paulyEvents,id,start,end,subject")
-    if (result.result === loadingStateEnum.success) {
-      setLoadingState(loadingStateEnum.success)
-      var outputEvents: eventType[] = result.events
-      var url: string = (result.nextLink !== undefined) ? result.nextLink:""
-      var notFound: boolean = (result.nextLink !== undefined) ? true:false
-      while (notFound) {
-        const furtherResult = await getGraphEvents(true, url)
-        if (furtherResult.result === loadingStateEnum.success) {
-          outputEvents = [...outputEvents, ...furtherResult.events]
-          url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
-          notFound = (furtherResult.nextLink !== undefined) ? true:false
-        } else {
-          notFound = false
-        }
-      }
-      var outputEventsString: string[] = []
-      for (var index = 0; index < outputEvents.length; index++) {
-        outputEventsString.push(JSON.stringify(outputEvents[index]))
-      }
-      dispatch(currentEventsSchoolYearSlice.actions.setCurrentEventsSchoolYear(outputEventsString))
-    } else {
-      setLoadingState(loadingStateEnum.failed)
-    }
-  }
-  useEffect(() => {
-    getData()
-  }, [])
-
-  return (
-    <View style={{width: width, height: height, overflow: "scroll"}}>
-      { (loadingState === loadingStateEnum.loading) ?
-        <Text>Loading</Text>:
-        <View>
-          { (loadingState === loadingStateEnum.success) ?
-            <View>
-              { fullStore.currentEventsSchoolYear.map((event) => (
-                <Pressable onPress={() => {onSelect(getEventFromJSON(event)); console.log("Event", getEventFromJSON(event))}}>
-                  <View>
-                    <Text>{getEventFromJSON(event).name}</Text>
-                  </View>
-                </Pressable>
-              ))}
-            </View>:
-            <Text>Failed</Text>
-          }
-        </View>
-      }
-    </View>
-  )
 }

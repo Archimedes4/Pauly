@@ -43,7 +43,7 @@ export default function ProgressView({width, height}:{width: number, height: num
   return (
     <Svg width={width} height={height} viewBox="0 0 16 16" fill="none">
       <G id="SVGRepo_iconCarrier">
-        {paths.map((path, index) => <ChipView d={path} index={index}/>)}
+        {paths.map((path, index) => <ChipView key={"Chip_Key_Holder_" + index} d={path} index={index}/>)}
       </G>
     </Svg>
   )

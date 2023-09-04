@@ -366,6 +366,10 @@ export const dressCodeData = {
       "indexed": true
     },
     {
+      "name":"dressCodeName",
+      "text":{ }
+    },
+    {
       "name":"dressCodeData",
       "text":{"allowMultipleLines": true},
       "required": true

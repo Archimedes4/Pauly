@@ -83,11 +83,11 @@ export default function GovernmentSportsTeamAddPost() {
         }
     }
   return (
-    <View>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
         <Link to="/profile/government/sports">
             <Text>Back</Text>
         </Link>
-        <Text>GovernmentSportsTeamAddPost</Text>
+        <Text>Add Sports Team Post</Text>
         <TextInput value={postName} onChangeText={(e) => {setPostName(e)}}/>
         <View>
             <MicrosoftFilePicker onSelectedFile={(item: microsoftFileType) => {getShareLink(item)}} height={100} width={100} />

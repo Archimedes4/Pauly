@@ -57,7 +57,7 @@ export default function GovernmentSchedule() {
     }
     useEffect(() => {console.log("This", newPeriods)}, [newPeriods])
   return (
-        <View>
+        <View style={{width: width, height: height, backgroundColor: "white"}}>
             <Link to="/profile/government/calendar">
                 <Text>Back</Text>
             </Link>
@@ -91,28 +91,28 @@ export default function GovernmentSchedule() {
 }
 
 function PeriodBlock({period, newPeriods, onSetNewPeriods}:{period: periodType, newPeriods: periodType[], onSetNewPeriods: (item: periodType[]) => void}) {
-    function deleteItem(period: periodType) {
-        var newNewPeriodsArray: periodType[] = newPeriods
-        if (newNewPeriodsArray.length === 1){
-            newNewPeriodsArray.pop()
-            onSetNewPeriods(newNewPeriodsArray)
-        } else {
-            const indexToRemove = newNewPeriodsArray.findIndex((e) => {return e.id === period.id})
-            if (indexToRemove !== -1) {
-                newNewPeriodsArray.splice(indexToRemove, indexToRemove)
-            } else {
-                //TO DO something went wrong this should not be possible though
-            }
-            onSetNewPeriods(newNewPeriodsArray)
-        }
+  function deleteItem(period: periodType) {
+    var newNewPeriodsArray: periodType[] = newPeriods
+    if (newNewPeriodsArray.length === 1){
+      newNewPeriodsArray.pop()
+      onSetNewPeriods(newNewPeriodsArray)
+    } else {
+      const indexToRemove = newNewPeriodsArray.findIndex((e) => {return e.id === period.id})
+      if (indexToRemove !== -1) {
+        newNewPeriodsArray.splice(indexToRemove, indexToRemove)
+      } else {
+        //TO DO something went wrong this should not be possible though
+      }
+      onSetNewPeriods(newNewPeriodsArray)
     }
-    return (
-        <View key={period.id}>
-            <Text>{period.startHour}:{period.startMinute}</Text>
-            <Text>{period.endHour}:{period.endMinute}</Text>
-            <Button title='remove' onPress={() => {
-                deleteItem(period)
-            }}/>
-        </View>
-    )
+  }
+  return (
+    <View key={period.id}>
+      <Text>{period.startHour}:{period.startMinute}</Text>
+      <Text>{period.endHour}:{period.endMinute}</Text>
+      <Button title='remove' onPress={() => {
+        deleteItem(period)
+      }}/>
+    </View>
+  )
 }
