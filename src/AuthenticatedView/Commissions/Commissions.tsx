@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
 import { Link } from 'react-router-native';
-import callMsGraph from '../../Functions/microsoftAssets';
+import callMsGraph from '../../Functions/Ultility/microsoftAssets';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSelector } from 'react-redux';

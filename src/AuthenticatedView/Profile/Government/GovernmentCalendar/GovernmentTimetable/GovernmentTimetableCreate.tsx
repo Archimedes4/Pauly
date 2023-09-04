@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../../../../Functions/microsoftAssets'
-import create_UUID from '../../../../../Functions/CreateUUID';
+import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
+import create_UUID from '../../../../../Functions/Ultility/CreateUUID';
 import { Link } from 'react-router-native';
 import { DownIcon, UpIcon } from '../../../../../UI/Icons/Icons';
 import { loadingStateEnum } from '../../../../../types';

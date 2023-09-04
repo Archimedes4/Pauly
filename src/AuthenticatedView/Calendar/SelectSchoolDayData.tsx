@@ -1,14 +1,11 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { loadingStateEnum } from '../../types'
-import { currentEventsSchoolYearSlice } from '../../Redux/reducers/currentEventSchoolYearReducer'
-import create_UUID from '../../Functions/CreateUUID'
-import { getEventFromJSON } from '../../Functions/calendarFunctions'
-import { getGraphEvents, getTimetable } from '../../Functions/calendarFunctionsGraph'
-import { useDispatch, useSelector } from 'react-redux'
+import create_UUID from '../../Functions/Ultility/CreateUUID'
+import { getGraphEvents, getTimetable } from '../../Functions/Calendar/calendarFunctionsGraph'
+import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
 import { orgWideGroupID } from '../../PaulyConfig'
-import getDressCodeData from '../../Functions/getDressCodeData'
 
 enum pickSchoolDayMode {
   schoolYear,
@@ -72,7 +69,14 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
         }}/>:null
       }
       { (schoolDayMode === pickSchoolDayMode.dressCodeIncentives) ?
-        <DressCodeIncentivesSelect />:null
+        <DressCodeIncentivesSelect dressCodeIncentivesData={timetable.dressCode.dressCodeIncentives} onSelect={(e) => {
+          setSelectedSchoolDayData({
+            schoolDay: selectedSchoolDayData.schoolDay,
+            schedule: selectedSchoolDayData.schedule,
+            dressCode: selectedSchoolDayData.dressCode,
+            dressCodeIncentive: e
+          })
+        }} />:null
       }
     </View>
   )
@@ -184,12 +188,14 @@ function DressCodeSelect({dressCodeData}:{dressCodeData: dressCodeDataType[], on
   )
 }
 
-function DressCodeIncentivesSelect({}:{}) {
+function DressCodeIncentivesSelect({dressCodeIncentivesData}:{dressCodeIncentivesData: dressCodeIncentiveType[], onSelect: (item: dressCodeIncentiveType) => void}) {
   return (
     <View>
-      {
+      {dressCodeIncentivesData.map((incentive) => (
+        <View>
 
-      }
+        </View>
+      ))}
       <Text>None</Text>
     </View>
   )

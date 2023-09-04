@@ -2,8 +2,8 @@ import { View, Text, Dimensions, Image } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { ChevronLeft } from '../../UI/Icons/Icons'
-import callMsGraph from '../../Functions/microsoftAssets'
-import getFileWithShareID from '../../Functions/getFileWithShareID'
+import callMsGraph from '../../Functions/Ultility/microsoftAssets'
+import getFileWithShareID from '../../Functions/Ultility/getFileWithShareID'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useMsal } from '@azure/msal-react'

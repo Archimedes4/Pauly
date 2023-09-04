@@ -52,14 +52,14 @@ import GovernmentClassesCreateRoot from './src/AuthenticatedView/Profile/Governm
 import GovernmentClassesCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesCreate';
 import CommissionsView from './src/AuthenticatedView/Commissions/CommissionsView';
 import GovernmentHomePage from './src/AuthenticatedView/Profile/Government/GovernmentHomePage';
-import callMsGraph from './src/Functions/microsoftAssets';
+import callMsGraph from './src/Functions/Ultility/microsoftAssets';
 import NavBarComponent from './src/UI/NavComponent';
 import GovernmentTimetableCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableCreate';
 import Testing from './src/AuthenticatedView/Profile/Government/Testing';
 import store, { RootState } from './src/Redux/store';
 import PageNotFound from './src/AuthenticatedView/404Page';
 import GovernmentAdmin from './src/AuthenticatedView/Profile/Government/GovernmentAdminCenter/GovernmentAdmin';
-import getPaulyLists from './src/Functions/getPaulyLists';
+import getPaulyLists from './src/Functions/Ultility/getPaulyLists';
 import GovernmentTimetableEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
 import MicrosoftGraphEditGroup from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditGroup';
 import MicrosoftGraphEditExtension from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditExtension';

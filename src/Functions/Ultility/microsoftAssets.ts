@@ -1,5 +1,5 @@
-import { authenticationCallSlice } from "../Redux/reducers/authenticationCallReducer";
-import store from "../Redux/store";
+import { authenticationCallSlice } from "../../Redux/reducers/authenticationCallReducer";
+import store from "../../Redux/store";
 
 export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string): Promise<Response> {
     const headers = new Headers();

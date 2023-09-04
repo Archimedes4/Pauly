@@ -1,6 +1,6 @@
 import { View, Text, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../Functions/microsoftAssets'
+import callMsGraph from '../../Functions/Ultility/microsoftAssets'
 import { useParams } from 'react-router-native';
 import * as Location from 'expo-location';
 import { RootState } from '../../Redux/store';

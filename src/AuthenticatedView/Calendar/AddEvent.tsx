@@ -8,15 +8,15 @@ import DatePicker from "../../UI/DateTimePicker/DatePicker";
 import Dropdown from "../../UI/Dropdown";
 import { CalendarIcon, CloseIcon } from "../../UI/Icons/Icons";
 import TimePicker from "../../UI/DateTimePicker/TimePicker";
-import callMsGraph from "../../Functions/microsoftAssets";
-import { getEventFromJSON } from "../../Functions/calendarFunctions";
-import { getGraphEvents, getTimetable } from "../../Functions/calendarFunctionsGraph";
+import callMsGraph from "../../Functions/Ultility/microsoftAssets";
+import { getEventFromJSON } from "../../Functions/Calendar/calendarFunctions";
+import { getGraphEvents, getTimetable } from "../../Functions/Calendar/calendarFunctionsGraph";
 import SelectTimetable from "./SelectTimetable";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { loadingStateEnum } from "../../types";
 import PickerWrapper from "../../UI/Pickers/Picker";
-import create_UUID from "../../Functions/CreateUUID";
+import create_UUID from "../../Functions/Ultility/CreateUUID";
 import SelectSchoolDayData from "./SelectSchoolDayData";
 
 enum reocurringType {
@@ -137,6 +137,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
           const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchDataDay))
           if (patchResult.ok){
             setCreateEventState(loadingStateEnum.success)
+
           } else {
             setCreateEventState(loadingStateEnum.failed)
           }
@@ -284,7 +285,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
             { (selectedEventType === paulyEventType.schoolDay) ?
               <View style={{width: 100, height: 100}}>
                 <Text>Selected School Year:</Text>
-                  <SelectSchoolDayData width={100} height={100} selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={setSelectedSchoolYear} selectedSchoolDayData={selectedSchoolDayData} setSelectedSchoolDayData={setSelectedSchoolDayData} />:
+                <SelectSchoolDayData width={100} height={100} selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={setSelectedSchoolYear} selectedSchoolDayData={selectedSchoolDayData} setSelectedSchoolDayData={setSelectedSchoolDayData} />
               </View>:null
             }
             { (selectedEventType === paulyEventType.schoolYear) ?

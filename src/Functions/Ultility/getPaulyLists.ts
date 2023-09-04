@@ -1,7 +1,7 @@
 import callMsGraph from "./microsoftAssets";
-import { orgWideGroupID } from "../PaulyConfig";
-import store from "../Redux/store";
-import { paulyListSlice } from "../Redux/reducers/paulyListReducer";
+import { orgWideGroupID } from "../../PaulyConfig";
+import store from "../../Redux/store";
+import { paulyListSlice } from "../../Redux/reducers/paulyListReducer";
 
 export default async function getPaulyLists(authToken?: string) {
     const getRootSiteIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/sites/root", "GET", undefined, undefined, undefined, authToken)

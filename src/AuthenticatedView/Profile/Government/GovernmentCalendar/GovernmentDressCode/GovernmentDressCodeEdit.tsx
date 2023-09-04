@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { RootState } from '../../../../../Redux/store'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-native'
-import callMsGraph from '../../../../../Functions/microsoftAssets'
+import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import { loadingStateEnum } from '../../../../../types'
 import getDressCode from '../../../../../Functions/getDressCode'
 

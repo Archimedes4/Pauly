@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../Functions/microsoftAssets';
+import callMsGraph from '../../Functions/Ultility/microsoftAssets';
 import { Link } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
 import { useSelector } from 'react-redux';

@@ -3,8 +3,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import Slider from '../../../../UI/Slider/Slider';
 import { Link } from 'react-router-native'
 import MapWeb from '../../../../UI/Map/Map.web';
-import callMsGraph from '../../../../Functions/microsoftAssets';
-import create_UUID from '../../../../Functions/CreateUUID';
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import create_UUID from '../../../../Functions/Ultility/CreateUUID';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 import SegmentedPicker from "../../../../UI/Pickers/SegmentedPicker"

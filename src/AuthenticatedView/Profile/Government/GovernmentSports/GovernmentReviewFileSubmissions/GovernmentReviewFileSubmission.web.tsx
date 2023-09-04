@@ -1,8 +1,8 @@
 import { View, Text, Image, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../../../../Functions/microsoftAssets'
+import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import { Link, useParams } from 'react-router-native';
-import getFileWithShareID from '../../../../../Functions/getFileWithShareID';
+import getFileWithShareID from '../../../../../Functions/Ultility/getFileWithShareID';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
 // import Video from 'react-native-video';

@@ -2,7 +2,7 @@ import { View, Text, Button, Pressable, TextInput } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { loadingStateEnum } from '../../../../types';
 import { Link } from 'react-router-native';
-import callMsGraph from '../../../../Functions/microsoftAssets';
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import { initializePaulyPartOne, initializePaulyPartThree, initializePaulyPartTwo } from '../../../../Functions/initializePauly/initializePauly'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';

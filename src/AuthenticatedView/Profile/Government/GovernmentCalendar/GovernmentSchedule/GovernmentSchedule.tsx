@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../../../../Functions/microsoftAssets';
+import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';

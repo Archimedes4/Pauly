@@ -3,7 +3,7 @@ import { Dimensions, View, Text, Image, Pressable } from 'react-native';
 import MonthView from './MonthView';
 import { Link, Navigate, useNavigate } from 'react-router-native';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
-import callMsGraph from '../Functions/microsoftAssets';
+import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';

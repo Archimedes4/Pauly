@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native"
 import { useEffect, useState } from "react"
-import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/calendarFunctions"
+import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/Calendar/calendarFunctions"
 
 
 function MonthBlock({value, width, height, startDate, daySelected, selectedDates}:{value:number, width: number, height: number, startDate: number, daySelected: number, selectedDates: DateProperty[]}) {

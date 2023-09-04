@@ -7,10 +7,10 @@
 import { useEffect, useRef, useState } from "react"
 import {View, ScrollView, useColorScheme, Text} from "react-native"
 import { useSearchParams } from "react-router-native"
-import { getEventFromJSON, isDateToday } from "../../Functions/calendarFunctions"
+import { getEventFromJSON, isDateToday } from "../../Functions/Calendar/calendarFunctions"
 import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
-import create_UUID from "../../Functions/CreateUUID"
+import create_UUID from "../../Functions/Ultility/CreateUUID"
 
 declare global {
     type calendarCourseType = {

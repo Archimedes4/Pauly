@@ -1,6 +1,6 @@
 import { View, Text, Button, Dimensions, ScrollView } from 'react-native'
 import React, {useContext, useEffect, useState} from 'react'
-import callMsGraph from '../../../../Functions/microsoftAssets'
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { Link, useParams } from 'react-router-native';
 import PickerWrapper from '../../../../UI/Pickers/Picker';
 import { loadingStateEnum } from '../../../../types';

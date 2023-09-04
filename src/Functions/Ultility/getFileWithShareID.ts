@@ -1,4 +1,4 @@
-import { dataContentTypeOptions } from "../types";
+import { dataContentTypeOptions } from "../../types";
 import callMsGraph from "./microsoftAssets"
 
 export default async function getFileWithShareID(shareID: string): Promise<{ url: string; contentType: dataContentTypeOptions }> {

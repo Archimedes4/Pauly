@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useState } from 'react'
-import callMsGraph from '../../../../Functions/microsoftAssets'
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { loadingStateEnum } from '../../../../types'
 import { Link, useParams } from 'react-router-native'
 import { RootState } from '../../../../Redux/store'

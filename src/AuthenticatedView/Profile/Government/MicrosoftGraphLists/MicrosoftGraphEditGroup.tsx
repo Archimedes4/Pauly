@@ -1,7 +1,7 @@
 import { View, Text, Dimensions, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-native'
-import callMsGraph from '../../../../Functions/microsoftAssets'
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { CopyIcon } from '../../../../UI/Icons/Icons';
 import * as Clipboard from 'expo-clipboard';
 import { loadingStateEnum } from '../../../../types';

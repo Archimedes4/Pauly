@@ -1,9 +1,9 @@
-import { orgWideGroupID } from "../PaulyConfig";
-import callMsGraph from "./microsoftAssets";
-import { loadingStateEnum } from "../types";
-import store from "../Redux/store";
+import { orgWideGroupID } from "../../PaulyConfig";
+import callMsGraph from "../Ultility/microsoftAssets";
+import { loadingStateEnum } from "../../types";
+import store from "../../Redux/store";
 import { Data } from "@react-google-maps/api";
-import getDressCode from "./getDressCode";
+import getDressCode from "../getDressCode";
 
 //Defaults to org wide events
 export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {

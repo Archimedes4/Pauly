@@ -1,5 +1,5 @@
-import { loadingStateEnum, taskImportanceEnum } from "../types";
-import callMsGraph from "./microsoftAssets";
+import { loadingStateEnum, taskImportanceEnum } from "../../types";
+import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getUsersTasks(): Promise<{result: loadingStateEnum, data?: taskType[]}> {
     const tasksResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks")

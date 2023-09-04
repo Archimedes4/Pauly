@@ -1,7 +1,7 @@
 import { View, Text,Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import DayView from './DayView';
-import create_UUID from '../../Functions/CreateUUID';
+import create_UUID from '../../Functions/Ultility/CreateUUID';
 
 export default function Week({width, height}:{width: number, height: number}) {
   //const pageData = useContext(pageDataContext);

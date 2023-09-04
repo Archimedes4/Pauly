@@ -4,7 +4,7 @@ import { Link } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../../Redux/store'
 import { loadingStateEnum } from '../../../../../types'
-import callMsGraph from '../../../../../Functions/microsoftAssets'
+import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import ListItem from '../../../../../UI/ListItem'
 import getDressCodeData from '../../../../../Functions/getDressCodeData'
 

@@ -1,5 +1,5 @@
-import { loadingStateEnum } from "../types";
-import callMsGraph from "./microsoftAssets";
+import { loadingStateEnum } from "../../types";
+import callMsGraph from "../Ultility/microsoftAssets";
 
 declare global {
     type resourceType = {

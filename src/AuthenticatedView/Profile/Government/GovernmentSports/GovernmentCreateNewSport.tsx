@@ -1,8 +1,8 @@
 import { View, Text, TextInput, Button, Dimensions, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../../../Functions/microsoftAssets'
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { Link } from 'react-router-native';
-import create_UUID from '../../../../Functions/CreateUUID';
+import create_UUID from '../../../../Functions/Ultility/CreateUUID';
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { loadingStateEnum } from '../../../../types';

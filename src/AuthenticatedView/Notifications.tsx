@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, Dimensions, Platform, Pressable } from 'react-native'
-import { getSchoolDayOnSelectedDay } from '../Functions/calendarFunctionsGraph';
+import { getSchoolDayOnSelectedDay } from '../Functions/Calendar/calendarFunctionsGraph';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
-import getCurrentPaulyData from '../Functions/getCurrentPaulyData';
+import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
 import { WebView } from 'react-native-webview';
 import { loadingStateEnum } from '../types';
-import getFileWithShareID from '../Functions/getFileWithShareID';
-import callMsGraph from '../Functions/microsoftAssets';
+import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
+import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import testApi from '../Functions/AzureFunctions/Test';
-import getUsersTasks from '../Functions/getUsersTasks';
+import getUsersTasks from '../Functions/Homepage/getUsersTasks';
 import CommissionClaim from './Commissions/CommissionClaim';
 import ProgressView from '../UI/ProgressView';
-import getInsightData from '../Functions/getInsightData';
+import getInsightData from '../Functions/Homepage/getInsightData';
 
 //Get Messages
 // Last Chat Message Channels Included

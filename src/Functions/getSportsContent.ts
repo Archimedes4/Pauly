@@ -1,7 +1,7 @@
 import store from "../Redux/store"
 import { loadingStateEnum } from "../types"
-import getFileWithShareID from "./getFileWithShareID"
-import callMsGraph from "./microsoftAssets"
+import getFileWithShareID from "./Ultility/getFileWithShareID"
+import callMsGraph from "./Ultility/microsoftAssets"
 
 export default async function getSportsContent(): Promise<{result: loadingStateEnum, sports?: sportPost[]}> {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" +  store.getState().paulyList.sportsApprovedSubmissionsListId + "/items?expand=fields")

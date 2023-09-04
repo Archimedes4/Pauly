@@ -1,12 +1,12 @@
 import { View, Text, Pressable, TextInput, Button } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../../Functions/microsoftAssets';
+import callMsGraph from '../../../Functions/Ultility/microsoftAssets';
 import { Link } from 'react-router-native';
 import MicrosoftFilePicker from '../../../UI/microsoftFilePicker';
 import { useMsal } from '@azure/msal-react';
 import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
-import getCurrentPaulyData from '../../../Functions/getCurrentPaulyData';
+import getCurrentPaulyData from '../../../Functions/Homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../../../types';
 
 export default function GovernmentHomePage() {

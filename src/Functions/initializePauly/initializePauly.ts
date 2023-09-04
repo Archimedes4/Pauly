@@ -1,5 +1,5 @@
 import { loadingStateEnum } from "../../types"
-import callMsGraph from "../microsoftAssets"
+import callMsGraph from "../Ultility/microsoftAssets"
 import { paulyListData, commissionsData, paulyClassExtensionData, paulyDataData, paulyEventExtensionData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData, paulyResourceExtensionData, dressCodeData, paulyUserExtensionData, addDataArray } from "./initializePaulyData"
 
 export async function initializePaulyPartOne(secondUserId: string): Promise<{result: loadingStateEnum, groupId?: string}> {  
