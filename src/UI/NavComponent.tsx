@@ -22,7 +22,7 @@ function NavBarBlock({des, expandedMode, blockLength, children, text, width, set
                         </React.Fragment>
                     </View>
                     { expandedMode ? 
-                        <Text style={{position: "absolute", left: blockLength, color: "white", marginLeft: 8    }}>{text}</Text>:null
+                        <Text style={{position: "absolute", left: blockLength, color: "white", marginLeft: 8}}>{text}</Text>:null
                     }
                 </View>
             </View>
@@ -67,7 +67,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
     <Pressable id={"Pressable"} onHoverIn={() => {onSetExpandedMode(true)}} onHoverOut={() => {onSetExpandedMode(false)}}>
         <View id="Main" style={{backgroundColor: "#793033", height: height, overflow: "hidden", width: (expandedMode) ? (width * 2.5):width, alignItems: "center"}}>
             {/* <View style={{height: height, width: (expandedMode) ? blockLength * 2.5:blockLength, alignItems: "center", position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined}}> */}
-                <Pressable style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? (width * 2.5):width, margin: 0, marginTop: blockLength * 0.4, marginBottom: blockLength * 0.4}]} onPress={() => {onSetExpandedMode(!expandedMode)}}>
+                <Pressable style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? (width * 2.5):width, margin: 0, marginTop: blockLength * 0.4, marginBottom: blockLength * 0.4}]} onPress={() => {onSetExpandedMode(!expandedMode)}} onHoverIn={() => {onSetExpandedMode(true)}}>
                     <View style={{flexDirection: "row", width: expandedMode ? blockLength * 2.5:blockLength, height: blockLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined, pointerEvents: 'none'}}>
                         <View style={{position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined}}>
                             <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: blockLength, height:  blockLength}} />
@@ -100,7 +100,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
                 <NavBarBlock des='/profile/government' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Government'} width={width} setIsExpandedMode={() => {onSetExpandedMode(true)}}>
                     <GovernmentIcon width={iconLength} height={iconLength} />
                 </NavBarBlock>
-                <Pressable onPress={() => {navigation("/profile")}}  style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? blockLength * 2.5:blockLength, margin: 0, position: "absolute", left: expandedMode ? (width - blockLength)/2:undefined, bottom: height * 0.05}]}>
+                <Pressable onHoverIn={() => {onSetExpandedMode(true)}} onPress={() => {navigation("/profile")}}  style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? blockLength * 2.5:blockLength, margin: 0, position: "absolute", left: expandedMode ? (width - blockLength)/2:undefined, bottom: height * 0.05}]}>
                     <View style={{width: (expandedMode) ? blockLength * 2.5:blockLength, height: iconLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined, flexDirection: "row"}}>
                         { (uri !== "") ?
                             <Image source={{uri: uri}} style={{width: iconLength, height: iconLength, borderRadius: iconLength/2}}/>:
@@ -108,7 +108,7 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
                         }
                         <View style={{height: iconLength, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: blockLength - iconLength}}>
                             { expandedMode ?
-                                <Text style={{color: "white", marginLeft: 8}}>{displayName}</Text>:null
+                              <Text style={{color: "white", marginLeft: 8, pointerEvents: "none"}}>{displayName}</Text>:null
                             }  
                         </View>   
                     </View>

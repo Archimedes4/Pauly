@@ -1,5 +1,3 @@
-
-
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 const initalCalendarState: string[] = []

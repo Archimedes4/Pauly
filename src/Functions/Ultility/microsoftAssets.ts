@@ -1,4 +1,3 @@
-import { authenticationCallSlice } from "../../Redux/reducers/authenticationCallReducer";
 import store from "../../Redux/store";
 
 export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string): Promise<Response> {
@@ -32,7 +31,6 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
             //     }
             // }
             // const unsubscribe = store.subscribe(getNewResult)
-            store.dispatch(authenticationCallSlice.actions.setAuthenticationCallIncrement())
             const previousValue: string = store.getState().authenticationToken
             return new Promise((resolve) => {
                 const unsubscribe = store.subscribe(async () => {

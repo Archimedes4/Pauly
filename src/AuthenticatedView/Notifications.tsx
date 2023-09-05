@@ -14,6 +14,7 @@ import getUsersTasks from '../Functions/Homepage/getUsersTasks';
 import CommissionClaim from './Commissions/CommissionClaim';
 import ProgressView from '../UI/ProgressView';
 import getInsightData from '../Functions/Homepage/getInsightData';
+import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -50,6 +51,7 @@ export default function Notifications() {
     if (siteId !== ""){
       //Calendar Data
       const result = await getSchoolDayOnSelectedDay(new Date())
+    
 
 
       //Insights
@@ -117,11 +119,10 @@ export default function Notifications() {
       </View>
       <View style={{shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
         <View style={{margin: 10}}>
-        {userTasks.map((task) => (
-          <View key={"User_Task_" + task.id}>
-            <Text>{task.name}</Text>
-          </View>
-        ))}
+          <Text>Tasks</Text>
+          {userTasks.map((task) => (
+            <TaskItem task={task}/>
+          ))}
         </View>
       </View>
       <View>
@@ -146,4 +147,16 @@ export default function Notifications() {
       </View>
     </View>
   )
+}
+
+function TaskItem({task}:{task: taskType}) {
+  const [checked, setChecked] = useState<boolean>(false)
+  return (
+    <View key={"User_Task_" + task.id} style={{flexDirection: "row"}}>
+      <Pressable onPress={() => {setChecked(!checked)}}>
+        <CustomCheckBox checked={checked} checkMarkColor={'blue'} checkedBorderColor={'black'} unCheckedBorderColor={'black'} checkedBackgroundColor={'white'} unCheckedBackgroundColor={'white'} height={50} width={50} />
+      </Pressable>
+      <Text>{task.name}</Text>
+    </View>
+  ) 
 }

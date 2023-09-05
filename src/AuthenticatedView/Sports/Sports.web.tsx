@@ -7,10 +7,11 @@ import getFileWithShareID from '../../Functions/Ultility/getFileWithShareID'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useMsal } from '@azure/msal-react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
 import { dataContentTypeOptions, loadingStateEnum } from '../../types'
 import getSportsContent from '../../Functions/getSportsContent'
+import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer'
 
 declare global {
   type sportPost = {
@@ -25,6 +26,11 @@ export default function Sports() {
   const {sportsApprovedSubmissionsListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(statusBarColorSlice.actions.setStatusBarColor("#444444"))
+  }, [])
 
   async function loadSportsContent() {
     const result = await getSportsContent()

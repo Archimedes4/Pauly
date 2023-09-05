@@ -76,6 +76,7 @@ import GovernmentDressCodeCreate from './src/AuthenticatedView/Profile/Governmen
 import GovernmentDressCode from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
 import GovernmentDressCodeEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentEditCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentEditCommission';
+import { authenticationRefreshTokenSlice } from './src/Redux/reducers/authenticationRefreshTokenReducer';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -156,8 +157,8 @@ WebBrowser.maybeCompleteAuthSession();
 
 function AppMain() {
   //Dimentions
+  const statusBarColor = useSelector((state: RootState) => state.statusBarColor)
   const [dimensions, setDimensions] = useState({window: windowDimensions, screen: screenDimensions});
-
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
 
   useEffect(() => {
@@ -248,14 +249,9 @@ function AppMain() {
     }
   }
 
-  const discovery = AuthSession.useAutoDiscovery(
-    'https://login.microsoftonline.com/' + tenantId +'/v2.0/',
-  );
+  const discovery = AuthSession.useAutoDiscovery('https://login.microsoftonline.com/' + tenantId +'/v2.0');
 
-  const redirectUri = AuthSession.makeRedirectUri({
-    scheme: "Archimedes4.Pauly",
-    path: 'auth',
-  });
+  const redirectUri = AuthSession.makeRedirectUri({scheme: "Archimedes4.Pauly", path: 'auth'});
 
   // Request
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
@@ -263,6 +259,7 @@ function AppMain() {
       clientId,
       scopes: ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"],
       redirectUri,
+      prompt: AuthSession.Prompt.SelectAccount
     },
     discovery,
   );
@@ -270,6 +267,7 @@ function AppMain() {
   async function getAuthToken() {
     promptAsync().then((codeResponse) => {
       if (request && codeResponse?.type === 'success' && discovery) {
+        console.log(request)
         AuthSession.exchangeCodeAsync(
           {
             clientId,
@@ -283,42 +281,38 @@ function AppMain() {
         ).then((response) => {
           console.log("This is response", response)
           store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
+          if (response.refreshToken !== undefined){
+            store.dispatch(authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(response.refreshToken))
+          }
           getPaulyLists(response.accessToken)
           getUserProfile(response.accessToken)
-        });
+        }).catch(e => {console.log(e)});
       }
     });
   }
 
-  async function refreshAuthToken() {
-    promptAsync().then((codeResponse) => {
-      if (request && codeResponse?.type === 'success' && discovery) {
-        AuthSession.exchangeCodeAsync(
-          {
-            clientId,
-            code: codeResponse.params.code,
-            extraParams: request.codeVerifier
-              ? { code_verifier: request.codeVerifier }
-              : undefined,
-            redirectUri,
-          },
-          discovery,
-        ).then((response) => {
-          store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
-        });
-      }
-    });
-  }
-
-  const callsCount = useSelector((state: RootState) => state.authenticationCall)
-  useEffect(() => {
-    if (callsCount !== 0){
-      refreshAuthToken()
-    }
-  }, [callsCount])
+  // async function refreshAuthToken() {
+  //   promptAsync().then((codeResponse) => {
+  //     if (request && codeResponse?.type === 'success' && discovery) {
+  //       AuthSession.exchangeCodeAsync(
+  //         {
+  //           clientId,
+  //           code: codeResponse.params.code,
+  //           extraParams: request.codeVerifier
+  //             ? { code_verifier: request.codeVerifier }
+  //             : undefined,
+  //           redirectUri,
+  //         },
+  //         discovery,
+  //       ).then((response) => {
+  //         store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
+  //       });
+  //     }
+  //   });
+  // }
 
   return (
-    <View style={{backgroundColor: "#793033"}}>
+    <View style={{backgroundColor: statusBarColor}}>
       <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
         { (result?.type === 'success') ?
           <View>

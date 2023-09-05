@@ -4,8 +4,9 @@ import { Link } from 'react-router-native';
 import callMsGraph from '../../Functions/Ultility/microsoftAssets';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
+import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer';
 
 enum CommissionMode{
   Before,
@@ -18,6 +19,7 @@ export default function Commissions() {
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
+  const dispatch = useDispatch()
 
   async function getCommissions(){
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields")//TO DO list id
@@ -42,6 +44,7 @@ export default function Commissions() {
     }
   }
   useEffect(() => {
+    dispatch(statusBarColorSlice.actions.setStatusBarColor("#444444"))
     getCommissions()
   }, [])
 
