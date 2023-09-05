@@ -30,6 +30,7 @@ export default function GovernmentTimetableCreate() {
   const [timetableName, setTimetableName] = useState<string>("")
   const [selectedSchedules, setSelectedSchedules] = useState<scheduleType[]>([])
   const [dressCodes, setDressCodes] = useState<dressCodeType[]>([])
+  const [selectedDressCode, setSelectedDressCode] = useState<dressCodeType | undefined>(undefined)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   const [schoolDays, setSchoolDays] = useState<schoolDayType[]>([])
   const [newSchoolDayName, setNewSchoolDayName] = useState<string>("")
@@ -58,7 +59,7 @@ export default function GovernmentTimetableCreate() {
           "timetableDataSchedules":JSON.stringify(scheduals),
           "timetableDataDays":JSON.stringify(schoolDays),
           "timetableDefaultScheduleId":selectedDefaultSchedule.id,
-          "timetableDressCodeId":""
+          "timetableDressCodeId":selectedDressCode.id
         }
       }
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + timetablesListId +"/items?expand=fields", "POST", false, JSON.stringify(data))//TO DO fix site id
@@ -202,21 +203,6 @@ export default function GovernmentTimetableCreate() {
           </View>
         ))}
       </View>
-      <Text>Dress Codes</Text>
-      <View>
-        { (dressCodeState === loadingStateEnum.loading) ?
-          <Text>Loading</Text>:
-          <View>
-            { (dressCodeState === loadingStateEnum.success) ?
-              <View>
-                { dressCodes.map((dressCode) => (
-                  <ListItem to={''} title={''} width={0} />
-                ))}
-              </View>:<Text>Failed</Text>
-            }
-          </View>
-        }
-      </View>
       <TextInput value={newSchoolDayName} onChangeText={setNewSchoolDayName} onSubmitEditing={() => {
         if (newSchoolDayName !== ""){
           setSchoolDays([...schoolDays, {name: newSchoolDayName, id: create_UUID(), order: (schoolDays.length === 0) ? 0:schoolDays[schoolDays.length - 1].order + 1}]); setNewSchoolDayName("")
@@ -227,6 +213,21 @@ export default function GovernmentTimetableCreate() {
           setSchoolDays([...schoolDays, {name: newSchoolDayName, id: create_UUID(), order: (schoolDays.length === 0) ? 0:schoolDays[schoolDays.length - 1].order + 1}]); setNewSchoolDayName("")
         }
       }} />
+      <Text>Dress Codes</Text>
+      <View>
+        { (dressCodeState === loadingStateEnum.loading) ?
+          <Text>Loading</Text>:
+          <View>
+            { (dressCodeState === loadingStateEnum.success) ?
+              <View>
+                { dressCodes.map((dressCode) => (
+                  <ListItem title={dressCode.name} width={width * 0.8} onPress={() => {setSelectedDressCode(dressCode)}}/>
+                ))}
+              </View>:<Text>Failed</Text>
+            }
+          </View>
+        }
+      </View>
       <Button title={(createTimetableLoadingState === loadingStateEnum.notStarted) ? "Create Timetable":(createTimetableLoadingState === loadingStateEnum.loading) ? "Loading":(createTimetableLoadingState === loadingStateEnum.success) ? "Success":"Failed"} onPress={() => {if (createTimetableLoadingState === loadingStateEnum.notStarted) {createTimetable()}}}/>
     </View>
   )

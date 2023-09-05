@@ -118,32 +118,49 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", true, JSON.stringify(data))
       if (result.ok){
         const dataOut = await result.json()
+        console.log(dataOut)
         if (selectedEventType === paulyEventType.schoolYear) {
           var patchData = {}
           patchData[eventExtensionId] = {}
           patchData[eventExtensionId]["eventType"] = "schoolYear"
           patchData[eventExtensionId]["eventData"] = selectedTimetable.id
           const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
-          if (patchResult.ok){
-            setCreateEventState(loadingStateEnum.success)
-          } else {
+          if (!patchResult.ok){
             setCreateEventState(loadingStateEnum.failed)
+            return
           }
         } else if (selectedEventType === paulyEventType.schoolDay && selectedSchoolDayData !== undefined) {
+          const selectedSchoolDayDataCompressed: schoolDayDataCompressedType = {
+            schoolDayId: selectedSchoolDayData.schoolDay.id,
+            scheduleId: selectedSchoolDayData.schedule.id,
+            dressCodeId: selectedSchoolDayData.dressCode.id,
+            dressCodeIncentiveId: selectedSchoolDayData.dressCodeIncentive?.id
+          }
           var patchDataDay = {}
           patchDataDay[eventExtensionId] = {}
           patchDataDay[eventExtensionId]["eventType"] = "schoolDay"
-          patchDataDay[eventExtensionId]["eventData"] = JSON.stringify(selectedSchoolDayData)
+          patchDataDay[eventExtensionId]["eventData"] = JSON.stringify(selectedSchoolDayDataCompressed)
           const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchDataDay))
           if (patchResult.ok){
             setCreateEventState(loadingStateEnum.success)
-
           } else {
             setCreateEventState(loadingStateEnum.failed)
+            return
           }
-        } else {
-          setCreateEventState(loadingStateEnum.success)
         }
+        setCreateEventState(loadingStateEnum.success)
+        const resultEvent: eventType = {
+          id: data["id"],
+          name: dataOut["subject"],
+          startTime: new Date(dataOut["start"]["dateTime"]),
+          endTime: new Date(dataOut["end"]["dateTime"]),
+          eventColor: "white",
+          paulyEventType: (selectedEventType === paulyEventType.schoolDay) ? "schoolDay":(selectedEventType === paulyEventType.schoolYear) ? "schoolYear":undefined,
+          paulyEventData: (selectedEventType === paulyEventType.schoolDay) ? JSON.stringify(selectedSchoolDayData):(selectedEventType === paulyEventType.schoolYear) ? selectedTimetable.id:undefined,
+          microsoftEvent: true,
+          microsoftReference: ""
+        }
+        dispatch(currentEventsSlice.actions.pushEvent(JSON.stringify(resultEvent)))
       } else {
         setCreateEventState(loadingStateEnum.failed)
       }

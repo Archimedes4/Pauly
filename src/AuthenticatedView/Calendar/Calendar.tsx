@@ -53,9 +53,7 @@ export default function Calendar() {
   const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [selectedEvent, setSelectedEvent] = useState<eventType | undefined>(undefined)
-  // const fullStore = useSelector((state: RootState) => state)
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
-  const dispatch = useDispatch()
   
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),

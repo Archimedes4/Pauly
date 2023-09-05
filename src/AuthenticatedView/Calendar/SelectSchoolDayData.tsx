@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native'
+import { View, Text, Pressable, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { loadingStateEnum } from '../../types'
 import create_UUID from '../../Functions/Ultility/CreateUUID'
@@ -21,6 +21,7 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
   const [timetable, setTimetable] = useState<timetableType>(undefined)
 
   async function loadData(id: string) {
+    setTimetableState(loadingStateEnum.loading)
     const result = await getTimetable(id)
     if (result.result === loadingStateEnum.success && result.timetable !== undefined) {
       setTimetable(result.timetable)
@@ -31,10 +32,13 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
   }
 
   useEffect(() => {
-    if (selectedSchoolYear !== undefined){
+    if (selectedSchoolYear !== undefined && timetable === undefined){
+      console.log("loading Data")
       loadData(selectedSchoolYear.paulyEventData)
+    } else {
+      console.log("This is a no go", selectedSchoolYear !== undefined, timetable === undefined)
     }
-  }, [])
+  }, [schoolDayMode, selectedSchoolYear])
 
   return (
     <View style={{width: width, height: height}}>
@@ -42,41 +46,41 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
         <SchoolYearsSelect onSelect={(e) => {setSelectedSchoolYear(e); setSchoolDayMode(pickSchoolDayMode.schoolDay)}} />:null
       }
       { (schoolDayMode === pickSchoolDayMode.schoolDay) ?
-        <SchoolDaySelect width={width} height={height} schoolDays={timetable.days} loadingState={timetableState} onSelect={(e) => {
+        <SchoolDaySelect width={width} height={height} schoolDays={timetable?.days} loadingState={timetableState} onSelect={(e) => {
           setSelectedSchoolDayData({
             schoolDay: e,
             schedule: selectedSchoolDayData.schedule,
             dressCode: selectedSchoolDayData.dressCode
           }); setSchoolDayMode(pickSchoolDayMode.schedule)
-        }} />:null
+        }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.schoolYear)}}/>:null
       }
       { (schoolDayMode === pickSchoolDayMode.schedule) ?
-        <ScheduleSelect schedules={timetable.schedules} onSelect={(e) => {
+        <ScheduleSelect schedules={timetable?.schedules} onSelect={(e) => {
           setSelectedSchoolDayData({
             schoolDay: selectedSchoolDayData.schoolDay,
             schedule: e,
             dressCode: selectedSchoolDayData.dressCode
           }); setSchoolDayMode(pickSchoolDayMode.dressCode)
-        }} />:null
+        }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.schoolDay)}}/>:null
       }
       { (schoolDayMode === pickSchoolDayMode.dressCode) ?
-        <DressCodeSelect dressCodeData={timetable.dressCode.dressCodeData} onSelect={(e) => {
+        <DressCodeSelect dressCodeData={timetable?.dressCode.dressCodeData} onSelect={(e) => {
           setSelectedSchoolDayData({
             schoolDay: selectedSchoolDayData.schoolDay,
             schedule: selectedSchoolDayData.schedule,
             dressCode: e
           }); setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives)
-        }}/>:null
+        }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.schedule)}}/>:null
       }
       { (schoolDayMode === pickSchoolDayMode.dressCodeIncentives) ?
-        <DressCodeIncentivesSelect dressCodeIncentivesData={timetable.dressCode.dressCodeIncentives} onSelect={(e) => {
+        <DressCodeIncentivesSelect dressCodeIncentivesData={timetable?.dressCode.dressCodeIncentives} onSelect={(e) => {
           setSelectedSchoolDayData({
             schoolDay: selectedSchoolDayData.schoolDay,
             schedule: selectedSchoolDayData.schedule,
             dressCode: selectedSchoolDayData.dressCode,
             dressCodeIncentive: e
           })
-        }} />:null
+        }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.dressCode)}}/>:null
       }
     </View>
   )
@@ -114,7 +118,8 @@ function SchoolYearsSelect({onSelect}:{onSelect: (item: eventType) => void}) {
     }, [])
   
     return (
-      <View style={{overflow: "scroll"}}>
+      <View>
+        <ScrollView>
         { (loadingState === loadingStateEnum.loading) ?
           <Text>Loading</Text>:
           <View>
@@ -132,13 +137,18 @@ function SchoolYearsSelect({onSelect}:{onSelect: (item: eventType) => void}) {
             }
           </View>
         }
+        </ScrollView>
       </View>
     )
 }
 
-function SchoolDaySelect({width, height, schoolDays, loadingState, onSelect}:{width: number, height: number, schoolDays: schoolDayType[] | undefined, loadingState: loadingStateEnum,  onSelect: (item: schoolDayType) => void}) {
+function SchoolDaySelect({width, height, schoolDays, loadingState, onSelect, onBack}:{width: number, height: number, schoolDays: schoolDayType[] | undefined, loadingState: loadingStateEnum,  onSelect: (item: schoolDayType) => void, onBack: () => void}) {
     return (
-      <View style={{width: width, height: height}}>
+      <View>
+        <Pressable onPress={() => {onBack()}}>
+          <Text>Back</Text>
+        </Pressable>
+        <ScrollView style={{width: width, height: height}}>
         { (loadingState === loadingStateEnum.loading) ?
           <Text>Loading</Text>:
           <View>
@@ -155,11 +165,12 @@ function SchoolDaySelect({width, height, schoolDays, loadingState, onSelect}:{wi
             }
           </View>
         }
+        </ScrollView>
       </View>
     )
 }
 
-function ScheduleSelect({schedules, onSelect}:{schedules: scheduleType[] | undefined, onSelect: (item: scheduleType) => void}) {
+function ScheduleSelect({schedules, onSelect}:{schedules: scheduleType[] | undefined, onSelect: (item: scheduleType) => void, onBack: () => void}) {
   return (
     <View>
       {schedules.map((schedule) => (
@@ -173,14 +184,14 @@ function ScheduleSelect({schedules, onSelect}:{schedules: scheduleType[] | undef
   )
 }
 
-function DressCodeSelect({dressCodeData}:{dressCodeData: dressCodeDataType[], onSelect: (item: dressCodeDataType) => void}) {
+function DressCodeSelect({dressCodeData, onSelect}:{dressCodeData: dressCodeDataType[], onSelect: (item: dressCodeDataType) => void, onBack: () => void}) {
   return (
     <View>
       <Pressable>
         <Text>Back</Text>
       </Pressable>
       {dressCodeData.map((data) => (
-        <Pressable>
+        <Pressable onPress={() => {onSelect(data)}}>
           <Text>{data.name}</Text>
         </Pressable>
       ))}
@@ -188,12 +199,12 @@ function DressCodeSelect({dressCodeData}:{dressCodeData: dressCodeDataType[], on
   )
 }
 
-function DressCodeIncentivesSelect({dressCodeIncentivesData}:{dressCodeIncentivesData: dressCodeIncentiveType[], onSelect: (item: dressCodeIncentiveType) => void}) {
+function DressCodeIncentivesSelect({dressCodeIncentivesData}:{dressCodeIncentivesData: dressCodeIncentiveType[], onSelect: (item: dressCodeIncentiveType) => void, onBack: () => void}) {
   return (
     <View>
       {dressCodeIncentivesData.map((incentive) => (
         <View>
-
+          <Text>{incentive.name}</Text>
         </View>
       ))}
       <Text>None</Text>

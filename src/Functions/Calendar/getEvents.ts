@@ -8,7 +8,7 @@ export default async function getEvents() {
   const selectedDateOut = new Date(JSON.parse(store.getState().selectedDate))
   const startDate = new Date(selectedDateOut.getFullYear(), selectedDateOut.getMonth(), 1)
   const endDate = new Date(selectedDateOut.getFullYear(), selectedDateOut.getMonth() + 1, 0)
-  //PersonalCalendar
+  //Personal Calendar
   var outputEvents: eventType[] = []
   const personalCalendarResult = await getGraphEvents(false, "https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=" + startDate.toISOString() +"&endDateTime=" + endDate.toISOString(), "https://graph.microsoft.com/v1.0/me/events/")
   if (personalCalendarResult.result === loadingStateEnum.success){
@@ -36,7 +36,6 @@ export default async function getEvents() {
     var notFound: boolean = (orgEventsResult.nextLink !== undefined) ? true:false
     while (notFound) {
       const furtherResult = await getGraphEvents(false, url, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/")
-      console.log(furtherResult)
       if (furtherResult.result === loadingStateEnum.success) {
         outputEvents = [...outputEvents, ...furtherResult.events]
         url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""

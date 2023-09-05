@@ -6,7 +6,7 @@ import { Data } from "@react-google-maps/api";
 import getDressCode from "../getDressCode";
 
 //Defaults to org wide events
-export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
+export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
   const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=" + store.getState().paulyList.eventExtensionId, "GET", true)
   if (result.ok){
     const data = await result.json()
@@ -78,9 +78,7 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
 export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
   const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
   if (result.ok) {
-    console.log(result)
     const data = await result.json()
-    console.log(data)
     if (data["value"].length !== undefined){
       if (data["value"].length === 1) {
         try {
@@ -94,7 +92,7 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
               return {result: loadingStateEnum.failed}
             }
           }
-          const dressCodeResult = await getDressCode(data["value"][0]["fields"]["timetableId"])
+          const dressCodeResult = await getDressCode(data["value"][0]["fields"]["timetableDressCodeId"])
           if (dressCodeResult.result === loadingStateEnum.success && dressCodeResult.data !== undefined){
             const resultingTimetable: timetableType = {
               name: data["value"][0]["fields"]["timetableName"],
@@ -117,8 +115,6 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
       return {result: loadingStateEnum.failed}
     }
   } else {
-    const data = await result.json()
-    console.log(data)
     return {result: loadingStateEnum.failed}
   }
 }
@@ -130,7 +126,6 @@ export async function getSchoolDayOnSelectedDay(selectedDate: Date): Promise<{ r
   const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$filter=start/dateTime%20eq%20'" + startDate + "'%20and%20end/dateTime%20eq%20'" + endDate + "'&$select=" + eventExtensionId, "GET", true)
   if (result.ok) {
     const data = await result.json()
-    console.log(data)
     for(var index = 0; index < data["value"].length; index++){
       if (data["value"][index][eventExtensionId] !== undefined) {
         const event: eventType = {

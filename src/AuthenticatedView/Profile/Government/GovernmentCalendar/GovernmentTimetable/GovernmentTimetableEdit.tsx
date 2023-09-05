@@ -11,7 +11,7 @@ export default function GovernmentTimetableEdit() {
       <Link to="/profile/government/calendar/timetable">
         <Text>Back</Text>
       </Link>
-      <Text>GovernmentTimetableEdit</Text>
+      <Text>Edit Timetable</Text>
     </View>
   )
 }

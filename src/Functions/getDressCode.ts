@@ -3,10 +3,10 @@ import { loadingStateEnum } from "../types";
 import callMsGraph from "./Ultility/microsoftAssets";
 
 export default async function getDressCode(dressCodeId: string): Promise<{result: loadingStateEnum, data?: dressCodeType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.dressCodeListId + `/items?expand=fields&$filter=fields/dressCodeId%20eq%20'${dressCodeId}'`)
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.dressCodeListId + `/items?expand=fields&$filter=fields/dressCodeId%20eq%20'${dressCodeId}'`)//&$filter=fields/dressCodeId%20eq%20'${dressCodeId}'
   if (result.ok) {
     const data = await result.json()
-    if (data["value"].length !== 1){ 
+    if (data["value"].length !== 1){
       return {result: loadingStateEnum.failed}
     }
 
@@ -19,7 +19,7 @@ export default async function getDressCode(dressCodeId: string): Promise<{result
         dressCodeData: dressCodeData,
         dressCodeIncentives: dressCodeIncentivesData
       }}
-    } catch {
+    } catch (e) {
       return {result: loadingStateEnum.failed}
     }
   } else {
