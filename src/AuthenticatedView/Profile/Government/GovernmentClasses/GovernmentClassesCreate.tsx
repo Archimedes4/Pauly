@@ -5,25 +5,31 @@ import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 
 declare global {
-    type microsoftUserType = {
-        id: string
-        displayName: string
-    }
+  type microsoftUserType = {
+    id: string
+    displayName: string
+  }
 }
 
 export default function GovernmentClassesCreate() {
-  const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
-
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  async function getClasses() {
+    const result = await callMsGraph("")
+  }
+  async function createClass() {
+    
+  }
   return (
-    <View>
-        <Text>GovernmentClassesCreate</Text>
-        <View>
-            <Text>Teacher:</Text>
-            <Text>Name:</Text>
-            <Text>School Year:</Text>
-            <Text>Periods:</Text>
-            <Text>Semester:</Text>
-        </View>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
+      <Text>Add Class Data</Text>
+      <View>
+        <Text>_Teacher:</Text>
+        <Text>Name:</Text>
+        <Text>School Year Event Id:</Text>
+        <Text>Periods: number[]</Text>
+        <Text>Semester Id: string</Text>
+        <Text>Room Id: string</Text>
+      </View>
     </View>
   )
 }

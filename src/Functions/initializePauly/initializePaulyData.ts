@@ -55,6 +55,11 @@ export const paulyListData = {
       "required":true
     },
     {
+      "name":"roomListId",
+      "text":{},
+      "required":true
+    },
+    {
       "name":"classExtensionId",
       "text":{},
       "required": true
@@ -384,6 +389,25 @@ export const dressCodeData = {
     "template": "genericList"
   }
 }
+export const roomData = {
+  "displayName": "Rooms",
+  "columns": [
+    {
+      "name":"roomId",
+      "text":{ },
+      "required": true,
+      "indexed": true
+    },
+    {
+      "name":"roomName",
+      "text":{ },
+      "required": true
+    }
+  ],
+  "list": {
+    "template": "genericList"
+  }
+}
 
 //Extensions
 export const paulyEventExtensionData = {
@@ -414,15 +438,23 @@ export const paulyClassExtensionData = {
   "owner":clientId,
   "properties": [
     {
-      "name":"className",
+      "name":"className",//This property will be optional in the future
       "type":"String"
     },
     {
-      "name":"teacherId",
+      "name":"teacherId",//TO DO This property will be removed in the future when class data added
       "type":"String"
     },
     {
       "name":"schoolYearEventId",
+      "type":"String"
+    },
+    {
+      "name":"semesterId",
+      "type":"String"
+    },
+    {
+      "name":"roomId",
       "type":"String"
     },
     {
@@ -546,5 +578,11 @@ export const addDataArray: addDataType[] = [
     urlOne: "https://graph.microsoft.com/v1.0/sites/",
     urlTwo:  "/lists",
     id: "dressCodeListId"
+  },
+  {
+    data: roomData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "roomListId"
   }
 ]

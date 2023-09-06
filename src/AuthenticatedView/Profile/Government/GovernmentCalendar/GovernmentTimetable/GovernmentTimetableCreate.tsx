@@ -17,7 +17,7 @@ declare global {
     order: number     
   }
 }
-
+//TO DO longest amount of school days is 20 make sure this is enforced
 export default function GovernmentTimetableCreate() {
   const {timetablesListId, scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {width, height} = useSelector((state: RootState) => state.dimentions)

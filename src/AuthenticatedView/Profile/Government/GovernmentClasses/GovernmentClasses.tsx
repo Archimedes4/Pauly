@@ -1,20 +1,26 @@
-import { View, Text, Button } from 'react-native'
+import { View, Text, Button, Pressable } from 'react-native'
 import React from 'react'
-import { Link } from 'react-router-native'
+import { Link, useNavigate } from 'react-router-native'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../../Redux/store'
 
 export default function GovernmentClasses() {
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const navigate = useNavigate();
   return (
-    <View>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
       <Link to="/profile/government/">
         <Text>Back</Text>
       </Link>
-        <Text>GovernmentClasses</Text>
-        <Link to="/profile/government/classes/root/create/">
-            <Text>Create Root Class</Text>
-        </Link>
-        <Link to="/profile/government/classes/main/create/">
+        <Text>Classes</Text>
+        <Link to="/profile/government/classes/create">
           <Text>Create Class</Text>
         </Link>
+        <Pressable onPress={() => {
+          navigate("/profile/government/classes/room")
+        }}>
+          <Text>Rooms</Text>
+        </Pressable>
         <Button title="Import Classes" onPress={() => {}} />
     </View>
   )

@@ -40,7 +40,6 @@ import GovernmentCreateNewTeam from './src/AuthenticatedView/Profile/Government/
 import GovernmentSportsTeams from './src/AuthenticatedView/Profile/Government/GovernmentSports/GovernmentSportsTeams';
 import GovernmentSportTeamEdit from './src/AuthenticatedView/Profile/Government/GovernmentSports/GovernmentSportTeamEdit';
 import GovernmentSportsTeamAddPost from './src/AuthenticatedView/Profile/Government/GovernmentSports/GovernmentSportsTeamAddPost';
-import MicrosoftGraphEditList from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditList';
 import GovernmentReviewFileSubmission from './src/AuthenticatedView/Profile/Government/GovernmentSports/GovernmentReviewFileSubmissions/GovernmentReviewFileSubmission';
 import GovernmentCalendar from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentCalendar';
 import GovernmentSchedual from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentSchedule';
@@ -48,7 +47,6 @@ import GovernmentTimetable from './src/AuthenticatedView/Profile/Government/Gove
 import GovernmentScheduleCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleCreate';
 import GovernmentScheduleEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleEdit';
 import GovernmentClasses from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClasses';
-import GovernmentClassesCreateRoot from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesCreateRoot';
 import GovernmentClassesCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesCreate';
 import CommissionsView from './src/AuthenticatedView/Commissions/CommissionsView';
 import GovernmentHomePage from './src/AuthenticatedView/Profile/Government/GovernmentHomePage';
@@ -77,6 +75,8 @@ import GovernmentDressCode from './src/AuthenticatedView/Profile/Government/Gove
 import GovernmentDressCodeEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentEditCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentEditCommission';
 import { authenticationRefreshTokenSlice } from './src/Redux/reducers/authenticationRefreshTokenReducer';
+import GovernmentRooms from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentRooms';
+import GovernmentRoomsCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovermentRoomsCreate'
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -120,8 +120,9 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/government/commissions/edit/:id" element={<GovernmentEditCommission/>}/>
                   <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />
                   <Route path="/profile/government/classes" element={<GovernmentClasses />} />
-                  <Route path="/profile/government/classes/main/create" element={<GovernmentClassesCreate />} />
-                  <Route path="/profile/government/classes/root/create" element={<GovernmentClassesCreateRoot />} />
+                  <Route path="/profile/government/classes/create" element={<GovernmentClassesCreate />} />
+                  <Route path="/profile/government/classes/room" element={<GovernmentRooms />} />
+                  <Route path="/profile/government/classes/room/create" element={<GovernmentRoomsCreate />} />
                   <Route path="/profile/government/calendar" element={<GovernmentCalendar />} />
                   <Route path="/profile/government/calendar/schedule" element={<GovernmentSchedual />} />
                   <Route path="/profile/government/calendar/schedule/create" element={<GovernmentScheduleCreate />} />
