@@ -14,17 +14,17 @@ import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer';
 import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../types';
 declare global {
-    type DateProperty = {
-        Date: number
-        ColorName?: string
-        SchoolDay?: string
-        Value?: number
-    }
+  type DateProperty = {
+    Date: number
+    ColorName?: string
+    SchoolDay?: string
+    Value?: number
+  }
 }
 
 export default function HomePage() {
   const navigate = useNavigate()
-  const {paulyDataListId, siteId} = useSelector((state: RootState) => state.paulyList)
+  const {siteId} = useSelector((state: RootState) => state.paulyList)
   const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [messageText, setMessageText] = useState("")
@@ -50,9 +50,9 @@ export default function HomePage() {
   }, [authenticationToken])
 
   useEffect(() => {
-      if (currentBreakPoint > 0){
-          navigate("/notifications")
-      }
+    if (currentBreakPoint > 0){
+      navigate("/notifications")
+    }
   }, [currentBreakPoint])
 
   // Font

@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../Functions/Ultility/microsoftAssets';
-import { Link } from 'react-router-native';
+import { Link, useNavigate } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
@@ -10,9 +10,7 @@ import { loadingStateEnum } from '../../types';
 declare global {
     type timetableStringType = {
       name: string,
-      id: string,
-      schedules: string[],
-      days: string[]
+      id: string
     }
     type timetableType = {
       name: string,
@@ -27,6 +25,7 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
   const {timetablesListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedTimetables, setLoadedTimetables] = useState<timetableStringType[]>([])
+  const navigate = useNavigate()
   async function getTimetables() {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + timetablesListId + "/items?expand=fields")
     if (result.ok){
@@ -37,9 +36,7 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
           try {
             newLoadedTimetables.push({
               name: dataResult["value"][index]["fields"]["timetableName"],
-              id: dataResult["value"][index]["fields"]["timetableId"],
-              schedules: JSON.parse(dataResult["value"][index]["fields"]["timetableDataSchedules"]),
-              days: JSON.parse(dataResult["value"][index]["fields"]["timetableDataDays"])
+              id: dataResult["value"][index]["fields"]["timetableId"]
             })
           } catch (e) {
             console.log("Error", e)
@@ -63,21 +60,17 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
       }
       { (loadingState === loadingStateEnum.success) ?
         <View>
-          { loadedTimetables.map((timetables) => (
-            <>
-                { governmentMode ?
-                    <Link to={"/profile/government/calendar/timetable/edit/" + timetables.id}>
-                        <View>
-                            <Text>{timetables.name}</Text>
-                        </View>
-                    </Link>:
-                    <Pressable onPress={() => {onSelect(timetables)}}>
-                        <View>
-                            <Text>{timetables.name}</Text>
-                        </View>
-                    </Pressable>
-                }
-            </>
+          { loadedTimetables.map((timetable) => (
+            <Pressable key={"Timetable_"+timetable.id} onPress={() => {
+              if (governmentMode){
+                navigate("/profile/government/calendar/timetable/edit/" + timetable.id)
+              } else {
+                onSelect(timetable)
+              }}}>
+              <View>
+                <Text>{timetable.name}</Text>
+              </View>
+            </Pressable>
           ))
           }
         </View>:null

@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import create_UUID from '../../../../../Functions/Ultility/CreateUUID';
 import { Link } from 'react-router-native';
-import { DownIcon, UpIcon } from '../../../../../UI/Icons/Icons';
+import { DownIcon, UpIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
 import { loadingStateEnum } from '../../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
@@ -12,6 +12,7 @@ import ListItem from '../../../../../UI/ListItem';
 declare global {
   type schoolDayType = {
     name: string,
+    shorthand: string
     id: string,
     order: number     
   }
@@ -33,7 +34,6 @@ export default function GovernmentTimetableCreate() {
   const [selectedDressCode, setSelectedDressCode] = useState<dressCodeType | undefined>(undefined)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   const [schoolDays, setSchoolDays] = useState<schoolDayType[]>([])
-  const [newSchoolDayName, setNewSchoolDayName] = useState<string>("")
   const [selectedDefaultSchedule, setSelectedDefaultSchedule] = useState<scheduleType | undefined>(undefined)
   async function createTimetable() {
     if (selectedDefaultSchedule !== undefined){
@@ -116,7 +116,7 @@ export default function GovernmentTimetableCreate() {
         <Text>Back</Text>
       </Link>
       <Text>Create Timetable</Text>
-      <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}}/>
+      <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}} placeholder='Timetable Name'/>
       <Text>Scheduals</Text>
       <Text>Selected Schedules</Text>
       <View style={{height: height * 0.4, overflow: "scroll"}}>
@@ -131,7 +131,9 @@ export default function GovernmentTimetableCreate() {
         </View>
       ))}
       </View>
-      <Text>Other Schedules</Text>
+      <View style={{alignItems: "center"}}>
+        <Text>Other Schedules</Text>
+      </View>
       <View style={{height: height * 0.4, overflow: "scroll"}}>
         { (scheduleState === loadingStateEnum.loading) ?
           <Text>Loading</Text>:null
@@ -164,55 +166,7 @@ export default function GovernmentTimetableCreate() {
           </View>:null
         }
       </View>
-      <Text>School Days</Text>
-      <View style={{height: height * 0.2}}>
-        {schoolDays.map((item, index) => (
-          <View style={{flexDirection: "row"}}>
-            <Text>{item.name}</Text>
-            {(item.order !== 0) ? 
-            <Pressable onPress={() => {
-              var newSchoolDays = schoolDays
-              newSchoolDays[index].order = newSchoolDays[index].order - 1
-              newSchoolDays[index - 1].order = newSchoolDays[index - 1].order + 1
-              const saveCurrent = newSchoolDays[index]
-              newSchoolDays[index] = newSchoolDays[index - 1]
-              newSchoolDays[index - 1] = saveCurrent
-              setSchoolDays(newSchoolDays)
-            }}>
-              <UpIcon width={10} height={10}/>
-            </Pressable>:null}
-            {((item.order + 1) < schoolDays.length) ? 
-            <Pressable onPress={() => {
-              var newSchoolDays = schoolDays
-              newSchoolDays[index].order = newSchoolDays[index].order + 1
-              newSchoolDays[index + 1].order = newSchoolDays[index + 1].order - 1
-              const saveCurrent = newSchoolDays[index]
-              newSchoolDays[index] = newSchoolDays[index + 1]
-              newSchoolDays[index + 1] = saveCurrent
-              setSchoolDays(newSchoolDays)
-            }}>
-              <DownIcon width={10} height={10} />
-            </Pressable>:null}
-            <Pressable onPress={() => {
-              var newSchoolDays = schoolDays
-              newSchoolDays.splice(index, 1)
-              setSchoolDays(newSchoolDays)
-            }}>
-              <Text>X</Text>
-            </Pressable>
-          </View>
-        ))}
-      </View>
-      <TextInput value={newSchoolDayName} onChangeText={setNewSchoolDayName} onSubmitEditing={() => {
-        if (newSchoolDayName !== ""){
-          setSchoolDays([...schoolDays, {name: newSchoolDayName, id: create_UUID(), order: (schoolDays.length === 0) ? 0:schoolDays[schoolDays.length - 1].order + 1}]); setNewSchoolDayName("")
-        }
-      }}/>
-      <Button title='Add' onPress={() => {
-        if (newSchoolDayName !== ""){
-          setSchoolDays([...schoolDays, {name: newSchoolDayName, id: create_UUID(), order: (schoolDays.length === 0) ? 0:schoolDays[schoolDays.length - 1].order + 1}]); setNewSchoolDayName("")
-        }
-      }} />
+      <SchoolDays height={height} schoolDays={schoolDays} setSchoolDays={setSchoolDays} />
       <Text>Dress Codes</Text>
       <View>
         { (dressCodeState === loadingStateEnum.loading) ?
@@ -230,5 +184,90 @@ export default function GovernmentTimetableCreate() {
       </View>
       <Button title={(createTimetableLoadingState === loadingStateEnum.notStarted) ? "Create Timetable":(createTimetableLoadingState === loadingStateEnum.loading) ? "Loading":(createTimetableLoadingState === loadingStateEnum.success) ? "Success":"Failed"} onPress={() => {if (createTimetableLoadingState === loadingStateEnum.notStarted) {createTimetable()}}}/>
     </View>
+  )
+}
+
+function SchoolDays({height, schoolDays, setSchoolDays}:{height: number, schoolDays: schoolDayType[], setSchoolDays: (item: schoolDayType[]) => void}) {
+  return (
+    <View>
+      <Text>School Days</Text>
+      <View style={{height: height * 0.2}}>
+        {schoolDays.map((item, index) => (
+          <SchoolDayItem item={item} index={index} schoolDays={schoolDays} setSchoolDays={setSchoolDays}/>
+        ))}
+      </View>
+      <Button title='Add' onPress={() => {
+        setSchoolDays([...schoolDays, {name: "", shorthand: "", id: create_UUID(), order: (schoolDays.length === 0) ? 0:schoolDays[schoolDays.length - 1].order + 1}])
+      }} />
+    </View>
+  )
+}
+
+function SchoolDayItem({item, index, schoolDays, setSchoolDays}:{item: schoolDayType, index: number, schoolDays: schoolDayType[], setSchoolDays: (item: schoolDayType[]) => void}) {
+  const [selected, setSelected] = useState<boolean>(false)
+  return (
+    <Pressable style={{flexDirection: "row"}} onHoverIn={() => {setSelected(true)}} onHoverOut={() => {setSelected(false)}}>
+      <View style={{margin: 10}}>
+        <View style={{marginRight: "auto"}}>
+          <View style={{flexDirection: "row"}}>
+            { (item.name === "") ?
+              <WarningIcon width={14} height={14} outlineColor='red'/>:null
+            }
+            <Text>Name: </Text>
+            { selected ?
+              <TextInput value={item.name} onChangeText={(e) => {
+                var newSchoolDays = schoolDays
+                newSchoolDays[index].name = e
+                setSchoolDays([...newSchoolDays])
+              }}/>:<Text>{item.name}</Text>
+            }
+          </View>
+          <View style={{flexDirection: "row"}}>
+            { (item.shorthand === "") ?
+              <WarningIcon width={14} height={14} outlineColor='red'/>:null
+            }
+            <Text>Shorthand: </Text>
+            { selected ?
+              <TextInput maxLength={1} value={item.shorthand} onChangeText={(e) => {
+                var newSchoolDays = schoolDays
+                newSchoolDays[index].shorthand = e
+                setSchoolDays([...newSchoolDays])
+              }}/>:<Text>{item.shorthand}</Text>
+            }
+          </View>
+        </View>
+        {(item.order !== 0) ? 
+        <Pressable onPress={() => {
+          var newSchoolDays = schoolDays
+          newSchoolDays[index].order = newSchoolDays[index].order - 1
+          newSchoolDays[index - 1].order = newSchoolDays[index - 1].order + 1
+          const saveCurrent = newSchoolDays[index]
+          newSchoolDays[index] = newSchoolDays[index - 1]
+          newSchoolDays[index - 1] = saveCurrent
+          setSchoolDays([...newSchoolDays])
+        }}>
+          <UpIcon width={10} height={10}/>
+        </Pressable>:null}
+        {((item.order + 1) < schoolDays.length) ? 
+        <Pressable onPress={() => {
+          var newSchoolDays = schoolDays
+          newSchoolDays[index].order = newSchoolDays[index].order + 1
+          newSchoolDays[index + 1].order = newSchoolDays[index + 1].order - 1
+          const saveCurrent = newSchoolDays[index]
+          newSchoolDays[index] = newSchoolDays[index + 1]
+          newSchoolDays[index + 1] = saveCurrent
+          setSchoolDays([...newSchoolDays])
+        }}>
+          <DownIcon width={10} height={10} />
+        </Pressable>:null}
+        <Pressable onPress={() => {
+          var newSchoolDays = schoolDays
+          newSchoolDays.splice(index, 1)
+          setSchoolDays([...newSchoolDays])
+        }}>
+          <Text>X</Text>
+        </Pressable>
+      </View>
+    </Pressable>
   )
 }

@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalStateTaskDeltaLink: string = JSON.stringify(new Date())
+const initalStateTaskDeltaLink: string = ""
 
-export const taskDeltaLinkSlice = createSlice({
+export const taskDeltaSlice = createSlice({
     name: "taskDeltaLink",
     initialState: initalStateTaskDeltaLink,
     reducers: {
@@ -12,7 +12,7 @@ export const taskDeltaLinkSlice = createSlice({
     }
 })
 
-export const tasksDeltaReducer = taskDeltaLinkSlice.reducer
+export const tasksDeltaReducer = taskDeltaSlice.reducer
 
 const initalTasksState: string[] = []
 

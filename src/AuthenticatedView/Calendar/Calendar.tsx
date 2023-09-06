@@ -27,8 +27,8 @@ enum calendarMode {
 }
 declare global {
   type monthDataType = {
-    id: string
-    showing: boolean
+    id: string,
+    showing: boolean,
     dayData: number,
     events: eventType[]
   }
@@ -254,7 +254,7 @@ function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent,
           <Text style={{color: "black"}}>{value.dayData}</Text>
           <ScrollView style={{width: width, height: height * 0.8}}>
             {value.events.map((event) => (
-              <Pressable key={"Calendar_Event_" + event.id} onPress={() => {setIsEditing(true); setSelectedEvent(event); setAddDate(true)}}>
+              <Pressable key={"Calendar_Event_" + event.id + "_" + create_UUID()} onPress={() => {setIsEditing(true); setSelectedEvent(event); setAddDate(true)}}>
                 <Text>{event.name}</Text>
               </Pressable>
             ))}

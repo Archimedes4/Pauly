@@ -47,7 +47,32 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
     return {result: loadingStateEnum.failed}
   }
 }
-  
+
+//Gets an event from paulys team
+export async function getEvent(id: string): Promise<{result: loadingStateEnum, data?: eventType}> {
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + `/calendar/events/${id}?$select=` + store.getState().paulyList.eventExtensionId, "GET", true)
+  if (result.ok){
+    const data = await result.json()
+    const eventExtensionID = store.getState().paulyList.eventExtensionId
+    var event: eventType = {
+      id: data["id"],
+      name: data["subject"],
+      startTime: new Date(data["start"]["dateTime"]),
+      endTime: new Date(data["end"]["dateTime"]),
+      eventColor: "white",
+      microsoftEvent: true,
+      microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["id"]
+    }
+    if (data[eventExtensionID] !== undefined){
+      event["paulyEventType"] = data[eventExtensionID]["eventType"]
+      event["paulyEventData"] = data[eventExtensionID]["eventData"]
+    }
+    return {result: loadingStateEnum.success, data: event}
+  } else {
+    return {result: loadingStateEnum.failed}
+  }
+}
+
 export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
   const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
   if (result.ok) {
@@ -76,9 +101,10 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
 }
   
 export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")
   if (result.ok) {
     const data = await result.json()
+    console.log(data)
     if (data["value"].length !== undefined){
       if (data["value"].length === 1) {
         try {
@@ -93,6 +119,7 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
             }
           }
           const dressCodeResult = await getDressCode(data["value"][0]["fields"]["timetableDressCodeId"])
+          console.log(dressCodeResult)
           if (dressCodeResult.result === loadingStateEnum.success && dressCodeResult.data !== undefined){
             const resultingTimetable: timetableType = {
               name: data["value"][0]["fields"]["timetableName"],
@@ -119,7 +146,7 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
   }
 }
 
-export async function getSchoolDayOnSelectedDay(selectedDate: Date): Promise<{ result: loadingStateEnum; event?: eventType; }> {
+export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadingStateEnum; event?: eventType; }> {
   const eventExtensionId = store.getState().paulyList.eventExtensionId
   const startDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0)).toISOString().slice(0, -1) + "0000"
   const endDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 0)).toISOString().slice(0, -1) + "0000"

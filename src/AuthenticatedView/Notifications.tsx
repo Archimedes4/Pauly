@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, Dimensions, Platform, Pressable } from 'react-native'
-import { getSchoolDayOnSelectedDay } from '../Functions/Calendar/calendarFunctionsGraph';
+import { getEvent, getSchoolDay, getTimetable } from '../Functions/Calendar/calendarFunctionsGraph';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
@@ -46,12 +46,36 @@ export default function Notifications() {
   const [userData, setUserData] = useState<resourceType[]>([])
   const [trendingState, setTrendingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [userState, setUserState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [schoolDayData, setSchoolDayData] = useState<schoolDayDataType | undefined>(undefined)
 
   async function loadData() {
     if (siteId !== ""){
       //Calendar Data
-      const result = await getSchoolDayOnSelectedDay(new Date())
-    
+      const result = await getSchoolDay(new Date())
+      if (result.result === loadingStateEnum.success && result.event !== undefined){
+        console.log(result.event.paulyEventData)
+        const outputIds: schoolDayDataCompressedType = JSON.parse(result.event.paulyEventData)
+        console.log(outputIds)
+        const eventResult = await getEvent(outputIds.schoolYearEventId)
+        if (eventResult.result === loadingStateEnum.success && eventResult.data !== undefined){
+          console.log("Timetable")
+          const timetableResult = await getTimetable(eventResult.data?.paulyEventData)
+          console.log(timetableResult)
+          if (timetableResult.result === loadingStateEnum.success && timetableResult.timetable !== undefined){
+            console.log(timetableResult)
+            const schoolDay = timetableResult.timetable.days.find((e) => {return e.id === outputIds.schoolDayId})
+            const schedule = timetableResult.timetable.schedules.find((e) => {return e.id === outputIds.scheduleId})
+            const dressCode = timetableResult.timetable.dressCode.dressCodeData.find((e) => {return e.id === outputIds.dressCodeId})
+            const dressCodeIncentive = timetableResult.timetable.dressCode.dressCodeIncentives.find((e) => {return e.id === outputIds?.dressCodeIncentiveId})
+            setSchoolDayData({
+              schoolDay: schoolDay,
+              schedule: schedule,
+              dressCode: dressCode,
+              dressCodeIncentive: dressCodeIncentive
+            })
+          }
+        }
+      }
 
 
       //Insights
@@ -121,7 +145,7 @@ export default function Notifications() {
         <View style={{margin: 10}}>
           <Text>Tasks</Text>
           {userTasks.map((task) => (
-            <TaskItem task={task}/>
+            <TaskItem task={task} key={"User_Task_" + task.id}/>
           ))}
         </View>
       </View>
@@ -145,6 +169,15 @@ export default function Notifications() {
         </View>
         <Text>Popular Files</Text>
       </View>
+      <View style={{backgroundColor: "#793033", width: width * 0.3, height: height * 0.3, borderRadius: 15}}>
+        <View>
+          <Text style={{color: "white"}}>{new Date().toLocaleDateString("en-US", {weekday: "long"})}</Text>
+        </View>
+        <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width * 0.3, height: height * 0.075}}>
+          <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
+        </View>
+        <Text style={{color: "white"}}>{schoolDayData?.schoolDay.shorthand}</Text>
+      </View>
     </View>
   )
 }
@@ -152,7 +185,7 @@ export default function Notifications() {
 function TaskItem({task}:{task: taskType}) {
   const [checked, setChecked] = useState<boolean>(false)
   return (
-    <View key={"User_Task_" + task.id} style={{flexDirection: "row"}}>
+    <View style={{flexDirection: "row"}}>
       <Pressable onPress={() => {setChecked(!checked)}}>
         <CustomCheckBox checked={checked} checkMarkColor={'blue'} checkedBorderColor={'black'} unCheckedBorderColor={'black'} checkedBackgroundColor={'white'} unCheckedBackgroundColor={'white'} height={50} width={50} />
       </Pressable>

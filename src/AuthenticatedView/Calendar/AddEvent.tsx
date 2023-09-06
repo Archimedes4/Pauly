@@ -31,7 +31,8 @@ declare global {
     schoolDayId: string,
     scheduleId: string,
     dressCodeId: string,
-    dressCodeIncentiveId: string
+    dressCodeIncentiveId: string,
+    schoolYearEventId: string
   }
   type schoolDayDataType = {
     schoolDay: schoolDayType,
@@ -134,7 +135,8 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
             schoolDayId: selectedSchoolDayData.schoolDay.id,
             scheduleId: selectedSchoolDayData.schedule.id,
             dressCodeId: selectedSchoolDayData.dressCode.id,
-            dressCodeIncentiveId: selectedSchoolDayData.dressCodeIncentive?.id
+            dressCodeIncentiveId: selectedSchoolDayData.dressCodeIncentive?.id,
+            schoolYearEventId: selectedSchoolYear.id
           }
           var patchDataDay = {}
           patchDataDay[eventExtensionId] = {}
