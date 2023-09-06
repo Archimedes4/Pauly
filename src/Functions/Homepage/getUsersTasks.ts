@@ -23,6 +23,7 @@ export default async function getUsersTasks(deltaRunAgain?: boolean): Promise<{r
         status: (taskData["value"][index]["status"] === "notStarted") ? taskStatusEnum.notStarted:(taskData["value"][index]["status"] === "inProgress") ? taskStatusEnum.inProgress:(taskData["value"][index]["status"] === "completed") ? taskStatusEnum.completed:(taskData["value"][index]["status"] === "waitingOnOthers") ? taskStatusEnum.waitingOnOthers:taskStatusEnum.deferred
       })
     }
+    var returnTasksString: string[] = []
     return {result: loadingStateEnum.success, data: resultTasks}
   } else {
     if (deltaMode) {

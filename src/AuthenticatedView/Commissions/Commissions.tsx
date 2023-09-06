@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Text, View } from 'react-native'
-import { Link } from 'react-router-native';
+import { Pressable, Text, View } from 'react-native'
+import { Link, useNavigate } from 'react-router-native';
 import callMsGraph from '../../Functions/Ultility/microsoftAssets';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -20,7 +20,8 @@ export default function Commissions() {
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
   const dispatch = useDispatch()
-
+  const navigate = useNavigate();
+  
   async function getCommissions(){
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields")//TO DO list id
     if (result.ok) {
@@ -76,12 +77,12 @@ export default function Commissions() {
       </View>
       <View>
         { currentCommissions.map((item: commissionType) => (
-          <Link to={"/commissions/" + item.commissionId} key={"Link_" + item.commissionId}>
+          <Pressable onPress={() => {navigate("/commissions/" + item.commissionId)}} key={"Link_" + item.commissionId}>
             <View key={item.commissionId} style={{borderRadius: 15, borderColor: "Black", borderWidth: 10, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5}}>
               <Text>{item.title}</Text>
               <Text>{item.commissionId}</Text>
             </View>
-          </Link>
+          </Pressable>
         ))}
       </View>
     </View>

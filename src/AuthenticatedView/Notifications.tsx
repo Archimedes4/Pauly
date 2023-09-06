@@ -39,8 +39,7 @@ import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
 export default function Notifications() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
-  const [messageText, setMessageText] = useState<string>("")
-  const [powerpointBlob, setPowerpointBlob] = useState<string>("")
+  const {message, animationSpeed, powerpointBlob} = useSelector((state: RootState) => state.paulyData)
   const [userTasks, setUserTasks] = useState<taskType[]>([])
   const [trendingData, setTrendingData] = useState<resourceType[]>()
   const [userData, setUserData] = useState<resourceType[]>([])
@@ -87,20 +86,6 @@ export default function Notifications() {
 
       //Pauly Data
       const dataResult = await getCurrentPaulyData(siteId)
-      if (dataResult.result === loadingStateEnum.success) {
-        setMessageText(dataResult.data.message)
-        const fileResult = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + dataResult.data.powerpointId + "/driveItem/content?format=pdf")
-        if (fileResult.ok){
-          const dataBlob = await fileResult.blob()
-          const urlOut = URL.createObjectURL(dataBlob)
-          console.log(urlOut)
-          setPowerpointBlob(urlOut)
-        } else {
-
-        }
-      } else {
-
-      }
 
       //List Data 
       const taskResult = await getUsersTasks()
@@ -121,7 +106,7 @@ export default function Notifications() {
         </Link>:null
       }
       <View>
-        <Text>{messageText}</Text>
+        <Text>{message}</Text>
       </View>
       <View>
         { (powerpointBlob !== "") ?

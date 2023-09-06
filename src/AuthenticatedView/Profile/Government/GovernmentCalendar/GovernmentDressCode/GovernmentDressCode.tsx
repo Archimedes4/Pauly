@@ -6,7 +6,7 @@ import { RootState } from '../../../../../Redux/store'
 import { loadingStateEnum } from '../../../../../types'
 import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import ListItem from '../../../../../UI/ListItem'
-import getDressCodeData from '../../../../../Functions/getDressCodeData'
+import getDressCodeData from '../../../../../Functions/Homepage/getDressCodeData'
 
 declare global{
   type dressCodeIncentiveType = {

@@ -10,6 +10,7 @@ import authenticationRefreshTokenReducer from './reducers/authenticationRefreshT
 import dimentionsReducer from './reducers/dimentionsReducer';
 import authenticationApiTokenReducer from './reducers/authenticationApiToken';
 import { tasksDeltaReducer, tasksReducer } from './reducers/tasksReducers';
+import paulyDataReducer from './reducers/paulyDataReducer';
 
 const store = configureStore({
   reducer: {
@@ -24,7 +25,8 @@ const store = configureStore({
     authenticationApiToken: authenticationApiTokenReducer,
     statusBarColor: statusBarColorReducer,
     tasksDeltaLink: tasksDeltaReducer,
-    tasks: tasksReducer
+    tasks: tasksReducer,
+    paulyData: paulyDataReducer
   }
 });
 

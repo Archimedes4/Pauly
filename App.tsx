@@ -47,7 +47,7 @@ import GovernmentTimetable from './src/AuthenticatedView/Profile/Government/Gove
 import GovernmentScheduleCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleCreate';
 import GovernmentScheduleEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleEdit';
 import GovernmentClasses from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClasses';
-import GovernmentClassesCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesEdit';
+import GovernmentClassesEdit from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesEdit';
 import CommissionsView from './src/AuthenticatedView/Commissions/CommissionsView';
 import GovernmentHomePage from './src/AuthenticatedView/Profile/Government/GovernmentHomePage';
 import callMsGraph from './src/Functions/Ultility/microsoftAssets';
@@ -120,7 +120,7 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/government/commissions/edit/:id" element={<GovernmentEditCommission/>}/>
                   <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />
                   <Route path="/profile/government/classes" element={<GovernmentClasses />} />
-                  <Route path="/profile/government/classes/create" element={<GovernmentClassesCreate />} />
+                  <Route path="/profile/government/classes/edit/:id" element={<GovernmentClassesEdit />} />
                   <Route path="/profile/government/classes/room" element={<GovernmentRooms />} />
                   <Route path="/profile/government/classes/room/create" element={<GovernmentRoomsCreate />} />
                   <Route path="/profile/government/calendar" element={<GovernmentCalendar />} />

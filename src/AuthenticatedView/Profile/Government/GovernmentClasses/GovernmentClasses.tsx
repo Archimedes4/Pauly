@@ -1,5 +1,5 @@
 import { View, Text, Button, Pressable, ScrollView } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
@@ -35,6 +35,10 @@ export default function GovernmentClasses() {
     }
   }
 
+  useEffect(() => {
+    getClasses()
+  }, [])
+
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
       <View>
@@ -45,9 +49,9 @@ export default function GovernmentClasses() {
       </View>
       <ScrollView style={{height: height * 0.85}}>
         {classes.map((classMap) => (
-          <View>
+          <Pressable onPress={() => {navigate("/profile/government/classes/edit/" + classMap.id)}}>
             <Text>{classMap.name}</Text>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
       <Pressable onPress={() => {

@@ -5,6 +5,7 @@ import store, { RootState } from '../../../../Redux/store'
 import { useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { loadingStateEnum } from '../../../../types'
+import { getRooms } from '../../../../Functions/getRooms'
 
 declare global {
   type roomType = {
@@ -19,26 +20,16 @@ export default function GovernmentRooms() {
   const [roomState, setRoomState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [rooms, setRooms] = useState<roomType[]>([])
 
-  async function getRooms() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.roomListId +"/items?expand=fields")
-    if (result.ok){
-      const data = await result.json()
-      var resultArray: roomType[] = []
-      for (var index = 0; index < data["value"].length; index++){
-        resultArray.push({
-          name: data["value"][index]["fields"]["roomName"],
-          id: data["value"][index]["fields"]["roomId"]
-        })
-      }
-      setRooms(resultArray)
-      setRoomState(loadingStateEnum.success)
-    } else {
-      setRoomState(loadingStateEnum.failed)
+  async function loadData() {
+    const result = await getRooms()
+    setRoomState(result.result)
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setRooms(result.data)
     }
   }
 
   useEffect(() => {
-    getRooms()
+    loadData()
   }, [])
 
   return (

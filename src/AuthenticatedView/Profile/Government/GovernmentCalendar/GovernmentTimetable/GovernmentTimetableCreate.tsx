@@ -7,7 +7,7 @@ import { DownIcon, UpIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
 import { loadingStateEnum } from '../../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
-import getDressCodeData from '../../../../../Functions/getDressCodeData';
+import getDressCodeData from '../../../../../Functions/Homepage/getDressCodeData';
 import ListItem from '../../../../../UI/ListItem';
 declare global {
   type schoolDayType = {
