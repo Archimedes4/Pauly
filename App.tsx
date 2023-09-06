@@ -47,7 +47,7 @@ import GovernmentTimetable from './src/AuthenticatedView/Profile/Government/Gove
 import GovernmentScheduleCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleCreate';
 import GovernmentScheduleEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleEdit';
 import GovernmentClasses from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClasses';
-import GovernmentClassesCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesCreate';
+import GovernmentClassesCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentClassesEdit';
 import CommissionsView from './src/AuthenticatedView/Commissions/CommissionsView';
 import GovernmentHomePage from './src/AuthenticatedView/Profile/Government/GovernmentHomePage';
 import callMsGraph from './src/Functions/Ultility/microsoftAssets';
