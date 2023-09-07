@@ -4,7 +4,7 @@ import { Link } from 'react-router-native'
 
 //Resources
 // -> Sports
-// -> Work/Volenteer Oportnities
+// -> Advancement Board
 // -> Schedule Annoucments
 // -> School Events
 // -> Annoucments
@@ -12,10 +12,11 @@ import { Link } from 'react-router-native'
 enum resourceMode {
   home,
   sports,
-  workVolenteer,
+  advancement,
   schedule,
   schoolEvents,
   annoucments,
+  fitness,
   files
 }
 
@@ -25,10 +26,13 @@ export default function Resources() {
   }
   return (
     <View>
-        <Link to="/profile/">
-            <Text>Back</Text>
-        </Link>
+      <Link to="/profile/">
+        <Text>Back</Text>
+      </Link>
       <Text>Resources</Text>
+      <View>
+        
+      </View>
       <Text>Search</Text>
       <View>
         {
