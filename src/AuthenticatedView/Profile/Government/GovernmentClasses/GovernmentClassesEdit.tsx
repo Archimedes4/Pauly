@@ -4,10 +4,11 @@ import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { loadingStateEnum } from '../../../../types';
-import { useParams } from 'react-router-native';
+import { useNavigate, useParams } from 'react-router-native';
 import { getRooms } from '../../../../Functions/getRooms';
 import getSchoolYears from '../../../../Functions/Calendar/getSchoolYears';
 import SegmentedPicker from '../../../../UI/Pickers/SegmentedPicker';
+import { setString } from 'expo-clipboard';
 
 declare global {
   type microsoftUserType = {
@@ -28,7 +29,8 @@ enum semesters {
 export default function GovernmentClassesEdit() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {id} = useParams()
-
+  const navigate = useNavigate();
+  
   const [selectedSemester, setSelectedSemester] = useState<semesters>(semesters.semesterOne)
 
   //Rooms States
@@ -40,6 +42,7 @@ export default function GovernmentClassesEdit() {
   //School Years State
   const [schoolYearState, setSchoolYearState] =  useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolYearNextLink, setSchoolYearNextLink] = useState<string | undefined>(undefined)
+  const [schoolYears, setSchoolYears] = useState<eventType[]>([])
 
   async function getGroup() {
     const result = await callMsGraph("")
@@ -49,7 +52,7 @@ export default function GovernmentClassesEdit() {
     //TO DO figure out if there will be performance issuses in continually getting next page
     const result = await getRooms(roomsNextLink, (roomSearchText !== "") ? roomSearchText:undefined)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
-
+      setRooms(result.data)
     }
     setRoomsState(result.result)
     setRoomsNextLink(result.nextLink)
@@ -58,7 +61,7 @@ export default function GovernmentClassesEdit() {
   async function loadSchoolYears() {
     const result = await getSchoolYears(schoolYearNextLink) 
     if (result.result === loadingStateEnum.success && result.events !== undefined) {
-      
+      setSchoolYears(result.events)
     }
     setSchoolYearState(result.result)
     setSchoolYearNextLink(result.nextLink)
@@ -78,13 +81,31 @@ export default function GovernmentClassesEdit() {
 
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
+      <Pressable onPress={() => {
+        navigate("/profile/government/classes")
+      }}>
+        <Text>Back</Text>
+      </Pressable>
       <Text>Add Class Data</Text>
       <View>
         <Text>_Teacher:</Text>
         <Text>Name:</Text>
         <Text>School Years</Text>
         <View>
-
+          { (schoolYearState === loadingStateEnum.loading) ?
+            <Text>Loading</Text>:
+            <View>
+              { (schoolYearState === loadingStateEnum.success) ?
+                <View>
+                  { schoolYears.map((year) => (
+                    <View>
+                      <Text>{year.name}</Text>
+                    </View>
+                  ))}
+                </View>:<Text>Failed</Text>
+              }
+            </View>
+          }
         </View>
         <Text>Periods: number[]</Text>
         <SegmentedPicker selectedIndex={selectedSemester} setSelectedIndex={setSelectedSemester} options={["Semester One", "Semester Two"]} width={width * 0.85} height={height * 0.1} />

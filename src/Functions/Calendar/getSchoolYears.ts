@@ -29,6 +29,8 @@ export default async function getSchoolYears(nextLink?: string): Promise<{ resul
     }
     return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
   } else {
+    const data = await result.json()
+    console.log(data)
     return {result: loadingStateEnum.failed}
   }
 }

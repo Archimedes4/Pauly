@@ -49,7 +49,7 @@ export default function GovernmentClasses() {
       </View>
       <ScrollView style={{height: height * 0.85}}>
         {classes.map((classMap) => (
-          <Pressable onPress={() => {navigate("/profile/government/classes/edit/" + classMap.id)}}>
+          <Pressable key={"Class_"+classMap.id} onPress={() => {navigate("/profile/government/classes/edit/" + classMap.id)}}>
             <Text>{classMap.name}</Text>
           </Pressable>
         ))}
