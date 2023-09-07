@@ -10,11 +10,12 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
   const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=" + store.getState().paulyList.eventExtensionId, "GET", true)
   if (result.ok){
     const data = await result.json()
+    console.log(data)
     var newEvents: eventType[] = []
     for(var index = 0; index < data["value"].length; index++) {
       if (schoolYear) {
         const eventExtensionID = store.getState().paulyList.eventExtensionId
-        if (data["value"][index][eventExtensionID] !== undefined) {
+        if (data["value"][index]["singleValueExtendedProperties"][eventExtensionID] !== undefined) {
           if (data["value"][index][eventExtensionID]["eventType"] === "schoolYear") {
             newEvents.push({
               id: data["value"][index]["id"],
@@ -44,6 +45,8 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
     }
     return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
   } else {
+    const data = await result.json()
+    console.log(data)
     return {result: loadingStateEnum.failed}
   }
 }

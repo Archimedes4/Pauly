@@ -87,12 +87,11 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
 }
 
 function SchoolYearsSelect({onSelect}:{onSelect: (item: eventType) => void}) {
-    const {eventExtensionId} = useSelector((state: RootState) => state.paulyList)
     const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
     const [currentEventsSchoolYear, setCurrentEventsSchoolYear] = useState<eventType[]>([])
 
     async function getData() {
-      const result = await getGraphEvents(true, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$select=" + eventExtensionId + ",id,start,end,subject")
+      const result = await getGraphEvents(true, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$expand=singleValueExtendedProperties($filter=id eq 'eventType')")
       if (result.result === loadingStateEnum.success) {
         var outputEvents: eventType[] = result.events
         var url: string = (result.nextLink !== undefined) ? result.nextLink:""

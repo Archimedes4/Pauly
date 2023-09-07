@@ -65,7 +65,12 @@ export const paulyListData = {
       "required": true
     },
     {
-      "name":"eventExtensionId",
+      "name":"eventTypeExtensionId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"eventDataExtensionId",
       "text":{},
       "required": true
     },
@@ -410,25 +415,6 @@ export const roomData = {
 }
 
 //Extensions
-export const paulyEventExtensionData = {
-  "id": "paulyEvents",
-  "description": "Pauly Event Data",
-  "targetTypes": [
-    "Event"
-  ],
-  "owner": clientId,
-  "properties": [
-    {
-      "name": "eventType",
-      "type": "String"
-    },
-    {
-      "name": "eventData",
-      "type": "String"
-    }
-  ]
-}
-
 export const paulyClassExtensionData = {
   "id":"paulyClass",
   "description":"Pauly Class Data",
@@ -505,11 +491,6 @@ declare global {
 
 //Add data array
 export const addDataArray: addDataType[] = [
-  {
-    data: paulyEventExtensionData,
-    urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
-    id: "eventExtensionId"
-  },
   {
     data: paulyClassExtensionData,
     urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",

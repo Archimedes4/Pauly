@@ -1,6 +1,7 @@
 import { loadingStateEnum } from "../../types"
+import create_UUID from "../Ultility/CreateUUID"
 import callMsGraph from "../Ultility/microsoftAssets"
-import { paulyListData, commissionsData, paulyClassExtensionData, paulyDataData, paulyEventExtensionData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData, paulyResourceExtensionData, dressCodeData, paulyUserExtensionData, addDataArray } from "./initializePaulyData"
+import { paulyListData, commissionsData, paulyClassExtensionData, paulyDataData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData, paulyResourceExtensionData, dressCodeData, paulyUserExtensionData, addDataArray } from "./initializePaulyData"
 
 export async function initializePaulyPartOne(secondUserId: string): Promise<{result: loadingStateEnum, groupId?: string}> {  
   const currentUsersIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/me", "GET")
@@ -100,8 +101,23 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
       paulyListNewData["fields"][callData.id] = data["id"]
     }
   }
-
   console.log("Ended for")
+  if (getPaulyListResultData["fields"] !== undefined) {
+    if (getPaulyListResultData["fields"]["eventTypeExtensionId"] !== undefined) {
+      paulyListNewData["fields"]["eventTypeExtensionId"] = getPaulyListResultData["fields"]["eventTypeExtensionId"] 
+    } else {
+      paulyListNewData["fields"]["eventTypeExtensionId"] = `String {${create_UUID()}} Name eventType`
+    }
+  }
+
+  if (getPaulyListResultData["fields"] !== undefined) {
+    if (getPaulyListResultData["fields"]["eventDataExtensionId"] !== undefined) {
+      paulyListNewData["fields"]["eventDataExtensionId"] = getPaulyListResultData["fields"]["eventDataExtensionId"] 
+    } else {
+      paulyListNewData["fields"]["eventDataExtensionId"] = `String {${create_UUID()}} Name eventType`
+    }
+  }
+
   if (paulyListNewData["fields"]["paulyDataListId"] === undefined) {
     const paulyDataResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", false, JSON.stringify(paulyDataData))
     if (!paulyDataResult.ok) {return loadingStateEnum.failed}

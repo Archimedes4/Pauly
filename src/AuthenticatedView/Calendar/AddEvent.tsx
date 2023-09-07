@@ -52,7 +52,6 @@ enum paulyEventType {
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
     const selectedDate = useSelector((state: RootState) => state.selectedDate)
     const currentEvents = useSelector((state: RootState) => state.currentEvents)
-    const {eventExtensionId} = useSelector((state: RootState) => state.paulyList)
     const dispatch = useDispatch()
 
     const [createEventState, setCreateEventState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
@@ -114,42 +113,61 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
         data["end"]["dateTime"] = endDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         data["isAllDay"] = true
       }
+      if (selectedEventType === paulyEventType.schoolYear) {
+
+        data["singleValueExtendedProperties"] = [
+          {
+            "id":store.getState().paulyList.eventTypeExtensionId,
+            "value":"schoolYear"
+          },
+          {
+            "id":store.getState().paulyList.eventDataExtensionId,
+            "value":selectedTimetable.id
+          }
+        ]
+        //data["singleValueExtendedProperties"]["id"] = "String {66f5a359-4659-4830-9070-00040ec6ac6e} Name eventType"schoolYear
+        // patchData[eventExtensionId]["eventData"] = selectedTimetable.id
+        // const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
+        // if (!patchResult.ok){
+        //   setCreateEventState(loadingStateEnum.failed)
+        //   return
+        // }
+      } else if (selectedEventType === paulyEventType.schoolDay && selectedSchoolDayData !== undefined) {
+        const selectedSchoolDayDataCompressed: schoolDayDataCompressedType = {
+          schoolDayId: selectedSchoolDayData.schoolDay.id,
+          scheduleId: selectedSchoolDayData.schedule.id,
+          dressCodeId: selectedSchoolDayData.dressCode.id,
+          dressCodeIncentiveId: selectedSchoolDayData.dressCodeIncentive?.id,
+          schoolYearEventId: selectedSchoolYear.id
+        }
+        data["singleValueExtendedProperties"] = [
+          {
+            "id":`String {${create_UUID()}} Name eventType`,
+            "value":"schoolDay"
+          },
+          {
+            "id":`String {${create_UUID()}} Name eventData`,
+            "value":JSON.stringify(selectedSchoolDayDataCompressed)
+          }
+        ]
+        // var patchDataDay = {}
+        // patchDataDay[eventExtensionId] = {}
+        // patchDataDay[eventExtensionId]["eventType"] = "schoolDay"
+        // patchDataDay[eventExtensionId]["eventData"] = JSON.stringify(selectedSchoolDayDataCompressed)
+        // const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchDataDay))
+        // if (patchResult.ok){
+        //   setCreateEventState(loadingStateEnum.success)
+        // } else {
+        //   setCreateEventState(loadingStateEnum.failed)
+        //   return
+        // }
+      }
       if (recurringEvent) {
       }
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", true, JSON.stringify(data))
       if (result.ok){
         const dataOut = await result.json()
         console.log(dataOut)
-        if (selectedEventType === paulyEventType.schoolYear) {
-          var patchData = {}
-          patchData[eventExtensionId] = {}
-          patchData[eventExtensionId]["eventType"] = "schoolYear"
-          patchData[eventExtensionId]["eventData"] = selectedTimetable.id
-          const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
-          if (!patchResult.ok){
-            setCreateEventState(loadingStateEnum.failed)
-            return
-          }
-        } else if (selectedEventType === paulyEventType.schoolDay && selectedSchoolDayData !== undefined) {
-          const selectedSchoolDayDataCompressed: schoolDayDataCompressedType = {
-            schoolDayId: selectedSchoolDayData.schoolDay.id,
-            scheduleId: selectedSchoolDayData.schedule.id,
-            dressCodeId: selectedSchoolDayData.dressCode.id,
-            dressCodeIncentiveId: selectedSchoolDayData.dressCodeIncentive?.id,
-            schoolYearEventId: selectedSchoolYear.id
-          }
-          var patchDataDay = {}
-          patchDataDay[eventExtensionId] = {}
-          patchDataDay[eventExtensionId]["eventType"] = "schoolDay"
-          patchDataDay[eventExtensionId]["eventData"] = JSON.stringify(selectedSchoolDayDataCompressed)
-          const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchDataDay))
-          if (patchResult.ok){
-            setCreateEventState(loadingStateEnum.success)
-          } else {
-            setCreateEventState(loadingStateEnum.failed)
-            return
-          }
-        }
         setCreateEventState(loadingStateEnum.success)
         const resultEvent: eventType = {
           id: data["id"],

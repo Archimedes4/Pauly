@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Button, Pressable } from 'react-native'
+import { View, Text, TextInput, Button, Pressable, ScrollView } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import create_UUID from '../../../../../Functions/Ultility/CreateUUID';
@@ -191,11 +191,11 @@ function SchoolDays({height, schoolDays, setSchoolDays}:{height: number, schoolD
   return (
     <View>
       <Text>School Days</Text>
-      <View style={{height: height * 0.2}}>
+      <ScrollView style={{height: height * 0.2}}>
         {schoolDays.map((item, index) => (
           <SchoolDayItem item={item} index={index} schoolDays={schoolDays} setSchoolDays={setSchoolDays}/>
         ))}
-      </View>
+      </ScrollView>
       <Button title='Add' onPress={() => {
         setSchoolDays([...schoolDays, {name: "", shorthand: "", id: create_UUID(), order: (schoolDays.length === 0) ? 0:schoolDays[schoolDays.length - 1].order + 1}])
       }} />

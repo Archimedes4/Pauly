@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable } from 'react-native'
+import { View, Text, TextInput, Pressable, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../../Redux/store'
@@ -49,9 +49,11 @@ export default function GovernmentDressCodeCreate() {
         onChangeText={setDressCodeName}
         placeholder='Dress Code Name'
       />
-      { dressCodeData.map((dressCode, index) => (
-        <DressCodeBlock dressCode={dressCode} dressCodeData={dressCodeData} index={index} setDressCodeData={setDressCodeData} selectedDressCodeId={selectedDressCodeId} setSelectedDressCodeId={setSelectedDressCodeId } />
-      ))}
+      <ScrollView style={{height: height * 0.7}}>
+        { dressCodeData.map((dressCode, index) => (
+          <DressCodeBlock dressCode={dressCode} dressCodeData={dressCodeData} index={index} setDressCodeData={setDressCodeData} selectedDressCodeId={selectedDressCodeId} setSelectedDressCodeId={setSelectedDressCodeId } />
+        ))}
+      </ScrollView>
       <Pressable onPress={() => {
         setDressCodeData([...dressCodeData, {name: "", description: "", id: create_UUID()}])
       }}>
