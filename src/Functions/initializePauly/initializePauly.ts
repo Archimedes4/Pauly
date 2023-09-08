@@ -108,14 +108,18 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
     } else {
       paulyListNewData["fields"]["eventTypeExtensionId"] = `String {${create_UUID()}} Name eventType`
     }
+  } else {
+    paulyListNewData["fields"]["eventTypeExtensionId"] = `String {${create_UUID()}} Name eventType`
   }
 
   if (getPaulyListResultData["fields"] !== undefined) {
     if (getPaulyListResultData["fields"]["eventDataExtensionId"] !== undefined) {
       paulyListNewData["fields"]["eventDataExtensionId"] = getPaulyListResultData["fields"]["eventDataExtensionId"] 
     } else {
-      paulyListNewData["fields"]["eventDataExtensionId"] = `String {${create_UUID()}} Name eventType`
+      paulyListNewData["fields"]["eventDataExtensionId"] = `String {${create_UUID()}} Name eventData`
     }
+  } else {
+    paulyListNewData["fields"]["eventDataExtensionId"] = `String {${create_UUID()}} Name eventData`
   }
 
   if (paulyListNewData["fields"]["paulyDataListId"] === undefined) {

@@ -20,46 +20,46 @@ export default function MicrosoftGraphEditGroup() {
     const [deleteGroupLoadingState, setDeleteGroupLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
 
     async function getListItems() {
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + id)
-        if (result.ok) {
-            const data = await result.json()
-            console.log(data)
-            setGroupLoadingState(loadingStateEnum.success)
-        } else {
-            setGroupLoadingState(loadingStateEnum.failed)
-        }
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + id)
+      if (result.ok) {
+        const data = await result.json()
+        console.log(data)
+        setGroupLoadingState(loadingStateEnum.success)
+      } else {
+        setGroupLoadingState(loadingStateEnum.failed)
+      }
     }
 
     async function deleteGroup() {
-        setDeleteGroupLoadingState(loadingStateEnum.loading)
-        const deleteGroupResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + id, "DELETE")
-        if (deleteGroupResult.ok) {
-            setDeleteGroupLoadingState(loadingStateEnum.success)
-        } else {
-            setDeleteGroupLoadingState(loadingStateEnum.failed)
-        }
+      setDeleteGroupLoadingState(loadingStateEnum.loading)
+      const deleteGroupResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + id, "DELETE")
+      if (deleteGroupResult.ok) {
+        setDeleteGroupLoadingState(loadingStateEnum.success)
+      } else {
+        setDeleteGroupLoadingState(loadingStateEnum.failed)
+      }
     }
 
     useEffect(() => {getListItems()}, [])
     return (
         <View style={{overflow: "hidden", height: height, width: width, backgroundColor: "white"}}>
             <Link to="/profile/government/graph/group">
-                <Text>Back</Text>
+              <Text>Back</Text>
             </Link>
             <Text>MicrosoftGraphEditList</Text>
             <View style={{flexDirection: "row"}}>
-                <Text>{id}</Text>
-                { isCoppiedToClipboard ?
-                    <Pressable onPress={async () => {await Clipboard.setStringAsync(id)}}>
-                        <Text>Copied To Clipboard!</Text>
-                    </Pressable>:
-                    <Pressable onPress={async () => {await Clipboard.setStringAsync(id); setIsCoppiedToClipboard(true)}}>
-                        <CopyIcon width={14} height={14}/>
-                    </Pressable>
-                }
+              <Text>{id}</Text>
+              { isCoppiedToClipboard ?
+                <Pressable onPress={async () => {await Clipboard.setStringAsync(id)}}>
+                  <Text>Copied To Clipboard!</Text>
+                </Pressable>:
+                <Pressable onPress={async () => {await Clipboard.setStringAsync(id); setIsCoppiedToClipboard(true)}}>
+                  <CopyIcon width={14} height={14}/>
+                </Pressable>
+              }
             </View>
             <Pressable onPress={() => {deleteGroup()}}>
-                <Text>{(deleteGroupLoadingState === loadingStateEnum.notStarted) ? "Delete Group":(deleteGroupLoadingState === loadingStateEnum.loading) ? "Loading":(deleteGroupLoadingState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+              <Text>{(deleteGroupLoadingState === loadingStateEnum.notStarted) ? "Delete Group":(deleteGroupLoadingState === loadingStateEnum.loading) ? "Loading":(deleteGroupLoadingState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
             </Pressable>
         </View>
     )

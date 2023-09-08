@@ -116,7 +116,17 @@ export default function GovernmentTimetableCreate() {
         <Text>Back</Text>
       </Link>
       <Text>Create Timetable</Text>
-      <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}} placeholder='Timetable Name'/>
+      <View>
+        <View>
+          <Text>Warning: because of the way that timetables work some properties cannot be edited.</Text>
+          <Text>The dress code you pick cannot change</Text>
+          <Text>Schedules can be added but they have to have the same number of periods</Text>
+          <Text>The number of days in a schedule cannot go up or down only the order and the name can be changed</Text>
+        </View>
+      </View>
+      <View>
+        <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}} placeholder='Timetable Name'/>
+      </View>
       <Text>Scheduals</Text>
       <Text>Selected Schedules</Text>
       <View style={{height: height * 0.4, overflow: "scroll"}}>

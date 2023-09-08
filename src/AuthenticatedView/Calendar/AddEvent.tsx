@@ -125,6 +125,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
             "value":selectedTimetable.id
           }
         ]
+        console.log(data["singleValueExtendedProperties"])
         //data["singleValueExtendedProperties"]["id"] = "String {66f5a359-4659-4830-9070-00040ec6ac6e} Name eventType"schoolYear
         // patchData[eventExtensionId]["eventData"] = selectedTimetable.id
         // const patchResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/events/" + dataOut["id"], "PATCH", false, JSON.stringify(patchData))
@@ -142,11 +143,11 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
         }
         data["singleValueExtendedProperties"] = [
           {
-            "id":`String {${create_UUID()}} Name eventType`,
+            "id":store.getState().paulyList.eventTypeExtensionId,
             "value":"schoolDay"
           },
           {
-            "id":`String {${create_UUID()}} Name eventData`,
+            "id":store.getState().paulyList.eventDataExtensionId,
             "value":JSON.stringify(selectedSchoolDayDataCompressed)
           }
         ]
@@ -164,6 +165,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
       }
       if (recurringEvent) {
       }
+      console.log(data)
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", true, JSON.stringify(data))
       if (result.ok){
         const dataOut = await result.json()
@@ -182,6 +184,8 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
         }
         dispatch(currentEventsSlice.actions.pushEvent(JSON.stringify(resultEvent)))
       } else {
+        const dataOut = await result.json()
+        console.log(dataOut)
         setCreateEventState(loadingStateEnum.failed)
       }
     }

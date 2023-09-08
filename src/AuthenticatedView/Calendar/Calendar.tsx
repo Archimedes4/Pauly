@@ -32,6 +32,7 @@ declare global {
     dayData: number,
     events: eventType[]
   }
+  type paulyEventTypes = "schoolDay" | "schoolYear"
   type eventType = {
     id: string
     name: string
@@ -39,7 +40,7 @@ declare global {
     endTime: Date
     eventColor: string
     microsoftEvent: boolean
-    paulyEventType?: "schoolDay" | "schoolYear"
+    paulyEventType?: paulyEventTypes
     paulyEventData?: string
     microsoftReference?: string
   }

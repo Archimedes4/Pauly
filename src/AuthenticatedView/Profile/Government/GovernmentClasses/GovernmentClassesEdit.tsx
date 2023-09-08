@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable } from 'react-native'
+import { View, Text, TextInput, Pressable, ScrollView } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { RootState } from '../../../../Redux/store';
@@ -9,6 +9,9 @@ import { getRooms } from '../../../../Functions/getRooms';
 import getSchoolYears from '../../../../Functions/Calendar/getSchoolYears';
 import SegmentedPicker from '../../../../UI/Pickers/SegmentedPicker';
 import { setString } from 'expo-clipboard';
+import { getTimetable } from '../../../../Functions/Calendar/calendarFunctionsGraph';
+import { CloseIcon, WarningIcon } from '../../../../UI/Icons/Icons';
+import Dropdown from '../../../../UI/Dropdown';
 
 declare global {
   type microsoftUserType = {
@@ -33,19 +36,42 @@ export default function GovernmentClassesEdit() {
   
   const [selectedSemester, setSelectedSemester] = useState<semesters>(semesters.semesterOne)
 
+  const [className, setClassName] = useState<string>("")
+
   //Rooms States
   const [roomSearchText, setRoomSearchText] = useState<string>("")
   const [roomsNextLink, setRoomsNextLink] = useState<string | undefined>(undefined)
   const [rooms, setRooms] = useState<roomType[]>([])
   const [roomsState, setRoomsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [selectedRoom, setSelectedRoom] = useState<roomType | undefined>(undefined)
 
   //School Years State
   const [schoolYearState, setSchoolYearState] =  useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolYearNextLink, setSchoolYearNextLink] = useState<string | undefined>(undefined)
   const [schoolYears, setSchoolYears] = useState<eventType[]>([])
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
 
-  async function getGroup() {
-    const result = await callMsGraph("")
+  const [timetableState, setTimetableState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const [selectedTimetable, setSelectedTimetable] = useState<timetableType | undefined>(undefined)
+
+  const [classState, setClassState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+
+  const [createClassState, setCreateClassState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const [isShowingClassConfirmMenu, setIsShowingClassConfirmMenu] = useState<boolean>(false)
+
+  const [periods, setPeriods] = useState<number[]>([])
+
+  async function getClass() {
+    setClassState(loadingStateEnum.loading)
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + id + "/") //TO DO change to class
+    if (result.ok) {
+      const data = await result.json()
+      console.log(data)
+      
+      setClassState(loadingStateEnum.success)
+    } else {
+      setClassState(loadingStateEnum.failed)
+    }
   }
 
   async function loadRooms() {
@@ -67,6 +93,26 @@ export default function GovernmentClassesEdit() {
     setSchoolYearNextLink(result.nextLink)
   }
 
+  async function loadTimetable() {
+    if (selectedSchoolYear !== undefined){
+      setTimetableState(loadingStateEnum.loading)
+      const result = await getTimetable(selectedSchoolYear.paulyEventData)
+      if (result.result === loadingStateEnum.success && result.timetable !== undefined){
+        setPeriods(Array.from(Array(result.timetable.days.length).keys()))
+        setSelectedTimetable(result.timetable)
+      }
+      setTimetableState(result.result)
+    }
+  }
+
+  useEffect(() => {
+    loadTimetable()
+  }, [selectedSchoolYear])
+
+  useEffect(() => {
+    getClass()
+  }, [])
+
   async function createClass() {
     
   }
@@ -80,57 +126,129 @@ export default function GovernmentClassesEdit() {
   }, [])
 
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
-      <Pressable onPress={() => {
-        navigate("/profile/government/classes")
-      }}>
-        <Text>Back</Text>
-      </Pressable>
-      <Text>Add Class Data</Text>
-      <View>
-        <Text>_Teacher:</Text>
-        <Text>Name:</Text>
-        <Text>School Years</Text>
-        <View>
-          { (schoolYearState === loadingStateEnum.loading) ?
-            <Text>Loading</Text>:
-            <View>
-              { (schoolYearState === loadingStateEnum.success) ?
-                <View>
-                  { schoolYears.map((year) => (
+    <>
+      <View style={{width: width, height: height, backgroundColor: "white"}}>
+        { (classState === loadingStateEnum.loading) ?
+          <View>
+            <Pressable onPress={() => {
+              navigate("/profile/government/classes")
+            }}>
+              <Text>Back</Text>
+            </Pressable>
+            <Text>Loading</Text>
+          </View>:
+          <View>
+            { (classState === loadingStateEnum.success) ?
+              <View style={{width: width, height: height, backgroundColor: "white"}}>
+                <Pressable onPress={() => {
+                  navigate("/profile/government/classes")
+                }}>
+                  <Text>Back</Text>
+                </Pressable>
+                <Text>Add Class Data</Text>
+                <Text>_Teacher:</Text>
+                <Text>Name:</Text>
+                <Text>School Years</Text>
+                <View style={{height: height * 0.3}}>
+                  { (schoolYearState === loadingStateEnum.loading) ?
+                    <Text>Loading</Text>:
                     <View>
-                      <Text>{year.name}</Text>
+                      { (schoolYearState === loadingStateEnum.success) ?
+                        <ScrollView style={{height: height * 0.3}}>
+                          { schoolYears.map((year) => (
+                            <Pressable onPress={() => {
+                              setSelectedSchoolYear(year)
+                            }}>
+                              <Text>{year.name}</Text>
+                            </Pressable>
+                          ))}
+                        </ScrollView>:<Text>Failed</Text>
+                      }
                     </View>
-                  ))}
-                </View>:<Text>Failed</Text>
-              }
-            </View>
-          }
-        </View>
-        <Text>Periods: number[]</Text>
-        <SegmentedPicker selectedIndex={selectedSemester} setSelectedIndex={setSelectedSemester} options={["Semester One", "Semester Two"]} width={width * 0.85} height={height * 0.1} />
-        <Text>Room Id: string</Text>
-        <Text>Select Room</Text>
-        <View>
-          { (roomsState === loadingStateEnum.loading) ?
-            <Text>Loading</Text>:
-            <View>
-              { (roomsState === loadingStateEnum.success) ?
-                <View>
-                  { rooms.map((room) => (
+                  }
+                </View>
+                <View style={{height: height * 0.3}}>
+                  <Text>Periods</Text>
+                  { (timetableState === loadingStateEnum.cannotStart) ?
+                    <Text>Please pick a school year</Text>:
                     <View>
-                      <Text>{room.name}</Text>
+                      { (timetableState === loadingStateEnum.loading) ?
+                        <Text>Loading</Text>:
+                        <View>
+                          { (timetableState === loadingStateEnum.success && selectedTimetable?.days.length === periods.length) ?
+                            <ScrollView style={{height: height * 0.3}}>
+                              { selectedTimetable.days.map((day, dayIndex) => (
+                                <View key={"Day_"+day.id} style={{flexDirection: "row"}}>
+                                  <Text>{day.name}</Text>
+                                  { (selectedTimetable?.schedules.length >= 1 && periods.length >= dayIndex) ?
+                                    <Dropdown selectedIndex={periods[dayIndex]} onSetSelectedIndex={(index) => {
+                                      if (periods.length >= dayIndex) {
+                                        var newPeriods = periods
+                                        newPeriods[dayIndex] = index 
+                                        setPeriods([...newPeriods])
+                                      }
+                                    }}>
+                                      <Text>unchosen</Text>
+                                      {selectedTimetable.schedules[0].periods.map((_periods, index) => (
+                                        <View>
+                                          <Text>{index + 1}</Text>
+                                        </View>
+                                      ))}
+                                    </Dropdown>:<Text>Something went wrong please reload the page.</Text>
+                                  }
+                                </View>
+                              ))}
+                            </ScrollView>:
+                            <Text>Failed</Text>
+                          }
+                        </View>
+                      }
                     </View>
-                  ))}
-                </View>:<Text>Failed</Text>
-              }
-            </View>
-          }
-        </View>
-        <Pressable>
-          <Text>Create Class</Text>
-        </Pressable>
+                  }
+                </View>
+                <SegmentedPicker selectedIndex={selectedSemester} setSelectedIndex={setSelectedSemester} options={["Semester One", "Semester Two"]} width={width * 0.85} height={height * 0.1} />
+                <View>
+                  { (selectedRoom === undefined) ?
+                    <WarningIcon width={12} height={12} outlineColor='red'/>:null
+                  }
+                  <Text>Select Room</Text>
+                </View>
+                <View>
+                  { (roomsState === loadingStateEnum.loading) ?
+                    <Text>Loading</Text>:
+                    <View>
+                      { (roomsState === loadingStateEnum.success) ?
+                        <View>
+                          { rooms.map((room) => (
+                            <Pressable onPress={() => {setSelectedRoom(room)}}>
+                              <Text>{room.name}</Text>
+                            </Pressable>
+                          ))}
+                        </View>:<Text>Failed</Text>
+                      }
+                    </View>
+                  }
+                </View>
+                <Pressable onPress={() => {setIsShowingClassConfirmMenu(true)}}>
+                  <Text>Create Class</Text>
+                </Pressable>
+              </View>:<Text>Failed</Text>
+            }
+          </View>
+        }
       </View>
-    </View>
+      { isShowingClassConfirmMenu ? 
+        <View style={{width: width * 0.8, height: height * 0.8, borderRadius: 15, backgroundColor: "white", position: "absolute"}}>
+          <Pressable onPress={() => {setIsShowingClassConfirmMenu(false)}}>
+            <CloseIcon width={14} height={14} />
+          </Pressable>
+          <Text>Create Class</Text>
+
+          <Pressable>
+            <Text>Confirm</Text>
+          </Pressable>
+        </View>:null
+      }
+    </>
   )
 }

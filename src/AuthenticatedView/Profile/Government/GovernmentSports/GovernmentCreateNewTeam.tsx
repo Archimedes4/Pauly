@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 
 export default function GovernmentCreateNewTeam() {
   const { sport, id } = useParams()
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
 
   const [createTeamLoadingState, setCreateTeamLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
@@ -58,7 +59,7 @@ export default function GovernmentCreateNewTeam() {
   }
 
   return (
-    <View>
+    <View style={{width: width, height: height}}>
       <Link to={"/profile/government/sports/team/" + sport + "/" + id}>
         <Text>Back</Text>
       </Link>
