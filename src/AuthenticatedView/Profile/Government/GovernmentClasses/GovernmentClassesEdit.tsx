@@ -67,6 +67,7 @@ export default function GovernmentClassesEdit() {
     if (result.ok) {
       const data = await result.json()
       console.log(data)
+      setClassName(data["displayName"])
       
       setClassState(loadingStateEnum.success)
     } else {
@@ -98,7 +99,9 @@ export default function GovernmentClassesEdit() {
       setTimetableState(loadingStateEnum.loading)
       const result = await getTimetable(selectedSchoolYear.paulyEventData)
       if (result.result === loadingStateEnum.success && result.timetable !== undefined){
-        setPeriods(Array.from(Array(result.timetable.days.length).keys()))
+        var newArray = Array.from(Array(result.timetable.days.length))
+        newArray.fill(0, 0, newArray.length)
+        setPeriods(newArray)
         setSelectedTimetable(result.timetable)
       }
       setTimetableState(result.result)
@@ -127,7 +130,7 @@ export default function GovernmentClassesEdit() {
 
   return (
     <>
-      <View style={{width: width, height: height, backgroundColor: "white"}}>
+      <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
         { (classState === loadingStateEnum.loading) ?
           <View>
             <Pressable onPress={() => {
@@ -147,7 +150,10 @@ export default function GovernmentClassesEdit() {
                 </Pressable>
                 <Text>Add Class Data</Text>
                 <Text>_Teacher:</Text>
-                <Text>Name:</Text>
+                <View>
+                  <Text>Name:</Text>
+                  <TextInput value={className} onChangeText={setClassName}/>
+                </View>
                 <Text>School Years</Text>
                 <View style={{height: height * 0.3}}>
                   { (schoolYearState === loadingStateEnum.loading) ?
@@ -169,35 +175,20 @@ export default function GovernmentClassesEdit() {
                 </View>
                 <View style={{height: height * 0.3}}>
                   <Text>Periods</Text>
-                  { (timetableState === loadingStateEnum.cannotStart) ?
+                  <Text>{periods.toString()}</Text>
+                  { (timetableState === loadingStateEnum.notStarted) ?
                     <Text>Please pick a school year</Text>:
                     <View>
                       { (timetableState === loadingStateEnum.loading) ?
                         <Text>Loading</Text>:
-                        <View>
+                        <View style={{zIndex: 4}}>
                           { (timetableState === loadingStateEnum.success && selectedTimetable?.days.length === periods.length) ?
                             <ScrollView style={{height: height * 0.3}}>
-                              { selectedTimetable.days.map((day, dayIndex) => (
-                                <View key={"Day_"+day.id} style={{flexDirection: "row"}}>
-                                  <Text>{day.name}</Text>
-                                  { (selectedTimetable?.schedules.length >= 1 && periods.length >= dayIndex) ?
-                                    <Dropdown selectedIndex={periods[dayIndex]} onSetSelectedIndex={(index) => {
-                                      if (periods.length >= dayIndex) {
-                                        var newPeriods = periods
-                                        newPeriods[dayIndex] = index 
-                                        setPeriods([...newPeriods])
-                                      }
-                                    }}>
-                                      <Text>unchosen</Text>
-                                      {selectedTimetable.schedules[0].periods.map((_periods, index) => (
-                                        <View>
-                                          <Text>{index + 1}</Text>
-                                        </View>
-                                      ))}
-                                    </Dropdown>:<Text>Something went wrong please reload the page.</Text>
-                                  }
-                                </View>
-                              ))}
+                              <>
+                                { selectedTimetable.days.map((day, dayIndex) => (
+                                  <DayBlock day={day} dayIndex={dayIndex} periods={periods} setPeriods={setPeriods} selectedTimetable={selectedTimetable} />
+                                ))}
+                              </>
                             </ScrollView>:
                             <Text>Failed</Text>
                           }
@@ -207,24 +198,24 @@ export default function GovernmentClassesEdit() {
                   }
                 </View>
                 <SegmentedPicker selectedIndex={selectedSemester} setSelectedIndex={setSelectedSemester} options={["Semester One", "Semester Two"]} width={width * 0.85} height={height * 0.1} />
-                <View>
+                <View style={{flexDirection: "row"}}>
                   { (selectedRoom === undefined) ?
                     <WarningIcon width={12} height={12} outlineColor='red'/>:null
                   }
                   <Text>Select Room</Text>
                 </View>
-                <View>
+                <View style={{height: height * 0.3}}>
                   { (roomsState === loadingStateEnum.loading) ?
                     <Text>Loading</Text>:
                     <View>
                       { (roomsState === loadingStateEnum.success) ?
-                        <View>
+                        <ScrollView style={{height: height * 0.3}}>
                           { rooms.map((room) => (
                             <Pressable onPress={() => {setSelectedRoom(room)}}>
                               <Text>{room.name}</Text>
                             </Pressable>
                           ))}
-                        </View>:<Text>Failed</Text>
+                        </ScrollView>:<Text>Failed</Text>
                       }
                     </View>
                   }
@@ -236,7 +227,7 @@ export default function GovernmentClassesEdit() {
             }
           </View>
         }
-      </View>
+      </ScrollView>
       { isShowingClassConfirmMenu ? 
         <View style={{width: width * 0.8, height: height * 0.8, borderRadius: 15, backgroundColor: "white", position: "absolute"}}>
           <Pressable onPress={() => {setIsShowingClassConfirmMenu(false)}}>
@@ -250,5 +241,26 @@ export default function GovernmentClassesEdit() {
         </View>:null
       }
     </>
+  )
+}
+
+function DayBlock({day, periods, dayIndex, setPeriods, selectedTimetable}:{day: schoolDayType, dayIndex: number, periods: number[], setPeriods: (item: number[]) => void, selectedTimetable: timetableType}) {
+  const [selected, setSelected] = useState<boolean>(false)
+  return (
+    <View key={"Day_"+day.id} style={{flexDirection: "row", margin: 10, zIndex: (selected) ? 2:1}}>
+      <Text>{day.name}</Text>
+      <View>
+        { (selectedTimetable?.schedules.length >= 1 && periods.length >= dayIndex) ?
+          <Dropdown selectedIndex={periods[dayIndex]} onSetSelectedIndex={(index) => {
+            if (periods.length >= dayIndex) {
+              var newPeriods = periods;
+              newPeriods[dayIndex] = index;
+              setPeriods([...newPeriods]);
+            }
+          }} expanded={selected} setExpanded={(e) => {setSelected(e); console.log("called")}} style={{ backgroundColor: "white", zIndex: -2}} expandedStyle={{backgroundColor: "blue", zIndex: 101, position: "absolute"}} options={["unchosen", ...Array.from(selectedTimetable.schedules[0].periods).flatMap((_item, index) => ((index + 1).toString()))]} children={''} />
+          :<Text>Something went wrong please reload the page.</Text>
+        }
+      </View>
+    </View>
   )
 }

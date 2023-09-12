@@ -1,12 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: {uri: string, displayName: string} = {uri: "", displayName: ""}
+const initalState: {uri: string, displayName: string, id: string} = {uri: "", displayName: "", id: ""}
 
 export const microsoftProfileDataSlice = createSlice({
     name: "microsoftProfileData",
     initialState: initalState,
     reducers: {
-        setMicrosoftProfileData: (state, action) => {
+        setMicrosoftProfileData: (state, action: PayloadAction<{uri: string, displayName: string, id: string}>) => {
             return action.payload
         }
     }

@@ -77,6 +77,7 @@ import GovernmentEditCommission from './src/AuthenticatedView/Profile/Government
 import { authenticationRefreshTokenSlice } from './src/Redux/reducers/authenticationRefreshTokenReducer';
 import GovernmentRooms from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentRooms';
 import GovernmentRoomsCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovermentRoomsCreate'
+import { getToken } from "./getToken"
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -159,6 +160,7 @@ WebBrowser.maybeCompleteAuthSession();
 function AppMain() {
   //Dimentions
   const statusBarColor = useSelector((state: RootState) => state.statusBarColor)
+  const {width} = useSelector((state: RootState) => state.dimentions)
   const [dimensions, setDimensions] = useState({window: windowDimensions, screen: screenDimensions});
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
 
@@ -245,7 +247,7 @@ function AppMain() {
       const profileResult = await callMsGraph("https://graph.microsoft.com/v1.0/me", "GET", false, undefined, undefined, accessToken)
       if (profileResult.ok){
         const profileData = await profileResult.json()
-        store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileData({uri: urlOut, displayName: profileData["displayName"]}))
+        store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileData({uri: urlOut, displayName: profileData["displayName"], id: profileData["id"]}))
       }
     }
   }
@@ -265,20 +267,23 @@ function AppMain() {
     discovery,
   );
 
+  
   async function getAuthToken() {
-    promptAsync().then((codeResponse) => {
+    AuthSession.dismiss()
+    promptAsync().then(async (codeResponse) => {
       if (request && codeResponse?.type === 'success' && discovery) {
-        console.log(request)
+        console.log(request, codeResponse)
         AuthSession.exchangeCodeAsync(
           {
             clientId,
             code: codeResponse.params.code,
             extraParams: request.codeVerifier
               ? { code_verifier: request.codeVerifier }
-              : undefined,
+              :undefined,
             redirectUri,
+            scopes: request.scopes
           },
-          discovery,
+          {tokenEndpoint: 'https://login.microsoftonline.com/' + tenantId +'/oauth2/v2.0/token'}
         ).then((response) => {
           console.log("This is response", response)
           store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
@@ -288,6 +293,7 @@ function AppMain() {
           getPaulyLists(response.accessToken)
           getUserProfile(response.accessToken)
         }).catch(e => {console.log(e)});
+        //const result = await getToken(codeResponse.params.code, redirectUri, ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"], request.codeVerifier)
       }
     });
   }
@@ -314,7 +320,10 @@ function AppMain() {
 
   return (
     <View style={{backgroundColor: statusBarColor}}>
-      <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height}}>
+      {
+        <View style={{height: dimensions.window.height, width: (expandedMode) ? dimensions.window.width * 0.25:dimensions.window.width * 0.1, backgroundColor: "#793033"}}/>
+      }
+      <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height, zIndex: 2, position: "absolute", left: 0, top: 0}}>
         { (result?.type === 'success') ?
           <View>
             <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>

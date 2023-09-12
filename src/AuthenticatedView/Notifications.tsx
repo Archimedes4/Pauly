@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, Dimensions, Platform, Pressable } from 'react-native'
 import { getEvent, getSchoolDay, getTimetable } from '../Functions/Calendar/calendarFunctionsGraph';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
 import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
@@ -15,6 +15,7 @@ import CommissionClaim from './Commissions/CommissionClaim';
 import ProgressView from '../UI/ProgressView';
 import getInsightData from '../Functions/Homepage/getInsightData';
 import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
+import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -46,6 +47,7 @@ export default function Notifications() {
   const [trendingState, setTrendingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [userState, setUserState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolDayData, setSchoolDayData] = useState<schoolDayDataType | undefined>(undefined)
+  const dispatch = useDispatch()
 
   async function loadData() {
     if (siteId !== ""){
@@ -98,6 +100,11 @@ export default function Notifications() {
   useEffect(() => {
     loadData()
   }, [siteId])
+
+  useEffect(() => {
+    dispatch(statusBarColorSlice.actions.setStatusBarColor("white"))
+  }, []) 
+
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
       { (currentBreakPoint === 0) ?
@@ -174,7 +181,9 @@ function TaskItem({task}:{task: taskType}) {
       <Pressable onPress={() => {setChecked(!checked)}}>
         <CustomCheckBox checked={checked} checkMarkColor={'blue'} checkedBorderColor={'black'} unCheckedBorderColor={'black'} checkedBackgroundColor={'white'} unCheckedBackgroundColor={'white'} height={50} width={50} />
       </Pressable>
-      <Text>{task.name}</Text>
+      <View style={{justifyContent: "center", alignItems: "center", alignContent: "center"}}>
+        <Text>{task.name}</Text>
+      </View>
     </View>
   ) 
 }

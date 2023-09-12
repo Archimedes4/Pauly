@@ -1,19 +1,22 @@
 import store from "../../Redux/store";
 
-export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string): Promise<Response> {
-  const headers = new Headers();
+export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string, headers?: Headers): Promise<Response> {
+  var headersOut: Headers = new Headers()
   const bearer = `Bearer ${(authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken}`
 
-  headers.append("Authorization", bearer);
-  headers.append("Content-Type", "application/json")
+  headersOut.append("Authorization", bearer);
+  headersOut.append("Content-Type", "application/json")
 
+  headers?.forEach((value, key) => {
+    headersOut.append(key, value)
+  })
   if (perfer){
-    headers.append('Prefer','outlook.timezone="Central America Standard Time"')
+    headersOut.append('Prefer','outlook.timezone="Central America Standard Time"')
   }
 
   const options = {
     method: (method) ? method:"GET",
-    headers: headers,
+    headers: headersOut,
     body: body
   };
 

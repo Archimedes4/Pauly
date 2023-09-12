@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Switch } from 'react-native'
+import { View, Text, Pressable, Switch, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import store, { RootState } from '../../../Redux/store'
@@ -6,7 +6,7 @@ import callMsGraph from '../../../Functions/Ultility/microsoftAssets'
 import { loadingStateEnum, resourceResponce } from '../../../types'
 import { Link } from 'react-router-native'
 import ProgressView from '../../../UI/ProgressView'
-import getResource from '../../../Functions/getResource'
+import getResource from '../../../Functions/getResources'
 
 type channelType = {
   id: string,
@@ -174,11 +174,13 @@ export default function GovernmentResources() {
   }, [])
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
-      <Link to="/profile/government">
-        <Text>Back</Text>
-      </Link>
-      <Text>GovernmentResources</Text>
-      <View>
+      <View style={{height: height * 0.1}}>
+        <Link to="/profile/government">
+          <Text>Back</Text>
+        </Link>
+        <Text>GovernmentResources</Text>
+      </View>
+      <ScrollView style={{height: height * 0.9}}>
         { (getTeamsState === loadingStateEnum.loading) ?
           <Text>Loading</Text>:
           <View>
@@ -191,7 +193,7 @@ export default function GovernmentResources() {
             }
           </View>
         }
-      </View>
+      </ScrollView>
     </View>
   )
 }

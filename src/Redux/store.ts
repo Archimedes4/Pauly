@@ -1,3 +1,4 @@
+import resourcesLastCallReducer, { resourcesLastCalled } from './reducers/resourcesLastCallReducer';
 import statusBarColorReducer from './reducers/statusBarColorReducer';
 import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
 import { configureStore } from '@reduxjs/toolkit';
@@ -11,6 +12,7 @@ import dimentionsReducer from './reducers/dimentionsReducer';
 import authenticationApiTokenReducer from './reducers/authenticationApiToken';
 import { tasksDeltaReducer, tasksReducer } from './reducers/tasksReducers';
 import paulyDataReducer from './reducers/paulyDataReducer';
+import resourcesReducer from './reducers/resourcesReducer';
 
 const store = configureStore({
   reducer: {
@@ -26,7 +28,9 @@ const store = configureStore({
     statusBarColor: statusBarColorReducer,
     tasksDeltaLink: tasksDeltaReducer,
     tasks: tasksReducer,
-    paulyData: paulyDataReducer
+    paulyData: paulyDataReducer,
+    resourcesLastCalled: resourcesLastCallReducer,
+    resources: resourcesReducer
   }
 });
 

@@ -32,11 +32,7 @@ export default function HomePage() {
   const dispatch = useDispatch()
 
   async function loadData() {
-    const result = await getCurrentPaulyData(siteId)
-    if (result.result === loadingStateEnum.success && result.data !== undefined) {
-      setMessageText(result.data.message)
-      setAnnimationSpeed(result.data.animationSpeed)
-    }
+    await getCurrentPaulyData(siteId)
   }
 
   useEffect(() => {
@@ -57,18 +53,18 @@ export default function HomePage() {
 
   // Font
   const [fontsLoaded] = useFonts({
-      'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),
-      'Gochi Hand': require('../../assets/fonts/GochiHand-Regular.ttf')
+    'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),
+    'Gochi Hand': require('../../assets/fonts/GochiHand-Regular.ttf')
   });
   
   const onLayoutRootView = useCallback(async () => {
-      if (fontsLoaded) {
+    if (fontsLoaded) {
       await SplashScreen.hideAsync();
-      }
+    }
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-      return null;
+    return null;
   }
 
   return (

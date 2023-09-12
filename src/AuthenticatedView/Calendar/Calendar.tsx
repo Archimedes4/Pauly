@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, Pressable, TextInput, Switch, ScrollView } from 'react-native'
+import { View, Text, Dimensions, Pressable, TextInput, Switch, ScrollView, useWindowDimensions } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { findFirstDayinMonth, getEventFromJSON } from '../../Functions/Calendar/calendarFunctions';
@@ -118,10 +118,11 @@ export default function Calendar() {
 function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEvent}:{width: number, height: number, setAddDate: (addDate: boolean) => void, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void}) {
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
-  // const fullStore = useSelector((state: RootState) => state)
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  
+  const selectedDateRedux: string =  useSelector((state: RootState) => state.selectedDate)
+  const {fontScale} = useWindowDimensions();
+
   const dispatch = useDispatch()
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
@@ -162,7 +163,6 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
     setMonthData(monthDataResult)
   }
 
-  const selectedDateRedux: string =  useSelector((state: RootState) => state.selectedDate)
   useEffect(() => {
     setSelectedDate(new Date(JSON.parse(selectedDateRedux)))
   }, [selectedDateRedux])
@@ -180,7 +180,8 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
       <View style={{height: height/8, width: width}}>
         <View style={{flexDirection: "row"}}>
           <View style={{width: width * 0.2, flexDirection: "row"}}>
-            <Text style={{}}>{selectedDate.toLocaleString("en-us", { month: "long" })}</Text><Text> {selectedDate.getFullYear()}</Text>{/*leading, title, white*/}
+            <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 24}}>{selectedDate.toLocaleString("en-us", { month: "long" })}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={{textAlign:'center',fontSize:30}}>{selectedDate.getFullYear()}</Text>
           </View>
           <View>
             {(selectedDate.getFullYear() !== new Date().getFullYear() || selectedDate.getMonth() != new Date().getMonth()) ?
@@ -188,7 +189,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
                 <Pressable onPress={() => {
                   dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(new Date())))
                 }}>
-                  <Text style={{color: "black"}}>Today</Text>
+                  <Text style={{color: "black", fontSize: 12/fontScale}}>Today</Text>
                 </Pressable>
               </View>:<View style={{width: width * 0.2}}></View>
             }

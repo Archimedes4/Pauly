@@ -169,15 +169,35 @@ export const commissionsSubmissionsData = {
       "enforceUniqueValues": true
     },
     {
-      "name":"claimedCommissions",
+      "name": "submittedTime",
       "required": true,
-      "text":{"allowMultipleLines": true}
+      "text": { }
+    },
+    {
+      "name": "submissionId",
+      "text": {},
+      "required": true,
+      "indexed": true,
+      "enforceUniqueValues": true
+    },
+    {
+      "name":"submissionApproved",
+      "boolean": {},
+      "required": true,
+      "indexed": true
+    },
+    {
+      "name":"commissionId",
+      "text": {},
+      "required": true,
+      "indexed": true
     }
   ],
   "list": {
     "template": "genericList"
   }
 }
+
 export const paulyDataData = {
   "displayName": "PaulyData",
   "columns": [

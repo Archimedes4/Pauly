@@ -43,87 +43,44 @@ export default function CreateNewCommission() {
     const [isTimed, setIsTimed] = useState<boolean>(true)
 
     async function createCommission() {
-        if (submitCommissionState === loadingStateEnum.failed || submitCommissionState === loadingStateEnum.notStarted){
-            setSubmitCommissionState(loadingStateEnum.loading)
-            const newCommissionID = create_UUID()
-            const data = {
-                "fields": {
-                    //All Commissions
-                    "Title": commissionName,
-                    "timed":isTimed,
-                    "points":points,
-                    "hidden":isHidden,
-                    "maxNumberOfClaims":maxNumberOfClaims,
-                    "allowMultipleSubmissions":allowMultipleSubmissions,
-                    "commissionID": newCommissionID,
-                    "value":selectedCommissionType + 1
-                }
-            }
-            if (isTimed) {
-                data["fields"]["startDate"] = startDate.toISOString().replace(/.\d+Z$/g, "Z")
-                data["fields"]["endDate"] = endDate.toISOString().replace(/.\d+Z$/g, "Z")
-            }
-            if (selectedCommissionType === commissionTypeEnum.Location || selectedCommissionType === commissionTypeEnum.ImageLocation) {
-                data["fields"]["proximity"] = proximity
-                data["fields"]["coordinateLat"] = selectedPositionIn.lat
-                data["fields"]["coordinateLng"] = selectedPositionIn.lng
-            }
-            if (selectedCommissionType === commissionTypeEnum.QRCode) {
-                data["fields"]["qrCodeData"] = "[]"
-            }
-            const listData = {
-                "displayName":newCommissionID,
-                "columns": [
-                    {
-                        "name": "submittedTime",
-                        "required": true,
-                        "text": { }
-                    },
-                    {
-                        "name": "userId",
-                        "text": { },
-                        "required": true,
-                        "indexed":true
-                    },
-                    {
-                        "name": "submissionId",
-                        "text": {},
-                        "required": true,
-                        "indexed": true,
-                        "enforceUniqueValues": true
-                    },
-                    {
-                        "name":"submissionApproved",
-                        "boolean": {},
-                        "required": true,
-                        "indexed": true
-                    },
-                    {
-                        "name":"submissionData",
-                        "text": {"allowMultipleLines": true}
-                    }
-                ],
-                "list":
-                {
-                  "contentTypesEnabled": false,
-                  "hidden": false,
-                  "template": " genericList"
-                }
-            }
-            const resultList = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists", "POST", false, JSON.stringify(listData))
-            if (resultList.ok){
-                const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items", "POST", false, JSON.stringify(data))//TO DO fix this id
-                if (result.ok){
-                    setSubmitCommissionState(loadingStateEnum.success)
-                } else {
-                    const data = await result.json()
-                    console.log(data)
-                    setSubmitCommissionState(loadingStateEnum.failed)
-                }
-            } else {
-                setSubmitCommissionState(loadingStateEnum.failed)
-            }
+      if (submitCommissionState === loadingStateEnum.failed || submitCommissionState === loadingStateEnum.notStarted){
+        setSubmitCommissionState(loadingStateEnum.loading)
+        const newCommissionID = create_UUID()
+        const data = {
+          "fields": {
+            //All Commissions
+            "Title": commissionName,
+            "timed":isTimed,
+            "points":points,
+            "hidden":isHidden,
+            "maxNumberOfClaims":maxNumberOfClaims,
+            "allowMultipleSubmissions":allowMultipleSubmissions,
+            "commissionID": newCommissionID,
+            "value":selectedCommissionType + 1
+          }
         }
+        if (isTimed) {
+          data["fields"]["startDate"] = startDate.toISOString().replace(/.\d+Z$/g, "Z")
+          data["fields"]["endDate"] = endDate.toISOString().replace(/.\d+Z$/g, "Z")
+        }
+        if (selectedCommissionType === commissionTypeEnum.Location || selectedCommissionType === commissionTypeEnum.ImageLocation) {
+          data["fields"]["proximity"] = proximity
+          data["fields"]["coordinateLat"] = selectedPositionIn.lat
+          data["fields"]["coordinateLng"] = selectedPositionIn.lng
+        }
+        if (selectedCommissionType === commissionTypeEnum.QRCode) {
+          data["fields"]["qrCodeData"] = "[]"
+        }
+
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items", "POST", false, JSON.stringify(data))//TO DO fix this id
+        if (result.ok){
+          setSubmitCommissionState(loadingStateEnum.success)
+        } else {
+          const data = await result.json()
+          console.log(data)
+          setSubmitCommissionState(loadingStateEnum.failed)
+        }
+      }
     }
 
     return (
@@ -131,19 +88,19 @@ export default function CreateNewCommission() {
             <View style={{height: height, width: width, zIndex: 1, overflow: "hidden"}}>
                 <ScrollView style={{height: height, zIndex: 1}}>
                     <Link to="/profile/government/commissions/">
-                        <Text>Back</Text>
+                      <Text>Back</Text>
                     </Link>
                     <View style={{alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-                        <Text>Create New Commission</Text>
+                      <Text>Create New Commission</Text>
                     </View>
                     <View style={{width: width, height: height * 0.15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-                        <SegmentedPicker selectedIndex={selectedCommissionType} setSelectedIndex={setSelectedCommissionType} options={["Issued", "Location", "Image", "Image and Location", "QRCode"]} width={width * 0.8} height={height * 0.1} />
+                      <SegmentedPicker selectedIndex={selectedCommissionType} setSelectedIndex={setSelectedCommissionType} options={["Issued", "Location", "Image", "Image and Location", "QRCode"]} width={width * 0.8} height={height * 0.1} />
                     </View>
                     <Text>Commission Name</Text>
                     <TextInput 
-                        value={commissionName}
-                        onChangeText={text => setCommissionName(text)}
-                        placeholder='Commission Name'
+                      value={commissionName}
+                      onChangeText={text => setCommissionName(text)}
+                      placeholder='Commission Name'
                     />
                     { (selectedCommissionType === commissionTypeEnum.ImageLocation || selectedCommissionType === commissionTypeEnum.Location) ?
                         <View>
@@ -165,28 +122,28 @@ export default function CreateNewCommission() {
                         </View>:null
                     }
                     <View style={{flexDirection: "row"}}>
-                        <Text>Timed: </Text>
-                        <Switch
-                            trackColor={{false: '#767577', true: '#81b0ff'}}
-                            thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={(e) => {setIsTimed(e)}}
-                            value={isTimed}
-                        />
+                      <Text>Timed: </Text>
+                      <Switch
+                        trackColor={{false: '#767577', true: '#81b0ff'}}
+                        thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={(e) => {setIsTimed(e)}}
+                        value={isTimed}
+                      />
                     </View>
                     { isTimed ?
                         <View>
                             <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
-                                <Text>Start Date</Text>
-                                <TimePickerDate date={startDate} setDate={setStartDate} />
-                                <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
-                                    <Text>Pick Start Date</Text>
-                                </Pressable>
+                              <Text>Start Date</Text>
+                              <TimePickerDate date={startDate} setDate={setStartDate} />
+                              <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
+                                <Text>Pick Start Date</Text>
+                              </Pressable>
                             </View>
                             <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
-                                <Text>End Date</Text>
-                                <TimePickerDate date={endDate} setDate={setEndDate} />
-                                <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
+                              <Text>End Date</Text>
+                              <TimePickerDate date={endDate} setDate={setEndDate} />
+                              <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
                             </View>
                         </View>:null
                     }

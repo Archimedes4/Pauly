@@ -65,7 +65,7 @@ export default function Commissions() {
   
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
-      <View style={{width: width, height: height * 0.1, backgroundColor: '#444444'}}>
+      <View style={{width: width, height: height * 0.1, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         { (currentBreakPoint === 0) ?
           <Link to="/">
             <View>
@@ -78,9 +78,10 @@ export default function Commissions() {
       <View>
         { currentCommissions.map((item: commissionType) => (
           <Pressable onPress={() => {navigate("/commissions/" + item.commissionId)}} key={"Link_" + item.commissionId}>
-            <View key={item.commissionId} style={{borderRadius: 15, borderColor: "Black", borderWidth: 10, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5}}>
-              <Text>{item.title}</Text>
-              <Text>{item.commissionId}</Text>
+            <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, margin: width * 0.05}}>
+              <View style={{margin: 10}}>
+                <Text>{item.title}</Text>
+              </View>
             </View>
           </Pressable>
         ))}
