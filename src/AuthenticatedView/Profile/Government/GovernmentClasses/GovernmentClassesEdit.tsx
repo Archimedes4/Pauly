@@ -1,15 +1,15 @@
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
-import { RootState } from '../../../../Redux/store';
+import store, { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { loadingStateEnum } from '../../../../types';
 import { useNavigate, useParams } from 'react-router-native';
-import { getRooms } from '../../../../Functions/getRooms';
+import { getRoom, getRooms } from '../../../../Functions/getRooms';
 import getSchoolYears from '../../../../Functions/Calendar/getSchoolYears';
 import SegmentedPicker from '../../../../UI/Pickers/SegmentedPicker';
 import { setString } from 'expo-clipboard';
-import { getTimetable } from '../../../../Functions/Calendar/calendarFunctionsGraph';
+import { getEvent, getTimetable } from '../../../../Functions/Calendar/calendarFunctionsGraph';
 import { CloseIcon, WarningIcon } from '../../../../UI/Icons/Icons';
 import Dropdown from '../../../../UI/Dropdown';
 
@@ -56,19 +56,26 @@ export default function GovernmentClassesEdit() {
 
   const [classState, setClassState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
 
-  const [createClassState, setCreateClassState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const [updateClassState, setUpdateClassState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const [isShowingClassConfirmMenu, setIsShowingClassConfirmMenu] = useState<boolean>(false)
 
   const [periods, setPeriods] = useState<number[]>([])
 
   async function getClass() {
     setClassState(loadingStateEnum.loading)
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + id + "/") //TO DO change to class
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + id + "?$select=" + store.getState().paulyList.classExtensionId + ",displayName") //TO DO change to class
     if (result.ok) {
       const data = await result.json()
-      console.log(data)
-      setClassName(data["displayName"])
-      
+      const extensionData = data[store.getState().paulyList.classExtensionId]
+      if (extensionData !== undefined) {
+        setClassName(extensionData["className"])
+        setSelectedSemester(parseInt(extensionData["semesterId"]))
+        setPeriods(JSON.parse(extensionData["periodData"]))
+        const eventResult = await getEvent(extensionData["schoolYearEventId"])
+        const roomResult = await getRoom(extensionData["roomId"])
+      } else {
+        setClassName(data["displayName"])
+      }
       setClassState(loadingStateEnum.success)
     } else {
       setClassState(loadingStateEnum.failed)
@@ -116,8 +123,22 @@ export default function GovernmentClassesEdit() {
     getClass()
   }, [])
 
-  async function createClass() {
-    
+  async function updateClass() {
+    setUpdateClassState(loadingStateEnum.loading)
+    var data = {}
+    data[store.getState().paulyList.classExtensionId] = {
+      "className":className,
+      "schoolYearEventId": selectedSchoolYear.id,
+      "semesterId": selectedSemester.toString(),
+      "roomId": selectedRoom.id,
+      "periodData": JSON.stringify(periods)
+    }
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${id}`, "PATCH", undefined, JSON.stringify(data))
+    if (result.ok){
+      setUpdateClassState(loadingStateEnum.success)
+    } else {
+      setUpdateClassState(loadingStateEnum.failed)
+    }
   }
 
   useEffect(() => {
@@ -149,7 +170,6 @@ export default function GovernmentClassesEdit() {
                   <Text>Back</Text>
                 </Pressable>
                 <Text>Add Class Data</Text>
-                <Text>_Teacher:</Text>
                 <View>
                   <Text>Name:</Text>
                   <TextInput value={className} onChangeText={setClassName}/>
@@ -229,14 +249,17 @@ export default function GovernmentClassesEdit() {
         }
       </ScrollView>
       { isShowingClassConfirmMenu ? 
-        <View style={{width: width * 0.8, height: height * 0.8, borderRadius: 15, backgroundColor: "white", position: "absolute"}}>
+        <View style={{width: width * 0.8, height: height * 0.8, top: height * 0.1, left: width * 0.1, borderRadius: 15, backgroundColor: "white", position: "absolute", shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
           <Pressable onPress={() => {setIsShowingClassConfirmMenu(false)}}>
             <CloseIcon width={14} height={14} />
           </Pressable>
           <Text>Create Class</Text>
-
-          <Pressable>
-            <Text>Confirm</Text>
+          <Text>Name: {className}</Text>
+          <Text>Room: {selectedRoom?.name}</Text>
+          <Text>School Year: {selectedSchoolYear.name}</Text>
+          <Text>Semester: {(selectedSemester === semesters.semesterOne) ? "One":"Two"}</Text>
+          <Pressable onPress={() => {updateClass()}}>
+            <Text style={{margin: 10}}>{(updateClassState === loadingStateEnum.cannotStart) ? "Cannot Update Class":(updateClassState === loadingStateEnum.notStarted) ? "Update Class":(updateClassState === loadingStateEnum.loading) ? "Loading":(updateClassState === loadingStateEnum.success) ? "Updated Class":"Failed To Update Class"}</Text>
           </Pressable>
         </View>:null
       }

@@ -19,3 +19,21 @@ export async function getRooms(nextLink?: string, search?: string): Promise<{res
     return {result: loadingStateEnum.failed}
   }
 }
+
+export async function getRoom(roomId: string): Promise<{result: loadingStateEnum, data?: roomType}> {
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.roomListId}/items?expand=fields&fields/roomId%20eq%20'${roomId}'`)
+  if (result.ok) {
+    const data = await result.json()
+    if (data["value"].length === 0){
+      
+      return {result: loadingStateEnum.success, data: {
+        name: data["value"][0]["fields"]["roomName"],
+        id: data["value"][0]["feilds"]["ro0mId"]
+      }}
+    } else {
+      return {result: loadingStateEnum.failed}
+    }
+  } else {
+    return {result: loadingStateEnum.failed}
+  }
+}

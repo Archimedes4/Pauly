@@ -24,6 +24,7 @@ declare global{
     }
 }
 
+//NOTE: period length cannot be longer than 20
 export default function GovernmentSchedule() {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
     const {scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)
@@ -84,7 +85,9 @@ export default function GovernmentSchedule() {
             </View>
             <TimePicker selectedHourMilitary={newPeriodHourStart} selectedMinuteMilitary={newPeriodMinuteStart} onSetSelectedHourMilitary={setNewPeriodHourStart} onSetSelectedMinuteMilitary={setNewPeriodMinuteStart}/>
             <TimePicker selectedHourMilitary={newPeriodHourEnd} selectedMinuteMilitary={newPeriodMinuteEnd} onSetSelectedHourMilitary={setNewPeriodHourEnd} onSetSelectedMinuteMilitary={setNewPeriodMinuteEnd}/>
-            <Button title="Add Period" onPress={() => {setNewPeriods([...newPeriods, {startHour: newPeriodHourStart, startMinute: newPeriodMinuteStart, endHour: newPeriodHourEnd, endMinute: newPeriodMinuteEnd, id: create_UUID()}])}}/>
+            { (newPeriods.length < 20) ?
+              <Button title="Add Period" onPress={() => {setNewPeriods([...newPeriods, {startHour: newPeriodHourStart, startMinute: newPeriodMinuteStart, endHour: newPeriodHourEnd, endMinute: newPeriodMinuteEnd, id: create_UUID()}])}}/>:null
+            }
             <Button title={(createScheduleLoadingState === loadingStateEnum.notStarted) ? "Create Schedule":(createScheduleLoadingState === loadingStateEnum.loading) ? "Loading":(createScheduleLoadingState === loadingStateEnum.success) ? "Success":"Failed"} onPress={() => {if (createScheduleLoadingState === loadingStateEnum.notStarted) {submitSchedule()}}} />
         </View>
   )

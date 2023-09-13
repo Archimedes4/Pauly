@@ -5,6 +5,7 @@ import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
 import { loadingStateEnum } from '../../../../types'
+import getCommissions from '../../../../Functions/getCommissions'
 
 declare global {
   type commissionType = {
@@ -28,37 +29,18 @@ export default function GovernmentCommissions() {
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {height, width} = useSelector((state: RootState) => state.dimentions)
   const [commissions, setCommissions] = useState<commissionType[]>([])
-  const [getCommissionsLoadingState, setGetCommissionsLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [commissionsState, setCommissionsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
-  async function getCommissions(){
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields")
-    if (result.ok){
-      const data = await result.json()
-      if (data["value"].length !== undefined){
-        var newCommissions: commissionType[] = []
-        for (let index = 0; index < data["value"].length; index++){
-          newCommissions.push({
-            title: data["value"][index]["fields"]["Title"],
-            startDate: new Date(data["value"][index]["fields"]["startDate"]),
-            endDate: new Date(data["value"][index]["fields"]["endDate"]),
-            points: data["value"][index]["fields"]["points"],
-            hidden: data["value"][index]["fields"]["hidden"],
-            commissionId: data["value"][index]["fields"]["commissionID"],
-            proximity: data["value"][index]["fields"]["proximity"],
-            coordinateLat: data["value"][index]["fields"]["coordinateLat"],
-            coordinateLng: data["value"][index]["fields"]["coordinateLng"]
-          })
-        }
-        setCommissions(newCommissions)
-        setGetCommissionsLoadingState(loadingStateEnum.success)
-      } else {
-        setGetCommissionsLoadingState(loadingStateEnum.failed)
-      }
-    } else {
-      setGetCommissionsLoadingState(loadingStateEnum.failed)
+  async function loadData() {
+    const result = await getCommissions()
+    if (result.result === loadingStateEnum.success) {
+      setCommissions(result.data)
+      //TO DO pagination
     }
+    setCommissionsState(result.result)
   }
-  useEffect(() => {getCommissions()}, [])
+
+  useEffect(() => {loadData()}, [])
   return (
     <View style={{height: height, width: width, backgroundColor: "white"}}>
       <View style={{height: height * 0.1}}>
@@ -70,10 +52,10 @@ export default function GovernmentCommissions() {
         </View>
       </View>
       <View style={{height: height * 0.85}}>
-        { (getCommissionsLoadingState === loadingStateEnum.loading) ?
+        { (commissionsState === loadingStateEnum.loading) ?
           <Text>Loading</Text>:
           <View>
-            { (getCommissionsLoadingState === loadingStateEnum.success) ?
+            { (commissionsState === loadingStateEnum.success) ?
               <View>
                 {commissions.map((commission) => (
                   <Link to={"/profile/government/commissions/edit/" + commission.commissionId} key={"Commission_" + commission.commissionId} style={{margin: 10, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>

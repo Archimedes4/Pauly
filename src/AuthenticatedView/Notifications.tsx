@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { View, Text, Dimensions, Platform, Pressable } from 'react-native'
+import { View, Text, Dimensions, Platform, Pressable, TextInput, Linking, ScrollView } from 'react-native'
 import { getEvent, getSchoolDay, getTimetable } from '../Functions/Calendar/calendarFunctionsGraph';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
@@ -112,8 +112,10 @@ export default function Notifications() {
           <Text>Back</Text>
         </Link>:null
       }
-      <View>
-        <Text>{message}</Text>
+      <View style={{width: width, height: height * 0.1}}>
+        <View style={{width: width * 0.8, height: height * 0.07, borderRadius: 15, backgroundColor: "#444444", margin: "auto"}}>
+          <Text>{message}</Text>
+        </View>
       </View>
       <View>
         { (powerpointBlob !== "") ?
@@ -137,29 +139,45 @@ export default function Notifications() {
         <View style={{margin: 10}}>
           <Text>Tasks</Text>
           {userTasks.map((task) => (
-            <TaskItem task={task} key={"User_Task_" + task.id}/>
+            <TaskItem task={task} key={"User_Task_" + task.id} excessItem={false}/>
           ))}
         </View>
       </View>
-      <View>
+      <View style={{height: height * 0.1, width: width * 0.5}}>
         <Text>Recent Files</Text>
-        <View>
+        <ScrollView style={{height: height * 0.1-14}}>
           { (userState === loadingStateEnum.loading) ?
             <Text>Loading</Text>:
             <View>
               { (userState === loadingStateEnum.success) ?
                 <View>
                   { userData.map((data) => (
-                    <View key={"User_Insight_" + data.id}>
-                      <Text>{data.title}</Text>
-                    </View>
+                    <Pressable key={"User_Insight_" + data.id} onPress={() => {Linking.openURL(data.webUrl)}}>
+                      <Text style={{margin: 10}}>{data.title}</Text>
+                    </Pressable>
                   ))}
                 </View>:<Text>Failed</Text>
               }
             </View>
           }
-        </View>
+        </ScrollView>
+      </View>
+      <View style={{height: height * 0.1, width: width * 0.5}}>
         <Text>Popular Files</Text>
+        { (trendingState === loadingStateEnum.loading) ?
+          <Text>Loading</Text>:
+          <ScrollView  style={{height: height * 0.1-14}}>
+            { (trendingState === loadingStateEnum.success) ?
+              <View>
+                { trendingData.map((data) => (
+                  <Pressable key={"User_Insight_" + data.id} onPress={() => {Linking.openURL(data.webUrl)}}>
+                    <Text style={{margin: 10}}>{data.title}</Text>
+                  </Pressable>
+                ))}
+              </View>:<Text>Failed</Text>
+            }
+          </ScrollView>
+        }
       </View>
       <View style={{backgroundColor: "#793033", width: width * 0.3, height: height * 0.3, borderRadius: 15}}>
         <View>
@@ -174,15 +192,21 @@ export default function Notifications() {
   )
 }
 
-function TaskItem({task}:{task: taskType}) {
+function TaskItem({task}:{task: taskType, excessItem: boolean}) {
   const [checked, setChecked] = useState<boolean>(false)
+  const [taskName, setTaskName] = useState<string>(task.name)
   return (
     <View style={{flexDirection: "row"}}>
       <Pressable onPress={() => {setChecked(!checked)}}>
         <CustomCheckBox checked={checked} checkMarkColor={'blue'} checkedBorderColor={'black'} unCheckedBorderColor={'black'} checkedBackgroundColor={'white'} unCheckedBackgroundColor={'white'} height={50} width={50} />
       </Pressable>
       <View style={{justifyContent: "center", alignItems: "center", alignContent: "center"}}>
-        <Text>{task.name}</Text>
+        <TextInput 
+          value={taskName}
+          onChangeText={(e) => {
+            setTaskName(e)
+          }}
+        />
       </View>
     </View>
   ) 

@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, ScrollView, Text, View } from 'react-native'
 import { Link, useNavigate } from 'react-router-native';
 import callMsGraph from '../../Functions/Ultility/microsoftAssets';
 import { useFonts } from 'expo-font';
@@ -7,6 +7,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer';
+import getPoints from '../../Functions/getPoints';
+import getCommissions from '../../Functions/getCommissions';
+import { loadingStateEnum } from '../../types';
 
 enum CommissionMode{
   Before,
@@ -19,34 +22,22 @@ export default function Commissions() {
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
+  const [points, setPoints] = useState<number>(0)
   const dispatch = useDispatch()
   const navigate = useNavigate();
-  
-  async function getCommissions(){
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields")//TO DO list id
-    if (result.ok) {
-      const data = await result.json()
-      console.log(data)
-      if (data["value"] !== null && data["value"] !== undefined){
-        var resultCommissions: commissionType[] = []
-        for (let index = 0; index < data["value"].length; index++) {
-          resultCommissions.push({
-            title: data["value"][index]["fields"]["Title"],
-            startDate: new Date(data["value"][index]["fields"]["startDate"]),
-            endDate:  new Date(data["value"][index]["fields"]["endDate"]),
-            points:  data["value"][index]["fields"]["points"] as number,
-            proximity: data["value"][index]["fields"]["proximity"] as number,
-            commissionId: data["value"][index]["fields"]["commissionID"] as string,
-            hidden: data["value"][index]["fields"]["hidden"]
-          })
-        }
-        setCurrentCommissions(resultCommissions)
-      }
+
+  async function loadData() {
+    const pointResult = await getPoints()
+    const commissionsResult = await getCommissions()
+    if (commissionsResult.result === loadingStateEnum.success) {
+
     }
+    //TO DO pagination
   }
+
   useEffect(() => {
     dispatch(statusBarColorSlice.actions.setStatusBarColor("#444444"))
-    getCommissions()
+    loadData()
   }, [])
 
   const [fontsLoaded] = useFonts({
@@ -75,7 +66,7 @@ export default function Commissions() {
         }
         <Text style={{fontFamily: 'BukhariScript'}}>Commissions</Text>
       </View>
-      <View>
+      <ScrollView style={{height: height * 0.9}}>
         { currentCommissions.map((item: commissionType) => (
           <Pressable onPress={() => {navigate("/commissions/" + item.commissionId)}} key={"Link_" + item.commissionId}>
             <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, margin: width * 0.05}}>
@@ -85,7 +76,7 @@ export default function Commissions() {
             </View>
           </Pressable>
         ))}
-      </View>
+      </ScrollView>
     </View>
   )
 }

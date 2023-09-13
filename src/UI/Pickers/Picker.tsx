@@ -18,7 +18,6 @@ interface PickerWrapperProps {
 const PickerWrapper: React.FC<PickerWrapperProps>  = ({ selectedIndex, onSetSelectedIndex, children, width, height }) => {
     const pan = useRef(new Animated.Value(0)).current
     const compoentWidth = width/Children.count(children)
-    useEffect(() => {console.log("Length", width/Children.count(children), "width", width)}, [children])
     function fadeIn(id: number) {
         // Will change fadeAnim value to 1 in 5 seconds
         Animated.timing(pan, {

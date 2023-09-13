@@ -97,7 +97,9 @@ export default function Calendar() {
       </View> 
       <View style={{height: height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
-        <MonthViewMain width={width * 0.8} height={height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>: null
+        <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+          <MonthViewMain width={width * 0.9} height={height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>
+        </View>: null
       }
       { (selectedCalendarMode === calendarMode.week) ?
         <Week width={width * 1.0} height={height * 0.9} />:null
@@ -177,9 +179,9 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
 
   return (
     <View style={{backgroundColor: "white"}}>
-      <View style={{height: height/8, width: width}}>
+      <View style={{height: height/8, width: width, justifyContent: "center", alignItems: "center", alignContent: "center"}}>
         <View style={{flexDirection: "row"}}>
-          <View style={{width: width * 0.2, flexDirection: "row"}}>
+          <View style={{width: width * 0.6, flexDirection: "row"}}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 24}}>{selectedDate.toLocaleString("en-us", { month: "long" })}</Text>
             <Text numberOfLines={1} adjustsFontSizeToFit style={{textAlign:'center',fontSize:30}}>{selectedDate.getFullYear()}</Text>
           </View>
@@ -215,7 +217,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
       <View style={{width: width}}>
         <View style={{flexDirection: "row"}}>
           {daysInWeek.map((DOW) => (
-            <View key={create_UUID()} style={{width: width/7, height: height/8}}>
+            <View key={create_UUID()} style={{width: width/7, height: height/8, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
               <Text style={{color: "black"}}>{DOW}</Text>
             </View>
           ))}

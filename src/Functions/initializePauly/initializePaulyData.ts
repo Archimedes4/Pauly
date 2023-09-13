@@ -83,6 +83,11 @@ export const paulyListData = {
       "name":"userExtensionId",
       "text":{},
       "required": true
+    },
+    {
+      "name":"noClassListId",
+      "text":{},
+      "required": true
     }
   ],
   "list": {
@@ -197,7 +202,6 @@ export const commissionsSubmissionsData = {
     "template": "genericList"
   }
 }
-
 export const paulyDataData = {
   "displayName": "PaulyData",
   "columns": [
@@ -433,6 +437,33 @@ export const roomData = {
     "template": "genericList"
   }
 }
+export const noClassData = {
+  "displayName": "No Class",
+  "columns": [
+    {
+      "name":"classGroupId",
+      "text":{ },
+      "required": true,
+      "indexed": true
+    },
+    {
+      "name":"classOffDay",
+      "text":{ },
+      "required": true
+    },
+    {
+      "name":"startTime",
+      "text": { }
+    },
+    {
+      "name":"endTime",
+      "text": { }
+    }
+  ],
+  "list": {
+    "template": "genericList"
+  }
+}
 
 //Extensions
 export const paulyClassExtensionData = {
@@ -445,10 +476,6 @@ export const paulyClassExtensionData = {
   "properties": [
     {
       "name":"className",//This property will be optional in the future
-      "type":"String"
-    },
-    {
-      "name":"teacherId",//TO DO This property will be removed in the future when class data added
       "type":"String"
     },
     {
@@ -585,5 +612,11 @@ export const addDataArray: addDataType[] = [
     urlOne: "https://graph.microsoft.com/v1.0/sites/",
     urlTwo:  "/lists",
     id: "roomListId"
+  },
+  {
+    data: noClassData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "noClassListId"
   }
 ]
