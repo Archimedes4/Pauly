@@ -13,7 +13,8 @@ import {
   Pressable,
   View,
   ScaledSize,
-  Image
+  Image,
+  Platform
 } from 'react-native';
 import { Provider, useSelector } from 'react-redux'
 import { NativeRouter, Route, Routes } from 'react-router-native';
@@ -257,20 +258,24 @@ function AppMain() {
   const redirectUri = AuthSession.makeRedirectUri({scheme: "Archimedes4.Pauly", path: 'auth'});
 
   // Request
+
   const [request, result, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId,
       scopes: ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"],
       redirectUri,
-      prompt: AuthSession.Prompt.SelectAccount
+      prompt: AuthSession.Prompt.SelectAccount,
+      responseType: (Platform.OS === "web") ? AuthSession.ResponseType.Code:AuthSession.ResponseType.Token
     },
     discovery,
   );
-
   
   async function getAuthToken() {
     AuthSession.dismiss()
-    promptAsync().then(async (codeResponse) => {
+    console.log("This")
+    const codeResponse = await promptAsync()
+    console.log(codeResponse)
+    if (Platform.OS === "web") {
       if (request && codeResponse?.type === 'success' && discovery) {
         console.log(request, codeResponse)
         AuthSession.exchangeCodeAsync(
@@ -295,7 +300,7 @@ function AppMain() {
         }).catch(e => {console.log(e)});
         //const result = await getToken(codeResponse.params.code, redirectUri, ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"], request.codeVerifier)
       }
-    });
+    }
   }
 
   // async function refreshAuthToken() {

@@ -19,13 +19,15 @@ export default function GovernmentReviewFileSubmission() {
   const [dataURL, setDataURL] = useState<string>("")
   const [dataContentType, setDataContentType] = useState<dataContentTypeOptions>(dataContentTypeOptions.unknown)
   const [currentSubmissionInfomration, setCurrentSubmissionInformation] = useState<mediaSubmissionType | undefined>(undefined)
-  
+
   //Loading States
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function deleteSubmission(itemID: string): Promise<boolean> {
     const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items/` + itemID, "DELETE")//TO DO fix list ids
     if (result.ok){
+      //TO DO Check if submission has been approved before   
+      //Remove from approved submissions
       return true
     } else {
       return false
@@ -72,16 +74,45 @@ export default function GovernmentReviewFileSubmission() {
   async function approveSubmission() {
     if (currentSubmissionInfomration){
       const data = {
-        "fields": {
-          Title: currentSubmissionInfomration.Title,
-          FileId: currentSubmissionInfomration.FileId,
-          Caption: currentSubmissionInfomration.Title
-        }
+        "requests": [
+          {
+            "id":"1",
+            "method": "POST",
+            "url": `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsApprovedSubmissionsListId}/items`,
+            "body": {
+              "fields": {
+                Title: currentSubmissionInfomration.Title,
+                FileId: currentSubmissionInfomration.FileId,
+                Caption: currentSubmissionInfomration.Title
+              }
+            },
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          },
+          {
+            "id":"2",
+            "method":"PATCH",
+            "url": `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items/${currentSubmissionInfomration.ItemID}`,
+            "body": {
+              "fields":{"Accepted":true}
+            },
+            "headers": {
+              "Content-Type": "application/json"
+            }
+          }
+        
+        ]
       }
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsApprovedSubmissionsListId}/items`, "POST", false, JSON.stringify(data))
-      
-      const dataResult = await result.json()
-      console.log(dataResult)
+      var resourceHeader = new Headers()
+      resourceHeader.append("Accept", "application/json")
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", false, JSON.stringify(data), undefined, undefined, resourceHeader)
+      if (result.ok){
+
+      } else {
+        const data = await result.json()
+        console.log(data)
+      }
     }
   }
   useEffect(() => {

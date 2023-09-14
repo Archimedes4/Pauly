@@ -105,7 +105,9 @@ export default function Calendar() {
         <Week width={width * 1.0} height={height * 0.9} />:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
-        <DayView width={width * 0.9} height={height * 0.9} />:null
+        <View style={{width: width, height: height * 0.9, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
+          <DayView width={width * 0.9} height={height * 0.9} />
+        </View>:null
       }
       </View>
       { isShowingAddDate ?

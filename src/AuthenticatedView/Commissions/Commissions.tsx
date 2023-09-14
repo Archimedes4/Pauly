@@ -28,9 +28,10 @@ export default function Commissions() {
 
   async function loadData() {
     const pointResult = await getPoints()
+    console.log(pointResult)
     const commissionsResult = await getCommissions()
-    if (commissionsResult.result === loadingStateEnum.success) {
-
+    if (commissionsResult.result === loadingStateEnum.success, commissionsResult.data !== undefined) {
+      setCurrentCommissions(commissionsResult.data)
     }
     //TO DO pagination
   }
@@ -55,28 +56,33 @@ export default function Commissions() {
   }
   
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
-      <View style={{width: width, height: height * 0.1, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-        { (currentBreakPoint === 0) ?
-          <Link to="/">
-            <View>
-              <Text>Back</Text>
-            </View>
-          </Link>:null
-        }
-        <Text style={{fontFamily: 'BukhariScript'}}>Commissions</Text>
-      </View>
-      <ScrollView style={{height: height * 0.9}}>
-        { currentCommissions.map((item: commissionType) => (
-          <Pressable onPress={() => {navigate("/commissions/" + item.commissionId)}} key={"Link_" + item.commissionId}>
-            <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, margin: width * 0.05}}>
-              <View style={{margin: 10}}>
-                <Text>{item.title}</Text>
+    <>
+      <View style={{width: width, height: height, backgroundColor: "white"}}>
+        <View style={{width: width, height: height * 0.1, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+          { (currentBreakPoint === 0) ?
+            <Link to="/">
+              <View>
+                <Text>Back</Text>
               </View>
-            </View>
-          </Pressable>
-        ))}
-      </ScrollView>
-    </View>
+            </Link>:null
+          }
+          <Text style={{fontFamily: 'BukhariScript'}}>Commissions</Text>
+        </View>
+        <ScrollView style={{height: height * 0.9}}>
+          { currentCommissions.map((item: commissionType) => (
+            <Pressable onPress={() => {navigate("/commissions/" + item.commissionId)}} key={"Link_" + item.commissionId}>
+              <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, margin: width * 0.05}}>
+                <View style={{margin: 10}}>
+                  <Text>{item.title}</Text>
+                </View>
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+      { 
+
+      }
+    </>
   )
 }

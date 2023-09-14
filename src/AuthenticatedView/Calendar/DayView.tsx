@@ -6,194 +6,194 @@
 //
 import { useEffect, useRef, useState } from "react"
 import {View, ScrollView, useColorScheme, Text} from "react-native"
-import { useSearchParams } from "react-router-native"
 import { getEventFromJSON, isDateToday } from "../../Functions/Calendar/calendarFunctions"
 import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
 import create_UUID from "../../Functions/Ultility/CreateUUID"
 
 declare global {
-    type calendarCourseType = {
-        name: String
-        semester: number
-        dayA: number
-        dayB: number
-        dayC: number
-        dayD: number
-        noClass: noClassType[]
-        year: number
-        assignments: assignmentTypeQuiz[]
-    }
-    type noClassType = {
-        day: number
-        Month: number
-        Year: number
-    }
-    type assignmentTypeQuiz = {
-        id: string
-        title: string
-        description: string
-        assignmentEnum: number
-        documentRef: string
-        assignmentDuringClass: boolean
-        selectedMonth?: number
-        selectedDay?: number
-        dueDate?: Date
-    }
+  type calendarCourseType = {
+    name: String
+    semester: number
+    dayA: number
+    dayB: number
+    dayC: number
+    dayD: number
+    noClass: noClassType[]
+    year: number
+    assignments: assignmentTypeQuiz[]
+  }
+  type noClassType = {
+    day: number
+    Month: number
+    Year: number
+  }
+  type assignmentTypeQuiz = {
+    id: string
+    title: string
+    description: string
+    assignmentEnum: number
+    documentRef: string
+    assignmentDuringClass: boolean
+    selectedMonth?: number
+    selectedDay?: number
+    dueDate?: Date
+  }
 }
 
 export default function DayView({width, height}:{width: number, height: number}) {
-    const colorScheme = useColorScheme();
-    const fullStore = useSelector((state: RootState) => state)
-    const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0)
-    const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0)
-    const [currentTime, setCurrentTime] = useState<string>("12:00")
-    const [isShowingTime, setIsShowingTime] = useState<boolean>(true)
-    const [hourLength, setHourLength] = useState<number>(0)
-    const hoursText: string[] = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM","10PM", "11PM"]
-    const mainScrollRef = useRef<ScrollView>(null)
+  const colorScheme = useColorScheme();
+  const fullStore = useSelector((state: RootState) => state)
+  const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0)
+  const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0)
+  const [currentTime, setCurrentTime] = useState<string>("12:00")
+  const [isShowingTime, setIsShowingTime] = useState<boolean>(true)
+  const [hourLength, setHourLength] = useState<number>(0)
+  const hoursText: string[] = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM","10PM", "11PM"]
+  const mainScrollRef = useRef<ScrollView>(null)
 
-    function setCurrentTimeFunction(hour: number, minuite: number){
-        if (minuite.toString().length == 1) {
-            if (hour == 12) {
-                setCurrentTime("12:0"+minuite.toString())
-            } else {
-                setCurrentTime((hour % 12).toString() + ":0" + minuite.toString())
-            }
-        } else {
-            if (hour == 12) {
-                setCurrentTime("12:"+minuite)
-            } else {
-                setCurrentTime((hour % 12).toString() + ":" + minuite.toString())
-            }
-        }
+  function setCurrentTimeFunction(hour: number, minuite: number){
+    if (minuite.toString().length == 1) {
+      if (hour == 12) {
+        setCurrentTime("12:0"+minuite.toString())
+      } else {
+        setCurrentTime((hour % 12).toString() + ":0" + minuite.toString())
+      }
+    } else {
+      if (hour == 12) {
+        setCurrentTime("12:"+minuite)
+      } else {
+        setCurrentTime((hour % 12).toString() + ":" + minuite.toString())
+      }
     }
+  }
 
-    function loadCalendarContent() {
-        //GetStudentSchedule()
-        const currentDate = new Date
-        const resultHeightTopOffset = findTimeOffset(currentDate, height)
-        setHeightOffsetTop(resultHeightTopOffset)
-        const minuiteInt: number = currentDate.getMinutes()
-        setCurrentMinuteInt(minuiteInt)
-        const hourInt = currentDate.getHours()
+  function loadCalendarContent() {
+    //GetStudentSchedule()
+    const currentDate = new Date
+    const resultHeightTopOffset = findTimeOffset(currentDate, height)
+    setHeightOffsetTop(resultHeightTopOffset)
+    const minuiteInt: number = currentDate.getMinutes()
+    setCurrentMinuteInt(minuiteInt)
+    const hourInt = currentDate.getHours()
+    setCurrentTimeFunction(hourInt, minuiteInt)
+    mainScrollRef.current?.scrollTo({ x: 0, y: resultHeightTopOffset, animated: false});
+    console.log("This", resultHeightTopOffset)
+    // if (heightOffsetTop >= height){
+    //     setScrollPosition(height)
+    //     mainScrollRef.current?.scrollTo({ x: 0, y: height, animated: true });
+    // } else {
+    //     setScrollPosition(heightOffsetTop)
+    // }
+  }
+
+  //https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
+  //Upadtes every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateOnTimeChange()
+    }, 1000);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [])
+  function updateOnTimeChange() {
+    let minuiteInt = new Date().getMinutes()
+    if (currentMinuteInt != minuiteInt!) {
+      setCurrentMinuteInt(minuiteInt)
+      
+      let hourInt = new Date().getHours()
+      if (minuiteInt.toString().length == 1){
         setCurrentTimeFunction(hourInt, minuiteInt)
-        mainScrollRef.current?.scrollTo({ x: 0, y: resultHeightTopOffset, animated: false});
-        console.log("This", resultHeightTopOffset)
-        // if (heightOffsetTop >= height){
-        //     setScrollPosition(height)
-        //     mainScrollRef.current?.scrollTo({ x: 0, y: height, animated: true });
-        // } else {
-        //     setScrollPosition(heightOffsetTop)
-        // }
+      } else {
+        setCurrentTimeFunction(hourInt, minuiteInt)
+      }
+      setHeightOffsetTop(findTimeOffset(new Date, height))
     }
-    //https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
-    //Upadtes every second
-    useEffect(() => {
-        const interval = setInterval(() => {
-            updateOnTimeChange()
-        }, 1000);
+  }
 
-        return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-    }, [])
-    function updateOnTimeChange() {
-        let minuiteInt = new Date().getMinutes()
-        if (currentMinuteInt != minuiteInt!) {
-            setCurrentMinuteInt(minuiteInt)
-            
-            let hourInt = new Date().getHours()
-            if (minuiteInt.toString().length == 1){
-                setCurrentTimeFunction(hourInt, minuiteInt)
-            } else {
-                setCurrentTimeFunction(hourInt, minuiteInt)
-            }
-            setHeightOffsetTop(findTimeOffset(new Date, height))
-        }
-    }
+  useEffect(() => {
+    setHourLength(height * 0.1)
+    loadCalendarContent()
+  }, [])
 
-    useEffect(() => {
-        setHourLength(height * 0.1)
-        loadCalendarContent()
-    }, [])
+  // useEffect(() => {
+  //     findDateProperty(selectedDay)
+  // }, [selectedDay])
 
-    // useEffect(() => {
-    //     findDateProperty(selectedDay)
-    // }, [selectedDay])
-
-    return (
-        <View style={{height: height, width: width}}>
-            <ScrollView style={{height: height, width: width}} ref={mainScrollRef}>
+  return (
+    <View style={{height: height, width: width}}>
+        <ScrollView style={{height: height, width: width}} ref={mainScrollRef}>
+            <View>
                 <View>
+                  { isShowingTime ?
                     <View>
-                        { isShowingTime ?
-                            <View>
-                                {hoursText.map((value) => (
-                                    <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
-                                        { (calculateIfShowing(value, new Date(JSON.parse(fullStore.selectedDate)))) ?
-                                            <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
-                                        }
-                                        <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0}} />
-                                    </View>
-                                ))}
-                            </View>:null
-                        }
-                    </View>
-                    <View>
-                        { fullStore.currentEvents.map((event) => (
-                            <View>
-                                <EventBlock event={getEventFromJSON(event)} width={width} height={0} />
-                            </View>
-                        ))}
-                    </View>
-                    { (new Date(JSON.parse(fullStore.selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(fullStore.selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(fullStore.selectedDate)).getFullYear() === new Date().getFullYear()) ?
-                        <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
-                            <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
-                            <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
-                        </View>:null
-                    }   
+                      {hoursText.map((value) => (
+                        <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
+                          { (calculateIfShowing(value, new Date(JSON.parse(fullStore.selectedDate)))) ?
+                            <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
+                          }
+                          <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
+                        </View>
+                      ))}
+                    </View>:null
+                  }
                 </View>
-            </ScrollView>
-        </View>
-    )
+                <>
+                  {fullStore.currentEvents.map((event) => (
+                    <EventBlock event={getEventFromJSON(event)} width={width} height={height} />
+                  ))}
+                </>
+                { (new Date(JSON.parse(fullStore.selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(fullStore.selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(fullStore.selectedDate)).getFullYear() === new Date().getFullYear()) ?
+                  <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
+                    <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
+                    <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
+                  </View>:null
+                }   
+            </View>
+        </ScrollView>
+    </View>
+  )
 }
 
 function EventBlock({event, width, height}:{event: eventType, width: number, height: number}) {
-    const Offset = computeNewDate(event.startTime, event.endTime, height)
-    return (
-    <View style={{width: width * 0.8, height: Offset, marginLeft: width * 0.2, backgroundColor: event.eventColor, opacity: 0.6}}>
-            <Text>{event.name}</Text>
-            <Text>{event.startTime.toISOString()} to {event.endTime.toISOString()}</Text>
+  const EventHeight = computeEventHeight(event.startTime, event.endTime, height)
+  const Offset = findTimeOffset(event.startTime, height)
+  return (
+    <View style={{width: width * 0.8, height: EventHeight, top: Offset, position: "absolute", marginLeft: width * 0.2, backgroundColor: event.eventColor, opacity: 0.6}}>
+      <Text>{event.name}</Text>
+      <Text>{event.startTime.toISOString()} to {event.endTime.toISOString()}</Text>
     </View>
-    )
+  )
 }
 
 function calculateIfShowing(value: String, Time: Date): boolean { //TO DO shorten
-    if (isDateToday(Time)) {
-        const hourInt = Time.getHours()
-        const minuiteInt = Time.getMinutes()
-        if (minuiteInt + 15 >= 60){
-            var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
-            resepctiveTime += (hourInt > 12) ? "PM":"AM"
-            if (resepctiveTime === value){
-                return false
-            } else {
-                return true
-            }
-        } else if (minuiteInt - 15 <= 0) {
-            var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
-            resepctiveTime += (hourInt > 12) ? "PM":"AM"
-            if (resepctiveTime === value){
-                return false
-            } else {
-                return true
-            }
-        } else {
-            return true
-        }
-    } else {
+  if (isDateToday(Time)) {
+    const hourInt = Time.getHours()
+    const minuiteInt = Time.getMinutes()
+    if (minuiteInt + 15 >= 60){
+      var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
+      resepctiveTime += (hourInt > 12) ? "PM":"AM"
+      if (resepctiveTime === value){
+        return false
+      } else {
         return true
+      }
+    } else if (minuiteInt - 15 <= 0) {
+      var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
+      resepctiveTime += (hourInt > 12) ? "PM":"AM"
+      if (resepctiveTime === value){
+        return false
+      } else {
+        return true
+      }
+    } else {
+      return true
     }
+  } else {
+    return true
+  }
 }
+
 function findTimeOffset(time: Date, height: number): number {
     let hourWidth = height * 0.1
     let minutieWidth = (height * 0.1)/60
@@ -203,22 +203,6 @@ function findTimeOffset(time: Date, height: number): number {
     // + (hourWidth/2)
     return returnOffset
 }
-
-// function getDate(hour: number, minute: number, Time: Date): Date {
-//     // Specify date components
-//     var dateComponents = DateComponents()
-//     dateComponents.year =  Calendar.current.dateComponents([.year], from: Time).year
-//     dateComponents.month = Calendar.current.dateComponents([.month], from: Time).month
-//     dateComponents.day = Calendar.current.dateComponents([.day], from: Time).day
-//     dateComponents.timeZone = TimeZone(abbreviation: "CDT")
-//     dateComponents.hour = Hour
-//     dateComponents.minute = Minute
-
-//     // Create date from components
-//     let userCalendar = Calendar(identifier: .gregorian) // since the components above (like year 1980) are for Gregorian
-//     let someDateTime = userCalendar.date(from: dateComponents)
-//     return someDateTime!
-// }
 
 function FindPeriod(classCourse: calendarCourseType, day: string): number{
     var PeriodInt = 0
@@ -270,25 +254,24 @@ function getEventColor(monthInt: number, dayInt: number, Class: calendarCourseTy
     return colorResult
 }
 
-function computeNewDate(fromDate: Date, toDate: Date, height: number): number {
-    let delta = toDate.getTime() - fromDate.getTime()
-    
-    let deltaInt = delta
-    let deltaHours = deltaInt / 3600
-    let deltaRemaining = deltaInt % 3600
-    let deltaMinutes = deltaRemaining / 60
-    
-    let NewHourHeight = height / 24
-    let NewHeight = height - NewHourHeight
-    let HourWidth = NewHeight / 24
-    let MinutieWidth = NewHeight / 1440
-    
-    // print("This is delta \(delta)")
-    // print("This is delta hours \(deltaHours)")
-    // print("This is delta minute \(deltaMinutes)")
-    
-    let ReturnOffset = (HourWidth * deltaHours) + (MinutieWidth * deltaMinutes)
-    return ReturnOffset
+function computeEventHeight(fromDate: Date, toDate: Date, height: number): number {
+  var delta = toDate.getTime() - fromDate.getTime()
+  console.log(delta)
+  if (delta >= 86400000) {
+    delta = 86400000
+  }
+
+  let deltaInt = delta
+  let deltaHours = deltaInt / 3600
+  let deltaRemaining = deltaInt % 3600
+  let deltaMinutes = deltaRemaining / 60
+  
+  const HourHeight = height * 0.1
+  const MinuteHeight = (height * 0.1)/60
+  
+  console.log("Hour", HourHeight, "Minute", MinuteHeight)
+  let ReturnOffset = (HourHeight * deltaHours) + (MinuteHeight * deltaMinutes)
+  return ReturnOffset
 }
 
 function findOffsetEvent(time: Date, height: number): number{
@@ -503,4 +486,20 @@ function findOffsetEvent(time: Date, height: number): number{
 //     } catch {
 //         print("Error")
 //     }
+// }
+
+// function getDate(hour: number, minute: number, Time: Date): Date {
+//     // Specify date components
+//     var dateComponents = DateComponents()
+//     dateComponents.year =  Calendar.current.dateComponents([.year], from: Time).year
+//     dateComponents.month = Calendar.current.dateComponents([.month], from: Time).month
+//     dateComponents.day = Calendar.current.dateComponents([.day], from: Time).day
+//     dateComponents.timeZone = TimeZone(abbreviation: "CDT")
+//     dateComponents.hour = Hour
+//     dateComponents.minute = Minute
+
+//     // Create date from components
+//     let userCalendar = Calendar(identifier: .gregorian) // since the components above (like year 1980) are for Gregorian
+//     let someDateTime = userCalendar.date(from: dateComponents)
+//     return someDateTime!
 // }

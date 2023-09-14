@@ -64,11 +64,11 @@ export default async function getPoints(): Promise<{result: loadingStateEnum, da
       nextUrl = ""
       if (commissions.length !== 0) {
         const batchResult = await getPointsBatch(commissions)
-        if (batchResult.result !== loadingStateEnum.success) {
-          return {result: loadingStateEnum.failed}
-        } else {
-          points += batchResult.points
-        }
+          if (batchResult.result !== loadingStateEnum.success) {
+            return {result: loadingStateEnum.failed}
+          } else {
+            points += batchResult.points
+          }
       }
     }
   }

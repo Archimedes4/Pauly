@@ -81,6 +81,8 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
     //School Year
     const [selectedTimetable, setSelectedTimetable] = useState<timetableStringType | undefined>(undefined)
 
+    const [isGovernmentMode, setIsGovernmentMode] = useState<boolean>(false)
+    
     useEffect(() => {
       if (selectedEventType === paulyEventType.schoolDay || selectedEventType === paulyEventType.schoolYear){
         setAllDay(true)
