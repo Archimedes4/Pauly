@@ -13,6 +13,7 @@ import authenticationApiTokenReducer from './reducers/authenticationApiToken';
 import { tasksDeltaReducer, tasksReducer } from './reducers/tasksReducers';
 import paulyDataReducer from './reducers/paulyDataReducer';
 import resourcesReducer from './reducers/resourcesReducer';
+import AddEventReducer from './reducers/AddEventReducer';
 
 const store = configureStore({
   reducer: {
@@ -30,7 +31,8 @@ const store = configureStore({
     tasks: tasksReducer,
     paulyData: paulyDataReducer,
     resourcesLastCalled: resourcesLastCallReducer,
-    resources: resourcesReducer
+    resources: resourcesReducer,
+    addEvent: AddEventReducer
   }
 });
 

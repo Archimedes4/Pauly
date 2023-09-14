@@ -10,7 +10,6 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
   const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$expand=singleValueExtendedProperties", "GET", true)
   if (result.ok){
     const data = await result.json()
-    console.log("This", data)
     var newEvents: eventType[] = []
     for(var index = 0; index < data["value"].length; index++) {
       if (schoolYear) {

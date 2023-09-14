@@ -8,12 +8,11 @@ import { useSelector } from 'react-redux';
 import { loadingStateEnum } from '../../types';
 import CommissionClaim from './CommissionClaim';
 
-export default function CommissionsView() {
+export default function CommissionsView({id}:{id: string}) {
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [commissionData, setCommissionData] = useState<commissionType | undefined>(undefined)
   const [getCommissionLoadingState, setGetCommissionLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const { id } = useParams()
   async function getCommissionInformation() {
     console.log("This is the id", id)
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items?expand=fields&filter=fields/commissionID%20eq%20'"+ id +"'")
@@ -53,7 +52,7 @@ export default function CommissionsView() {
 
   useEffect(() => {getCommissionInformation()}, [id])
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width * 0.8, height: height * 0.8, backgroundColor: "white", shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
       <Text>Commission</Text>
       { (commissionData === undefined) ?
         <View>

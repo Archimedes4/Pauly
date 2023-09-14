@@ -121,37 +121,35 @@ export default function DayView({width, height}:{width: number, height: number})
   // }, [selectedDay])
 
   return (
-    <View style={{height: height, width: width}}>
-        <ScrollView style={{height: height, width: width}} ref={mainScrollRef}>
+    <ScrollView style={{height: height, width: width, backgroundColor: "white"}} ref={mainScrollRef}>
+        <View>
             <View>
+              { isShowingTime ?
                 <View>
-                  { isShowingTime ?
-                    <View>
-                      {hoursText.map((value) => (
-                        <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
-                          { (calculateIfShowing(value, new Date(JSON.parse(fullStore.selectedDate)))) ?
-                            <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
-                          }
-                          <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
-                        </View>
-                      ))}
-                    </View>:null
-                  }
-                </View>
-                <>
-                  {fullStore.currentEvents.map((event) => (
-                    <EventBlock event={getEventFromJSON(event)} width={width} height={height} />
+                  {hoursText.map((value) => (
+                    <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
+                      { (calculateIfShowing(value, new Date(JSON.parse(fullStore.selectedDate)))) ?
+                        <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
+                      }
+                      <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
+                    </View>
                   ))}
-                </>
-                { (new Date(JSON.parse(fullStore.selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(fullStore.selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(fullStore.selectedDate)).getFullYear() === new Date().getFullYear()) ?
-                  <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
-                    <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
-                    <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
-                  </View>:null
-                }   
+                </View>:null
+              }
             </View>
-        </ScrollView>
-    </View>
+            <>
+              {fullStore.currentEvents.map((event) => (
+                <EventBlock event={getEventFromJSON(event)} width={width} height={height} />
+              ))}
+            </>
+            { (new Date(JSON.parse(fullStore.selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(fullStore.selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(fullStore.selectedDate)).getFullYear() === new Date().getFullYear()) ?
+              <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
+                <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
+                <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
+              </View>:null
+            }   
+        </View>
+    </ScrollView>
   )
 }
 
@@ -256,20 +254,17 @@ function getEventColor(monthInt: number, dayInt: number, Class: calendarCourseTy
 
 function computeEventHeight(fromDate: Date, toDate: Date, height: number): number {
   var delta = toDate.getTime() - fromDate.getTime()
-  console.log(delta)
   if (delta >= 86400000) {
     delta = 86400000
   }
 
-  let deltaInt = delta
-  let deltaHours = deltaInt / 3600
-  let deltaRemaining = deltaInt % 3600
+  let deltaHours = delta/3600000
+  let deltaRemaining = delta % 3600000
   let deltaMinutes = deltaRemaining / 60
   
   const HourHeight = height * 0.1
   const MinuteHeight = (height * 0.1)/60
-  
-  console.log("Hour", HourHeight, "Minute", MinuteHeight)
+
   let ReturnOffset = (HourHeight * deltaHours) + (MinuteHeight * deltaMinutes)
   return ReturnOffset
 }

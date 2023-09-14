@@ -108,7 +108,6 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/calendar" element={<Calendar />}/>
                   <Route path="/resources" element={<Resources/>}/>
                   <Route path="/commissions" element={<Commissions/>}/>
-                  <Route path="/commissions/:id" element={<CommissionsView/>}/>
                   <Route path="/profile/" element={<Profile/>}/>
                   <Route path="/profile/settings" element={<Settings/>}/>
                   <Route path="/profile/government" element={<Government />}/>
@@ -299,6 +298,15 @@ function AppMain() {
           getUserProfile(response.accessToken)
         }).catch(e => {console.log(e)});
         //const result = await getToken(codeResponse.params.code, redirectUri, ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"], request.codeVerifier)
+      }
+    } else {
+      console.log("HERE", codeResponse)
+      if (codeResponse["authentication"] !== undefined) {
+        if (codeResponse["authentication"]["accessToken"] !== undefined) {
+          store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(codeResponse["authentication"]["accessToken"]))
+          getPaulyLists(codeResponse["authentication"]["accessToken"])
+          getUserProfile(codeResponse["authentication"]["accessToken"])
+        }
       }
     }
   }

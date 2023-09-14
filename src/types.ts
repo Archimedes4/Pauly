@@ -43,11 +43,38 @@ export enum commissionTypeEnum {
   QRCode
 }
 
+export enum paulyEventType {
+  regular,
+  schoolDay,
+  schoolYear,
+  studentCouncil
+}
+
+export enum recurringType {
+  daily,
+  weekly,
+  monthly,
+  yearly
+}
+
 declare global {
   type taskType = {
     name: string
     id: string
     importance: taskImportanceEnum,
     status: taskStatusEnum
+  }
+  type schoolDayDataCompressedType = {
+    schoolDayId: string,
+    scheduleId: string,
+    dressCodeId: string,
+    dressCodeIncentiveId: string,
+    schoolYearEventId: string
+  }
+  type schoolDayDataType = {
+    schoolDay: schoolDayType,
+    schedule: scheduleType,
+    dressCode: dressCodeDataType,
+    dressCodeIncentive?: dressCodeIncentiveType
   }
 }

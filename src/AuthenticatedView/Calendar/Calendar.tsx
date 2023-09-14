@@ -2,7 +2,6 @@ import { View, Text, Dimensions, Pressable, TextInput, Switch, ScrollView, useWi
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { findFirstDayinMonth, getEventFromJSON } from '../../Functions/Calendar/calendarFunctions';
-import { getGraphEvents } from '../../Functions/Calendar/calendarFunctionsGraph';
 import create_UUID from '../../Functions/Ultility/CreateUUID';
 import DayView from "./DayView"
 import Week from './Week';
@@ -97,9 +96,9 @@ export default function Calendar() {
       </View> 
       <View style={{height: height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
-        <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "white"}}>
           <MonthViewMain width={width * 0.9} height={height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>
-        </View>: null
+        </View>:null
       }
       { (selectedCalendarMode === calendarMode.week) ?
         <Week width={width * 1.0} height={height * 0.9} />:null
@@ -237,8 +236,9 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
                             d.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), value.dayData);
                             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
                           }} key={value.id}>
-                            <CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}  setAddDate={setAddDate}/>
-                          </Pressable>:<View key={value.id}><CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate}/></View>
+                            <CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate} calenarWidth={width}/>
+                          </Pressable>:
+                          <View key={value.id}><CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate} calenarWidth={width}/></View>
                         }
                       </View>:null
                     }
@@ -252,191 +252,37 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
   )
 }
 
-function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent, setAddDate}:{value: monthDataType, width: number, height: number, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void, setAddDate: (addDate: boolean) => void}) {
+function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent, setAddDate, calenarWidth}:{value: monthDataType, width: number, height: number, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void, setAddDate: (addDate: boolean) => void, calenarWidth: number}) {
   return(
-    <View>
-      { (value.showing) ?
-        <View style={{width: width, height: height}}>
-          <Text style={{color: "black"}}>{value.dayData}</Text>
-          <ScrollView style={{width: width, height: height * 0.8}}>
-            {value.events.map((event) => (
-              <Pressable key={"Calendar_Event_" + event.id + "_" + create_UUID()} onPress={() => {setIsEditing(true); setSelectedEvent(event); setAddDate(true)}}>
-                <Text>{event.name}</Text>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>:<View style={{width: width, height: height}}></View>
+    <>
+      { (calenarWidth <= 519) ?
+        <>
+          { (value.showing) ?
+            <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+              <Text style={{color: "black"}}>{value.dayData}</Text>
+              { (value.events.length >= 1) ?
+                <View style={{backgroundColor: "black", borderRadius: 50, width: (width < height) ? width* 0.25:height * 0.25, height: (width < height) ? width* 0.25:height * 0.25}}/>:
+                <View style={{backgroundColor: "transparent", borderRadius: 50, width: (width < height) ? width* 0.25:height * 0.25, height: (width < height) ? width* 0.25:height * 0.25}}/>
+              }
+            </View>:
+            <View style={{width: width, height: height}}/>
+          }
+        </>:
+        <>
+          { (value.showing) ?
+            <View style={{width: width, height: height}}>
+              <Text style={{color: "black"}}>{value.dayData}</Text>
+              <ScrollView style={{width: width, height: height * 0.8}}>
+                {value.events.map((event) => (
+                  <Pressable key={"Calendar_Event_" + event.id + "_" + create_UUID()} onPress={() => {setIsEditing(true); setSelectedEvent(event); setAddDate(true)}}>
+                    <Text>{event.name}</Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </View>:<View style={{width: width, height: height}} />
+          }
+        </>
       }
-    </View>
+    </>
   )
 }
-//     Rectangle()
-//         .fill(Color.marron)
-//         .frame(width: geo.width * 0.14285714285714, height: geo.width * 0.14285714285714)
-//     if value.Showing{
-//         if Int(value.DayData) == Day{
-//             RadialGradient(
-//                 gradient: Gradient(colors: [.customGray, .marron]),
-//                       center: .center,
-//                       startRadius: 10,
-//                       endRadius: 25
-//                   )
-//             .opacity(0.75)
-//         } else {
-//             if NowYear == Year && NowMonth == CurrentMonth && NowDay == Int(value.DayData){
-//                 RadialGradient(
-//                           gradient: Gradient(colors: [.gray, .marron]),
-//                           center: .center,
-//                           startRadius: 10,
-//                           endRadius: 25
-//                       )
-//                 .opacity(0.75)
-//             }
-//         }
-//     }
-// }
-
-
-                  //   if value.Showing{
-                  //     // Specify date components
-                  //     var dateComponents = DateComponents()
-                  //     let CurrentYear = Calendar.current.dateComponents([.year], from: SelectedDate).year
-                  //     let CurrentMonth = Calendar.current.dateComponents([.month], from: SelectedDate).month
-                  //     dateComponents.year = CurrentYear
-                  //     dateComponents.month = CurrentMonth
-                  //     dateComponents.day = Int(value.DayData)
-                  //     dateComponents.timeZone = TimeZone(abbreviation: "CDT") // Japan Standard Time
-                  //     dateComponents.hour = 0
-                  //     dateComponents.minute = 0
-
-                  //     // Create date from components
-                  //     let userCalendar = Calendar(identifier: .gregorian) // since the components above (like year 1980) are for Gregorian
-                  //     SelectedDate = userCalendar.date(from: dateComponents)!
-                  // }
-
-// function WeekView(){
-//   // @EnvironmentObject var WindowMode: SelectedWindowMode
-//   // @Binding var CalendarClasses: [CalendarCourseType]
-//   // @Binding var SelectedDates: [DateProperty]
-//   @State var CurrentEvents: EventType[]] = []
-//   const [selectedDay, setSelectedDay] = useState<Date>(Date())
-//   @State var Days: [Date] = []
-//   const modes: String[] = ["Schedule", "Events"]
-//   @State var SelectedMode: String = "Schedule"
-//   @State var SelectedDate: Int = 0
-//   useEffect(() => {
-
-//   }, [selectedDay])
-//   let monthInt = Calendar.current.dateComponents([.day], from: Date())
-//   let CurrentDay = Calendar.current.dateComponents([.day], from: WeekDay)
-//   return (
-//     <View>
-//               <View>
-//                   Spacer()
-//                   Button(){
-//                       SelectedDay = Calendar.current.date(byAdding: .day, value: -7, to: SelectedDay)!
-//                       Days = GetDates(CurrentDate: SelectedDay)
-//                   } label: {
-//                       Image(systemName: "chevron.left")
-//                   }
-//                   Text(SelectedDay, format: .dateTime.month().year())
-//                   Button(){
-//                       SelectedDay = Calendar.current.date(byAdding: .day, value: 7, to: SelectedDay)!
-//                       Days = GetDates(CurrentDate: SelectedDay)
-//                   } label: {
-//                       Image(systemName: "chevron.forward")
-//                   }
-//                   if SelectedDay.formatted(date: .numeric, time: .omitted) != Date.now.formatted(date: .numeric, time: .omitted){
-//                       Button(){
-//                           SelectedDay = Date.now
-//                           Days = GetDates(CurrentDate: SelectedDay)
-//                       } label: {
-//                           Text("Today")
-//                       }
-//                   }
-//                   Spacer()
-//               </View>
-//               <View>
-//                 {Days.map((weekDay) => (
-//                   <View>
-//                     <Pressable onPress={() => {
-//                       SelectedDate = CurrentDay.day ?? 100
-//                       SelectedDay = WeekDay
-//                     }}>
-//                       <View>
-//                         <Svg style={{zIndex: 0}}>
-//                           <Circle />
-//                         </Svg>
-//                         <Text style={{zIndex: 1}}>{weekDay.toLocaleString()}</Text>
-//                       </View>
-//                     </Pressable>
-//                   </View>
-//                 ))
-
-//                 }
-//                   ForEach(Days, id: \.self){ WeekDay in
-
-//                       if CurrentDay == monthInt {
-//                           Button{
-//                               SelectedDate = CurrentDay.day ?? 100
-//                               SelectedDay = WeekDay
-//                           } label: {
-//                               ZStack{
-//                                   Circle()
-//                                       .strokeBorder(SelectedDate == (CurrentDay.day ?? 100) ? Color.blue:Color.clear, lineWidth: 2.0)
-//                                       .background(Circle().fill(.red))
-//                                       .frame(width: geo.size.width * 0.1, height: geo.size.height * 0.1)
-//                                   Text(WeekDay, format: .dateTime.day())
-//                                       .foregroundColor(.black)
-//                               }.onAppear(){
-//                                   SelectedDate = monthInt.day ?? 0
-//                               }
-//                           }
-//                       } else {
-//                           Button{
-//                               SelectedDate = CurrentDay.day ?? 100
-//                               SelectedDay = WeekDay
-//                           } label: {
-//                               ZStack{
-//                                   Circle()
-//                                       .strokeBorder(SelectedDate == (CurrentDay.day ?? 100) ? Color.blue:Color.clear, lineWidth: 2.0)
-//                                       .background(Circle().fill(.gray))
-//                                       .frame(width: geo.size.width * 0.1, height: geo.size.height * 0.1)
-//                                   Text(WeekDay, format: .dateTime.day())
-//                                       .foregroundColor(.black)
-//                               }
-//                           }
-//                       }
-//                   }
-//               </View>
-//               Picker("", selection: $SelectedMode){
-//                   ForEach(Modes, id: \.self){
-//                       Text($0)
-//                   }
-//               }.pickerStyle(.segmented)
-//               Spacer()
-//               if SelectedMode == "Schedule"{
-//                   DayView(CalendarClasses: $CalendarClasses, SelectedDates: $SelectedDates, SelectedDay: $SelectedDay)
-//                     .environmentObject(WindowMode)
-//               } else {
-//                   if SelectedMode == "Events"{
-//                       CalendarEventsView(SelectedDay: $SelectedDay)
-//                           .environmentObject(WindowMode)
-//                   }
-//               }
-//     </View>
-//   )
-// }
-
-// function getWeekdayDates(CurrentDate: Date): Date[] {
-//   let weekday = Calendar.current.component(.weekday, from: CurrentDate)
-//   var result: [Date] = []
-//   for x in 0..<weekday{
-//       result.append(Calendar.current.date(byAdding: .day, value: -x, to: CurrentDate)!)
-//   }
-//   for x in (weekday..<7).enumerated(){
-//       result.append(Calendar.current.date(byAdding: .day, value: (x.offset + 1), to: CurrentDate)!)
-//   }
-//   result.sort()
-//   return result
-// }

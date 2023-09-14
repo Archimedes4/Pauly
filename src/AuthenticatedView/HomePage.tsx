@@ -13,6 +13,7 @@ import { BookIcon, MedalIcon, PersonIcon } from '../UI/Icons/Icons';
 import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer';
 import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../types';
+import ProgressView from '../UI/ProgressView';
 declare global {
   type DateProperty = {
     Date: number
@@ -26,13 +27,15 @@ export default function HomePage() {
   const navigate = useNavigate()
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
+  const {message} = useSelector((state: RootState) => state.paulyData)
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const [messageText, setMessageText] = useState("")
   const [animationSpeed, setAnnimationSpeed] = useState(0)
+  const [dataState, setDataState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const dispatch = useDispatch()
 
   async function loadData() {
-    await getCurrentPaulyData(siteId)
+    const result = await getCurrentPaulyData(siteId)
+    setDataState(result)
   }
 
   useEffect(() => {
@@ -40,7 +43,7 @@ export default function HomePage() {
   }, [])
 
   useEffect(() => {
-    if (store.getState().authenticationToken !== ""){
+    if (store.getState().authenticationToken !== "" || store.getState().paulyList.siteId !== ""){
       loadData()
     }
   }, [authenticationToken])
@@ -70,12 +73,24 @@ export default function HomePage() {
   return (
     <View style={{backgroundColor: "#793033", overflow: "hidden"}}>
       <View style={{width: width * 1.0, height: height * 0.08}}>
-        { (messageText !== "") ?
-          <ScrollingTextAnimation width={width * 1.0} height={height * 0.08}>
-            <View>
-              <Text numberOfLines={1} style={{fontSize: height * 0.07, height: height * 0.07}}>{messageText}</Text>
-            </View>
-          </ScrollingTextAnimation>:null
+        { (dataState === loadingStateEnum.loading) ?
+          <View style={{width: width * 1.0, height: height * 0.08, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+            <ProgressView width={(width < (height * 0.08)) ? width * 0.1:height * 0.07} height={(width < (height * 0.08)) ? width * 0.1:height * 0.07}/>
+          </View>:
+          <>
+            { (dataState === loadingStateEnum.success) ?
+              <>
+                { (message !== "") ?
+                  <ScrollingTextAnimation width={width * 1.0} height={height * 0.08}>
+                    <View>
+                      <Text numberOfLines={1} style={{fontSize: height * 0.07, height: height * 0.07}}>{message}</Text>
+                    </View>
+                  </ScrollingTextAnimation>:null
+                }
+              </>:
+              <Text>Failed</Text>
+            }
+          </>
         }
       </View>
       <Link style={{width: width * 0.999, height: height * 0.42}} to="/calendar">

@@ -81,10 +81,10 @@ export default function Sports() {
               { sportsPosts.map((item) => (
                 <View style={{marginTop: height * 0.05}}>
                 { (item.fileType === dataContentTypeOptions.image) ?
-                  <Image style={{width: width * 0.9, height: height * 0.6, marginLeft: width * 0.05}} source={{uri: item.fileID}}/>:null
+                  <Image style={{width: width * 0.9, height: height * 0.4, marginLeft: width * 0.05, marginRight: width * 0.05}} source={{uri: item.fileID}}/>:null
                 }
                 { (item.fileType === dataContentTypeOptions.video) ?
-                  <video src={item.fileID} style={{width: width * 0.9, height: height * 0.6}} controls/>:null
+                  <video src={item.fileID} style={{width: width * 0.9, height: height * 0.4, marginLeft: width * 0.05, marginRight: width * 0.05}} controls/>:null
                 }
                 </View>
               ))

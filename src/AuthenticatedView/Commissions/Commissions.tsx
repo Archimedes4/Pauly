@@ -10,6 +10,8 @@ import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer'
 import getPoints from '../../Functions/getPoints';
 import getCommissions from '../../Functions/getCommissions';
 import { loadingStateEnum } from '../../types';
+import CommissionsView from './CommissionsView';
+import ProgressView from '../../UI/ProgressView';
 
 enum CommissionMode{
   Before,
@@ -22,9 +24,13 @@ export default function Commissions() {
   const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
+  const [selectedCommission, setSelectedCommission] = useState<string>("")
   const [points, setPoints] = useState<number>(0)
   const dispatch = useDispatch()
   const navigate = useNavigate();
+
+  //Loading States
+  const [commissionState, setCommissionState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function loadData() {
     const pointResult = await getPoints()
@@ -33,6 +39,7 @@ export default function Commissions() {
     if (commissionsResult.result === loadingStateEnum.success, commissionsResult.data !== undefined) {
       setCurrentCommissions(commissionsResult.data)
     }
+    setCommissionState(commissionsResult.result)
     //TO DO pagination
   }
 
@@ -68,20 +75,35 @@ export default function Commissions() {
           }
           <Text style={{fontFamily: 'BukhariScript'}}>Commissions</Text>
         </View>
-        <ScrollView style={{height: height * 0.9}}>
-          { currentCommissions.map((item: commissionType) => (
-            <Pressable onPress={() => {navigate("/commissions/" + item.commissionId)}} key={"Link_" + item.commissionId}>
-              <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, margin: width * 0.05}}>
-                <View style={{margin: 10}}>
-                  <Text>{item.title}</Text>
+        <View style={{height: height * 0.9}}>
+          { (commissionState === loadingStateEnum.loading) ?
+            <View style={{width: width, height: height * 0.9, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+              <ProgressView width={(width < height) ? width * 0.1:height*0.1} height={(width < height) ? width * 0.1:height*0.1} />
+              <Text>Loading</Text>
+            </View>:
+            <View>
+              { (commissionState === loadingStateEnum.success) ?
+                <ScrollView style={{height: height * 0.9}}>
+                  { currentCommissions.map((item: commissionType) => (
+                    <Pressable onPress={() => {setSelectedCommission(item.commissionId)}} key={"Link_" + item.commissionId}>
+                      <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, margin: width * 0.05}}>
+                        <View style={{margin: 10}}>
+                          <Text>{item.title}</Text>
+                        </View>
+                      </View>
+                    </Pressable>
+                  ))}
+                </ScrollView>:
+                <View>
+                  <Text>Failed</Text>
                 </View>
-              </View>
-            </Pressable>
-          ))}
-        </ScrollView>
+              }
+            </View>
+          }
+        </View>
       </View>
-      { 
-
+      { (selectedCommission !== "") ?
+        <CommissionsView id={selectedCommission} />:null
       }
     </>
   )

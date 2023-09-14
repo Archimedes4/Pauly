@@ -44,10 +44,13 @@ export default function Notifications() {
   const [userTasks, setUserTasks] = useState<taskType[]>([])
   const [trendingData, setTrendingData] = useState<resourceType[]>()
   const [userData, setUserData] = useState<resourceType[]>([])
-  const [trendingState, setTrendingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const [userState, setUserState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [schoolDayData, setSchoolDayData] = useState<schoolDayDataType | undefined>(undefined)
   const dispatch = useDispatch()
+
+  //States
+  const [trendingState, setTrendingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [userState, setUserState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [taskState, setTaskState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function loadData() {
     if (siteId !== ""){
@@ -94,6 +97,7 @@ export default function Notifications() {
       if (taskResult.result === loadingStateEnum.success && taskResult.data !== undefined) {
         setUserTasks(taskResult.data)
       }
+      setTaskState(taskResult.result)
     }
   }
 
@@ -106,14 +110,14 @@ export default function Notifications() {
   }, []) 
 
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
       { (currentBreakPoint === 0) ?
         <Link to="/profile/">
           <Text>Back</Text>
         </Link>:null
       }
       <View style={{width: width, height: height * 0.1}}>
-        <View style={{width: width * 0.8, height: height * 0.07, borderRadius: 15, backgroundColor: "#444444", margin: "auto"}}>
+        <View style={{width: width * 0.9, height: height * 0.07, borderRadius: 15, backgroundColor: "#444444", margin: "auto"}}>
           <Text>{message}</Text>
         </View>
       </View>
@@ -135,12 +139,14 @@ export default function Notifications() {
           </View>
         }
       </View>
-      <View style={{shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
-        <View style={{margin: 10}}>
-          <Text>Tasks</Text>
-          {userTasks.map((task) => (
-            <TaskItem task={task} key={"User_Task_" + task.id} excessItem={false}/>
-          ))}
+      <View style={{width: width}}>
+        <Text>Tasks</Text>
+        <View style={{shadowColor: "black", width: width * 0.9, marginLeft: width * 0.05, marginRight: width * 0.05, height: height * 0.5, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+          <View style={{margin: 10}}>
+            {userTasks.map((task) => (
+              <TaskItem task={task} key={"User_Task_" + task.id} excessItem={false}/>
+            ))}
+          </View>
         </View>
       </View>
       <View style={{height: height * 0.1, width: width * 0.5}}>
@@ -188,7 +194,7 @@ export default function Notifications() {
         </View>
         <Text style={{color: "white"}}>{schoolDayData?.schoolDay.shorthand}</Text>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
