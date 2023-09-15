@@ -3,7 +3,6 @@ import { Pressable, View, Text, Switch, TextInput, Button } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "../../Redux/store";
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
-import { orgWideGroupID } from "../../PaulyConfig";
 import DatePicker from "../../UI/DateTimePicker/DatePicker";
 import Dropdown from "../../UI/Dropdown";
 import { CalendarIcon, CloseIcon } from "../../UI/Icons/Icons";
@@ -23,11 +22,8 @@ import { addEventSlice } from "../../Redux/reducers/AddEventReducer";
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
-  const {selectedEventType, isPickingStartDate, isPickingEndDate, eventName, allDay, createEventState, recurringEvent, selectedRecurringType} = useSelector((state: RootState) => state.addEvent)
+  const {selectedEventType, isPickingStartDate, isPickingEndDate, eventName, allDay, createEventState, recurringEvent, selectedRecurringType, startDate, endDate} = useSelector((state: RootState) => state.addEvent)
   const dispatch = useDispatch()
-
-  const [startDate, setStartDate] = useState<Date>((editing) ? editData.startTime:new Date(JSON.parse(selectedDate)))
-  const [endDate, setEndDate] = useState<Date>((editing) ? editData.endTime:new Date(JSON.parse(selectedDate)))
   
   useEffect(() => {
     if (selectedEventType === paulyEventType.schoolDay || selectedEventType === paulyEventType.schoolYear){
@@ -77,62 +73,20 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
   return (
     <View style={{backgroundColor: "white", width: width, height: height, borderRadius: 5, borderWidth: 5}}>
       { (isPickingStartDate || isPickingEndDate) ?
-        <DatePicker selectedDate={isPickingStartDate ? startDate:endDate} onSetSelectedDate={(e) => {if (isPickingStartDate) {setStartDate(e); dispatch(addEventSlice.actions.setIsPickingStartDate(false))} else {setEndDate(e); dispatch(addEventSlice.actions.setIsPickingEndDate(false))}}} width={width} height={height} onCancel={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(false)); dispatch(addEventSlice.actions.setIsPickingEndDate(false))}} allowedDatesRange={(selectedEventType === paulyEventType.schoolDay) ? {startDate: selectedSchoolYear.startTime, endDate: selectedSchoolYear.endTime}:undefined}/>:
+        <DatePicker 
+          selectedDate={isPickingStartDate ? (new Date(startDate)):new Date(endDate)} 
+          onSetSelectedDate={(e) => {
+            if (isPickingStartDate) {
+              dispatch(addEventSlice.actions.setStartDate(e)); dispatch(addEventSlice.actions.setIsPickingStartDate(false))
+            } else {dispatch(addEventSlice.actions.setEndDate(e)); dispatch(addEventSlice.actions.setIsPickingEndDate(false))}}} 
+          width={width} height={height} onCancel={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(false)); dispatch(addEventSlice.actions.setIsPickingEndDate(false))}} 
+          allowedDatesRange={(selectedEventType === paulyEventType.schoolDay) ? {startDate: selectedSchoolYear.startTime, endDate: selectedSchoolYear.endTime}:undefined}/>:
         <View>
           <Pressable onPress={() => {setIsShowingAddDate(false)}}>
             <CloseIcon width={10} height={10}/>
           </Pressable>
           <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
-          { (selectedEventType === paulyEventType.schoolDay) ?
-            null:
-            <View>
-              <TextInput
-                value={eventName}
-                onChangeText={(e) => {dispatch(addEventSlice.actions.setEventName(e))}}
-                placeholder="Event Name"
-                style={{width: width * 0.8, height: height * 0.05, borderBottomColor: '#000000', borderBottomWidth: 1, marginLeft: width * 0.01}}
-              />
-              <View style={{flexDirection: "row"}}>
-                <Text>All Day</Text>
-                <Switch
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
-                  thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={(e) => {dispatch(addEventSlice.actions.setAllDay(e))}}
-                  value={allDay}
-                />
-              </View>
-            </View>
-          }
-          <Text>{(selectedEventType === paulyEventType.schoolDay) ? "":"Start "}Date</Text>
-          <View style={{flexDirection: "row"}}>
-            <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true))}}>
-              <View style={{flexDirection: "row"}}>
-                <Text>{startDate.toLocaleString("en-us", { month: "long" })} {startDate.getDate()} {startDate.getFullYear()}</Text>
-                <CalendarIcon width={14} height={14}/>
-              </View>
-            </Pressable>
-            { allDay ?
-              null:<TimePicker selectedHourMilitary={startDate.getHours()} selectedMinuteMilitary={startDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = startDate; newDate.setHours(e); setStartDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = startDate; newDate.setMinutes(e); setStartDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
-            }
-          </View>
-          { (selectedEventType === paulyEventType.schoolDay) ?
-            null:
-            <View>
-              <Text>End Date</Text>
-              <View style={{flexDirection: "row"}}>
-                <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingEndDate(true))}} style={{margin: 5}}>
-                  <View style={{flexDirection: "row"}}>
-                    <Text>{endDate.toLocaleString("en-us", { month: "long" })} {endDate.getDate()} {endDate.getFullYear()}</Text>
-                    <CalendarIcon width={14} height={14}/>
-                  </View>
-                </Pressable>
-                { allDay ?
-                  null:<TimePicker selectedHourMilitary={endDate.getHours()} selectedMinuteMilitary={endDate.getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = endDate; newDate.setHours(e); setEndDate(newDate)}} onSetSelectedMinuteMilitary={(e) => {var newDate = endDate; newDate.setMinutes(e); setEndDate(newDate)}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
-                }
-              </View>
-            </View>
-          }
+          <DateAndTimeSection width={width} height={height}/>
           <Text>Reocurring Event</Text>
           <Switch
             trackColor={{false: '#767577', true: '#81b0ff'}}
@@ -192,6 +146,7 @@ function GovernmentCalendarOptions({width, height, selectedEventType, setSelecte
     schoolDay: undefined,
     schedule: undefined,
     dressCode: undefined,
+    semester: undefined,
     dressCodeIncentive: undefined
   })
   const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
@@ -216,5 +171,65 @@ function GovernmentCalendarOptions({width, height, selectedEventType, setSelecte
         </View>:null
       }
     </>
+  )
+}
+
+function DateAndTimeSection({width, height}:{width: number, height: number}) {
+  const {selectedEventType, eventName, allDay, startDate, endDate} = useSelector((state: RootState) => state.addEvent)
+  const dispatch = useDispatch()
+  return (
+    <View>
+      { (selectedEventType === paulyEventType.schoolDay) ?
+        null:
+        <View>
+          <TextInput
+            value={eventName}
+            onChangeText={(e) => {dispatch(addEventSlice.actions.setEventName(e))}}
+            placeholder="Event Name"
+            style={{width: width * 0.8, height: height * 0.05, borderBottomColor: '#000000', borderBottomWidth: 1, marginLeft: width * 0.01}}
+          />
+          <View style={{flexDirection: "row"}}>
+            <Text>All Day</Text>
+            <Switch
+              trackColor={{false: '#767577', true: '#81b0ff'}}
+              thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={(e) => {dispatch(addEventSlice.actions.setAllDay(e))}}
+              value={allDay}
+            />
+          </View>
+        </View>
+      }
+      <Text>{(selectedEventType === paulyEventType.schoolDay) ? "":"Start "}Date</Text>
+      <View style={{flexDirection: "row"}}>
+        <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true))}}>
+          <View style={{flexDirection: "row"}}>
+            <Text>{new Date(startDate).toLocaleString("en-us", { month: "long" })} {new Date(startDate).getDate()} {new Date(startDate).getFullYear()}</Text>
+            <CalendarIcon width={14} height={14}/>
+          </View>
+        </Pressable>
+        { allDay ?
+          null:<TimePicker selectedHourMilitary={new Date(startDate).getHours()} selectedMinuteMilitary={new Date(startDate).getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = new Date(startDate); newDate.setHours(e); dispatch(addEventSlice.actions.setStartDate(newDate))}} onSetSelectedMinuteMilitary={(e) => {
+            var newDate = new Date(startDate); newDate.setMinutes(e); dispatch(addEventSlice.actions.setStartDate(newDate))}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
+        }
+      </View>
+      { (selectedEventType === paulyEventType.schoolDay) ?
+        null:
+        <View>
+          <Text>End Date</Text>
+          <View style={{flexDirection: "row"}}>
+            <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingEndDate(true))}} style={{margin: 5}}>
+              <View style={{flexDirection: "row"}}>
+                <Text>{new Date(endDate).toLocaleString("en-us", { month: "long" })} {new Date(endDate).getDate()} {new Date(endDate).getFullYear()}</Text>
+                <CalendarIcon width={14} height={14}/>
+              </View>
+            </Pressable>
+            { allDay ?
+              null:<TimePicker selectedHourMilitary={new Date(endDate).getHours()} selectedMinuteMilitary={new Date(endDate).getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = new Date(endDate); newDate.setHours(e); dispatch(addEventSlice.actions.setEndDate(newDate))}} onSetSelectedMinuteMilitary={(e) => {var newDate = new Date(endDate); newDate.setMinutes(e); dispatch(addEventSlice.actions.setEndDate(newDate))}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
+            }
+          </View>
+        </View>
+      }
+    </View>
   )
 }

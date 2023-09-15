@@ -102,9 +102,11 @@ export default function Commissions() {
           }
         </View>
       </View>
-      { (selectedCommission !== "") ?
-        <CommissionsView id={selectedCommission} />:null
-      }
+      <View style={{position: "absolute", zIndex: 2, top: height * 0.1, left: width * 0.1}}>
+        { (selectedCommission !== "") ?
+          <CommissionsView id={selectedCommission} />:null
+        }
+      </View>
     </>
   )
 }

@@ -10,10 +10,19 @@ export default async function getCurrentPaulyData(siteId: string): Promise<loadi
     if (data["animationSpeed"] !== undefined && data["message"] !== undefined && data["powerpointId"] !== undefined) {
       const fileResult = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + data["powerpointId"] + "/driveItem/content?format=pdf")
       if (fileResult.ok){
-        const dataBlob = await fileResult.blob()
-        const urlOut = URL.createObjectURL(dataBlob)
-        store.dispatch(paulyDataSlice.actions.setPaulyData({powerpointId: urlOut, message: data["message"], animationSpeed: data["animationSpeed"]}))
-        return loadingStateEnum.success
+        const outLocation = fileResult.headers.get("Location")
+        const dataOut = await fetch(outLocation)
+        if (dataOut.ok) {
+          const dataBlob = await fileResult.blob()
+          const urlOut = URL.createObjectURL(dataBlob)
+          console.log(urlOut)
+          const outputResult = {powerpointBlob: urlOut, message: data["message"], animationSpeed: data["animationSpeed"]}
+          console.log(outputResult)
+          store.dispatch(paulyDataSlice.actions.setPaulyData(outputResult))
+          return loadingStateEnum.success
+        } else {
+          return loadingStateEnum.failed
+        }
       } else {
         return loadingStateEnum.failed
       }

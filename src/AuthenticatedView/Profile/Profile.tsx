@@ -1,29 +1,40 @@
-import { View, Text} from 'react-native'
+import { View, Text, ScrollView, Pressable} from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-native'
+import { Link, useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
+import { BookIcon, GearIcon, GovernmentIcon, MedalIcon } from '../../UI/Icons/Icons'
 
 export default function Profile() {
-  const {height, width} = useSelector((state: RootState) => state.dimentions)
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (currentBreakPoint !== 0) {
+      navigate("/notifications")
+    }
+  }, [currentBreakPoint])
   return (
-    <View style={{height: height, width: width, backgroundColor: "white", alignItems: "center"}}>
+    <ScrollView style={{height: height, width: width, backgroundColor: "#793033"}}>
       <Link to="/">
         <Text>Back</Text>
       </Link>
       <Text>Profile</Text>
-      <Link to="/profile/commissions" style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+      <Pressable onPress={() => {navigate("/profile/commissions")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center"}}>
+        <MedalIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
         <Text>Commissions</Text>
-      </Link>
-      <Link to="/profile/resources">
+      </Pressable>
+      <Pressable onPress={() => {navigate("/profile/resources")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", marginTop: height * 0.05}}>
+        <BookIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
         <Text>Resources</Text>
-      </Link>
-      <Link to="/profile/settings">
+      </Pressable>
+      <Pressable onPress={() => {navigate("/profile/settings")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", marginTop: height * 0.05}}>
+        <GearIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
         <Text>Settings</Text>
-      </Link>
-      <Link to="/profile/government">
+      </Pressable>
+      <Pressable onPress={() => {navigate("/profile/government")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", marginTop: height * 0.05}}>
+        <GovernmentIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
         <Text>Government</Text>
-      </Link>
-    </View>
+      </Pressable>
+    </ScrollView>
   )
 }

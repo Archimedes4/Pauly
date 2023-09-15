@@ -8,6 +8,27 @@ interface iconProps {
   style?:  StyleProp<ViewStyle>;
 }
 
+//Icons
+//CalendarIcon
+//MedalIcon
+//BookIcon
+//GovernmentIcon
+//HomeIcon
+//UpIcon
+//DownIcon
+//AddIcon
+//CloseIcon
+//ChevronLeft
+//ChevronRight
+//FolderIcon
+//DocumentIcon
+//CopyIcon
+//PersonIcon
+//GearIcon
+//GraduationHatIcon
+//WarningIcon
+//SearchIcon
+
 export function CalendarIcon({width, height, style}:iconProps) {
   return (
     <View>

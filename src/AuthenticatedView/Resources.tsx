@@ -1,11 +1,13 @@
-import { View, Text, ScrollView, TextInput, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, ScrollView, TextInput, Platform, Pressable } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { getResourceFromJson, getResources } from '../Functions/getResources'
 import { useSelector } from 'react-redux'
 import { RootState } from '../Redux/store'
 import { SearchIcon } from '../UI/Icons/Icons'
 import WebView from 'react-native-webview'
+import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
 
 //Resources
 // -> Sports
@@ -18,7 +20,6 @@ enum resourceMode {
   home,
   sports,
   advancement,
-  schedule,
   schoolEvents,
   annoucments,
   fitness,
@@ -36,6 +37,21 @@ export default function Resources() {
   useEffect(() => {
     loadData()
   }, [])
+
+  const [fontsLoaded] = useFonts({
+    'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+  
   return (
     <View style={{height: height, width: width}}>
       <View style={{height: height * 0.1, backgroundColor: "#444444"}}>
@@ -45,7 +61,7 @@ export default function Resources() {
         <Text>Resources</Text>
       </View>
       <SearchBox searchValue={searchValue} setSearchValue={setSearchValue}/>
-      <ScrollView style={{height: height * 0.9}}>
+      <ScrollView style={{height: height * 0.8 + ((height >= 1000) ? ((height - 1000) * 0.05):0), backgroundColor: "white"}}>
         {resources.map((resource) => (
           <View key={"Resource_"+getResourceFromJson(resource).id}>
             { (Platform.OS !== "web") ?
@@ -55,7 +71,25 @@ export default function Resources() {
           </View>
         ))}
       </ScrollView>
+      <ScrollView horizontal={true} style={{height: height * 0.01 - ((height >= 1000) ? ((height - 1000) * 0.05):0), width: width, backgroundColor: "white"}}>
+        <PickerPiece text='Home' item={resourceMode.home} onPress={setSelectedResourceMode}/>
+        <PickerPiece text='Sports' item={resourceMode.sports} onPress={setSelectedResourceMode}/>
+        <PickerPiece text='Advancement' item={resourceMode.advancement} onPress={setSelectedResourceMode}/>
+        <PickerPiece text='School Events' item={resourceMode.schoolEvents} onPress={setSelectedResourceMode}/>
+        <PickerPiece text='Annoucments' item={resourceMode.annoucments} onPress={setSelectedResourceMode}/>
+        <PickerPiece text='Fitness' item={resourceMode.fitness} onPress={setSelectedResourceMode}/>
+        <PickerPiece text='Files' item={resourceMode.files} onPress={setSelectedResourceMode}/>
+      </ScrollView>
     </View>
+  )
+}
+
+function PickerPiece({text}:{text: string, item: resourceMode, onPress: (item: resourceMode) => void}) {
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  return (
+    <Pressable style={{height: height * 0.01 - ((height >= 1000) ? ((height - 1000) * 0.05):0), width: (currentBreakPoint >= 2) ? (width*0.2):width * 0.4}}>
+      <Text>{text}</Text>
+    </Pressable>
   )
 }
 

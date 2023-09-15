@@ -52,7 +52,7 @@ export default function CommissionsView({id}:{id: string}) {
 
   useEffect(() => {getCommissionInformation()}, [id])
   return (
-    <View style={{width: width * 0.8, height: height * 0.8, backgroundColor: "white", shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+    <View style={{width: width * 0.8, height: height * 0.8, backgroundColor: "white", shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
       <Text>Commission</Text>
       { (commissionData === undefined) ?
         <View>

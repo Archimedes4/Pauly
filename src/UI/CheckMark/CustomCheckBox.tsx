@@ -1,21 +1,17 @@
 //Original Code from https://github.com/Rakha112/react-native-custom-checkbox/blob/main/src/components/CustomCheckBox.js
 
 import React, {memo} from 'react';
-import Svg from 'react-native-svg';
+import Svg, { Circle, G, Path } from 'react-native-svg';
 import {Easing, useDerivedValue, withTiming} from 'react-native-reanimated';
 import AnimatedCheckMarkPath from './AnimatedCheckMarkPath';
-import AnimatedColor from './AnimatedColor';
 import { View } from 'react-native';
 
-export default function CustomCheckBox({checked, checkMarkColor, height, width}:{
+export default function CustomCheckBox({checked, checkMarkColor, height, width, strokeDasharray}:{
   checked: boolean,
   checkMarkColor: string,
-  checkedBorderColor: string,
-  unCheckedBorderColor: string,
-  checkedBackgroundColor: string,
-  unCheckedBackgroundColor: string,
   height: number,
-  width: number
+  width: number,
+  strokeDasharray?: number
 }) {
   const progress = useDerivedValue(() => {
     return withTiming(checked ? 0:1, {
@@ -32,6 +28,7 @@ export default function CustomCheckBox({checked, checkMarkColor, height, width}:
           checkMarkColor={checkMarkColor}
           checked={checked}
         />
+        <Circle cx="26" cy="26" r="20" stroke="black" strokeDasharray={strokeDasharray} strokeWidth="2" fill="none" />
       </Svg>
     </View>
   );

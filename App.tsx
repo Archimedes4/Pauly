@@ -82,11 +82,11 @@ import { getToken } from "./getToken"
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
-  xSmall,	//<576px
-  small, //≥576px
-  medium, //≥768px
-  large, //≥992px
-  xLarge //≥1200px
+  xSmall,	  //<576px  ->0
+  small,    //≥576px  ->1
+  medium,   //≥768px  ->2
+  large,    //≥992px  ->3
+  xLarge    //≥1200px ->4
 }
 
 function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{dimensions: {
@@ -160,7 +160,6 @@ WebBrowser.maybeCompleteAuthSession();
 function AppMain() {
   //Dimentions
   const statusBarColor = useSelector((state: RootState) => state.statusBarColor)
-  const {width} = useSelector((state: RootState) => state.dimentions)
   const [dimensions, setDimensions] = useState({window: windowDimensions, screen: screenDimensions});
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
 

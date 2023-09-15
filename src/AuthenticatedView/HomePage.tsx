@@ -72,7 +72,7 @@ export default function HomePage() {
 
   return (
     <View style={{backgroundColor: "#793033", overflow: "hidden"}}>
-      <View style={{width: width * 1.0, height: height * 0.08}}>
+      <Pressable style={{width: width * 1.0, height: height * 0.08}} onPress={() => {navigate("/notifications")}}>
         { (dataState === loadingStateEnum.loading) ?
           <View style={{width: width * 1.0, height: height * 0.08, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
             <ProgressView width={(width < (height * 0.08)) ? width * 0.1:height * 0.07} height={(width < (height * 0.08)) ? width * 0.1:height * 0.07}/>
@@ -92,7 +92,7 @@ export default function HomePage() {
             }
           </>
         }
-      </View>
+      </Pressable>
       <Link style={{width: width * 0.999, height: height * 0.42}} to="/calendar">
         <View>
           <View style={{width: width * 1.0, height: height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center"}}>

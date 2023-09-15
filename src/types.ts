@@ -57,6 +57,11 @@ export enum recurringType {
   yearly
 }
 
+export enum semesters {
+  semesterOne,
+  semesterTwo
+}
+
 declare global {
   type taskType = {
     name: string
@@ -68,6 +73,7 @@ declare global {
     schoolDayId: string,
     scheduleId: string,
     dressCodeId: string,
+    semester: semesters,
     dressCodeIncentiveId: string,
     schoolYearEventId: string
   }
@@ -75,6 +81,7 @@ declare global {
     schoolDay: schoolDayType,
     schedule: scheduleType,
     dressCode: dressCodeDataType,
+    semester: semesters,
     dressCodeIncentive?: dressCodeIncentiveType
   }
 }

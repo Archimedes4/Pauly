@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import store, { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
-import { loadingStateEnum } from '../../../../types';
+import { loadingStateEnum, semesters } from '../../../../types';
 import { useNavigate, useParams } from 'react-router-native';
 import { getRoom, getRooms } from '../../../../Functions/getRooms';
 import getSchoolYears from '../../../../Functions/Calendar/getSchoolYears';
@@ -20,13 +20,9 @@ declare global {
   }
   type classType = {
     name: string,
-    id: string
+    id: string,
+    periods: number[]
   }
-}
-
-enum semesters {
-  semesterOne,
-  semesterTwo
 }
 
 export default function GovernmentClassesEdit() {

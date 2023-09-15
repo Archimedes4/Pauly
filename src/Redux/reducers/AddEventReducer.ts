@@ -1,4 +1,4 @@
-import { paulyEventType, recurringType } from './../../types';
+import { paulyEventType, recurringType, semesters } from './../../types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '../../types';
 
@@ -15,7 +15,8 @@ type addEventStatesType = {
   selectedEventType: paulyEventType
   recurringEvent: boolean
   selectedRecurringType: recurringType
-
+  startDate: string
+  endDate: string
 }
 
 const initalState: addEventStatesType = {
@@ -50,6 +51,7 @@ const initalState: addEventStatesType = {
       periods: [],
       id: ''
     },
+    semester: semesters.semesterOne,
     dressCode: {
       name: '',
       description: '',
@@ -66,7 +68,9 @@ const initalState: addEventStatesType = {
   },
   selectedEventType: 0,
   recurringEvent: false,
-  selectedRecurringType: recurringType.daily
+  selectedRecurringType: recurringType.daily,
+  startDate: new Date().toISOString(),
+  endDate: new Date().toISOString()
 }
 
 export const addEventSlice = createSlice({
@@ -108,6 +112,20 @@ export const addEventSlice = createSlice({
     },
     setSelectedRecurringType: (state, action: PayloadAction<recurringType>) => {
       return {...state, selectedRecurringType: action.payload}
+    },
+    setStartDate: (state, action: PayloadAction<string | Date>) => {
+      if (typeof action.payload === "string") {
+        return {...state, startDate: action.payload}
+      } else {
+        return {...state, startDate: action.payload.toISOString()}
+      }
+    },
+    setEndDate: (state, action: PayloadAction<string | Date>) => {
+      if (typeof action.payload === "string") {
+        return {...state, endDate: action.payload}
+      } else {
+        return {...state, endDate: action.payload.toISOString()}
+      }
     }
   }
 })

@@ -75,6 +75,7 @@ export default function Notifications() {
               schoolDay: schoolDay,
               schedule: schedule,
               dressCode: dressCode,
+              semester: outputIds.semester,
               dressCodeIncentive: dressCodeIncentive
             })
           }
@@ -112,7 +113,7 @@ export default function Notifications() {
   return (
     <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
       { (currentBreakPoint === 0) ?
-        <Link to="/profile/">
+        <Link to="/">
           <Text>Back</Text>
         </Link>:null
       }
@@ -146,6 +147,7 @@ export default function Notifications() {
             {userTasks.map((task) => (
               <TaskItem task={task} key={"User_Task_" + task.id} excessItem={false}/>
             ))}
+            <TaskItem key={"User_Task_Excess"} excessItem={true}/>
           </View>
         </View>
       </View>
@@ -198,13 +200,13 @@ export default function Notifications() {
   )
 }
 
-function TaskItem({task}:{task: taskType, excessItem: boolean}) {
+function TaskItem({task, excessItem}:{task?: taskType, excessItem: boolean}) {
   const [checked, setChecked] = useState<boolean>(false)
-  const [taskName, setTaskName] = useState<string>(task.name)
+  const [taskName, setTaskName] = useState<string>(task ? task.name:"")
   return (
     <View style={{flexDirection: "row"}}>
       <Pressable onPress={() => {setChecked(!checked)}}>
-        <CustomCheckBox checked={checked} checkMarkColor={'blue'} checkedBorderColor={'black'} unCheckedBorderColor={'black'} checkedBackgroundColor={'white'} unCheckedBackgroundColor={'white'} height={50} width={50} />
+        <CustomCheckBox checked={checked} checkMarkColor={'blue'} strokeDasharray={excessItem ? 5:undefined} height={20} width={20} />
       </Pressable>
       <View style={{justifyContent: "center", alignItems: "center", alignContent: "center"}}>
         <TextInput 

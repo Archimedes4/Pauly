@@ -1,4 +1,4 @@
-import { View, Text, Dimensions, Image } from 'react-native'
+import { View, Text, Dimensions, Image, ScrollView } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { ChevronLeft } from '../../UI/Icons/Icons'
@@ -12,6 +12,7 @@ import { RootState } from '../../Redux/store'
 import { dataContentTypeOptions, loadingStateEnum } from '../../types'
 import getSportsContent from '../../Functions/getSportsContent'
 import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer'
+import ProgressView from '../../UI/ProgressView'
 
 declare global {
   type sportPost = {
@@ -59,7 +60,7 @@ export default function Sports() {
   }
   return (
     <View style={{height: height, width: width, backgroundColor: "white", overflow: "hidden"}}>
-      <View style={{height: height * 0.075, width: width, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+      <View style={{height: height * 0.1, width: width, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         { (width > 576) ?
           null:<Link to="/">
             <View style={{flexDirection: "row"}}>
@@ -70,14 +71,14 @@ export default function Sports() {
         }
         <Text style={{fontFamily: "BukhariScript"}}>Sports</Text>
       </View>
-      
-      { (loadingResult === loadingStateEnum.loading) ?
+      {(loadingResult === loadingStateEnum.loading) ?
         <View>
+          <ProgressView width={(width < height) ? width * 0.5:height * 0.5} height={(width < height) ? width * 0.5:height * 0.5}/>
           <Text>Loading</Text>
         </View>:
-        <View> 
+        <> 
           { (loadingResult === loadingStateEnum.success) ?
-            <View>
+            <ScrollView style={{height: height * 0.8}}>
               { sportsPosts.map((item) => (
                 <View style={{marginTop: height * 0.05}}>
                 { (item.fileType === dataContentTypeOptions.image) ?
@@ -89,17 +90,16 @@ export default function Sports() {
                 </View>
               ))
               }
-            </View>:
-            <View>
-              { (loadingResult === loadingStateEnum.failed) ?
-                <View>
-                  <Text>Something went wrong</Text>
-                </View>:null
-              }
+            </ScrollView>:
+            <View>  
+              <Text>Something went wrong</Text>
             </View>
           }
-        </View>
+        </>
       }
+      <ScrollView>
+        
+      </ScrollView>
     </View>
   )
 }

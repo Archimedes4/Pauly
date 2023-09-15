@@ -1,6 +1,6 @@
 import { View, Text, Pressable, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { loadingStateEnum } from '../../types'
+import { loadingStateEnum, semesters } from '../../types'
 import create_UUID from '../../Functions/Ultility/CreateUUID'
 import { getGraphEvents, getTimetable } from '../../Functions/Calendar/calendarFunctionsGraph'
 import { useSelector } from 'react-redux'
@@ -12,6 +12,7 @@ enum pickSchoolDayMode {
   schoolDay,
   schedule,
   dressCode,
+  semester,
   dressCodeIncentives
 }
 
@@ -50,7 +51,8 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
           setSelectedSchoolDayData({
             schoolDay: e,
             schedule: selectedSchoolDayData.schedule,
-            dressCode: selectedSchoolDayData.dressCode
+            dressCode: selectedSchoolDayData.dressCode,
+            semester: semesters.semesterOne
           }); setSchoolDayMode(pickSchoolDayMode.schedule)
         }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.schoolYear)}}/>:null
       }
@@ -59,7 +61,8 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
           setSelectedSchoolDayData({
             schoolDay: selectedSchoolDayData.schoolDay,
             schedule: e,
-            dressCode: selectedSchoolDayData.dressCode
+            dressCode: selectedSchoolDayData.dressCode,
+            semester: selectedSchoolDayData.semester
           }); setSchoolDayMode(pickSchoolDayMode.dressCode)
         }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.schoolDay)}}/>:null
       }
@@ -68,9 +71,37 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
           setSelectedSchoolDayData({
             schoolDay: selectedSchoolDayData.schoolDay,
             schedule: selectedSchoolDayData.schedule,
-            dressCode: e
-          }); setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives)
+            dressCode: e,
+            semester: selectedSchoolDayData.semester
+          }); setSchoolDayMode(pickSchoolDayMode.semester)
         }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.schedule)}}/>:null
+      }
+      { (schoolDayMode === pickSchoolDayMode.semester) ?
+        <View>
+          <Pressable onPress={() => {setSchoolDayMode(pickSchoolDayMode.dressCode)}}>
+            <Text>Back</Text>
+          </Pressable>
+          <Pressable onPress={() => {
+            setSelectedSchoolDayData({
+              schoolDay: selectedSchoolDayData.schoolDay,
+              schedule: selectedSchoolDayData.schedule,
+              dressCode: selectedSchoolDayData.dressCode,
+              semester: semesters.semesterOne
+            }); setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives)
+          }}>
+            <Text>Semester One</Text>
+          </Pressable>
+          <Pressable onPress={() => {
+            setSelectedSchoolDayData({
+              schoolDay: selectedSchoolDayData.schoolDay,
+              schedule: selectedSchoolDayData.schedule,
+              dressCode: selectedSchoolDayData.dressCode,
+              semester: semesters.semesterTwo
+            }); setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives)
+          }}>
+            <Text>Semester Two</Text>
+          </Pressable>
+        </View>:null
       }
       { (schoolDayMode === pickSchoolDayMode.dressCodeIncentives) ?
         <DressCodeIncentivesSelect dressCodeIncentivesData={timetable?.dressCode.dressCodeIncentives} onSelect={(e) => {
@@ -78,6 +109,7 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
             schoolDay: selectedSchoolDayData.schoolDay,
             schedule: selectedSchoolDayData.schedule,
             dressCode: selectedSchoolDayData.dressCode,
+            semester: selectedSchoolDayData.semester,
             dressCodeIncentive: e
           })
         }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.dressCode)}}/>:null
