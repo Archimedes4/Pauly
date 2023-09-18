@@ -8,10 +8,9 @@ export default function Settings() {
   return (
     <View>
         <Link to="/profile/">
-            <Text>Back</Text>
+          <Text>Back</Text>
         </Link>
       <Text>Settings</Text>
-      
       <Button title='Logout' onPress={() => {
         fetch("https://login.microsoftonline.com/" + tenantId + "/oauth2/logout?post_logout_redirect_uri=http://localhost:19006")
       }}></Button>

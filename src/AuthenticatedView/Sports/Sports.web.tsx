@@ -72,7 +72,7 @@ export default function Sports() {
         <Text style={{fontFamily: "BukhariScript"}}>Sports</Text>
       </View>
       {(loadingResult === loadingStateEnum.loading) ?
-        <View>
+        <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={(width < height) ? width * 0.5:height * 0.5} height={(width < height) ? width * 0.5:height * 0.5}/>
           <Text>Loading</Text>
         </View>:

@@ -1,6 +1,6 @@
-import store from "../Redux/store";
-import { loadingStateEnum } from "../types";
-import callMsGraph from "./Ultility/microsoftAssets";
+import store from "../../Redux/store";
+import { loadingStateEnum } from "../../types";
+import callMsGraph from "../Ultility/microsoftAssets";
 
 //Gets points when given an array of commission ids
 async function getPointsBatch(commissions: string[]): Promise<{result: loadingStateEnum, points: number}> {

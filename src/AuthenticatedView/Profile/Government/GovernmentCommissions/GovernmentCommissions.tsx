@@ -1,23 +1,34 @@
-import { View, Text } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-native'
+import { Link, useNavigate } from 'react-router-native'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
-import { loadingStateEnum } from '../../../../types'
-import getCommissions from '../../../../Functions/getCommissions'
+import { commissionTypeEnum, loadingStateEnum } from '../../../../types'
+import getCommissions from '../../../../Functions/commissions/getCommissions'
+import ProgressView from '../../../../UI/ProgressView'
 
 declare global {
   type commissionType = {
+    itemId: string
     title: string
-    startDate: Date
-    endDate: Date
+    timed: boolean
     points: number
     hidden: boolean
+    maxNumberOfClaims: number
+    allowMultipleSubmissions: boolean
     commissionId: string
+    value: commissionTypeEnum
+    startDate?: Date
+    endDate?: Date
     proximity?: number
     coordinateLat?: number
     coordinateLng?: number
+    postData?: {
+      teamId: string
+      channelId: string
+      postId: string
+    }
   }
 }
 
@@ -26,7 +37,6 @@ function CommissionPickerType() {
 }
 
 export default function GovernmentCommissions() {
-  const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {height, width} = useSelector((state: RootState) => state.dimentions)
   const [commissions, setCommissions] = useState<commissionType[]>([])
   const [commissionsState, setCommissionsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
@@ -58,11 +68,7 @@ export default function GovernmentCommissions() {
             { (commissionsState === loadingStateEnum.success) ?
               <View>
                 {commissions.map((commission) => (
-                  <Link to={"/profile/government/commissions/edit/" + commission.commissionId} key={"Commission_" + commission.commissionId} style={{margin: 10, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
-                    <View style={{margin: 10}}>
-                      <Text selectable={false}>{commission.title}</Text>
-                    </View>
-                  </Link>
+                  <CommissionBlock commission={commission} />
                 ))}
               </View>:<Text>Failed</Text>
             }
@@ -75,5 +81,32 @@ export default function GovernmentCommissions() {
         </Link>
       </View>
     </View>
+  )
+}
+
+function CommissionBlock({commission}:{commission: commissionType}) {
+  const {width} = useSelector((state: RootState) => state.dimentions)
+  const navigate = useNavigate()
+  const [unclaimedState, setUnclaimedState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [unclaimedCount, setUnclaimedCount] = useState<number>(0)
+  return (
+    <>
+      <Pressable onPress={() => navigate("/profile/government/commissions/" + commission.commissionId)} key={"Commission_" + commission.commissionId} style={{margin: 10, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+        <View style={{margin: 10}}>
+          <Text selectable={false}>{commission.title}</Text>
+        </View>
+      </Pressable>
+      { (unclaimedCount === 0) ?
+        <View style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "red"}}>
+              
+        </View>:null
+      }
+      {
+        (unclaimedState === loadingStateEnum.loading) ?
+        <View style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "red"}}>
+          <ProgressView width={10} height={10}/>
+        </View>:null
+      }
+    </>
   )
 }

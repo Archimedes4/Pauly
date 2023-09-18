@@ -157,6 +157,18 @@ export const commissionsData = {
     {
       "name":"qrCodeData",
       "text":{"allowMultipleLines": true}
+    },
+    {
+      "name":"postTeamId",
+      "text":{ }
+    },
+    {
+      "name":"postChannelId",
+      "text":{ }
+    },
+    {
+      "name":"postId",
+      "text":{ }
     }
   ],
   "list": {
@@ -512,20 +524,6 @@ export const paulyResourceExtensionData = {
   ]
 }
 
-export const paulyUserExtensionData = {
-  "id":"paulyUser",
-  "description":"Pauly User Data. Holds Commissions",
-  "targetTypes": [
-    "user"
-  ],
-  "owner":clientId,
-  "properties": [
-    {
-      "name":"commissionData",
-      "type":"String"
-    }
-  ]
-}
 
 declare global {
   type addDataType = {
@@ -547,11 +545,6 @@ export const addDataArray: addDataType[] = [
     data: paulyResourceExtensionData,
     urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
     id: "resourceExtensionId"
-  },
-  {
-    data: paulyUserExtensionData,
-    urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
-    id: "userExtensionId"
   },
   {
     data: commissionsData,

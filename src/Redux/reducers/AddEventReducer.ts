@@ -1,4 +1,4 @@
-import { paulyEventType, recurringType, semesters } from './../../types';
+import { paulyEventType, recurringType, semesters } from '../../types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '../../types';
 
@@ -9,7 +9,7 @@ type addEventStatesType = {
   isPickingEndDate: boolean
   allDay: boolean
   isGovernmentEvent: boolean
-  selectedTimetable: timetableType
+  selectedTimetable: timetableStringType
   selectedSchoolDayData: schoolDayDataType
   selectedSchoolYear: eventType
   selectedEventType: paulyEventType
@@ -28,15 +28,7 @@ const initalState: addEventStatesType = {
   isGovernmentEvent: false,
   selectedTimetable: {
     name: '',
-    id: '',
-    schedules: [],
-    days: [],
-    dressCode: {
-      name: '',
-      id: '',
-      dressCodeData: [],
-      dressCodeIncentives: []
-    }
+    id: ''
   },
   selectedSchoolDayData: {
     schoolDay: {
@@ -95,7 +87,7 @@ export const addEventSlice = createSlice({
     setIsGovernmentEvent: (state, action: PayloadAction<boolean>) => {
       return {...state, isGovernmentEvent: action.payload}
     },
-    setSelectedTimetable: (state, action: PayloadAction<timetableType>) => {
+    setSelectedTimetable: (state, action: PayloadAction<timetableStringType>) => {
       return {...state, selectedTimetable: action.payload}
     },
     setSelectedSchoolDayData: (state, action: PayloadAction<schoolDayDataType>) => {

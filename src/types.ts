@@ -62,7 +62,17 @@ export enum semesters {
   semesterTwo
 }
 
+export enum submissionTypeEnum {
+  all,
+  unApproved,
+  approved
+}
+
 declare global {
+  type groupType = {
+    name: string,
+    id: string
+  }  
   type taskType = {
     name: string
     id: string
@@ -83,5 +93,24 @@ declare global {
     dressCode: dressCodeDataType,
     semester: semesters,
     dressCodeIncentive?: dressCodeIncentiveType
+  }
+  type channelType = {
+    id: string,
+    displayName: string,
+    selected: boolean,
+    loading: boolean,
+    error: boolean,
+    description?: string
+  }
+  type resourceDataType = {
+    id: string,
+    body: string
+  }
+  type submissionType = {
+    userName: string
+    submissionTime: Date
+    id: string
+    itemId: string
+    approved: boolean
   }
 }

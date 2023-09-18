@@ -6,16 +6,16 @@ import { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
 import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
 import { WebView } from 'react-native-webview';
-import { loadingStateEnum } from '../types';
+import { loadingStateEnum, semesters } from '../types';
 import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
-import testApi from '../Functions/AzureFunctions/Test';
 import getUsersTasks from '../Functions/Homepage/getUsersTasks';
 import CommissionClaim from './Commissions/CommissionClaim';
 import ProgressView from '../UI/ProgressView';
 import getInsightData from '../Functions/Homepage/getInsightData';
 import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
 import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer';
+import getClassEvents from '../Functions/getClassEventsTimetable';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -57,16 +57,11 @@ export default function Notifications() {
       //Calendar Data
       const result = await getSchoolDay(new Date())
       if (result.result === loadingStateEnum.success && result.event !== undefined){
-        console.log(result.event.paulyEventData)
         const outputIds: schoolDayDataCompressedType = JSON.parse(result.event.paulyEventData)
-        console.log(outputIds)
         const eventResult = await getEvent(outputIds.schoolYearEventId)
         if (eventResult.result === loadingStateEnum.success && eventResult.data !== undefined){
-          console.log("Timetable")
           const timetableResult = await getTimetable(eventResult.data?.paulyEventData)
-          console.log(timetableResult)
           if (timetableResult.result === loadingStateEnum.success && timetableResult.timetable !== undefined){
-            console.log(timetableResult)
             const schoolDay = timetableResult.timetable.days.find((e) => {return e.id === outputIds.schoolDayId})
             const schedule = timetableResult.timetable.schedules.find((e) => {return e.id === outputIds.scheduleId})
             const dressCode = timetableResult.timetable.dressCode.dressCodeData.find((e) => {return e.id === outputIds.dressCodeId})
@@ -78,6 +73,8 @@ export default function Notifications() {
               semester: outputIds.semester,
               dressCodeIncentive: dressCodeIncentive
             })
+            const classResult = await getClassEvents(schedule.id, outputIds.semester, outputIds.schoolYearEventId, schoolDay, result.event.startTime)
+            console.log(classResult)
           }
         }
       }
@@ -143,12 +140,27 @@ export default function Notifications() {
       <View style={{width: width}}>
         <Text>Tasks</Text>
         <View style={{shadowColor: "black", width: width * 0.9, marginLeft: width * 0.05, marginRight: width * 0.05, height: height * 0.5, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
-          <View style={{margin: 10}}>
-            {userTasks.map((task) => (
-              <TaskItem task={task} key={"User_Task_" + task.id} excessItem={false}/>
-            ))}
-            <TaskItem key={"User_Task_Excess"} excessItem={true}/>
-          </View>
+          <ScrollView style={{margin: 10, height: height * 0.5 - 20}}>
+            { (taskState === loadingStateEnum.loading) ?
+              <View style={{width: width * 0.9, height: height * 0.5-20, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                <ProgressView width={(width * 0.9 < (height * 0.5-20)) ? width * 0.45:(height * 0.25-20)} height={(width * 0.9 < (height * 0.5-20)) ? width * 0.45:(height * 0.25 -20)}/>
+                <Text>Loading</Text>
+              </View>:
+              <>
+                { (taskState === loadingStateEnum.success) ?
+                  <>
+                    {userTasks.map((task) => (
+                      <TaskItem task={task} key={"User_Task_" + task.id} excessItem={false}/>
+                    ))}
+                    <TaskItem key={"User_Task_Excess"} excessItem={true}/>
+                  </>:
+                  <View>
+                    <Text>failed</Text>
+                  </View>
+                }
+              </>
+            }
+          </ScrollView>
         </View>
       </View>
       <View style={{height: height * 0.1, width: width * 0.5}}>

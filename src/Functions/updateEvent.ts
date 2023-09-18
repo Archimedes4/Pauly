@@ -1,5 +1,5 @@
 import { orgWideGroupID } from "../PaulyConfig"
-import { addEventSlice } from "../Redux/reducers/AddEventReducer"
+import { addEventSlice } from "../Redux/reducers/addEventReducer"
 import { currentEventsSlice } from "../Redux/reducers/currentEventReducer"
 import store from "../Redux/store"
 import { loadingStateEnum, paulyEventType } from "../types"
@@ -20,8 +20,8 @@ export default async function createEvent(): Promise<loadingStateEnum> {
   if (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) {
     if (store.getState().addEvent.selectedSchoolDayData === undefined) return
     data["start"]["dateTime"] = store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-    var newEndDate = new Date(store.getState().addEvent.endDate)
-    newEndDate.setDate(new Date(store.getState().addEvent.endDate).getDate() + 1)
+    var newEndDate = new Date(store.getState().addEvent.startDate)
+    newEndDate.setDate(new Date(store.getState().addEvent.startDate).getDate() + 1)
     data["end"]["dateTime"] = newEndDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
     data["isAllDay"] = true
     data["subject"] = store.getState().addEvent.selectedSchoolDayData.schoolDay.name + " " + store.getState().addEvent.selectedSchoolDayData.schedule.properName

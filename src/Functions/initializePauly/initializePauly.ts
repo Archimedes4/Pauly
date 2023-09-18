@@ -145,6 +145,7 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
     if (!addPaulyListResult.ok) {return loadingStateEnum.failed}
   } else {
     const addPaulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyList/items/1",  "PATCH", false, JSON.stringify(paulyListNewData))
+    const ourData = await addPaulyListResult.json()
     if (!addPaulyListResult.ok) {return loadingStateEnum.failed}
   }
   return loadingStateEnum.success

@@ -7,8 +7,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer';
-import getPoints from '../../Functions/getPoints';
-import getCommissions from '../../Functions/getCommissions';
+import getPoints from '../../Functions/commissions/getPoints';
+import getCommissions from '../../Functions/commissions/getCommissions';
 import { loadingStateEnum } from '../../types';
 import CommissionsView from './CommissionsView';
 import ProgressView from '../../UI/ProgressView';
@@ -45,8 +45,13 @@ export default function Commissions() {
 
   useEffect(() => {
     dispatch(statusBarColorSlice.actions.setStatusBarColor("#444444"))
-    loadData()
   }, [])
+
+  useEffect(() => {
+    if (siteId !== "") {
+      loadData()
+    }
+  }, [siteId])
 
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
@@ -73,7 +78,7 @@ export default function Commissions() {
               </View>
             </Link>:null
           }
-          <Text style={{fontFamily: 'BukhariScript'}}>Commissions</Text>
+          <Text style={{fontFamily: 'BukhariScript', fontSize:  25}}>Commissions</Text>
         </View>
         <View style={{height: height * 0.9}}>
           { (commissionState === loadingStateEnum.loading) ?
@@ -104,7 +109,7 @@ export default function Commissions() {
       </View>
       <View style={{position: "absolute", zIndex: 2, top: height * 0.1, left: width * 0.1}}>
         { (selectedCommission !== "") ?
-          <CommissionsView id={selectedCommission} />:null
+          <CommissionsView id={selectedCommission} onClose={() => setSelectedCommission("")}/>:null
         }
       </View>
     </>

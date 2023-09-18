@@ -8,15 +8,6 @@ import { Link } from 'react-router-native'
 import ProgressView from '../../../UI/ProgressView'
 import getResource from '../../../Functions/getResources'
 
-type channelType = {
-  id: string,
-  displayName: string,
-  selected: boolean,
-  loading: boolean,
-  error: boolean,
-  description?: string
-}
-
 type resourceGroupType = {
   name: string,
   id: string,

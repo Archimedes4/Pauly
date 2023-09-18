@@ -3,13 +3,6 @@ import store from "../Redux/store"
 import callMsGraph from "./Ultility/microsoftAssets"
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
 
-declare global {
-  type resourceDataType = {
-    id: string,
-    body: string
-  }
-}
-
 export async function getResources(): Promise<loadingStateEnum> {
   var nextLink = "https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.resourceListId + "/items?expand=fields"
   var output: string[] = []
@@ -50,12 +43,13 @@ export async function getResources(): Promise<loadingStateEnum> {
             for (var responceIndex = 0; responceIndex < resourceResponceData["responses"].length; responceIndex++) {
               if (resourceResponceData["responses"][responceIndex]["status"] === 200) {
                 for (var dataIndex = 0; dataIndex < resourceResponceData["responses"][responceIndex]["body"]["value"].length; dataIndex++) {
-                  const outputData: resourceDataType = {
-                    id: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["id"],
-                    body: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"]
+                  if (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"] !== "<systemEventMessage/>") {
+                    const outputData: resourceDataType = {
+                      id: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["id"],
+                      body: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"]
+                    }
+                    output.push(JSON.stringify(outputData))
                   }
-                  console.log(outputData)
-                  output.push(JSON.stringify(outputData))
                 }
               } else {
                 return loadingStateEnum.failed

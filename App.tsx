@@ -32,7 +32,7 @@ import Government from './src/AuthenticatedView/Profile/Government/Government';
 import MicrosoftGraphOverview from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphOverview';
 import MicrosoftGraphCreateList from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphCreateList';
 import GovernmentCommissions from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentCommissions';
-import CreateNewCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentCreateCommission';
+import GovernmentEditCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentEditCommission';
 import Sports from './src/AuthenticatedView/Sports/Sports.web';
 import Calendar from './src/AuthenticatedView/Calendar/Calendar';
 import GovernmentSports from './src/AuthenticatedView/Profile/Government/GovernmentSports/GovernmentSports';
@@ -74,7 +74,6 @@ import GovernmentResources from './src/AuthenticatedView/Profile/Government/Gove
 import GovernmentDressCodeCreate from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeCreate';
 import GovernmentDressCode from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
 import GovernmentDressCodeEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
-import GovernmentEditCommission from './src/AuthenticatedView/Profile/Government/GovernmentCommissions/GovernmentEditCommission';
 import { authenticationRefreshTokenSlice } from './src/Redux/reducers/authenticationRefreshTokenReducer';
 import GovernmentRooms from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentRooms';
 import GovernmentRoomsCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovermentRoomsCreate'
@@ -117,8 +116,7 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
                   <Route path="/profile/government/graph/:mode/edit/:id" element={<MicrosoftGraphEdit />}/>
                   <Route path="/profile/government/graph/:mode/create" element={<MicrosoftGraphCreateList/>}/>
                   <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
-                  <Route path="/profile/government/commissions/create" element={<CreateNewCommission/>}/>
-                  <Route path="/profile/government/commissions/edit/:id" element={<GovernmentEditCommission/>}/>
+                  <Route path="/profile/government/commissions/:id" element={<GovernmentEditCommission/>}/>
                   <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />
                   <Route path="/profile/government/classes" element={<GovernmentClasses />} />
                   <Route path="/profile/government/classes/edit/:id" element={<GovernmentClassesEdit />} />

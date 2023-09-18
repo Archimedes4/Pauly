@@ -7,17 +7,13 @@ import { loadingStateEnum } from '../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 import { clientId } from '../../../../PaulyConfig';
+import { getTeams } from '../../../../Functions/GroupsData';
 
 type listType = {
   displayName: string
   listId: string
   name: string
 }
-
-type groupType = {
-  name: string,
-  id: string
-}  
 
 type extensionType = {
   description: string,
@@ -73,26 +69,12 @@ export default function MicrosoftGraphOverview() {
     const groupResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups?$filter=startswith(displayName,'" + search +"')")
   }
 
-  async function getGroups() {
-    const groupResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups")
-    if (groupResult.ok) {
-      const groupResultData = await groupResult.json()
-      if (groupResultData["value"] !== undefined){
-        var outputData: groupType[] = []
-        for(var index = 0; index < groupResultData["value"].length; index++) {
-          outputData.push({
-            name: groupResultData["value"][index]["displayName"],
-            id: groupResultData["value"][index]["id"]
-          })
-        }
-        setGroups(outputData)
-        setGroupLoadingState(loadingStateEnum.success)
-      } else {
-        setGroupLoadingState(loadingStateEnum.failed)
-      }
-    } else {
-      setGroupLoadingState(loadingStateEnum.failed)
+  async function loadData() {
+    const groupResult = await getTeams("https://graph.microsoft.com/v1.0/groups")
+    if (groupResult.result === loadingStateEnum.success && groupResult.data !== undefined) {
+      setGroups(groupResult.data)
     }
+    setGroupLoadingState(groupResult.result)
   }
 
   async function getExtensions() {
@@ -141,7 +123,7 @@ export default function MicrosoftGraphOverview() {
 
   useEffect(() => {
     getLists()
-    getGroups()
+    loadData()
     getExtensions()
   }, [])
   return (

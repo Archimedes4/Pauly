@@ -112,7 +112,7 @@ export default function SelectSchoolDayData({width, height, selectedSchoolYear, 
             semester: selectedSchoolDayData.semester,
             dressCodeIncentive: e
           })
-        }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.dressCode)}}/>:null
+        }} onBack={() => {setSchoolDayMode(pickSchoolDayMode.semester)}}/>:null
       }
     </View>
   )
@@ -215,10 +215,10 @@ function ScheduleSelect({schedules, onSelect}:{schedules: scheduleType[] | undef
   )
 }
 
-function DressCodeSelect({dressCodeData, onSelect}:{dressCodeData: dressCodeDataType[], onSelect: (item: dressCodeDataType) => void, onBack: () => void}) {
+function DressCodeSelect({dressCodeData, onSelect, onBack}:{dressCodeData: dressCodeDataType[], onSelect: (item: dressCodeDataType) => void, onBack: () => void}) {
   return (
     <View>
-      <Pressable>
+      <Pressable onPress={() => {onBack()}}>
         <Text>Back</Text>
       </Pressable>
       {dressCodeData.map((data) => (

@@ -13,7 +13,7 @@ import authenticationApiTokenReducer from './reducers/authenticationApiToken';
 import { tasksDeltaReducer, tasksReducer } from './reducers/tasksReducers';
 import paulyDataReducer from './reducers/paulyDataReducer';
 import resourcesReducer from './reducers/resourcesReducer';
-import AddEventReducer from './reducers/AddEventReducer';
+import AddEventReducer from './reducers/addEventReducer';
 
 const store = configureStore({
   reducer: {

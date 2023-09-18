@@ -116,8 +116,8 @@ export default function GovernmentTimetableCreate() {
         <Text>Back</Text>
       </Link>
       <Text>Create Timetable</Text>
-      <View>
-        <View>
+      <View style={{backgroundColor: "#FF6700", borderRadius: 15, margin: 5}}>
+        <View style={{margin: 10}}>
           <Text>Warning: because of the way that timetables work some properties cannot be edited.</Text>
           <Text>The dress code you pick cannot change</Text>
           <Text>Schedules can be added but they have to have the same number of periods</Text>
@@ -185,7 +185,7 @@ export default function GovernmentTimetableCreate() {
             { (dressCodeState === loadingStateEnum.success) ?
               <View>
                 { dressCodes.map((dressCode) => (
-                  <ListItem title={dressCode.name} width={width * 0.8} onPress={() => {setSelectedDressCode(dressCode)}}/>
+                  <ListItem title={dressCode.name} width={width * 0.8} onPress={() => {setSelectedDressCode(dressCode)}} style={{backgroundColor: (selectedDressCode?.id === dressCode.id) ? "blue":"white"}}/>
                 ))}
               </View>:<Text>Failed</Text>
             }
@@ -217,7 +217,7 @@ function SchoolDayItem({item, index, schoolDays, setSchoolDays}:{item: schoolDay
   const [selected, setSelected] = useState<boolean>(false)
   return (
     <Pressable style={{flexDirection: "row"}} onHoverIn={() => {setSelected(true)}} onHoverOut={() => {setSelected(false)}}>
-      <View style={{margin: 10}}>
+      <View style={{margin: 10, flexDirection: "row"}}>
         <View style={{marginRight: "auto"}}>
           <View style={{flexDirection: "row"}}>
             { (item.name === "") ?

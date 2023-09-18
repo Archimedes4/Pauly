@@ -17,7 +17,7 @@ import PickerWrapper from "../../UI/Pickers/Picker";
 import create_UUID from "../../Functions/Ultility/CreateUUID";
 import SelectSchoolDayData from "./SelectSchoolDayData";
 import updateEvent from "../../Functions/updateEvent";
-import { addEventSlice } from "../../Redux/reducers/AddEventReducer";
+import { addEventSlice } from "../../Redux/reducers/addEventReducer";
 
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
@@ -119,7 +119,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
               </Dropdown>
             </View>:null
           }
-          <GovernmentCalendarOptions selectedEventType={selectedEventType} setSelectedEventType={(e) => {dispatch(addEventSlice.actions.setSelectedEventType(e))}} width={width} height={height}/>
+          <GovernmentCalendarOptions width={width} height={height}/>
           <Pressable onPress={() => {
             dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.loading))
             updateEvent()
@@ -140,19 +140,21 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
   )
 }
 
-function GovernmentCalendarOptions({width, height, selectedEventType, setSelectedEventType}:{width: number, height: number, selectedEventType: paulyEventType, setSelectedEventType: (item: paulyEventType) => void}) {
-  const [selectedTimetable, setSelectedTimetable] = useState<timetableStringType | undefined>(undefined)
-  const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<schoolDayDataType>({
-    schoolDay: undefined,
-    schedule: undefined,
-    dressCode: undefined,
-    semester: undefined,
-    dressCodeIncentive: undefined
-  })
-  const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
+function GovernmentCalendarOptions({width, height}:{width: number, height: number}) {
+  // const [selectedTimetable, setSelectedTimetable] = useState<timetableStringType | undefined>(undefined)
+  // const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<schoolDayDataType>({
+  //   schoolDay: undefined,
+  //   schedule: undefined,
+  //   dressCode: undefined,
+  //   semester: undefined,
+  //   dressCodeIncentive: undefined
+  // })
+  const {selectedEventType, selectedTimetable, selectedSchoolDayData, selectedSchoolYear} = useSelector((state: RootState) => state.addEvent)
+  //const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
+  const dispatch = useDispatch()
   return (
     <>
-      <PickerWrapper selectedIndex={selectedEventType} onSetSelectedIndex={setSelectedEventType} width={width} height={height * 0.05}>
+      <PickerWrapper selectedIndex={selectedEventType} onSetSelectedIndex={(e) => {dispatch(addEventSlice.actions.setSelectedEventType(e))}} width={width} height={height * 0.05}>
         <Text>Regular</Text>
         <Text>School Day </Text>
         <Text>School Year</Text>
@@ -161,13 +163,13 @@ function GovernmentCalendarOptions({width, height, selectedEventType, setSelecte
       { (selectedEventType === paulyEventType.schoolDay) ?
         <View style={{width: 100, height: 100}}>
           <Text>Selected School Year:</Text>
-          <SelectSchoolDayData width={100} height={100} selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={setSelectedSchoolYear} selectedSchoolDayData={selectedSchoolDayData} setSelectedSchoolDayData={setSelectedSchoolDayData} />
+          <SelectSchoolDayData width={100} height={100} selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={(e) => {dispatch(addEventSlice.actions.setSelectedSchoolYear(e))}} selectedSchoolDayData={selectedSchoolDayData} setSelectedSchoolDayData={(e) => {dispatch(addEventSlice.actions.setSelectedSchoolDayData(e))}} />
         </View>:null
       }
       { (selectedEventType === paulyEventType.schoolYear) ?
         <View>
           <Text>Selected Timetable: {(selectedTimetable) ? selectedTimetable.name:"Unselected"}</Text>
-          <SelectTimetable governmentMode={false} onSelect={(e) => {setSelectedTimetable(e)}}/>
+          <SelectTimetable governmentMode={false} onSelect={(e) => {dispatch(addEventSlice.actions.setSelectedTimetable(e))}}/>
         </View>:null
       }
     </>

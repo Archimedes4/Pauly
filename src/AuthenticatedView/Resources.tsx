@@ -8,6 +8,7 @@ import { SearchIcon } from '../UI/Icons/Icons'
 import WebView from 'react-native-webview'
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
+import WebViewCross from '../UI/WebViewCross'
 
 //Resources
 // -> Sports
@@ -61,17 +62,15 @@ export default function Resources() {
         <Text>Resources</Text>
       </View>
       <SearchBox searchValue={searchValue} setSearchValue={setSearchValue}/>
-      <ScrollView style={{height: height * 0.8 + ((height >= 1000) ? ((height - 1000) * 0.05):0), backgroundColor: "white"}}>
+      <View style={{width: width, height: height * 0.05, backgroundColor: "#ededed"}}/>
+      <ScrollView style={{height: height * 0.75 + ((height >= 1000) ? ((height - 1000) * 0.05):0), backgroundColor: "#ededed"}}>
         {resources.map((resource) => (
-          <View key={"Resource_"+getResourceFromJson(resource).id}>
-            { (Platform.OS !== "web") ?
-              <WebView source={{html: getResourceFromJson(resource).body}}/>:
-              <div dangerouslySetInnerHTML={{__html: getResourceFromJson(resource).body}}/>
-            }
+          <View key={"Resource_"+getResourceFromJson(resource).id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+            <WebViewCross html={getResourceFromJson(resource).body}/>
           </View>
         ))}
       </ScrollView>
-      <ScrollView horizontal={true} style={{height: height * 0.01 - ((height >= 1000) ? ((height - 1000) * 0.05):0), width: width, backgroundColor: "white"}}>
+      <ScrollView horizontal={true} style={{height: height * 0.01 - ((height >= 1000) ? ((height - 1000) * 0.05):0), width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
         <PickerPiece text='Home' item={resourceMode.home} onPress={setSelectedResourceMode}/>
         <PickerPiece text='Sports' item={resourceMode.sports} onPress={setSelectedResourceMode}/>
         <PickerPiece text='Advancement' item={resourceMode.advancement} onPress={setSelectedResourceMode}/>
