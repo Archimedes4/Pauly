@@ -4,9 +4,11 @@ import { Link, useNavigate } from 'react-router-native'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
-import { commissionTypeEnum, loadingStateEnum } from '../../../../types'
+import { commissionTypeEnum, loadingStateEnum, submissionTypeEnum } from '../../../../types'
 import getCommissions from '../../../../Functions/commissions/getCommissions'
 import ProgressView from '../../../../UI/ProgressView'
+import getSubmissions from '../../../../Functions/commissions/getSubmissions'
+import create_UUID from '../../../../Functions/Ultility/CreateUUID'
 
 declare global {
   type commissionType = {
@@ -88,23 +90,46 @@ function CommissionBlock({commission}:{commission: commissionType}) {
   const {width} = useSelector((state: RootState) => state.dimentions)
   const navigate = useNavigate()
   const [unclaimedState, setUnclaimedState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const [unclaimedCount, setUnclaimedCount] = useState<number>(0)
+  const [unclaimedCount, setUnclaimedCount] = useState<string>("0")
+
+  async function loadData() {
+    const result = await getSubmissions(commission.commissionId, submissionTypeEnum.unApproved)
+    if (result.result === loadingStateEnum.success && result.count !== undefined) {
+      console.log(result)
+      if (result.count >= 50) {
+        setUnclaimedCount(result.count.toString() + "+")
+      } else {
+        setUnclaimedCount(result.count.toString())
+      }
+    }
+    setUnclaimedState(result.result)
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
   return (
     <>
-      <Pressable onPress={() => navigate("/profile/government/commissions/" + commission.commissionId)} key={"Commission_" + commission.commissionId} style={{margin: 10, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+      <Pressable onPress={() => navigate("/profile/government/commissions/" + commission.commissionId)} key={"Commission_" + commission.commissionId + "_" + create_UUID()} style={{margin: 10, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
         <View style={{margin: 10}}>
           <Text selectable={false}>{commission.title}</Text>
         </View>
       </Pressable>
-      { (unclaimedCount === 0) ?
-        <View style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "red"}}>
-              
+      { (unclaimedCount !== "0") ?
+        <View key={create_UUID()} style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "red", position: "absolute", alignContent: "center", alignItems: "center", justifyContent: "center", top: -2, left: width-25}}>
+          <Text style={{color: "white"}}>{unclaimedCount}</Text>
         </View>:null
       }
       {
         (unclaimedState === loadingStateEnum.loading) ?
-        <View style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "red"}}>
+        <View key={create_UUID()} style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "#FF6700", position: "absolute", alignContent: "center", alignItems: "center", justifyContent: "center", top: -2, left: width-25}}>
           <ProgressView width={10} height={10}/>
+        </View>:null
+      }
+      {
+        (unclaimedState === loadingStateEnum.failed) ?
+        <View key={create_UUID()} style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "red", position: "absolute", alignContent: "center", alignItems: "center", justifyContent: "center", top: -2, left: width-25}}>
+          <Text style={{color: "white"}}>!</Text>
         </View>:null
       }
     </>

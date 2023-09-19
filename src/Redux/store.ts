@@ -13,7 +13,8 @@ import authenticationApiTokenReducer from './reducers/authenticationApiToken';
 import { tasksDeltaReducer, tasksReducer } from './reducers/tasksReducers';
 import paulyDataReducer from './reducers/paulyDataReducer';
 import resourcesReducer from './reducers/resourcesReducer';
-import AddEventReducer from './reducers/addEventReducer';
+import addEventReducer from './reducers/addEventReducer';
+import homepageDataReducer from './reducers/homepageDataReducer';
 
 const store = configureStore({
   reducer: {
@@ -32,7 +33,8 @@ const store = configureStore({
     paulyData: paulyDataReducer,
     resourcesLastCalled: resourcesLastCallReducer,
     resources: resourcesReducer,
-    addEvent: AddEventReducer
+    addEvent: addEventReducer,
+    homepageData: homepageDataReducer
   }
 });
 

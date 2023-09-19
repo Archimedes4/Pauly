@@ -3,15 +3,15 @@ import { loadingStateEnum, submissionTypeEnum } from "../../types";
 import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getSubmissions(commissionId: string, submissionType: submissionTypeEnum): Promise<{result: loadingStateEnum, data?: submissionType[], nextLink?: string, count?: number}> {
-  const filter: string = (submissionType === submissionTypeEnum.approved) ? "fields/submissionApproved%20eq%20true%20and%20":(submissionType === submissionTypeEnum.unApproved) ? "fields/submissionApproved%20eq%20false%20and%20":""
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$filter=${filter}fields/commissionId%20eq%20'${commissionId}'&$count=true`)
+  const filter: string = (submissionType === submissionTypeEnum.approved) ? "fields/submissionApproved%20ne%20false%20and%20":(submissionType === submissionTypeEnum.unApproved) ? "fields/submissionApproved%20eq%20false%20and%20":""
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$filter=${filter}fields/commissionId%20eq%20'${commissionId}'`, "GET")
   if (result.ok) {
     const data = await result.json()
 
     //Get Users
     var batchRequests: {id: string, method: string, url: string}[][] = [] 
     var users: object = {}
-    for (var index = 0; index < data["value"]; index++) {
+    for (var index = 0; index < data["value"].length; index++) {
       if ((index%20) === 0) {
         batchRequests.push([])
       }
@@ -30,7 +30,7 @@ export default async function getSubmissions(commissionId: string, submissionTyp
       const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData))
       if (result.ok) {
         const batchResultData = await batchResult.json()
-        for (var batchIndex = 0; batchIndex < batchResultData["responses"].index; batchIndex++) {
+        for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
           if (batchResultData["responses"][batchIndex]["status"] === 200) {
             users[batchResultData["responses"][batchIndex]["body"]["id"]] = batchResultData["responses"][batchIndex]["body"]["displayName"]
           } else {
@@ -44,7 +44,7 @@ export default async function getSubmissions(commissionId: string, submissionTyp
 
     //Return Output
     var output: submissionType[] = []
-    for (var index = 0; index < data["value"]; index++) {
+    for (var index = 0; index < data["value"].length; index++) {
       const name = users[data["value"][index]["fields"]["userId"]]
       if (name !== undefined){
         output.push({
@@ -58,7 +58,7 @@ export default async function getSubmissions(commissionId: string, submissionTyp
         return {result: loadingStateEnum.failed}
       }
     }
-    return {result: loadingStateEnum.success, data: output, nextLink: data["@odata.nextLink"], count: data["@odata.count"]}
+    return {result: loadingStateEnum.success, data: output, nextLink: data["@odata.nextLink"], count: data["value"].length}
   } else {
     return {result: loadingStateEnum.failed}
   }

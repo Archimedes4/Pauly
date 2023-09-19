@@ -182,8 +182,7 @@ export const commissionsSubmissionsData = {
       "name":"userId",
       "text":{ },
       "required": true,
-      "indexed": true,
-      "enforceUniqueValues": true
+      "indexed": true
     },
     {
       "name": "submittedTime",

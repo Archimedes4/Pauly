@@ -16,7 +16,12 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.archimedes4.Pauly"
+      "bundleIdentifier": "com.archimedes4.Pauly",
+      "infoPlist": {
+        "keychain-access-groups":["com.microsoft.identity.universalstorage", "com.microsoft.adalcache"],
+        "CFBundleURLTypes":[{"CFBundleURLSchemes":["msauth.com.archimedes4.Pauly"]}],
+        "LSApplicationQueriesSchemes": ["msauthv2", "msauthv3"]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +33,6 @@
     "web": {
       "favicon": "./assets/icon.png"
     },
-    "scheme": "Archimedes4.Pauly",
     "extra": {
       "eas": {
         "projectId": "41b62420-4ae0-49b3-be2c-3eeb912dc208"

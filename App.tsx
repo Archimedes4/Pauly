@@ -16,7 +16,7 @@ import {
   Image,
   Platform
 } from 'react-native';
-import { Provider, useSelector } from 'react-redux'
+import { Provider, useDispatch, useSelector } from 'react-redux'
 import { NativeRouter, Route, Routes } from 'react-router-native';
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from "expo-auth-session"
@@ -62,7 +62,6 @@ import getPaulyLists from './src/Functions/Ultility/getPaulyLists';
 import GovernmentTimetableEdit from './src/AuthenticatedView/Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
 import MicrosoftGraphEditGroup from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditGroup';
 import MicrosoftGraphEditExtension from './src/AuthenticatedView/Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditExtension';
-
 import { clientId, tenantId } from './src/PaulyConfig';
 import { loadingStateEnum } from './src/types';
 import authenticationTokenReducer, { authenticationTokenSlice } from './src/Redux/reducers/authenticationTokenReducer';
@@ -78,6 +77,8 @@ import { authenticationRefreshTokenSlice } from './src/Redux/reducers/authentica
 import GovernmentRooms from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovernmentRooms';
 import GovernmentRoomsCreate from './src/AuthenticatedView/Profile/Government/GovernmentClasses/GovermentRoomsCreate'
 import { getToken } from "./getToken"
+import PublicClientApplication, { MSALAccount, MSALConfiguration, MSALInteractiveParams, MSALResult, MSALSignoutParams } from 'react-native-msal';
+import getUserProfile from './src/Functions/getUserProfile';
 
 //From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 enum breakPointMode {
@@ -153,19 +154,31 @@ function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{d
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
-WebBrowser.maybeCompleteAuthSession();
+const config: MSALConfiguration = {
+  auth: {
+    clientId: clientId,
+    // This authority is used as the default in `acquireToken` and `acquireTokenSilent` if not provided to those methods.
+    // Defaults to 'https://login.microsoftonline.com/common'
+    authority: `https://login.microsoftonline.com/${tenantId}`
+  },
+};
+const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"]
+
+const pca = new PublicClientApplication(config);
 
 function AppMain() {
   //Dimentions
   const statusBarColor = useSelector((state: RootState) => state.statusBarColor)
+  const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
   const [dimensions, setDimensions] = useState({window: windowDimensions, screen: screenDimensions});
   const [expandedMode, setExpandedMode] = useState<boolean>(false)
+  const [account, setAccount] = useState<undefined | MSALAccount>(undefined)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
       'change',
       ({window, screen}) => {
-        console.log("Window Change")
         setDimensions({window, screen});
       },
     );
@@ -235,98 +248,45 @@ function AppMain() {
   }, [dimensions])
 
   //Authentication
-  async function getUserProfile(accessToken: string) {
-    //TO DO check if ok
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/photo/$value", "GET", false, undefined, undefined, accessToken)
-    if (result.ok){
-      const dataBlob = await result.blob()
-      const urlOut = URL.createObjectURL(dataBlob)
-      const profileResult = await callMsGraph("https://graph.microsoft.com/v1.0/me", "GET", false, undefined, undefined, accessToken)
-      if (profileResult.ok){
-        const profileData = await profileResult.json()
-        store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileData({uri: urlOut, displayName: profileData["displayName"], id: profileData["id"]}))
+  async function authInit() {
+    try {
+      await pca.init();
+      const isSignedIn = await pca.getAccounts()
+      if (isSignedIn.length >= 1) {
+        dispatch(authenticationTokenSlice.actions.setAuthenticationToken(await pca.acquireTokenSilent({
+          scopes,
+          account: isSignedIn[0]
+        })))
+        setAccount(isSignedIn[0])
       }
+    } catch (error) {
+      console.error('Error initializing the pca, check your config.', error);
     }
   }
 
-  const discovery = AuthSession.useAutoDiscovery('https://login.microsoftonline.com/' + tenantId +'/v2.0');
+  useEffect(() => {
+    authInit()
+  }, [])
 
-  const redirectUri = AuthSession.makeRedirectUri({scheme: "Archimedes4.Pauly", path: 'auth'});
-
-  // Request
-
-  const [request, result, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId,
-      scopes: ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"],
-      redirectUri,
-      prompt: AuthSession.Prompt.SelectAccount,
-      responseType: (Platform.OS === "web") ? AuthSession.ResponseType.Code:AuthSession.ResponseType.Token
-    },
-    discovery,
-  );
-  
   async function getAuthToken() {
-    AuthSession.dismiss()
-    console.log("This")
-    const codeResponse = await promptAsync()
-    console.log(codeResponse)
-    if (Platform.OS === "web") {
-      if (request && codeResponse?.type === 'success' && discovery) {
-        console.log(request, codeResponse)
-        AuthSession.exchangeCodeAsync(
-          {
-            clientId,
-            code: codeResponse.params.code,
-            extraParams: request.codeVerifier
-              ? { code_verifier: request.codeVerifier }
-              :undefined,
-            redirectUri,
-            scopes: request.scopes
-          },
-          {tokenEndpoint: 'https://login.microsoftonline.com/' + tenantId +'/oauth2/v2.0/token'}
-        ).then((response) => {
-          console.log("This is response", response)
-          store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
-          if (response.refreshToken !== undefined){
-            store.dispatch(authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(response.refreshToken))
-          }
-          getPaulyLists(response.accessToken)
-          getUserProfile(response.accessToken)
-        }).catch(e => {console.log(e)});
-        //const result = await getToken(codeResponse.params.code, redirectUri, ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"], request.codeVerifier)
-      }
-    } else {
-      console.log("HERE", codeResponse)
-      if (codeResponse["authentication"] !== undefined) {
-        if (codeResponse["authentication"]["accessToken"] !== undefined) {
-          store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(codeResponse["authentication"]["accessToken"]))
-          getPaulyLists(codeResponse["authentication"]["accessToken"])
-          getUserProfile(codeResponse["authentication"]["accessToken"])
-        }
-      }
-    }
+    const params: MSALInteractiveParams = { scopes };
+    const result: MSALResult | undefined = await pca.acquireToken(params);
+    setAccount(result.account)
+    store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
+    getPaulyLists(result.accessToken)
+    getUserProfile(result.accessToken)
   }
 
-  // async function refreshAuthToken() {
-  //   promptAsync().then((codeResponse) => {
-  //     if (request && codeResponse?.type === 'success' && discovery) {
-  //       AuthSession.exchangeCodeAsync(
-  //         {
-  //           clientId,
-  //           code: codeResponse.params.code,
-  //           extraParams: request.codeVerifier
-  //             ? { code_verifier: request.codeVerifier }
-  //             : undefined,
-  //           redirectUri,
-  //         },
-  //         discovery,
-  //       ).then((response) => {
-  //         store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(response.accessToken))
-  //       });
-  //     }
-  //   });
-  // }
+  async function signOut() {
+    // Same as `pca.removeAccount` with the exception that, if called on iOS with the `signoutFromBrowser` option set to true, it will additionally remove the account from the system browser
+    // Remove all tokens from the cache for this application for the provided account
+    const removeSuccess: boolean = await pca.removeAccount(account);
+    const params: MSALSignoutParams = {
+      account: account,
+      signoutFromBrowser: true,
+    };
+    const success: boolean = await pca.signOut(params);
+  }
 
   return (
     <View style={{backgroundColor: statusBarColor}}>
@@ -334,7 +294,7 @@ function AppMain() {
         <View style={{height: dimensions.window.height, width: (expandedMode) ? dimensions.window.width * 0.25:dimensions.window.width * 0.1, backgroundColor: "#793033"}}/>
       }
       <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height, zIndex: 2, position: "absolute", left: 0, top: 0}}>
-        { (result?.type === 'success') ?
+        { (authenticationToken !== '') ?
           <View>
             <AuthenticatedView dimensions={dimensions} width={dimensions.window.width} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
           </View>:

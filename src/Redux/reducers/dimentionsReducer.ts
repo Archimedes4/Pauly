@@ -1,5 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
+// xSmall,	 <576px  ->0
+// small,    ≥576px  ->1
+// medium,   ≥768px  ->2
+// large,    ≥992px  ->3
+// xLarge    ≥1200px ->4
+
 const initalState: {width: number, height: number, currentBreakPoint: number} = {width: 0, height: 0, currentBreakPoint: 0}
 
 export const dimentionsSlice = createSlice({

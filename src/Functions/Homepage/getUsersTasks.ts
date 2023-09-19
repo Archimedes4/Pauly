@@ -7,7 +7,7 @@ import callMsGraph from "../Ultility/microsoftAssets";
 export default async function getUsersTasks(deltaRunAgain?: boolean): Promise<{result: loadingStateEnum, data?: taskType[]}> {
   var deltaMode = false
   if (store.getState().tasksDeltaLink !== "" && deltaRunAgain !== true) {deltaMode = true}
-  const url = (deltaMode) ? "":"https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/delta"
+  const url = (deltaMode) ? store.getState().tasksDeltaLink:"https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/delta"
   const tasksResult = await callMsGraph(url)
   if (tasksResult.ok){
     const taskData = await tasksResult.json()

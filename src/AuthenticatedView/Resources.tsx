@@ -86,7 +86,7 @@ export default function Resources() {
 function PickerPiece({text}:{text: string, item: resourceMode, onPress: (item: resourceMode) => void}) {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   return (
-    <Pressable style={{height: height * 0.01 - ((height >= 1000) ? ((height - 1000) * 0.05):0), width: (currentBreakPoint >= 2) ? (width*0.2):width * 0.4}}>
+    <Pressable style={{height: height * 0.01 - ((height >= 1000) ? ((height - 1000) * 0.05):0), width: (currentBreakPoint >= 2) ? (width*0.2):width * 0.4, backgroundColor: "#444444", borderRadius: 15}}>
       <Text>{text}</Text>
     </Pressable>
   )
@@ -100,16 +100,20 @@ function SearchBox({searchValue, setSearchValue}:{searchValue: string, setSearch
       <View style={{width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 25, flexDirection: "row", backgroundColor: "white"}}>
         { isOverflowing ?
           null:
-          <SearchIcon width={14} height={14}/>
+          <View style={{width: 20, height: 40, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 10}}>
+            <SearchIcon width={15} height={15}/>
+          </View>
         }
         <View>
-          <TextInput placeholder='Search' placeholderTextColor={"Black"} value={searchValue} onChangeText={setSearchValue} style={{width: width * 0.8 - 20, height: 20, margin: 10}}/>
+          <TextInput placeholder='Search' placeholderTextColor={"Black"} value={searchValue} onChangeText={setSearchValue} style={{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0, outlineStyle: 'none'}} enterKeyHint='search' returnKeyType='search' inputMode='search'/>
           <View
             style={{height: 0, alignSelf: 'flex-start', overflow: "hidden"}}
             onLayout={e => {
               if (e.nativeEvent.layout.width > width * 0.8 - 20) {
                 setIsOverflowing(true)
+                console.log("True")
               } else {
+                console.log("FALSR")
                 setIsOverflowing(false)
               }
             }}>

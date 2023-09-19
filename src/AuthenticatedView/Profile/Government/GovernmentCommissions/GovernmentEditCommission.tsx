@@ -17,6 +17,7 @@ import { getChannels, getPosts, getTeams } from '../../../../Functions/GroupsDat
 import WebViewCross from '../../../../UI/WebViewCross';
 import getCommission from '../../../../Functions/commissions/getCommission';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
+import { CloseIcon } from '../../../../UI/Icons/Icons';
 
 enum datePickingMode {
   none,
@@ -141,124 +142,129 @@ export default function GovernmentEditCommission() {
 
   return (
     <View style={{overflow: "hidden", width: width, height: height, backgroundColor: "white"}}>
-      <View style={{height: height, width: width, zIndex: 1, overflow: "hidden"}}>
-        <ScrollView style={{height: height, zIndex: 1}}>
-          <Link to="/profile/government/commissions/">
-            <Text>Back</Text>
-          </Link>
-          <View style={{alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-            <Text>{isCreating ? "Create New":"Edit"} Commission</Text>
-          </View>
-          <View style={{width: width, height: height * 0.15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-            <SegmentedPicker selectedIndex={selectedCommissionType} setSelectedIndex={setSelectedCommissionType} options={["Issued", "Location", "Image", "Image and Location", "QRCode"]} width={width * 0.8} height={height * 0.1} />
-          </View>
-          <Text>Commission Name</Text>
-          <TextInput 
-            value={commissionName}
-            onChangeText={text => setCommissionName(text)}
-            placeholder='Commission Name'
+      <ScrollView style={{height: height, width: width, zIndex: 1}}>
+        <Link to="/profile/government/commissions/">
+          <Text>Back</Text>
+        </Link>
+        <View style={{alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+          <Text>{isCreating ? "Create New":"Edit"} Commission</Text>
+        </View>
+        <View style={{width: width, height: height * 0.15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+          <SegmentedPicker selectedIndex={selectedCommissionType} setSelectedIndex={setSelectedCommissionType} options={["Issued", "Location", "Image", "Image and Location", "QRCode"]} width={width * 0.8} height={height * 0.1} />
+        </View>
+        <Text>Commission Name</Text>
+        <TextInput 
+          value={commissionName}
+          onChangeText={text => setCommissionName(text)}
+          placeholder='Commission Name'
+        />
+        { (selectedCommissionType === commissionTypeEnum.ImageLocation || selectedCommissionType === commissionTypeEnum.Location) ?
+          <View>
+            <View style={{width: width, height: height * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+              <MapWeb proximity={proximity} selectedPositionIn={selectedPositionIn} onSetSelectedPositionIn={setSelectedPositionIn} width={width * 0.8} height={height * 0.3}/>
+            </View>
+            <View style={{flexDirection: "row"}}>
+              <Text>Proximity</Text>
+              <TextInput 
+                keyboardType='numeric'
+                onChangeText={(text)=> setProximity(parseFloat(text))}
+                value={proximity.toString()}
+                maxLength={10}  //setting limit of input
+              />
+            </View>
+            <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+              <Slider width={width * 0.9} height={50} value={proximity/1000} onValueChange={(value) => {setProximity(value * 1000)}} containerWidth={width}/>
+            </View>
+          </View>:null
+        }
+        <View style={{flexDirection: "row"}}>
+          <Text>Timed: </Text>
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={(e) => {setIsTimed(e)}}
+            value={isTimed}
           />
-          { (selectedCommissionType === commissionTypeEnum.ImageLocation || selectedCommissionType === commissionTypeEnum.Location) ?
-            <View>
-              <View style={{width: width, height: height * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
-                <MapWeb proximity={proximity} selectedPositionIn={selectedPositionIn} onSetSelectedPositionIn={setSelectedPositionIn} width={width * 0.8} height={height * 0.3}/>
-              </View>
-              <View style={{flexDirection: "row"}}>
-                <Text>Proximity</Text>
-                <TextInput 
-                  keyboardType='numeric'
-                  onChangeText={(text)=> setProximity(parseFloat(text))}
-                  value={proximity.toString()}
-                  maxLength={10}  //setting limit of input
-                />
-              </View>
-              <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-                <Slider width={width * 0.9} height={50} value={proximity/1000} onValueChange={(value) => {setProximity(value * 1000)}} containerWidth={width}/>
-              </View>
-            </View>:null
-          }
-          <View style={{flexDirection: "row"}}>
-            <Text>Timed: </Text>
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={(e) => {setIsTimed(e)}}
-              value={isTimed}
-            />
-          </View>
-          { isTimed ?
-            <View>
-              <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
-                <Text>Start Date</Text>
-                <TimePickerDate date={startDate} setDate={setStartDate} />
-                <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
-                  <Text>Pick Start Date</Text>
-                </Pressable>
-              </View>
-              <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
-                <Text>End Date</Text>
-                <TimePickerDate date={endDate} setDate={setEndDate} />
-                <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
-              </View>
-            </View>:null
-          }
-          <View style={{flexDirection: "row"}}>
-            <Text>Points: </Text>
-            <TextInput 
-              keyboardType='numeric'
-              onChangeText={(text)=> {
-                if (text === ""){
-                  setPoints(0)
-                } else {
-                  setPoints(parseFloat(text))
-                }
-              }}
-              value={points.toString()}
-              maxLength={10}  //setting limit of input
-            />
-          </View>
-          <View style={{flexDirection: "row"}}>
-            <Text>Allow Multiple Submissions: </Text>
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={allowMultipleSubmissions ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={(e) => {setAllowMultipleSubmissions(e)}}
-              value={allowMultipleSubmissions}
-            />
-          </View>
-          <View style={{flexDirection: "row"}}>
-            <Text>Is Hidden: </Text>
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={isHidden ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={(e) => {setIsHidden(e)}}
-              value={isHidden}
-            />
-          </View>
-          <View style={{flexDirection: "row"}}>
-            <Text>Max number of claims: </Text>
-            <TextInput 
-            value={maxNumberOfClaims.toString()}
-            onChangeText={(e) => {
-              if (e !== "") {setMaxNumberOfClaims(parseFloat(e))} else {setMaxNumberOfClaims(0)}}}
-              inputMode='numeric'
-            />
-          </View>
-          <Text>Post</Text>
-          <PostSelectionContainer width={width} height={height * 0.4} selectedTeamId={selectedTeamId} setSelectedTeamId={setSelectedTeamId} selectedChannelId={selectedChannelId} setSelectedChannelId={setSelectedChannelId} setSelectedPostId={setSelectedPostId} />
-          <Pressable onPress={() => {createCommission()}}>
-            <Text>{(submitCommissionState === loadingStateEnum.notStarted) ? "Create Commission":(submitCommissionState === loadingStateEnum.loading) ? "Loading":(submitCommissionState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
-          </Pressable>
-          { (!isCreating) ?
-            <Pressable onPress={() => {deleteCommission()}}>
-              <Text>{(deleteCommissionResult === loadingStateEnum.notStarted) ? "Delete Commission":(deleteCommissionResult === loadingStateEnum.loading) ? "Loading":(deleteCommissionResult === loadingStateEnum.success) ? "Deleted Commission":"Failed to Delete Commission"}</Text>
-            </Pressable>:null
-          }
-        </ScrollView>
-      </View>
+        </View>
+        { isTimed ?
+          <View>
+            <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
+              <Text>Start Date</Text>
+              <TimePickerDate date={startDate} setDate={setStartDate} />
+              <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
+                <Text>Pick Start Date</Text>
+              </Pressable>
+            </View>
+            <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
+              <Text>End Date</Text>
+              <TimePickerDate date={endDate} setDate={setEndDate} />
+              <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
+            </View>
+          </View>:null
+        }
+        <View style={{flexDirection: "row"}}>
+          <Text>Points: </Text>
+          <TextInput 
+            keyboardType='numeric'
+            onChangeText={(text)=> {
+              if (text === ""){
+                setPoints(0)
+              } else {
+                setPoints(parseFloat(text))
+              }
+            }}
+            value={points.toString()}
+            maxLength={10}  //setting limit of input
+          />
+        </View>
+        <View style={{flexDirection: "row"}}>
+          <Text>Allow Multiple Submissions: </Text>
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={allowMultipleSubmissions ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={(e) => {setAllowMultipleSubmissions(e)}}
+            value={allowMultipleSubmissions}
+          />
+        </View>
+        <View style={{flexDirection: "row"}}>
+          <Text>Is Hidden: </Text>
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={isHidden ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={(e) => {setIsHidden(e)}}
+            value={isHidden}
+          />
+        </View>
+        <View style={{flexDirection: "row"}}>
+          <Text>Max number of claims: </Text>
+          <TextInput 
+          value={maxNumberOfClaims.toString()}
+          onChangeText={(e) => {
+            if (e !== "") {setMaxNumberOfClaims(parseFloat(e))} else {setMaxNumberOfClaims(0)}}}
+            inputMode='numeric'
+          />
+        </View>
+        <Text>Post</Text>
+        <PostSelectionContainer width={width} height={height * 0.4} selectedTeamId={selectedTeamId} setSelectedTeamId={setSelectedTeamId} selectedChannelId={selectedChannelId} setSelectedChannelId={setSelectedChannelId} setSelectedPostId={setSelectedPostId} />
+        {
+          (!isCreating) ?
+          <View style={{marginTop: 10, marginBottom: 10, height: height * 0.5}}>
+            <CommissionSubmissions commissionId={id} width={width} height={height * 0.5} />
+          </View>:null
+        }
+        <Pressable onPress={() => {createCommission()}}>
+          <Text>{(submitCommissionState === loadingStateEnum.notStarted) ? "Create Commission":(submitCommissionState === loadingStateEnum.loading) ? "Loading":(submitCommissionState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+        </Pressable>
+        { (!isCreating) ?
+          <Pressable onPress={() => {deleteCommission()}}>
+            <Text>{(deleteCommissionResult === loadingStateEnum.notStarted) ? "Delete Commission":(deleteCommissionResult === loadingStateEnum.loading) ? "Loading":(deleteCommissionResult === loadingStateEnum.success) ? "Deleted Commission":"Failed to Delete Commission"}</Text>
+          </Pressable>:null
+        }
+      </ScrollView>
+    
       <View style={{height: height * 0.8, width: width * 0.8, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "white":"transparent", borderRadius: 15, shadowColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "black":"transparent", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, alignItems: "center", justifyContent: "center", alignContent: "center"}} pointerEvents={(currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? 'auto':'none'}>
         { (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ?
           <DatePicker 
@@ -440,6 +446,7 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
   const [selectedSubmission, setSelectedSubmisson] = useState<submissionType | undefined>(undefined)
 
   async function loadData() {
+    setSubmissionsState(loadingStateEnum.loading)
     const result = await getSubmissions(commissionId, selectedSubmissionMode)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       setSubmissions(result.data)
@@ -457,7 +464,7 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
   }
   useEffect(() => {
     loadData()
-  } ,[])
+  } ,[selectedSubmissionMode])
   return (
     <>
       { (submissiosState === loadingStateEnum.loading) ?
@@ -466,7 +473,7 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
         </View>:
         <>
           { (submissiosState === loadingStateEnum.success) ?
-            <View>
+            <View style={{width: width, height: height}}>
               <View style={{flexDirection: "row"}}>
                 <Pressable onPress={() => setSelectedSubmissionMode(submissionTypeEnum.all)} style={{marginLeft: "auto", marginRight: "auto"}}>
                   <Text>All</Text>
@@ -479,7 +486,7 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
                 </Pressable>
               </View>
               { submissions.map((submission) => (
-                <Pressable style={{margin: 10}}>
+                <Pressable style={{margin: 10}} onPress={() => setSelectedSubmisson(submission)}>
                   <Text>{submission.userName}</Text>
                   <Text>{submission.submissionTime.toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
                 </Pressable>
@@ -491,19 +498,23 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
           }
         </>
       }
+      { (selectedSubmission !== undefined) ?
+        <SubmissionView width={width} height={height} submissionData={selectedSubmission} onClose={() => setSelectedSubmisson(undefined)}/>:null
+      }
     </>
   )
 }
 
-function SubmissionView({width, height, submissionData}:{width: number, height: number, submissionData: submissionType}) {
-  const [changeState, setChangeState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+function SubmissionView({width, height, submissionData, onClose}:{width: number, height: number, submissionData: submissionType, onClose: () => void}) {
+  const [changeState, setChangeState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   async function changeSubmissionApproved() {
+    setChangeState(loadingStateEnum.loading)
     const data = {
       "fields":{
         "submissionApproved":!submissionData.approved
       }
     }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items/${submissionData.id}`, "PATCH", undefined, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items/${submissionData.itemId}`, "PATCH", undefined, JSON.stringify(data))
     if (result.ok) {
       setChangeState(loadingStateEnum.success)
     } else {
@@ -511,14 +522,19 @@ function SubmissionView({width, height, submissionData}:{width: number, height: 
     }
   }
   return (
-    <View style={{width: width, height: height, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
-      <Text>Submission</Text>
-      <Text>By: {submissionData.userName}</Text>
-      <Text>Time: {submissionData.submissionTime.toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
-      <Text>Approved: {submissionData.approved}</Text>
-      <Text>Id: {submissionData.id}</Text>
+    <View style={{width: width * 0.8, height: height * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: "white"}}>
+      <Pressable onPress={() => onClose()} style={{margin: 10}}>
+        <CloseIcon width={12} height={12}/>
+      </Pressable>
+      <View style={{width: width * 0.8, alignContent: "center", alignItems: "center"}}>
+        <Text>Submission</Text>
+        <Text>By: {submissionData.userName}</Text>
+        <Text>Time: {submissionData.submissionTime.toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
+        <Text>Approved: {submissionData.approved ? "TURE":"FALSE"}</Text>
+        <Text>Id: {submissionData.id}</Text>
+      </View>
       <Pressable onPress={() => changeSubmissionApproved()}>
-        <Text>{(changeState === loadingStateEnum.loading) ? "Loading":(changeState === loadingStateEnum.success) ? ((submissionData.approved) ? "APPROVE":"REMOVE APPROVAL"):"Failed"}</Text>
+        <Text>{(changeState === loadingStateEnum.notStarted) ? ((submissionData.approved) ? "REMOVE APPROVAL":"APPROVE"):(changeState === loadingStateEnum.loading) ? "Loading":(changeState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
       </Pressable>
     </View>
   )
