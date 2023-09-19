@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import store from "../../Redux/store";
 
 export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string, headers?: Headers): Promise<Response> {
