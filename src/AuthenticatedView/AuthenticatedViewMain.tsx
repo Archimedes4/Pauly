@@ -48,6 +48,7 @@ import {
   View,
   ScaledSize
 } from 'react-native';
+import React from 'react';
 
 export default function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{dimensions: {
   window: ScaledSize,

@@ -12,6 +12,7 @@ import { Provider, useSelector } from 'react-redux'
 import store, { RootState } from './src/Redux/store';
 import { dimentionsSlice } from './src/Redux/reducers/dimentionsReducer';
 import AppMain from './AppMain/AppMain';
+import React from 'react';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');

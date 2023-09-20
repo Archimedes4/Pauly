@@ -6,7 +6,7 @@
     "checkJs": false,
     "jsx": "react",
     "outDir": "./build",
-    "rootDir": "./lib",
+    "rootDir": "./",
     "removeComments": true,
     "noEmit": true,
     "pretty": true,
