@@ -10,6 +10,7 @@ import { getEventFromJSON, isDateToday } from "../../Functions/Calendar/calendar
 import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
 import create_UUID from "../../Functions/Ultility/CreateUUID"
+import React from "react"
 
 declare global {
   type calendarCourseType = {

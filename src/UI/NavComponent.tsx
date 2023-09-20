@@ -5,9 +5,10 @@ import {Image, StyleSheet, View, Dimensions, Pressable, Text } from "react-nativ
 import { Path, Svg, G } from 'react-native-svg'
 import {BookIcon, CalendarIcon, GovernmentIcon, HomeIcon, MedalIcon, PersonIcon} from './Icons/Icons'
 import { RootState } from '../Redux/store'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { expandedModeSlice } from '../Redux/reducers/expandedModeReducer'
 
 function NavBarBlock({des, expandedMode, blockLength, children, text, width, setIsExpandedMode}:{des: string, expandedMode: boolean, blockLength: number, iconLength: number, text: string, children: ReactNode, width: number, setIsExpandedMode: () => void}) {
     const [isHover, setIsHover] = useState<boolean>(false)
@@ -30,23 +31,26 @@ function NavBarBlock({des, expandedMode, blockLength, children, text, width, set
     )
 }
 
-export default function NavBarComponent({width, height, expandedMode, onSetExpandedMode}:{width: number, height: number, expandedMode: boolean, onSetExpandedMode: (item: boolean) => void}) {
+export default function NavBarComponent({width, height}:{width: number, height: number}) {
     const {uri, displayName} = useSelector((state: RootState) => state.microsoftProfileData)
+    const expandedMode = useSelector((state: RootState) => state.expandedMode)
     const [blockLength, setBlockLength] = useState<number>(0)
     const [iconLength, setIconLength] = useState<number>(0)
     const navigation = useNavigate()
+    const dispatch = useDispatch()
+
     useEffect(() => {
-        console.log("Changed")
-        if ((width * 0.6) > ((height * 0.6)/8)){ //checking to see if the width or the height is going to 
-            setBlockLength((height * 0.6)/8)
-        } else {
-            setBlockLength(width * 0.6)
-        }
-        if ((width * 0.7) > ((height * 0.7)/8)){
-            setIconLength((height * 0.6)/8)
-        } else {
-            setIconLength(width * 0.5)
-        }
+      //checking to see if the width or the height is going to be the limiting factor.
+      if ((width * 0.6) > ((height * 0.6)/8)){ 
+        setBlockLength((height * 0.6)/8)
+      } else {
+        setBlockLength(width * 0.6)
+      }
+      if ((width * 0.7) > ((height * 0.7)/8)){
+        setIconLength((height * 0.6)/8)
+      } else {
+        setIconLength(width * 0.5)
+      }
     }, [width, height])
 
     const [fontsLoaded] = useFonts({
@@ -64,10 +68,10 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
       }
     
   return (
-    <Pressable id={"Pressable"} onHoverIn={() => {onSetExpandedMode(true)}} onHoverOut={() => {onSetExpandedMode(false)}}>
+    <Pressable id={"Pressable"} onHoverIn={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}} onHoverOut={() => {dispatch(expandedModeSlice.actions.setExpandedMode(false))}}>
         <View id="Main" style={{backgroundColor: "#793033", height: height, overflow: "hidden", width: (expandedMode) ? (width * 2.5):width, alignItems: "center"}}>
             {/* <View style={{height: height, width: (expandedMode) ? blockLength * 2.5:blockLength, alignItems: "center", position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined}}> */}
-                <Pressable style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? (width * 2.5):width, margin: 0, marginTop: blockLength * 0.4, marginBottom: blockLength * 0.4}]} onPress={() => {onSetExpandedMode(!expandedMode)}} onHoverIn={() => {onSetExpandedMode(true)}}>
+                <Pressable style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? (width * 2.5):width, margin: 0, marginTop: blockLength * 0.4, marginBottom: blockLength * 0.4}]} onPress={() => {dispatch(expandedModeSlice.actions.setExpandedMode(!expandedMode))}} onHoverIn={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
                     <View style={{flexDirection: "row", width: expandedMode ? blockLength * 2.5:blockLength, height: blockLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined, pointerEvents: 'none'}}>
                         <View style={{position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined}}>
                             <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: blockLength, height:  blockLength}} />
@@ -82,25 +86,25 @@ export default function NavBarComponent({width, height, expandedMode, onSetExpan
                     <Image source={require("../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: fontSize, height: fontSize, position: "absolute", left: -fontSize * 0.2}} />
                     <Text style={{position: "absolute", left: fontSize * 0.5, top: (fontSize * 0.22),  fontFamily: "Gochi Hand", fontSize: fontSize - (fontSize/3), textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 4, height: 5}, textShadowRadius: 0, color: "white", pointerEvents: "none"}}>auly</Text>
                 </View> */}
-                <NavBarBlock des='/notifications' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Notifications'} width={width} setIsExpandedMode={() => {onSetExpandedMode(true)}}>
+                <NavBarBlock des='/notifications' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Notifications'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
                     <HomeIcon width={iconLength} height={iconLength}/>
                 </NavBarBlock>
-                <NavBarBlock des='/resources' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Resources'} width={width} setIsExpandedMode={() => {onSetExpandedMode(true)}}>
+                <NavBarBlock des='/resources' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Resources'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
                     <BookIcon width={iconLength} height={iconLength}/>
                 </NavBarBlock>
-                <NavBarBlock des='/commissions' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Commissions'} width={width} setIsExpandedMode={() => {onSetExpandedMode(true)}}>
+                <NavBarBlock des='/commissions' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Commissions'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
                     <MedalIcon width={iconLength} height={iconLength}/>
                 </NavBarBlock>
-                <NavBarBlock des='/calendar' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Calendar'} width={width} setIsExpandedMode={() => {onSetExpandedMode(true)}}>
+                <NavBarBlock des='/calendar' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Calendar'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
                     <CalendarIcon width={iconLength} height={iconLength}/>
                 </NavBarBlock>
-                <NavBarBlock des='/sports' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Sports'} width={width} setIsExpandedMode={() => {onSetExpandedMode(true)}}>
+                <NavBarBlock des='/sports' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Sports'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
                     <Image source={require("../../assets/images/Football.png")} resizeMode='contain' style={{width: iconLength, height: iconLength}}/>
                 </NavBarBlock>
-                <NavBarBlock des='/profile/government' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Government'} width={width} setIsExpandedMode={() => {onSetExpandedMode(true)}}>
+                <NavBarBlock des='/profile/government' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Government'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
                     <GovernmentIcon width={iconLength} height={iconLength} />
                 </NavBarBlock>
-                <Pressable onHoverIn={() => {onSetExpandedMode(true)}} onPress={() => {navigation("/profile")}}  style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? blockLength * 2.5:blockLength, margin: 0, position: "absolute", left: expandedMode ? (width - blockLength)/2:undefined, bottom: height * 0.05}]}>
+                <Pressable onHoverIn={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}} onPress={() => {navigation("/profile")}}  style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? blockLength * 2.5:blockLength, margin: 0, position: "absolute", left: expandedMode ? (width - blockLength)/2:undefined, bottom: height * 0.05}]}>
                     <View style={{width: (expandedMode) ? blockLength * 2.5:blockLength, height: iconLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined, flexDirection: "row"}}>
                         { (uri !== "") ?
                             <Image source={{uri: uri}} style={{width: iconLength, height: iconLength, borderRadius: iconLength/2}}/>:

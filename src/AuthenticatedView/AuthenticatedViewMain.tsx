@@ -50,16 +50,13 @@ import {
 } from 'react-native';
 import React from 'react';
 
-export default function AuthenticatedView({dimensions, width, expandedMode, setExpandedMode}:{dimensions: {
-  window: ScaledSize,
-  screen: ScaledSize
-}, width: number, expandedMode: boolean, setExpandedMode: (item: boolean) => void}) {
+export default function AuthenticatedView({dimensions, width}:{dimensions: {window: ScaledSize,screen: ScaledSize}, width: number}) {
   return (
     <View style={{width: width}}>
         <NativeRouter>
           <View style={{flexDirection: "row", overflow: "hidden", width: width}}>
               { (width >= 576) ?
-                <NavBarComponent width={width * 0.1} height={dimensions.window.height} expandedMode={expandedMode} onSetExpandedMode={setExpandedMode} />:null
+                <NavBarComponent width={width * 0.1} height={dimensions.window.height} />:null
               }
               <View style={{width: dimensions.window.width}}>
                 <Routes>

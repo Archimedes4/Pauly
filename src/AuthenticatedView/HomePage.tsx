@@ -14,6 +14,7 @@ import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer';
 import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../types';
 import ProgressView from '../UI/ProgressView';
+import React from 'react';
 declare global {
   type DateProperty = {
     Date: number

@@ -65,7 +65,9 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
               if (governmentMode){
                 navigate("/profile/government/calendar/timetable/edit/" + timetable.id)
               } else {
-                onSelect(timetable)
+                if (onSelect !== undefined) {
+                  onSelect(timetable)
+                }
               }}}>
               <View>
                 <Text>{timetable.name}</Text>

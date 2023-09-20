@@ -65,8 +65,8 @@ export default function Resources() {
       <View style={{width: width, height: height * 0.05, backgroundColor: "#ededed"}}/>
       <ScrollView style={{height: height * 0.75 + ((height >= 1000) ? ((height - 1000) * 0.05):0), backgroundColor: "#ededed"}}>
         {resources.map((resource) => (
-          <View key={"Resource_"+getResourceFromJson(resource).id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-            <WebViewCross html={getResourceFromJson(resource).body}/>
+          <View key={"Resource_"+getResourceFromJson(resource)?.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+            <WebViewCross html={getResourceFromJson(resource)?.body}/>
           </View>
         ))}
       </ScrollView>

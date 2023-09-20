@@ -2,7 +2,7 @@
   "expo": {
     "name": "Pauly",
     "slug": "Pauly",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -16,12 +16,13 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.archimedes4.Pauly",
+      "bundleIdentifier": "Archimedes4.Pauly",
       "infoPlist": {
         "keychain-access-groups":["com.microsoft.identity.universalstorage", "com.microsoft.adalcache"],
-        "CFBundleURLTypes":[{"CFBundleURLSchemes":["msauth.com.archimedes4.Pauly"]}],
+        "CFBundleURLTypes":[{"CFBundleURLSchemes":["msauth.com.Archimedes4.Pauly"]}],
         "LSApplicationQueriesSchemes": ["msauthv2", "msauthv3"]
-      }
+      },
+      "buildNumber":"38"
     },
     "android": {
       "adaptiveIcon": {

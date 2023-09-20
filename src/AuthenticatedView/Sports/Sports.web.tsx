@@ -36,7 +36,7 @@ export default function Sports() {
   async function loadSportsContent() {
     const result = await getSportsContent()
     setLoadingResult(result.result)
-    if (result.result === loadingStateEnum.success) {
+    if (result.result === loadingStateEnum.success && result.sports !== undefined) {
       setSportsPosts(result.sports)
     }
   }

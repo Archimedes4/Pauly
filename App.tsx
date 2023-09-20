@@ -29,8 +29,8 @@ enum breakPointMode {
 function AppCore() {
   //Dimentions
   const statusBarColor = useSelector((state: RootState) => state.statusBarColor)
+  const expandedMode = useSelector((state: RootState) => state.expandedMode)
   const [dimensions, setDimensions] = useState({window: windowDimensions, screen: screenDimensions});
-  const [expandedMode, setExpandedMode] = useState<boolean>(false)
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
@@ -109,7 +109,7 @@ function AppCore() {
       {
         <View style={{height: dimensions.window.height, width: (expandedMode) ? dimensions.window.width * 0.25:dimensions.window.width * 0.1, backgroundColor: "#793033"}}/>
       }
-      <AppMain expandedMode={false} setExpandedMode={setExpandedMode} dimensions={dimensions} />
+      <AppMain dimensions={dimensions} />
     </View>
   );
 }

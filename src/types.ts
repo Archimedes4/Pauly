@@ -68,6 +68,14 @@ export enum submissionTypeEnum {
   approved
 }
 
+export enum locationStateEnum {
+  success,
+  permissionDenied,
+  notCloseEnough,
+  mockedLocation,
+  notStarted
+}
+
 declare global {
   type groupType = {
     name: string,
@@ -112,5 +120,9 @@ declare global {
     id: string
     itemId: string
     approved: boolean
+  }
+  type locationCoords = {
+    latCoordinate: number
+    lngCoordinate: number
   }
 }

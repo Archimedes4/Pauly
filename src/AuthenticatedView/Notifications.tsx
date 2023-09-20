@@ -42,17 +42,8 @@ export default function Notifications() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const {message, animationSpeed, powerpointBlob} = useSelector((state: RootState) => state.paulyData)
-  const {userState, userData, trendingData, taskState, schoolDayData, trendingState} = useSelector((state: RootState) => state.homepageData)
-  //const [userTasks, setUserTasks] = useState<taskType[]>([])
-  //const [trendingData, setTrendingData] = useState<resourceType[]>()
-  //const [userData, setUserData] = useState<resourceType[]>([])
-  //const [schoolDayData, setSchoolDayData] = useState<schoolDayDataType | undefined>(undefined)
+  const {schoolDayData} = useSelector((state: RootState) => state.homepageData)
   const dispatch = useDispatch()
-
-  //States
-  //const [trendingState, setTrendingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  //const [userState, setUserState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  //const [taskState, setTaskState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function loadData() {
     if (siteId !== ""){
@@ -80,7 +71,7 @@ export default function Notifications() {
                 const classResult = await getClassEvents(schedule.id, outputIds.semester, outputIds.schoolYearEventId, schoolDay, result.event.startTime)
                 if (classResult.result === loadingStateEnum.success && classResult.data !== undefined) {
                   if (classResult.data.length >= 1) {
-                  
+                    classResult.data[0].startTime
                   }
                 }
               }
@@ -98,7 +89,7 @@ export default function Notifications() {
       dispatch(homepageDataSlice.actions.setUserState(insightResult.userState))
 
       //Pauly Data
-      const dataResult = await getCurrentPaulyData(siteId)
+      await getCurrentPaulyData(siteId)
 
       //List Data 
       const taskResult = await getUsersTasks()
@@ -139,8 +130,7 @@ export default function Notifications() {
         }
       </View>
       <TaskBlock />
-      
-      
+      <InsightsBlock />
       <View style={{backgroundColor: "#793033", width: width * 0.3, height: height * 0.3, borderRadius: 15}}>
         <View>
           <Text style={{color: "white"}}>{new Date().toLocaleDateString("en-US", {weekday: "long"})}</Text>
@@ -148,7 +138,9 @@ export default function Notifications() {
         <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width * 0.3, height: height * 0.075}}>
           <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
         </View>
-        <Text style={{color: "white"}}>{schoolDayData?.schoolDay.shorthand}</Text>
+        <View>
+          <Text style={{color: "white"}}>{schoolDayData?.schoolDay.shorthand}</Text>
+        </View>
       </View>
     </ScrollView>
   )
@@ -236,7 +228,7 @@ function InsightsBlock() {
             <PopularFiles />
           </View>
         </>:
-        <View style={{width: width * 0.9, flexDirection: "row"}}>
+        <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto"}}>
           <View style={{width: width * 0.45}}>
             <TrendingFiles />
           </View>

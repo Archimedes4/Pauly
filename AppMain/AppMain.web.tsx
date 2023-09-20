@@ -43,7 +43,7 @@ const pca = new PublicClientApplication({
 
 const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"]
 
-export default function AppMain({expandedMode, setExpandedMode, dimensions}:{expandedMode: boolean, setExpandedMode: (item: boolean) => void, dimensions: {window: ScaledSize; screen: ScaledSize}}) {
+export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
   async function signOut() {
     // Same as `pca.removeAccount` with the exception that, if called on iOS with the `signoutFromBrowser` option set to true, it will additionally remove the account from the system browser
     // Remove all tokens from the cache for this application for the provided account
@@ -53,13 +53,13 @@ export default function AppMain({expandedMode, setExpandedMode, dimensions}:{exp
   return (
     <MsalProvider instance={pca}>
       <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height, zIndex: 2, position: "absolute", left: 0, top: 0}}>
-        <AuthDeep expandedMode={expandedMode} setExpandedMode={setExpandedMode} dimensions={dimensions} />
+        <AuthDeep dimensions={dimensions} />
       </SafeAreaView>
     </MsalProvider>
   )
 }
 
-function AuthDeep({expandedMode, setExpandedMode, dimensions}:{expandedMode: boolean, setExpandedMode: (item: boolean) => void, dimensions: {window: ScaledSize; screen: ScaledSize}}) {
+function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
   const { instance } = useMsal();
   const dispatch = useDispatch()
 
@@ -78,7 +78,7 @@ function AuthDeep({expandedMode, setExpandedMode, dimensions}:{expandedMode: boo
       getUserProfile(result.accessToken)
     }
 
-    instance.addEventCallback((event) => {
+    instance.addEventCallback((event: any) => {
       // set active account after redirect
       if (event.eventType === EventType.LOGIN_SUCCESS && event.payload.account) {
         const account = event.payload.account;
@@ -96,7 +96,7 @@ function AuthDeep({expandedMode, setExpandedMode, dimensions}:{expandedMode: boo
           scopes: scopes
         });
       } else {
-        if (authResult !== undefined) {
+        if (authResult !== undefined && authResult !== null) {
           dispatch(authenticationTokenSlice.actions.setAuthenticationToken(authResult.accessToken))
           getPaulyLists(authResult.accessToken)
           getUserProfile(authResult.accessToken)
@@ -115,7 +115,7 @@ function AuthDeep({expandedMode, setExpandedMode, dimensions}:{expandedMode: boo
   return (
     <>
       <AuthenticatedTemplate>
-        <AuthenticatedViewMain dimensions={dimensions} width={dimensions.window.width} expandedMode={expandedMode} setExpandedMode={setExpandedMode}/>
+        <AuthenticatedViewMain dimensions={dimensions} width={dimensions.window.width}/>
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <Login onGetAuthToken={() => {getAuthToken()}} width={dimensions.window.width}/>

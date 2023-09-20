@@ -15,6 +15,7 @@ import paulyDataReducer from './reducers/paulyDataReducer';
 import resourcesReducer from './reducers/resourcesReducer';
 import addEventReducer from './reducers/addEventReducer';
 import homepageDataReducer from './reducers/homepageDataReducer';
+import expandedModeReducer from './reducers/expandedModeReducer';
 
 const store = configureStore({
   reducer: {
@@ -34,7 +35,8 @@ const store = configureStore({
     resourcesLastCalled: resourcesLastCallReducer,
     resources: resourcesReducer,
     addEvent: addEventReducer,
-    homepageData: homepageDataReducer
+    homepageData: homepageDataReducer,
+    expandedMode: expandedModeReducer
   }
 });
 

@@ -1,8 +1,9 @@
-import { orgWideGroupID, siteID } from "../PaulyConfig";
-import callMsGraph from "./microsoftAssets";
+import { orgWideGroupID} from "../PaulyConfig";
+import callMsGraph from "./Ultility/microsoftAssets";
 import { loadingStateEnum } from "../types";
 import store from "../Redux/store";
 import { Data } from "@react-google-maps/api";
+import getDressCode from "./Homepage/getDressCode";
 
 //Defaults to org wide events
 export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string; }> {
@@ -48,7 +49,7 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
 }
   
 export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
   if (result.ok) {
     const data = await result.json()
     console.log(data)
@@ -75,7 +76,7 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
 }
   
 export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteID + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")//TO DO fix site id
   if (result.ok) {
     console.log(result)
     const data = await result.json()
@@ -93,14 +94,19 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
               return {result: loadingStateEnum.failed}
             }
           }
-          console.log("This is timetable Days", JSON.parse(data["value"][0]["fields"]["timetableDataDays"]))
-          const resultingTimetable: timetableType = {
-            name: data["value"][0]["fields"]["timetableName"],
-            id: data["value"][0]["fields"]["timetableId"],
-            schedules: newSchedules,
-            days: JSON.parse(data["value"][0]["fields"]["timetableDataDays"])
+          const dressCodeResult = await getDressCode(data["value"][0]["fields"]["timetableDressCodeId"])
+          if (dressCodeResult.result === loadingStateEnum.success && dressCodeResult.data !== undefined) {
+            const resultingTimetable: timetableType = {
+              name: data["value"][0]["fields"]["timetableName"],
+              id: data["value"][0]["fields"]["timetableId"],
+              schedules: newSchedules,
+              days: JSON.parse(data["value"][0]["fields"]["timetableDataDays"]),
+              dressCode: dressCodeResult.data
+            }
+            return {result: loadingStateEnum.success, timetable: resultingTimetable}
+          } else {
+            return {result: loadingStateEnum.failed}
           }
-          return {result: loadingStateEnum.success, timetable: resultingTimetable}
         } catch (e) {
           return {result: loadingStateEnum.failed}
         }

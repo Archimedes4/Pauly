@@ -1,46 +1,74 @@
 import { View, Text, Pressable } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from "expo-auth-session"
 import { clientId, orgWideGroupID, tenantId } from '../../PaulyConfig';
 import store, { RootState } from '../../Redux/store';
 import { authenticationApiTokenSlice } from '../../Redux/reducers/authenticationApiToken';
 import { useSelector } from 'react-redux';
+import { commissionTypeEnum, loadingStateEnum, locationStateEnum } from '../../types';
+import ProgressView from '../../UI/ProgressView';
+import getUsersLocation from '../../Functions/getLocation';
 
-async function claimCommissionPost(commissionId: string) {
+async function claimCommissionPost(commissionId: string, imageShare?: string, location?: locationCoords): Promise<loadingStateEnum> {
   if (store.getState().authenticationApiToken !== "") {
+    var outResult: string = ""
+    if (location) {
+      outResult += `&latCoordinate=${location.latCoordinate}&lngCoordinate=${location.lngCoordinate}` 
+    }
+    if (imageShare) {
+      outResult += `&imageShare=${imageShare}`
+    }
     const bearer = `Bearer ${store.getState().authenticationApiToken}`
-    const result = await fetch("http://localhost:7071/api/SubmitCommission?orgWideGroupId="+orgWideGroupID+"&commissionId="+commissionId, {
+    const result = await fetch(`http://localhost:7071/api/SubmitCommission?orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}` + outResult, {
       headers: {
         "Authorization":bearer
       }
     })
     if (result.ok){
-      console.log("Success")
+      return loadingStateEnum.success
     } else {
-
+      return loadingStateEnum.failed
     }
   } else {
-    const timeoutId = setTimeout(() => {
-      return
-    }, 10000)
-    store.subscribe(async () => {
-      if (store.getState().authenticationApiToken !== "") {
-        clearTimeout(timeoutId)
-        const result = await claimCommissionPost(commissionId)
-      }
+    return new Promise<loadingStateEnum>((resolve) => {
+      const timeoutId = setTimeout(() => {
+        resolve(loadingStateEnum.failed)
+      }, 10000)
+      store.subscribe(async () => {
+        if (store.getState().authenticationApiToken !== "") {
+          clearTimeout(timeoutId)
+          const result = await claimCommissionPost(commissionId)
+          resolve(result)
+        }
+      })
     })
   }
 }
-export default function CommissionClaim({commissionId}:{commissionId: string}) {
+
+export default function CommissionClaim({commission}:{commission: commissionType}) {
   const authenticationApiToken = useSelector((state: RootState) => state.authenticationApiToken)
+  const [claimCommissionState, setClaimCommissionState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const {width} = useSelector((state: RootState) => state.dimentions)
+  const [location, setLocation] = useState<undefined | locationCoords>(undefined)
+  const [locationState, setLocationState] = useState<locationStateEnum>(locationStateEnum.notStarted)
+
   async function claimCommission() {
+    setClaimCommissionState(loadingStateEnum.loading)
     if (authenticationApiToken === "") {
       await getAuthToken()
     }
-    //TO DO add check to make use authenticationApiToken now exisits and wait for it if not
-    claimCommissionPost(commissionId)
-    
+    if (commission.value === commissionTypeEnum.ImageLocation || commission.value === commissionTypeEnum.Location) {
+      const locationResult = await getUsersLocation(commission)
+      if (locationResult.result === locationStateEnum.success && locationResult.data !== undefined) {
+        const result = await claimCommissionPost(commission.commissionId, undefined, (commission.value === commissionTypeEnum.ImageLocation || commission.value === commissionTypeEnum.Location) ? locationResult.data:undefined)
+        setClaimCommissionState(result)
+      } else {
+        setClaimCommissionState(loadingStateEnum.failed)
+      }
+    } else {
+      setClaimCommissionState(loadingStateEnum.failed)
+    }
   }
 
   const discovery: AuthSession.DiscoveryDocument = {
@@ -79,7 +107,7 @@ export default function CommissionClaim({commissionId}:{commissionId: string}) {
           }
         })
         if (!result.ok) {
-          const data = await result.json()
+          setClaimCommissionState(loadingStateEnum.failed)
         } else {
           const data = await result.json()
           store.dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(data["access_token"]))
@@ -89,8 +117,13 @@ export default function CommissionClaim({commissionId}:{commissionId: string}) {
   }
 
   return (
-    <Pressable onPress={() => {claimCommission()}} style={{}}>
-      <Text>Claim Commission</Text>
+    <Pressable onPress={() => {claimCommission()}} style={{marginLeft: "auto", marginRight: "auto", backgroundColor: "#ededed", width: width * 0.7, borderRadius: 15, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
+      { (claimCommissionState === loadingStateEnum.loading) ?
+        <View style={{margin: 10}}>
+          <ProgressView width={24} height={24}/>
+        </View>:
+        <Text style={{margin: 10, fontWeight: "bold"}}>CLAIM COMMISSION</Text>   
+      }
     </Pressable>
   )
 }

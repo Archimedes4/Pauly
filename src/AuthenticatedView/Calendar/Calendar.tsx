@@ -183,8 +183,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
       <View style={{height: height/8, width: width, justifyContent: "center", alignItems: "center", alignContent: "center"}}>
         <View style={{flexDirection: "row"}}>
           <View style={{width: width * 0.6, flexDirection: "row"}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 24}}>{selectedDate.toLocaleString("en-us", { month: "long" })}</Text>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={{textAlign:'center',fontSize:30}}>{selectedDate.getFullYear()}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 30}}>{selectedDate.toLocaleString("en-us", { month: "long" })} {selectedDate.getFullYear()}</Text>
           </View>
           <View>
             {(selectedDate.getFullYear() !== new Date().getFullYear() || selectedDate.getMonth() != new Date().getMonth()) ?
@@ -202,7 +201,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
             const d = new Date();
             d.setFullYear((selectedDate.getMonth() === 1) ? selectedDate.getFullYear() - 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 1) ? 12:selectedDate.getMonth() - 1, selectedDate.getDay());
             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
-          }} >
+          }} style={{marginTop: "auto", marginBottom: "auto"}}>
             <ChevronLeft width={14} height={14}/>
           </Pressable>
           {/*This is right chevron*/}
@@ -210,7 +209,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
             const d = new Date();
             d.setFullYear((selectedDate.getMonth() === 12) ? selectedDate.getFullYear() + 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 12) ? 1:selectedDate.getMonth() + 1, selectedDate.getDay());
             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
-          }}>
+          }} style={{marginTop: "auto", marginBottom: "auto"}}>
             <ChevronRight width={14} height={14}/>
           </Pressable>
         </View>

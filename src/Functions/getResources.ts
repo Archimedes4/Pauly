@@ -67,6 +67,7 @@ export async function getResources(): Promise<loadingStateEnum> {
       return loadingStateEnum.failed
     }
   }
+  return loadingStateEnum.failed
 }
 
 export async function getResourcesSearch(search: string): Promise<loadingStateEnum> {
@@ -150,9 +151,10 @@ export async function getResourcesSearch(search: string): Promise<loadingStateEn
       return loadingStateEnum.failed
     }
   }
+  return loadingStateEnum.failed
 }
 
-export function getResourceFromJson(JSONIn: string): resourceDataType {
+export function getResourceFromJson(JSONIn: string): resourceDataType | undefined {
   try {
     const result: resourceDataType = JSON.parse(JSONIn)
     return result

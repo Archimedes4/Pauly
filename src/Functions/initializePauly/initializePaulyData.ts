@@ -207,6 +207,10 @@ export const commissionsSubmissionsData = {
       "text": {},
       "required": true,
       "indexed": true
+    },
+    {
+      "name":"submissionData",
+      "text":{"allowMultipleLines": true}
     }
   ],
   "list": {
