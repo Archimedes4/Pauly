@@ -18,6 +18,7 @@ import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
 import { useMsal } from '@azure/msal-react';
 import { loadingStateEnum } from '../../types';
 import getEvents from '../../Functions/Calendar/getEvents';
+import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer';
 
 enum calendarMode {
   month,
@@ -54,7 +55,12 @@ export default function Calendar() {
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [selectedEvent, setSelectedEvent] = useState<eventType | undefined>(undefined)
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
-  
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(statusBarColorSlice.actions.setStatusBarColor("#444444"))
+  }, [])
+
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });

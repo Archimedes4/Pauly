@@ -2,6 +2,7 @@
   "expo": {
     "name": "Pauly",
     "slug": "Pauly",
+    "scheme": "Pauly",
     "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,7 +23,7 @@
         "CFBundleURLTypes":[{"CFBundleURLSchemes":["msauth.com.Archimedes4.Pauly"]}],
         "LSApplicationQueriesSchemes": ["msauthv2", "msauthv3"]
       },
-      "buildNumber":"38"
+      "buildNumber":"40"
     },
     "android": {
       "adaptiveIcon": {

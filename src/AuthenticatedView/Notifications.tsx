@@ -5,18 +5,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
 import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
-import { WebView } from 'react-native-webview';
 import { loadingStateEnum, semesters } from '../types';
 import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import getUsersTasks from '../Functions/Homepage/getUsersTasks';
-import CommissionClaim from './Commissions/CommissionClaim';
 import ProgressView from '../UI/ProgressView';
 import getInsightData from '../Functions/Homepage/getInsightData';
 import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
 import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer';
 import getClassEvents from '../Functions/getClassEventsTimetable';
 import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
+import PDFView from '../UI/PDF/PDFView';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -89,7 +88,7 @@ export default function Notifications() {
       dispatch(homepageDataSlice.actions.setUserState(insightResult.userState))
 
       //Pauly Data
-      await getCurrentPaulyData(siteId)
+      await getCurrentPaulyData()
 
       //List Data 
       const taskResult = await getUsersTasks()
@@ -120,15 +119,7 @@ export default function Notifications() {
           <Text>{message}</Text>
         </View>
       </View>
-      <View>
-        { (powerpointBlob !== "") ?  
-          <PDFView />:
-          <View>
-            <ProgressView width={100} height={100}/>
-            <Text>Loading</Text>
-          </View>
-        }
-      </View>
+      <BoardBlock />
       <TaskBlock />
       <InsightsBlock />
       <View style={{backgroundColor: "#793033", width: width * 0.3, height: height * 0.3, borderRadius: 15}}>
@@ -199,19 +190,33 @@ function TaskItem({task, excessItem}:{task?: taskType, excessItem: boolean}) {
   ) 
 }
 
-function PDFView() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
+function BoardBlock() {
+  const {powerpointBlob, paulyDataState} = useSelector((state: RootState) => state.paulyData)
   return (
-    <>
-      {(Platform.OS === 'web') ?
-        <embed src={powerpointBlob} width={width * 0.5 + 'px'} height={height * 0.2 + 'px'}/>:
-        <WebView
-          style={{width: width * 0.5, height: height * 0.2}}
-          source={{ html: '<embed src="' + powerpointBlob + "#page=2"+ '" width="' + width * 0.5 + 'px" height="' +  height * 0.2 + 'px" />' }}
-        />
+    <View>
+      { (paulyDataState === loadingStateEnum.loading) ?
+        <View>
+          <ProgressView width={100} height={100}/>
+          <Text>Loading</Text>
+        </View>:
+        <>
+          { (paulyDataState === loadingStateEnum.success) ?
+            <>
+              { (powerpointBlob !== "") ?  
+                <PDFView />:
+                <View>
+                  <ProgressView width={100} height={100}/>
+                  <Text>Loading</Text>
+                </View>
+              }
+            </>:
+            <View>
+              <Text>Failed</Text>
+            </View>
+          }
+        </>
       }
-    </>
+    </View>
   )
 }
 

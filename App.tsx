@@ -30,6 +30,7 @@ function AppCore() {
   //Dimentions
   const statusBarColor = useSelector((state: RootState) => state.statusBarColor)
   const expandedMode = useSelector((state: RootState) => state.expandedMode)
+  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [dimensions, setDimensions] = useState({window: windowDimensions, screen: screenDimensions});
 
   useEffect(() => {
@@ -99,15 +100,14 @@ function AppCore() {
       }
     }
     if (height !== dimensions.window.height) {
-      console.log("height changed")
       store.dispatch(dimentionsSlice.actions.setDimentionsHeight(dimensions.window.height))
     }
   }, [dimensions])
 
   return (
     <View style={{backgroundColor: statusBarColor}}>
-      {
-        <View style={{height: dimensions.window.height, width: (expandedMode) ? dimensions.window.width * 0.25:dimensions.window.width * 0.1, backgroundColor: "#793033"}}/>
+      { (currentBreakPoint >= 1) ?
+        <View style={{height: dimensions.window.height, width: (expandedMode) ? dimensions.window.width * 0.25:dimensions.window.width * 0.1, backgroundColor: "#793033"}}/>:null
       }
       <AppMain dimensions={dimensions} />
     </View>

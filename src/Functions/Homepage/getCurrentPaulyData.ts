@@ -4,29 +4,19 @@ import callMsGraph from "../Ultility/microsoftAssets"
 import { loadingStateEnum } from "../../types"
 import { paulyDataSlice } from "../../Redux/reducers/paulyDataReducer"
 
-export default async function getCurrentPaulyData(siteId: string) {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + store.getState().paulyList.paulyDataListId + "/items/1/fields")
+export default async function getCurrentPaulyData() {
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.paulyDataListId}/items/1/fields`)
   if (result.ok){
     const data = await result.json()
     if (data["animationSpeed"] !== undefined && data["message"] !== undefined && data["powerpointId"] !== undefined) {
       const fileResult = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + data["powerpointId"] + "/driveItem/content?format=pdf")
       if (fileResult.ok){
-        if (fileResult.headers.get("Location") !== null) {
-          const outLocation = fileResult.headers.get("Location")
-          const dataOut = await fetch((outLocation !== null) ? outLocation:"")
-          if (dataOut.ok) {
-            const dataBlob = await fileResult.blob()
-            const urlOut = URL.createObjectURL(dataBlob)
-            console.log(urlOut)
-            const outputResult = {powerpointBlob: urlOut + "?scrollbar=0&page=1", message: data["message"], animationSpeed: data["animationSpeed"], paulyDataState: loadingStateEnum.success}
-            console.log(outputResult)
-            store.dispatch(paulyDataSlice.actions.setPaulyData(outputResult))
-          } else {
-            store.dispatch(paulyDataSlice.actions.setPaulyDataState(loadingStateEnum.failed))
-          }
-        } else {
-          store.dispatch(paulyDataSlice.actions.setPaulyDataState(loadingStateEnum.failed))
-        }
+        const dataBlob = await fileResult.blob()
+        const urlOut = URL.createObjectURL(dataBlob)
+        console.log(urlOut)
+        const outputResult = {powerpointBlob: urlOut + "#scrollbar=0&page=1", message: data["message"], animationSpeed: data["animationSpeed"], paulyDataState: loadingStateEnum.success}
+        console.log(outputResult)
+        store.dispatch(paulyDataSlice.actions.setPaulyData(outputResult))
       } else {
         store.dispatch(paulyDataSlice.actions.setPaulyDataState(loadingStateEnum.failed))
       }

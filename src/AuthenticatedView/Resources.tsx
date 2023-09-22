@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TextInput, Platform, Pressable } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-native'
+import { Link, useNavigate } from 'react-router-native'
 import { getResourceFromJson, getResources } from '../Functions/getResources'
 import { useSelector } from 'react-redux'
 import { RootState } from '../Redux/store'
@@ -28,10 +28,13 @@ enum resourceMode {
 }
 
 export default function Resources() {
-  const {height, width} = useSelector((state: RootState) => state.dimentions)
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const resources = useSelector((state: RootState) => state.resources)
   const [selectedResourceMode, setSelectedResourceMode] = useState<resourceMode>(resourceMode.home)
+  const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
   const [searchValue, setSearchValue] = useState<string>("")
+  const navigate = useNavigate()
+
   async function loadData() {
     const result = await getResources()
   }
@@ -55,39 +58,46 @@ export default function Resources() {
   
   return (
     <View style={{height: height, width: width}}>
-      <View style={{height: height * 0.1, backgroundColor: "#444444"}}>
-        <Link to="/profile/">
-          <Text>Back</Text>
-        </Link>
-        <Text>Resources</Text>
+      <View style={{height: height * 0.1, width: width, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        { (currentBreakPoint <= 0) ?
+          <Pressable onPress={() => {navigate("/")}} style={{position: "absolute"}}>
+            <Text>Back</Text>
+          </Pressable>:null
+        }
+        <Text style={{fontFamily: "BukhariScript"}}>Resources</Text>
       </View>
       <SearchBox searchValue={searchValue} setSearchValue={setSearchValue}/>
       <View style={{width: width, height: height * 0.05, backgroundColor: "#ededed"}}/>
-      <ScrollView style={{height: height * 0.75 + ((height >= 1000) ? ((height - 1000) * 0.05):0), backgroundColor: "#ededed"}}>
+      <ScrollView style={{height: (isHoverPicker) ? height * 0.75:height * 0.8, backgroundColor: "#ededed"}}>
         {resources.map((resource) => (
           <View key={"Resource_"+getResourceFromJson(resource)?.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
             <WebViewCross html={getResourceFromJson(resource)?.body}/>
           </View>
         ))}
       </ScrollView>
-      <ScrollView horizontal={true} style={{height: height * 0.01 - ((height >= 1000) ? ((height - 1000) * 0.05):0), width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
-        <PickerPiece text='Home' item={resourceMode.home} onPress={setSelectedResourceMode}/>
-        <PickerPiece text='Sports' item={resourceMode.sports} onPress={setSelectedResourceMode}/>
-        <PickerPiece text='Advancement' item={resourceMode.advancement} onPress={setSelectedResourceMode}/>
-        <PickerPiece text='School Events' item={resourceMode.schoolEvents} onPress={setSelectedResourceMode}/>
-        <PickerPiece text='Annoucments' item={resourceMode.annoucments} onPress={setSelectedResourceMode}/>
-        <PickerPiece text='Fitness' item={resourceMode.fitness} onPress={setSelectedResourceMode}/>
-        <PickerPiece text='Files' item={resourceMode.files} onPress={setSelectedResourceMode}/>
-      </ScrollView>
+      <Pressable style={{height: (isHoverPicker) ? height * 0.1:height * 0.05}} onHoverIn={() => {setIsHoverPicker(true)}} onHoverOut={() => {setIsHoverPicker(false)}}>
+        <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
+          <PickerPiece text='Home' item={resourceMode.home} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+          <PickerPiece text='Sports' item={resourceMode.sports} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+          <PickerPiece text='Advancement' item={resourceMode.advancement} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+          <PickerPiece text='School Events' item={resourceMode.schoolEvents} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+          <PickerPiece text='Annoucments' item={resourceMode.annoucments} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+          <PickerPiece text='Fitness' item={resourceMode.fitness} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+          <PickerPiece text='Files' item={resourceMode.files} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+        </ScrollView>
+      </Pressable>
     </View>
   )
 }
 
-function PickerPiece({text}:{text: string, item: resourceMode, onPress: (item: resourceMode) => void}) {
+function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, item: resourceMode, onPress: (item: resourceMode) => void, isHoverPicker: boolean, setIsHoverPicker: (item: boolean) => void}) {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const [isSelected, setIsSelected] = useState<boolean>(false)
   return (
-    <Pressable style={{height: height * 0.01 - ((height >= 1000) ? ((height - 1000) * 0.05):0), width: (currentBreakPoint >= 2) ? (width*0.2):width * 0.4, backgroundColor: "#444444", borderRadius: 15}}>
-      <Text>{text}</Text>
+    <Pressable onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+      <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <Text style={{color: "white"}}>{text}</Text>
+      </View>
     </Pressable>
   )
 }

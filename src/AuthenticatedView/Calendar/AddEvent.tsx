@@ -18,6 +18,7 @@ import create_UUID from "../../Functions/Ultility/CreateUUID";
 import SelectSchoolDayData from "./SelectSchoolDayData";
 import updateEvent from "../../Functions/updateEvent";
 import { addEventSlice } from "../../Redux/reducers/addEventReducer";
+import React from "react";
 
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
@@ -35,13 +36,6 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
     if (editData !== undefined && editData.microsoftEvent && editData.microsoftReference !== undefined){
       const deleteEvent = await callMsGraph(editData.microsoftReference, "DELETE")
       if (deleteEvent.ok){
-        var currentEvents = []
-        for (var index = 0; index < currentEvents.length; index++){
-          var result = getEventFromJSON(currentEvents[index])
-          if (result.id !== editData.id){
-            currentEvents.push(result)
-          }
-        }
         var outputEvents: string[] = []
         for (var index = 0; index < currentEvents.length; index++){
           outputEvents.push(JSON.stringify(currentEvents[index]))
@@ -72,7 +66,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
 
   return (
     <View style={{backgroundColor: "white", width: width, height: height, borderRadius: 5, borderWidth: 5}}>
-      { (isPickingStartDate || isPickingEndDate) ?
+      { ((isPickingStartDate || isPickingEndDate) && selectedSchoolYear !== undefined) ?
         <DatePicker 
           selectedDate={isPickingStartDate ? (new Date(startDate)):new Date(endDate)} 
           onSetSelectedDate={(e) => {

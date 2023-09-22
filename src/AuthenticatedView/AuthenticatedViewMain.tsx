@@ -9,7 +9,7 @@ import MicrosoftGraphOverview from './Profile/Government/MicrosoftGraphLists/Mic
 import MicrosoftGraphCreateList from './Profile/Government/MicrosoftGraphLists/MicrosoftGraphCreateList';
 import GovernmentCommissions from './Profile/Government/GovernmentCommissions/GovernmentCommissions';
 import GovernmentEditCommission from './Profile/Government/GovernmentCommissions/GovernmentEditCommission';
-import Sports from './Sports/Sports.web';
+import Sports from './Sports';
 import Calendar from './Calendar/Calendar';
 import GovernmentSports from './Profile/Government/GovernmentSports/GovernmentSports';
 import GovernmentCreateNewSport from './Profile/Government/GovernmentSports/GovernmentCreateNewSport';

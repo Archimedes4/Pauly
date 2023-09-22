@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScaledSize, Linking } from 'react-native'
+import { View, Text, SafeAreaView, ScaledSize, Linking, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Login from '../src/login'
 import AuthenticatedView from '../src/AuthenticatedView/AuthenticatedViewMain'
@@ -12,14 +12,20 @@ import getUserProfile from '../src/Functions/getUserProfile'
 
 import * as WebBrowser from 'expo-web-browser';
 import {
+  AuthRequest,
+  Prompt,
+  ResponseType,
   exchangeCodeAsync,
   makeRedirectUri,
   useAuthRequest,
   useAutoDiscovery,
 } from 'expo-auth-session';
 
-
-WebBrowser.maybeCompleteAuthSession();
+if (Platform.OS === "web") {
+  WebBrowser.maybeCompleteAuthSession();
+} else {
+  console.log("Not Ran")
+}
 
 const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"]
 
@@ -31,41 +37,45 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
   const redirectUri = makeRedirectUri({
-    scheme: undefined,
+    scheme: "Pauly",
     path: 'auth',
   });
 
-  const [request, , promptAsync] = useAuthRequest(
-    {
-      clientId,
-      scopes: scopes,
-      redirectUri
-    },
-    discovery,
+  const authRequest = new AuthRequest({
+    clientId: clientId,
+    redirectUri: redirectUri,
+    scopes: scopes,
+    prompt: Prompt.SelectAccount,
+    responseType: ResponseType.Code
+  })
+
+  // const [request, , promptAsync] =  useAuthRequest(
+  //   {
+  //     clientId,
+  //     scopes: scopes,
+  //     redirectUri,
+  //     prompt: Prompt.SelectAccount
+  //   },
+  //   discovery,
     
-  );
+  // );
 
 
 
   async function getAuthToken() {
-    promptAsync().then((codeResponse) => {
-      if (request && codeResponse?.type === 'success' && discovery) {
-        exchangeCodeAsync(
-          {
-            clientId,
-            code: codeResponse.params.code,
-            extraParams: request.codeVerifier
-              ? { code_verifier: request.codeVerifier }
-              : undefined,
-            redirectUri
-          },
-          discovery,
-        ).then((res) => {
-          store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
-          getPaulyLists(res.accessToken)
-          getUserProfile(res.accessToken)
-        });
-    }})
+    if (discovery !== null){
+      authRequest.promptAsync(discovery).then(async (res) => {
+        if (authRequest && res?.type === 'success' && discovery) {
+          if (res.params !== null) {
+            console.log("Done")
+            dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.params.code))
+            getPaulyLists(res.params.code)
+            getUserProfile(res.params.code)
+          } else {
+            console.log(res)
+          }
+      }})
+    }
   }
 
 
