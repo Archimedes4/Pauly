@@ -3,7 +3,6 @@ import React from 'react'
 import { Link } from 'react-router-native'
 import { useMsal } from "@azure/msal-react";
 import { tenantId } from '../../PaulyConfig';
-import { MSALSignoutParams } from 'react-native-msal';
 
 export default function Settings() {
   return (

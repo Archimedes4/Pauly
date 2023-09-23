@@ -74,7 +74,7 @@ export default function Sports() {
       </View>
       {(loadingResult === loadingStateEnum.loading) ?
         <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-          <ProgressView width={(width < height) ? width * 0.5:height * 0.5} height={(width < height) ? width * 0.5:height * 0.5}/>
+          <ProgressView width={(width < height) ? width * 0.25:height * 0.25} height={(width < height) ? width * 0.5:height * 0.5}/>
           <Text>Loading</Text>
         </View>:
         <> 
@@ -86,9 +86,7 @@ export default function Sports() {
                   <Image style={{width: width * 0.9, height: height * 0.4, marginLeft: width * 0.05, marginRight: width * 0.05}} source={{uri: item.fileID}}/>:null
                 }
                 { (item.fileType === dataContentTypeOptions.video) ?
-                  <View style={{width: width * 0.9, height: height * 0.4, marginLeft: width * 0.05, marginRight: width * 0.05}}>
-                    <Video source={{uri: item.fileID}} resizeMode={ResizeMode.CONTAIN} style={{width: "100%", height: "100%", position: "relative", flex: 1}}  useNativeControls/>
-                  </View>:null
+                  <Video useNativeControls source={{uri: item.fileID}} resizeMode={ResizeMode.COVER} style={{width: width * 0.9, height: height * 0.4, alignSelf: 'stretch', marginLeft: width * 0.05, marginRight: width * 0.05}} videoStyle={{width: width * 0.9, height: height * 0.4}}/>:null
                 }
                 </View>
               ))
