@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../Redux/store'
 import { dataContentTypeOptions, loadingStateEnum } from '../types'
 import getSportsContent from '../Functions/getSportsContent'
-import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer'
+import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 import ProgressView from '../UI/ProgressView'
 import { ResizeMode, Video } from 'expo-av';
 
@@ -32,7 +32,7 @@ export default function Sports() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    dispatch(statusBarColorSlice.actions.setStatusBarColor("#444444"))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
   }, [])
 
   async function loadSportsContent() {

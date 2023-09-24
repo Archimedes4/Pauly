@@ -1,10 +1,12 @@
 import { View, Text, ScrollView, Pressable} from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-native'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-native'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
 import { BookIcon, GearIcon, GovernmentIcon, MedalIcon } from '../../UI/Icons/Icons'
-import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer'
+import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer'
+import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
 
 export default function Profile() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -12,7 +14,7 @@ export default function Profile() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(statusBarColorSlice.actions.setStatusBarColor("#793033"))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop("#793033"))
   }, [])
 
   useEffect(() => {
@@ -20,13 +22,28 @@ export default function Profile() {
       navigate("/notifications")
     }
   }, [currentBreakPoint])
+
+  const [fontsLoaded] = useFonts({
+    'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <ScrollView style={{height: height, width: width, backgroundColor: "#793033"}}>
       <Pressable onPress={() => navigate("/")}>
         <Text>Back</Text>
       </Pressable>
-      <View>
-        <Text>Profile</Text>
+      <View style={{width: width, height: height * 0.1, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+        <Text style={{fontFamily: "BukhariScript"}}>Profile</Text>
       </View>
       <Pressable onPress={() => {navigate("/profile/commissions")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center"}}>
         <MedalIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>

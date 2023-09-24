@@ -63,7 +63,7 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
           { loadedTimetables.map((timetable) => (
             <Pressable key={"Timetable_"+timetable.id} onPress={() => {
               if (governmentMode){
-                navigate("/profile/government/calendar/timetable/edit/" + timetable.id)
+                navigate("/profile/government/calendar/timetable/" + timetable.id)
               } else {
                 if (onSelect !== undefined) {
                   onSelect(timetable)

@@ -18,7 +18,7 @@ export default async function createEvent(): Promise<loadingStateEnum> {
     }
   }
   if (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) {
-    if (store.getState().addEvent.selectedSchoolDayData === undefined) return
+    if (store.getState().addEvent.selectedSchoolDayData === undefined) return loadingStateEnum.failed
     data["start"]["dateTime"] = store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
     var newEndDate = new Date(store.getState().addEvent.startDate)
     newEndDate.setDate(new Date(store.getState().addEvent.startDate).getDate() + 1)
@@ -67,7 +67,7 @@ export default async function createEvent(): Promise<loadingStateEnum> {
   if (result.ok){
     const dataOut = await result.json()
     const resultEvent: eventType = {
-      id: data["id"],
+      id: dataOut["id"],
       name: dataOut["subject"],
       startTime: new Date(dataOut["start"]["dateTime"]),
       endTime: new Date(dataOut["end"]["dateTime"]),

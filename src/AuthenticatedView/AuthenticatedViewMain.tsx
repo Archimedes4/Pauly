@@ -25,11 +25,8 @@ import GovernmentScheduleCreate from './Profile/Government/GovernmentCalendar/Go
 import GovernmentScheduleEdit from './Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleEdit';
 import GovernmentClasses from './Profile/Government/GovernmentClasses/GovernmentClasses';
 import GovernmentClassesEdit from './Profile/Government/GovernmentClasses/GovernmentClassesEdit';
-import CommissionsView from './Commissions/CommissionsView';
 import GovernmentHomePage from './Profile/Government/GovernmentHomePage';
-import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import NavBarComponent from '../UI/NavComponent';
-import GovernmentTimetableCreate from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableCreate';
 import Testing from './Profile/Government/Testing';
 import PageNotFound from './404Page';
 import GovernmentAdmin from './Profile/Government/GovernmentAdminCenter/GovernmentAdmin';
@@ -41,70 +38,77 @@ import GovernmentDressCodeCreate from './Profile/Government/GovernmentCalendar/G
 import GovernmentDressCode from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
 import GovernmentDressCodeEdit from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentTimetableEdit from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
-import MicrosoftGraphEditGroup from './Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditGroup';
-import MicrosoftGraphEditExtension from './Profile/Government/MicrosoftGraphLists/MicrosoftGraphEditExtension';
 import { NativeRouter, Route, Routes } from 'react-router-native';
 import {
   View,
   ScaledSize
 } from 'react-native';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../Redux/store';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import ProfileBlock from './ProfileBlock';
 
 export default function AuthenticatedView({dimensions, width}:{dimensions: {window: ScaledSize,screen: ScaledSize}, width: number}) {
+  const {height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const isShowingProfileBlock = useSelector((state: RootState) => state.isShowingProfileBlock)
+  const insets = useSafeAreaInsets();
   return (
-    <View style={{width: width}}>
-        <NativeRouter>
-          <View style={{flexDirection: "row", overflow: "hidden", width: width}}>
-              { (width >= 576) ?
-                <NavBarComponent width={width * 0.1} height={dimensions.window.height} />:null
-              }
-              <View style={{width: dimensions.window.width}}>
-                <Routes>
-                  <Route path="/" element={<HomePage/>}/>
-                  <Route path="/sports" element={<Sports/>}/>
-                  <Route path="/notifications" element={<Notifications/>}/>
-                  <Route path="/calendar" element={<Calendar />}/>
-                  <Route path="/resources" element={<Resources/>}/>
-                  <Route path="/commissions" element={<Commissions/>}/>
-                  <Route path="/profile/" element={<Profile/>}/>
-                  <Route path="/profile/settings" element={<Settings/>}/>
-                  <Route path="/profile/government" element={<Government />}/>
-                  <Route path="/profile/government/resources" element={<GovernmentResources />} />
-                  <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
-                  <Route path="/profile/government/graph/:mode" element={<MicrosoftGraphOverview/>}/>
-                  <Route path="/profile/government/graph/:mode/edit/:id" element={<MicrosoftGraphEdit />}/>
-                  <Route path="/profile/government/graph/:mode/create" element={<MicrosoftGraphCreateList/>}/>
-                  <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
-                  <Route path="/profile/government/commissions/:id" element={<GovernmentEditCommission/>}/>
-                  <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />
-                  <Route path="/profile/government/classes" element={<GovernmentClasses />} />
-                  <Route path="/profile/government/classes/edit/:id" element={<GovernmentClassesEdit />} />
-                  <Route path="/profile/government/classes/room" element={<GovernmentRooms />} />
-                  <Route path="/profile/government/classes/room/create" element={<GovernmentRoomsCreate />} />
-                  <Route path="/profile/government/calendar" element={<GovernmentCalendar />} />
-                  <Route path="/profile/government/calendar/schedule" element={<GovernmentSchedual />} />
-                  <Route path="/profile/government/calendar/schedule/create" element={<GovernmentScheduleCreate />} />
-                  <Route path="/profile/government/calendar/schedule/edit/:scheduleId" element={<GovernmentScheduleEdit />} />
-                  <Route path="/profile/government/calendar/timetable" element={<GovernmentTimetable />} />
-                  <Route path="/profile/government/calendar/timetable/edit/:timetableId" element={<GovernmentTimetableEdit/>} />
-                  <Route path="/profile/government/calendar/timetable/create" element={<GovernmentTimetableCreate />} />
-                  <Route path="/profile/government/calendar/dresscode" element={<GovernmentDressCode />} />
-                  <Route path="/profile/government/calendar/dresscode/edit/:id" element={<GovernmentDressCodeEdit />} /> 
-                  <Route path="/profile/government/calendar/dresscode/create" element={<GovernmentDressCodeCreate />} />
-                  <Route path="/profile/government/sports" element={<GovernmentSports/>}/>
-                  <Route path="/profile/government/sports/create" element={<GovernmentCreateNewSport/>}/>
-                  <Route path="/profile/government/sports/team/:sport/:id" element={<GovernmentSportsTeams/>}/>
-                  <Route path="/profile/government/sports/team/:sport/:id/create/" element={<GovernmentCreateNewTeam/>}/>
-                  <Route path="/profile/government/sports/team/edit/:sport/:id/:team/:teamId/:season" element={<GovernmentSportTeamEdit />} />
-                  <Route path="/profile/government/sports/post/:sport/:id/:team/:teamId/:season" element={<GovernmentSportsTeamAddPost />} />
-                  <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
-                  <Route path="*" element={<PageNotFound />} />
-                  {/* TO DO remove went development complete and move to production */}
-                  <Route path="/testing" element={<Testing />} />
-                </Routes>
-              </View>
+    <View style={{width: width, top: -insets.top}}>
+      <NativeRouter>
+        <View style={{flexDirection: "row", overflow: "hidden", width: width}}>
+          { (currentBreakPoint >= 1) ?
+            <NavBarComponent width={width * 0.1} height={dimensions.window.height} />:null
+          }
+          <View style={{width: dimensions.window.width, height: height, backgroundColor: "#793033"}}>
+            <Routes>
+              <Route path="/" element={<HomePage/>}/>
+              <Route path="/sports" element={<Sports/>}/>
+              <Route path="/notifications" element={<Notifications/>}/>
+              <Route path="/calendar" element={<Calendar />}/>
+              <Route path="/resources" element={<Resources/>}/>
+              <Route path="/commissions" element={<Commissions/>}/>
+              <Route path="/profile/" element={<Profile/>}/>
+              <Route path="/profile/settings" element={<Settings/>}/>
+              <Route path="/profile/government" element={<Government />}/>
+              <Route path="/profile/government/resources" element={<GovernmentResources />} />
+              <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
+              <Route path="/profile/government/graph/:mode" element={<MicrosoftGraphOverview/>}/>
+              <Route path="/profile/government/graph/:mode/edit/:id" element={<MicrosoftGraphEdit />}/>
+              <Route path="/profile/government/graph/:mode/create" element={<MicrosoftGraphCreateList/>}/>
+              <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
+              <Route path="/profile/government/commissions/:id" element={<GovernmentEditCommission/>}/>
+              <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />
+              <Route path="/profile/government/classes" element={<GovernmentClasses />} />
+              <Route path="/profile/government/classes/edit/:id" element={<GovernmentClassesEdit />} />
+              <Route path="/profile/government/classes/room" element={<GovernmentRooms />} />
+              <Route path="/profile/government/classes/room/create" element={<GovernmentRoomsCreate />} />
+              <Route path="/profile/government/calendar" element={<GovernmentCalendar />} />
+              <Route path="/profile/government/calendar/schedule" element={<GovernmentSchedual />} />
+              <Route path="/profile/government/calendar/schedule/create" element={<GovernmentScheduleCreate />} />
+              <Route path="/profile/government/calendar/schedule/edit/:scheduleId" element={<GovernmentScheduleEdit />} />
+              <Route path="/profile/government/calendar/timetable" element={<GovernmentTimetable />} />
+              <Route path="/profile/government/calendar/timetable/:id" element={<GovernmentTimetableEdit/>} />
+              <Route path="/profile/government/calendar/dresscode" element={<GovernmentDressCode />} />
+              <Route path="/profile/government/calendar/dresscode/edit/:id" element={<GovernmentDressCodeEdit />} /> 
+              <Route path="/profile/government/calendar/dresscode/create" element={<GovernmentDressCodeCreate />} />
+              <Route path="/profile/government/sports" element={<GovernmentSports/>}/>
+              <Route path="/profile/government/sports/create" element={<GovernmentCreateNewSport/>}/>
+              <Route path="/profile/government/sports/team/:sport/:id" element={<GovernmentSportsTeams/>}/>
+              <Route path="/profile/government/sports/team/:sport/:id/create/" element={<GovernmentCreateNewTeam/>}/>
+              <Route path="/profile/government/sports/team/edit/:sport/:id/:team/:teamId/:season" element={<GovernmentSportTeamEdit />} />
+              <Route path="/profile/government/sports/post/:sport/:id/:team/:teamId/:season" element={<GovernmentSportsTeamAddPost />} />
+              <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
+              <Route path="*" element={<PageNotFound />} />
+              {/* TO DO remove went development complete and move to production */}
+              <Route path="/testing" element={<Testing />} />
+            </Routes>
           </View>
-        </NativeRouter>
+          { (currentBreakPoint >= 1 && isShowingProfileBlock) ?
+            <ProfileBlock width={width * 0.1} />:null
+          }
+        </View>
+      </NativeRouter>
     </View>
   )
 }

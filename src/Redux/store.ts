@@ -1,5 +1,5 @@
 import resourcesLastCallReducer, { resourcesLastCalled } from './reducers/resourcesLastCallReducer';
-import statusBarColorReducer from './reducers/statusBarColorReducer';
+import safeAreaColorsReducer from './reducers/safeAreaColorsReducer';
 import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import currentEventsReducer from './reducers/currentEventReducer';
@@ -16,6 +16,7 @@ import resourcesReducer from './reducers/resourcesReducer';
 import addEventReducer from './reducers/addEventReducer';
 import homepageDataReducer from './reducers/homepageDataReducer';
 import expandedModeReducer from './reducers/expandedModeReducer';
+import isShowingProfileBlockReducer from './reducers/isShowingProfileBlockReducer';
 
 const store = configureStore({
   reducer: {
@@ -28,7 +29,7 @@ const store = configureStore({
     dimentions: dimentionsReducer,
     microsoftProfileData: microsoftProfileDataReducer,
     authenticationApiToken: authenticationApiTokenReducer,
-    statusBarColor: statusBarColorReducer,
+    safeAreaColors: safeAreaColorsReducer,
     tasksDeltaLink: tasksDeltaReducer,
     tasks: tasksReducer,
     paulyData: paulyDataReducer,
@@ -36,7 +37,8 @@ const store = configureStore({
     resources: resourcesReducer,
     addEvent: addEventReducer,
     homepageData: homepageDataReducer,
-    expandedMode: expandedModeReducer
+    expandedMode: expandedModeReducer,
+    isShowingProfileBlock: isShowingProfileBlockReducer
   }
 });
 

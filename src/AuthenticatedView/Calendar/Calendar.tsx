@@ -18,7 +18,7 @@ import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
 import { useMsal } from '@azure/msal-react';
 import { loadingStateEnum } from '../../types';
 import getEvents from '../../Functions/Calendar/getEvents';
-import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer';
+import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 
 enum calendarMode {
   month,
@@ -58,7 +58,7 @@ export default function Calendar() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(statusBarColorSlice.actions.setStatusBarColor("#444444"))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
   }, [])
 
   const [fontsLoaded] = useFonts({
@@ -125,6 +125,21 @@ export default function Calendar() {
 }
 
 function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEvent}:{width: number, height: number, setAddDate: (addDate: boolean) => void, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void}) {
+  return (
+    <>
+      { (width <= 519) ?
+        <ScrollView style={{backgroundColor: "white", height: height, width: width}}>
+          <MonthView width={width} height={height} setAddDate={setAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>
+        </ScrollView>:
+         <View style={{backgroundColor: "white", height: height, width: width}}>
+          <MonthView width={width} height={height} setAddDate={setAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>
+        </View>
+      }
+    </>
+  )
+}
+
+function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{width: number, height: number, setAddDate: (addDate: boolean) => void, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void}) {
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
@@ -185,7 +200,7 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
   }
 
   return (
-    <View style={{backgroundColor: "white"}}>
+    <>
       <View style={{height: height/8, width: width, justifyContent: "center", alignItems: "center", alignContent: "center"}}>
         <View style={{flexDirection: "row"}}>
           <View style={{width: width * 0.6, flexDirection: "row"}}>
@@ -241,9 +256,9 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
                             d.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), value.dayData);
                             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
                           }} key={value.id}>
-                            <CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate} calenarWidth={width}/>
+                            <CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate} calendarWidth={width}/>
                           </Pressable>:
-                          <View key={value.id}><CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate} calenarWidth={width}/></View>
+                          <View key={value.id}><CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate} calendarWidth={width}/></View>
                         }
                       </View>:null
                     }
@@ -253,14 +268,27 @@ function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEven
             ))}
           </View>
       </View>
-    </View>
+      { (width <= 519) ?
+        <ScrollView>
+          { ((selectedDate.getDate() - 1) <= monthData.length) ?
+            <>
+              { monthData[selectedDate.getDate() - 1].events.map((event) => (
+                <View>
+                  <Text>{event.name}</Text>
+                </View>
+              ))}
+            </>:null
+          }
+        </ScrollView>:null
+      }
+    </>
   )
 }
 
-function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent, setAddDate, calenarWidth}:{value: monthDataType, width: number, height: number, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void, setAddDate: (addDate: boolean) => void, calenarWidth: number}) {
+function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent, setAddDate, calendarWidth}:{value: monthDataType, width: number, height: number, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void, setAddDate: (addDate: boolean) => void, calendarWidth: number}) {
   return(
     <>
-      { (calenarWidth <= 519) ?
+      { (calendarWidth <= 519) ?
         <>
           { (value.showing) ?
             <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>

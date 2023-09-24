@@ -12,7 +12,7 @@ import getUsersTasks from '../Functions/Homepage/getUsersTasks';
 import ProgressView from '../UI/ProgressView';
 import getInsightData from '../Functions/Homepage/getInsightData';
 import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
-import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer';
+import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import getClassEvents from '../Functions/getClassEventsTimetable';
 import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
 import PDFView from '../UI/PDF/PDFView';
@@ -104,7 +104,7 @@ export default function Notifications() {
   }, [siteId])
 
   useEffect(() => {
-    dispatch(statusBarColorSlice.actions.setStatusBarColor("white"))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "white", bottom: "white"}))
   }, []) 
 
   return (

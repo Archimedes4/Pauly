@@ -113,13 +113,13 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   }, [])
 
   return (
-    <>
+    <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height, zIndex: 2, position: "absolute", left: 0, top: 0}}>
       <AuthenticatedTemplate>
         <AuthenticatedViewMain dimensions={dimensions} width={dimensions.window.width}/>
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <Login onGetAuthToken={() => {getAuthToken()}} width={dimensions.window.width}/>
       </UnauthenticatedTemplate>
-    </>
+    </SafeAreaView>
   )
 }

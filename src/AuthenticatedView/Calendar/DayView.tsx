@@ -44,7 +44,8 @@ declare global {
 
 export default function DayView({width, height}:{width: number, height: number}) {
   const colorScheme = useColorScheme();
-  const fullStore = useSelector((state: RootState) => state)
+  const currentEvents = useSelector((state: RootState) => state.currentEvents)
+  const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0)
   const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0)
   const [currentTime, setCurrentTime] = useState<string>("12:00")
@@ -80,12 +81,6 @@ export default function DayView({width, height}:{width: number, height: number})
     setCurrentTimeFunction(hourInt, minuiteInt)
     mainScrollRef.current?.scrollTo({ x: 0, y: resultHeightTopOffset, animated: false});
     console.log("This", resultHeightTopOffset)
-    // if (heightOffsetTop >= height){
-    //     setScrollPosition(height)
-    //     mainScrollRef.current?.scrollTo({ x: 0, y: height, animated: true });
-    // } else {
-    //     setScrollPosition(heightOffsetTop)
-    // }
   }
 
   //https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
@@ -129,7 +124,7 @@ export default function DayView({width, height}:{width: number, height: number})
                 <View>
                   {hoursText.map((value) => (
                     <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
-                      { (calculateIfShowing(value, new Date(JSON.parse(fullStore.selectedDate)))) ?
+                      { (calculateIfShowing(value, new Date(JSON.parse(selectedDate)))) ?
                         <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
                       }
                       <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
@@ -139,11 +134,11 @@ export default function DayView({width, height}:{width: number, height: number})
               }
             </View>
             <>
-              {fullStore.currentEvents.map((event) => (
+              {currentEvents.map((event) => (
                 <EventBlock event={getEventFromJSON(event)} width={width} height={height} />
               ))}
             </>
-            { (new Date(JSON.parse(fullStore.selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(fullStore.selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(fullStore.selectedDate)).getFullYear() === new Date().getFullYear()) ?
+            { (new Date(JSON.parse(selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(selectedDate)).getFullYear() === new Date().getFullYear()) ?
               <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
                 <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
                 <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
@@ -231,23 +226,23 @@ function getEventColor(monthInt: number, dayInt: number, Class: calendarCourseTy
     for(let index = 0; index < Class.assignments.length; index++) {
         const x = Class.assignments[index]
         if (x.assignmentDuringClass) {
-            if (x.selectedMonth! == monthInt) {
-                if (x.selectedDay! == dayInt) {
-                    if (x.assignmentEnum == 0) {
-                        return "purple"
-                    } else if (x.assignmentEnum == 1) {
-                        return "red"
-                    } else if (x.assignmentEnum == 2) {
-                        return "yellow"
-                    } else if (x.assignmentEnum == 3) {
-                        return "orange"
-                    } else if (x.assignmentEnum == 4) {
-                        return "blue"
-                    } else {
-                         return "green"
-                    }
-                }
+          if (x.selectedMonth! == monthInt) {
+            if (x.selectedDay! == dayInt) {
+              if (x.assignmentEnum == 0) {
+                return "purple"
+              } else if (x.assignmentEnum == 1) {
+                return "red"
+              } else if (x.assignmentEnum == 2) {
+                return "yellow"
+              } else if (x.assignmentEnum == 3) {
+                return "orange"
+              } else if (x.assignmentEnum == 4) {
+                return "blue"
+              } else {
+                return "green"
+              }
             }
+          }
         }
     }
     return colorResult
@@ -271,13 +266,13 @@ function computeEventHeight(fromDate: Date, toDate: Date, height: number): numbe
 }
 
 function findOffsetEvent(time: Date, height: number): number{
-    let hourWidth = height * 0.1
-    let minutieWidth = (height * 0.1) / 60
-    
-    let HourInt = time.getHours()
-    let MinuiteInt = time.getMinutes()
-    let ReturnOffset = (hourWidth * HourInt) + (minutieWidth * MinuiteInt!) + (hourWidth / 2)
-    return ReturnOffset
+  let hourWidth = height * 0.1
+  let minutieWidth = (height * 0.1) / 60
+  
+  let HourInt = time.getHours()
+  let MinuiteInt = time.getMinutes()
+  let ReturnOffset = (hourWidth * HourInt) + (minutieWidth * MinuiteInt!) + (hourWidth / 2)
+  return ReturnOffset
 }
 
 

@@ -6,7 +6,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
-import { statusBarColorSlice } from '../../Redux/reducers/statusBarColorReducer';
+import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 import getPoints from '../../Functions/commissions/getPoints';
 import getCommissions from '../../Functions/commissions/getCommissions';
 import { loadingStateEnum } from '../../types';
@@ -44,7 +44,7 @@ export default function Commissions() {
   }
 
   useEffect(() => {
-    dispatch(statusBarColorSlice.actions.setStatusBarColor("#444444"))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
   }, [])
 
   useEffect(() => {
@@ -71,16 +71,15 @@ export default function Commissions() {
     <>
       <View style={{width: width, height: height, backgroundColor: "white"}}>
         <View style={{width: width, height: height * 0.1, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-          { (currentBreakPoint === 0) ?
-            <Link to="/">
-              <View>
-                <Text>Back</Text>
-              </View>
-            </Link>:null
+          { (currentBreakPoint <= 0) ?
+            <Pressable onPress={() => navigate("/")} style={{position: "absolute", top: 0, left: 0}}>
+              <Text>Back</Text>
+            </Pressable>
+            :null
           }
           <Text style={{fontFamily: 'BukhariScript', fontSize:  25}}>Commissions</Text>
         </View>
-        <View style={{height: height * 0.9}}>
+        <View style={{height: height * 0.8}}>
           { (commissionState === loadingStateEnum.loading) ?
             <View style={{width: width, height: height * 0.9, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
               <ProgressView width={(width < height) ? width * 0.1:height*0.1} height={(width < height) ? width * 0.1:height*0.1} />
@@ -91,9 +90,10 @@ export default function Commissions() {
                 <ScrollView style={{height: height * 0.9}}>
                   { currentCommissions.map((item: commissionType) => (
                     <Pressable onPress={() => {setSelectedCommission(item.commissionId)}} key={"Link_" + item.commissionId}>
-                      <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, margin: width * 0.05}}>
+                      <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, marginLeft: width * 0.025, marginRight: width * 0.025, marginTop: height * 0.02}}>
                         <View style={{margin: 10}}>
                           <Text>{item.title}</Text>
+                          <Text>{item.startDate?.toLocaleDateString("en-US", {month: "long", day: "numeric", minute: "numeric"})}</Text>
                         </View>
                       </View>
                     </Pressable>
@@ -106,6 +106,14 @@ export default function Commissions() {
             </View>
           }
         </View>
+        <ScrollView style={{height: height * 0.1, width: width}} horizontal={true}>
+          <View>
+            <Text>All</Text>
+          </View>
+          <View>
+            <Text>Current</Text>
+          </View>
+        </ScrollView>
       </View>
       <View style={{position: "absolute", zIndex: 2, top: height * 0.1, left: width * 0.1}}>
         { (selectedCommission !== "") ?

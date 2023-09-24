@@ -2,13 +2,14 @@ import { View, Text, ScrollView, TextInput, Platform, Pressable } from 'react-na
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { getResourceFromJson, getResources } from '../Functions/getResources'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../Redux/store'
 import { SearchIcon } from '../UI/Icons/Icons'
 import WebView from 'react-native-webview'
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import WebViewCross from '../UI/WebViewCross'
+import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 
 //Resources
 // -> Sports
@@ -34,11 +35,13 @@ export default function Resources() {
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
   const [searchValue, setSearchValue] = useState<string>("")
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   async function loadData() {
     const result = await getResources()
   }
   useEffect(() => {
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
     loadData()
   }, [])
 
@@ -60,7 +63,7 @@ export default function Resources() {
     <View style={{height: height, width: width}}>
       <View style={{height: height * 0.1, width: width, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         { (currentBreakPoint <= 0) ?
-          <Pressable onPress={() => {navigate("/")}} style={{position: "absolute"}}>
+          <Pressable onPress={() => {navigate("/")}} style={{position: "absolute", top: 0, left: 0}}>
             <Text>Back</Text>
           </Pressable>:null
         }

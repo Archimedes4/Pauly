@@ -1,6 +1,6 @@
-import { View, Text, Dimensions, Image, ImageSourcePropType } from 'react-native'
+import { View, Text, Dimensions, Image, ImageSourcePropType, Pressable } from 'react-native'
 import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-native'
+import { Link, useNavigate } from 'react-router-native'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { BookIcon, CalendarIcon, GearIcon, GraduationHatIcon, HomeIcon, MedalIcon } from '../../../UI/Icons/Icons';
@@ -18,7 +18,8 @@ function Block({height, width, text, imageSource, children}:{height: number, wid
 }
 
 export default function Government() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const navigate = useNavigate()
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../../assets/fonts/BukhariScript.ttf'),
   });
@@ -39,6 +40,11 @@ export default function Government() {
   }
   return (
     <View style={{height: height, width: width, backgroundColor: "white"}}>
+      { (currentBreakPoint <= 0) ?
+        <Pressable onPress={() => navigate("/profile/")}>
+          <Text>Back</Text>
+        </Pressable>:null
+      }
       <View style={{height: height * 0.2, width: width, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <Text style={{fontFamily: "BukhariScript", fontSize: 100}}>Government</Text>
       </View>

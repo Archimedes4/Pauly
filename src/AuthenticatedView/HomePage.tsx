@@ -10,7 +10,7 @@ import store, { RootState } from '../Redux/store';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { BookIcon, MedalIcon, PersonIcon } from '../UI/Icons/Icons';
-import { statusBarColorSlice } from '../Redux/reducers/statusBarColorReducer';
+import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../types';
 import ProgressView from '../UI/ProgressView';
@@ -28,26 +28,23 @@ export default function HomePage() {
   const navigate = useNavigate()
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
-  const {message} = useSelector((state: RootState) => state.paulyData)
+  const {message, paulyDataState} = useSelector((state: RootState) => state.paulyData)
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const [animationSpeed, setAnnimationSpeed] = useState(0)
-  const [dataState, setDataState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const dispatch = useDispatch()
 
   async function loadData() {
-    const result = await getCurrentPaulyData(siteId)
-    setDataState(result)
+    await getCurrentPaulyData()
   }
 
   useEffect(() => {
-    dispatch(statusBarColorSlice.actions.setStatusBarColor("#793033"))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#793033", bottom: "#793033"}))
   }, [])
 
   useEffect(() => {
-    if (store.getState().authenticationToken !== "" || store.getState().paulyList.siteId !== ""){
+    if (store.getState().authenticationToken !== "" && store.getState().paulyList.siteId !== ""){
       loadData()
     }
-  }, [authenticationToken])
+  }, [authenticationToken, siteId])
 
   useEffect(() => {
     if (currentBreakPoint > 0){
@@ -74,12 +71,12 @@ export default function HomePage() {
   return (
     <View style={{backgroundColor: "#793033", overflow: "hidden"}}>
       <Pressable style={{width: width * 1.0, height: height * 0.08}} onPress={() => {navigate("/notifications")}}>
-        { (dataState === loadingStateEnum.loading) ?
+        { (paulyDataState === loadingStateEnum.loading) ?
           <View style={{width: width * 1.0, height: height * 0.08, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
             <ProgressView width={(width < (height * 0.08)) ? width * 0.1:height * 0.07} height={(width < (height * 0.08)) ? width * 0.1:height * 0.07}/>
           </View>:
           <>
-            { (dataState === loadingStateEnum.success) ?
+            { (paulyDataState === loadingStateEnum.success) ?
               <>
                 { (message !== "") ?
                   <ScrollingTextAnimation width={width * 1.0} height={height * 0.08}>

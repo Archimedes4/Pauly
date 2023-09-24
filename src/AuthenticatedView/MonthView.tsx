@@ -2,6 +2,7 @@ import { View, Text, Pressable } from "react-native"
 import { useEffect, useState } from "react"
 import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/Calendar/calendarFunctions"
 import React from "react"
+import { getSchoolDays } from "../Functions/Calendar/calendarFunctionsGraph"
 
 function MonthBlock({value, width, height, startDate, daySelected, selectedDates}:{value:number, width: number, height: number, startDate: number, daySelected: number, selectedDates: DateProperty[]}) {
   let textval: number = getDay(value, startDate) ?? 0
@@ -67,6 +68,11 @@ export default function MonthView({width, height}:{width: number, height: number
   let StartDate = findFirstDayinMonth(new Date())
   const [daySelected, setDaySelected] = useState<number>(((Count + StartDate) - 2) - ((Count/7) * 2))
   const thirtyValue = [...Array(30).keys()]
+
+  useEffect(() => {
+    getSchoolDays(new Date())
+  }, [])
+
   return(
     <View style={{flexDirection: "row", flexWrap: "wrap", width: width, height: height}}>
       <View style={{width: width * 0.2, height: height * 0.13, justifyContent: "center", alignItems: "center", alignContent: "center", overflow: "hidden"}}><Text numberOfLines={1} style={{width: width * 0.2, textAlign: "center"}}>Monday</Text></View>

@@ -12,6 +12,15 @@ import ProgressView from '../../UI/ProgressView';
 import * as ImagePicker from 'expo-image-picker';
 import WebViewCross from '../../UI/WebViewCross';
 
+enum CameraResult {
+  notStarted,
+  loading,
+  success,
+  permissionDenied,
+  goToSettings,
+  failed
+}
+
 export default function CommissionsView({id, onClose}:{id: string, onClose: () => void}) {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [commissionData, setCommissionData] = useState<commissionType | undefined>(undefined)
@@ -19,6 +28,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
   const [messageState, setMessageState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const [messageData, setMessageData] = useState<string>("")
   const [imageUri, setImageUri] = useState<string>("")
+  const [takeImageState, setTakeImageState] = useState<CameraResult>(CameraResult.notStarted)
 
   async function getPost(teamId: string, channelId: string, messageId: string) {
     setMessageState(loadingStateEnum.loading)
@@ -59,19 +69,38 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
       alert('You did not select any image.');
     }
   }
+  const [status, requestPermission] = ImagePicker.useCameraPermissions();
 
   async function takeImage() {
-    const result = await ImagePicker.launchCameraAsync({
-      allowsEditing: false,
-      allowsMultipleSelection: false,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images
-    })
-    if (!result.canceled) {
-      if (result.assets.length === 1) {
-        setImageUri(result.assets[0].uri)
+    setTakeImageState(CameraResult.loading)
+    if (status?.status === ImagePicker.PermissionStatus.GRANTED) {
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: false,
+        allowsMultipleSelection: false,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images
+      })
+      if (!result.canceled) {
+        if (result.assets.length === 1) {
+          setImageUri(result.assets[0].uri)
+          setTakeImageState(CameraResult.success)
+        } else {
+          setTakeImageState(CameraResult.failed)
+        }
       } else {
-
+        setTakeImageState(CameraResult.notStarted)
       }
+    } else {
+      if (status?.canAskAgain) {
+        const permissionResult = await requestPermission()
+        if (permissionResult.granted) {
+          takeImage()
+        } else {
+          setTakeImageState(CameraResult.permissionDenied)
+        }
+      } else {
+        setTakeImageState(CameraResult.goToSettings)
+      }
+      
     }
   }
 
@@ -108,7 +137,9 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                       }
                     </View>
                     <Pressable onPress={() => takeImage()} style={{marginLeft: "auto", marginRight: "auto", backgroundColor: "#ededed", width: width * 0.7, borderRadius: 15, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
-                      <Text style={{margin: 10, fontWeight: "bold"}}>TAKE PHOTO</Text>
+                      { (takeImageState === CameraResult.loading) ?
+                        <ProgressView width={14} height={14} style={{margin: 10}}/>:<Text style={{margin: 10, fontWeight: "bold"}}>{(takeImageState === CameraResult.notStarted) ? "TAKE PHOTO":(takeImageState === CameraResult.goToSettings) ? "Go To Settings And Give Camera Permissions":(takeImageState === CameraResult.permissionDenied) ? "Permission Denied":(takeImageState === CameraResult.success) ? "TAKE DIFFERENT PHOTO":"AN ERROR OCCURED"}</Text>
+                      }
                     </Pressable>
                     <Pressable onPress={() => pickImage()} style={{marginLeft: "auto", marginRight: "auto", backgroundColor: "#ededed", width: width * 0.7, borderRadius: 15, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
                       <Text style={{margin: 10, fontWeight: "bold"}}>CHOOSE PHOTO</Text>

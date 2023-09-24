@@ -1,4 +1,4 @@
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, ViewStyle } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import Svg, { G, Path } from 'react-native-svg'
 import { SharedValue, interpolateColor, useAnimatedProps, useAnimatedStyle, useDerivedValue, useSharedValue, withDelay, withRepeat, withTiming } from 'react-native-reanimated';
@@ -27,7 +27,7 @@ function ChipView({d, index}:{d:string, index: number}) {
   )
 }
 
-export default function ProgressView({width, height}:{width: number, height: number}) {
+export default function ProgressView({width, height, style}:{width: number, height: number, style?: ViewStyle}) {
   
   const paths = [
     "M7.706 0.290 C 7.484 0.362,7.356 0.490,7.294 0.699 C 7.259 0.816,7.253 1.088,7.253 2.508 C 7.253 4.389,7.251 4.365,7.443 4.557 C 7.700 4.813,8.300 4.813,8.557 4.557 C 8.749 4.365,8.747 4.389,8.747 2.508 C 8.747 0.688,8.744 0.656,8.596 0.480 C 8.472 0.333,8.339 0.284,8.040 0.276 C 7.893 0.272,7.743 0.278,7.706 0.290",
@@ -41,7 +41,7 @@ export default function ProgressView({width, height}:{width: number, height: num
   ]
 
   return (
-    <Svg width={width} height={height} viewBox="0 0 16 16" fill="none">
+    <Svg width={width} height={height} style={style} viewBox="0 0 16 16" fill="none">
       <G id="SVGRepo_iconCarrier">
         {paths.map((path, index) => <ChipView key={"Chip_Key_Holder_" + index} d={path} index={index}/>)}
       </G>

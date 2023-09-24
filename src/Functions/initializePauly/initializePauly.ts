@@ -1,7 +1,7 @@
 import { loadingStateEnum } from "../../types"
 import create_UUID from "../Ultility/CreateUUID"
 import callMsGraph from "../Ultility/microsoftAssets"
-import { paulyListData, commissionsData, paulyClassExtensionData, paulyDataData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData, paulyResourceExtensionData, dressCodeData, paulyUserExtensionData, addDataArray } from "./initializePaulyData"
+import { paulyListData, commissionsData, paulyClassExtensionData, paulyDataData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData, paulyResourceExtensionData, dressCodeData, addDataArray } from "./initializePaulyData"
 
 export async function initializePaulyPartOne(secondUserId: string): Promise<{result: loadingStateEnum, groupId?: string}> {  
   const currentUsersIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/me", "GET")
@@ -66,7 +66,7 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
   if (!getRootSiteIdResult.ok){return loadingStateEnum.failed}
   const getRootSiteIdResultData = await getRootSiteIdResult.json()
   
-  var paulyListNewData = {"fields":{"Title":"Main"}}
+  var paulyListNewData: {"fields": any} = {"fields":{"Title":"Main"}}
 
   //Check if already data
   var secondRun: boolean = false

@@ -89,7 +89,8 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
           properName: data["value"][0]["fields"]["scheduleProperName"],
           descriptiveName: data["value"][0]["fields"]["scheduleDescriptiveName"],
           periods: JSON.parse(data["value"][0]["fields"]["scheduleData"]) as periodType[],
-          id: data["value"][0]["fields"]["scheduleId"]
+          id: data["value"][0]["fields"]["scheduleId"],
+          color:  data["value"][0]["fields"]["scheduleColor"]
         }
         return {result: loadingStateEnum.success, schedule: resultSchedule}
       } else {
@@ -183,5 +184,14 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
     return {result: loadingStateEnum.failed}
   } else {
     return {result: loadingStateEnum.failed}
+  }
+}
+
+export async function getSchoolDays(date: Date) {
+  var firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
+  var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')%20and%20start/DateTime%20ge%20'${firstDay}'%20AND%20end/DateTime%20le%20'${lastDay}'`, "GET", true)
+  if (result.ok) {
+    const data = await result.json()
   }
 }

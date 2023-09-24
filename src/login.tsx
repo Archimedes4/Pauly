@@ -2,13 +2,22 @@ import { View, Text, Pressable, Image } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './Redux/store';
+import { safeAreaColorsSlice } from './Redux/reducers/safeAreaColorsReducer';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Login({onGetAuthToken, width}:{onGetAuthToken: () => void, width: number}) {
   const {height} = useSelector((state: RootState) => state.dimentions)
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false)
   const [fontSize, setFontSize] = useState<number>(0)
+  const dispatch = useDispatch()
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop("#793033"))
+  }, [])
+
   useEffect(() => {
     const heightIsGreater: boolean = width < height
     const newWidth = heightIsGreater ? width:height
@@ -36,7 +45,7 @@ export default function Login({onGetAuthToken, width}:{onGetAuthToken: () => voi
   }
 
   return (
-    <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: height, width: width, overflow: "hidden"}}>
+    <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: height, width: width, overflow: "hidden", top: -insets.top}}>
       <View id='Content_Area' style={{width: (width < height) ? width:height, height: (width < height) ? width:height, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
         <View style={{width: fontSize * 1.65, height: fontSize, flexDirection: "row"}} id='Text_Container'>
           <Image source={require("../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: fontSize, height: fontSize, position: "absolute", left: -fontSize * 0.2}} />

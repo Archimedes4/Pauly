@@ -73,3 +73,14 @@ update azure ad app
     ]
 }
 ```
+
+## Format
+### Colors
+| name           | value     |
+| -------------- | --------- |
+| white          | "white"   |
+| light gray     | "#ededed" |
+| dark gray      | "#444444" |
+| maroon         | "#793033" |
+| warning orange | "#FF6700" |
+

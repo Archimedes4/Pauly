@@ -261,6 +261,11 @@ export const scheduleData = {
       "required": true
     },
     {
+      "name":"scheduleColor",
+      "text":{"maxLength":9},
+      "required": true
+    },
+    {
       "name":"scheduleData",
       "text":{"allowMultipleLines": true},
       "required": true
