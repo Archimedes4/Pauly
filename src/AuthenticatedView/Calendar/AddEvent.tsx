@@ -22,6 +22,7 @@ import React from "react";
 export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
   const {selectedEventType, isPickingStartDate, isPickingEndDate, eventName, allDay, createEventState, recurringEvent, selectedRecurringType, startDate, endDate} = useSelector((state: RootState) => state.addEvent)
   const dispatch = useDispatch()
   
@@ -114,7 +115,9 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
               </Dropdown>
             </View>:null
           }
-          <GovernmentCalendarOptions width={width} height={height}/>
+          { isGovernmentMode ?
+            <GovernmentCalendarOptions width={width} height={height}/>:null
+          }
           <View style={{width: width, alignContent: 'center', alignItems: "center", justifyContent: "center"}}>
             <Pressable onPress={() => {
               dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.loading))

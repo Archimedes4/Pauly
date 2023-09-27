@@ -15,6 +15,7 @@ import { useFonts } from 'expo-font';
 
 export default function Settings() {
   const {height, width} = useSelector((state: RootState) => state.dimentions)
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
   const {uri, displayName} = useSelector((state: RootState) => state.microsoftProfileData)
   const navigate = useNavigate()
 
@@ -65,15 +66,15 @@ export default function Settings() {
         }
         <Text style={{color: "white", fontWeight: "bold", fontSize: 24}}>{displayName}</Text>
       </View>
-      
-      
-      <Pressable onPress={() => {navigate("/profile/government")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", marginTop: height * 0.05}}>
-        <GovernmentIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
-        <Text>Government</Text>
-      </Pressable>
       <Pressable onPress={() => {signOut()}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", alignContent: "center", justifyContent: "center", marginTop: height * 0.05}}>
         <Text style={{fontWeight: "bold"}}>SIGN OUT</Text>
       </Pressable>
+      { isGovernmentMode ?
+        <Pressable onPress={() => {navigate("/profile/government")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", marginTop: height * 0.05}}>
+          <GovernmentIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
+          <Text>Government</Text>
+        </Pressable>:null
+      }
     </View>
   )
 }

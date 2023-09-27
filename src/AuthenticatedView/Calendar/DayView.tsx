@@ -150,8 +150,8 @@ export default function DayView({width, height}:{width: number, height: number})
 }
 
 function EventBlock({event, width, height}:{event: eventType, width: number, height: number}) {
-  const EventHeight = computeEventHeight(event.startTime, event.endTime, height)
-  const Offset = findTimeOffset(event.startTime, height)
+  const EventHeight = computeEventHeight(new Date(event.startTime), new Date(event.endTime), height)
+  const Offset = findTimeOffset(new Date(event.startTime), height)
   return (
     <View style={{width: width * 0.8, height: EventHeight, top: Offset, position: "absolute", marginLeft: width * 0.2, backgroundColor: event.eventColor, opacity: 0.6}}>
       <Text>{event.name}</Text>

@@ -170,8 +170,8 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
         const check: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1))
         for (var indexEvent = 0; indexEvent < currentEvents.length; indexEvent++) {
           const event: eventType = currentEvents[indexEvent]
-          const startTimeDate = new Date(event.startTime.getFullYear(), event.startTime.getMonth(), event.startTime.getDate())
-          const endTimeDate = new Date(event.endTime.getFullYear(), event.endTime.getMonth(), event.endTime.getDate())
+          const startTimeDate = new Date(event.startTime)
+          const endTimeDate = new Date(event.endTime)
           if (check >= startTimeDate && check <= endTimeDate) {
             //Event is on the date
             if (check.getTime() !== event.endTime.getTime()) {
@@ -272,7 +272,7 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
         <ScrollView>
           { ((selectedDate.getDate() - 1) <= monthData.length) ?
             <>
-              { monthData[selectedDate.getDate() - 1].events.map((event) => (
+              {monthData[selectedDate.getDate() - 1].events.map((event) => (
                 <View>
                   <Text>{event.name}</Text>
                 </View>
@@ -308,7 +308,7 @@ function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent,
               <ScrollView style={{width: width, height: height * 0.8}}>
                 {value.events.map((event) => (
                   <Pressable key={"Calendar_Event_" + event.id + "_" + create_UUID()} onPress={() => {setIsEditing(true); setSelectedEvent(event); setAddDate(true)}}>
-                    <Text>{event.name}</Text>
+                    <Text style={{fontSize: 10}}>{event.name}</Text>
                   </Pressable>
                 ))}
               </ScrollView>
