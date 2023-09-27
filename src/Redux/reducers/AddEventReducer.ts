@@ -41,7 +41,8 @@ const initalState: addEventStatesType = {
       properName: '',
       descriptiveName: '',
       periods: [],
-      id: ''
+      id: '',
+      color: ''
     },
     semester: semesters.semesterOne,
     dressCode: {
@@ -58,7 +59,7 @@ const initalState: addEventStatesType = {
     eventColor: '',
     microsoftEvent: false
   },
-  selectedEventType: 0,
+  selectedEventType: paulyEventType.regular,
   recurringEvent: false,
   selectedRecurringType: recurringType.daily,
   startDate: new Date().toISOString(),
@@ -76,10 +77,10 @@ export const addEventSlice = createSlice({
       return {...state, createEventState: action.payload}
     },
     setIsPickingStartDate: (state, action: PayloadAction<boolean>) => {
-      return {...state, isPickingStateDate: action.payload}
+      state.isPickingStartDate = action.payload
     },
     setIsPickingEndDate: (state, action: PayloadAction<boolean>) => {
-      return {...state, isPickingEndDate: action.payload}
+      state.isPickingEndDate = action.payload
     },
     setAllDay: (state, action: PayloadAction<boolean>) => {
       return {...state, allDay: action.payload}

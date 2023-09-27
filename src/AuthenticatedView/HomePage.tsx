@@ -81,7 +81,7 @@ export default function HomePage() {
                 { (message !== "") ?
                   <ScrollingTextAnimation width={width * 1.0} height={height * 0.08}>
                     <View>
-                      <Text numberOfLines={1} style={{fontSize: height * 0.07, height: height * 0.07}}>{message}</Text>
+                      <Text numberOfLines={1} adjustsFontSizeToFit={true} style={{fontSize: height * 0.1, height: height * 0.1}}>{message}</Text>
                     </View>
                   </ScrollingTextAnimation>:null
                 }

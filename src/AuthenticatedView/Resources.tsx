@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TextInput, Platform, Pressable } from 'react-native'
+import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { getResourceFromJson, getResources } from '../Functions/getResources'
@@ -10,6 +10,9 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import WebViewCross from '../UI/WebViewCross'
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
+import BackButton from '../UI/BackButton'
+import { loadingStateEnum } from '../types'
+import ProgressView from '../UI/ProgressView'
 
 //Resources
 // -> Sports
@@ -38,7 +41,7 @@ export default function Resources() {
   const dispatch = useDispatch()
 
   async function loadData() {
-    const result = await getResources()
+    await getResources()
   }
   useEffect(() => {
     dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
@@ -63,20 +66,32 @@ export default function Resources() {
     <View style={{height: height, width: width}}>
       <View style={{height: height * 0.1, width: width, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         { (currentBreakPoint <= 0) ?
-          <Pressable onPress={() => {navigate("/")}} style={{position: "absolute", top: 0, left: 0}}>
-            <Text>Back</Text>
-          </Pressable>:null
+          <BackButton to='/'/>:null
         }
         <Text style={{fontFamily: "BukhariScript"}}>Resources</Text>
       </View>
       <SearchBox searchValue={searchValue} setSearchValue={setSearchValue}/>
       <View style={{width: width, height: height * 0.05, backgroundColor: "#ededed"}}/>
       <ScrollView style={{height: (isHoverPicker) ? height * 0.75:height * 0.8, backgroundColor: "#ededed"}}>
-        {resources.map((resource) => (
-          <View key={"Resource_"+getResourceFromJson(resource)?.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-            <WebViewCross html={getResourceFromJson(resource)?.body}/>
-          </View>
-        ))}
+        <>
+          { (resources.loadingState === loadingStateEnum.loading) ?
+            <View style={{width: width, height: (isHoverPicker) ? height * 0.75:height * 0.8, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+              <ProgressView width={(width < height) ? width * 0.05:height * 0.05} height={(width < height) ? width * 0.05:height * 0.05}/>
+              <Text>Loading</Text>
+            </View>:
+            <>
+              { (resources.loadingState === loadingStateEnum.success) ?
+                <>
+                  {resources.resources.map((resource) => (
+                    <View key={"Resource_"+resource.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                      <WebViewCross html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
+                    </View>
+                  ))}
+                </>:<Text>Failed</Text>
+              }
+            </>
+          }
+        </>
       </ScrollView>
       <Pressable style={{height: (isHoverPicker) ? height * 0.1:height * 0.05}} onHoverIn={() => {setIsHoverPicker(true)}} onHoverOut={() => {setIsHoverPicker(false)}}>
         <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
@@ -108,6 +123,7 @@ function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, item
 function SearchBox({searchValue, setSearchValue}:{searchValue: string, setSearchValue: (item: string) => void}) {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
+  const style: ViewStyle = (Platform.OS === "web") ? {outlineStyle: "none"}:{}
   return (
     <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", position: "absolute", top: height * 0.1 - 19, zIndex: 2}}>
       <View style={{width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 25, flexDirection: "row", backgroundColor: "white"}}>
@@ -118,7 +134,7 @@ function SearchBox({searchValue, setSearchValue}:{searchValue: string, setSearch
           </View>
         }
         <View>
-          <TextInput placeholder='Search' placeholderTextColor={"Black"} value={searchValue} onChangeText={setSearchValue} style={{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0, outlineStyle: (Platform.OS === "web") ? 'none':undefined}} enterKeyHint='search' returnKeyType='search' inputMode='search'/>
+          <TextInput placeholder='Search' placeholderTextColor={"black"} value={searchValue} onChangeText={setSearchValue} style={[{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0}, style]} enterKeyHint='search' returnKeyType='search' inputMode='search'/>
           <View
             style={{height: 0, alignSelf: 'flex-start', overflow: "hidden"}}
             onLayout={e => {

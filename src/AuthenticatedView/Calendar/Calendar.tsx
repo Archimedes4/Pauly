@@ -1,7 +1,7 @@
 import { View, Text, Dimensions, Pressable, TextInput, Switch, ScrollView, useWindowDimensions } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
-import { findFirstDayinMonth, getEventFromJSON } from '../../Functions/Calendar/calendarFunctions';
+import { findFirstDayinMonth } from '../../Functions/Calendar/calendarFunctions';
 import create_UUID from '../../Functions/Ultility/CreateUUID';
 import DayView from "./DayView"
 import Week from './Week';
@@ -110,13 +110,13 @@ export default function Calendar() {
         <Week width={width * 1.0} height={height * 0.9} />:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
-        <View style={{width: width, height: height * 0.9, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height * 0.9, alignItems: "center", alignContent: "center", justifyContent: "center", backgroundColor: "white"}}>
           <DayView width={width * 0.9} height={height * 0.9} />
         </View>:null
       }
       </View>
       { isShowingAddDate ?
-        <View style={{zIndex: 2, position: "absolute", left: width * 0.05 + (((width >= 576) ? ((width * 0.3) - 576):0)/2), top: height * 0.1}}>
+        <View style={{zIndex: 2, position: "absolute", left: width * 0.05 + (((width >= 576) ? (width * 0.3):0)/2), top: height * 0.1}}>
           <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={width * 0.9 - ((width >= 576) ? (width * 0.3):0)} height={height * 0.8} editing={isEditing} editData={selectedEvent} />
         </View>:null
       }
@@ -169,7 +169,7 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
         var events: eventType[] = []
         const check: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1))
         for (var indexEvent = 0; indexEvent < currentEvents.length; indexEvent++) {
-          const event: eventType = getEventFromJSON(currentEvents[indexEvent])
+          const event: eventType = currentEvents[indexEvent]
           const startTimeDate = new Date(event.startTime.getFullYear(), event.startTime.getMonth(), event.startTime.getDate())
           const endTimeDate = new Date(event.endTime.getFullYear(), event.endTime.getMonth(), event.endTime.getDate())
           if (check >= startTimeDate && check <= endTimeDate) {

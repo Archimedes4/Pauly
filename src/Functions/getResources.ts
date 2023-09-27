@@ -3,9 +3,9 @@ import store from "../Redux/store"
 import callMsGraph from "./Ultility/microsoftAssets"
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
 
-export async function getResources(): Promise<loadingStateEnum> {
+export async function getResources() {
   var nextLink = "https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.resourceListId + "/items?expand=fields"
-  var output: string[] = []
+  var output: resourceDataType[] = []
   while (nextLink !== "") {
     const result = await callMsGraph(nextLink)
     if (result.ok) {
@@ -46,28 +46,32 @@ export async function getResources(): Promise<loadingStateEnum> {
                   if (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"] !== "<systemEventMessage/>") {
                     const outputData: resourceDataType = {
                       id: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["id"],
-                      body: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"]
+                      body: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"],
+                      html: (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["contentType"] === "html") ? true:false
                     }
-                    output.push(JSON.stringify(outputData))
+                    output.push(outputData)
                   }
                 }
               } else {
-                return loadingStateEnum.failed
+                store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+                return
               }
             }
           } else {
-            return loadingStateEnum.failed
+            store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+            return
           }
         }
       }
-      console.log(output)
-      store.dispatch(resourcesSlice.actions.setResources(output))
-      return loadingStateEnum.success
+      store.dispatch(resourcesSlice.actions.setResources({resources: output, loadingState: loadingStateEnum.success}))
+      return
     } else {
-      return loadingStateEnum.failed
+      store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+      return
     }
   }
-  return loadingStateEnum.failed
+  store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+  return
 }
 
 export async function getResourcesSearch(search: string): Promise<loadingStateEnum> {
@@ -90,7 +94,7 @@ export async function getResourcesSearch(search: string): Promise<loadingStateEn
 
 
   var nextLink = "https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.resourceListId + "/items?expand=fields"
-  var output: string[] = []
+  var output: resourceDataType[] = []
   while (nextLink !== "") {
     const result = await callMsGraph(nextLink)
     if (result.ok) {
@@ -130,10 +134,10 @@ export async function getResourcesSearch(search: string): Promise<loadingStateEn
                 for (var dataIndex = 0; dataIndex < resourceResponceData["responses"][responceIndex]["body"]["value"].length; dataIndex++) {
                   const outputData: resourceDataType = {
                     id: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["id"],
-                    body: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"]
+                    body: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"],
+                    html: (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["contentType"] === "html") ? true:false
                   }
-                  console.log(outputData)
-                  output.push(JSON.stringify(outputData))
+                  output.push(outputData)
                 }
               } else {
                 return loadingStateEnum.failed
@@ -145,7 +149,6 @@ export async function getResourcesSearch(search: string): Promise<loadingStateEn
         }
       }
       console.log(output)
-      store.dispatch(resourcesSlice.actions.setResources(output))
       return loadingStateEnum.success
     } else {
       return loadingStateEnum.failed

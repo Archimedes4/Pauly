@@ -5,7 +5,8 @@ declare global {
   type resourceType = {
     webUrl: string,
     id: string,
-    title: string
+    title: string,
+    type: string
   }
   type insightResult = {
     userState: loadingStateEnum,
@@ -25,7 +26,8 @@ export default async function getInsightData(): Promise<insightResult> {
       userOutData.push({
         webUrl: userData["value"][index]["resourceReference"]["webUrl"],
         id: userData["value"][index]["resourceReference"]["id"],
-        title: userData["value"][index]["resourceVisualization"]["title"]
+        title: userData["value"][index]["resourceVisualization"]["title"],
+        type: userData["value"][index]["resourceVisualization"]["type"]
       })
     }
     userState = loadingStateEnum.success
@@ -41,7 +43,8 @@ export default async function getInsightData(): Promise<insightResult> {
       trendingOutData.push({
         webUrl: trendingData["value"][index]["resourceReference"]["webUrl"],
         id: trendingData["value"][index]["resourceReference"]["id"],
-        title: trendingData["value"][index]["resourceVisualization"]["title"]
+        title: trendingData["value"][index]["resourceVisualization"]["title"],
+        type: trendingData["value"][index]["resourceVisualization"]["title"]
       })
     }
     trendingState = loadingStateEnum.success

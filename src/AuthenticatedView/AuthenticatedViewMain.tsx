@@ -3,7 +3,6 @@ import Commissions from './Commissions/Commissions';
 import Notifications from './Notifications';
 import Resources from './Resources';
 import Settings from './Profile/Settings';
-import Profile from './Profile/Profile';
 import Government from './Profile/Government/Government';
 import MicrosoftGraphOverview from './Profile/Government/MicrosoftGraphLists/MicrosoftGraphOverview';
 import MicrosoftGraphCreateList from './Profile/Government/MicrosoftGraphLists/MicrosoftGraphCreateList';
@@ -47,7 +46,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ProfileBlock from './ProfileBlock';
+import ProfileBlock from './Profile/ProfileBlock';
 
 export default function AuthenticatedView({dimensions, width}:{dimensions: {window: ScaledSize,screen: ScaledSize}, width: number}) {
   const {height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -68,8 +67,7 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
               <Route path="/calendar" element={<Calendar />}/>
               <Route path="/resources" element={<Resources/>}/>
               <Route path="/commissions" element={<Commissions/>}/>
-              <Route path="/profile/" element={<Profile/>}/>
-              <Route path="/profile/settings" element={<Settings/>}/>
+              <Route path="/profile" element={<Settings/>}/>
               <Route path="/profile/government" element={<Government />}/>
               <Route path="/profile/government/resources" element={<GovernmentResources />} />
               <Route path="/profile/government/admin" element={<GovernmentAdmin />} />

@@ -46,8 +46,6 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
     }
     return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
   } else {
-    const data = await result.json()
-    console.log("This", data)
     return {result: loadingStateEnum.failed}
   }
 }
@@ -100,8 +98,6 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
       return {result: loadingStateEnum.failed, schedule: undefined}
     }
   } else {
-    const data = await result.json()
-    console.log(data)
     return {result: loadingStateEnum.failed, schedule: undefined}
   }
 }
@@ -163,19 +159,21 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
       const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId
       if (data["value"][index]["singleValueExtendedProperties"] !== undefined) {
         const eventData: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"]
-        if (eventData.find((e) => {return e.id === eventTypeExtensionID}).value === "schoolDay") {
-          const event: eventType = {
-            id: data["value"][index]["id"],
-            name: data["value"][index]["subject"],
-            startTime: new Date(data["value"][index]["start"]["dateTime"]),
-            endTime: new Date(data["value"][index]["end"]["dateTime"]),
-            eventColor: "white",
-            microsoftEvent: true,
-            microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],
-            paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID}).value === "schoolDay") ? "schoolDay":undefined,
-            paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID}).value
+        if (eventData !== undefined) {
+          if (eventData.find((e) => {if (e !== undefined) {return e.id === eventTypeExtensionID}}).value === "schoolDay") {
+            const event: eventType = {
+              id: data["value"][index]["id"],
+              name: data["value"][index]["subject"],
+              startTime: new Date(data["value"][index]["start"]["dateTime"]),
+              endTime: new Date(data["value"][index]["end"]["dateTime"]),
+              eventColor: "white",
+              microsoftEvent: true,
+              microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],
+              paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID}).value === "schoolDay") ? "schoolDay":undefined,
+              paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID}).value
+            }
+            return {result: loadingStateEnum.success, event: event}
           }
-          return {result: loadingStateEnum.success, event: event}
         }
         return {result: loadingStateEnum.failed}
       }
@@ -193,5 +191,6 @@ export async function getSchoolDays(date: Date) {
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')%20and%20start/DateTime%20ge%20'${firstDay}'%20AND%20end/DateTime%20le%20'${lastDay}'`, "GET", true)
   if (result.ok) {
     const data = await result.json()
+    console.log(data)
   }
 }

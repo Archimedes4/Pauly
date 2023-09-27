@@ -58,10 +58,3 @@ export function isDateToday(dateToCheck: Date) {
 export function convertYearToSchoolYear(year: number) {
     return (year - 1) + "-" + year
 }
-
-export function getEventFromJSON(input: string): eventType {
-  var result = JSON.parse(input)
-  result["endTime"] = new Date(result["endTime"])
-  result["startTime"] = new Date(result["startTime"])
-  return result
-}

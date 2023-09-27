@@ -22,7 +22,6 @@
     "@rneui/base": "^4.0.0-rc.8",
     "@rneui/themed": "^4.0.0-rc.8",
     "@types/react": "~18.2.14",
-    "canvas": "^2.11.2",
     "expo": "^49.0.11",
     "expo-auth-session": "~5.0.2",
     "expo-av": "~13.4.1",

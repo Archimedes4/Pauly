@@ -114,7 +114,8 @@ declare global {
   }
   type resourceDataType = {
     id: string,
-    body: string
+    body: string,
+    html: boolean //if false is text
   }
   type submissionType = {
     userName: string

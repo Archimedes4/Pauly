@@ -6,7 +6,7 @@
 //
 import { useEffect, useRef, useState } from "react"
 import {View, ScrollView, useColorScheme, Text} from "react-native"
-import { getEventFromJSON, isDateToday } from "../../Functions/Calendar/calendarFunctions"
+import { isDateToday } from "../../Functions/Calendar/calendarFunctions"
 import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
 import create_UUID from "../../Functions/Ultility/CreateUUID"
@@ -118,33 +118,33 @@ export default function DayView({width, height}:{width: number, height: number})
 
   return (
     <ScrollView style={{height: height, width: width, backgroundColor: "white"}} ref={mainScrollRef}>
-        <View>
-            <View>
-              { isShowingTime ?
-                <View>
-                  {hoursText.map((value) => (
-                    <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
-                      { (calculateIfShowing(value, new Date(JSON.parse(selectedDate)))) ?
-                        <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
-                      }
-                      <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
-                    </View>
-                  ))}
-                </View>:null
-              }
-            </View>
-            <>
-              {currentEvents.map((event) => (
-                <EventBlock event={getEventFromJSON(event)} width={width} height={height} />
-              ))}
-            </>
-            { (new Date(JSON.parse(selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(selectedDate)).getFullYear() === new Date().getFullYear()) ?
-              <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
-                <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
-                <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
+      <View>
+          <View>
+            { isShowingTime ?
+              <View>
+                {hoursText.map((value) => (
+                  <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
+                    { (calculateIfShowing(value, new Date(JSON.parse(selectedDate)))) ?
+                      <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
+                    }
+                    <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
+                  </View>
+                ))}
               </View>:null
-            }   
-        </View>
+            }
+          </View>
+          <>
+            {currentEvents.map((event) => (
+              <EventBlock event={event} width={width} height={height} />
+            ))}
+          </>
+          { (new Date(JSON.parse(selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(selectedDate)).getFullYear() === new Date().getFullYear()) ?
+            <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
+              <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
+              <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
+            </View>:null
+          }   
+      </View>
     </ScrollView>
   )
 }

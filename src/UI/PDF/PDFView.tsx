@@ -4,7 +4,7 @@ import React from 'react'
 export default function PDFView() {
   return (
     <View>
-      <Text>PDFView</Text>
+      <Text>Something Went Wrong</Text>
     </View>
   )
 }

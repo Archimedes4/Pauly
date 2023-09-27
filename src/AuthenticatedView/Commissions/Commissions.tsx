@@ -51,6 +51,8 @@ export default function Commissions() {
   useEffect(() => {
     if (siteId !== "") {
       loadData()
+    } else {
+      console.log("failed")
     }
   }, [siteId])
 

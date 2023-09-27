@@ -17,6 +17,8 @@ import getClassEvents from '../Functions/getClassEventsTimetable';
 import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
 import PDFView from '../UI/PDF/PDFView';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import BackButton from '../UI/BackButton';
+import MimeTypeIcon from '../UI/Icons/mimeTypeIcon';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -42,7 +44,6 @@ export default function Notifications() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const {message, animationSpeed, powerpointBlob} = useSelector((state: RootState) => state.paulyData)
-  const {schoolDayData} = useSelector((state: RootState) => state.homepageData)
   const dispatch = useDispatch()
 
   async function loadData() {
@@ -71,7 +72,7 @@ export default function Notifications() {
                 const classResult = await getClassEvents(schedule.id, outputIds.semester, outputIds.schoolYearEventId, schoolDay, result.event.startTime)
                 if (classResult.result === loadingStateEnum.success && classResult.data !== undefined) {
                   if (classResult.data.length >= 1) {
-                    classResult.data[0].startTime
+                    console.log(classResult.data[0].startTime)
                   }
                 }
               }
@@ -111,30 +112,37 @@ export default function Notifications() {
   return (
     <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
       { (currentBreakPoint === 0) ?
-        <Link to="/">
-          <Text>Back</Text>
-        </Link>:null
+        <BackButton to='/'/>:null
       }
       <View style={{width: width, height: height * 0.1}}>
         <View style={{width: width * 0.9, height: height * 0.07, borderRadius: 15, backgroundColor: "#444444", marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
           <Text>{message}</Text>
         </View>
       </View>
+      <WidgetView />
       <BoardBlock />
       <TaskBlock />
       <InsightsBlock />
-      <View style={{backgroundColor: "#793033", width: width * 0.3, height: height * 0.3, borderRadius: 15}}>
-        <View>
-          <Text style={{color: "white"}}>{new Date().toLocaleDateString("en-US", {weekday: "long"})}</Text>
-        </View>
-        <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width * 0.3, height: height * 0.075}}>
-          <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
-        </View>
-        <View>
-          <Text style={{color: "white"}}>{schoolDayData?.schoolDay.shorthand}</Text>
-        </View>
-      </View>
     </ScrollView>
+  )
+}
+
+function WidgetView() {
+  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const {schoolDayData} = useSelector((state: RootState) => state.homepageData)
+  const dow: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  return (
+    <View style={{backgroundColor: "#793033", width: width * 0.9, height: height * 0.3, borderRadius: 15, marginLeft: width * 0.05}}>
+      <View style={{width: width * 0.9, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <Text style={{color: "white"}}>{dow[new Date().getDay()]}</Text>
+      </View>
+      <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width * 0.9, height: height * 0.075}}>
+        <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
+      </View>
+      <View>
+        <Text style={{color: "white"}}>{schoolDayData?.schoolDay.shorthand}</Text>
+      </View>
+    </View>
   )
 }
 
@@ -345,19 +353,21 @@ function BoardBlock() {
 }
 
 function InsightsBlock() {
-  const {width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   return (
     <>
       { (currentBreakPoint <= 0) ?
         <>
-          <View>
+          <Text>Recent Files</Text>
+          <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
             <TrendingFiles />
           </View>
-          <View>
+          <Text>Popular Files</Text>
+          <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
             <PopularFiles />
           </View>
         </>:
-        <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto"}}>
+        <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
           <View style={{width: width * 0.45}}>
             <TrendingFiles />
           </View>
@@ -379,12 +389,15 @@ function PopularFiles() {
         <View>
           <Text>Loading</Text>
         </View>:
-        <ScrollView  style={{height: height * 0.1-14}}>
+        <ScrollView  style={{height: height * 0.3}}>
           {(trendingState === loadingStateEnum.success) ?
             <>
               {trendingData.map((data) => (
-                <Pressable key={"User_Insight_" + data.id} onPress={() => {Linking.openURL(data.webUrl)}}>
-                  <Text style={{margin: 10}}>{data.title}</Text>
+                <Pressable key={"User_Insight_" + data.id} style={{flexDirection: "row"}} onPress={() => {Linking.openURL(data.webUrl)}}>
+                  <View style={{margin: 10}}>
+                    <MimeTypeIcon width={14} height={14} mimeType={data.type}/>
+                    <Text>{data.title}</Text>
+                  </View>
                 </Pressable>
               ))}
             </>:<Text>Failed To Load</Text>
@@ -399,17 +412,19 @@ function TrendingFiles() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {userState, userData} = useSelector((state: RootState) => state.homepageData)
   return  (
-    <View style={{height: height * 0.1, width: width * 0.5}}>
-        <Text>Recent Files</Text>
-        <ScrollView style={{height: height * 0.1-14}}>
+    <View style={{height: height * 0.3, width: width * 0.5}}>
+        <ScrollView style={{height: height * 0.3}}>
           { (userState === loadingStateEnum.loading) ?
             <Text>Loading</Text>:
             <View>
               { (userState === loadingStateEnum.success) ?
                 <View>
                   { userData.map((data) => (
-                    <Pressable key={"User_Insight_" + data.id} onPress={() => {Linking.openURL(data.webUrl)}}>
-                      <Text style={{margin: 10}}>{data.title}</Text>
+                    <Pressable key={"User_Insight_" + data.id} style={{flexDirection: "row"}} onPress={() => {Linking.openURL(data.webUrl)}}>
+                      <View style={{margin: 10, flexDirection: "row"}}>
+                        <MimeTypeIcon width={14} height={14} mimeType={data.type}/>
+                        <Text>{data.title}</Text>
+                      </View>
                     </Pressable>
                   ))}
                 </View>:<Text>Failed</Text>
