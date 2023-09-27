@@ -10,7 +10,6 @@ import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
 import getUserProfile from '../src/Functions/getUserProfile'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-
 import * as WebBrowser from 'expo-web-browser';
 import {
   AuthRequest,

@@ -1,4 +1,4 @@
-import { loadingStateEnum } from './../../types';
+import { loadingStateEnum, taskImportanceEnum, taskStatusEnum } from './../../types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 type homepageStatesType = {
@@ -17,8 +17,14 @@ const initalState: homepageStatesType = {
   trendingState: loadingStateEnum.loading,
   userData: [],
   trendingData: [],
-  userTasks: [],
-  schoolDayData: undefined
+  userTasks: [{
+    name: "",
+    importance: taskImportanceEnum.normal,
+    id: "",
+    status: taskStatusEnum.notStarted,
+    excess: true
+  }],
+  schoolDayData: undefined,
 }
 
 export const homepageDataSlice = createSlice({
@@ -42,6 +48,19 @@ export const homepageDataSlice = createSlice({
     },
     setUserTasks: (state, action: PayloadAction<taskType[]>) => {
       return {...state, userTasks: action.payload}
+    },
+    updateUserTask: (state, action: PayloadAction<{task: taskType, index: number}>) => {
+      if (action.payload.index <  state.userTasks.length) {
+        state.userTasks[action.payload.index] = action.payload.task
+      } else {
+        return state
+      }
+    },
+    unshiftUserTask: (state, action: PayloadAction<taskType>) => {
+      state.userTasks.unshift(action.payload)
+    },
+    popUserTask: (state, action: PayloadAction<number>) => {
+      state.userTasks.splice(action.payload, 1)
     },
     setSchoolDayData: (state, action: PayloadAction<schoolDayDataType>) => {
       return {...state, schoolDayData: action.payload}

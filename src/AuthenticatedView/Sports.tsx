@@ -14,6 +14,7 @@ import getSportsContent from '../Functions/getSportsContent'
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 import ProgressView from '../UI/ProgressView'
 import { ResizeMode, Video } from 'expo-av';
+import BackButton from '../UI/BackButton'
 
 declare global {
   type sportPost = {
@@ -65,10 +66,7 @@ export default function Sports() {
     <View style={{height: height, width: width, backgroundColor: "white", overflow: "hidden"}}>
       <View style={{height: height * 0.1, width: width, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         { (currentBreakPoint <= 0) ?
-            <Pressable style={{position: "absolute", flexDirection: "row", top: 0, left: 0}} onPress={() => navigate("/")}>
-              <ChevronLeft width={14} height={14}/>
-              <Text>Back</Text>
-            </Pressable>:null
+            <BackButton to='/'/>:null
         }
         <Text style={{fontFamily: "BukhariScript"}}>Sports</Text>
       </View>

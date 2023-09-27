@@ -2,45 +2,55 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { useEffect, useState } from "react";
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
 import WebView from "react-native-webview";
+import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api';
+import * as PDFJS from "pdfjs-dist"
+PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`
 
 export default function PDFView() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const [images, setImages] = useState<string[]>([])
+  const [pageIndex, setPageIndex] = useState<number>(0)
   const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
-  const [page, setPage] = useState<number>(1)
-  async function getImage() {
-    const options = {
-      density: 100,
-      saveFilename: "untitled",
-      savePath: "./images",
-      format: "png",
-      width: 600,
-      height: 600
-    };
-    const result = await fetch(powerpointBlob)
-    if (result.ok) {
-      const blob = await result.blob()
-      const arrayBuffer = await blob.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-     
+  
+  async function convertPdfToImages(url: string) {
+    const images: string[] = [];
+    console.log("fetch")
+    const dataResult = await fetch(url)
+    if (dataResult.ok) {
+      const blob = await dataResult.blob()
+      const base64: string | undefined = await blobToBase64(blob)
+      if (base64 === undefined) {return}
+      var docInitParams: DocumentInitParameters = {data: base64}
       
-      
+      const pdf = await PDFJS.getDocument(docInitParams).promise
+      const canvas = document.createElement("canvas"); //Fail
+      for (let i = 0; i < pdf.numPages; i++) {
+        const page = await pdf.getPage(i + 1);
+        const viewport = page.getViewport({ scale: 1 });
+        const context = canvas.getContext("2d"); //Fail
+        canvas.height = viewport.height; //Fail
+        canvas.width = viewport.width; //Fail
+        if (context !== null) {
+          await page.render({ canvasContext: context, viewport: viewport }).promise;
+          console.log(canvas.toDataURL())
+          images.push(canvas.toDataURL());
+        }
+      }
+      canvas.remove();
+      setImages(images)
     }
   }
-  useEffect(() => {
-    getImage()
-  }, [powerpointBlob, page])
   
   return (
     <>
-      <WebView
-        style={{width: width * 0.5, height: height * 0.2}}
-        source={{ html: '<embed src="' + powerpointBlob + "#page=2"+ '" width="' + width * 0.5 + 'px" height="' +  height * 0.2 + 'px" />' }}
-        nestedScrollEnabled={false}
-        scrollEnabled={false}
-        scalesPageToFit={false}
-      />
+      <View>
+        
+      </View>
     </>
   )
+}
+
+function blobToBase64(blob: Blob): string | PromiseLike<string | undefined> | undefined {
+  throw new Error('Function not implemented.');
 }

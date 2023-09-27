@@ -44,6 +44,7 @@ export enum commissionTypeEnum {
 }
 
 export enum paulyEventType {
+  personal,
   regular,
   schoolDay,
   schoolYear,
@@ -85,7 +86,8 @@ declare global {
     name: string
     id: string
     importance: taskImportanceEnum,
-    status: taskStatusEnum
+    status: taskStatusEnum,
+    excess: boolean
   }
   type schoolDayDataCompressedType = {
     schoolDayId: string,

@@ -116,8 +116,8 @@ export default function Calendar() {
       }
       </View>
       { isShowingAddDate ?
-        <View style={{zIndex: 2, position: "absolute", left: width * 0.2, top: height * 0.1}}>
-          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={width * 0.6} height={height * 0.8} editing={isEditing} editData={selectedEvent} />
+        <View style={{zIndex: 2, position: "absolute", left: width * 0.05 + (((width >= 576) ? ((width * 0.3) - 576):0)/2), top: height * 0.1}}>
+          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={width * 0.9 - ((width >= 576) ? (width * 0.3):0)} height={height * 0.8} editing={isEditing} editData={selectedEvent} />
         </View>:null
       }
     </View>

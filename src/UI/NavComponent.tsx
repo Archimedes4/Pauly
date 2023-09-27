@@ -39,6 +39,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
   const [iconLength, setIconLength] = useState<number>(0)
   const navigation = useNavigate()
   const dispatch = useDispatch()
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
 
   useEffect(() => {
     //checking to see if the width or the height is going to be the limiting factor.
@@ -96,9 +97,11 @@ export default function NavBarComponent({width, height}:{width: number, height: 
         <NavBarBlock des='/sports' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Sports'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
           <Image source={require("../../assets/images/Football.png")} resizeMode='contain' style={{width: iconLength, height: iconLength}}/>
         </NavBarBlock>
-        <NavBarBlock des='/profile/government' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Government'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
-          <GovernmentIcon width={iconLength} height={iconLength} />
-        </NavBarBlock>
+        { isGovernmentMode ?
+          <NavBarBlock des='/profile/government' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Government'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
+            <GovernmentIcon width={iconLength} height={iconLength} />
+          </NavBarBlock>:null
+        }
         <Pressable onHoverIn={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}} onPress={() => {dispatch(isShowingProfileBlockSlice.actions.setIsShowingProfileBlock(!store.getState().isShowingProfileBlock))}}  style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? blockLength * 2.5:blockLength, margin: 0, position: "absolute", left: expandedMode ? (width - blockLength)/2:undefined, bottom: height * 0.05}]}>
           <View style={{width: (expandedMode) ? blockLength * 2.5:blockLength, height: iconLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined, flexDirection: "row"}}>
             { (uri !== "") ?

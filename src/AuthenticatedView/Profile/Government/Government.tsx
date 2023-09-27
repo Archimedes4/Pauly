@@ -19,7 +19,13 @@ function Block({height, width, text, imageSource, children}:{height: number, wid
 
 export default function Government() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
   const navigate = useNavigate()
+  useEffect(() => {
+    if (!isGovernmentMode) {
+      navigate("/")
+    }
+  }, [])
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../../assets/fonts/BukhariScript.ttf'),
   });

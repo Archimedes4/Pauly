@@ -17,6 +17,7 @@ import addEventReducer from './reducers/addEventReducer';
 import homepageDataReducer from './reducers/homepageDataReducer';
 import expandedModeReducer from './reducers/expandedModeReducer';
 import isShowingProfileBlockReducer from './reducers/isShowingProfileBlockReducer';
+import isGovernmentModeReducer from './reducers/isGovernmentModeReducer';
 
 const store = configureStore({
   reducer: {
@@ -38,7 +39,8 @@ const store = configureStore({
     addEvent: addEventReducer,
     homepageData: homepageDataReducer,
     expandedMode: expandedModeReducer,
-    isShowingProfileBlock: isShowingProfileBlockReducer
+    isShowingProfileBlock: isShowingProfileBlockReducer,
+    isGovernmentMode: isGovernmentModeReducer
   }
 });
 

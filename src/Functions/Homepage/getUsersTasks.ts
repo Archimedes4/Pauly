@@ -20,10 +20,17 @@ export default async function getUsersTasks(deltaRunAgain?: boolean): Promise<{r
         name: taskData["value"][index]["title"],
         id: taskData["value"][index]["id"],
         importance: (taskData["value"][index]["importance"] === "high") ? taskImportanceEnum.high : (taskData["value"][index]["importance"] === "low") ? taskImportanceEnum.low : taskImportanceEnum.normal,
-        status: (taskData["value"][index]["status"] === "notStarted") ? taskStatusEnum.notStarted:(taskData["value"][index]["status"] === "inProgress") ? taskStatusEnum.inProgress:(taskData["value"][index]["status"] === "completed") ? taskStatusEnum.completed:(taskData["value"][index]["status"] === "waitingOnOthers") ? taskStatusEnum.waitingOnOthers:taskStatusEnum.deferred
+        status: (taskData["value"][index]["status"] === "notStarted") ? taskStatusEnum.notStarted:(taskData["value"][index]["status"] === "inProgress") ? taskStatusEnum.inProgress:(taskData["value"][index]["status"] === "completed") ? taskStatusEnum.completed:(taskData["value"][index]["status"] === "waitingOnOthers") ? taskStatusEnum.waitingOnOthers:taskStatusEnum.deferred,
+        excess: false
       })
     }
-    var returnTasksString: string[] = []
+    resultTasks.unshift({
+      name: "",
+      importance: taskImportanceEnum.normal,
+      id: "",
+      status: taskStatusEnum.notStarted,
+      excess: true
+    })
     return {result: loadingStateEnum.success, data: resultTasks}
   } else {
     if (deltaMode) {

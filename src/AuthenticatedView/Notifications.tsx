@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
 import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
-import { loadingStateEnum, semesters } from '../types';
+import { loadingStateEnum, semesters, taskImportanceEnum, taskStatusEnum } from '../types';
 import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import getUsersTasks from '../Functions/Homepage/getUsersTasks';
@@ -16,6 +16,7 @@ import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import getClassEvents from '../Functions/getClassEventsTimetable';
 import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
 import PDFView from '../UI/PDF/PDFView';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -115,7 +116,7 @@ export default function Notifications() {
         </Link>:null
       }
       <View style={{width: width, height: height * 0.1}}>
-        <View style={{width: width * 0.9, height: height * 0.07, borderRadius: 15, backgroundColor: "#444444", margin: "auto"}}>
+        <View style={{width: width * 0.9, height: height * 0.07, borderRadius: 15, backgroundColor: "#444444", marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
           <Text>{message}</Text>
         </View>
       </View>
@@ -143,7 +144,7 @@ function TaskBlock() {
   return (
     <View style={{width: width}}>
       <Text>Tasks</Text>
-      <View style={{shadowColor: "black", width: width * 0.9, marginLeft: width * 0.05, marginRight: width * 0.05, height: height * 0.5, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+      <View style={{shadowColor: "black", width: width * 0.9, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", marginRight: width * 0.05, height: height * 0.5, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
         <ScrollView style={{margin: 10, height: height * 0.5 - 20}}>
           { (taskState === loadingStateEnum.loading) ?
             <View style={{width: width * 0.9, height: height * 0.5-20, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
@@ -153,10 +154,9 @@ function TaskBlock() {
             <>
               { (taskState === loadingStateEnum.success) ?
                 <>
-                  {userTasks.map((task) => (
-                    <TaskItem task={task} key={"User_Task_" + task.id} excessItem={false}/>
+                  {userTasks.map((task, index) => (
+                    <TaskItem task={task} key={"User_Task_" + task.id} index={index}/>
                   ))}
-                  <TaskItem key={"User_Task_Excess"} excessItem={true}/>
                 </>:
                 <View>
                   <Text>Failed</Text>
@@ -170,23 +170,147 @@ function TaskBlock() {
   )
 }
 
-function TaskItem({task, excessItem}:{task?: taskType, excessItem: boolean}) {
-  const [checked, setChecked] = useState<boolean>(false)
-  const [taskName, setTaskName] = useState<string>(task ? task.name:"")
+function DeleteTask({onDelete}:{onDelete: () => void}) {
   return (
-    <View style={{flexDirection: "row"}}>
-      <Pressable onPress={() => {setChecked(!checked)}}>
-        <CustomCheckBox checked={checked} checkMarkColor={'blue'} strokeDasharray={excessItem ? 5:undefined} height={20} width={20} />
-      </Pressable>
-      <View style={{justifyContent: "center", alignItems: "center", alignContent: "center"}}>
-        <TextInput 
-          value={taskName}
-          onChangeText={(e) => {
-            setTaskName(e)
-          }}
-        />
+    <Pressable onPress={() => onDelete()}>
+      <Text>Delete</Text>
+    </Pressable>
+  )
+}
+
+function TaskItem({task, index}:{task: taskType, index: number}) {
+  const [checked, setChecked] = useState<boolean>((task.status === taskStatusEnum.completed))
+  const [updateTaskState, setUpdateTaskState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const { userTasks } = useSelector((state: RootState) => state.homepageData)
+  const [currentText, setCurrentText] = useState(task.name)
+  const [mounted, setMounted] = useState(false)
+  const dispatch = useDispatch()
+  async function updateTaskStatus(status: taskStatusEnum) {
+    setUpdateTaskState(loadingStateEnum.loading)
+    const data = {
+      "status":(status === taskStatusEnum.notStarted) ? "notStarted":(status === taskStatusEnum.inProgress) ? "inProgress":(status === taskStatusEnum.completed) ? "completed":(status === taskStatusEnum.waitingOnOthers) ? "waitingOnOthers":"deferred",
+    }
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`, "PATCH", undefined, JSON.stringify(data))
+    if (result.ok) {
+      setUpdateTaskState(loadingStateEnum.success) 
+    } else {
+      setUpdateTaskState(loadingStateEnum.failed)
+    }
+  }
+  async function updateText() {
+    const data = {
+      "title":userTasks[index].name
+    }
+    if (task.excess === false) {
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`, "PATCH", undefined, JSON.stringify(data))
+      if (result.ok) {
+        setUpdateTaskState(loadingStateEnum.success)
+      } else {
+        setUpdateTaskState(loadingStateEnum.failed)
+      }
+    } else {
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks`, "POST", undefined, JSON.stringify(data))
+      if (result.ok) {
+        const data = await result.json()
+        dispatch(homepageDataSlice.actions.updateUserTask({task: {
+          name: task.name,
+          id: data["id"],
+          importance: (data["importance"] === "high") ? taskImportanceEnum.high : (data["importance"] === "low") ? taskImportanceEnum.low : taskImportanceEnum.normal,
+          status: (data["status"] === "notStarted") ? taskStatusEnum.notStarted:(data["status"] === "inProgress") ? taskStatusEnum.inProgress:(data["status"] === "completed") ? taskStatusEnum.completed:(data["status"] === "waitingOnOthers") ? taskStatusEnum.waitingOnOthers:taskStatusEnum.deferred,
+          excess: false
+        }, index: index}))
+        dispatch(homepageDataSlice.actions.unshiftUserTask({
+          name: "",
+          importance: taskImportanceEnum.normal,
+          id: "",
+          status: taskStatusEnum.notStarted,
+          excess: true
+        }))
+        setUpdateTaskState(loadingStateEnum.success)
+      } else {
+        setUpdateTaskState(loadingStateEnum.failed)
+      }
+    }
+  }
+
+  async function deleteTask() {
+    if (task !== undefined) {
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`, "DELETE")
+      if (result.ok) {
+        const index = store.getState().homepageData.userTasks.findIndex((e) => e.id === task.id)
+        console.log(index)
+        if (index !== -1){
+          dispatch(homepageDataSlice.actions.popUserTask(index))
+        }
+      } else {
+
+      }
+    }
+  }
+
+  async function checkUpdateText() {
+    setUpdateTaskState(loadingStateEnum.loading)
+    if (index !== undefined) {
+      const taskNameSave = store.getState().homepageData.userTasks[index].name
+      setTimeout(() => {
+        if (store.getState().homepageData.userTasks[index].name === taskNameSave) {
+          console.log("ran")
+          updateText() 
+        } else {
+          console.log("Not ran")
+        }
+      }, 1500)
+    }
+  }
+
+  useEffect(() => {
+    if (mounted) {
+      checkUpdateText()
+    } else {
+      setMounted(true)
+    }
+  }, [currentText])
+
+  return (
+    <Swipeable onSwipeableOpen={(e) => {console.log(e, "Logged")}} renderRightActions={() => <>
+      {task.excess ?
+        null:<DeleteTask onDelete={() => deleteTask()}/>
+      }
+    </>}>
+      <View style={{flexDirection: "row", width: width * 0.9}}>
+        <Pressable onPress={(e) => {
+          setChecked(!checked)
+          if (e) {
+            updateTaskStatus(taskStatusEnum.completed)
+          } else {
+            updateTaskStatus(taskStatusEnum.notStarted)
+          }
+        }}>
+          <CustomCheckBox checked={checked} checkMarkColor={'blue'} strokeDasharray={(task.excess) ? 5:undefined} height={20} width={20} />
+        </Pressable>
+        <View style={{justifyContent: "center", alignItems: "center", alignContent: "center"}}>
+          <TextInput 
+            value={task.name}
+            onChangeText={(e) => {
+              var newTask: taskType = {
+                name: task.name,
+                id: task.id,
+                importance: task.importance,
+                status: task.status,
+                excess: task.excess
+              }
+              newTask["name"] = e
+              dispatch(homepageDataSlice.actions.updateUserTask({task: newTask, index: index}))
+              setCurrentText(e)
+            }}
+          />
+        </View>
+        <View>
+          
+        </View>
       </View>
-    </View>
+    </Swipeable>
   ) 
 }
 

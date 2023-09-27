@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#793033"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -22,7 +22,7 @@
         "keychain-access-groups":["com.microsoft.identity.universalstorage", "com.microsoft.adalcache"],
         "LSApplicationQueriesSchemes": ["msauthv2", "msauthv3"]
       },
-      "buildNumber":"42"
+      "buildNumber":"43"
     },
     "android": {
       "adaptiveIcon": {

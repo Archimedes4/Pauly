@@ -15,6 +15,7 @@ import AppMain from './AppMain/AppMain';
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -128,7 +129,9 @@ function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
-        <AppCore />
+        <GestureHandlerRootView style={{ flex: 1 }}>
+         <AppCore />
+        </GestureHandlerRootView>
       </SafeAreaProvider>
     </Provider>
   )

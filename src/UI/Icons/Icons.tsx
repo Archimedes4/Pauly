@@ -1,11 +1,12 @@
 import { View, Text, StyleProp, ViewStyle } from 'react-native'
 import React from 'react'
-import Svg, { Circle, G, Path, Polygon, Rect } from 'react-native-svg'
+import Svg, { Circle, G, Path, Polygon, Rect, Shape, SvgProps } from 'react-native-svg'
 
 interface iconProps {
   width: number;
   height: number;
-  style?:  StyleProp<ViewStyle>;
+  style?: StyleProp<ViewStyle>;
+  props?: Shape<SvgProps>
 }
 
 //Icons
@@ -132,9 +133,9 @@ export function AddIcon({width, height, style}:iconProps) {
   )
 }
 
-export function CloseIcon({width, height, style}:iconProps) {
+export function CloseIcon({width, height, style, props}:iconProps) {
   return (
-    <Svg width={width} height={height} style={style} viewBox="0 0 24 24" fill="none">
+    <Svg width={width} height={height} style={style} {...props} viewBox="0 0 24 24" fill="none">
       <G strokeWidth="0"/>
       <G strokeLinecap="round" strokeLinejoin="round"/>
       <G>
@@ -144,23 +145,19 @@ export function CloseIcon({width, height, style}:iconProps) {
   )
 }
 
-export function ChevronLeft({width, height, style}:iconProps) {
+export function ChevronLeft({width, height, style, props}:iconProps) {
   return (
-    <View>
-        <Svg width={width} height={height} style={style} fill="currentColor" viewBox="0 0 16 16">
-            <Path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-        </Svg>
-    </View>
+    <Svg width={width} height={height} style={style}  viewBox="0 0 16 16" {... props}>
+      <Path fillRule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+    </Svg>
   )
 }
 
 export function ChevronRight({width, height, style}:iconProps) {
   return (
-    <View>
-        <Svg width={width} height={height} style={style} fill="currentColor" viewBox="0 0 16 16">
-            <Path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-        </Svg>
-    </View>
+    <Svg width={width} height={height} style={style} viewBox="0 0 16 16">
+      <Path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+    </Svg>
   )
 }
 

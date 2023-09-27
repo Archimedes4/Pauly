@@ -12,6 +12,7 @@ import getCommissions from '../../Functions/commissions/getCommissions';
 import { loadingStateEnum } from '../../types';
 import CommissionsView from './CommissionsView';
 import ProgressView from '../../UI/ProgressView';
+import BackButton from '../../UI/BackButton';
 
 enum CommissionMode{
   Before,
@@ -72,10 +73,7 @@ export default function Commissions() {
       <View style={{width: width, height: height, backgroundColor: "white"}}>
         <View style={{width: width, height: height * 0.1, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           { (currentBreakPoint <= 0) ?
-            <Pressable onPress={() => navigate("/")} style={{position: "absolute", top: 0, left: 0}}>
-              <Text>Back</Text>
-            </Pressable>
-            :null
+            <BackButton to='/'/>:null
           }
           <Text style={{fontFamily: 'BukhariScript', fontSize:  25}}>Commissions</Text>
         </View>
@@ -89,8 +87,8 @@ export default function Commissions() {
               { (commissionState === loadingStateEnum.success) ?
                 <ScrollView style={{height: height * 0.9}}>
                   { currentCommissions.map((item: commissionType) => (
-                    <Pressable onPress={() => {setSelectedCommission(item.commissionId)}} key={"Link_" + item.commissionId}>
-                      <View key={item.commissionId} style={{borderRadius: 15, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowRadius: 5, marginLeft: width * 0.025, marginRight: width * 0.025, marginTop: height * 0.02}}>
+                    <Pressable onPress={() => {setSelectedCommission(item.commissionId)}} key={"Link_" + item.commissionId} style={{backgroundColor: "transparent"}}>
+                      <View key={item.commissionId} style={{borderRadius: 15, marginLeft: width * 0.025, elevation: 2, marginRight: width * 0.025, marginTop: height * 0.02, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5}}>
                         <View style={{margin: 10}}>
                           <Text>{item.title}</Text>
                           <Text>{item.startDate?.toLocaleDateString("en-US", {month: "long", day: "numeric", minute: "numeric"})}</Text>
@@ -112,6 +110,15 @@ export default function Commissions() {
           </View>
           <View>
             <Text>Current</Text>
+          </View>
+          <View>
+            <Text>Past</Text>
+          </View>
+          <View>
+            <Text>Future</Text>
+          </View>
+          <View>
+            <Text>Claimed</Text>
           </View>
         </ScrollView>
       </View>

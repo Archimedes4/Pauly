@@ -44,12 +44,6 @@ const pca = new PublicClientApplication({
 const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"]
 
 export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
-  async function signOut() {
-    // Same as `pca.removeAccount` with the exception that, if called on iOS with the `signoutFromBrowser` option set to true, it will additionally remove the account from the system browser
-    // Remove all tokens from the cache for this application for the provided account
-    pca.logoutPopup()
-  }
-
   return (
     <MsalProvider instance={pca}>
       <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height, zIndex: 2, position: "absolute", left: 0, top: 0}}>
@@ -63,7 +57,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   const { instance } = useMsal();
   const dispatch = useDispatch()
 
-  async function getAuthToken() {
+  async function getAuthToken(userInitated: boolean) {
     // Account selection logic is app dependent. Adjust as needed for different use cases.
     // Set active acccount on page load
     console.log("Running auth")
@@ -90,12 +84,12 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
     instance.handleRedirectPromise().then(authResult=>{
       // Check if user signed in 
       const account = instance.getActiveAccount();
-      if(!account){
+      if(!account && userInitated){
         // redirect anonymous user to login page 
         instance.loginRedirect({
           scopes: scopes
         });
-      } else {
+      } else if (account) {
         if (authResult !== undefined && authResult !== null) {
           dispatch(authenticationTokenSlice.actions.setAuthenticationToken(authResult.accessToken))
           getPaulyLists(authResult.accessToken)
@@ -109,7 +103,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   }
 
   useEffect(() => {
-    getAuthToken()
+    getAuthToken(false)
   }, [])
 
   return (
@@ -118,7 +112,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
         <AuthenticatedViewMain dimensions={dimensions} width={dimensions.window.width}/>
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-        <Login onGetAuthToken={() => {getAuthToken()}} width={dimensions.window.width}/>
+        <Login onGetAuthToken={() => {getAuthToken(true)}} width={dimensions.window.width}/>
       </UnauthenticatedTemplate>
     </SafeAreaView>
   )

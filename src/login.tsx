@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Image } from 'react-native'
+import { View, Text, Pressable, Image, Keyboard } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -6,11 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './Redux/store';
 import { safeAreaColorsSlice } from './Redux/reducers/safeAreaColorsReducer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GearIcon } from './UI/Icons/Icons';
 
 export default function Login({onGetAuthToken, width}:{onGetAuthToken: () => void, width: number}) {
   const {height} = useSelector((state: RootState) => state.dimentions)
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false)
+  const [isGovernmentButtonHover, setIsGovernmentButtonHover] = useState<boolean>(false)
   const [fontSize, setFontSize] = useState<number>(0)
+  const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] = useState<boolean>(false)
   const dispatch = useDispatch()
   const insets = useSafeAreaInsets();
 
@@ -45,7 +48,7 @@ export default function Login({onGetAuthToken, width}:{onGetAuthToken: () => voi
   }
 
   return (
-    <View style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: height, width: width, overflow: "hidden", top: -insets.top}}>
+    <Pressable style={{backgroundColor: "#793033", alignContent: "center", alignItems: "center", justifyContent: "center", height: height, width: width, overflow: "hidden", top: -insets.top}} onLongPress={() => {setIsShowingGovernmentLogin(true)}} delayLongPress={5000}>
       <View id='Content_Area' style={{width: (width < height) ? width:height, height: (width < height) ? width:height, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
         <View style={{width: fontSize * 1.65, height: fontSize, flexDirection: "row"}} id='Text_Container'>
           <Image source={require("../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: fontSize, height: fontSize, position: "absolute", left: -fontSize * 0.2}} />
@@ -54,7 +57,13 @@ export default function Login({onGetAuthToken, width}:{onGetAuthToken: () => voi
         <Pressable onPress={async () => {onGetAuthToken()}} onHoverIn={() => {setIsButtonHover(true)}} onHoverOut={() => {setIsButtonHover(false)}} style={{height: height * 0.09, width: width * 0.5, borderRadius: 50, backgroundColor: isBottonHover ? "#444444":"white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: isBottonHover ? "white":"black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, marginTop: (width < height) ? width * 0.1:height * 0.1}}>
           <Text style={{textAlign: "center", color: isBottonHover ? "white":"black", fontWeight: "bold"}}>LOGIN</Text>
         </Pressable>
+        { isShowingGovernmentLogin ?
+          <Pressable onPress={async () => {onGetAuthToken()}} onHoverIn={() => {setIsGovernmentButtonHover(true)}} onHoverOut={() => {setIsGovernmentButtonHover(false)}} style={{height: height * 0.09, width: width * 0.5, borderRadius: 50, backgroundColor: isGovernmentButtonHover ? "#444444":"white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: isBottonHover ? "white":"black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, marginTop: (width < height) ? width * 0.1:height * 0.1, flexDirection: "row"}}>
+            <GearIcon width={18} height={18} />
+            <Text style={{textAlign: "center", color: isBottonHover ? "white":"black", fontWeight: "bold"}}>LOGIN AS ADMIN</Text>
+          </Pressable>:null
+        }
       </View>
-    </View>
+    </Pressable>
   )
 }

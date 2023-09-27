@@ -118,7 +118,7 @@ function SearchBox({searchValue, setSearchValue}:{searchValue: string, setSearch
           </View>
         }
         <View>
-          <TextInput placeholder='Search' placeholderTextColor={"Black"} value={searchValue} onChangeText={setSearchValue} style={{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0, outlineStyle: 'none'}} enterKeyHint='search' returnKeyType='search' inputMode='search'/>
+          <TextInput placeholder='Search' placeholderTextColor={"Black"} value={searchValue} onChangeText={setSearchValue} style={{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0, outlineStyle: (Platform.OS === "web") ? 'none':undefined}} enterKeyHint='search' returnKeyType='search' inputMode='search'/>
           <View
             style={{height: 0, alignSelf: 'flex-start', overflow: "hidden"}}
             onLayout={e => {

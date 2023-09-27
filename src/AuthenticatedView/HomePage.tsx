@@ -103,7 +103,7 @@ export default function HomePage() {
         <Link to={'/commissions'}>
           <View style={{borderColor: "black", borderWidth: 2}}>
             <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-            <MedalIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
+            <MedalIcon width={width * 0.5} height={height * 0.23} style={{position: "absolute", top: height * 0.01, zIndex: 2}}/>
           </View>
         </Link>
         <Link to={'/sports'}>
