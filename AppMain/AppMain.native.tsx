@@ -21,6 +21,7 @@ import {
   useAutoDiscovery,
 } from 'expo-auth-session';
 import { StatusBar } from 'expo-status-bar'
+import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
 
 if (Platform.OS === "web") {
   WebBrowser.maybeCompleteAuthSession();
@@ -65,12 +66,26 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
     }
   }
 
+  async function getGovernmentAuthToken() {
+    if (discovery !== null){
+      authRequest.promptAsync(discovery).then(async (res) => {
+        if (authRequest && res?.type === 'success' && discovery) {
+          if (res.authentication !== null) {
+            dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.authentication.accessToken))
+            getPaulyLists(res.authentication.accessToken)
+            getUserProfile(res.authentication.accessToken)
+            dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(true))
+          }
+      }})
+    }
+  }
+
 
   return (
     <>
       { (authenticationToken !== '') ?  
         <AuthenticatedView dimensions={dimensions} width={dimensions.window.width}/>:
-        <Login onGetAuthToken={() => {getAuthToken()}} width={dimensions.window.width}/>
+        <Login onGetAuthToken={() => {getAuthToken()}} onGetGovernmentAuthToken={() => {getGovernmentAuthToken()}} width={dimensions.window.width}/>
       }
     </>
   )

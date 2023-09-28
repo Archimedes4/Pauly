@@ -16,7 +16,6 @@ function blobToBase64(blob: Blob) {
       if (typeof reader.result !== 'string') {
         resolve(undefined)
       } else {
-        console.log(reader.result)
         resolve(reader.result)
       }
     };
@@ -32,7 +31,6 @@ export default function PDFView() {
   
   async function convertPdfToImages(url: string) {
     const images: string[] = [];
-    console.log("fetch")
     const dataResult = await fetch(url)
     if (dataResult.ok) {
       const blob = await dataResult.blob()
@@ -50,7 +48,6 @@ export default function PDFView() {
         canvas.width = viewport.width; //Fail
         if (context !== null) {
           await page.render({ canvasContext: context, viewport: viewport }).promise;
-          console.log(canvas.toDataURL())
           images.push(canvas.toDataURL());
         }
       }

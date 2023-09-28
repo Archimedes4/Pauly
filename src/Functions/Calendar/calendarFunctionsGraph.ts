@@ -7,7 +7,7 @@ import getDressCode from "../Homepage/getDressCode";
 
 //Defaults to org wide events
 export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
-  const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$expand=singleValueExtendedProperties", "GET", true)
+  const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties", "GET", true)
   if (result.ok){
     const data = await result.json()
     var newEvents: eventType[] = []
@@ -21,8 +21,9 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
             newEvents.push({
               id: data["value"][index]["id"],
               name: data["value"][index]["subject"],
-              startTime: new Date(data["value"][index]["start"]["dateTime"]),
-              endTime: new Date(data["value"][index]["end"]["dateTime"]),
+              startTime: data["value"][index]["start"]["dateTime"],
+              endTime: data["value"][index]["end"]["dateTime"],
+              allDay: data["value"][index]["isAllDay"],
               eventColor: "white",
               paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID}).value === "schoolYear") ? "schoolYear":undefined,
               paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID}).value,
@@ -35,8 +36,9 @@ export async function getGraphEvents(schoolYear: boolean, url?: string, referenc
         const newEvent: eventType = {
           id: data["value"][index]["id"],
           name: data["value"][index]["subject"],
-          startTime: new Date(data["value"][index]["start"]["dateTime"]),
-          endTime: new Date(data["value"][index]["end"]["dateTime"]),
+          startTime: data["value"][index]["start"]["dateTime"],
+          endTime: data["value"][index]["end"]["dateTime"],
+          allDay: data["value"][index]["isAllDay"],
           eventColor: "white",
           microsoftEvent: true,
           microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
@@ -58,8 +60,9 @@ export async function getEvent(id: string): Promise<{result: loadingStateEnum, d
     var event: eventType = {
       id: data["id"],
       name: data["subject"],
-      startTime: new Date(data["start"]["dateTime"]),
-      endTime: new Date(data["end"]["dateTime"]),
+      startTime: data["start"]["dateTime"],
+      endTime: data["end"]["dateTime"],
+      allDay: data["isAllDay"],
       eventColor: "white",
       microsoftEvent: true,
       microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["id"]
@@ -164,8 +167,9 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
             const event: eventType = {
               id: data["value"][index]["id"],
               name: data["value"][index]["subject"],
-              startTime: new Date(data["value"][index]["start"]["dateTime"]),
-              endTime: new Date(data["value"][index]["end"]["dateTime"]),
+              startTime: data["value"][index]["start"]["dateTime"],
+              endTime: data["value"][index]["end"]["dateTime"],
+              allDay: data["value"][index]["isAllDay"],
               eventColor: "white",
               microsoftEvent: true,
               microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],

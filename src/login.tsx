@@ -8,7 +8,7 @@ import { safeAreaColorsSlice } from './Redux/reducers/safeAreaColorsReducer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GearIcon } from './UI/Icons/Icons';
 
-export default function Login({onGetAuthToken, width}:{onGetAuthToken: () => void, width: number}) {
+export default function Login({onGetAuthToken, onGetGovernmentAuthToken, width}:{onGetAuthToken: () => void, onGetGovernmentAuthToken: () => void, width: number}) {
   const {height} = useSelector((state: RootState) => state.dimentions)
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false)
   const [isGovernmentButtonHover, setIsGovernmentButtonHover] = useState<boolean>(false)
@@ -58,7 +58,7 @@ export default function Login({onGetAuthToken, width}:{onGetAuthToken: () => voi
           <Text style={{textAlign: "center", color: isBottonHover ? "white":"black", fontWeight: "bold"}}>LOGIN</Text>
         </Pressable>
         { isShowingGovernmentLogin ?
-          <Pressable onPress={async () => {onGetAuthToken()}} onHoverIn={() => {setIsGovernmentButtonHover(true)}} onHoverOut={() => {setIsGovernmentButtonHover(false)}} style={{height: height * 0.09, width: width * 0.5, borderRadius: 50, backgroundColor: isGovernmentButtonHover ? "#444444":"white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: isBottonHover ? "white":"black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, marginTop: (width < height) ? width * 0.1:height * 0.1, flexDirection: "row"}}>
+          <Pressable onPress={async () => {onGetGovernmentAuthToken()}} onHoverIn={() => {setIsGovernmentButtonHover(true)}} onHoverOut={() => {setIsGovernmentButtonHover(false)}} style={{height: height * 0.09, width: width * 0.5, borderRadius: 50, backgroundColor: isGovernmentButtonHover ? "#444444":"white", alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: isBottonHover ? "white":"black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, marginTop: (width < height) ? width * 0.1:height * 0.1, flexDirection: "row"}}>
             <GearIcon width={18} height={18} />
             <Text style={{textAlign: "center", color: isBottonHover ? "white":"black", fontWeight: "bold"}}>LOGIN AS ADMIN</Text>
           </Pressable>:null

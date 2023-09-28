@@ -9,6 +9,7 @@ type homepageStatesType = {
   trendingData: resourceType[]
   userTasks: taskType[]
   schoolDayData: undefined | schoolDayDataType
+  startTime: string
 }
 
 const initalState: homepageStatesType = {
@@ -25,6 +26,7 @@ const initalState: homepageStatesType = {
     excess: true
   }],
   schoolDayData: undefined,
+  startTime: ""
 }
 
 export const homepageDataSlice = createSlice({
@@ -64,6 +66,9 @@ export const homepageDataSlice = createSlice({
     },
     setSchoolDayData: (state, action: PayloadAction<schoolDayDataType>) => {
       return {...state, schoolDayData: action.payload}
+    },
+    setStartTime: (state, action: PayloadAction<string>) => {
+      state.startTime = action.payload
     }
   }
 })

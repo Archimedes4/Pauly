@@ -36,10 +36,11 @@ declare global {
   type eventType = {
     id: string
     name: string
-    startTime: Date
-    endTime: Date
-    eventColor: string
-    microsoftEvent: boolean
+    startTime: string
+    endTime: string //This is held in iso format
+    eventColor: string //This is held in iso format
+    microsoftEvent: boolean,
+    allDay: boolean
     paulyEventType?: paulyEventTypes
     paulyEventData?: string
     microsoftReference?: string
@@ -174,7 +175,7 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
           const endTimeDate = new Date(event.endTime)
           if (check >= startTimeDate && check <= endTimeDate) {
             //Event is on the date
-            if (check.getTime() !== event.endTime.getTime()) {
+            if (check.getTime() !== new Date(event.endTime).getTime()) {
               events.push(event)
             }
           }

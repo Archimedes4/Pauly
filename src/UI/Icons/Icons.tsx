@@ -253,14 +253,14 @@ export function SearchIcon({width, height, style}:iconProps) {
 export function WordIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 32 32" fill="#000000">
-      <G id="SVGRepo_bgCarrier" stroke-width="0"/>
-      <G id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <G id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <G id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
       <G id="SVGRepo_iconCarrier">
         <Defs>
           <LinearGradient id="a" x1="4.494" y1="-1712.086" x2="13.832" y2="-1695.914" gradientTransform="translate(0 1720)" gradientUnits="userSpaceOnUse">
-            <Stop offset="0" stop-color="#2368c4"/>
-            <Stop offset="0.5" stop-color="#1a5dbe"/>
-            <Stop offset="1" stop-color="#1146ac"/>
+            <Stop offset="0" stopColor="#2368c4"/>
+            <Stop offset="0.5" stopColor="#1a5dbe"/>
+            <Stop offset="1" stopColor="#1146ac"/>
           </LinearGradient>
         </Defs>
         <Path d="M28.806,3H9.705A1.192,1.192,0,0,0,8.512,4.191h0V9.5l11.069,3.25L30,9.5V4.191A1.192,1.192,0,0,0,28.806,3Z" fill={"#41a5ee"} />
@@ -271,7 +271,7 @@ export function WordIcon({width, height, style}:iconProps) {
         <Path d="M15.783,8.85H8.512V25.1h7.271a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.783,8.85Z" opacity={0.20000000298023224} />{/*isolation:isolate*/}
         <Path d="M15.783,8.85H8.512V23.8h7.271a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.783,8.85Z" opacity={0.20000000298023224} />{/*isolation:isolate*/}
         <Path d="M15.132,8.85H8.512V23.8h6.62a1.2,1.2,0,0,0,1.194-1.191V10.041A1.2,1.2,0,0,0,15.132,8.85Z" opacity={0.20000000298023224} />{/*isolation:isolate*/}
-        <Path d="M3.194,8.85H15.132a1.193,1.193,0,0,1,1.194,1.191V21.959a1.193,1.193,0,0,1-1.194,1.191H3.194A1.192,1.192,0,0,1,2,21.959V10.041A1.192,1.192,0,0,1,3.194,8.85Z" fill={"url(#a)"}/>
+        <Path d="M3.194,8.85H15.132a1.193,1.193,0,0,1,1.194,1.191V21.959a1.193,1.193,0,0,1-1.194,1.191H3.194A1.192,1.192,0,0,1,2,21.959V10.041A1.192,1.192,0,0,1,3.194,8.85Z" fill={"#215091"}/>
         <Path d="M6.9,17.988c.023.184.039.344.046.481h.028c.01-.13.032-.287.065-.47s.062-.338.089-.465l1.255-5.407h1.624l1.3,5.326a7.761,7.761,0,0,1,.162,1h.022a7.6,7.6,0,0,1,.135-.975l1.039-5.358h1.477l-1.824,7.748H10.591L9.354,14.742q-.054-.222-.122-.578t-.084-.52H9.127q-.021.189-.084.561c-.042.249-.075.432-.1.552L7.78,19.871H6.024L4.19,12.127h1.5l1.131,5.418A4.469,4.469,0,0,1,6.9,17.988Z" fill={"#fff"} />
       </G>
     </Svg>
@@ -281,14 +281,14 @@ export function WordIcon({width, height, style}:iconProps) {
 export function PowerpointIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 32 32" fill="#000000">
-      <G id="SVGRepo_bgCarrier" stroke-width="0"/>
-      <G id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <G id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <G id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
       <G id="SVGRepo_iconCarrier">
         <Defs>
           <LinearGradient id="a" x1="4.494" y1="-1748.086" x2="13.832" y2="-1731.914" gradientTransform="translate(0 1756)" gradientUnits="userSpaceOnUse">
-            <Stop offset="0" stop-color="#ca4c28"/>
-            <Stop offset="0.5" stop-color="#c5401e"/>
-            <Stop offset="1" stop-color="#b62f14"/>
+            <Stop offset="0" stopColor="#ca4c28"/>
+            <Stop offset="0.5" stopColor="#c5401e"/>
+            <Stop offset="1" stopColor="#b62f14"/>
           </LinearGradient>
         </Defs>
         <Path d="M18.93,17.3,16.977,3h-.146A12.9,12.9,0,0,0,3.953,15.854V16Z" fill={"#ed6c47"}/>
@@ -308,14 +308,14 @@ export function PowerpointIcon({width, height, style}:iconProps) {
 export function ExcelIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 32 32" fill="#000000">
-      <G id="SVGRepo_bgCarrier" stroke-width="0"/>
-      <G id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <G id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <G id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
       <G id="SVGRepo_iconCarrier">
         <Defs>
           <LinearGradient id="a" x1="4.494" y1="-2092.086" x2="13.832" y2="-2075.914" gradientTransform="translate(0 2100)" gradientUnits="userSpaceOnUse">
-            <Stop offset="0" stop-color="#18884f"/>
-            <Stop offset="0.5" stop-color="#117e43"/>
-            <Stop offset="1" stop-color="#0b6631"/>
+            <Stop offset="0" stopColor="#18884f"/>
+            <Stop offset="0.5" stopColor="#117e43"/>
+            <Stop offset="1" stopColor="#0b6631"/>
           </LinearGradient>
         </Defs>
         <Path d="M19.581,15.35,8.512,13.4V27.809A1.192,1.192,0,0,0,9.705,29h19.1A1.192,1.192,0,0,0,30,27.809h0V22.5Z" fill={"#185c37"}/>
@@ -337,11 +337,11 @@ export function ExcelIcon({width, height, style}:iconProps) {
 export function VideoIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 24 24" fill="none">
-      <G id="SVGRepo_bgCarrier" stroke-width="0"/>
-      <G id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <G id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <G id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
       <G id="SVGRepo_iconCarrier">
-        <Path d="M18 3H6C3.79086 3 2 4.79086 2 7V17C2 19.2091 3.79086 21 6 21H18C20.2091 21 22 19.2091 22 17V7C22 4.79086 20.2091 3 18 3Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <Path d="M10.28 8.03994C9.19003 8.42994 9 10.5199 9 12.0399C9 13.5599 9.19003 15.5999 10.28 16.0399C11.37 16.4799 16 13.7499 16 12.0399C16 10.3299 11.44 7.61994 10.28 8.03994Z" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <Path d="M18 3H6C3.79086 3 2 4.79086 2 7V17C2 19.2091 3.79086 21 6 21H18C20.2091 21 22 19.2091 22 17V7C22 4.79086 20.2091 3 18 3Z" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <Path d="M10.28 8.03994C9.19003 8.42994 9 10.5199 9 12.0399C9 13.5599 9.19003 15.5999 10.28 16.0399C11.37 16.4799 16 13.7499 16 12.0399C16 10.3299 11.44 7.61994 10.28 8.03994Z" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
       </G>
     </Svg>
   )
@@ -350,8 +350,8 @@ export function VideoIcon({width, height, style}:iconProps) {
 export function PDFIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 32 32" fill="#000000">
-      <G id="SVGRepo_bgCarrier" stroke-width="0"/>
-      <G id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <G id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <G id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
       <G id="SVGRepo_iconCarrier">
         <Path d="M24.1,2.072h0l5.564,5.8V29.928H8.879V30H29.735V7.945L24.1,2.072" fill={"#909090"}/>
         <Path d="M24.031,2H8.808V29.928H29.664V7.873L24.03,2" fill={"#f4f4f4"}/>
@@ -374,8 +374,8 @@ export function PDFIcon({width, height, style}:iconProps) {
 export function ImageIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 24 24" fill="none">
-      <G id="SVGRepo_bgCarrier" stroke-width="0"/>
-      <G id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <G id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <G id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
       <G id="SVGRepo_iconCarrier">
         <Path d="M14.2639 15.9375L12.5958 14.2834C11.7909 13.4851 11.3884 13.086 10.9266 12.9401C10.5204 12.8118 10.0838 12.8165 9.68048 12.9536C9.22188 13.1095 8.82814 13.5172 8.04068 14.3326L4.04409 18.2801M14.2639 15.9375L14.6053 15.599C15.4112 14.7998 15.8141 14.4002 16.2765 14.2543C16.6831 14.126 17.12 14.1311 17.5236 14.2687C17.9824 14.4251 18.3761 14.8339 19.1634 15.6514L20 16.4934M14.2639 15.9375L18.275 19.9565M18.275 19.9565C17.9176 20 17.4543 20 16.8 20H7.2C6.07989 20 5.51984 20 5.09202 19.782C4.71569 19.5903 4.40973 19.2843 4.21799 18.908C4.12796 18.7313 4.07512 18.5321 4.04409 18.2801M18.275 19.9565C18.5293 19.9256 18.7301 19.8727 18.908 19.782C19.2843 19.5903 19.5903 19.2843 19.782 18.908C20 18.4802 20 17.9201 20 16.8V16.4934M4.04409 18.2801C4 17.9221 4 17.4575 4 16.8V7.2C4 6.0799 4 5.51984 4.21799 5.09202C4.40973 4.71569 4.71569 4.40973 5.09202 4.21799C5.51984 4 6.07989 4 7.2 4H16.8C17.9201 4 18.4802 4 18.908 4.21799C19.2843 4.40973 19.5903 4.71569 19.782 5.09202C20 5.51984 20 6.0799 20 7.2V16.4934M17 8.99989C17 10.1045 16.1046 10.9999 15 10.9999C13.8954 10.9999 13 10.1045 13 8.99989C13 7.89532 13.8954 6.99989 15 6.99989C16.1046 6.99989 17 7.89532 17 8.99989Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </G>
@@ -386,8 +386,8 @@ export function ImageIcon({width, height, style}:iconProps) {
 export function AudioIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 24 24" fill="none">
-      <G id="SVGRepo_bgCarrier" stroke-width="0"/>
-      <G id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <G id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <G id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
       <G id="SVGRepo_iconCarrier">
         <Path d="M4.15838 13.9306C3.44537 12.7423 3.44537 11.2577 4.15838 10.0694C4.37596 9.70674 4.73641 9.45272 5.1511 9.36978L6.84413 9.03117C6.94499 9.011 7.03591 8.95691 7.10176 8.87788L9.17085 6.39498C10.3534 4.97592 10.9447 4.26638 11.4723 4.45742C12 4.64846 12 5.57207 12 7.41928L12 16.5807C12 18.4279 12 19.3515 11.4723 19.5426C10.9447 19.7336 10.3534 19.0241 9.17085 17.605L7.10176 15.1221C7.03591 15.0431 6.94499 14.989 6.84413 14.9688L5.1511 14.6302C4.73641 14.5473 4.37596 14.2933 4.15838 13.9306Z" fill="#222222"/>
         <Path d="M14.5355 8.46447C15.4684 9.39732 15.9948 10.6611 16 11.9803C16.0052 13.2996 15.4888 14.5674 14.5633 15.5076" stroke="#222222" stroke-width="2" stroke-linecap="round"/>
@@ -400,8 +400,8 @@ export function AudioIcon({width, height, style}:iconProps) {
 export function OneNoteIcon({width, height, style}:iconProps) {
   return (
     <Svg width={width} height={height} style={style} viewBox="0 0 32 32" fill="none">
-      <G id="SVGRepo_bgCarrier" stroke-width="0"/>
-      <G id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+      <G id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <G id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
       <G id="SVGRepo_iconCarrier">
         <Path d="M8 23H32V28C32 29.1046 31.1046 30 30 30H10C8.89543 30 8 29.1046 8 28V23Z" fill="#5D29A1"/>
         <Rect x="8" y="16" width="24" height="7" fill="#7F32CC"/>
@@ -413,11 +413,11 @@ export function OneNoteIcon({width, height, style}:iconProps) {
         <Defs>
           <LinearGradient id="paint0_linear_87_7733" x1="8" y1="16" x2="24.5" y2="16" gradientUnits="userSpaceOnUse">
             <Stop stop-color="#8C42AC"/>
-            <Stop offset="1" stop-color="#C36DEF"/>
+            <Stop offset="1" stopColor="#C36DEF"/>
           </LinearGradient>
           <LinearGradient id="paint1_linear_87_7733" x1="0" y1="16" x2="19" y2="16" gradientUnits="userSpaceOnUse">
             <Stop stop-color="#44176C"/>
-            <Stop offset="1" stop-color="#621F9C"/>
+            <Stop offset="1" stopColor="#621F9C"/>
           </LinearGradient>
         </Defs>
       </G>

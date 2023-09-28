@@ -84,3 +84,21 @@ update azure ad app
 | maroon         | "#793033" |
 | warning orange | "#FF6700" |
 
+### Users
+| Permission                | Admin Consent Required |
+| ------------------------- | ---------------------- |
+| User.Read                 | NO                     |
+| User.ReadBasic.All        | NO                     |
+| ChannelMessage.Read.All   | YES                    |
+| Channel.ReadBasic.All     | NO                     |  
+| Calendars.ReadWrite       | YES                    |
+| Team.ReadBasic.All        | NO                     |
+| Tasks.ReadWrite           | NO                     |
+| Sites.Read.All            | NO                     |
+| Group.ReadWrite.All       | YES                    |
+
+### Government
+| Permission                | Admin Consent Required |
+| ------------------------- | ---------------------- |
+| Application.ReadWrite.All | YES                    |
+| Sites.Manage.All          | YES                    |

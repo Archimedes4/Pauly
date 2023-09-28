@@ -69,10 +69,13 @@ export default function Notifications() {
                 dressCodeIncentive: dressCodeIncentive
               }))
               if (schedule !== undefined) {
-                const classResult = await getClassEvents(schedule.id, outputIds.semester, outputIds.schoolYearEventId, schoolDay, result.event.startTime)
+                const classResult = await getClassEvents(schedule.id, outputIds.semester, outputIds.schoolYearEventId, schoolDay, new Date(result.event.startTime))
+                console.log("Events", classResult)
                 if (classResult.result === loadingStateEnum.success && classResult.data !== undefined) {
                   if (classResult.data.length >= 1) {
                     console.log(classResult.data[0].startTime)
+                    const startTimeDate = new Date(classResult.data[0].startTime)
+                    dispatch(homepageDataSlice.actions.setStartTime((startTimeDate.getHours() % 12) + 1 + ":" + startTimeDate.getMinutes()))
                   }
                 }
               }
@@ -115,7 +118,7 @@ export default function Notifications() {
         <BackButton to='/'/>:null
       }
       <View style={{width: width, height: height * 0.1}}>
-        <View style={{width: width * 0.9, height: height * 0.07, borderRadius: 15, backgroundColor: "#444444", marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
+        <View style={{width: width * 0.9, height: height * 0.07, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#444444", marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
           <Text>{message}</Text>
         </View>
       </View>
@@ -128,8 +131,8 @@ export default function Notifications() {
 }
 
 function WidgetView() {
-  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {schoolDayData} = useSelector((state: RootState) => state.homepageData)
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const {schoolDayData, startTime} = useSelector((state: RootState) => state.homepageData)
   const dow: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   return (
     <View style={{backgroundColor: "#793033", width: width * 0.9, height: height * 0.3, borderRadius: 15, marginLeft: width * 0.05}}>
@@ -141,6 +144,7 @@ function WidgetView() {
       </View>
       <View>
         <Text style={{color: "white"}}>{schoolDayData?.schoolDay.shorthand}</Text>
+        <Text>{startTime}</Text>
       </View>
     </View>
   )
@@ -312,10 +316,8 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
               dispatch(homepageDataSlice.actions.updateUserTask({task: newTask, index: index}))
               setCurrentText(e)
             }}
+            style={{width: width * 0.9 - 35}}
           />
-        </View>
-        <View>
-          
         </View>
       </View>
     </Swipeable>

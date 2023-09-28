@@ -59,7 +59,7 @@ const initalState: addEventStatesType = {
     eventColor: '',
     microsoftEvent: false
   },
-  selectedEventType: paulyEventType.regular,
+  selectedEventType: paulyEventType.personal,
   recurringEvent: false,
   selectedRecurringType: recurringType.daily,
   startDate: new Date().toISOString(),

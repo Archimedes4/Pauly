@@ -74,8 +74,8 @@ export default async function getClassEvents(scheduleId: string, semester: semes
         outputEvents.push({
           id: classes[index].id,
           name: classes[index].name,
-          startTime: startDate,
-          endTime: endDate,
+          startTime: startDate.toISOString(),
+          endTime: endDate.toISOString(),
           eventColor: "white",
           microsoftEvent: false
         })

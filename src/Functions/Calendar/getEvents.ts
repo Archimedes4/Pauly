@@ -45,9 +45,5 @@ export default async function getEvents() {
       }
     }
   }
-  var outputEventsString: string[] = []
-  for (var index = 0; index < outputEvents.length; index++) {
-    outputEventsString.push(JSON.stringify(outputEvents[index]))
-  }
-  store.dispatch(currentEventsSlice.actions.setCurrentEvents(outputEventsString))
+  store.dispatch(currentEventsSlice.actions.setCurrentEvents(outputEvents))
 }

@@ -76,7 +76,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
               dispatch(addEventSlice.actions.setEndDate(e)); dispatch(addEventSlice.actions.setIsPickingEndDate(false))
             }}} 
           width={width} height={height} onCancel={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(false)); dispatch(addEventSlice.actions.setIsPickingEndDate(false))}} 
-          allowedDatesRange={(selectedEventType === paulyEventType.schoolDay && selectedSchoolYear !== undefined) ? {startDate: selectedSchoolYear.startTime, endDate: selectedSchoolYear.endTime}:undefined}/>:
+          allowedDatesRange={(selectedEventType === paulyEventType.schoolDay && selectedSchoolYear !== undefined) ? {startDate: new Date(selectedSchoolYear.startTime), endDate: new Date(selectedSchoolYear.endTime)}:undefined}/>:
         <View>
           <Pressable onPress={() => {setIsShowingAddDate(false)}}>
             <CloseIcon width={10} height={10}/>
@@ -161,7 +161,6 @@ function GovernmentCalendarOptions({width, height}:{width: number, height: numbe
         <Text>School Year</Text>
         <Text>Student Council</Text>
       </PickerWrapper>
-      <Text>{selectedEventType}</Text>
       { (selectedEventType === paulyEventType.schoolDay) ?
         <View style={{width: 100, height: 100}}>
           <Text>Selected School Year:</Text>

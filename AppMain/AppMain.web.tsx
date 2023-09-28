@@ -9,6 +9,7 @@ import getUserProfile from '../src/Functions/getUserProfile'
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer'
 import { EventType, LogLevel, PublicClientApplication } from '@azure/msal-browser'
 import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsal } from '@azure/msal-react'
+import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
 
 const pca = new PublicClientApplication({
   auth: {
@@ -57,7 +58,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   const { instance } = useMsal();
   const dispatch = useDispatch()
 
-  async function getAuthToken(userInitated: boolean) {
+  async function getAuthToken(userInitated: boolean, government: boolean) {
     // Account selection logic is app dependent. Adjust as needed for different use cases.
     // Set active acccount on page load
     console.log("Running auth")
@@ -94,6 +95,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
           dispatch(authenticationTokenSlice.actions.setAuthenticationToken(authResult.accessToken))
           getPaulyLists(authResult.accessToken)
           getUserProfile(authResult.accessToken)
+          dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(true))
         }
       }
     }).catch(err=>{
@@ -103,7 +105,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   }
 
   useEffect(() => {
-    getAuthToken(false)
+    getAuthToken(false, false)
   }, [])
 
   return (
@@ -112,7 +114,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
         <AuthenticatedViewMain dimensions={dimensions} width={dimensions.window.width}/>
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
-        <Login onGetAuthToken={() => {getAuthToken(true)}} width={dimensions.window.width}/>
+        <Login onGetAuthToken={() => {getAuthToken(true, false)}} onGetGovernmentAuthToken={() => {getAuthToken(true, true)}} width={dimensions.window.width}/>
       </UnauthenticatedTemplate>
     </SafeAreaView>
   )
