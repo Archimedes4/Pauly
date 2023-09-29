@@ -21,8 +21,8 @@ declare global {
     allowMultipleSubmissions: boolean
     commissionId: string
     value: commissionTypeEnum
-    startDate?: Date
-    endDate?: Date
+    startDate?: string
+    endDate?: string
     proximity?: number
     coordinateLat?: number
     coordinateLng?: number
@@ -46,7 +46,9 @@ export default function GovernmentCommissions() {
   async function loadData() {
     const result = await getCommissions()
     if (result.result === loadingStateEnum.success) {
-      setCommissions(result.data)
+      if (result.data  !== undefined) {
+        setCommissions(result.data)
+      }
       //TO DO pagination
     }
     setCommissionsState(result.result)

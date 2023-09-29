@@ -1,7 +1,6 @@
 import { View, Text, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import * as PDFJS from "pdfjs-dist"
-
 import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
 import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api'

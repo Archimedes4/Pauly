@@ -18,6 +18,7 @@ import homepageDataReducer from './reducers/homepageDataReducer';
 import expandedModeReducer from './reducers/expandedModeReducer';
 import isShowingProfileBlockReducer from './reducers/isShowingProfileBlockReducer';
 import isGovernmentModeReducer from './reducers/isGovernmentModeReducer';
+import commissionsReducer from './reducers/commissionsReducer';
 
 const store = configureStore({
   reducer: {
@@ -40,7 +41,8 @@ const store = configureStore({
     homepageData: homepageDataReducer,
     expandedMode: expandedModeReducer,
     isShowingProfileBlock: isShowingProfileBlockReducer,
-    isGovernmentMode: isGovernmentModeReducer
+    isGovernmentMode: isGovernmentModeReducer,
+    commissions: commissionsReducer
   }
 });
 

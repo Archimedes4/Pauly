@@ -1,3 +1,6 @@
+//Andrew Mainella
+//Pauly
+
 import { orgWideGroupID } from "../../PaulyConfig"
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer"
 import store from "../../Redux/store"

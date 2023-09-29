@@ -94,7 +94,7 @@ export default function Calendar() {
           } 
         </View>
         <View style={{flexDirection: "row", alignItems: "center", height: height * 0.1}}>
-          <Text style={{fontFamily: "BukhariScript", fontSize: Math.sqrt(((width * 0.4)*(height * 0.1))/8), color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017)}}>Calendar</Text>
+          <Text style={{fontFamily: "BukhariScript", fontSize: Math.pow((width * 0.1)/(height * 0.1), 2) * 40, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017)}}>Calendar</Text>
           <CalendarTypePicker setSelectedCalendarMode={setSelectedCalendarMode} selectedIndex={selectedCalendarMode} width={width * 0.5} height={height * 0.05}/>
           <Pressable onPress={() => {setIsShowingAddDate(true); setIsEditing(false); setSelectedEvent(undefined)}} style={{height: height * 0.05, width: height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1, marginLeft: width * 0.005}}>
             <AddIcon width={height * 0.03} height={height * 0.03}/>

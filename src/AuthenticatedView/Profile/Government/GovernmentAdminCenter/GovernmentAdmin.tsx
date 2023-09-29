@@ -20,9 +20,7 @@ enum initStage {
 
 export default function GovernmentAdmin() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
-  
-  const [currentUserId, setCurrentUserId] = useState<string>("")
-  const [loadedUsers, setLoadedUsers] = useState<microsoftUserType[]>([])
+
   const [selectedUser, setSelectedUser] = useState<microsoftUserType | undefined>(undefined)
   const [timeLeft, setTimeLeft] = useState<string>("")
   const [timeElapsed, setTimeElapsed] = useState<string>("Not Started")
@@ -38,7 +36,6 @@ export default function GovernmentAdmin() {
   const [initResult, setInitResult] = useState<loadingStateEnum>(loadingStateEnum.cannotStart)
   const [initTwoResult, setInitTwoResult] = useState<loadingStateEnum>(loadingStateEnum.cannotStart)
   const [initThreeResult, setInitThreeResult] = useState<loadingStateEnum>(loadingStateEnum.cannotStart)
-  const [loadUsersResult, setLoadUsersResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [currentInitStage, setCurrentInitStage] = useState<initStage>(initStage.notStarted)
 
   async function initializePauly() {
@@ -112,32 +109,6 @@ export default function GovernmentAdmin() {
         setInitThreeResult(loadingStateEnum.failed)
         setCurrentInitStage(initStage.done)
       }
-    }
-  }
-
-  async function getUserId() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/me")
-    if (result.ok) {
-      const data = await result.json()
-      setCurrentUserId(data["id"])
-    }
-  }
-
-  async function getUsers() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/users?$top=10")
-    if (result.ok){
-      const data = await result.json()
-      var newUsers: microsoftUserType[] = []
-      for (var index = 0; index < data["value"].length; index++){
-        newUsers.push({
-          id: data["value"][index]["id"],
-          displayName: data["value"][index]["displayName"]
-        })
-      }
-      setLoadedUsers(newUsers)
-      setLoadUsersResult(loadingStateEnum.success)
-    } else {
-      setLoadUsersResult(loadingStateEnum.failed)
     }
   }
 
@@ -217,11 +188,6 @@ export default function GovernmentAdmin() {
   }, [currentInitStage])
 
   useEffect(() => {
-    getUserId()
-    getUsers()
-  }, [])
-
-  useEffect(() => {
     if (createdGroupId !== "" && (initResult === loadingStateEnum.notStarted || initResult === loadingStateEnum.cannotStart || initResult === loadingStateEnum.failed)){
       setInitTwoResult(loadingStateEnum.notStarted)
       setInitThreeResult(loadingStateEnum.notStarted)
@@ -233,28 +199,6 @@ export default function GovernmentAdmin() {
       <Link to="/profile/government">
         <Text>Back</Text>
       </Link>
-      <View style={{height: height * 0.1}}>
-        { (loadUsersResult === loadingStateEnum.loading) ?
-          <Text>Loading</Text>:
-          <View>
-            { (loadUsersResult === loadingStateEnum.success) ?
-              <View>
-                {loadedUsers.map((user) => (
-                  <View key={"User_"+user.id}>
-                    { (user.id !== currentUserId) ?
-                      <Pressable onPress={() => {setSelectedUser(user); setInitResult(loadingStateEnum.notStarted)}}>
-                        <View>
-                          <Text>{user.displayName}</Text>
-                        </View>
-                      </Pressable>:null
-                    }
-                  </View>
-                ))}
-              </View>:<Text>Failed</Text>
-            }
-          </View>
-        }
-      </View>
       <TextInput value={createdGroupId} onChangeText={setCreatedGroupId} placeholder='Group Id'/>
       <Text>Time Elapsed: {timeElapsed}</Text>
       <View style={{height: height * 0.25, width: height * 0.1, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
@@ -312,5 +256,69 @@ export default function GovernmentAdmin() {
         </View>:null
       }
     </View>
+  )
+}
+
+function UserBlock({setSelectedUser, setInitResult}:{setSelectedUser: (item: microsoftUserType) => void, setInitResult: (item: loadingStateEnum) => void}) {
+  const [currentUserId, setCurrentUserId] = useState<string>("")
+  const [loadedUsers, setLoadedUsers] = useState<microsoftUserType[]>([])
+  const [loadUsersResult, setLoadUsersResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const {height} = useSelector((state: RootState) => state.dimentions)
+  
+  async function getUserId() {
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/me")
+    if (result.ok) {
+      const data = await result.json()
+      setCurrentUserId(data["id"])
+    }
+  }
+
+  async function getUsers() {
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/users?$top=10")
+    if (result.ok){
+      const data = await result.json()
+      var newUsers: microsoftUserType[] = []
+      for (var index = 0; index < data["value"].length; index++){
+        newUsers.push({
+          id: data["value"][index]["id"],
+          displayName: data["value"][index]["displayName"]
+        })
+      }
+      setLoadedUsers(newUsers)
+      setLoadUsersResult(loadingStateEnum.success)
+    } else {
+      setLoadUsersResult(loadingStateEnum.failed)
+    }
+  }
+
+  useEffect(() => {
+    getUserId()
+    getUsers()
+  }, [])
+  return (
+    <>
+      <View style={{height: height * 0.1}}>
+        { (loadUsersResult === loadingStateEnum.loading) ?
+          <Text>Loading</Text>:
+          <View>
+            { (loadUsersResult === loadingStateEnum.success) ?
+              <View>
+                {loadedUsers.map((user) => (
+                  <View key={"User_"+user.id}>
+                    { (user.id !== currentUserId) ?
+                      <Pressable onPress={() => {setSelectedUser(user); setInitResult(loadingStateEnum.notStarted)}}>
+                        <View>
+                          <Text>{user.displayName}</Text>
+                        </View>
+                      </Pressable>:null
+                    }
+                  </View>
+                ))}
+              </View>:<Text>Failed</Text>
+            }
+          </View>
+        }
+      </View>
+    </>
   )
 }

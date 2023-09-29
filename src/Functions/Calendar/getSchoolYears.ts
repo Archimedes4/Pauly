@@ -18,8 +18,9 @@ export default async function getSchoolYears(nextLink?: string): Promise<{ resul
           newEvents.push({
             id: data["value"][index]["id"],
             name: data["value"][index]["subject"],
-            startTime: new Date(data["value"][index]["start"]["dateTime"]),
-            endTime: new Date(data["value"][index]["end"]["dateTime"]),
+            startTime: data["value"][index]["start"]["dateTime"],
+            endTime: data["value"][index]["end"]["dateTime"],
+            allDay: data["value"][index]["isAllDay"],
             eventColor: "white",
             paulyEventType:  (eventData.find((e) => {return e.id === eventTypeExtensionID})?.value === "schoolYear") ? "schoolYear":undefined,
             paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID})?.value,

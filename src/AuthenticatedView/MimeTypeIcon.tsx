@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleProp, View, ViewStyle } from "react-native";
 import { Shape, SvgProps } from "react-native-svg";
-import { AudioIcon, DocumentIcon, ExcelIcon, FolderIcon, ImageIcon, OneNoteIcon, PDFIcon, PowerpointIcon, VideoIcon, WordIcon } from "./Icons";
+import { AudioIcon, DocumentIcon, ExcelIcon, FolderIcon, ImageIcon, OneNoteIcon, PDFIcon, PowerpointIcon, VideoIcon, WordIcon } from "../UI/Icons/Icons";
 
 interface iconProps {
   width: number;
@@ -85,4 +85,3 @@ export default function MimeTypeIcon({width, height, style, props, mimeType}:ico
     </>
   )
 }
-//<DocumentIcon width={width} height={height} style={style} props={props}/>:null

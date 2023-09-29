@@ -13,6 +13,7 @@ import { loadingStateEnum } from '../../types';
 import CommissionsView from './CommissionsView';
 import ProgressView from '../../UI/ProgressView';
 import BackButton from '../../UI/BackButton';
+import { commissionsSlice } from '../../Redux/reducers/commissionsReducer';
 
 enum CommissionMode{
   Before,
@@ -22,11 +23,11 @@ enum CommissionMode{
 
 export default function Commissions() {
   const {height, width} = useSelector((state: RootState) => state.dimentions)
-  const {commissionListId, siteId} = useSelector((state: RootState) => state.paulyList)
+  const {siteId} = useSelector((state: RootState) => state.paulyList)
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const [currentCommissions, setCurrentCommissions] = useState<commissionType[]>([])
-  const [selectedCommission, setSelectedCommission] = useState<string>("")
-  const [points, setPoints] = useState<number>(0)
+  const {currentCommissions, selectedCommission, points} = useSelector((state: RootState) => state.commissions)
+
+  const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
   const dispatch = useDispatch()
   const navigate = useNavigate();
 
@@ -38,7 +39,7 @@ export default function Commissions() {
     console.log(pointResult)
     const commissionsResult = await getCommissions()
     if (commissionsResult.result === loadingStateEnum.success, commissionsResult.data !== undefined) {
-      setCurrentCommissions(commissionsResult.data)
+      dispatch(commissionsSlice.actions.setCurrentCommissions(commissionsResult.data))
     }
     setCommissionState(commissionsResult.result)
     //TO DO pagination
@@ -51,8 +52,6 @@ export default function Commissions() {
   useEffect(() => {
     if (siteId !== "") {
       loadData()
-    } else {
-      console.log("failed")
     }
   }, [siteId])
 
@@ -89,11 +88,13 @@ export default function Commissions() {
               { (commissionState === loadingStateEnum.success) ?
                 <ScrollView style={{height: height * 0.9}}>
                   { currentCommissions.map((item: commissionType) => (
-                    <Pressable onPress={() => {setSelectedCommission(item.commissionId)}} key={"Link_" + item.commissionId} style={{backgroundColor: "transparent"}}>
+                    <Pressable onPress={() => {dispatch(commissionsSlice.actions.setSelectedCommission(item.commissionId))}} key={"Link_" + item.commissionId} style={{backgroundColor: "transparent"}}>
                       <View key={item.commissionId} style={{borderRadius: 15, marginLeft: width * 0.025, elevation: 2, marginRight: width * 0.025, marginTop: height * 0.02, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5}}>
                         <View style={{margin: 10}}>
                           <Text>{item.title}</Text>
-                          <Text>{item.startDate?.toLocaleDateString("en-US", {month: "long", day: "numeric", minute: "numeric"})}</Text>
+                          { (item.timed && item.startDate !== undefined) ?
+                            <Text>{new Date(item.startDate).toLocaleDateString("en-US", {month: "long", day: "numeric", minute: "numeric"})}</Text>:null
+                          }
                         </View>
                       </View>
                     </Pressable>
@@ -106,29 +107,33 @@ export default function Commissions() {
             </View>
           }
         </View>
-        <ScrollView style={{height: height * 0.1, width: width}} horizontal={true}>
-          <View>
-            <Text>All</Text>
-          </View>
-          <View>
-            <Text>Current</Text>
-          </View>
-          <View>
-            <Text>Past</Text>
-          </View>
-          <View>
-            <Text>Future</Text>
-          </View>
-          <View>
-            <Text>Claimed</Text>
-          </View>
-        </ScrollView>
+        <Pressable style={{height: (isHoverPicker) ? height * 0.1:height * 0.05}} onHoverIn={() => {setIsHoverPicker(true)}} onHoverOut={() => {setIsHoverPicker(false)}}>
+          <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
+            <PickerPiece text='All' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Current' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Past' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Claimed' onPress={() => {getCommissions(undefined, undefined, true)}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Future' onPress={() => {getCommissions({date: new Date(), filter: "ge"})}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+          </ScrollView>
+        </Pressable>
       </View>
       <View style={{position: "absolute", zIndex: 2, top: height * 0.1, left: width * 0.1}}>
         { (selectedCommission !== "") ?
-          <CommissionsView id={selectedCommission} onClose={() => setSelectedCommission("")}/>:null
+          <CommissionsView id={selectedCommission} onClose={() => dispatch(commissionsSlice.actions.setSelectedCommission(""))}/>:null
         }
       </View>
     </>
+  )
+}
+
+function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, onPress: () => void, isHoverPicker: boolean, setIsHoverPicker: (item: boolean) => void}) {
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const [isSelected, setIsSelected] = useState<boolean>(false)
+  return (
+    <Pressable onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+      <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <Text style={{color: "white"}}>{text}</Text>
+      </View>
+    </Pressable>
   )
 }

@@ -6,7 +6,7 @@
 //
 import { useEffect, useRef, useState } from "react"
 import {View, ScrollView, useColorScheme, Text} from "react-native"
-import { isDateToday } from "../../Functions/Calendar/calendarFunctions"
+import { calculateIfShowing, computeEventHeight, findTimeOffset, isDateToday } from "../../Functions/Calendar/calendarFunctions"
 import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
 import create_UUID from "../../Functions/Ultility/CreateUUID"
@@ -135,7 +135,11 @@ export default function DayView({width, height}:{width: number, height: number})
           </View>
           <>
             {currentEvents.map((event) => (
-              <EventBlock event={event} width={width} height={height} />
+              <>
+                { event.allDay ?
+                  null:<EventBlock event={event} width={width} height={height} />
+                }
+              </>
             ))}
           </>
           { (new Date(JSON.parse(selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(selectedDate)).getFullYear() === new Date().getFullYear()) ?
@@ -153,67 +157,10 @@ function EventBlock({event, width, height}:{event: eventType, width: number, hei
   const EventHeight = computeEventHeight(new Date(event.startTime), new Date(event.endTime), height)
   const Offset = findTimeOffset(new Date(event.startTime), height)
   return (
-    <View style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0, backgroundColor: event.eventColor, opacity: 0.3}}>
-      <Text>{event.name}</Text>
-      <Text>{new Date(event.startTime).toISOString()} to {new Date(event.endTime).toISOString()}</Text>
+    <View style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0}}>
+      <View style={{width: width * 0.9, height: EventHeight, position: "absolute", backgroundColor: event.eventColor, opacity: 0.3, zIndex: -1}}/>
+      <Text style={{opacity: 1}}>{event.name}</Text>
+      <Text>{new Date(event.startTime).toLocaleString("en-us", {hour: "numeric", minute: "numeric"})} to {new Date(event.endTime).toLocaleString("en-us", {hour: "numeric", minute: "numeric"})}</Text>
     </View>
   )
-}
-
-function calculateIfShowing(value: String, Time: Date): boolean { //TO DO shorten
-  if (isDateToday(Time)) {
-    const hourInt = Time.getHours()
-    const minuiteInt = Time.getMinutes()
-    if (minuiteInt + 15 >= 60){
-      var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
-      resepctiveTime += (hourInt > 12) ? "PM":"AM"
-      if (resepctiveTime === value){
-        return false
-      } else {
-        return true
-      }
-    } else if (minuiteInt - 15 <= 0) {
-      var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
-      resepctiveTime += (hourInt > 12) ? "PM":"AM"
-      if (resepctiveTime === value){
-        return false
-      } else {
-        return true
-      }
-    } else {
-      return true
-    }
-  } else {
-    return true
-  }
-}
-
-function findTimeOffset(time: Date, height: number): number {
-    let hourWidth = height * 0.1
-    let minutieWidth = (height * 0.1)/60
-    let hourInt = time.getHours() 
-    let minuiteInt = time.getMinutes()
-    var returnOffset = (hourWidth * hourInt) + (minutieWidth * minuiteInt)
-    // + (hourWidth/2)
-    return returnOffset
-}
-
-//Ryan was here April 13, 2023
-//Andrew was here April 13, 2023
-
-function computeEventHeight(fromDate: Date, toDate: Date, height: number): number {
-  var delta = toDate.getTime() - fromDate.getTime()
-  if (delta >= 86400000) {
-    delta = 86400000
-  }
-
-  let deltaHours = delta/3600000
-  let deltaRemaining = delta % 3600000
-  let deltaMinutes = deltaRemaining / 60
-  
-  const HourHeight = height * 0.1
-  const MinuteHeight = (height * 0.1)/60
-
-  let ReturnOffset = (HourHeight * deltaHours) + (MinuteHeight * deltaMinutes)
-  return ReturnOffset
 }

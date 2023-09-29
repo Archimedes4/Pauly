@@ -18,7 +18,7 @@ import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
 import PDFView from '../UI/PDF/PDFView';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import BackButton from '../UI/BackButton';
-import MimeTypeIcon from '../UI/Icons/mimeTypeIcon';
+import MimeTypeIcon from './MimeTypeIcon';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -328,6 +328,7 @@ function BoardBlock() {
   const {powerpointBlob, paulyDataState} = useSelector((state: RootState) => state.paulyData)
   return (
     <View>
+      <Text>Board</Text>
       { (paulyDataState === loadingStateEnum.loading) ?
         <View>
           <ProgressView width={100} height={100}/>
@@ -369,7 +370,7 @@ function InsightsBlock() {
             <PopularFiles />
           </View>
         </>:
-        <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+        <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto", marginTop: height * 0.025, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
           <View style={{width: width * 0.45}}>
             <TrendingFiles />
           </View>

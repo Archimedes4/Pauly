@@ -33,8 +33,8 @@ export default async function getCommissions(startDate?: {date: Date, filter: "g
           resultCommissions.push({
             itemId: data["value"][index]["id"],
             title: data["value"][index]["fields"]["Title"],
-            startDate: new Date(data["value"][index]["fields"]["startDate"]),
-            endDate: new Date(data["value"][index]["fields"]["endDate"]),
+            startDate: data["value"][index]["fields"]["startDate"],
+            endDate: data["value"][index]["fields"]["endDate"],
             points: data["value"][index]["fields"]["points"] as number,
             proximity: data["value"][index]["fields"]["proximity"] as number,
             commissionId: data["value"][index]["fields"]["commissionID"] as string,
@@ -85,8 +85,8 @@ async function getCommissionsBatch(commissions: string[]): Promise<{result: load
           commissionsResult.push({
             itemId: data["value"][index]["id"],
             title: data["value"][index]["fields"]["Title"],
-            startDate: new Date(data["value"][index]["fields"]["startDate"]),
-            endDate: new Date(data["value"][index]["fields"]["endDate"]),
+            startDate: data["value"][index]["fields"]["startDate"],
+            endDate: data["value"][index]["fields"]["endDate"],
             points: data["value"][index]["fields"]["points"] as number,
             proximity: data["value"][index]["fields"]["proximity"] as number,
             commissionId: data["value"][index]["fields"]["commissionID"] as string,
