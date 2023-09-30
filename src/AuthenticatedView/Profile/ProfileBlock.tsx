@@ -11,6 +11,7 @@ import { revokeAsync } from 'expo-auth-session'
 
 export default function ProfileBlock({width}:{width: number}) {
   const expandedMode = useSelector((state: RootState) => state.expandedMode)
+  const {height} = useSelector((state: RootState) => state.dimentions)
 
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
@@ -32,7 +33,7 @@ export default function ProfileBlock({width}:{width: number}) {
     }
   }
   return (
-    <View style={{position: "absolute", bottom: 0, left: (expandedMode) ? (width * 2.5):width, backgroundColor: "white", width: width}}>
+    <View style={{position: "absolute", bottom: 0, left: (expandedMode) ? (width * 2.5):width, backgroundColor: "white", width: width, height: height * 0.15}}>
       <Text>ProfileBlock</Text>
       <Pressable onPress={() => signOut()}>
         <Text>Sign Out</Text>

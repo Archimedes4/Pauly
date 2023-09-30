@@ -37,18 +37,17 @@ export default function Week({width, height}:{width: number, height: number}) {
             
         </View>:
         <View>
-
           <View style={{flexDirection: "row", height: width * 0.142857142857143, width: width}}>
             <Pressable style={{margin: width * 0.01111111111111111}} onPress={() => {
               const d = new Date(JSON.parse(selectedDateRedux));
               d.setDate(d.getDate() - 7)
-              dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
+              dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
             }}>
               <ChevronLeft width={width * 0.08888888888888889} height={width * 0.08888888888888889} />
             </Pressable>
             {daysOfWeek.map((day) => (
               <Pressable onPress={() => {
-                dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(day)))
+                dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(day.toISOString()))
               }} key={day.getDay() + "_" + create_UUID()} style={{width: width * 0.08888888888888889, height: width * 0.08888888888888889, margin: width * 0.01111111111111111, borderRadius: 50, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center", borderColor: (day.getDate() === new Date(JSON.parse(selectedDateRedux)).getDate()) ? "black":"#793033", borderWidth: (new Date().getDate() === day.getDate() || day.getDate() === new Date(JSON.parse(selectedDateRedux)).getDate()) ? 5:0}}>
                 <Text style={{color: "white"}}>{day.getDate()}</Text>
               </Pressable>
@@ -56,7 +55,7 @@ export default function Week({width, height}:{width: number, height: number}) {
             <Pressable style={{margin: width * 0.01111111111111111}} onPress={() => {
               const d = new Date(JSON.parse(selectedDateRedux));
               d.setDate(d.getDate() + 7)
-              dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
+              dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
             }}>
               <ChevronRight width={width * 0.08888888888888889} height={width * 0.08888888888888889} />
             </Pressable>

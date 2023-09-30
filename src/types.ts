@@ -66,7 +66,8 @@ export enum semesters {
 export enum submissionTypeEnum {
   all,
   unApproved,
-  approved
+  approved,
+  unReviewed
 }
 
 export enum locationStateEnum {
@@ -75,6 +76,12 @@ export enum locationStateEnum {
   notCloseEnough,
   mockedLocation,
   notStarted
+}
+
+export enum calendarMode {
+  month,
+  week,
+  day
 }
 
 declare global {
@@ -123,6 +130,7 @@ declare global {
     id: string
     itemId: string
     approved: boolean
+    reviewed: boolean
   }
   type locationCoords = {
     latCoordinate: number

@@ -16,15 +16,11 @@ import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
 import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
 import { useMsal } from '@azure/msal-react';
-import { loadingStateEnum } from '../../types';
+import { calendarMode, loadingStateEnum } from '../../types';
 import getEvents from '../../Functions/Calendar/getEvents';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
-
-enum calendarMode {
-  month,
-  week,
-  day
-}
+import BackButton from '../../UI/BackButton';
+import { addEventSlice } from '../../Redux/reducers/addEventReducer';
 declare global {
   type monthDataType = {
     id: string,
@@ -51,10 +47,8 @@ const monthNames = ["January", "February", "March", "April", "May", "June","July
 
 export default function Calendar() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const [selectedCalendarMode, setSelectedCalendarMode] = useState<calendarMode>(calendarMode.month)
-  const [isShowingAddDate, setIsShowingAddDate] = useState<boolean>(false)
-  const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [selectedEvent, setSelectedEvent] = useState<eventType | undefined>(undefined)
+  const {selectedCalendarMode, isShowingAddDate} = useSelector((state: RootState) => state.addEvent)
+
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const dispatch = useDispatch()
 
@@ -85,26 +79,28 @@ export default function Calendar() {
       <View style={{height: height * 0.1, backgroundColor: '#444444'}}>
         <View style={{flexDirection: "row"}}>
           { (currentBreakPoint >= 1) ?
-            null:<Link to="/">
-              <View style={{flexDirection: "row"}}>
-                <ChevronLeft width={14} height={14}/>
-                <Text>Back</Text>
-              </View>
-            </Link>
+            null:<BackButton to='/'/>
           } 
         </View>
-        <View style={{flexDirection: "row", alignItems: "center", height: height * 0.1}}>
-          <Text style={{fontFamily: "BukhariScript", fontSize: Math.pow((width * 0.1)/(height * 0.1), 2) * 40, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017)}}>Calendar</Text>
-          <CalendarTypePicker setSelectedCalendarMode={setSelectedCalendarMode} selectedIndex={selectedCalendarMode} width={width * 0.5} height={height * 0.05}/>
-          <Pressable onPress={() => {setIsShowingAddDate(true); setIsEditing(false); setSelectedEvent(undefined)}} style={{height: height * 0.05, width: height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1, marginLeft: width * 0.005}}>
-            <AddIcon width={height * 0.03} height={height * 0.03}/>
+        <View style={{flexDirection: "row", alignItems: "center", height: height * 0.1, width: width}}>
+          <Text style={{fontFamily: "BukhariScript", fontSize: Math.cbrt((width < height) ? width * 0.5:height * 0.1) * 5, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017)}}>Calendar</Text>
+          <CalendarTypePicker width={width * 0.5} height={height * 0.05}/>
+          <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false)); dispatch(addEventSlice.actions.setIsEditing(false)); dispatch(addEventSlice.actions.setIsEditing(false)); dispatch(addEventSlice.actions.setSelectedEvent(undefined))}} style={{
+            height: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.8,
+            width: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.8,
+            alignItems: "center", alignContent: "center", justifyContent: "center",
+            borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1,
+            marginLeft: width * 0.005,
+            marginRight: width * 0.005
+          }}>
+            <AddIcon width={((width * 0.1) < (height * 0.1)) ? width * 0.05:height * 0.4} height={((width * 0.1) < (height * 0.1)) ? width * 0.05:height * 0.4}/>
           </Pressable>
         </View>
       </View> 
       <View style={{height: height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
         <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "white"}}>
-          <MonthViewMain width={width * 0.9} height={height * 0.9} setAddDate={setIsShowingAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>
+          <MonthViewMain width={width * 0.9} height={height * 0.9} />
         </View>:null
       }
       { (selectedCalendarMode === calendarMode.week) ?
@@ -118,29 +114,29 @@ export default function Calendar() {
       </View>
       { isShowingAddDate ?
         <View style={{zIndex: 2, position: "absolute", left: width * 0.05 + (((width >= 576) ? (width * 0.3):0)/2), top: height * 0.1}}>
-          <AddEvent setIsShowingAddDate={setIsShowingAddDate} width={width * 0.9 - ((width >= 576) ? (width * 0.3):0)} height={height * 0.8} editing={isEditing} editData={selectedEvent} />
+          <AddEvent width={width * 0.9 - ((width >= 576) ? (width * 0.3):0)} height={height * 0.8} />
         </View>:null
       }
     </View>
   )
 }
 
-function MonthViewMain({width, height, setAddDate, setIsEditing, setSelectedEvent}:{width: number, height: number, setAddDate: (addDate: boolean) => void, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void}) {
+function MonthViewMain({width, height}:{width: number, height: number}) {
   return (
     <>
       { (width <= 519) ?
         <ScrollView style={{backgroundColor: "white", height: height, width: width}}>
-          <MonthView width={width} height={height} setAddDate={setAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>
+          <MonthView width={width} height={height} />
         </ScrollView>:
          <View style={{backgroundColor: "white", height: height, width: width}}>
-          <MonthView width={width} height={height} setAddDate={setAddDate} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent}/>
+          <MonthView width={width} height={height} />
         </View>
       }
     </>
   )
 }
 
-function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{width: number, height: number, setAddDate: (addDate: boolean) => void, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void}) {
+function MonthView({width, height}:{width: number, height: number}) {
   const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
@@ -189,7 +185,7 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
   }
 
   useEffect(() => {
-    setSelectedDate(new Date(JSON.parse(selectedDateRedux)))
+    setSelectedDate(new Date(selectedDateRedux))
   }, [selectedDateRedux])
 
   useEffect(() => {
@@ -211,7 +207,7 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
             {(selectedDate.getFullYear() !== new Date().getFullYear() || selectedDate.getMonth() != new Date().getMonth()) ?
               <View style={{width: width * 0.2}}>
                 <Pressable onPress={() => {
-                  dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(new Date())))
+                  dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(new Date().toISOString()))
                 }}>
                   <Text style={{color: "black", fontSize: 12/fontScale}}>Today</Text>
                 </Pressable>
@@ -222,7 +218,7 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
           <Pressable onPress={() => {
             const d = new Date();
             d.setFullYear((selectedDate.getMonth() === 1) ? selectedDate.getFullYear() - 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 1) ? 12:selectedDate.getMonth() - 1, selectedDate.getDay());
-            dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
+            dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
           }} style={{marginTop: "auto", marginBottom: "auto"}}>
             <ChevronLeft width={14} height={14}/>
           </Pressable>
@@ -230,7 +226,7 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
           <Pressable onPress={() => {
             const d = new Date();
             d.setFullYear((selectedDate.getMonth() === 12) ? selectedDate.getFullYear() + 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 12) ? 1:selectedDate.getMonth() + 1, selectedDate.getDay());
-            dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
+            dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
           }} style={{marginTop: "auto", marginBottom: "auto"}}>
             <ChevronRight width={14} height={14}/>
           </Pressable>
@@ -244,30 +240,30 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
             </View>
           ))}
         </View>
-          <View>
-            { Array.from(Array(7).keys()).map((valueRow) => (
-              <View key={"Row_"+valueRow+"_"+create_UUID()} style={{flexDirection: "row"}}>
-                { monthData.map((value, id) => (
-                  <View key={value.id}>
-                    {(id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
-                      <View>
-                        { value.showing ?
-                          <Pressable onPress={() => {
-                            const d = new Date();
-                            d.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), value.dayData);
-                            dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(JSON.stringify(d)))
-                          }} key={value.id}>
-                            <CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate} calendarWidth={width}/>
-                          </Pressable>:
-                          <View key={value.id}><CalendarCardView width={width / 7} height={height / 8} value={value} setIsEditing={setIsEditing} setSelectedEvent={setSelectedEvent} setAddDate={setAddDate} calendarWidth={width}/></View>
-                        }
-                      </View>:null
-                    }
-                  </View>
-                ))}
-              </View>
-            ))}
-          </View>
+        <View>
+        { Array.from(Array(7).keys()).map((valueRow) => (
+            <View key={"Row_"+valueRow+"_"+create_UUID()} style={{flexDirection: "row"}}>
+              { monthData.map((value, id) => (
+                <View key={value.id}>
+                  {(id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
+                    <View>
+                      { value.showing ?
+                        <Pressable onPress={() => {
+                          const d = new Date();
+                          d.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), value.dayData);
+                          dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
+                        }} key={value.id}>
+                          <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
+                        </Pressable>:
+                        <View key={value.id}><CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/></View>
+                      }
+                    </View>:null
+                  }
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
       </View>
       { (width <= 519) ?
         <ScrollView>
@@ -286,7 +282,8 @@ function MonthView({width, height, setAddDate, setIsEditing, setSelectedEvent}:{
   )
 }
 
-function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent, setAddDate, calendarWidth}:{value: monthDataType, width: number, height: number, setIsEditing: (isEditing: boolean) => void, setSelectedEvent: (selectedEvent: eventType) => void, setAddDate: (addDate: boolean) => void, calendarWidth: number}) {
+function CalendarCardView({value, width, height, calendarWidth}:{value: monthDataType, width: number, height: number, calendarWidth: number}) {
+  const dispatch = useDispatch()
   return(
     <>
       { (calendarWidth <= 519) ?
@@ -308,7 +305,7 @@ function CalendarCardView({value, width, height, setIsEditing, setSelectedEvent,
               <Text style={{color: "black"}}>{value.dayData}</Text>
               <ScrollView style={{width: width, height: height * 0.8}}>
                 {value.events.map((event) => (
-                  <Pressable key={"Calendar_Event_" + event.id + "_" + create_UUID()} onPress={() => {setIsEditing(true); setSelectedEvent(event); setAddDate(true)}}>
+                  <Pressable key={"Calendar_Event_" + event.id + "_" + create_UUID()} onPress={() => {dispatch(addEventSlice.actions.setIsEditing(true)); dispatch(addEventSlice.actions.setIsEditing(true)); dispatch(addEventSlice.actions.setIsShowingAddDate(true)); dispatch(addEventSlice.actions.setSelectedEvent(event))}}>
                     <Text style={{fontSize: 10}}>{event.name}</Text>
                   </Pressable>
                 ))}

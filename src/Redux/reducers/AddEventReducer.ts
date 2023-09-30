@@ -1,4 +1,4 @@
-import { paulyEventType, recurringType, semesters } from '../../types';
+import { calendarMode, paulyEventType, recurringType, semesters } from '../../types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '../../types';
 
@@ -17,6 +17,10 @@ type addEventStatesType = {
   selectedRecurringType: recurringType
   startDate: string
   endDate: string
+  isShowingAddDate: boolean
+  isEditing: boolean
+  selectedCalendarMode: calendarMode
+  selectedEvent: eventType | undefined
 }
 
 const initalState: addEventStatesType = {
@@ -54,16 +58,21 @@ const initalState: addEventStatesType = {
   selectedSchoolYear: {
     id: '',
     name: '',
-    startTime: undefined,
-    endTime: undefined,
+    startTime: '',
+    endTime: '',
     eventColor: '',
-    microsoftEvent: false
+    microsoftEvent: false,
+    allDay: false
   },
   selectedEventType: paulyEventType.personal,
   recurringEvent: false,
   selectedRecurringType: recurringType.daily,
   startDate: new Date().toISOString(),
-  endDate: new Date().toISOString()
+  endDate: new Date().toISOString(),
+  isShowingAddDate: false,
+  isEditing: false,
+  selectedCalendarMode: calendarMode.month,
+  selectedEvent: undefined
 }
 
 export const addEventSlice = createSlice({
@@ -119,6 +128,18 @@ export const addEventSlice = createSlice({
       } else {
         return {...state, endDate: action.payload.toISOString()}
       }
+    },
+    setIsShowingAddDate: (state, action: PayloadAction<boolean>) => {
+      state.isShowingAddDate = action.payload
+    },
+    setIsEditing: (state, action: PayloadAction<boolean>) => {
+      state.isEditing = action.payload
+    },
+    setSelectedCalendarMode: (state, action: PayloadAction<calendarMode>) => {
+      state.selectedCalendarMode = action.payload
+    },
+    setSelectedEvent: (state, action: PayloadAction<eventType | undefined>) => {
+      state.selectedEvent = action.payload
     }
   }
 })

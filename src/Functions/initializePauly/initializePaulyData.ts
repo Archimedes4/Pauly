@@ -203,6 +203,12 @@ export const commissionsSubmissionsData = {
       "indexed": true
     },
     {
+      "name":"submissionReviewed",
+      "boolean": {},
+      "required": true,
+      "indexed": true
+    },
+    {
       "name":"commissionId",
       "text": {},
       "required": true,

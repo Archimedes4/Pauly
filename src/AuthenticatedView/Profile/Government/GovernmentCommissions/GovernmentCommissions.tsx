@@ -19,6 +19,9 @@ declare global {
     hidden: boolean
     maxNumberOfClaims: number
     allowMultipleSubmissions: boolean
+    submissionsCount: number
+    claimCount: number
+    reviewedCount: number
     commissionId: string
     value: commissionTypeEnum
     startDate?: string
@@ -32,10 +35,6 @@ declare global {
       postId: string
     }
   }
-}
-
-function CommissionPickerType() {
-  
 }
 
 export default function GovernmentCommissions() {
@@ -95,9 +94,8 @@ function CommissionBlock({commission}:{commission: commissionType}) {
   const [unclaimedCount, setUnclaimedCount] = useState<string>("0")
 
   async function loadData() {
-    const result = await getSubmissions(commission.commissionId, submissionTypeEnum.unApproved)
+    const result = await getSubmissions(commission.commissionId, submissionTypeEnum.unReviewed)
     if (result.result === loadingStateEnum.success && result.count !== undefined) {
-      console.log(result)
       if (result.count >= 50) {
         setUnclaimedCount(result.count.toString() + "+")
       } else {

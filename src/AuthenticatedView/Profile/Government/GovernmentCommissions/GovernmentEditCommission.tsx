@@ -18,6 +18,7 @@ import WebViewCross from '../../../../UI/WebViewCross';
 import getCommission from '../../../../Functions/commissions/getCommission';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
 import { CloseIcon } from '../../../../UI/Icons/Icons';
+import BackButton from '../../../../UI/BackButton';
 
 enum datePickingMode {
   none,
@@ -61,15 +62,17 @@ export default function GovernmentEditCommission() {
   const {id} = useParams()
 
   async function loadData() {
-    const result = await getCommission(id)
-    if (result.result === loadingStateEnum.success && result.data !== undefined) {
-      setCommissionItemId(result.data.itemId)
-      setCommissionName(result.data.title)
-      setAllowMultipleSubmissions(result.data.allowMultipleSubmissions)
-      setIsHidden(result.data.hidden)
-      setMaxNumberOfClaims(result.data.maxNumberOfClaims)
+    if (id !== undefined) {
+      const result = await getCommission(id)
+      if (result.result === loadingStateEnum.success && result.data !== undefined) {
+        setCommissionItemId(result.data.itemId)
+        setCommissionName(result.data.title)
+        setAllowMultipleSubmissions(result.data.allowMultipleSubmissions)
+        setIsHidden(result.data.hidden)
+        setMaxNumberOfClaims(result.data.maxNumberOfClaims)
+      }
+      setGetCommissionResult(result.result) 
     }
-    setGetCommissionResult(result.result)
   }
   async function deleteCommission() {
     if (commissionItemId === "" || deleteCommissionResult === loadingStateEnum.loading || deleteCommissionResult === loadingStateEnum.success) {return}
@@ -143,9 +146,7 @@ export default function GovernmentEditCommission() {
   return (
     <View style={{overflow: "hidden", width: width, height: height, backgroundColor: "white"}}>
       <ScrollView style={{height: height, width: width, zIndex: 1}}>
-        <Link to="/profile/government/commissions/">
-          <Text>Back</Text>
-        </Link>
+        <BackButton to="/profile/government/commissions"/>
         <View style={{alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <Text>{isCreating ? "Create New":"Edit"} Commission</Text>
         </View>
@@ -250,7 +251,7 @@ export default function GovernmentEditCommission() {
         <Text>Post</Text>
         <PostSelectionContainer width={width} height={height * 0.4} selectedTeamId={selectedTeamId} setSelectedTeamId={setSelectedTeamId} selectedChannelId={selectedChannelId} setSelectedChannelId={setSelectedChannelId} setSelectedPostId={setSelectedPostId} />
         {
-          (!isCreating) ?
+          (!isCreating && id !== undefined) ?
           <View style={{marginTop: 10, marginBottom: 10, height: height * 0.5}}>
             <CommissionSubmissions commissionId={id} width={width} height={height * 0.5} />
           </View>:null
@@ -268,7 +269,7 @@ export default function GovernmentEditCommission() {
       <View style={{height: height * 0.8, width: width * 0.8, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "white":"transparent", borderRadius: 15, shadowColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "black":"transparent", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, alignItems: "center", justifyContent: "center", alignContent: "center"}} pointerEvents={(currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? 'auto':'none'}>
         { (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ?
           <DatePicker 
-            selectedDate={(currentDatePickingMode === datePickingMode.start) ? startDate:(currentDatePickingMode === datePickingMode.end) ? endDate:null} 
+            selectedDate={(currentDatePickingMode === datePickingMode.start) ? startDate:endDate} 
             onSetSelectedDate={(date) => {if (currentDatePickingMode === datePickingMode.end) {setEndDate(date)} else if (currentDatePickingMode === datePickingMode.start) {setStartDate(date)}}}
             width={width * 0.7} height={height * 0.7} onCancel={() => {setCurrentDatePickingMode(datePickingMode.none)}}
           />:null
@@ -511,7 +512,8 @@ function SubmissionView({width, height, submissionData, onClose}:{width: number,
     setChangeState(loadingStateEnum.loading)
     const data = {
       "fields":{
-        "submissionApproved":!submissionData.approved
+        "submissionApproved":!submissionData.approved,
+        "submissionReviewed":true
       }
     }
     const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items/${submissionData.itemId}`, "PATCH", undefined, JSON.stringify(data))
@@ -531,6 +533,7 @@ function SubmissionView({width, height, submissionData, onClose}:{width: number,
         <Text>By: {submissionData.userName}</Text>
         <Text>Time: {submissionData.submissionTime.toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
         <Text>Approved: {submissionData.approved ? "TURE":"FALSE"}</Text>
+        <Text>Reviewed: {submissionData.reviewed ? "TRUE":"FALSE"}</Text>
         <Text>Id: {submissionData.id}</Text>
       </View>
       <Pressable onPress={() => changeSubmissionApproved()}>

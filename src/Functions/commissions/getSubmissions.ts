@@ -3,7 +3,7 @@ import { loadingStateEnum, submissionTypeEnum } from "../../types";
 import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getSubmissions(commissionId: string, submissionType: submissionTypeEnum): Promise<{result: loadingStateEnum, data?: submissionType[], nextLink?: string, count?: number}> {
-  const filter: string = (submissionType === submissionTypeEnum.approved) ? "fields/submissionApproved%20ne%20false%20and%20":(submissionType === submissionTypeEnum.unApproved) ? "fields/submissionApproved%20eq%20false%20and%20":""
+  const filter: string = (submissionType === submissionTypeEnum.approved) ? "fields/submissionApproved%20ne%20false%20and%20":(submissionType === submissionTypeEnum.unApproved) ? "fields/submissionApproved%20eq%20false%20and%20":(submissionType === submissionTypeEnum.unReviewed) ? "fields/submissionReviewed%20eq%20false%20and%20":""
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$filter=${filter}fields/commissionId%20eq%20'${commissionId}'`, "GET")
   if (result.ok) {
     const data = await result.json()
@@ -32,7 +32,9 @@ export default async function getSubmissions(commissionId: string, submissionTyp
         const batchResultData = await batchResult.json()
         for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
           if (batchResultData["responses"][batchIndex]["status"] === 200) {
-            users[batchResultData["responses"][batchIndex]["body"]["id"]] = batchResultData["responses"][batchIndex]["body"]["displayName"]
+            Object.defineProperty(users, batchResultData["responses"][batchIndex]["body"]["id"], {
+              value: batchResultData["responses"][batchIndex]["body"]["displayName"]
+            })
           } else {
             return {result: loadingStateEnum.failed}
           }
@@ -52,7 +54,8 @@ export default async function getSubmissions(commissionId: string, submissionTyp
           submissionTime: new Date(data["value"][index]["fields"]["submittedTime"]),
           id: data["value"][index]["fields"]["submissionId"],
           itemId: data["value"][index]["id"],
-          approved: data["value"][index]["fields"]["submissionApproved"]
+          approved: data["value"][index]["fields"]["submissionApproved"],
+          reviewed: data["value"][index]["fields"]["submissionReviewed"]
         })
       } else {
         return {result: loadingStateEnum.failed}

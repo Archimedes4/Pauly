@@ -6,11 +6,14 @@ export const currentEventsSlice = createSlice({
   name: "currentEvents",
   initialState: initalCalendarState,
   reducers: {
-    setCurrentEvents: (state, action) => {
+    setCurrentEvents: (state, action: PayloadAction<eventType[]>) => {
       return [...action.payload]
     },
     pushEvent: (state, action: PayloadAction<eventType>) => {
       return [...state, action.payload]
+    },
+    removeCurrentEvent: (state, action: PayloadAction<number>) => {
+      state.slice(action.payload, 1)
     }
   }
 })

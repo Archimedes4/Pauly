@@ -19,11 +19,11 @@ import updateEvent from "../../Functions/updateEvent";
 import { addEventSlice } from "../../Redux/reducers/addEventReducer";
 import React from "react";
 
-export default function AddEvent({setIsShowingAddDate, width, height, editing, editData}:{setIsShowingAddDate: (item: boolean) => void, width: number, height: number, editing: boolean, editData?: eventType}) {
+export default function AddEvent({width, height}:{width: number, height: number}) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
   const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
-  const {selectedEventType, isPickingStartDate, isPickingEndDate, eventName, allDay, createEventState, recurringEvent, selectedRecurringType, startDate, endDate} = useSelector((state: RootState) => state.addEvent)
+  const {selectedEventType, isPickingStartDate, isPickingEndDate, eventName, allDay, isEditing, isShowingAddDate, selectedEvent, createEventState, recurringEvent, selectedRecurringType, startDate, endDate} = useSelector((state: RootState) => state.addEvent)
   const dispatch = useDispatch()
   
   useEffect(() => {
@@ -33,15 +33,12 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
   }, [selectedEventType])
 
   async function deleteEvent() {
-    if (editData !== undefined && editData.microsoftEvent && editData.microsoftReference !== undefined){
-      const deleteEvent = await callMsGraph(editData.microsoftReference, "DELETE")
+    if (selectedEvent !== undefined && selectedEvent.microsoftEvent && selectedEvent.microsoftReference !== undefined){
+      const deleteEvent = await callMsGraph(selectedEvent.microsoftReference, "DELETE")
       if (deleteEvent.ok){
-        var outputEvents: string[] = []
-        for (var index = 0; index < currentEvents.length; index++){
-          outputEvents.push(JSON.stringify(currentEvents[index]))
-        }
-        dispatch(currentEventsSlice.actions.setCurrentEvents(outputEvents))
-        setIsShowingAddDate(false)
+        const index = currentEvents.findIndex(e => {return e.id === selectedEvent.id})
+        dispatch(currentEventsSlice.actions.removeCurrentEvent(index))
+        dispatch(addEventSlice.actions.setIsShowingAddDate(false))
       } else {
         //TO DO throw error
       }
@@ -78,7 +75,7 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
           width={width} height={height} onCancel={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(false)); dispatch(addEventSlice.actions.setIsPickingEndDate(false))}} 
           allowedDatesRange={(selectedEventType === paulyEventType.schoolDay && selectedSchoolYear !== undefined) ? {startDate: new Date(selectedSchoolYear.startTime), endDate: new Date(selectedSchoolYear.endTime)}:undefined}/>:
         <View>
-          <Pressable onPress={() => {setIsShowingAddDate(false)}}>
+          <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false))}}>
             <CloseIcon width={10} height={10}/>
           </Pressable>
           <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
@@ -123,12 +120,12 @@ export default function AddEvent({setIsShowingAddDate, width, height, editing, e
               dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.loading))
               updateEvent()
             }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
-              <Text style={{zIndex: -1}}>{editing ? "Save":(createEventState === loadingStateEnum.notStarted) ? "CREATE":(createEventState === loadingStateEnum.loading) ? "Loading":(createEventState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+              <Text style={{zIndex: -1}}>{isEditing ? "Save":(createEventState === loadingStateEnum.notStarted) ? "CREATE":(createEventState === loadingStateEnum.loading) ? "Loading":(createEventState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
             </Pressable>
           </View>
-          { editing ? 
+          { isEditing ? 
             <Pressable onPress={() => {
-              setIsShowingAddDate(false); 
+              dispatch(addEventSlice.actions.setIsShowingAddDate(false))
               deleteEvent()
             }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
               <Text style={{zIndex: -1}}>Delete</Text>
