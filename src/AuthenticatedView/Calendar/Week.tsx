@@ -25,8 +25,8 @@ export default function Week({width, height}:{width: number, height: number}) {
     return week; 
   }
   useEffect(() => {
-    setDaysOfWeek(getDOW(new Date(JSON.parse(selectedDateRedux))))
-    console.log(new Date(JSON.parse(selectedDateRedux)))
+    setDaysOfWeek(getDOW(new Date(selectedDateRedux)))
+    console.log(new Date(selectedDateRedux))
   }, [selectedDateRedux])
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
@@ -39,7 +39,7 @@ export default function Week({width, height}:{width: number, height: number}) {
         <View>
           <View style={{flexDirection: "row", height: width * 0.142857142857143, width: width}}>
             <Pressable style={{margin: width * 0.01111111111111111}} onPress={() => {
-              const d = new Date(JSON.parse(selectedDateRedux));
+              const d = new Date(selectedDateRedux);
               d.setDate(d.getDate() - 7)
               dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
             }}>
@@ -48,12 +48,12 @@ export default function Week({width, height}:{width: number, height: number}) {
             {daysOfWeek.map((day) => (
               <Pressable onPress={() => {
                 dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(day.toISOString()))
-              }} key={day.getDay() + "_" + create_UUID()} style={{width: width * 0.08888888888888889, height: width * 0.08888888888888889, margin: width * 0.01111111111111111, borderRadius: 50, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center", borderColor: (day.getDate() === new Date(JSON.parse(selectedDateRedux)).getDate()) ? "black":"#793033", borderWidth: (new Date().getDate() === day.getDate() || day.getDate() === new Date(JSON.parse(selectedDateRedux)).getDate()) ? 5:0}}>
+              }} key={day.getDay() + "_" + create_UUID()} style={{width: width * 0.08888888888888889, height: width * 0.08888888888888889, margin: width * 0.01111111111111111, borderRadius: 50, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center", borderColor: (day.getDate() === new Date(selectedDateRedux).getDate()) ? "black":"#793033", borderWidth: (new Date().getDate() === day.getDate() || day.getDate() === new Date(selectedDateRedux).getDate()) ? 5:0}}>
                 <Text style={{color: "white"}}>{day.getDate()}</Text>
               </Pressable>
             ))}
             <Pressable style={{margin: width * 0.01111111111111111}} onPress={() => {
-              const d = new Date(JSON.parse(selectedDateRedux));
+              const d = new Date(selectedDateRedux);
               d.setDate(d.getDate() + 7)
               dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
             }}>

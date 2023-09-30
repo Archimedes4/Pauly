@@ -36,13 +36,19 @@ export default function Commissions() {
 
   async function loadData() {
     const pointResult = await getPoints()
-    console.log(pointResult)
     const commissionsResult = await getCommissions()
     if (commissionsResult.result === loadingStateEnum.success, commissionsResult.data !== undefined) {
       dispatch(commissionsSlice.actions.setCurrentCommissions(commissionsResult.data))
     }
     setCommissionState(commissionsResult.result)
     //TO DO pagination
+  }
+
+  async function loadCommissionData() {
+    const result = await getCommissions({date: new Date(), filter: "ge"})
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      
+    }
   }
 
   useEffect(() => {
@@ -112,8 +118,8 @@ export default function Commissions() {
             <PickerPiece text='All' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
             <PickerPiece text='Current' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
             <PickerPiece text='Past' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece text='Claimed' onPress={() => {getCommissions(undefined, undefined, true)}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece text='Future' onPress={() => {getCommissions({date: new Date(), filter: "ge"})}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Claimed' onPress={() => {loadCommissionData()}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Future' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
           </ScrollView>
         </Pressable>
       </View>

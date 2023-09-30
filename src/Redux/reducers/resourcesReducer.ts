@@ -1,22 +1,33 @@
 import { loadingStateEnum } from './../../types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-const initalResourcesState: {resources: resourceDataType[], loadingState: loadingStateEnum} = {resources: [], loadingState: loadingStateEnum.loading}
+
+type resourceStoreState = {
+  resources: resourceDataType[]
+  loadingState: loadingStateEnum
+  searchValue: string
+} 
+
+const initalResourcesState: resourceStoreState = {resources: [], loadingState: loadingStateEnum.loading, searchValue: ""}
 
 export const resourcesSlice = createSlice({
   name: "resources",
   initialState: initalResourcesState,
   reducers: {
     setResourceData: (state, action: PayloadAction<resourceDataType[]>) => {
-      return {resources: [...action.payload], loadingState: state.loadingState}
+      state.resources = action.payload
     },
     pushResource: (state, action: PayloadAction<resourceDataType>) => {
-      return {resources: [...state.resources, action.payload], loadingState: state.loadingState}
+      state.resources.push(action.payload)
     },
-    setResources: (_state, action: PayloadAction<{resources: resourceDataType[], loadingState: loadingStateEnum}>) => {
-      return action.payload
+    setResources: (state, action: PayloadAction<{resources: resourceDataType[], loadingState: loadingStateEnum}>) => {
+      state.resources = action.payload.resources
+      state.loadingState = action.payload.loadingState
     },
     setResourcesState: (state, action: PayloadAction<loadingStateEnum>) => {
-      return {resources: state.resources, loadingState: action.payload}
+      state.loadingState === action.payload
+    },
+    setSearchValue: (state, action: PayloadAction<string>) => {
+      state.searchValue = action.payload
     }
   }
 })

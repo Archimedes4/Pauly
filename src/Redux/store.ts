@@ -19,6 +19,7 @@ import expandedModeReducer from './reducers/expandedModeReducer';
 import isShowingProfileBlockReducer from './reducers/isShowingProfileBlockReducer';
 import isGovernmentModeReducer from './reducers/isGovernmentModeReducer';
 import commissionsReducer from './reducers/commissionsReducer';
+import pdfDataReducer from './reducers/pdfDataReducer';
 
 const store = configureStore({
   reducer: {
@@ -42,7 +43,8 @@ const store = configureStore({
     expandedMode: expandedModeReducer,
     isShowingProfileBlock: isShowingProfileBlockReducer,
     isGovernmentMode: isGovernmentModeReducer,
-    commissions: commissionsReducer
+    commissions: commissionsReducer,
+    pdfData: pdfDataReducer
   }
 });
 

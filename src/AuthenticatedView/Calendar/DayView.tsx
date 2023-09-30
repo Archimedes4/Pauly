@@ -83,15 +83,6 @@ export default function DayView({width, height}:{width: number, height: number})
     console.log("This", resultHeightTopOffset)
   }
 
-  //https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
-  //Upadtes every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      updateOnTimeChange()
-    }, 1000);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [])
   function updateOnTimeChange() {
     let minuiteInt = new Date().getMinutes()
     if (currentMinuteInt != minuiteInt!) {
@@ -107,6 +98,16 @@ export default function DayView({width, height}:{width: number, height: number})
     }
   }
 
+  //https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
+  //Upadtes every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateOnTimeChange()
+    }, 1000);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [])
+
   useEffect(() => {
     setHourLength(height * 0.1)
     loadCalendarContent()
@@ -118,37 +119,33 @@ export default function DayView({width, height}:{width: number, height: number})
 
   return (
     <ScrollView style={{height: height, width: width, backgroundColor: "white"}} ref={mainScrollRef}>
-      <View>
+      <>
+        { isShowingTime ?
           <View>
-            { isShowingTime ?
-              <View>
-                {hoursText.map((value) => (
-                  <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
-                    { (calculateIfShowing(value, new Date(JSON.parse(selectedDate)))) ?
-                      <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
-                    }
-                    <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
-                  </View>
-                ))}
-              </View>:null
-            }
-          </View>
-          <>
-            {currentEvents.map((event) => (
-              <>
-                { event.allDay ?
-                  null:<EventBlock event={event} width={width} height={height} />
+            {hoursText.map((value) => (
+              <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
+                { (calculateIfShowing(value, new Date(selectedDate))) ?
+                  <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
                 }
-              </>
+                <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
+              </View>
             ))}
-          </>
-          { (new Date(JSON.parse(selectedDate)).getDate() === new Date().getDate() && new Date(JSON.parse(selectedDate)).getMonth() === new Date().getMonth() && new Date(JSON.parse(selectedDate)).getFullYear() === new Date().getFullYear()) ?
-            <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
-              <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
-              <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
-            </View>:null
-          }   
-      </View>
+          </View>:null
+        }
+      </>
+      {currentEvents.map((event) => (
+        <>
+          { event.allDay ?
+            null:<EventBlock event={event} width={width} height={height} />
+          }
+        </>
+      ))}
+      { (new Date(selectedDate).getDate() === new Date().getDate() && new Date(selectedDate).getMonth() === new Date().getMonth() && new Date(selectedDate).getFullYear() === new Date().getFullYear()) ?
+        <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>
+          <Text style={{color: "red", zIndex: 2}}>{currentTime}</Text>
+          <View style={{backgroundColor: "red", width: width * 0.914, height: 6, position: "absolute", right: 0}}/>                       
+        </View>:null
+      }   
     </ScrollView>
   )
 }
@@ -157,7 +154,7 @@ function EventBlock({event, width, height}:{event: eventType, width: number, hei
   const EventHeight = computeEventHeight(new Date(event.startTime), new Date(event.endTime), height)
   const Offset = findTimeOffset(new Date(event.startTime), height)
   return (
-    <View style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0}}>
+    <View key={"Event_"+create_UUID()} style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0}}>
       <View style={{width: width * 0.9, height: EventHeight, position: "absolute", backgroundColor: event.eventColor, opacity: 0.3, zIndex: -1}}/>
       <Text style={{opacity: 1}}>{event.name}</Text>
       <Text>{new Date(event.startTime).toLocaleString("en-us", {hour: "numeric", minute: "numeric"})} to {new Date(event.endTime).toLocaleString("en-us", {hour: "numeric", minute: "numeric"})}</Text>

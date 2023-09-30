@@ -13,6 +13,7 @@ import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 import BackButton from '../UI/BackButton'
 import { loadingStateEnum } from '../types'
 import ProgressView from '../UI/ProgressView'
+import { resourcesSlice } from '../Redux/reducers/resourcesReducer'
 
 //Resources
 // -> Sports
@@ -33,16 +34,18 @@ enum resourceMode {
 
 export default function Resources() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const resources = useSelector((state: RootState) => state.resources)
+  const {resources, loadingState, searchValue} = useSelector((state: RootState) => state.resources)
   const [selectedResourceMode, setSelectedResourceMode] = useState<resourceMode>(resourceMode.home)
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
-  const [searchValue, setSearchValue] = useState<string>("")
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
+  const [isShowingCategoryView, setIsShowingCategoryView] = useState<boolean>(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
   async function loadData() {
     await getResources()
   }
+
   useEffect(() => {
     dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
     loadData()
@@ -70,22 +73,29 @@ export default function Resources() {
         }
         <Text style={{fontFamily: "BukhariScript"}}>Resources</Text>
       </View>
-      <SearchBox searchValue={searchValue} setSearchValue={setSearchValue}/>
+      <SearchBox searchValue={searchValue} />
       <View style={{width: width, height: height * 0.05, backgroundColor: "#ededed"}}/>
       <ScrollView style={{height: (isHoverPicker) ? height * 0.75:height * 0.8, backgroundColor: "#ededed"}}>
         <>
-          { (resources.loadingState === loadingStateEnum.loading) ?
+          { (loadingState === loadingStateEnum.loading) ?
             <View style={{width: width, height: (isHoverPicker) ? height * 0.75:height * 0.8, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
               <ProgressView width={(width < height) ? width * 0.05:height * 0.05} height={(width < height) ? width * 0.05:height * 0.05}/>
               <Text>Loading</Text>
             </View>:
             <>
-              { (resources.loadingState === loadingStateEnum.success) ?
+              { (loadingState === loadingStateEnum.success) ?
                 <>
-                  {resources.resources.map((resource) => (
-                    <View key={"Resource_"+resource.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-                      <WebViewCross html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
-                    </View>
+                  {resources.map((resource) => (
+                    <>
+                      { isGovernmentMode ?
+                        <Pressable key={"Resource_"+resource.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                          <WebViewCross html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
+                        </Pressable>:
+                        <View key={"Resource_"+resource.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                          <WebViewCross html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
+                        </View>
+                      }
+                    </>
                   ))}
                 </>:<Text>Failed</Text>
               }
@@ -108,6 +118,15 @@ export default function Resources() {
   )
 }
 
+function GovernmentCategoryView() {
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  return (
+    <View>
+      
+    </View>
+  )
+}
+
 function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, item: resourceMode, onPress: (item: resourceMode) => void, isHoverPicker: boolean, setIsHoverPicker: (item: boolean) => void}) {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [isSelected, setIsSelected] = useState<boolean>(false)
@@ -120,10 +139,11 @@ function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, item
   )
 }
 
-function SearchBox({searchValue, setSearchValue}:{searchValue: string, setSearchValue: (item: string) => void}) {
+function SearchBox({searchValue}:{searchValue: string}) {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
   const style: ViewStyle = (Platform.OS === "web") ? {outlineStyle: "none"}:{}
+  const dispatch = useDispatch()
   return (
     <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", position: "absolute", top: height * 0.1 - 19, zIndex: 2}}>
       <View style={{width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 25, flexDirection: "row", backgroundColor: "white"}}>
@@ -134,7 +154,7 @@ function SearchBox({searchValue, setSearchValue}:{searchValue: string, setSearch
           </View>
         }
         <View>
-          <TextInput placeholder='Search' placeholderTextColor={"black"} value={searchValue} onChangeText={setSearchValue} style={[{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0}, style]} enterKeyHint='search' returnKeyType='search' inputMode='search'/>
+          <TextInput placeholder='Search' placeholderTextColor={"black"} value={searchValue} onChangeText={(e) => {dispatch(resourcesSlice.actions.setSearchValue(e))}} style={[{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0}, style]} enterKeyHint='search' returnKeyType='search' inputMode='search'/>
           <View
             style={{height: 0, alignSelf: 'flex-start', overflow: "hidden"}}
             onLayout={e => {

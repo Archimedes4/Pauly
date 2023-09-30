@@ -6,13 +6,15 @@ type commissionsStateType = {
   points: number
   currentCommissions: commissionType[]
   selectedCommission: string
+  commissionNextLink: string | undefined
 }
 
 const initalState: commissionsStateType = {
   commissionsState: loadingStateEnum.loading,
   points: 0,
   currentCommissions: [],
-  selectedCommission: ""
+  selectedCommission: "",
+  commissionNextLink: undefined
 }
 
 export const commissionsSlice = createSlice({

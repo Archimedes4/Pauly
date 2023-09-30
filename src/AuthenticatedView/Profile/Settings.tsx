@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { useMsal } from "@azure/msal-react";
 import { tenantId } from '../../PaulyConfig';
-import { GovernmentIcon, PersonIcon } from '../../UI/Icons/Icons';
+import { GearIcon, GovernmentIcon, PersonIcon } from '../../UI/Icons/Icons';
 import BackButton from '../../UI/BackButton';
 import { DiscoveryDocument, revokeAsync, useAutoDiscovery } from 'expo-auth-session';
 import store, { RootState } from '../../Redux/store';
@@ -56,7 +56,8 @@ export default function Settings() {
   return (
     <View>
       <BackButton to='/'/>
-      <View style={{alignContent: "center", justifyContent: "center", alignItems: "center", marginTop: height * 0.025, marginBottom: height * 0.02}}>
+      <View style={{alignContent: "center", justifyContent: "center", alignItems: "center", height: height * 0.2, marginTop: height * 0.025, marginBottom: height * 0.02}}>
+        <GearIcon width={(width < height) ? width * 0.3:height*0.2} height={(width < height) ? width * 0.3:height*0.2} style={{position: "absolute", left: width * 0.2}}/>
         <Text style={{fontFamily: 'BukhariScript', fontSize: 45, color: "white"}}>Settings</Text>
       </View>
       <View style={{width: width, alignContent: "center", justifyContent: 'center', alignItems: "center"}}>
@@ -64,7 +65,7 @@ export default function Settings() {
           <Image source={{uri: uri}} style={{width: width * 0.5, height: width * 0.5, borderRadius: width * 0.25}}/>:
           <PersonIcon width={width * 0.5} height={height * 0.2}/>
         }
-        <Text style={{color: "white", fontWeight: "bold", fontSize: 24}}>{displayName}</Text>
+        <Text style={{color: "white", fontWeight: "bold", fontSize: 24, marginTop: height * 0.05}}>{displayName}</Text>
       </View>
       <Pressable onPress={() => {signOut()}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", alignContent: "center", justifyContent: "center", marginTop: height * 0.05}}>
         <Text style={{fontWeight: "bold"}}>SIGN OUT</Text>

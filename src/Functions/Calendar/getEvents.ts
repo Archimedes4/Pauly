@@ -8,7 +8,7 @@ import { loadingStateEnum } from "../../types"
 import { getGraphEvents } from "./calendarFunctionsGraph"
 
 export default async function getEvents() {
-  const selectedDateOut = new Date(JSON.parse(store.getState().selectedDate))
+  const selectedDateOut = new Date(store.getState().selectedDate)
   const startDate = new Date(selectedDateOut.getFullYear(), selectedDateOut.getMonth(), 1)
   const endDate = new Date(selectedDateOut.getFullYear(), selectedDateOut.getMonth() + 1, 0)
   //Personal Calendar

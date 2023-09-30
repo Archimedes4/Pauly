@@ -26,7 +26,7 @@ export default function WebViewCross({html}:{html: string | undefined}) {
                 </div>
               </body>
               </html>`}} 
-              style={{margin: 10, height: height, width: 900}} automaticallyAdjustContentInsets={false} 
+              style={{margin: 10, height: height + 10, width: 900}} automaticallyAdjustContentInsets={false} 
               javaScriptEnabled={true}
               injectedJavaScript={jsCode}
               
@@ -36,6 +36,7 @@ export default function WebViewCross({html}:{html: string | undefined}) {
               <div dangerouslySetInnerHTML={{__html: html}}/>
             </View>
           }
+          <Text>{html}</Text>
         </>:null
       }
     </>

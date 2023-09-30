@@ -77,11 +77,9 @@ export default function Calendar() {
   return (
     <View>
       <View style={{height: height * 0.1, backgroundColor: '#444444'}}>
-        <View style={{flexDirection: "row"}}>
-          { (currentBreakPoint >= 1) ?
-            null:<BackButton to='/'/>
-          } 
-        </View>
+        { (currentBreakPoint >= 1) ?
+          null:<BackButton to='/' style={{zIndex: 100}}/>
+        } 
         <View style={{flexDirection: "row", alignItems: "center", height: height * 0.1, width: width}}>
           <Text style={{fontFamily: "BukhariScript", fontSize: Math.cbrt((width < height) ? width * 0.5:height * 0.1) * 5, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017)}}>Calendar</Text>
           <CalendarTypePicker width={width * 0.5} height={height * 0.05}/>

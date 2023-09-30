@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, useCallback } from 'react';
-import { Dimensions, View, Text, Image, Pressable } from 'react-native';
+import { Dimensions, View, Text, Image, Pressable, Platform } from 'react-native';
 import MonthView from './MonthView';
 import { Link, Navigate, useNavigate } from 'react-router-native';
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
@@ -15,6 +15,7 @@ import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../types';
 import ProgressView from '../UI/ProgressView';
 import React from 'react';
+import { platform } from 'process';
 declare global {
   type DateProperty = {
     Date: number
@@ -81,7 +82,7 @@ export default function HomePage() {
                 { (message !== "") ?
                   <ScrollingTextAnimation width={width * 1.0} height={height * 0.08}>
                     <View>
-                      <Text numberOfLines={1} adjustsFontSizeToFit={true} style={{fontSize: height * 0.1, height: height * 0.1}}>{message}</Text>
+                      <Text numberOfLines={1} adjustsFontSizeToFit={true} style={{fontSize: (Platform.OS === "ios") ? height * 0.4:height * 0.065, height: (Platform.OS === "ios") ? height * 0.8:height * 0.1}}>{message}</Text>
                     </View>
                   </ScrollingTextAnimation>:null
                 }

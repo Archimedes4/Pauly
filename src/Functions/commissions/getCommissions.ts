@@ -18,7 +18,7 @@ function getFilter(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date:
   }
 }
 
-async function getSubmissions(commissionIds: string[]): Promise<{result: loadingStateEnum, data?: {claimedCount: number, submissionsCount: number, reviewedCount: number, commissionId: string}[]}> {
+async function getSubmissions(commissionIds: string[]): Promise<{result: loadingStateEnum, data?: Map<string, {claimCount: number, submissionsCount: number, reviewedCount: number}>}> {
   var outputRequests: {id: string, method: string, url: string}[][] = [[]]
   for (var index = 0; index < commissionIds.length; index++) {
     outputRequests[Math.floor(index/20)].push({
@@ -59,11 +59,20 @@ async function getSubmissions(commissionIds: string[]): Promise<{result: loading
             }
             for (var valueIndex = 0; valueIndex < data["respone"][index]["body"]["value"].length; valueIndex++) {
               if (outputMap.has(data["respone"][index]["body"]["value"][valueIndex]["commissionId"])) {
-                outputMap.get(data["respone"][index]["body"]["value"][valueIndex]["commissionId"])
+                const mapData = outputMap.get(data["respone"][index]["body"]["value"][valueIndex]["commissionId"])
+                if (mapData !== undefined) {
+                  const subApproved = data["respone"][index]["body"]["value"][valueIndex]["submissionApproved"]
+                  const subReviewed = data["respone"][index]["body"]["value"][valueIndex]["submissionReviewed"]
+                  outputMap.set(data["respone"][index]["body"]["value"][valueIndex]["commissionId"], {submissionsCount: mapData.submissionsCount++, claimCount: subApproved ? mapData.claimCount++:mapData.claimCount, reviewedCount: subReviewed ? mapData.reviewedCount++:mapData.reviewedCount})
+                } else {
+                  const subApproved = data["respone"][index]["body"]["value"][valueIndex]["submissionApproved"]
+                  const subReviewed = data["respone"][index]["body"]["value"][valueIndex]["submissionReviewed"]
+                  outputMap.set(data["respone"][index]["body"]["value"][valueIndex]["commissionId"], {submissionsCount: 1, claimCount: subApproved ? 1:0, reviewedCount: subReviewed ? 1:0})
+                }
               } else {
                 const subApproved = data["respone"][index]["body"]["value"][valueIndex]["submissionApproved"]
                 const subReviewed = data["respone"][index]["body"]["value"][valueIndex]["submissionReviewed"]
-                outputMap.set(data["respone"][index]["body"]["value"][valueIndex]["commissionId"], {})
+                outputMap.set(data["respone"][index]["body"]["value"][valueIndex]["commissionId"], {submissionsCount: 1, claimCount: subApproved ? 1:0, reviewedCount: subReviewed ? 1:0})
               }
             }
           }
@@ -75,6 +84,8 @@ async function getSubmissions(commissionIds: string[]): Promise<{result: loading
       return {result: loadingStateEnum.failed}
     }
   }
+  
+  return {result: loadingStateEnum.success, data: outputMap}
 }
 
 export default async function getCommissions(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean): Promise<{result: loadingStateEnum, data?: commissionType[], nextLink?: string}> {
@@ -87,26 +98,37 @@ export default async function getCommissions(startDate?: {date: Date, filter: "g
     if (result.ok) {
       const data = await result.json()
       if (data["value"] !== null && data["value"] !== undefined){
-        var resultCommissions: commissionType[] = []
-        for (let index = 0; index < data["value"].length; index++) {
-          resultCommissions.push({
-            itemId: data["value"][index]["id"],
-            title: data["value"][index]["fields"]["Title"],
-            startDate: data["value"][index]["fields"]["startDate"],
-            endDate: data["value"][index]["fields"]["endDate"],
-            claimCount: 0,
-            submissionsCount: 0,
-            points: data["value"][index]["fields"]["points"] as number,
-            proximity: data["value"][index]["fields"]["proximity"] as number,
-            commissionId: data["value"][index]["fields"]["commissionID"] as string,
-            hidden: data["value"][index]["fields"]["hidden"],
-            timed:  data["value"][index]["fields"]["timed"],
-            maxNumberOfClaims:  data["value"][index]["fields"]["maxNumberOfClaims"],
-            allowMultipleSubmissions:  data["value"][index]["fields"]["allowMultipleSubmissions"],
-            value:  data["value"][index]["fields"]["hidden"] - 1
-          })
+        const commissionsIds: string[] = []
+        for (var index = 0; index < data["value"].length; index++) {
+          commissionsIds.push(data["value"][index]["fields"]["commissionId"])
         }
-        return {result: loadingStateEnum.success, data: resultCommissions, nextLink: data["@odata.nextLink"]}
+        const submissions = await getSubmissions(commissionsIds)
+        if (submissions.result === loadingStateEnum.success && submissions.data !== undefined) {
+          var resultCommissions: commissionType[] = []
+          for (let index = 0; index < data["value"].length; index++) {
+            const submissionData = submissions.data.get(data["value"][index]["fields"]["commissionID"] as string)
+            resultCommissions.push({
+              itemId: data["value"][index]["id"],
+              title: data["value"][index]["fields"]["Title"],
+              startDate: data["value"][index]["fields"]["startDate"],
+              endDate: data["value"][index]["fields"]["endDate"],
+              claimCount: submissionData ? submissionData.claimCount:0,
+              submissionsCount: submissionData ? submissionData.submissionsCount:0,
+              reviewedCount: submissionData ? submissionData.reviewedCount:0,
+              points: data["value"][index]["fields"]["points"] as number,
+              proximity: data["value"][index]["fields"]["proximity"] as number,
+              commissionId: data["value"][index]["fields"]["commissionID"] as string,
+              hidden: data["value"][index]["fields"]["hidden"],
+              timed:  data["value"][index]["fields"]["timed"],
+              maxNumberOfClaims:  data["value"][index]["fields"]["maxNumberOfClaims"],
+              allowMultipleSubmissions:  data["value"][index]["fields"]["allowMultipleSubmissions"],
+              value:  data["value"][index]["fields"]["hidden"] - 1
+            })
+          }
+          return {result: loadingStateEnum.success, data: resultCommissions, nextLink: data["@odata.nextLink"]}
+        } else {
+          return {result: loadingStateEnum.failed}
+        }
       } else {
         return {result: loadingStateEnum.failed}
       }
