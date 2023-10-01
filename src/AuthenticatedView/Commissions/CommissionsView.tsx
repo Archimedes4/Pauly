@@ -119,29 +119,31 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                 <Pressable onPress={() => onClose()}>
                   <CloseIcon width={(width < height) ? width * 0.05:height * 0.05} height={(width < height) ? width * 0.05:height * 0.05}/>
                 </Pressable>
-                <Text>Commission</Text>
+                <View style={{width: width * 0.8, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                  <Text>Commission: {commissionData.title}</Text>
+                </View>
               </View>
               <View style={{height: height * 0.6}}>
                 <Text>{commissionData.points}</Text>
-                <View>
-                  <WebViewCross html={messageData}/>
+                <View style={{marginLeft: width * 0.05}}>
+                  <WebViewCross html={messageData} width={width * 0.7}/>  
                 </View>
                 { (commissionData.value === commissionTypeEnum.Image || commissionData.value === commissionTypeEnum.ImageLocation) ?
                   <View style={{height: height * 0.5}}>
-                    <View style={{width: width * 0.7, height: height * 0.3, marginLeft: "auto", marginRight: "auto", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                    <>
                       { (imageUri !== "") ?
-                        <Image source={{uri: imageUri, width: width * 0.7, height: height * 0.3}} width={width * 0.7} height={height * 0.3}/>:
-                        <View>
+                        <Image source={{uri: imageUri}} width={width * 0.7} height={height * 0.3} style={{marginLeft: "auto", marginRight: "auto", alignContent: "center", alignItems: "center", justifyContent: "center", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}/>:
+                        <View style={{width: width * 0.7, height: height * 0.3, marginLeft: "auto", marginRight: "auto", alignContent: "center", alignItems: "center", justifyContent: "center", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
                           <Text>No Photo Selected</Text>
                         </View>
                       }
-                    </View>
-                    <Pressable onPress={() => takeImage()} style={{marginLeft: "auto", marginRight: "auto", backgroundColor: "#ededed", width: width * 0.7, borderRadius: 15, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
+                    </>
+                    <Pressable onPress={() => takeImage()} style={{marginLeft: "auto", marginRight: "auto", marginTop: 15, backgroundColor: "#ededed", width: width * 0.7, borderRadius: 15, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
                       { (takeImageState === CameraResult.loading) ?
                         <ProgressView width={14} height={14} style={{margin: 10}}/>:<Text style={{margin: 10, fontWeight: "bold"}}>{(takeImageState === CameraResult.notStarted) ? "TAKE PHOTO":(takeImageState === CameraResult.goToSettings) ? "Go To Settings And Give Camera Permissions":(takeImageState === CameraResult.permissionDenied) ? "Permission Denied":(takeImageState === CameraResult.success) ? "TAKE DIFFERENT PHOTO":"AN ERROR OCCURED"}</Text>
                       }
                     </Pressable>
-                    <Pressable onPress={() => pickImage()} style={{marginLeft: "auto", marginRight: "auto", backgroundColor: "#ededed", width: width * 0.7, borderRadius: 15, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
+                    <Pressable onPress={() => pickImage()} style={{marginLeft: "auto", marginRight: "auto", marginTop: 10, backgroundColor: "#ededed", width: width * 0.7, borderRadius: 15, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
                       <Text style={{margin: 10, fontWeight: "bold"}}>CHOOSE PHOTO</Text>
                     </Pressable>
                   </View>:null

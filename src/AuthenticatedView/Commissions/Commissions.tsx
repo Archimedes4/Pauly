@@ -25,14 +25,13 @@ export default function Commissions() {
   const {height, width} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {currentCommissions, selectedCommission, points} = useSelector((state: RootState) => state.commissions)
+  const {currentCommissions, selectedCommission, commissionsState, points} = useSelector((state: RootState) => state.commissions)
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
   const dispatch = useDispatch()
   const navigate = useNavigate();
 
   //Loading States
-  const [commissionState, setCommissionState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function loadData() {
     const pointResult = await getPoints()
@@ -40,15 +39,16 @@ export default function Commissions() {
     if (commissionsResult.result === loadingStateEnum.success, commissionsResult.data !== undefined) {
       dispatch(commissionsSlice.actions.setCurrentCommissions(commissionsResult.data))
     }
-    setCommissionState(commissionsResult.result)
+    dispatch(commissionsSlice.actions.setCommissionsState(commissionsResult.result))
     //TO DO pagination
   }
 
-  async function loadCommissionData() {
-    const result = await getCommissions({date: new Date(), filter: "ge"})
+  async function loadCommissionData(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean) {
+    const result = await getCommissions(startDate, endDate, claimed)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
-      
+      dispatch(commissionsSlice.actions.setCurrentCommissions(result.data))
     }
+    dispatch(commissionsSlice.actions.setCommissionsState(result.result))
   }
 
   useEffect(() => {
@@ -85,13 +85,13 @@ export default function Commissions() {
           <Text style={{fontFamily: 'BukhariScript', fontSize:  25}}>Commissions</Text>
         </View>
         <View style={{height: height * 0.8}}>
-          { (commissionState === loadingStateEnum.loading) ?
+          { (commissionsState === loadingStateEnum.loading) ?
             <View style={{width: width, height: height * 0.9, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
               <ProgressView width={(width < height) ? width * 0.1:height*0.1} height={(width < height) ? width * 0.1:height*0.1} />
               <Text>Loading</Text>
             </View>:
             <View>
-              { (commissionState === loadingStateEnum.success) ?
+              { (commissionsState === loadingStateEnum.success) ?
                 <ScrollView style={{height: height * 0.9}}>
                   { currentCommissions.map((item: commissionType) => (
                     <Pressable onPress={() => {dispatch(commissionsSlice.actions.setSelectedCommission(item.commissionId))}} key={"Link_" + item.commissionId} style={{backgroundColor: "transparent"}}>
@@ -119,7 +119,7 @@ export default function Commissions() {
             <PickerPiece text='Current' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
             <PickerPiece text='Past' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
             <PickerPiece text='Claimed' onPress={() => {loadCommissionData()}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece text='Future' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Future' onPress={() => {loadCommissionData()}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
           </ScrollView>
         </Pressable>
       </View>

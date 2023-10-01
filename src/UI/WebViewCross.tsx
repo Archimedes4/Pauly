@@ -2,7 +2,7 @@ import { View, Text, Platform } from 'react-native'
 import React, { useState } from 'react'
 import WebView from 'react-native-webview'
 
-export default function WebViewCross({html}:{html: string | undefined}) {
+export default function WebViewCross({html, width}:{html: string | undefined, width: number}) {
   const jsCode = "window.ReactNativeWebView.postMessage(document.getElementById('pauly-main').clientHeight)"
   //document.getElementById('pauly-main').innerHTML
   const [height, setHeight] = useState<number>(0)
@@ -16,8 +16,8 @@ export default function WebViewCross({html}:{html: string | undefined}) {
               <html>
               <head>
                 <style>
-                  body {font-size: 24px}
-                  div {font-size: 24px}
+                  body {font-weight: normal; font-family: Arial; font-size: 55px}
+                  div {font-weight: normal; font-family: Arial}
                 </style>
               </head>
               <body>
@@ -26,17 +26,16 @@ export default function WebViewCross({html}:{html: string | undefined}) {
                 </div>
               </body>
               </html>`}} 
-              style={{margin: 10, height: height + 10, width: 900}} automaticallyAdjustContentInsets={false} 
+              style={{margin: 10, height: height + 10, width: width}}
+              automaticallyAdjustContentInsets={false} 
               javaScriptEnabled={true}
               injectedJavaScript={jsCode}
-              
-              onMessage={event => setHeight(parseFloat(event.nativeEvent.data))}
+              onMessage={event => setHeight(parseFloat(event.nativeEvent.data)/3)}
             />:
             <View style={{margin: 10}}>
               <div dangerouslySetInnerHTML={{__html: html}}/>
             </View>
           }
-          <Text>{html}</Text>
         </>:null
       }
     </>

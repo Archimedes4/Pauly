@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { getResourceFromJson, getResources } from '../Functions/getResources'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../Redux/store'
+import store, { RootState } from '../Redux/store'
 import { SearchIcon } from '../UI/Icons/Icons'
 import WebView from 'react-native-webview'
 import * as SplashScreen from 'expo-splash-screen';
@@ -14,6 +14,7 @@ import BackButton from '../UI/BackButton'
 import { loadingStateEnum } from '../types'
 import ProgressView from '../UI/ProgressView'
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer'
+import create_UUID from '../Functions/Ultility/CreateUUID'
 
 //Resources
 // -> Sports
@@ -73,7 +74,7 @@ export default function Resources() {
         }
         <Text style={{fontFamily: "BukhariScript"}}>Resources</Text>
       </View>
-      <SearchBox searchValue={searchValue} />
+      <SearchBox />
       <View style={{width: width, height: height * 0.05, backgroundColor: "#ededed"}}/>
       <ScrollView style={{height: (isHoverPicker) ? height * 0.75:height * 0.8, backgroundColor: "#ededed"}}>
         <>
@@ -88,11 +89,11 @@ export default function Resources() {
                   {resources.map((resource) => (
                     <>
                       { isGovernmentMode ?
-                        <Pressable key={"Resource_"+resource.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-                          <WebViewCross html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
+                        <Pressable key={"Resource_"+resource.id+"_"+create_UUID()} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                          <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
                         </Pressable>:
-                        <View key={"Resource_"+resource.id} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-                          <WebViewCross html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
+                        <View key={"Resource_"+resource.id+"_"+create_UUID()} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                          <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
                         </View>
                       }
                     </>
@@ -131,7 +132,7 @@ function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, item
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [isSelected, setIsSelected] = useState<boolean>(false)
   return (
-    <Pressable onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+    <Pressable key={"Button_"+create_UUID()} onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
       <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text style={{color: "white"}}>{text}</Text>
       </View>
@@ -139,11 +140,28 @@ function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, item
   )
 }
 
-function SearchBox({searchValue}:{searchValue: string}) {
+function SearchBox() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const {searchValue} = useSelector((state: RootState) => state.resources)
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
   const style: ViewStyle = (Platform.OS === "web") ? {outlineStyle: "none"}:{}
   const dispatch = useDispatch()
+
+  async function getSearchData() {
+    
+  }
+
+  useEffect(() => {
+    const searchValueSave = searchValue
+    setTimeout(() => {
+      if (store.getState().resources.searchValue === searchValueSave) {
+        console.log("ran")
+      } else {
+        console.log("Not ran")
+      }
+    }, 1500)
+  }, [searchValue])
+
   return (
     <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", position: "absolute", top: height * 0.1 - 19, zIndex: 2}}>
       <View style={{width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 25, flexDirection: "row", backgroundColor: "white"}}>
@@ -160,9 +178,7 @@ function SearchBox({searchValue}:{searchValue: string}) {
             onLayout={e => {
               if (e.nativeEvent.layout.width > width * 0.8 - 20) {
                 setIsOverflowing(true)
-                console.log("True")
               } else {
-                console.log("FALSR")
                 setIsOverflowing(false)
               }
             }}>

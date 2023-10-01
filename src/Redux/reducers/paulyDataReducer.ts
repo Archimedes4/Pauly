@@ -1,14 +1,17 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '../../types';
 
-type paulyDataType = {
-  message: string
-  animationSpeed: number
-  powerpointBlob: string
-  paulyDataState: loadingStateEnum
+declare global {
+  type paulyDataType = {
+    message: string
+    animationSpeed: number
+    powerpointBlob: string
+    powerpointShare: string
+    paulyDataState: loadingStateEnum
+  }
 }
 
-const initalState: paulyDataType = {message: "", animationSpeed: 0, powerpointBlob: "", paulyDataState: loadingStateEnum.loading}
+const initalState: paulyDataType = {message: "", animationSpeed: 0, powerpointBlob: "", powerpointShare: "", paulyDataState: loadingStateEnum.loading}
 
 export const paulyDataSlice = createSlice({
   name: "paulyData",

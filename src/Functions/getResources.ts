@@ -91,7 +91,12 @@ export async function getResourcesSearch(search: string): Promise<loadingStateEn
     ]
   }
   const searchResult = await callMsGraph("https://graph.microsoft.com/v1.0/search/query", "POST", false, JSON.stringify(searchPayload))
+  if (searchResult.ok) {
+    const searchData = await searchResult.json()
+    console.log(searchData)
+  } else {
 
+  }
 
   var nextLink = "https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.resourceListId + "/items?expand=fields"
   var output: resourceDataType[] = []

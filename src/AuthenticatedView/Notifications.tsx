@@ -117,7 +117,7 @@ export default function Notifications() {
       { (currentBreakPoint === 0) ?
         <BackButton to='/'/>:null
       }
-      <View style={{width: width, height: height * 0.1}}>
+      <View style={{width: width, height: height * 0.1, marginTop: (currentBreakPoint === 0) ? 10:0}}>
         <View style={{width: width * 0.9, height: height * 0.07, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#444444", marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
           <Text>{message}</Text>
         </View>
@@ -143,7 +143,7 @@ function WidgetView() {
         <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
       </View>
       <View>
-        <Text style={{color: "white"}}>{schoolDayData?.schoolDay.shorthand}</Text>
+        <Text style={{color: "white", fontWeight: "bold"}}>{schoolDayData?.schoolDay.shorthand}</Text>
         <Text>{startTime}</Text>
       </View>
     </View>

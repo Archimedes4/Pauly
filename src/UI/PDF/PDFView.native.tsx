@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../Redux/store';
+import store, { RootState } from '../../Redux/store';
 import { useEffect, useState } from "react";
 import React from "react";
 import { Platform, Text, Image } from "react-native";
@@ -27,16 +27,16 @@ export default function PDFView() {
   const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
   const {inject, images} = useSelector((state: RootState) => state.pdfData)
   const [page, setPage] = useState<number>(1)
-  const [injectJavascript, setInjectJavascript] = useState<string>("window.ReactNativeWebView.postMessage('failed1')")
   const dispatch = useDispatch()
 
   async function loadData() {
     const dataResult = await fetch(powerpointBlob)
     if (dataResult.ok) {
       const blob = await dataResult.blob()
-      const base64: string | undefined = await blobToBase64(blob)
-      if (base64 === undefined) {return}
-      dispatch(pdfDataSlice.actions.setInject(base64))
+      var file = new Blob([blob], {type: 'application/pdf'});
+      var fileURL = URL.createObjectURL(file);
+      dispatch(pdfDataSlice.actions.setInject(fileURL))
+      console.log("logged")
     }
   }
 
@@ -46,39 +46,55 @@ export default function PDFView() {
 
   return (
     <>
-      { (powerpointBlob !== "" && inject !== "window.ReactNativeWebView.postMessage('failed1')") ?
-        <WebViewInject inject={inject}/>:null 
+      { (powerpointBlob !== "" && inject !== "") ?
+        <WebViewInject/>:null 
       }
-      { (images.length !== 0) ?
-        <>
-          { (inject !== "failed") ?
+     
+          { (images !== "failed" && images !== "") ?
            <Image source={{uri: images}} style={{width: 100, height: 100}}/>:<Text>Failed</Text>
           }
-        </>:null
-      } 
     </>
   )
 }
 
-function WebViewInject({inject}:{inject: string}) {
+function WebViewInject() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const {powerpointShare} = useSelector((state: RootState) => state.paulyData)
+  const {inject} = useSelector((state: RootState) => state.pdfData)
   const dispatch = useDispatch()
+
   useEffect(() => {
-    console.log("mount", inject)
-  }, [])
+    console.log("This is inject", inject)
+  }, [inject])
   return (
     <WebView
-      style={{width: width * 0.5, height: height * 0.2}}
-      source={{html: 
-        `<!DOCTYPE html>
-          <html>
-          <head>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js" integrity="sha512-BbrZ76UNZq5BhH7LL7pn9A4TKQpQeNCHOo65/akfelcIBbcVvYWOFQKPXIrykE3qZxYjmDX573oa4Ywsc7rpTw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <script src="https://npmcdn.com/pdfjs-dist/build/pdf.js"></script>
-          </head>
-          <body>
-            <script>
+      source={{html:
+       `<!DOCTYPE html>
+        <html>
+        <head>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js" integrity="sha512-BbrZ76UNZq5BhH7LL7pn9A4TKQpQeNCHOo65/akfelcIBbcVvYWOFQKPXIrykE3qZxYjmDX573oa4Ywsc7rpTw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+          <script src="https://npmcdn.com/pdfjs-dist/build/pdf.js"></script>
+        </head>
+        <body>
+          <script>
+            window.ReactNativeWebView.postMessage('this')
+            async function loadData() {
+              window.ReactNativeWebView.postMessage('that')
+              const dataResult = await fetch("https://graph.microsoft.com/v1.0/shares/${powerpointShare}/driveItem/content?format=pdf", {
+                headers: {
+                  "Authorization":"Bearer ${store.getState().authenticationToken}"
+                }
+              })
+              window.ReactNativeWebView.postMessage('that 1')
+              if (!dataResult.ok) {window.ReactNativeWebView.postMessage('failed'); return}
+              const data = await dataResult.blob()
+              window.ReactNativeWebView.postMessage('that 3')
+              
+              window.ReactNativeWebView.postMessage('that 4')
+              var fileURL = URL.createObjectURL(data);
+              var docInitParams = {url: fileURL}
               window.ReactNativeWebView.postMessage('ran')
+              window.ReactNativeWebView.postMessage('that 2')
               var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
               var PDFJS = window['pdfjs-dist/build/pdf'];
               try {
@@ -86,8 +102,6 @@ function WebViewInject({inject}:{inject: string}) {
               } catch (e) {
                 window.ReactNativeWebView.postMessage('failed')
               } 
-          
-              var docInitParams: DocumentInitParameters = {data: "${ba}"}
               
               var loadingTask = PDFJS.getDocument(docInitParams);
               loadingTask.promise.then(function(pdf) {
@@ -127,13 +141,16 @@ function WebViewInject({inject}:{inject: string}) {
                 // PDF loading error
                 window.ReactNativeWebView.postMessage('failed')
               });
-            </script>
-            <canvas id="canvas"></canvas>
-          </body>
-          </html>`
-        }}
-      injectedJavaScript={inject}
-      onMessage={(e) => {dispatch(pdfDataSlice.actions.setImages(e.nativeEvent.data)); console.log(e.nativeEvent.data)}}
+            }
+            loadData()
+          </script>
+          <canvas id="canvas" style='width: 100; height: 100'></canvas>
+        </body>
+        </html>`
+      }}
+      onMessage={(e) => {dispatch(pdfDataSlice.actions.setImages(e.nativeEvent.data))}}
     />
   )
 }
+
+//`https://graph.microsoft.com/v1.0/shares/${data["powerpointId"]}/driveItem/content?format=pdf`

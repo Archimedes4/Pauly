@@ -8,7 +8,7 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
   headersOut.append("Authorization", bearer);
   headersOut.append("Content-Type", "application/json")
 
-  headers?.forEach((value, key) => {
+  headers?.forEach((value: string, key: string) => {
     headersOut.append(key, value)
   })
   if (perfer){

@@ -7,21 +7,6 @@ import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api'
 
 PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`
 
-//https://stackoverflow.com/questions/18650168/convert-blob-to-base64
-function blobToBase64(blob: Blob) {
-  return new Promise((resolve: (item: string | undefined) => void) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (typeof reader.result !== 'string') {
-        resolve(undefined)
-      } else {
-        resolve(reader.result)
-      }
-    };
-    reader.readAsBinaryString(blob)
-  });
-}
-
 
 export default function PDFView() {
   const [images, setImages] = useState<string[]>([])
@@ -33,9 +18,9 @@ export default function PDFView() {
     const dataResult = await fetch(url)
     if (dataResult.ok) {
       const blob = await dataResult.blob()
-      const base64: string | undefined = await blobToBase64(blob)
-      if (base64 === undefined) {return}
-      var docInitParams: DocumentInitParameters = {data: base64}
+      var file = new Blob([blob], {type: 'application/pdf'});
+      var fileURL = URL.createObjectURL(file);
+      var docInitParams: DocumentInitParameters = {url: fileURL}
       
       const pdf = await PDFJS.getDocument(docInitParams).promise
       const canvas = document.createElement("canvas"); //Fail
