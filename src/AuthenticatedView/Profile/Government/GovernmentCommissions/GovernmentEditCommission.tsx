@@ -13,7 +13,7 @@ import DatePicker from '../../../../UI/DateTimePicker/DatePicker';
 import TimePicker from '../../../../UI/DateTimePicker/TimePicker';
 import TimePickerDate from '../../../../UI/DateTimePicker/TimePickerDate';
 import ProgressView from '../../../../UI/ProgressView';
-import { getChannels, getPosts, getTeams } from '../../../../Functions/GroupsData';
+import { getChannels, getPosts, getTeams } from '../../../../Functions/groupsData';
 import WebViewCross from '../../../../UI/WebViewCross';
 import getCommission from '../../../../Functions/commissions/getCommission';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';

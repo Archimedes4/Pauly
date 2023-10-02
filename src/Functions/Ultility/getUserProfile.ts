@@ -1,6 +1,6 @@
-import { microsoftProfileDataSlice } from "../Redux/reducers/microsoftProfileDataReducer"
-import store from "../Redux/store"
-import callMsGraph from "./Ultility/microsoftAssets"
+import { microsoftProfileDataSlice } from "../../Redux/reducers/microsoftProfileDataReducer"
+import store from "../../Redux/store"
+import callMsGraph from "./microsoftAssets"
 
 export default async function getUserProfile(accessToken: string) {
   const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/photo/$value", "GET", false, undefined, undefined, accessToken)

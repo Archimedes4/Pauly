@@ -8,7 +8,7 @@ import { authenticationApiTokenSlice } from '../../Redux/reducers/authentication
 import { useSelector } from 'react-redux';
 import { commissionTypeEnum, loadingStateEnum, locationStateEnum } from '../../types';
 import ProgressView from '../../UI/ProgressView';
-import getUsersLocation from '../../Functions/getLocation';
+import getUsersLocation from '../../Functions/commissions/getLocation';
 
 async function claimCommissionPost(commissionId: string, imageShare?: string, location?: locationCoords): Promise<loadingStateEnum> {
   if (store.getState().authenticationApiToken !== "") {

@@ -50,7 +50,10 @@ export async function getPosts(teamId: string, channelId: string): Promise<{resu
     for (var index = 0; index < data["value"].length; index++) {
       output.push({
         id: data["value"][index]["id"],
-        body: data["value"][index]["body"]["content"]
+        body: data["value"][index]["body"]["content"],
+        teamId: data["value"][index]["channelIdentity"]["teamId"],
+        conversationId: data["value"][index]["channelIdentity"]["channelId"],
+        html: false
       })
     }
     return {result: loadingStateEnum.success, data: output, nextLink: data["@odata.nextLink"]}

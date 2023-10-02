@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer'
 import store, { RootState } from '../src/Redux/store'
 import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
-import getUserProfile from '../src/Functions/getUserProfile'
+import getUserProfile from '../src/Functions/Ultility/getUserProfile'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import {authorize} from "react-native-app-auth"
 

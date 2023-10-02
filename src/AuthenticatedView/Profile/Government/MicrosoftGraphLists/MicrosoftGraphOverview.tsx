@@ -7,7 +7,7 @@ import { loadingStateEnum } from '../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 import { clientId } from '../../../../PaulyConfig';
-import { getTeams } from '../../../../Functions/GroupsData';
+import { getTeams } from '../../../../Functions/groupsData';
 
 type listType = {
   displayName: string

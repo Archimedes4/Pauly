@@ -26,9 +26,8 @@ import callMsGraph from '../Functions/Ultility/microsoftAssets'
 
 export default function Resources() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {resources, loadingState, searchValue} = useSelector((state: RootState) => state.resources)
+  const {resources, loadingState, searchValue, selectedResourceMode} = useSelector((state: RootState) => state.resources)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
-  const [selectedResourceMode, setSelectedResourceMode] = useState<resourceMode>(resourceMode.home)
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
   const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
   const [isShowingCategoryView, setIsShowingCategoryView] = useState<boolean>(false)
@@ -37,7 +36,6 @@ export default function Resources() {
   const dispatch = useDispatch()
 
   async function loadData() {
-    console.log("Running")
     await getResources(selectedResourceMode)
   }
 
@@ -107,13 +105,13 @@ export default function Resources() {
         </ScrollView>
         <Pressable style={{height: (isHoverPicker) ? height * 0.1:height * 0.05}} onHoverIn={() => {setIsHoverPicker(true)}} onHoverOut={() => {setIsHoverPicker(false)}}>
           <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
-            <PickerPiece key={"Button_"+create_UUID()} text='Home' item={resourceMode.home} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece key={"Button_"+create_UUID()} text='Sports' item={resourceMode.sports} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece key={"Button_"+create_UUID()} text='Advancement' item={resourceMode.advancement} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece key={"Button_"+create_UUID()} text='School Events' item={resourceMode.schoolEvents} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece key={"Button_"+create_UUID()} text='Annoucments' item={resourceMode.annoucments} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece key={"Button_"+create_UUID()} text='Fitness' item={resourceMode.fitness} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece key={"Button_"+create_UUID()} text='Files' item={resourceMode.files} onPress={setSelectedResourceMode} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece key={"Button_"+create_UUID()} text='Home' item={resourceMode.home} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece key={"Button_"+create_UUID()} text='Sports' item={resourceMode.sports} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece key={"Button_"+create_UUID()} text='Advancement' item={resourceMode.advancement} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece key={"Button_"+create_UUID()} text='School Events' item={resourceMode.schoolEvents} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece key={"Button_"+create_UUID()} text='Annoucments' item={resourceMode.annoucments} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece key={"Button_"+create_UUID()} text='Fitness' item={resourceMode.fitness} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece key={"Button_"+create_UUID()} text='Files' item={resourceMode.files} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
           </ScrollView>
         </Pressable>
       </View>
@@ -177,11 +175,13 @@ function GovernmentCategoryView({teamId, channelId, messageId, onClose}:{teamId:
   )
 }
 
-function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, item: resourceMode, onPress: (item: resourceMode) => void, isHoverPicker: boolean, setIsHoverPicker: (item: boolean) => void}) {
+function PickerPiece({text, item, isHoverPicker, setIsHoverPicker}:{text: string, item: resourceMode, isHoverPicker: boolean, setIsHoverPicker: (item: boolean) => void}) {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const {selectedResourceMode} = useSelector((state: RootState) => state.resources)
   const [isSelected, setIsSelected] = useState<boolean>(false)
+  const dispatch = useDispatch()
   return (
-    <Pressable onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+    <Pressable onPress={() => {dispatch(resourcesSlice.actions.setSelectedResourceMode(item))}} onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: (item !== selectedResourceMode) ? "#FFFFFF":"blue"}}>
       <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text style={{color: "white"}}>{text}</Text>
       </View>
@@ -227,7 +227,7 @@ function SearchBox() {
           </View>
         }
         <View key={"Search_View_Input"}>
-          <TextInput key={"Search_TextInput"} placeholder='Search' placeholderTextColor={"black"} value={searchValue} onChangeText={(e) => {dispatch(resourcesSlice.actions.setSearchValue(e))}} style={[{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0}, style]} enterKeyHint='search' returnKeyType='search' inputMode='search'/>
+          <TextInput key={"Search_TextInput"} placeholder='Search' placeholderTextColor={"black"} value={searchValue} onChangeText={(e) => {dispatch(resourcesSlice.actions.setSearchValue(e))}} style={[{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0}, style]} enterKeyHint='search' inputMode='search'/>
           <View
             style={{height: 0, alignSelf: 'flex-start', overflow: "hidden"}}
             onLayout={e => {

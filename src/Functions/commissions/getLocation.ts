@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 import { getDistance } from "geolib";
-import { locationStateEnum } from '../types';
+import { locationStateEnum } from '../../types';
 
 export default async function getUsersLocation(commission: commissionType): Promise<{result: locationStateEnum, data?: locationCoords}> {
   let { status } = await Location.requestForegroundPermissionsAsync();

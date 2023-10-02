@@ -5,7 +5,7 @@ import AuthenticatedViewMain from '../src/AuthenticatedView/AuthenticatedViewMai
 import { clientId, tenantId } from '../src/PaulyConfig'
 import { useDispatch } from 'react-redux'
 import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
-import getUserProfile from '../src/Functions/getUserProfile'
+import getUserProfile from '../src/Functions/Ultility/getUserProfile'
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer'
 import { EventType, LogLevel, PublicClientApplication } from '@azure/msal-browser'
 import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsal } from '@azure/msal-react'

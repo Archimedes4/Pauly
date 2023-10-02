@@ -4,10 +4,9 @@ import { loadingStateEnum } from "../../types";
 import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getSchoolYears(nextLink?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + `/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolYear')`, "GET", true)
+  const result = await callMsGraph(nextLink ? nextLink:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolYear')`, "GET", true)
   if (result.ok){
     const data = await result.json()
-    console.log(data)
     var newEvents: eventType[] = []
     for(var index = 0; index < data["value"].length; index++) {
       const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId
@@ -32,8 +31,6 @@ export default async function getSchoolYears(nextLink?: string): Promise<{ resul
     }
     return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
   } else {
-    const data = await result.json()
-    console.log(data)
     return {result: loadingStateEnum.failed}
   }
 }

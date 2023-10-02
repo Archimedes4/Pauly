@@ -1,4 +1,4 @@
-import { loadingStateEnum } from './../../types';
+import { loadingStateEnum, resourceMode } from './../../types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 type resourceStoreState = {
@@ -6,9 +6,10 @@ type resourceStoreState = {
   loadingState: loadingStateEnum
   searchValue: string
   resourceFollow: resourceFollowType[]
+  selectedResourceMode: resourceMode
 } 
 
-const initalResourcesState: resourceStoreState = {resources: [], loadingState: loadingStateEnum.loading, searchValue: "", resourceFollow: []}
+const initalResourcesState: resourceStoreState = {resources: [], loadingState: loadingStateEnum.loading, searchValue: "", resourceFollow: [], selectedResourceMode: resourceMode.home}
 
 export const resourcesSlice = createSlice({
   name: "resources",
@@ -32,6 +33,9 @@ export const resourcesSlice = createSlice({
     },
     setResourceFollow: (state, action: PayloadAction<resourceFollowType[]>) => {
       state.resourceFollow = action.payload
+    },
+    setSelectedResourceMode: (state, action: PayloadAction<resourceMode>) => {
+      state.selectedResourceMode = action.payload
     }
   }
 })
