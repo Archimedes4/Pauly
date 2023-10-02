@@ -24,29 +24,29 @@ import pdfDataReducer from './reducers/pdfDataReducer';
 
 const store = configureStore({
   reducer: {
+    addEvent: addEventReducer,
+    authenticationToken: authenticationTokenReducer,
+    authenticationApiToken: authenticationApiTokenReducer,
+    authenticationRefreshToken: authenticationRefreshTokenReducer,
     currentEvents: currentEventsReducer,
     currentEventsLastCalled: currentEventsLastCalledReducer,
-    selectedDate: selectedDateReducer,
-    paulyList: paulyListReducer,
-    authenticationToken: authenticationTokenReducer,
-    authenticationRefreshToken: authenticationRefreshTokenReducer,
+    commissions: commissionsReducer,
     dimentions: dimentionsReducer,
-    microsoftProfileData: microsoftProfileDataReducer,
-    authenticationApiToken: authenticationApiTokenReducer,
-    safeAreaColors: safeAreaColorsReducer,
-    tasksDeltaLink: tasksDeltaReducer,
-    tasks: tasksReducer,
-    paulyData: paulyDataReducer,
-    resourcesLastCalled: resourcesLastCallReducer,
-    resources: resourcesReducer,
-    addEvent: addEventReducer,
-    homepageData: homepageDataReducer,
     expandedMode: expandedModeReducer,
+    homepageData: homepageDataReducer,
     isShowingProfileBlock: isShowingProfileBlockReducer,
     isGovernmentMode: isGovernmentModeReducer,
-    commissions: commissionsReducer,
+    microsoftProfileData: microsoftProfileDataReducer,
+    monthData: monthDataReducer,
+    paulyList: paulyListReducer,
+    paulyData: paulyDataReducer,
     pdfData: pdfDataReducer,
-    monthData: monthDataReducer
+    resourcesLastCalled: resourcesLastCallReducer,
+    resources: resourcesReducer,
+    safeAreaColors: safeAreaColorsReducer,
+    tasks: tasksReducer,
+    tasksDeltaLink: tasksDeltaReducer,
+    selectedDate: selectedDateReducer
   }
 });
 
