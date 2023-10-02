@@ -4,11 +4,11 @@ import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/Calend
 import React from "react"
 import { getSchoolDays } from "../Functions/Calendar/calendarFunctionsGraph"
 
-function MonthBlock({value, width, height, startDate, daySelected, selectedDates}:{value:number, width: number, height: number, startDate: number, daySelected: number, selectedDates: DateProperty[]}) {
+function MonthBlock({value, width, height, startDate, daySelected, selectedDates}:{value:number, width: number, height: number, startDate: number, daySelected: number, selectedDates: dateProperty[]}) {
   let textval: number = getDay(value, startDate) ?? 0
   let day = new Date().getDate()
   let index = selectedDates.findIndex((input) => input.Date == textval)
-  let var1: DateProperty = selectedDates[index]
+  let var1: dateProperty = selectedDates[index]
   return(
     <View style={{width: width, height: height, borderColor: "black", borderWidth: 2}} id="This">
       { (value >= (startDate - 1) && value <= daySelected) ?
@@ -63,7 +63,7 @@ function MonthBlock({value, width, height, startDate, daySelected, selectedDates
 }
 
 export default function MonthView({width, height}:{width: number, height: number}) {
-  const [selectedDates, setSelectedDates] = useState<DateProperty[]>([])
+  const [selectedDates, setSelectedDates] = useState<dateProperty[]>([])
   let Count = getDaysInMonth(new Date())
   let StartDate = findFirstDayinMonth(new Date())
   const [daySelected, setDaySelected] = useState<number>(((Count + StartDate) - 2) - ((Count/7) * 2))

@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: {inject: string, images: string} = {inject: "window.ReactNativeWebView.postMessage('failed1')", images: ""}
+//page number is an index meaning first page is 0
+const initalState: {inject: string, images: string[], pageNumber: number} = {inject: "", images: [], pageNumber: 0}
 
 export const pdfDataSlice = createSlice({
   name: "pdfData",
@@ -9,8 +10,20 @@ export const pdfDataSlice = createSlice({
     setInject: (state, action: PayloadAction<string>) => {
       state.inject = action.payload
     },
-    setImages: (state, action: PayloadAction<string>) => {
+    addImage: (state, action: PayloadAction<string>) => {
+      state.images.push(action.payload)
+    },
+    setImages: (state, action: PayloadAction<string[]>) => {
       state.images = action.payload
+    },
+    setPageNumber: (state, action: PayloadAction<number>) => {
+      state.pageNumber = action.payload
+    },
+    increasePageNumber: (state) => {
+      state.pageNumber++
+    },
+    decreasePageNumber: (state) => {
+      state.pageNumber--
     }
   }
 })

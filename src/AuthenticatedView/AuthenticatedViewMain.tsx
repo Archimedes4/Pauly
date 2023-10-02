@@ -53,13 +53,13 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
   const isShowingProfileBlock = useSelector((state: RootState) => state.isShowingProfileBlock)
   const insets = useSafeAreaInsets();
   return (
-    <View style={{width: width, top: -insets.top, overflow: "hidden"}}>
+    <View style={{width: width, top: -insets.top}}>
       <NativeRouter>
-        <View style={{flexDirection: "row", overflow: "hidden", width: width}}>
+        <View style={{flexDirection: "row", width: width}}>
           { (currentBreakPoint >= 1) ?
             <NavBarComponent width={width * 0.1} height={dimensions.window.height} />:null
           }
-          <View style={{width: dimensions.window.width, height: height, backgroundColor: "#793033", overflow: "hidden"}}>
+          <View style={{width: dimensions.window.width, height: height, backgroundColor: "#793033"}}>
             <Routes>
               <Route path="/" element={<HomePage/>}/>
               <Route path="/sports" element={<Sports/>}/>

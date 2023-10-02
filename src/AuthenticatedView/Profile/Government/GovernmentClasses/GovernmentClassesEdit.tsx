@@ -13,18 +13,6 @@ import { getEvent, getTimetable } from '../../../../Functions/Calendar/calendarF
 import { CloseIcon, WarningIcon } from '../../../../UI/Icons/Icons';
 import Dropdown from '../../../../UI/Dropdown';
 
-declare global {
-  type microsoftUserType = {
-    id: string
-    displayName: string
-  }
-  type classType = {
-    name: string,
-    id: string,
-    periods: number[]
-  }
-}
-
 export default function GovernmentClassesEdit() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {id} = useParams()

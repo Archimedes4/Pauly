@@ -10,6 +10,7 @@ import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTo
 import { EventType, LogLevel, PublicClientApplication } from '@azure/msal-browser'
 import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsal } from '@azure/msal-react'
 import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
+import { authenticationApiTokenSlice } from '../src/Redux/reducers/authenticationApiToken'
 
 const pca = new PublicClientApplication({
   auth: {
@@ -68,6 +69,11 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
       const result = await instance.acquireTokenSilent({
         scopes: scopes
       })
+      const apiResult = await instance.acquireTokenSilent({
+        scopes: [`api://${clientId}/api/Test`]
+      })
+      console.log(apiResult)
+      dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(apiResult.accessToken))
       dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
       getPaulyLists(result.accessToken)
       getUserProfile(result.accessToken)
@@ -109,7 +115,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   }, [])
 
   return (
-    <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height, zIndex: 2, position: "absolute", left: 0, top: 0, overflow: "hidden"}}>
+    <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height, zIndex: 2, position: "absolute", left: 0, top: 0}}>
       <AuthenticatedTemplate>
         <AuthenticatedViewMain dimensions={dimensions} width={dimensions.window.width}/>
       </AuthenticatedTemplate>

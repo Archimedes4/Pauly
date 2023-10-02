@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { FlatList, Pressable, ScrollView, Text, View, Image } from 'react-native'
 import { Link, useNavigate } from 'react-router-native';
 import callMsGraph from '../../Functions/Ultility/microsoftAssets';
 import { useFonts } from 'expo-font';
@@ -14,6 +14,7 @@ import CommissionsView from './CommissionsView';
 import ProgressView from '../../UI/ProgressView';
 import BackButton from '../../UI/BackButton';
 import { commissionsSlice } from '../../Redux/reducers/commissionsReducer';
+import create_UUID from '../../Functions/Ultility/CreateUUID';
 
 enum CommissionMode{
   Before,
@@ -44,11 +45,12 @@ export default function Commissions() {
   }
 
   async function loadCommissionData(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean) {
-    const result = await getCommissions(startDate, endDate, claimed)
+    const result = await getCommissions(undefined, startDate, endDate, claimed)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       dispatch(commissionsSlice.actions.setCurrentCommissions(result.data))
     }
     dispatch(commissionsSlice.actions.setCommissionsState(result.result))
+    dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink))
   }
 
   useEffect(() => {
@@ -92,20 +94,40 @@ export default function Commissions() {
             </View>:
             <View>
               { (commissionsState === loadingStateEnum.success) ?
-                <ScrollView style={{height: height * 0.9}}>
-                  { currentCommissions.map((item: commissionType) => (
-                    <Pressable onPress={() => {dispatch(commissionsSlice.actions.setSelectedCommission(item.commissionId))}} key={"Link_" + item.commissionId} style={{backgroundColor: "transparent"}}>
-                      <View key={item.commissionId} style={{borderRadius: 15, marginLeft: width * 0.025, elevation: 2, marginRight: width * 0.025, marginTop: height * 0.02, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5}}>
-                        <View style={{margin: 10}}>
-                          <Text>{item.title}</Text>
-                          { (item.timed && item.startDate !== undefined) ?
-                            <Text>{new Date(item.startDate).toLocaleDateString("en-US", {month: "long", day: "numeric", minute: "numeric"})}</Text>:null
+              
+                <FlatList style={{height: height * 0.9}} 
+                  data={[undefined, ...currentCommissions]}
+                  
+                  renderItem={({item, index}) =>
+                    <>
+                      { (index === 0) ?
+                        <View style={{flexDirection: "row", margin: 10, backgroundColor: "#793033", borderRadius: 15, shadowOffset: { width: 2, height: 3 }}}>
+                          <View style={{margin: 10, flexDirection: "row"}}> 
+                            <Image source={require("../../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: 50, height:  50}} />
+                            <Text style={{fontSize: 45, color: "white", fontFamily: 'BukhariScript', width: 100, paddingLeft: 10}}>{points}</Text>
+                          </View>
+                        </View>:
+                        <>
+                          { (item !== undefined) ?
+                            <Pressable onPress={() => {dispatch(commissionsSlice.actions.setSelectedCommission(item.commissionId))}} key={"Link_" + item.commissionId} style={{backgroundColor: "transparent"}}>
+                              <View key={item.commissionId} style={{borderRadius: 15, marginLeft: width * 0.025, elevation: 2, marginRight: width * 0.025, marginTop: height * 0.02, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5}}>
+                                <View style={{margin: 10}}>
+                                  <Text>{item.title}</Text>
+                                  { (item.timed && item.startDate !== undefined) ?
+                                    <Text>{new Date(item.startDate).toLocaleDateString("en-US", {month: "long", day: "numeric", minute: "numeric"})}</Text>:null
+                                  }
+                                </View>
+                              </View>
+                            </Pressable>:null
                           }
-                        </View>
-                      </View>
-                    </Pressable>
-                  ))}
-                </ScrollView>:
+                        </>
+                      }
+                    </>
+                  }
+                  keyExtractor={item => item?.commissionId + "_" + create_UUID()}
+                  onEndReachedThreshold={1}
+                  onEndReached={() => {}}
+                />:
                 <View>
                   <Text>Failed</Text>
                 </View>
@@ -115,15 +137,15 @@ export default function Commissions() {
         </View>
         <Pressable style={{height: (isHoverPicker) ? height * 0.1:height * 0.05}} onHoverIn={() => {setIsHoverPicker(true)}} onHoverOut={() => {setIsHoverPicker(false)}}>
           <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
-            <PickerPiece text='All' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece text='Current' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece text='Past' onPress={() => {}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece text='Claimed' onPress={() => {loadCommissionData()}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
-            <PickerPiece text='Future' onPress={() => {loadCommissionData()}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='All' onPress={() => {loadCommissionData()}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Current' onPress={() => {loadCommissionData({date: new Date(), filter: "ge"}, {date: new Date(), filter: "le"})}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Past' onPress={() => {loadCommissionData({date: new Date(), filter: "le"}, {date: new Date(), filter: "le"})}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Claimed' onPress={() => {loadCommissionData(undefined, undefined, true)}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
+            <PickerPiece text='Future' onPress={() => {loadCommissionData(undefined, {date: new Date(), filter: "ge"})}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
           </ScrollView>
         </Pressable>
       </View>
-      <View style={{position: "absolute", zIndex: 2, top: height * 0.1, left: width * 0.1}}>
+      <View style={{position: "absolute", zIndex: 2, top: height * 0.1, left: width * 0.05}}>
         { (selectedCommission !== "") ?
           <CommissionsView id={selectedCommission} onClose={() => dispatch(commissionsSlice.actions.setSelectedCommission(""))}/>:null
         }

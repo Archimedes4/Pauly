@@ -522,43 +522,12 @@ export const paulyClassExtensionData = {
     }
   ]
 }
-
-export const paulyResourceExtensionData = {
-  "id":"paulyResource",
-  "description":"Pauly Resource Data",
-  "targetTypes": [
-    "post"
-  ],
-  "owner":clientId,
-  "properties": [
-    {
-      "name":"type",
-      "type":"String"
-    }
-  ]
-}
-
-
-declare global {
-  type addDataType = {
-    data: object,
-    urlOne: string,
-    urlTwo?:string
-    id: string
-  }
-}
-
 //Add data array
 export const addDataArray: addDataType[] = [
   {
     data: paulyClassExtensionData,
     urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
     id: "classExtensionId"
-  },
-  {
-    data: paulyResourceExtensionData,
-    urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
-    id: "resourceExtensionId"
   },
   {
     data: commissionsData,

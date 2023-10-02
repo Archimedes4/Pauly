@@ -7,13 +7,6 @@ import { useSelector } from 'react-redux'
 import { loadingStateEnum } from '../../../../types'
 import { getRooms } from '../../../../Functions/getRooms'
 
-declare global {
-  type roomType = {
-    name: string,
-    id: string
-  }
-}
-
 export default function GovernmentRooms() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const navigate = useNavigate();

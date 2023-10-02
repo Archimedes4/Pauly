@@ -9,14 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
 import getDressCodeData from '../../../../../Functions/Homepage/getDressCodeData';
 import ListItem from '../../../../../UI/ListItem';
-declare global {
-  type schoolDayType = {
-    name: string,
-    shorthand: string
-    id: string,
-    order: number     
-  }
-}
+
 //TO DO longest amount of school days is 20 make sure this is enforced
 export default function GovernmentTimetableEdit() {
   const {timetablesListId, scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)

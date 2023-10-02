@@ -138,16 +138,7 @@ export default function AddEvent({width, height}:{width: number, height: number}
 }
 
 function GovernmentCalendarOptions({width, height}:{width: number, height: number}) {
-  // const [selectedTimetable, setSelectedTimetable] = useState<timetableStringType | undefined>(undefined)
-  // const [selectedSchoolDayData, setSelectedSchoolDayData] = useState<schoolDayDataType>({
-  //   schoolDay: undefined,
-  //   schedule: undefined,
-  //   dressCode: undefined,
-  //   semester: undefined,
-  //   dressCodeIncentive: undefined
-  // })
   const {selectedEventType, selectedTimetable, selectedSchoolDayData, selectedSchoolYear} = useSelector((state: RootState) => state.addEvent)
-  //const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
   const dispatch = useDispatch()
   return (
     <>

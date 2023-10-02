@@ -29,11 +29,12 @@ export default async function createEvent() {
       const resultEvent: eventType = {
         id: dataOut["id"],
         name: dataOut["subject"],
-        startTime: new Date(dataOut["start"]["dateTime"]),
-        endTime: new Date(dataOut["end"]["dateTime"]),
+        startTime: dataOut["start"]["dateTime"],
+        endTime: dataOut["end"]["dateTime"],
         eventColor: "white",
         microsoftEvent: true,
-        microsoftReference: `https://graph.microsoft.com/v1.0/me/events/${dataOut["id"]}`
+        microsoftReference: `https://graph.microsoft.com/v1.0/me/events/${dataOut["id"]}`,
+        allDay: false
       }
       store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent))
       store.dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.success))
@@ -104,13 +105,14 @@ export default async function createEvent() {
       const resultEvent: eventType = {
         id: dataOut["id"],
         name: dataOut["subject"],
-        startTime: new Date(dataOut["start"]["dateTime"]),
-        endTime: new Date(dataOut["end"]["dateTime"]),
+        startTime: dataOut["start"]["dateTime"],
+        endTime: dataOut["end"]["dateTime"],
         eventColor: "white",
-        paulyEventType: (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) ? "schoolDay":(store.getState().addEvent.selectedEventType === paulyEventType.schoolYear) ? "schoolYear":undefined,
-        paulyEventData: (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) ? JSON.stringify(store.getState().addEvent.selectedSchoolDayData):(store.getState().addEvent.selectedEventType === paulyEventType.schoolYear) ? store.getState().addEvent.selectedTimetable.id:undefined,
+        paulyEventType: (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) ? "schoolDay" : (store.getState().addEvent.selectedEventType === paulyEventType.schoolYear) ? "schoolYear" : undefined,
+        paulyEventData: (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) ? JSON.stringify(store.getState().addEvent.selectedSchoolDayData) : (store.getState().addEvent.selectedEventType === paulyEventType.schoolYear) ? store.getState().addEvent.selectedTimetable.id : undefined,
         microsoftEvent: true,
-        microsoftReference: `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${dataOut["id"]}`
+        microsoftReference: `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${dataOut["id"]}`,
+        allDay: false
       }
       store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent))
       store.dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.success))

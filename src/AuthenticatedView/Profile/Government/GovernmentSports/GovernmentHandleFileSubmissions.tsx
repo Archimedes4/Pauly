@@ -5,17 +5,6 @@ import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { RootState } from '../../../../Redux/store'
 import { useSelector } from 'react-redux'
 
-declare global {
-    type mediaSubmissionType = {
-        Title: string
-        User: string
-        SubmissionID: string
-        Accepted: boolean
-        FileId: string
-        ItemID: string
-    }
-}
-
 export default function GovernmentHandleFileSubmissions() {
     const {siteId, sportsSubmissionsListId} = useSelector((state: RootState) => state.paulyList)
     const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([])

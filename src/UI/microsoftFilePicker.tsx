@@ -7,27 +7,9 @@ import store from '../Redux/store';
 import { idText } from 'typescript';
 
 enum MicrosoftUploadModeType {
-    ShareLink,
-    Personal,
-    Site
-}
-declare global{
-    type TeamsGroupType = {
-        TeamName: string
-        TeamId: string
-        TeamDescription: string
-    }
-    
-    type microsoftFileType = {
-        name: string
-        id: string
-        lastModified: string
-        folder: boolean
-        parentDriveId: string
-        parentPath: string
-        itemGraphPath: string,
-        callPath: string
-    }
+  ShareLink,
+  Personal,
+  Site
 }
 
 export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, onSelectedFile, height, width}:{
@@ -38,7 +20,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
     onSelectedFile: (item: microsoftFileType) => void
 }) {
 
-    const [usersTeams, setUsersTeams] = useState<TeamsGroupType[]>([])
+    const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([])
     const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
     const [microsoftPath, setMicrosoftPath] = useState<string>("https://graph.microsoft.com/v1.0/me/drive/root/children")
     const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
@@ -99,7 +81,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
         const data = await result.json()
         console.log("This is teams data", data)
         if (data["error"] === undefined){
-          const NewData: TeamsGroupType[] = []
+          const NewData: teamsGroupType[] = []
           for(var index = 0; index < data["value"].length; index++){
             if (data["value"][index] !== undefined){
               NewData.push({TeamName: data["value"][index]["displayName"], TeamId: data["value"][index]["id"], TeamDescription: data["value"][index]["description"]})

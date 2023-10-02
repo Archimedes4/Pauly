@@ -9,6 +9,7 @@ import store, { RootState } from '../src/Redux/store'
 import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
 import getUserProfile from '../src/Functions/getUserProfile'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {authorize} from "react-native-app-auth"
 
 import * as WebBrowser from 'expo-web-browser';
 import {
@@ -20,6 +21,7 @@ import {
   useAuthRequest,
   useAutoDiscovery,
 } from 'expo-auth-session';
+import * as AuthSession from 'expo-auth-session';
 import { StatusBar } from 'expo-status-bar'
 import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
 
@@ -34,6 +36,35 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
   const dispatch = useDispatch()
   const insets = useSafeAreaInsets();
 
+  // async function getAuthToken() {
+  //   const redirectUri = makeRedirectUri({
+  //     scheme: "Pauly",
+  //     path: 'auth',
+  //   });
+
+  //   const config = {
+  //     issuer: `https://login.microsoftonline.com/${tenantId}/v2.0`,
+  //     clientId: clientId,
+  //     redirectUrl: redirectUri,
+  //     scopes: scopes
+  //   };
+    
+  //   // Log in to get an authentication token
+  //   const authState = await authorize(config).catch((e) => {
+  //     console.log(e)
+  //   })
+    
+  //   // console.log("Done", authState)
+  //   // dispatch(authenticationTokenSlice.actions.setAuthenticationToken(authState.accessToken))
+  //   // getPaulyLists(authState.accessToken)
+  //   // getUserProfile(authState.accessToken)
+
+  // }
+
+  // async function getGovernmentAuthToken() {
+
+  // }
+  
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
@@ -79,7 +110,6 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
       }})
     }
   }
-
 
   return (
     <>

@@ -18,23 +18,6 @@ function isValidHexaCode(input: string) {
   return hexaPattern.test(input);
 }
 
-declare global{
-  type periodType = {
-    startHour: number
-    startMinute: number
-    endHour: number
-    endMinute: number
-    id: string
-  }
-  type scheduleType = {
-    properName:string
-    descriptiveName: string
-    periods: periodType[]
-    id: string,
-    color: string
-  }
-}
-
 //NOTE: period length cannot be longer than 20
 export default function GovernmentSchedule() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)

@@ -1,21 +1,6 @@
 import { loadingStateEnum } from "../../types";
 import callMsGraph from "../Ultility/microsoftAssets";
 
-declare global {
-  type resourceType = {
-    webUrl: string,
-    id: string,
-    title: string,
-    type: string
-  }
-  type insightResult = {
-    userState: loadingStateEnum,
-    trendingState: loadingStateEnum,
-    userData: resourceType[],
-    trendingData: resourceType[]
-  }
-}
-
 export default async function getInsightData(): Promise<insightResult> {
   const usedResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/insights/used")
   var userOutData: resourceType[] = []

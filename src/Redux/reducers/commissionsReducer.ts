@@ -32,6 +32,9 @@ export const commissionsSlice = createSlice({
     },
     setSelectedCommission: (state, action: PayloadAction<string>) => {
       state.selectedCommission = action.payload
+    },
+    setCommissionNextLink: (state, action: PayloadAction<string | undefined>) => {
+      state.commissionNextLink = action.payload
     }
   }
 })

@@ -4,29 +4,12 @@ import { useEffect, useState } from "react";
 import React from "react";
 import { Platform, Text, Image } from "react-native";
 import WebView from "react-native-webview";
-import { ScrollView } from 'react-native-gesture-handler';
+import { GestureDetector, ScrollView, Gesture } from 'react-native-gesture-handler';
 import { pdfDataSlice } from '../../Redux/reducers/pdfDataReducer';
 
-//https://stackoverflow.com/questions/18650168/convert-blob-to-base64
-function blobToBase64(blob: Blob) {
-  return new Promise((resolve: (item: string | undefined) => void) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(blob)
-    reader.onloadend = () => {
-      if (typeof reader.result !== 'string') {
-        resolve(undefined)
-      } else {
-        resolve(reader.result)
-      }
-    };
-  });
-}
-
-export default function PDFView() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
+export default function PDFView({width, height}:{width: number, height: number}) {
   const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
-  const {inject, images} = useSelector((state: RootState) => state.pdfData)
-  const [page, setPage] = useState<number>(1)
+  const {inject, images, pageNumber} = useSelector((state: RootState) => state.pdfData)
   const dispatch = useDispatch()
 
   async function loadData() {
@@ -43,16 +26,18 @@ export default function PDFView() {
   useEffect(() => {
     loadData()
   }, [])
+  
 
   return (
     <>
       { (powerpointBlob !== "" && inject !== "") ?
         <WebViewInject/>:null 
       }
-     
-          { (images !== "failed" && images !== "") ?
-           <Image source={{uri: images}} style={{width: 100, height: 100}}/>:<Text>Failed</Text>
-          }
+      { (pageNumber < images.length) ?
+        <GestureDetector gesture={Gesture.Fling().onEnd((e) => {console.log(e)})}>
+          <Image source={{uri: images[pageNumber]}} style={{width: width, height: height, borderRadius: 15}}/>
+        </GestureDetector>:null
+      }
     </>
   )
 }
@@ -77,24 +62,17 @@ function WebViewInject() {
         </head>
         <body>
           <script>
-            window.ReactNativeWebView.postMessage('this')
             async function loadData() {
-              window.ReactNativeWebView.postMessage('that')
               const dataResult = await fetch("https://graph.microsoft.com/v1.0/shares/${powerpointShare}/driveItem/content?format=pdf", {
                 headers: {
                   "Authorization":"Bearer ${store.getState().authenticationToken}"
                 }
               })
-              window.ReactNativeWebView.postMessage('that 1')
               if (!dataResult.ok) {window.ReactNativeWebView.postMessage('failed'); return}
               const data = await dataResult.blob()
-              window.ReactNativeWebView.postMessage('that 3')
-              
-              window.ReactNativeWebView.postMessage('that 4')
+
               var fileURL = URL.createObjectURL(data);
               var docInitParams = {url: fileURL}
-              window.ReactNativeWebView.postMessage('ran')
-              window.ReactNativeWebView.postMessage('that 2')
               var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
               var PDFJS = window['pdfjs-dist/build/pdf'];
               try {
@@ -130,9 +108,9 @@ function WebViewInject() {
                     var renderTask = page.render(renderContext);
                     renderTask.promise.then(function() {
                       data.push(canvas.toDataURL('image/png'))
-                      if (totalPages == data.length) {
-                        window.ReactNativeWebView.postMessage(data[0]);
-                      }
+                     
+                      window.ReactNativeWebView.postMessage(data);
+                      
                     });
                   });
                 }
@@ -148,7 +126,8 @@ function WebViewInject() {
         </body>
         </html>`
       }}
-      onMessage={(e) => {dispatch(pdfDataSlice.actions.setImages(e.nativeEvent.data))}}
+      style={{width: 0, height: 0}}
+      onMessage={(e) => {if (e.nativeEvent.data.length >= 7) {dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data))} else {console.log("else")}}}
     />
   )
 }

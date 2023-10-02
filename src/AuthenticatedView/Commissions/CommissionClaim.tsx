@@ -88,7 +88,7 @@ export default function CommissionClaim({commission}:{commission: commissionType
       clientId,
       //scope: "api://6f1e349a-7320-4452-9f32-7e6633fe465b/api/Test",
       extraParams: {responceMode: "query", grant_type: "authorization_code"},
-      scopes: ["api://6f1e349a-7320-4452-9f32-7e6633fe465b/api/Test"],
+      scopes: [`api://${clientId}/api/Test`],
       redirectUri,
       responseType: "code"
     },
@@ -107,10 +107,10 @@ export default function CommissionClaim({commission}:{commission: commissionType
           }
         })
         if (!result.ok) {
-          setClaimCommissionState(loadingStateEnum.failed)
-        } else {
           const data = await result.json()
           store.dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(data["access_token"]))
+        } else {
+          setClaimCommissionState(loadingStateEnum.failed)
         }
       }
     });

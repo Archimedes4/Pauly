@@ -16,14 +16,6 @@ import ProgressView from '../UI/ProgressView'
 import { ResizeMode, Video } from 'expo-av';
 import BackButton from '../UI/BackButton'
 
-declare global {
-  type sportPost = {
-    caption: string,
-    fileID: string,
-    fileType: dataContentTypeOptions
-  }
-}
-
 export default function Sports() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {sportsApprovedSubmissionsListId, siteId} = useSelector((state: RootState) => state.paulyList)

@@ -8,26 +8,6 @@ import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import ListItem from '../../../../../UI/ListItem'
 import getDressCodeData from '../../../../../Functions/Homepage/getDressCodeData'
 
-declare global{
-  type dressCodeIncentiveType = {
-    name: string,
-    description: string,
-    requirementsDescription: string,
-    id: string
-  }
-  type dressCodeDataType = {
-    name: string,
-    description: string,
-    id: string
-  }
-  type dressCodeType = {
-    name: string,
-    id: string,
-    dressCodeData: dressCodeDataType[],
-    dressCodeIncentives: dressCodeIncentiveType[]
-  }
-}
-
 export default function GovernmentDressCode() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [getDressCodeState, setGetDressCodeState] = useState<loadingStateEnum>(loadingStateEnum.loading)
@@ -36,7 +16,7 @@ export default function GovernmentDressCode() {
   async function loadData() {
     const result = await getDressCodeData()
     setGetDressCodeState(result.result)
-    if (result.result === loadingStateEnum.success) {
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
       setDressCodes(result.data)
     }
   }

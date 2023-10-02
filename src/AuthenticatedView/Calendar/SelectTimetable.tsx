@@ -7,20 +7,6 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
 
-declare global {
-    type timetableStringType = {
-      name: string,
-      id: string
-    }
-    type timetableType = {
-      name: string,
-      id: string,
-      schedules: scheduleType[],
-      days: schoolDayType[],
-      dressCode: dressCodeType
-    }
-}  
-
 export default function SelectTimetable({governmentMode, onSelect}:{governmentMode: boolean, onSelect?: (item: timetableStringType) => void}) {
   const {timetablesListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)

@@ -7,21 +7,6 @@ import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 
-declare global {
-    type listColumnType = {
-        columnGroup: string
-        description: string
-        displayName: string
-        enforceUniqueValues: boolean
-        hidden: boolean
-        id: string
-        indexed: boolean
-        name: string
-        readOnly: boolean
-        required: boolean
-    }
-}
-
 export default function MicrosoftGraphEditList() {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
     const {siteId} = useSelector((state: RootState) => state.paulyList)

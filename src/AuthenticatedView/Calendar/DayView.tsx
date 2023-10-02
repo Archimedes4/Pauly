@@ -12,36 +12,6 @@ import { RootState } from "../../Redux/store"
 import create_UUID from "../../Functions/Ultility/CreateUUID"
 import React from "react"
 
-declare global {
-  type calendarCourseType = {
-    name: String
-    semester: number
-    dayA: number
-    dayB: number
-    dayC: number
-    dayD: number
-    noClass: noClassType[]
-    year: number
-    assignments: assignmentTypeQuiz[]
-  }
-  type noClassType = {
-    day: number
-    Month: number
-    Year: number
-  }
-  type assignmentTypeQuiz = {
-    id: string
-    title: string
-    description: string
-    assignmentEnum: number
-    documentRef: string
-    assignmentDuringClass: boolean
-    selectedMonth?: number
-    selectedDay?: number
-    dueDate?: Date
-  }
-}
-
 export default function DayView({width, height}:{width: number, height: number}) {
   const colorScheme = useColorScheme();
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
@@ -113,29 +83,25 @@ export default function DayView({width, height}:{width: number, height: number})
     loadCalendarContent()
   }, [])
 
-  // useEffect(() => {
-  //     findDateProperty(selectedDay)
-  // }, [selectedDay])
-
   return (
     <ScrollView style={{height: height, width: width, backgroundColor: "white"}} ref={mainScrollRef}>
       <>
         { isShowingTime ?
-          <View>
+          <>
             {hoursText.map((value) => (
               <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
-                { (calculateIfShowing(value, new Date(selectedDate))) ?
-                  <View><Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text></View>:null
+                { (calculateIfShowing(value, new Date(selectedDate))) ?  
+                  <Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text>:null
                 }
                 <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
               </View>
             ))}
-          </View>:null
+          </>:null
         }
       </>
       {currentEvents.map((event) => (
         <>
-          { event.allDay ?
+          { (event.allDay || new Date(event.endTime).getFullYear() !== new Date(selectedDate).getFullYear() || new Date(event.endTime).getMonth() !== new Date(selectedDate).getMonth() || new Date(event.endTime).getDate() !== new Date(selectedDate).getDate()) ?
             null:<EventBlock event={event} width={width} height={height} />
           }
         </>

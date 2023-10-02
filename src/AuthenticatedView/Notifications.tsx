@@ -119,7 +119,7 @@ export default function Notifications() {
       }
       <View style={{width: width, height: height * 0.1, marginTop: (currentBreakPoint === 0) ? 10:0}}>
         <View style={{width: width * 0.9, height: height * 0.07, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#444444", marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
-          <Text>{message}</Text>
+          <Text style={{color: "#FFFFFF"}}>{message}</Text>
         </View>
       </View>
       <WidgetView />
@@ -155,7 +155,7 @@ function TaskBlock() {
   const {taskState, userTasks} = useSelector((state: RootState) => state.homepageData)
   return (
     <View style={{width: width}}>
-      <Text>Tasks</Text>
+      <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Tasks</Text>
       <View style={{shadowColor: "black", width: width * 0.9, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", marginRight: width * 0.05, height: height * 0.5, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
         <ScrollView style={{margin: 10, height: height * 0.5 - 20}}>
           { (taskState === loadingStateEnum.loading) ?
@@ -325,10 +325,10 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
 }
 
 function BoardBlock() {
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {powerpointBlob, paulyDataState} = useSelector((state: RootState) => state.paulyData)
   return (
-    <View>
-      <Text>Board</Text>
+    <View style={{width: width * 0.9, height: height * 0.3, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
       { (paulyDataState === loadingStateEnum.loading) ?
         <View>
           <ProgressView width={100} height={100}/>
@@ -338,8 +338,8 @@ function BoardBlock() {
           { (paulyDataState === loadingStateEnum.success) ?
             <>
               { (powerpointBlob !== "") ?  
-                <PDFView />:
-                <View>
+                <PDFView width={width * 0.9} height={height * 0.3}/>:
+                <View style={{width: width * 0.9, height: height * 0.3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
                   <ProgressView width={100} height={100}/>
                   <Text>Loading</Text>
                 </View>
@@ -361,11 +361,11 @@ function InsightsBlock() {
     <>
       { (currentBreakPoint <= 0) ?
         <>
-          <Text>Recent Files</Text>
+          <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Recent Files</Text>
           <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
             <TrendingFiles />
           </View>
-          <Text>Popular Files</Text>
+          <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Popular Files</Text>
           <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
             <PopularFiles />
           </View>

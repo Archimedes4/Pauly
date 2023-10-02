@@ -1,3 +1,4 @@
+import monthDataReducer from './reducers/monthDataReducer';
 import resourcesLastCallReducer, { resourcesLastCalled } from './reducers/resourcesLastCallReducer';
 import safeAreaColorsReducer from './reducers/safeAreaColorsReducer';
 import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
@@ -44,7 +45,8 @@ const store = configureStore({
     isShowingProfileBlock: isShowingProfileBlockReducer,
     isGovernmentMode: isGovernmentModeReducer,
     commissions: commissionsReducer,
-    pdfData: pdfDataReducer
+    pdfData: pdfDataReducer,
+    monthData: monthDataReducer
   }
 });
 

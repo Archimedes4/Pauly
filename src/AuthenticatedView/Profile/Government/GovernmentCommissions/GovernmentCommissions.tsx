@@ -10,33 +10,6 @@ import ProgressView from '../../../../UI/ProgressView'
 import getSubmissions from '../../../../Functions/commissions/getSubmissions'
 import create_UUID from '../../../../Functions/Ultility/CreateUUID'
 
-declare global {
-  type commissionType = {
-    itemId: string
-    title: string
-    timed: boolean
-    points: number
-    hidden: boolean
-    maxNumberOfClaims: number
-    allowMultipleSubmissions: boolean
-    submissionsCount: number
-    claimCount: number
-    reviewedCount: number
-    commissionId: string
-    value: commissionTypeEnum
-    startDate?: string
-    endDate?: string
-    proximity?: number
-    coordinateLat?: number
-    coordinateLng?: number
-    postData?: {
-      teamId: string
-      channelId: string
-      postId: string
-    }
-  }
-}
-
 export default function GovernmentCommissions() {
   const {height, width} = useSelector((state: RootState) => state.dimentions)
   const [commissions, setCommissions] = useState<commissionType[]>([])

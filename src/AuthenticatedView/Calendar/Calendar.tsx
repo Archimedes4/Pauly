@@ -21,27 +21,7 @@ import getEvents from '../../Functions/Calendar/getEvents';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 import BackButton from '../../UI/BackButton';
 import { addEventSlice } from '../../Redux/reducers/addEventReducer';
-declare global {
-  type monthDataType = {
-    id: string,
-    showing: boolean,
-    dayData: number,
-    events: eventType[]
-  }
-  type paulyEventTypes = "schoolDay" | "schoolYear"
-  type eventType = {
-    id: string
-    name: string
-    startTime: string
-    endTime: string //This is held in iso format
-    eventColor: string //This is held in iso format
-    microsoftEvent: boolean,
-    allDay: boolean
-    paulyEventType?: paulyEventTypes
-    paulyEventData?: string
-    microsoftReference?: string
-  }
-}
+import { monthDataSlice } from '../../Redux/reducers/monthDataReducer'
 
 const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 
@@ -120,11 +100,22 @@ export default function Calendar() {
 }
 
 function MonthViewMain({width, height}:{width: number, height: number}) {
+  const monthData = useSelector((state: RootState) => state.monthData)
+  const selectedDate: string =  useSelector((state: RootState) => state.selectedDate)
   return (
     <>
       { (width <= 519) ?
         <ScrollView style={{backgroundColor: "white", height: height, width: width}}>
-          <MonthView width={width} height={height} />
+          <MonthView width={width} height={height * 0.8} /> 
+          { (new Date(selectedDate).getDate() <= monthData.length) ?
+            <>
+              {monthData[new Date(selectedDate).getDate() - 1].events.map((event) => (
+                <View>
+                  <Text>{event.name}</Text>
+                </View>
+              ))}
+            </>:null
+          }
         </ScrollView>:
          <View style={{backgroundColor: "white", height: height, width: width}}>
           <MonthView width={width} height={height} />
@@ -135,11 +126,11 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
 }
 
 function MonthView({width, height}:{width: number, height: number}) {
-  const [monthData, setMonthData] = useState<monthDataType[]>([])
+  //const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
-  const selectedDateRedux: string =  useSelector((state: RootState) => state.selectedDate)
+  const selectedDate: string =  useSelector((state: RootState) => state.selectedDate)
+  const monthData = useSelector((state: RootState) => state.monthData)
   const {fontScale} = useWindowDimensions();
 
   const dispatch = useDispatch()
@@ -179,15 +170,11 @@ function MonthView({width, height}:{width: number, height: number}) {
         monthDataResult.push({showing: false, dayData: 0, id: create_UUID(), events: []})
       }
     }
-    setMonthData(monthDataResult)
+    dispatch(monthDataSlice.actions.setMonthData(monthDataResult))
   }
 
   useEffect(() => {
-    setSelectedDate(new Date(selectedDateRedux))
-  }, [selectedDateRedux])
-
-  useEffect(() => {
-    getMonthData(selectedDate)
+    getMonthData(new Date(selectedDate))
   }, [selectedDate, currentEvents])
 
   if (!fontsLoaded) {
@@ -199,10 +186,10 @@ function MonthView({width, height}:{width: number, height: number}) {
       <View style={{height: height/8, width: width, justifyContent: "center", alignItems: "center", alignContent: "center"}}>
         <View style={{flexDirection: "row"}}>
           <View style={{width: width * 0.6, flexDirection: "row"}}>
-            <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 30}}>{selectedDate.toLocaleString("en-us", { month: "long" })} {selectedDate.getFullYear()}</Text>
+            <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 30}}>{new Date(selectedDate).toLocaleString("en-us", { month: "long" })} {new Date(selectedDate).getFullYear()}</Text>
           </View>
           <View>
-            {(selectedDate.getFullYear() !== new Date().getFullYear() || selectedDate.getMonth() != new Date().getMonth()) ?
+            {(new Date(selectedDate).getFullYear() !== new Date().getFullYear() || new Date(selectedDate).getMonth() != new Date().getMonth()) ?
               <View style={{width: width * 0.2}}>
                 <Pressable onPress={() => {
                   dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(new Date().toISOString()))
@@ -215,7 +202,7 @@ function MonthView({width, height}:{width: number, height: number}) {
           {/*This is left chevron*/}
           <Pressable onPress={() => {
             const d = new Date();
-            d.setFullYear((selectedDate.getMonth() === 1) ? selectedDate.getFullYear() - 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 1) ? 12:selectedDate.getMonth() - 1, selectedDate.getDay());
+            d.setFullYear((new Date(selectedDate).getMonth() === 1) ? new Date(selectedDate).getFullYear() - 1:new Date(selectedDate).getFullYear(), (new Date(selectedDate).getMonth() === 1) ? 12:new Date(selectedDate).getMonth() - 1, new Date(selectedDate).getDay());
             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
           }} style={{marginTop: "auto", marginBottom: "auto"}}>
             <ChevronLeft width={14} height={14}/>
@@ -223,7 +210,7 @@ function MonthView({width, height}:{width: number, height: number}) {
           {/*This is right chevron*/}
           <Pressable onPress={() => {
             const d = new Date();
-            d.setFullYear((selectedDate.getMonth() === 12) ? selectedDate.getFullYear() + 1:selectedDate.getFullYear(), (selectedDate.getMonth() === 12) ? 1:selectedDate.getMonth() + 1, selectedDate.getDay());
+            d.setFullYear((new Date(selectedDate).getMonth() === 12) ? new Date(selectedDate).getFullYear() + 1:new Date(selectedDate).getFullYear(), (new Date(selectedDate).getMonth() === 12) ? 1:new Date(selectedDate).getMonth() + 1, new Date(selectedDate).getDay());
             dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
           }} style={{marginTop: "auto", marginBottom: "auto"}}>
             <ChevronRight width={14} height={14}/>
@@ -238,7 +225,6 @@ function MonthView({width, height}:{width: number, height: number}) {
             </View>
           ))}
         </View>
-        <View>
         { Array.from(Array(7).keys()).map((valueRow) => (
             <View key={"Row_"+valueRow+"_"+create_UUID()} style={{flexDirection: "row"}}>
               { monthData.map((value, id) => (
@@ -248,7 +234,7 @@ function MonthView({width, height}:{width: number, height: number}) {
                       { value.showing ?
                         <Pressable onPress={() => {
                           const d = new Date();
-                          d.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), value.dayData);
+                          d.setFullYear(new Date(selectedDate).getFullYear(), new Date(selectedDate).getMonth(), value.dayData);
                           dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
                         }} key={value.id}>
                           <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
@@ -261,13 +247,13 @@ function MonthView({width, height}:{width: number, height: number}) {
               ))}
             </View>
           ))}
-        </View>
       </View>
       { (width <= 519) ?
         <ScrollView>
-          { ((selectedDate.getDate() - 1) <= monthData.length) ?
+          <Text>THis is a tst</Text>
+          { ((new Date(selectedDate).getDate() - 1) <= monthData.length) ?
             <>
-              {monthData[selectedDate.getDate() - 1].events.map((event) => (
+              {monthData[new Date(selectedDate).getDate() - 1].events.map((event) => (
                 <View>
                   <Text>{event.name}</Text>
                 </View>

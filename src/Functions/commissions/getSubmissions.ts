@@ -55,7 +55,8 @@ export default async function getSubmissions(commissionId: string, submissionTyp
           id: data["value"][index]["fields"]["submissionId"],
           itemId: data["value"][index]["id"],
           approved: data["value"][index]["fields"]["submissionApproved"],
-          reviewed: data["value"][index]["fields"]["submissionReviewed"]
+          reviewed: data["value"][index]["fields"]["submissionReviewed"],
+          submissionImage: (data["value"]["fields"]["submissionData"] !== undefined) ? JSON.parse(data["value"]["fields"]["submissionData"])["imageShare"]:undefined
         })
       } else {
         return {result: loadingStateEnum.failed}

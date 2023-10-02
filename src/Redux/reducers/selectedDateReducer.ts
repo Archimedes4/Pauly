@@ -6,7 +6,7 @@ export const selectedDateSlice = createSlice({
   name: "selectedDate",
   initialState: initalState,
   reducers: {
-    setCurrentEventsLastCalled: (state, action) => {
+    setCurrentEventsLastCalled: (_state, action) => {
       return action.payload
     }
   }

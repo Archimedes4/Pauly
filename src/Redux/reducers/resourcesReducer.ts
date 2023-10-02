@@ -5,9 +5,10 @@ type resourceStoreState = {
   resources: resourceDataType[]
   loadingState: loadingStateEnum
   searchValue: string
+  resourceFollow: resourceFollowType[]
 } 
 
-const initalResourcesState: resourceStoreState = {resources: [], loadingState: loadingStateEnum.loading, searchValue: ""}
+const initalResourcesState: resourceStoreState = {resources: [], loadingState: loadingStateEnum.loading, searchValue: "", resourceFollow: []}
 
 export const resourcesSlice = createSlice({
   name: "resources",
@@ -28,6 +29,9 @@ export const resourcesSlice = createSlice({
     },
     setSearchValue: (state, action: PayloadAction<string>) => {
       state.searchValue = action.payload
+    },
+    setResourceFollow: (state, action: PayloadAction<resourceFollowType[]>) => {
+      state.resourceFollow = action.payload
     }
   }
 })

@@ -1,3 +1,4 @@
+import { commissionsSlice } from "../../Redux/reducers/commissionsReducer"
 import store from "../../Redux/store"
 import { loadingStateEnum } from "../../types"
 import callMsGraph from "../Ultility/microsoftAssets"
@@ -88,13 +89,16 @@ async function getSubmissions(commissionIds: string[]): Promise<{result: loading
   return {result: loadingStateEnum.success, data: outputMap}
 }
 
-export default async function getCommissions(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean): Promise<{result: loadingStateEnum, data?: commissionType[], nextLink?: string}> {
+export default async function getCommissions(nextLink?: string, startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean): Promise<{result: loadingStateEnum, data?: commissionType[], nextLink?: string}> {
+  if (nextLink === undefined) {
+    store.dispatch(commissionsSlice.actions.setCommissionNextLink(undefined))
+  }
   if (claimed === true) {
     const result = await getUnclaimedCommissions()
     return {result: result.result, data: result.data}
   } else {
     const filter = getFilter(startDate, endDate)
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items?expand=fields${filter}`)
+    const result = await callMsGraph(nextLink ? nextLink:`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items?expand=fields${filter}`)
     if (result.ok) {
       const data = await result.json()
       if (data["value"] !== null && data["value"] !== undefined){

@@ -114,7 +114,7 @@ function AppCore() {
   return (
     <>
       <View style={{width: dimensions.window.width, height: insets.top, backgroundColor: safeAreaColors.top}}/>
-      <SafeAreaView style={{backgroundColor: safeAreaColors.bottom, width: dimensions.window.width, height: (dimensions.window.height - (insets.top + insets.bottom)), zIndex: 10, top: insets.top, position: "absolute", overflow: "hidden"}}>
+      <SafeAreaView style={{backgroundColor: safeAreaColors.bottom, width: dimensions.window.width, height: (dimensions.window.height - (insets.top + insets.bottom)), zIndex: 10, top: insets.top, position: "absolute"}}>
         <AppMain dimensions={dimensions} />
       </SafeAreaView>
       <View style={{width: dimensions.window.width, height: insets.bottom, backgroundColor: safeAreaColors.bottom, position: "absolute", bottom: 0}}/>

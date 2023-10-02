@@ -1,7 +1,7 @@
 import { loadingStateEnum } from "../../types"
 import create_UUID from "../Ultility/CreateUUID"
 import callMsGraph from "../Ultility/microsoftAssets"
-import { paulyListData, commissionsData, paulyClassExtensionData, paulyDataData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData, paulyResourceExtensionData, dressCodeData, addDataArray } from "./initializePaulyData"
+import { paulyListData, commissionsData, paulyClassExtensionData, paulyDataData, scheduleData, sportsApprovedSubmissionsData, sportsData, sportsSubmissionsData, timetablesData, resourceData, dressCodeData, addDataArray } from "./initializePaulyData"
 
 export async function initializePaulyPartOne(secondUserId: string): Promise<{result: loadingStateEnum, groupId?: string}> {  
   const currentUsersIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/me", "GET")
@@ -118,8 +118,14 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
     } else {
       paulyListNewData["fields"]["eventDataExtensionId"] = `String {${create_UUID()}} Name eventData`
     }
+    if (getPaulyListResultData["fields"]["resourceExtensionId"] !== undefined) {
+      paulyListNewData["fields"]["resourceExtensionId"] = getPaulyListResultData["fields"]["resourceExtensionId"]
+    } else {
+      paulyListNewData["fields"]["resourceExtensionId"] = `String {${create_UUID()}} Name resourceData`
+    }
   } else {
     paulyListNewData["fields"]["eventDataExtensionId"] = `String {${create_UUID()}} Name eventData`
+    paulyListNewData["fields"]["resourceExtensionId"] = `String {${create_UUID()}} Name resourceData`
   }
 
   if (paulyListNewData["fields"]["paulyDataListId"] === undefined) {

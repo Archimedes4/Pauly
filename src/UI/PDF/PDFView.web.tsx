@@ -8,7 +8,7 @@ import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api'
 PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`
 
 
-export default function PDFView() {
+export default function PDFView({width, height}:{width: number, height: number}) {
   const [images, setImages] = useState<string[]>([])
   const [pageIndex, setPageIndex] = useState<number>(0)
   const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
@@ -47,7 +47,7 @@ export default function PDFView() {
   return (
     <>
       { (pageIndex < images.length) ?
-        <Image source={{uri: images[pageIndex], width: 200, height: 100}} height={100} width={100}/>:null
+        <Image source={{uri: images[pageIndex], width: width, height: height}} style={{borderRadius: 15, width: width, height: height}} height={height} width={width}/>:null
       }
     </>
   )
