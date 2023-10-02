@@ -1,4 +1,4 @@
-import { loadingStateEnum, resourceResponce } from './../types';
+import { loadingStateEnum, resourceMode, resourceResponce } from './../types';
 import store from "../Redux/store"
 import callMsGraph from "./Ultility/microsoftAssets"
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
@@ -31,9 +31,10 @@ async function getResourceFollows() {
   return
 }
 
-export async function getResources(category? ) {
+export async function getResources(category?: resourceMode) {
   await getResourceFollows()
-  const categoryFilter = (category === resourceMode.sports) ? "sports":(selectedCategory === resourceMode.advancement) ? "advancement":(selectedCategory === resourceMode.schoolEvents) ? "schoolEvents":(selectedCategory === resourceMode.annoucments) ? "annoucments":(selectedCategory === resourceMode.fitness) ? "fitness":"files"
+  const categoryString = (category === resourceMode.sports) ? "sports":(category === resourceMode.advancement) ? "advancement":(category === resourceMode.schoolEvents) ? "schoolEvents":(category === resourceMode.annoucments) ? "annoucments":(category === resourceMode.fitness) ? "fitness":"files"
+  const categoryFilter = `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.resourceExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.resourceExtensionId}'%20and%20ep/value%20eq%20'${categoryString}')`
   var output: resourceDataType[] = []
   var batchDataRequests: {id:string; method:string; url:string}[][] = [[]]
   var batchCount = 0
@@ -64,21 +65,15 @@ export async function getResources(category? ) {
             for (var dataIndex = 0; dataIndex < resourceResponceData["responses"][responceIndex]["body"]["value"].length; dataIndex++) {
               if (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"] !== "<systemEventMessage/>") {
                 var attachments: resourceType[] = []
-                console.log(resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"])
                 for (var attachmentIndex = 0; attachmentIndex < resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"].length; attachmentIndex++) {
-                  console.log("Running through attach")
                   if (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["contentType"] === "reference") {
-                    console.log("Called")
-                    const attachResult = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${store.getState().resources.resourceFollow[parseInt(resourceResponceData["responses"][responceIndex]["id"]) - 1].teamId}/threads/${store.getState().resources.resourceFollow[parseInt(resourceResponceData["responses"][responceIndex]["id"]) - 1].channelId}/posts/${resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["id"]}/attachments/${resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["id"]}`)
-                    const attachData = await attachResult.json()
-                    if (attachResult.ok) {
-                      attachments.push({
-                        webUrl: '',
-                        id: '',
-                        title: '',
-                        type: ''
-                      })
-                    }
+                    attachments.push({
+                      webUrl: '',
+                      id: '',
+                      title: '',
+                      type: ''
+                    })
+                    
                   }
                 }
                 const outputData: resourceDataType = {
@@ -108,7 +103,8 @@ export async function getResources(category? ) {
   return
 }
 
-export async function getResourcesSearch(search: string): Promise<loadingStateEnum> {
+export async function getResourcesSearch(search: string) {
+  store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.loading))
   const searchPayload = {
     "requests": [
       {
@@ -127,19 +123,55 @@ export async function getResourcesSearch(search: string): Promise<loadingStateEn
   const searchResult = await callMsGraph("https://graph.microsoft.com/v1.0/search/query", "POST", false, JSON.stringify(searchPayload))
   if (searchResult.ok) {
     const searchData = await searchResult.json()
-    console.log(searchData)
+    var batchDataRequests: {id:string; method:string; url:string}[] = []
+    for (var index = 0; index < searchData["value"][0]["hits"].length; index++) {
+      if (searchData["value"][0]["hits"][index]["resource"]["channelIdentity"] !== undefined) {
+        const index = store.getState().resources.resourceFollow.findIndex((e) => {e.channelId === searchData["value"][0]["hits"][index]["resource"]["channelIdentity"]["channelId"]})
+        if (index !== -1) {
+          batchDataRequests.push({
+            id: batchDataRequests.length.toString() + 1,
+            method: "GET",
+            url: `/teams/${searchData["value"][0]["hits"][index]["resource"]["channelIdentity"]["teamId"]}/channel${searchData["value"][0]["hits"][index]["resource"]["channelIdentity"]["channelId"]}/message/${searchData["value"][0]["hits"][index]["resource"]["channelIdentity"]["id"]}`
+          })
+        } else {
+          store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+          return
+        }
+      }
+    }
+
+    var resourceHeader = new Headers()
+    resourceHeader.append("Accept", "application/json")
+    const batchData = {
+      "requests":batchDataRequests
+    }
+    const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData))
+    if (batchResult.ok) {
+      const batchResultData = await batchResult.json()
+      var outputData: resourceDataType[] = []
+      for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
+        if (batchResultData["responses"][batchIndex]["status"] === 200) {//TO DO fix ok code
+          outputData.push({
+            teamId: batchResultData["responses"][batchIndex]["body"]["channelIdentity"]["teamId"],
+            conversationId: batchResultData["responses"][batchIndex]["body"]["channelIdentity"]["channelId"],
+            id: batchResultData["responses"][batchIndex]["body"]["id"],
+            body: batchResultData["responses"][batchIndex]["body"]["body"]["content"],
+            html: (batchResultData["responses"][batchIndex]["body"]["body"]["contentType"] === "html") ? true:false
+          })
+        } else {
+          store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+          return
+        }
+      }
+      store.dispatch(resourcesSlice.actions.setResources({resources: outputData, loadingState: loadingStateEnum.success}))
+      return
+    } else {
+      store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+      return
+    }
   } else {
-
-  }
-  return loadingStateEnum.failed
-}
-
-export function getResourceFromJson(JSONIn: string): resourceDataType | undefined {
-  try {
-    const result: resourceDataType = JSON.parse(JSONIn)
-    return result
-  } catch {
-    return undefined
+    store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+    return 
   }
 }
 

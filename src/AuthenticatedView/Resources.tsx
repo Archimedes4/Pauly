@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
-import { getResourceFromJson, getResources, getResourcesSearch } from '../Functions/getResources'
+import { getResources, getResourcesSearch } from '../Functions/getResources'
 import { useDispatch, useSelector } from 'react-redux'
 import store, { RootState } from '../Redux/store'
 import { AddIcon, CloseIcon, SearchIcon } from '../UI/Icons/Icons'
@@ -11,7 +11,7 @@ import { useFonts } from 'expo-font';
 import WebViewCross from '../UI/WebViewCross'
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 import BackButton from '../UI/BackButton'
-import { loadingStateEnum } from '../types'
+import { loadingStateEnum, resourceMode } from '../types'
 import ProgressView from '../UI/ProgressView'
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer'
 import create_UUID from '../Functions/Ultility/CreateUUID'
@@ -37,19 +37,20 @@ export default function Resources() {
   const dispatch = useDispatch()
 
   async function loadData() {
-    await getResources()
+    console.log("Running")
+    await getResources(selectedResourceMode)
   }
 
   useEffect(() => {
     dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
-    loadData()
   }, [])
 
   useEffect(() => {
     if (siteId !== "") {
       loadData()
     }
-  }, [siteId])
+  }, [siteId, selectedResourceMode])
+
 
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),

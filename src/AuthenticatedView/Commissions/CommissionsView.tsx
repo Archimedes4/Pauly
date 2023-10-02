@@ -67,13 +67,12 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
     if (!result.canceled) {
       if (result.assets.length === 1) {
         setImageUri(result.assets[0].uri)
-        console.log(result.assets[0])
-        console.log(result.assets[0].uri)
+        setPickerImageState(CameraResult.success)
       } else {
-        console.log("errror")
+        setPickerImageState(CameraResult.failed)
       }
     } else {
-      alert('You did not select any image.');
+      setPickerImageState(CameraResult.notStarted)
     }
   }
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
@@ -141,14 +140,14 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                 <Pressable onPress={() => onClose()} style={{marginTop: 10, marginLeft: 10}}>
                   <CloseIcon width={(width < height) ? width * 0.05:height * 0.05} height={(width < height) ? width * 0.05:height * 0.05}/>
                 </Pressable>
-                <View style={{width: width * 0.8, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                <View style={{width: width * 0.9, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
                   <Text style={{fontSize: height * 0.03}}>Commission: {commissionData.title}</Text>
                 </View>
               </View>
               <ScrollView style={{height: isOverflowing ? height * 0.6:height * 0.7}}>
                 <View onLayout={(e) => {
                   if (e.nativeEvent.layout.height >= height * 0.6) {
-                    setIsOverflowing(false)
+                    setIsOverflowing(true)
                     console.log("True")
                   } else {
                     setIsOverflowing(false)
@@ -185,12 +184,12 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                     </>:null
                   }
                   { isOverflowing ?
-                    null:<View style={{marginTop: 10}}><CommissionClaim commission={commissionData} /></View>
+                    null:<View style={{marginTop: 10, marginBottom: 10}}><CommissionClaim commission={commissionData} /></View>
                   }
                 </View>
               </ScrollView>
               { isOverflowing ?
-                <View style={{height: height * 0.1}}>
+                <View style={{height: height * 0.1, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
                   <CommissionClaim commission={commissionData} />
                 </View>:null
               }

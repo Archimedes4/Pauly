@@ -1,0 +1,116 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { orgWideGroupID } from "../PaulyConfig";
+import { isGovernmentModeSlice } from "../Redux/reducers/isGovernmentModeReducer";
+import store from "../Redux/store";
+import callMsGraph from "./Ultility/microsoftAssets";
+
+export async function validateGovernmentMode() {
+  console.log("validting")
+  const userResult = await callMsGraph("https://graph.microsoft.com/v1.0/me?$select=id")
+  if (userResult.ok) {
+    const userData = await userResult.json()
+    const teamsResult = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/owners?$filter=id%20eq%20'${userData["id"]}'`)
+    if (teamsResult.ok) {
+      const teamsData = await teamsResult.json()
+      if (teamsData["value"].length === 1){
+        if (teamsData["value"][0]["id"] === userData["id"]) {
+          try {
+            await AsyncStorage.setItem('paulyGovernmentMode', JSON.stringify(true));
+            store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(true))
+          } catch (e) {
+            store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+          }
+        } else {
+          try {
+            await AsyncStorage.setItem('paulyGovernmentMode', JSON.stringify(false));
+            store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+          } catch (e) {
+            store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+          }
+        }
+      } else {
+        try {
+          await AsyncStorage.setItem('paulyGovernmentMode', JSON.stringify(false));
+          store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+        } catch (e) {
+          store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+        }
+      }
+    } else {
+      try {
+        await AsyncStorage.setItem('paulyGovernmentMode', JSON.stringify(false));
+        store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+      } catch (e) {
+        store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+      }
+    }
+  } else {
+    try {
+      await AsyncStorage.setItem('paulyGovernmentMode', JSON.stringify(false));
+      store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+    } catch (e) {
+      store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+    }
+  }
+}
+
+export async function checkIfGovernmentMode() {
+  try {
+    const value = await AsyncStorage.getItem('paulyGovernmentMode');
+    if (value !== null) {
+      // value previously stored
+      const governmentMode = JSON.parse(value)
+      if (governmentMode) {
+        store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(true))
+      } else {
+        store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+      }
+    } else {
+      store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+    }
+  } catch (e) {
+    // error reading value
+    store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+  }
+}
+
+export async function setWantGovernment(value: boolean) {
+  if (value) {
+    try {
+      await AsyncStorage.setItem('paulyWantGovernmentMode', JSON.stringify(true));
+      console.log("correct this thing is true")
+    } catch (e) {
+      console.log("this thing has failed")
+      //TO DO deal with error
+    }
+  } else {
+    try {
+      await AsyncStorage.setItem('paulyWantGovernmentMode', JSON.stringify(false));
+    } catch (e) {
+      //TO DO deal with error
+    }
+  }
+}
+
+export async function getWantGovernment(): Promise<boolean> {
+  console.log("This was called")
+  try {
+    console.log('try')
+    const value = await AsyncStorage.getItem('paulyWantGovernmentMode');
+    console.log(value)
+    if (value !== null) {
+      const result = JSON.parse(value)
+      if (result) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  } catch {
+    return false
+    //TO DO deal with error
+  }
+  return false
+}

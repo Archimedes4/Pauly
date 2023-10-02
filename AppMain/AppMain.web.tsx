@@ -11,6 +11,7 @@ import { EventType, LogLevel, PublicClientApplication } from '@azure/msal-browse
 import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsal } from '@azure/msal-react'
 import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
 import { authenticationApiTokenSlice } from '../src/Redux/reducers/authenticationApiToken'
+import { checkIfGovernmentMode, getWantGovernment, setWantGovernment, validateGovernmentMode } from '../src/Functions/handleGovernmentLogin'
 
 const pca = new PublicClientApplication({
   auth: {
@@ -59,10 +60,13 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   const { instance } = useMsal();
   const dispatch = useDispatch()
 
-  async function getAuthToken(userInitated: boolean, government: boolean) {
+  async function getAuthToken(userInitated: boolean, government?: boolean) {
     // Account selection logic is app dependent. Adjust as needed for different use cases.
     // Set active acccount on page load
-    console.log("Running auth")
+    if (government) {
+      setWantGovernment(government)
+    }
+
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
       instance.setActiveAccount(accounts[0]);
@@ -72,11 +76,14 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
       const apiResult = await instance.acquireTokenSilent({
         scopes: [`api://${clientId}/api/Test`]
       })
-      console.log(apiResult)
       dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(apiResult.accessToken))
       dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
       getPaulyLists(result.accessToken)
       getUserProfile(result.accessToken)
+      console.log("This is that", await getWantGovernment())
+      if (await getWantGovernment()) {
+        checkIfGovernmentMode()
+      }
     }
 
     instance.addEventCallback((event: any) => {
@@ -88,7 +95,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
     });
 
     // handle auth redired/do all initial setup for msal
-    instance.handleRedirectPromise().then(authResult=>{
+    instance.handleRedirectPromise().then(async authResult=>{
       // Check if user signed in 
       const account = instance.getActiveAccount();
       if(!account && userInitated){
@@ -99,9 +106,17 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
       } else if (account) {
         if (authResult !== undefined && authResult !== null) {
           dispatch(authenticationTokenSlice.actions.setAuthenticationToken(authResult.accessToken))
+          if (await getWantGovernment()) {
+            validateGovernmentMode()
+          }
+          const apiResult = await instance.acquireTokenSilent({
+            scopes: [`api://${clientId}/api/Test`]
+          })
+          console.log(apiResult)
+          dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(apiResult.accessToken))
           getPaulyLists(authResult.accessToken)
           getUserProfile(authResult.accessToken)
-          dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(true))
+          
         }
       }
     }).catch(err=>{
@@ -111,7 +126,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   }
 
   useEffect(() => {
-    getAuthToken(false, false)
+    getAuthToken(false)
   }, [])
 
   return (

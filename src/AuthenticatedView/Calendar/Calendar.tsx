@@ -63,7 +63,7 @@ export default function Calendar() {
         <View style={{flexDirection: "row", alignItems: "center", height: height * 0.1, width: width}}>
           <Text style={{fontFamily: "BukhariScript", fontSize: Math.cbrt((width < height) ? width * 0.5:height * 0.1) * 5, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017)}}>Calendar</Text>
           <CalendarTypePicker width={width * 0.5} height={height * 0.05}/>
-          <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false)); dispatch(addEventSlice.actions.setIsEditing(false)); dispatch(addEventSlice.actions.setIsEditing(false)); dispatch(addEventSlice.actions.setSelectedEvent(undefined))}} style={{
+          <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(true)); dispatch(addEventSlice.actions.setIsEditing(false)); dispatch(addEventSlice.actions.setSelectedEvent(undefined))}} style={{
             height: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.8,
             width: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.8,
             alignItems: "center", alignContent: "center", justifyContent: "center",
@@ -250,7 +250,6 @@ function MonthView({width, height}:{width: number, height: number}) {
       </View>
       { (width <= 519) ?
         <ScrollView>
-          <Text>THis is a tst</Text>
           { ((new Date(selectedDate).getDate() - 1) <= monthData.length) ?
             <>
               {monthData[new Date(selectedDate).getDate() - 1].events.map((event) => (

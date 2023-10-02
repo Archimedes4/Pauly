@@ -24,6 +24,7 @@ import {
 import * as AuthSession from 'expo-auth-session';
 import { StatusBar } from 'expo-status-bar'
 import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
+import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin'
 
 if (Platform.OS === "web") {
   WebBrowser.maybeCompleteAuthSession();
@@ -105,7 +106,7 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
             dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.authentication.accessToken))
             getPaulyLists(res.authentication.accessToken)
             getUserProfile(res.authentication.accessToken)
-            dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(true))
+            validateGovernmentMode()
           }
       }})
     }

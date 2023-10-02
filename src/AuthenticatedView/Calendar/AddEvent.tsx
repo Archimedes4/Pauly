@@ -179,16 +179,18 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
             placeholder="Event Name"
             style={{width: width * 0.8, height: height * 0.05, borderBottomColor: '#000000', borderBottomWidth: 1, marginLeft: width * 0.01}}
           />
-          <View style={{flexDirection: "row"}}>
-            <Text>All Day</Text>
-            <Switch
-              trackColor={{false: '#767577', true: '#81b0ff'}}
-              thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={(e) => {dispatch(addEventSlice.actions.setAllDay(e))}}
-              value={allDay}
-            />
-          </View>
+          { (selectedEventType !== paulyEventType.schoolYear) ?
+            <View style={{flexDirection: "row"}}>
+              <Text>All Day</Text>
+              <Switch
+                trackColor={{false: '#767577', true: '#81b0ff'}}
+                thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={(e) => {dispatch(addEventSlice.actions.setAllDay(e))}}
+                value={allDay}
+              />
+            </View>:null
+          }
         </View>
       }
       <Text>{(selectedEventType === paulyEventType.schoolDay) ? "":"Start "}Date</Text>

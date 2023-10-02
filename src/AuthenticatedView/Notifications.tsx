@@ -75,7 +75,7 @@ export default function Notifications() {
                   if (classResult.data.length >= 1) {
                     console.log(classResult.data[0].startTime)
                     const startTimeDate = new Date(classResult.data[0].startTime)
-                    dispatch(homepageDataSlice.actions.setStartTime((startTimeDate.getHours() % 12) + 1 + ":" + startTimeDate.getMinutes()))
+                    dispatch(homepageDataSlice.actions.setStartTime(((startTimeDate.getHours() % 12) + 1 <= 9) ? "0":"" + ((startTimeDate.getHours() % 12) + 1) + ":" + startTimeDate.getMinutes() + (startTimeDate.getMinutes() <= 9) ? "0":""))
                   }
                 }
               }
@@ -136,15 +136,17 @@ function WidgetView() {
   const dow: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   return (
     <View style={{backgroundColor: "#793033", width: width * 0.9, height: height * 0.3, borderRadius: 15, marginLeft: width * 0.05}}>
-      <View style={{width: width * 0.9, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+      <View style={{width: width * 0.9, height: height * 0.05, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text style={{color: "white"}}>{dow[new Date().getDay()]}</Text>
       </View>
-      <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width * 0.9, height: height * 0.075}}>
-        <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
+      <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width * 0.9, height: height * 0.1}}>
+        <Text style={{color: "white", height}}>{schoolDayData?.schedule.descriptiveName}</Text>
       </View>
-      <View>
-        <Text style={{color: "white", fontWeight: "bold"}}>{schoolDayData?.schoolDay.shorthand}</Text>
-        <Text>{startTime}</Text>
+      <View style={{flexDirection: "row", height: height * 0.15}}>
+        <View style={{height: height * 0.15, alignContent: "center", justifyContent: "ce`"}}>
+          <Text style={{color: "white", fontWeight: "bold", fontSize: height * 0.125}}>{schoolDayData?.schoolDay.shorthand}</Text>
+        </View>
+        <Text style={{color: "white", fontSize: height * 0.1}}>{startTime}</Text>
       </View>
     </View>
   )
