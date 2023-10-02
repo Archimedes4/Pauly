@@ -28,7 +28,6 @@ const monthNames = ["January", "February", "March", "April", "May", "June","July
 export default function Calendar() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {selectedCalendarMode, isShowingAddDate} = useSelector((state: RootState) => state.addEvent)
-
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const dispatch = useDispatch()
 
@@ -36,6 +35,15 @@ export default function Calendar() {
     dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
   }, [])
 
+
+  //This is the main (only) process that updates the events
+  //In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
+  useEffect(() => {
+    getEvents()
+  }, [selectedDate])
+
+
+  //Fonts
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });
@@ -45,10 +53,6 @@ export default function Calendar() {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
-
-  useEffect(() => {
-    getEvents()
-  }, [selectedDate])
 
   if (!fontsLoaded) {
     return null;

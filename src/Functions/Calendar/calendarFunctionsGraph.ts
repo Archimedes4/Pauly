@@ -9,45 +9,29 @@ import { Data } from "@react-google-maps/api";
 import getDressCode from "../Homepage/getDressCode";
 
 //Defaults to org wide events
-export async function getGraphEvents(schoolYear: boolean, url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
-  const result = await callMsGraph((url !== undefined) ? url:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties", "GET", true)
+export async function getGraphEvents(url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
+  const result = await callMsGraph((url !== undefined) ? url:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`, "GET", true)
   if (result.ok){
     const data = await result.json()
     var newEvents: eventType[] = []
     for(var index = 0; index < data["value"].length; index++) {
-      if (schoolYear) {
-        const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId
-        const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId
-        if (data["value"][index]["singleValueExtendedProperties"] !== undefined) {
-          const eventData: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"]
-          if (eventData.find((e) => {return e.id === eventTypeExtensionID}).value === "schoolYear") {
-            newEvents.push({
-              id: data["value"][index]["id"],
-              name: data["value"][index]["subject"],
-              startTime: data["value"][index]["start"]["dateTime"],
-              endTime: data["value"][index]["end"]["dateTime"],
-              allDay: data["value"][index]["isAllDay"],
-              eventColor: "white",
-              paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID}).value === "schoolYear") ? "schoolYear":undefined,
-              paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID}).value,
-              microsoftEvent: true,
-              microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
-            })
-          }
-        }
-      } else {
-        const newEvent: eventType = {
-          id: data["value"][index]["id"],
-          name: data["value"][index]["subject"],
-          startTime: data["value"][index]["start"]["dateTime"],
-          endTime: data["value"][index]["end"]["dateTime"],
-          allDay: data["value"][index]["isAllDay"],
-          eventColor: "white",
-          microsoftEvent: true,
-          microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
-        }
-        newEvents.push(newEvent)
-      }
+      const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId
+      const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId
+      const singleValueExtendedProperties: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"]
+      const eventType: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventDataExtensionID})?.value:undefined
+      const eventData: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventTypeExtensionID})?.value:undefined
+      newEvents.push({
+        id: data["value"][index]["id"],
+        name: data["value"][index]["subject"],
+        startTime: data["value"][index]["start"]["dateTime"],
+        endTime: data["value"][index]["end"]["dateTime"],
+        allDay: data["value"][index]["isAllDay"],
+        eventColor: "white",
+        paulyEventType: (eventType === "schoolYear") ? "schoolYear":(eventType === "schoolDay") ? "schoolDay":undefined,
+        paulyEventData: eventData,
+        microsoftEvent: true,
+        microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
+      })
     }
     return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
   } else {

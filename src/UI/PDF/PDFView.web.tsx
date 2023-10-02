@@ -4,6 +4,7 @@ import * as PDFJS from "pdfjs-dist"
 import { useSelector } from 'react-redux'
 import { RootState } from '../../Redux/store'
 import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 
 PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`
 
@@ -47,7 +48,9 @@ export default function PDFView({width, height}:{width: number, height: number})
   return (
     <>
       { (pageIndex < images.length) ?
-        <Image source={{uri: images[pageIndex], width: width, height: height}} style={{borderRadius: 15, width: width, height: height}} height={height} width={width}/>:null
+       <GestureDetector gesture={Gesture.Fling().onEnd((e) => {console.log(e)})}>
+        <Image source={{uri: images[pageIndex], width: width, height: height}} style={{borderRadius: 15, width: width, height: height}} height={height} width={width}/>
+       </GestureDetector>:null
       }
     </>
   )

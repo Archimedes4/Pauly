@@ -124,7 +124,7 @@ function SchoolYearsSelect({onSelect}:{onSelect: (item: eventType) => void}) {
     const [currentEventsSchoolYear, setCurrentEventsSchoolYear] = useState<eventType[]>([])
 
     async function getData() {
-      const result = await getGraphEvents(true, "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + `/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolYear')`)
+      const result = await getGraphEvents(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolYear')`)
       if (result.result === loadingStateEnum.success && result.events !== undefined) {
         var outputEvents: eventType[] = result.events
         var url: string = (result.nextLink !== undefined) ? result.nextLink:""

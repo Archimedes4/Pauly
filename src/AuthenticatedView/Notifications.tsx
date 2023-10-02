@@ -75,7 +75,9 @@ export default function Notifications() {
                   if (classResult.data.length >= 1) {
                     console.log(classResult.data[0].startTime)
                     const startTimeDate = new Date(classResult.data[0].startTime)
-                    dispatch(homepageDataSlice.actions.setStartTime(((startTimeDate.getHours() % 12) + 1 <= 9) ? "0":"" + ((startTimeDate.getHours() % 12) + 1) + ":" + startTimeDate.getMinutes() + (startTimeDate.getMinutes() <= 9) ? "0":""))
+                    const hourTime = (((startTimeDate.getHours() % 12) + 1 <= 9) ? `0${((startTimeDate.getHours() % 12) + 1)}`:((startTimeDate.getHours() % 12) + 1))
+                    const monthTime = (startTimeDate.getMinutes() <= 9) ? `0${startTimeDate.getMinutes()}`:startTimeDate.getMinutes().toString()
+                    dispatch(homepageDataSlice.actions.setStartTime( hourTime + ":" + monthTime ))
                   }
                 }
               }
@@ -122,7 +124,7 @@ export default function Notifications() {
           <Text style={{color: "#FFFFFF"}}>{message}</Text>
         </View>
       </View>
-      <WidgetView />
+      <WidgetView width={width * 0.9} height={height * 0.3}/>
       <BoardBlock />
       <TaskBlock />
       <InsightsBlock />
@@ -130,23 +132,24 @@ export default function Notifications() {
   )
 }
 
-function WidgetView() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
+function WidgetView({width, height}:{width: number, height: number}) {
   const {schoolDayData, startTime} = useSelector((state: RootState) => state.homepageData)
   const dow: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   return (
-    <View style={{backgroundColor: "#793033", width: width * 0.9, height: height * 0.3, borderRadius: 15, marginLeft: width * 0.05}}>
-      <View style={{width: width * 0.9, height: height * 0.05, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-        <Text style={{color: "white"}}>{dow[new Date().getDay()]}</Text>
+    <View style={{backgroundColor: "#793033", width: width, height: height, borderRadius: 15, marginLeft: width * 0.05}}>
+      <View style={{width: width, height: height/3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <Text style={{color: "white", fontSize: height/6}}>{dow[new Date().getDay()]}</Text>
       </View>
-      <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width * 0.9, height: height * 0.1}}>
-        <Text style={{color: "white", height}}>{schoolDayData?.schedule.descriptiveName}</Text>
+      <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/6}}>
+        <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
       </View>
-      <View style={{flexDirection: "row", height: height * 0.15}}>
-        <View style={{height: height * 0.15, alignContent: "center", justifyContent: "ce`"}}>
-          <Text style={{color: "white", fontWeight: "bold", fontSize: height * 0.125}}>{schoolDayData?.schoolDay.shorthand}</Text>
+      <View style={{flexDirection: "row", height: height/2}}>
+        <View style={{height: height * 0.5, width: width * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+          <Text style={{color: "white", fontWeight: "bold", fontSize: height * 0.4}}>{schoolDayData?.schoolDay.shorthand}</Text>
         </View>
-        <Text style={{color: "white", fontSize: height * 0.1}}>{startTime}</Text>
+        <View style={{height: height * 0.5, width: width * 0.7, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+          <Text style={{color: "white", fontSize: height/3}}>{startTime}</Text>
+        </View>
       </View>
     </View>
   )
@@ -332,7 +335,7 @@ function BoardBlock() {
   return (
     <View style={{width: width * 0.9, height: height * 0.3, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
       { (paulyDataState === loadingStateEnum.loading) ?
-        <View>
+        <View style={{width: width * 0.9, height: height * 0.3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={100} height={100}/>
           <Text>Loading</Text>
         </View>:
