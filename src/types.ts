@@ -1,3 +1,4 @@
+import { scheduleData } from './Functions/initializePauly/initializePaulyData';
 export enum loadingStateEnum {
   loading,
   success,
@@ -132,8 +133,11 @@ declare global {
     description?: string
   }
   type classType = {
-    name: string,
-    id: string,
+    name: string
+    id: string
+    room: roomType
+    schoolYearId: string
+    semester: semesters
     periods: number[]
   }
   type commissionType = {
@@ -267,6 +271,7 @@ declare global {
     paulyEventType?: paulyEventTypes
     paulyEventData?: string
     microsoftReference?: string
+    scheduleData?: scheduleType
   }
   type noClassType = {
     day: number

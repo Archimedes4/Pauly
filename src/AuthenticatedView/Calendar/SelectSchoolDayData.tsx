@@ -130,7 +130,7 @@ function SchoolYearsSelect({onSelect}:{onSelect: (item: eventType) => void}) {
         var url: string = (result.nextLink !== undefined) ? result.nextLink:""
         var notFound: boolean = (result.nextLink !== undefined) ? true:false
         while (notFound) {
-          const furtherResult = await getGraphEvents(true, url)
+          const furtherResult = await getGraphEvents(url)
           if (furtherResult.result === loadingStateEnum.success && furtherResult.events !== undefined) {
             outputEvents = [...outputEvents, ...furtherResult.events]
             url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""

@@ -21,6 +21,7 @@ import isShowingProfileBlockReducer from './reducers/isShowingProfileBlockReduce
 import isGovernmentModeReducer from './reducers/isGovernmentModeReducer';
 import commissionsReducer from './reducers/commissionsReducer';
 import pdfDataReducer from './reducers/pdfDataReducer';
+import monthViewReducer from './reducers/monthViewReducer';
 
 const store = configureStore({
   reducer: {
@@ -28,21 +29,22 @@ const store = configureStore({
     authenticationToken: authenticationTokenReducer,
     authenticationApiToken: authenticationApiTokenReducer,
     authenticationRefreshToken: authenticationRefreshTokenReducer,
+    commissions: commissionsReducer,
     currentEvents: currentEventsReducer,
     currentEventsLastCalled: currentEventsLastCalledReducer,
-    commissions: commissionsReducer,
     dimentions: dimentionsReducer,
     expandedMode: expandedModeReducer,
     homepageData: homepageDataReducer,
-    isShowingProfileBlock: isShowingProfileBlockReducer,
     isGovernmentMode: isGovernmentModeReducer,
+    isShowingProfileBlock: isShowingProfileBlockReducer,
     microsoftProfileData: microsoftProfileDataReducer,
     monthData: monthDataReducer,
-    paulyList: paulyListReducer,
+    monthView: monthViewReducer,
     paulyData: paulyDataReducer,
+    paulyList: paulyListReducer,
     pdfData: pdfDataReducer,
-    resourcesLastCalled: resourcesLastCallReducer,
     resources: resourcesReducer,
+    resourcesLastCalled: resourcesLastCallReducer,
     safeAreaColors: safeAreaColorsReducer,
     tasks: tasksReducer,
     tasksDeltaLink: tasksDeltaReducer,

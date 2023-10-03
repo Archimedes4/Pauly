@@ -41,7 +41,7 @@ export async function getGraphEvents(url?: string, referenceUrl?: string): Promi
 
 //Gets an event from paulys team
 export async function getEvent(id: string): Promise<{result: loadingStateEnum, data?: eventType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + `/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`, "GET", true)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`, "GET", true)
   if (result.ok){
     const data = await result.json()
     var event: eventType = {
@@ -67,7 +67,7 @@ export async function getEvent(id: string): Promise<{result: loadingStateEnum, d
 }
 
 export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.scheduleListId + "/items?expand=fields&$filter=fields/scheduleId%20eq%20'" + id +"'")//TO DO fix site id
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields&$filter=fields/scheduleId%20eq%20'${id}'`)//TO DO fix site id
   if (result.ok) {
     const data = await result.json()
     console.log(data)
@@ -93,10 +93,9 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
 }
   
 export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.timetablesListId + "/items?expand=fields&$filter=fields/timetableId%20eq%20'" + timetableId +"'")
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items?expand=fields&$filter=fields/timetableId%20eq%20'${timetableId}'`)
   if (result.ok) {
     const data = await result.json()
-    console.log(data)
     if (data["value"].length !== undefined){
       if (data["value"].length === 1) {
         try {
@@ -150,7 +149,7 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
       if (data["value"][index]["singleValueExtendedProperties"] !== undefined) {
         const eventData: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"]
         if (eventData !== undefined) {
-          if (eventData.find((e) => {if (e !== undefined) {return e.id === eventTypeExtensionID}}).value === "schoolDay") {
+          if (eventData.find((e) => {return e.id === eventTypeExtensionID})?.value === "schoolDay") {
             const event: eventType = {
               id: data["value"][index]["id"],
               name: data["value"][index]["subject"],
@@ -160,8 +159,8 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
               eventColor: "white",
               microsoftEvent: true,
               microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],
-              paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID}).value === "schoolDay") ? "schoolDay":undefined,
-              paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID}).value
+              paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID})?.value === "schoolDay") ? "schoolDay":undefined,
+              paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID})?.value
             }
             return {result: loadingStateEnum.success, event: event}
           }
@@ -176,12 +175,207 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
   }
 }
 
-export async function getSchoolDays(date: Date) {
+export async function getSchoolDays(date: Date): Promise<{result: loadingStateEnum, data?: eventType[], nextLink?: string}> {
   var firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
   var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')%20and%20start/DateTime%20ge%20'${firstDay}'%20AND%20end/DateTime%20le%20'${lastDay}'`, "GET", true)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", true)
   if (result.ok) {
     const data = await result.json()
-    console.log(data)
+    const scheduleIds = new Map<string, number>()
+    const schoolYearIds = new Map<string, number>()
+    for (var index = 0; index < data["value"].length; index++) {
+      const outputIds: schoolDayDataCompressedType = JSON.parse(data["value"][index]["singleValueExtendedProperties"].find((e: {id: string, value: string}) => {return e.id === store.getState().paulyList.eventDataExtensionId})["value"])
+      scheduleIds.set(outputIds.scheduleId, 0)
+      schoolYearIds.set(outputIds.schoolYearEventId, 0)
+    }
+    //Get batch data
+    var batchRequestData: {id: string, method: string, url: string}[][] = [[]]
+    var batchRequestIndex = 0
+    scheduleIds.forEach((value, key) => {
+      if (batchRequestIndex >= batchRequestData.length) {
+        batchRequestData.push([])
+      }
+      batchRequestData[batchRequestIndex].push({
+        id: (batchRequestData[batchRequestIndex].length + 1).toString(),
+        method: "GET",
+        url: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleColor,scheduleData,scheduleId)&$filter=fields/scheduleId%20eq%20'${key}'&$select=id`
+      })
+      if ((batchRequestIndex % 19) === 0) {
+        batchRequestIndex++
+      }
+    })
+    
+    const schedules = new Map<string, scheduleType>()
+    var resourceHeader = new Headers()
+    resourceHeader.append("Accept", "application/json")
+    for (var batchIndex = 0; batchIndex < batchRequestData.length; batchIndex++) {
+      const batchData = {
+        "requests":batchRequestData[batchIndex]
+      }
+      const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
+      if (batchResult.ok) {
+        const batchResultData = await batchResult.json()
+        for (var responseIndex = 0; responseIndex < batchResultData["responses"].length; responseIndex++) {
+          if (batchResultData["responses"][responseIndex]["status"] === 200) { //TO DO fix status code
+            if (batchResultData["responses"][responseIndex]["body"]["value"].length === 1) {
+              const scheduleResponseData = batchResultData["responses"][responseIndex]["body"]["value"][0]["fields"]
+              try {
+                schedules.set(scheduleResponseData["scheduleId"], {
+                  properName: scheduleResponseData["scheduleProperName"],
+                  descriptiveName: scheduleResponseData["scheduleDescriptiveName"],
+                  periods: JSON.parse(scheduleResponseData["scheduleData"]),
+                  id: scheduleResponseData["scheduleId"],
+                  color: scheduleResponseData["scheduleColor"]
+                })
+              } catch  {
+
+              }
+            } else {
+
+            }
+          } else {
+
+          }
+        }
+      } else {
+
+      }
+    }
+
+    getTimetablesFromSchoolYears(schoolYearIds)
+
+    var schoolDaysResult: eventType[] = []
+    for (var index = 0; index < data["value"].length; index++) {
+      const scheudle = schedules.get(data["value"][index]["id"])
+      if (scheudle !== undefined) {
+        schoolDaysResult.push({
+          id: data["value"][index]["id"],
+          name: data["value"][index]["subject"],
+          startTime: data["value"][index]["start"]["date"],
+          endTime: data["value"][index]["end"]["date"],
+          eventColor: scheudle.color,
+          microsoftEvent: true,
+          allDay: data["value"][index]["isAllDay"] ? true:false
+        })
+      }
+    }
+    return {result: loadingStateEnum.success, data: schoolDaysResult, nextLink: data["@odata.nextLink"]}
+  } else {
+    return {result: loadingStateEnum.failed}
   }
+}
+
+//This function gets both school years and their timetable data
+async function getTimetablesFromSchoolYears(schoolYearIds: Map<string, number>) {
+  //Get School Years
+  var batchRequestDataSchoolYear: {id: string, method: string, url: string}[][] = [[]]
+  var batchRequestIndexSchoolYear = 0
+  schoolYearIds.forEach((value, key) => {
+    if (batchRequestIndexSchoolYear >= batchRequestDataSchoolYear.length) {
+      batchRequestDataSchoolYear.push([])
+    }
+    batchRequestDataSchoolYear[batchRequestIndexSchoolYear].push({
+      id: (batchRequestDataSchoolYear[batchRequestIndexSchoolYear].length + 1).toString(),
+      method: "GET",
+      url: `/groups/${orgWideGroupID}/calendar/events/${key}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`
+    })
+    if ((batchRequestIndexSchoolYear % 19) === 0) {
+      batchRequestIndexSchoolYear++
+    }
+  })
+
+  const timetableIds = new Map<string, number>()
+  for (var batchIndexSchoolYear = 0; batchIndexSchoolYear < batchRequestDataSchoolYear.length; batchIndexSchoolYear++) {
+    const batchData = {
+      "requests":batchRequestDataSchoolYear[batchIndexSchoolYear]
+    }
+    var resourceHeader = new Headers()
+    resourceHeader.append("Accept", "application/json")
+    const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
+    if (batchResult.ok) {
+      const batchResultData = await batchResult.json()
+      for (var responseIndex = 0; responseIndex < batchResultData["responses"].length; responseIndex++) {
+        if (batchResultData["responses"][responseIndex]["status"] === 200) { //TO DO fix status code
+          if (batchResultData["responses"][responseIndex]["body"]["value"].length === 1) {
+            const schoolYearResponseData: {id: string, value: string}[] = batchResultData["responses"][responseIndex]["body"]["singleValueExtendedProperties"]
+            const schoolYearData = schoolYearResponseData.find((e) => {return e.id === store.getState().paulyList.eventDataExtensionId})
+            if (schoolYearData !== undefined) {
+              try {
+                timetableIds.set(schoolYearData.value, 0)
+              } catch  {
+
+              }
+            }
+          } else {
+
+          }
+        } else {
+
+        }
+      }
+    } else {
+
+    }
+  }  
+  
+  var batchRequestDataTimetable: {id: string, method: string, url: string}[][] = [[]]
+  var batchRequestIndexTimetable = 0
+  timetableIds.forEach((value, key) => {
+    if (batchRequestIndexTimetable >= batchRequestDataTimetable.length) {
+      batchRequestDataTimetable.push([])
+    }
+    batchRequestDataTimetable[batchRequestIndexTimetable].push({
+      id: (batchRequestDataTimetable[batchRequestIndexTimetable].length + 1).toString(),
+      method: "GET",
+      url: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items?expand=fields&$filter=fields/timetableId%20eq%20'${key}'`
+    })
+    if ((batchRequestIndexTimetable % 19) === 0) {
+      batchRequestIndexTimetable++
+    }
+  })
+
+  const timetables = new Map<string, timetableType>()
+  for (var batchIndexTimetable = 0; batchIndexTimetable < batchRequestDataSchoolYear.length; batchIndexTimetable++) {
+    const batchData = {
+      "requests":batchRequestDataTimetable[batchIndexTimetable]
+    }
+    var resourceHeader = new Headers()
+    resourceHeader.append("Accept", "application/json")
+    const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
+    if (batchResult.ok) {
+      const batchResultData = await batchResult.json()
+      for (var responseIndex = 0; responseIndex < batchResultData["responses"].length; responseIndex++) {
+        if (batchResultData["responses"][responseIndex]["status"] === 200) { //TO DO fix status code
+          if (batchResultData["responses"][responseIndex]["body"]["value"].length === 1) {
+            const schoolYearResponseData: {id: string, value: string}[] = batchResultData["responses"][responseIndex]["body"]["singleValueExtendedProperties"]
+            const schoolYearData = schoolYearResponseData.find((e) => {return e.id === store.getState().paulyList.eventDataExtensionId})
+            if (schoolYearData !== undefined) {
+              try {
+                timetables.set(schoolYearData.value, {
+                  name: "",
+                  id: "",
+                  schedules: [],
+                  days: [],
+                  dressCode: {
+                    name: "",
+                    id: "",
+                    dressCodeData: [],
+                    dressCodeIncentives: []
+                  }
+                })
+              } catch  {
+
+              }
+            }
+          } else {
+
+          }
+        } else {
+
+        }
+      }
+    } else {
+
+    }
+  }  
 }

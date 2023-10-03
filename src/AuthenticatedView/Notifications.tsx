@@ -18,7 +18,7 @@ import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
 import PDFView from '../UI/PDF/PDFView';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import BackButton from '../UI/BackButton';
-import MimeTypeIcon from './MimeTypeIcon';
+import MimeTypeIcon from '../UI/Icons/MimeTypeIcon';
 
 //Get Messages
 // Last Chat Message Channels Included

@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleProp, View, ViewStyle } from "react-native";
 import { Shape, SvgProps } from "react-native-svg";
-import { AudioIcon, DocumentIcon, ExcelIcon, FolderIcon, ImageIcon, OneNoteIcon, PDFIcon, PowerpointIcon, VideoIcon, WordIcon } from "../UI/Icons/Icons";
+import { AudioIcon, DocumentIcon, ExcelIcon, FolderIcon, ImageIcon, OneNoteIcon, PDFIcon, PowerpointIcon, VideoIcon, WordIcon } from "./Icons";
 
 interface iconProps {
   width: number;

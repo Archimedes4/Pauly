@@ -57,6 +57,13 @@ export default function GovernmentClassesEdit() {
         setPeriods(JSON.parse(extensionData["periodData"]))
         const eventResult = await getEvent(extensionData["schoolYearEventId"])
         const roomResult = await getRoom(extensionData["roomId"])
+        if (eventResult.result === loadingStateEnum.success && roomResult.result === loadingStateEnum.success && eventResult.data !== undefined && roomResult.data !== undefined) {
+          console.log("Here")
+          setSelectedRoom(roomResult.data)
+          setSelectedSchoolYear(eventResult.data)
+        } else {
+          setClassState(loadingStateEnum.failed)
+        }
       } else {
         setClassName(data["displayName"])
       }
@@ -86,13 +93,15 @@ export default function GovernmentClassesEdit() {
   }
 
   async function loadTimetable() {
-    if (selectedSchoolYear !== undefined){
+    if (selectedSchoolYear !== undefined && selectedSchoolYear.paulyEventData !== undefined){
       setTimetableState(loadingStateEnum.loading)
       const result = await getTimetable(selectedSchoolYear.paulyEventData)
       if (result.result === loadingStateEnum.success && result.timetable !== undefined){
-        var newArray = Array.from(Array(result.timetable.days.length))
-        newArray.fill(0, 0, newArray.length)
-        setPeriods(newArray)
+        if (result.timetable.days.length !== periods.length) {
+          var newArray = Array.from(Array(result.timetable.days.length))
+          newArray.fill(0, 0, newArray.length)
+          setPeriods(newArray)
+        }
         setSelectedTimetable(result.timetable)
       }
       setTimetableState(result.result)
@@ -108,20 +117,25 @@ export default function GovernmentClassesEdit() {
   }, [])
 
   async function updateClass() {
-    setUpdateClassState(loadingStateEnum.loading)
-    var data = {}
-    data[store.getState().paulyList.classExtensionId] = {
-      "className":className,
-      "schoolYearEventId": selectedSchoolYear.id,
-      "semesterId": selectedSemester.toString(),
-      "roomId": selectedRoom.id,
-      "periodData": JSON.stringify(periods)
-    }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${id}`, "PATCH", undefined, JSON.stringify(data))
-    if (result.ok){
-      setUpdateClassState(loadingStateEnum.success)
-    } else {
-      setUpdateClassState(loadingStateEnum.failed)
+    if (selectedRoom !== undefined && selectedSchoolYear !== undefined) {
+      setUpdateClassState(loadingStateEnum.loading)
+      const data = {}
+      Object.defineProperty(data, store.getState().paulyList.classExtensionId, {
+        value: {
+        "className":className,
+        "schoolYearEventId": selectedSchoolYear.id,
+        "semesterId": selectedSemester.toString(),
+        "roomId": selectedRoom.id,
+        "periodData": JSON.stringify(periods)
+        }
+      })
+      
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${id}`, "PATCH", undefined, JSON.stringify(data))
+      if (result.ok){
+        setUpdateClassState(loadingStateEnum.success)
+      } else {
+        setUpdateClassState(loadingStateEnum.failed)
+      }
     }
   }
 
@@ -177,7 +191,7 @@ export default function GovernmentClassesEdit() {
                     </View>
                   }
                 </View>
-                <View style={{height: height * 0.3}}>
+                <View style={{height: height * 0.3, marginBottom: height * 0.1}}>
                   <Text>Periods</Text>
                   <Text>{periods.toString()}</Text>
                   { (timetableState === loadingStateEnum.notStarted) ?
@@ -185,9 +199,9 @@ export default function GovernmentClassesEdit() {
                     <View>
                       { (timetableState === loadingStateEnum.loading) ?
                         <Text>Loading</Text>:
-                        <View style={{zIndex: 4}}>
+                        <View style={{zIndex: 100}}>
                           { (timetableState === loadingStateEnum.success && selectedTimetable?.days.length === periods.length) ?
-                            <ScrollView style={{height: height * 0.3}}>
+                            <ScrollView style={{height: height * 0.3, zIndex: 100}}>
                               <>
                                 { selectedTimetable.days.map((day, dayIndex) => (
                                   <DayBlock day={day} dayIndex={dayIndex} periods={periods} setPeriods={setPeriods} selectedTimetable={selectedTimetable} />
@@ -240,7 +254,7 @@ export default function GovernmentClassesEdit() {
           <Text>Create Class</Text>
           <Text>Name: {className}</Text>
           <Text>Room: {selectedRoom?.name}</Text>
-          <Text>School Year: {selectedSchoolYear.name}</Text>
+          <Text>School Year: {selectedSchoolYear?.name}</Text>
           <Text>Semester: {(selectedSemester === semesters.semesterOne) ? "One":"Two"}</Text>
           <Pressable onPress={() => {updateClass()}}>
             <Text style={{margin: 10}}>{(updateClassState === loadingStateEnum.cannotStart) ? "Cannot Update Class":(updateClassState === loadingStateEnum.notStarted) ? "Update Class":(updateClassState === loadingStateEnum.loading) ? "Loading":(updateClassState === loadingStateEnum.success) ? "Updated Class":"Failed To Update Class"}</Text>
@@ -254,7 +268,7 @@ export default function GovernmentClassesEdit() {
 function DayBlock({day, periods, dayIndex, setPeriods, selectedTimetable}:{day: schoolDayType, dayIndex: number, periods: number[], setPeriods: (item: number[]) => void, selectedTimetable: timetableType}) {
   const [selected, setSelected] = useState<boolean>(false)
   return (
-    <View key={"Day_"+day.id} style={{flexDirection: "row", margin: 10, zIndex: (selected) ? 2:1}}>
+    <View key={"Day_"+day.id} style={{flexDirection: "row", margin: 10, zIndex: (selected) ? 200:100}}>
       <Text>{day.name}</Text>
       <View>
         { (selectedTimetable?.schedules.length >= 1 && periods.length >= dayIndex) ?

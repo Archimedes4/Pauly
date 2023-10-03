@@ -22,6 +22,7 @@ import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer'
 import BackButton from '../../UI/BackButton';
 import { addEventSlice } from '../../Redux/reducers/addEventReducer';
 import { monthDataSlice } from '../../Redux/reducers/monthDataReducer'
+import { getClasses } from '../../Functions/getClassEventsTimetable';
 
 const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 
@@ -40,6 +41,7 @@ export default function Calendar() {
   //In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
   useEffect(() => {
     getEvents()
+    getClasses()
   }, [selectedDate])
 
 

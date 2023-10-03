@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
-import { loadingStateEnum } from '../../../../types'
+import { loadingStateEnum, semesters } from '../../../../types'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 
 
@@ -22,7 +22,14 @@ export default function GovernmentClasses() {
         for(var index = 0; index < groupResultData["value"].length; index++) {
           outputData.push({
             name: groupResultData["value"][index]["displayName"],
-            id: groupResultData["value"][index]["id"]
+            id: groupResultData["value"][index]["id"],
+            periods: [],
+            room: {
+              name: '',
+              id: ''
+            },
+            schoolYearId: '',
+            semester: semesters.semesterOne
           })
         }
         setClasses(outputData)
@@ -50,7 +57,7 @@ export default function GovernmentClasses() {
       <ScrollView style={{height: height * 0.85}}>
         {classes.map((classMap) => (
           <Pressable key={"Class_"+classMap.id} onPress={() => {navigate("/profile/government/classes/edit/" + classMap.id)}}>
-            <Text>{classMap.name}</Text>
+            <Text style={{margin: 10}}>{classMap.name}</Text>
           </Pressable>
         ))}
       </ScrollView>
