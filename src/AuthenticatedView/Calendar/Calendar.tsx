@@ -1,7 +1,7 @@
 import { View, Text, Dimensions, Pressable, TextInput, Switch, ScrollView, useWindowDimensions } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
-import { findFirstDayinMonth } from '../../Functions/Calendar/calendarFunctions';
+import { findFirstDayinMonth } from '../../Functions/calendar/calendarFunctions';
 import create_UUID from '../../Functions/Ultility/CreateUUID';
 import DayView from "./DayView"
 import Week from './Week';
@@ -17,7 +17,7 @@ import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
 import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
 import { useMsal } from '@azure/msal-react';
 import { calendarMode, loadingStateEnum } from '../../types';
-import getEvents from '../../Functions/Calendar/getEvents';
+import getEvents from '../../Functions/calendar/getEvents';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 import BackButton from '../../UI/BackButton';
 import { addEventSlice } from '../../Redux/reducers/addEventReducer';

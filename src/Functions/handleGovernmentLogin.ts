@@ -5,7 +5,6 @@ import store from "../Redux/store";
 import callMsGraph from "./Ultility/microsoftAssets";
 
 export async function validateGovernmentMode() {
-  console.log("validting")
   const userResult = await callMsGraph("https://graph.microsoft.com/v1.0/me?$select=id")
   if (userResult.ok) {
     const userData = await userResult.json()
@@ -78,9 +77,7 @@ export async function setWantGovernment(value: boolean) {
   if (value) {
     try {
       await AsyncStorage.setItem('paulyWantGovernmentMode', JSON.stringify(true));
-      console.log("correct this thing is true")
     } catch (e) {
-      console.log("this thing has failed")
       //TO DO deal with error
     }
   } else {
@@ -93,11 +90,8 @@ export async function setWantGovernment(value: boolean) {
 }
 
 export async function getWantGovernment(): Promise<boolean> {
-  console.log("This was called")
   try {
-    console.log('try')
     const value = await AsyncStorage.getItem('paulyWantGovernmentMode');
-    console.log(value)
     if (value !== null) {
       const result = JSON.parse(value)
       if (result) {

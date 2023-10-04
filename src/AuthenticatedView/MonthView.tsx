@@ -1,8 +1,8 @@
 import { View, Text, Pressable } from "react-native"
 import { useEffect, useState } from "react"
-import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/Calendar/calendarFunctions"
+import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/calendar/calendarFunctions"
 import React from "react"
-import { getSchoolDays } from "../Functions/Calendar/calendarFunctionsGraph"
+import { getSchoolDays } from "../Functions/calendar/calendarFunctionsGraph"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../Redux/store"
 import { loadingStateEnum } from "../types"
@@ -23,10 +23,10 @@ function MonthBlock({value, width, height, startDate, daySelected}:{value:number
         <View id="Text" style={{width:  width, height: height, justifyContent: "center", alignContent: "center", alignItems: "center", position: "absolute"}}>
           {  (monthViewData !== undefined) ?
               <View>
-                {(monthViewData.scheduleData != undefined) ?
+                {(monthViewData.schoolDayData !== undefined) ?
                   <View>
                     <View>
-                      <Text style={{color: "black", height: height * 0.03, transform: [{translateX: -width * 0.005}, {translateY: height * 0.4}]}}>{monthViewData.scheduleData.}</Text>
+                      <Text style={{color: "black", height: height * 0.03, transform: [{translateX: -width * 0.005}, {translateY: height * 0.4}]}}>{monthViewData.schoolDayData.schedule.color}</Text>
                     </View>
                     <Text style={{color: "black"}}>{textval}</Text>
                   </View>:<Text style={{color: "black", zIndex: 2}}>{textval}</Text>
@@ -51,6 +51,7 @@ export default function MonthView({width, height}:{width: number, height: number
   async function loadData() {
     if (monthViewData.length <= 0) {
       const result = await getSchoolDays(new Date())
+      console.log(result)
       if (result.result === loadingStateEnum.success && result.data !== undefined) {
         dispatch(monthViewSlice.actions.setMonthViewData(result.data))
       } 

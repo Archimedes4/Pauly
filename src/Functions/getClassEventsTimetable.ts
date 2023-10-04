@@ -1,6 +1,6 @@
 import store from "../Redux/store";
 import { loadingStateEnum, semesters } from "../types";
-import { getSchedule } from "./Calendar/calendarFunctionsGraph";
+import { getSchedule } from "./calendar/calendarFunctionsGraph";
 import callMsGraph from "./Ultility/microsoftAssets";
 
 export async function getClasses(): Promise<{result: loadingStateEnum, data?: classType[]}> {

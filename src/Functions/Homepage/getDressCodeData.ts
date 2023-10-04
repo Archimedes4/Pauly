@@ -3,7 +3,7 @@ import { loadingStateEnum } from "../../types"
 import callMsGraph from "../Ultility/microsoftAssets"
 
 export default async function getDressCodeData(): Promise<{result: loadingStateEnum, data?: dressCodeType[]}> {
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.dressCodeListId +"/items?expand=fields")
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.dressCodeListId}/items?expand=fields`)
   if (result.ok) {
     const data = await result.json()
     var newDressCodes: dressCodeType[] = []

@@ -11,7 +11,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { BookIcon, MedalIcon, PersonIcon } from '../UI/Icons/Icons';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
-import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
+import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../types';
 import ProgressView from '../UI/ProgressView';
 import React from 'react';

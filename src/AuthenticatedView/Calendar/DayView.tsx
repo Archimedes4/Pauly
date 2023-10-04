@@ -6,7 +6,7 @@
 //
 import { useEffect, useRef, useState } from "react"
 import {View, ScrollView, useColorScheme, Text} from "react-native"
-import { calculateIfShowing, computeEventHeight, findTimeOffset, isDateToday } from "../../Functions/Calendar/calendarFunctions"
+import { calculateIfShowing, computeEventHeight, findTimeOffset, isDateToday } from "../../Functions/calendar/calendarFunctions"
 import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
 import create_UUID from "../../Functions/Ultility/CreateUUID"

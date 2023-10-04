@@ -18,29 +18,6 @@ const pca = new PublicClientApplication({
     clientId: clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
     redirectUri: "http://localhost:19006/"//TO DO change prod
-  },
-  system: {
-    loggerOptions: {
-      loggerCallback: (level, message, containsPii) => {
-        if (containsPii) {
-          return;
-        }
-        switch (level) {
-          case LogLevel.Error:
-            console.error(message);
-            return;
-          case LogLevel.Info:
-            console.info(message);   // when fails this message appears: "[Thu, 15 Apr 2021 07:06:24 GMT] :  : @azure/msal-browser@2.13.0 : Info - Emitting event: msal:loginFailure"
-            return;
-          case LogLevel.Verbose:
-            console.debug(message);
-            return;
-          case LogLevel.Warning:
-            console.warn(message);
-            return;
-        }
-      },
-    },
   }
 });
 
@@ -80,7 +57,6 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
       dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
       getPaulyLists(result.accessToken)
       getUserProfile(result.accessToken)
-      console.log("This is that", await getWantGovernment())
       if (await getWantGovernment()) {
         checkIfGovernmentMode()
       }
@@ -112,7 +88,6 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
           const apiResult = await instance.acquireTokenSilent({
             scopes: [`api://${clientId}/api/Test`]
           })
-          console.log(apiResult)
           dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(apiResult.accessToken))
           getPaulyLists(authResult.accessToken)
           getUserProfile(authResult.accessToken)

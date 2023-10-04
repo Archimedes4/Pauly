@@ -7,7 +7,7 @@ import { DownIcon, UpIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
 import { loadingStateEnum } from '../../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
-import getDressCodeData from '../../../../../Functions/Homepage/getDressCodeData';
+import getDressCodeData from '../../../../../Functions/homepage/getDressCodeData';
 import ListItem from '../../../../../UI/ListItem';
 
 //TO DO longest amount of school days is 20 make sure this is enforced

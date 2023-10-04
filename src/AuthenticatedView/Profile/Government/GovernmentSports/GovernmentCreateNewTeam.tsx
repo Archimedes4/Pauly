@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Dimensions, Button } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import { Link, useParams } from 'react-router-native'
-import {convertYearToSchoolYear} from '../../../../Functions/Calendar/calendarFunctions'
+import {convertYearToSchoolYear} from '../../../../Functions/calendar/calendarFunctions'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import create_UUID from '../../../../Functions/Ultility/CreateUUID';
 import { loadingStateEnum } from '../../../../types';

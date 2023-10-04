@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { findFirstDayinMonth } from '../../Functions/Calendar/calendarFunctions'
+import { findFirstDayinMonth } from '../../Functions/calendar/calendarFunctions'
 import Svg, { G, Path } from 'react-native-svg'
 import { useFonts } from 'expo-font';
 import { DownIcon, UpIcon } from '../Icons/Icons';

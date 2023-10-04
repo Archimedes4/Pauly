@@ -6,10 +6,10 @@ import { useSelector } from 'react-redux';
 import { loadingStateEnum, semesters } from '../../../../types';
 import { useNavigate, useParams } from 'react-router-native';
 import { getRoom, getRooms } from '../../../../Functions/getRooms';
-import getSchoolYears from '../../../../Functions/Calendar/getSchoolYears';
+import getSchoolYears from '../../../../Functions/calendar/getSchoolYears';
 import SegmentedPicker from '../../../../UI/Pickers/SegmentedPicker';
 import { setString } from 'expo-clipboard';
-import { getEvent, getTimetable } from '../../../../Functions/Calendar/calendarFunctionsGraph';
+import { getEvent, getTimetable } from '../../../../Functions/calendar/calendarFunctionsGraph';
 import { CloseIcon, WarningIcon } from '../../../../UI/Icons/Icons';
 import Dropdown from '../../../../UI/Dropdown';
 

@@ -1,4 +1,10 @@
-import { scheduleData } from './Functions/initializePauly/initializePaulyData';
+//Andrew Mainella
+//Pauly
+//October 3 2023
+//
+//types.ts
+//Stores all of paulys types
+
 export enum loadingStateEnum {
   loading,
   success,
@@ -112,6 +118,13 @@ declare global {
     selectedMonth?: number
     selectedDay?: number
     dueDate?: Date
+  }
+  type batchResponseType = {
+    method: "GET"|"POST"
+    id: string
+    status: number
+    headers: object | undefined
+    body: object | undefined
   }
   type calendarCourseType = {
     name: String
@@ -271,7 +284,13 @@ declare global {
     paulyEventType?: paulyEventTypes
     paulyEventData?: string
     microsoftReference?: string
-    scheduleData?: scheduleType
+    schoolDayData?: {
+      schoolDayData: schoolDayType,
+      schedule: scheduleType,
+      dressCode: dressCodeDataType,
+      semester: semesters
+      dressCodeIncentiveId?: string
+    }
   }
   type noClassType = {
     day: number

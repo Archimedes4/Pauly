@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, Dimensions, Platform, Pressable, TextInput, Linking, ScrollView } from 'react-native'
-import { getEvent, getSchoolDay, getTimetable } from '../Functions/Calendar/calendarFunctionsGraph';
+import { getEvent, getSchoolDay, getTimetable } from '../Functions/calendar/calendarFunctionsGraph';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
-import getCurrentPaulyData from '../Functions/Homepage/getCurrentPaulyData';
+import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
 import { loadingStateEnum, semesters, taskImportanceEnum, taskStatusEnum } from '../types';
 import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
-import getUsersTasks from '../Functions/Homepage/getUsersTasks';
+import getUsersTasks from '../Functions/homepage/getUsersTasks';
 import ProgressView from '../UI/ProgressView';
-import getInsightData from '../Functions/Homepage/getInsightData';
+import getInsightData from '../Functions/homepage/getInsightData';
 import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import getClassEvents from '../Functions/getClassEventsTimetable';

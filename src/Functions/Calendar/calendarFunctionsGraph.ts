@@ -3,10 +3,10 @@
 
 import { orgWideGroupID } from "../../PaulyConfig";
 import callMsGraph from "../Ultility/microsoftAssets";
-import { loadingStateEnum } from "../../types";
+import { loadingStateEnum, semesters } from "../../types";
 import store from "../../Redux/store";
-import { Data } from "@react-google-maps/api";
-import getDressCode from "../Homepage/getDressCode";
+import getDressCode from "../homepage/getDressCode";
+import batchRequest from "../Ultility/batchRequest";
 
 //Defaults to org wide events
 export async function getGraphEvents(url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
@@ -189,74 +189,76 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
       schoolYearIds.set(outputIds.schoolYearEventId, 0)
     }
     //Get batch data
-    var batchRequestData: {id: string, method: string, url: string}[][] = [[]]
-    var batchRequestIndex = 0
-    scheduleIds.forEach((value, key) => {
-      if (batchRequestIndex >= batchRequestData.length) {
-        batchRequestData.push([])
-      }
-      batchRequestData[batchRequestIndex].push({
-        id: (batchRequestData[batchRequestIndex].length + 1).toString(),
-        method: "GET",
-        url: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleColor,scheduleData,scheduleId)&$filter=fields/scheduleId%20eq%20'${key}'&$select=id`
-      })
-      if ((batchRequestIndex % 19) === 0) {
-        batchRequestIndex++
+
+    const batchRequestResultSchedule = await batchRequest(undefined, {
+      firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleColor,scheduleData,scheduleId)&$filter=fields/scheduleId%20eq%20'`,
+      secondUrl: `'&$select=id`,
+      method: "GET",
+      keys: {
+        map: scheduleIds
       }
     })
-    
+
+    if (batchRequestResultSchedule.result !== loadingStateEnum.success || batchRequestResultSchedule.data === undefined) {
+      return {result: loadingStateEnum.failed}
+    }
     const schedules = new Map<string, scheduleType>()
-    var resourceHeader = new Headers()
-    resourceHeader.append("Accept", "application/json")
-    for (var batchIndex = 0; batchIndex < batchRequestData.length; batchIndex++) {
-      const batchData = {
-        "requests":batchRequestData[batchIndex]
-      }
-      const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
-      if (batchResult.ok) {
-        const batchResultData = await batchResult.json()
-        for (var responseIndex = 0; responseIndex < batchResultData["responses"].length; responseIndex++) {
-          if (batchResultData["responses"][responseIndex]["status"] === 200) { //TO DO fix status code
-            if (batchResultData["responses"][responseIndex]["body"]["value"].length === 1) {
-              const scheduleResponseData = batchResultData["responses"][responseIndex]["body"]["value"][0]["fields"]
-              try {
-                schedules.set(scheduleResponseData["scheduleId"], {
-                  properName: scheduleResponseData["scheduleProperName"],
-                  descriptiveName: scheduleResponseData["scheduleDescriptiveName"],
-                  periods: JSON.parse(scheduleResponseData["scheduleData"]),
-                  id: scheduleResponseData["scheduleId"],
-                  color: scheduleResponseData["scheduleColor"]
-                })
-              } catch  {
-
-              }
-            } else {
-
-            }
-          } else {
-
+    for (var scheudleIndex = 0; scheudleIndex < batchRequestResultSchedule.data.length; scheudleIndex++) {
+      if (batchRequestResultSchedule.data[scheudleIndex].status === 200) { //TO DO fix status code
+        if (batchRequestResultSchedule.data[scheudleIndex].body["value"].length === 1) {
+          const scheduleResponseData = batchRequestResultSchedule.data[scheudleIndex].body["value"][0]["fields"]
+          try {
+            schedules.set(scheduleResponseData["scheduleId"], {
+              properName: scheduleResponseData["scheduleProperName"],
+              descriptiveName: scheduleResponseData["scheduleDescriptiveName"],
+              periods: JSON.parse(scheduleResponseData["scheduleData"]),
+              id: scheduleResponseData["scheduleId"],
+              color: scheduleResponseData["scheduleColor"]
+            })
+          } catch  {
+            return {result: loadingStateEnum.failed}
           }
+        } else {
+          return {result: loadingStateEnum.failed}
         }
       } else {
-
+        return {result: loadingStateEnum.failed}
       }
     }
 
-    getTimetablesFromSchoolYears(schoolYearIds)
+    const timetableResult = await getTimetablesFromSchoolYears(schoolYearIds, schedules)
+    if (timetableResult.result !== loadingStateEnum.success || timetableResult.data === undefined) {
+      return {result: loadingStateEnum.failed}
+    }
 
     var schoolDaysResult: eventType[] = []
     for (var index = 0; index < data["value"].length; index++) {
-      const scheudle = schedules.get(data["value"][index]["id"])
-      if (scheudle !== undefined) {
+      const outputIds: schoolDayDataCompressedType = JSON.parse(data["value"][index]["singleValueExtendedProperties"].find((e: {id: string, value: string}) => {return e.id === store.getState().paulyList.eventDataExtensionId})["value"])
+      const schedule = schedules.get(outputIds.scheduleId)
+      const timetable = timetableResult.data.get(outputIds.schoolYearEventId)
+      console.log("This is timetable", timetable, outputIds)
+
+      const dressCode = timetable?.dressCode.dressCodeData.find((e) => {return e.id === outputIds.dressCodeId})
+      const schoolDay = timetable?.days.find((e) => {return e.id === outputIds.schoolDayId})
+      if (schedule !== undefined && timetable !== undefined && dressCode !== undefined && schoolDay !== undefined) {
         schoolDaysResult.push({
           id: data["value"][index]["id"],
           name: data["value"][index]["subject"],
           startTime: data["value"][index]["start"]["date"],
           endTime: data["value"][index]["end"]["date"],
-          eventColor: scheudle.color,
+          eventColor: schedule.color,
           microsoftEvent: true,
-          allDay: data["value"][index]["isAllDay"] ? true:false
+          allDay: data["value"][index]["isAllDay"] ? true:false,
+          schoolDayData: {
+            schoolDayData: schoolDay,
+            schedule: schedule,
+            dressCode: dressCode,
+            semester: outputIds.semester,
+            dressCodeIncentiveId: outputIds.dressCodeIncentiveId
+          }
         })
+      } else {
+        console.log("failed here", outputIds, schedule, timetable, dressCode, schoolDay)
       }
     }
     return {result: loadingStateEnum.success, data: schoolDaysResult, nextLink: data["@odata.nextLink"]}
@@ -266,116 +268,150 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
 }
 
 //This function gets both school years and their timetable data
-async function getTimetablesFromSchoolYears(schoolYearIds: Map<string, number>) {
+async function getTimetablesFromSchoolYears(schoolYearIds: Map<string, number>, schedules: Map<string, scheduleType>): Promise<{result: loadingStateEnum, data?: Map<string, timetableType>}> {
   //Get School Years
-  var batchRequestDataSchoolYear: {id: string, method: string, url: string}[][] = [[]]
-  var batchRequestIndexSchoolYear = 0
-  schoolYearIds.forEach((value, key) => {
-    if (batchRequestIndexSchoolYear >= batchRequestDataSchoolYear.length) {
-      batchRequestDataSchoolYear.push([])
-    }
-    batchRequestDataSchoolYear[batchRequestIndexSchoolYear].push({
-      id: (batchRequestDataSchoolYear[batchRequestIndexSchoolYear].length + 1).toString(),
-      method: "GET",
-      url: `/groups/${orgWideGroupID}/calendar/events/${key}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`
-    })
-    if ((batchRequestIndexSchoolYear % 19) === 0) {
-      batchRequestIndexSchoolYear++
+  const batchRequestResultSchoolYear = await batchRequest(undefined, {
+    firstUrl: `/groups/${orgWideGroupID}/calendar/events/`,
+    secondUrl: `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`,
+    method: "GET",
+    keys: {
+      map: schoolYearIds
     }
   })
 
-  const timetableIds = new Map<string, number>()
-  for (var batchIndexSchoolYear = 0; batchIndexSchoolYear < batchRequestDataSchoolYear.length; batchIndexSchoolYear++) {
-    const batchData = {
-      "requests":batchRequestDataSchoolYear[batchIndexSchoolYear]
-    }
-    var resourceHeader = new Headers()
-    resourceHeader.append("Accept", "application/json")
-    const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
-    if (batchResult.ok) {
-      const batchResultData = await batchResult.json()
-      for (var responseIndex = 0; responseIndex < batchResultData["responses"].length; responseIndex++) {
-        if (batchResultData["responses"][responseIndex]["status"] === 200) { //TO DO fix status code
-          if (batchResultData["responses"][responseIndex]["body"]["value"].length === 1) {
-            const schoolYearResponseData: {id: string, value: string}[] = batchResultData["responses"][responseIndex]["body"]["singleValueExtendedProperties"]
-            const schoolYearData = schoolYearResponseData.find((e) => {return e.id === store.getState().paulyList.eventDataExtensionId})
-            if (schoolYearData !== undefined) {
-              try {
-                timetableIds.set(schoolYearData.value, 0)
-              } catch  {
+  if (batchRequestResultSchoolYear.data === undefined || batchRequestResultSchoolYear.result !== loadingStateEnum.success) {return {result: loadingStateEnum.failed}}
 
-              }
-            }
+  const timetableIds = new Map<string, string[]>()
+  for (var schoolYearIndex = 0; schoolYearIndex < batchRequestResultSchoolYear.data.length; schoolYearIndex++) {
+    if (batchRequestResultSchoolYear.data[schoolYearIndex].status === 200) { //TO DO fix status code
+      const schoolYearResponseData: {id: string, value: string}[] = batchRequestResultSchoolYear.data[schoolYearIndex].body["singleValueExtendedProperties"]
+      const schoolYearData = schoolYearResponseData.find((e) => {return e.id === store.getState().paulyList.eventDataExtensionId})
+      if (schoolYearData !== undefined) {
+        try {
+          const perviousTimetable = timetableIds.get(schoolYearData.value)
+          if (perviousTimetable !== undefined) {
+            timetableIds.set(schoolYearData.value, [...perviousTimetable, batchRequestResultSchoolYear.data[schoolYearIndex].body["id"]])
           } else {
-
+            timetableIds.set(schoolYearData.value, [batchRequestResultSchoolYear.data[schoolYearIndex].body["id"]])
           }
-        } else {
-
+        } catch  {
+          return {result: loadingStateEnum.failed}
         }
+      } else {
+        return {result: loadingStateEnum.failed}
       }
     } else {
-
+      return {result: loadingStateEnum.failed}
     }
-  }  
+  }
   
-  var batchRequestDataTimetable: {id: string, method: string, url: string}[][] = [[]]
-  var batchRequestIndexTimetable = 0
-  timetableIds.forEach((value, key) => {
-    if (batchRequestIndexTimetable >= batchRequestDataTimetable.length) {
-      batchRequestDataTimetable.push([])
-    }
-    batchRequestDataTimetable[batchRequestIndexTimetable].push({
-      id: (batchRequestDataTimetable[batchRequestIndexTimetable].length + 1).toString(),
-      method: "GET",
-      url: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items?expand=fields&$filter=fields/timetableId%20eq%20'${key}'`
-    })
-    if ((batchRequestIndexTimetable % 19) === 0) {
-      batchRequestIndexTimetable++
+  //Get timetables
+  const batchRequestResultTimetable = await batchRequest(undefined, {
+    firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items?expand=fields($select=timetableName,timetableId,timetableDataDays,timetableDataSchedules,timetableDefaultScheduleId,timetableDressCodeId)&$filter=fields/timetableId%20eq%20'`,
+    secondUrl: `'&$select=id`,
+    method: "GET",
+    keys: {
+      map: timetableIds
     }
   })
+  
+  if (batchRequestResultTimetable.result !== loadingStateEnum.success || batchRequestResultTimetable.data === undefined) {
+    return {result: loadingStateEnum.failed}
+  }
+  
+  const dressCodeIds = new Map<string, number>()
+  for (var responseIndex = 0; responseIndex < batchRequestResultTimetable.data.length; responseIndex++) {
+    if (batchRequestResultTimetable.data[responseIndex].status === 200 && batchRequestResultTimetable.data[responseIndex] !== undefined) { //TO DO fix status code
+      if (batchRequestResultTimetable.data[responseIndex].body["value"].length === 1) {
+        try {
+          dressCodeIds.set(batchRequestResultTimetable.data[responseIndex].body["value"][0]["fields"]["timetableDressCodeId"], 0)
+        } catch  {
+          return {result: loadingStateEnum.failed}
+        }
+      } else {
+        return {result: loadingStateEnum.failed}
+      }
+    } else {
+      return {result: loadingStateEnum.failed}
+    }
+  }
+
+  //Get dress code data
+  const batchRequestResultDressCode = await batchRequest(undefined, {
+    firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.dressCodeListId}/items?expand=fields($select=dressCodeData,dressCodeIncentivesData,dressCodeName,dressCodeId)&$select=id&$filter=fields/dressCodeId%20eq%20'`,
+    secondUrl: `'&$top=1`,
+    method: "GET",
+    keys: {
+      map: dressCodeIds
+    }
+  })
+
+  if (batchRequestResultDressCode.data === undefined || batchRequestResultDressCode.result !== loadingStateEnum.success) {
+    return {result: loadingStateEnum.failed}
+  }
+  
+  const dressCodes = new Map<string, dressCodeType>()
+  for (var dressCodeIndex = 0; dressCodeIndex < batchRequestResultDressCode.data.length; dressCodeIndex++) {
+    if (batchRequestResultDressCode.data[dressCodeIndex].status === 200 && batchRequestResultDressCode.data[dressCodeIndex].body !== undefined) {
+       batchRequestResultDressCode.data[dressCodeIndex].body
+      if (batchRequestResultDressCode.data[dressCodeIndex].body?.value.length === 1){
+        try {
+          dressCodes.set(batchRequestResultDressCode.data[dressCodeIndex].body?.value[0]["fields"]["dressCodeId"], {
+            name: batchRequestResultDressCode.data[dressCodeIndex].body["value"][0]["fields"]["dressCodeName"],
+            id: batchRequestResultDressCode.data[dressCodeIndex].body["value"][0]["fields"]["dressCodeId"],
+            dressCodeData: JSON.parse(batchRequestResultDressCode.data[dressCodeIndex].body["value"][0]["fields"]["dressCodeData"]),
+            dressCodeIncentives: batchRequestResultDressCode.data[dressCodeIndex].body["value"][0]["fields"]["dressCodeIncentivesData"]
+          })
+        } catch {
+          return {result: loadingStateEnum.failed}
+        }
+      } else {
+        return {result: loadingStateEnum.failed}
+      }
+    } else {
+      return {result: loadingStateEnum.failed}
+    }
+  }
 
   const timetables = new Map<string, timetableType>()
-  for (var batchIndexTimetable = 0; batchIndexTimetable < batchRequestDataSchoolYear.length; batchIndexTimetable++) {
-    const batchData = {
-      "requests":batchRequestDataTimetable[batchIndexTimetable]
-    }
-    var resourceHeader = new Headers()
-    resourceHeader.append("Accept", "application/json")
-    const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
-    if (batchResult.ok) {
-      const batchResultData = await batchResult.json()
-      for (var responseIndex = 0; responseIndex < batchResultData["responses"].length; responseIndex++) {
-        if (batchResultData["responses"][responseIndex]["status"] === 200) { //TO DO fix status code
-          if (batchResultData["responses"][responseIndex]["body"]["value"].length === 1) {
-            const schoolYearResponseData: {id: string, value: string}[] = batchResultData["responses"][responseIndex]["body"]["singleValueExtendedProperties"]
-            const schoolYearData = schoolYearResponseData.find((e) => {return e.id === store.getState().paulyList.eventDataExtensionId})
-            if (schoolYearData !== undefined) {
-              try {
-                timetables.set(schoolYearData.value, {
-                  name: "",
-                  id: "",
-                  schedules: [],
-                  days: [],
-                  dressCode: {
-                    name: "",
-                    id: "",
-                    dressCodeData: [],
-                    dressCodeIncentives: []
-                  }
-                })
-              } catch  {
+  for (var timetableIndex = 0; timetableIndex < batchRequestResultTimetable.data.length; timetableIndex++) {
+    if (batchRequestResultTimetable.data[timetableIndex].status === 200) {
+      if (batchRequestResultTimetable.data[timetableIndex].body["value"].length === 1) {
+        const timetableData = batchRequestResultTimetable.data[timetableIndex].body["value"][0]["fields"]
+        const dressCode = dressCodes.get(timetableData["timetableDressCodeId"])
+        var timetableSchedules: scheduleType[] =[]
+        const scheduleIds: string[] = JSON.parse(timetableData["timetableDataSchedules"])
 
-              }
-            }
-          } else {
-
+        for (var scheduleIndex = 0; scheduleIndex < scheduleIds.length; scheduleIndex++) {
+          const newSchedule = schedules.get(scheduleIds[scheduleIndex])
+          if (newSchedule !== undefined) {
+            timetableSchedules.push(newSchedule)
           }
-        } else {
-
+        }
+        if (dressCode !== undefined) {
+          timetables.set(timetableData["timetableId"], {
+            name: timetableData["timetableName"],
+            id: timetableData["timetableId"],
+            schedules: timetableSchedules,
+            days: JSON.parse(timetableData["timetableDataDays"]),
+            dressCode: dressCode
+          })
         }
       }
     } else {
-
+      return {result: loadingStateEnum.failed}
     }
-  }  
+  }
+
+  console.log("This is timetable", timetables)
+
+  const outputTimetables = new Map<string, timetableType>()
+  timetables.forEach((value, key) => {
+    const timetablesArray = timetableIds.get(key)
+    if (timetablesArray) {
+      timetablesArray.forEach((item) => {outputTimetables.set(item, value)})
+    }
+  })
+
+  return {result: loadingStateEnum.success, data: outputTimetables}
 }

@@ -6,7 +6,7 @@ import MicrosoftFilePicker from '../../../UI/microsoftFilePicker';
 import { useMsal } from '@azure/msal-react';
 import store, { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
-import getCurrentPaulyData from '../../../Functions/Homepage/getCurrentPaulyData';
+import getCurrentPaulyData from '../../../Functions/homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../../../types';
 
 export default function GovernmentHomePage() {

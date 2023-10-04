@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-native'
 import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import { loadingStateEnum } from '../../../../../types'
-import getDressCode from '../../../../../Functions/Homepage/getDressCode'
+import getDressCode from '../../../../../Functions/homepage/getDressCode'
 
 export default function GovernmentDressCodeEdit() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
