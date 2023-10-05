@@ -80,16 +80,15 @@ async function addImage(commissionId: string, base64: string): Promise<{result: 
               })
               if (uploadCompleteResult.ok) {
                 const uploadCompleteResultData = await uploadCompleteResult.json()
-                const data = {
+                const createLinkMainData = {
                   "type": "view",
                   "scope": "organization"
                 }
-                const createLinkResult = await callMsGraph(`https://graph.microsoft.com/v1.0/drives/${rootIdData["id"]}/items/${uploadCompleteResultData["id"]}/createLink`, "POST", false, JSON.stringify(data))
+                const createLinkResult = await callMsGraph(`https://graph.microsoft.com/v1.0/me/drive/items/${uploadCompleteResultData["id"]}/createLink`, "POST", false, JSON.stringify(createLinkMainData))
                 if (createLinkResult.ok){
                   const createLinkData = await createLinkResult.json()
                   return {result: loadingStateEnum.success, data: createLinkData["shareId"]}
                 } else {
-                  const dataOut = await createLinkResult.json()
                   return {result: loadingStateEnum.failed}
                 }
               } else {
@@ -171,7 +170,7 @@ export default function CommissionClaim({commission, imageData}:{commission: com
         setClaimCommissionState(loadingStateEnum.failed)
       }
     } else {
-      const result = await claimCommissionPost(apiResult.accessToken, commission.commissionId, imageData, undefined)
+      const result = await claimCommissionPost(apiResult.accessToken, commission.commissionId, (outImageUrl !== "") ? outImageUrl:undefined, undefined)
       setClaimCommissionState(result)
     }
   }

@@ -258,7 +258,7 @@ declare global {
   }
   type submissionType = {
     userName: string
-    submissionTime: Date
+    submissionTime: string
     id: string
     itemId: string
     approved: boolean

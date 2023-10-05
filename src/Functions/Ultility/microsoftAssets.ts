@@ -6,13 +6,7 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
   const bearer = `Bearer ${(authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken}`
 
   headersOut.append("Authorization", bearer);
-  if (headers !== undefined) {
-    if (headers.get("Content-Type") === undefined) {
-      headersOut.append("Content-Type", "application/json")
-    }
-  } else {
-    headersOut.append("Content-Type", "application/json")
-  }
+  headersOut.append("Content-Type", "application/json")
 
   headers?.forEach((value: string, key: string) => {
     headersOut.append(key, value)

@@ -13,8 +13,8 @@ export default async function getCommission(commissionId: string): Promise<{resu
     const dataResult: commissionType = {
       itemId: data["value"][0]["id"],
       title: data["value"][0]["fields"]["Title"],
-      startDate: new Date(data["value"][0]["fields"]["startDate"]),
-      endDate: new Date(data["value"][0]["fields"]["endDate"]),
+      startDate: data["value"][0]["fields"]["startDate"],
+      endDate: data["value"][0]["fields"]["endDate"],
       points: data["value"][0]["fields"]["points"],
       hidden: data["value"][0]["fields"]["hidden"],
       commissionId: data["value"][0]["fields"]["commissionID"],
@@ -29,7 +29,10 @@ export default async function getCommission(commissionId: string): Promise<{resu
       timed: false,
       maxNumberOfClaims: 0,
       allowMultipleSubmissions: false,
-      value: data["value"][0]["fields"]["value"] - 1
+      value: data["value"][0]["fields"]["value"] - 1,
+      submissionsCount: 0,
+      claimCount: 0,
+      reviewedCount: 0
     }
     return {result: loadingStateEnum.success, data: dataResult}
   } else {

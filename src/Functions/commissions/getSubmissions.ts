@@ -51,21 +51,20 @@ export default async function getSubmissions(commissionId: string, submissionTyp
       if (name !== undefined){
         output.push({
           userName: name,
-          submissionTime: new Date(data["value"][index]["fields"]["submittedTime"]),
+          submissionTime: data["value"][index]["fields"]["submittedTime"],
           id: data["value"][index]["fields"]["submissionId"],
           itemId: data["value"][index]["id"],
           approved: data["value"][index]["fields"]["submissionApproved"],
           reviewed: data["value"][index]["fields"]["submissionReviewed"],
-          submissionImage: (data["value"]["fields"]["submissionData"] !== undefined) ? JSON.parse(data["value"]["fields"]["submissionData"])["imageShare"]:undefined
+          submissionImage: (data["value"][index]["fields"]["submissionData"] !== undefined) ? JSON.parse(data["value"][index]["fields"]["submissionData"])["imageShare"]:undefined
         })
       } else {
         return {result: loadingStateEnum.failed}
       }
     }
+    console.log(output)
     return {result: loadingStateEnum.success, data: output, nextLink: data["@odata.nextLink"], count: data["value"].length}
   } else {
-    const data = await result.json()
-
     return {result: loadingStateEnum.failed}
   }
 }
