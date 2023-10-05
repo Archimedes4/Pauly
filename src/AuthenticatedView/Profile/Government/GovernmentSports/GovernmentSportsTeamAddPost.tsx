@@ -1,17 +1,21 @@
 import { View, Text, Pressable, TextInput } from 'react-native'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import MicrosoftFilePicker from '../../../../UI/microsoftFilePicker'
-import { Link, useSearchParams } from 'react-router-native'
+import { Link, useNavigate, useSearchParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import create_UUID from '../../../../Functions/Ultility/CreateUUID'
 import { useSelector } from 'react-redux'
 import store, { RootState } from '../../../../Redux/store'
+import { loadingStateEnum } from '../../../../types'
+import { getSports, getSportsTeams } from '../../../../Functions/sportsFunctions'
+import ProgressView from '../../../../UI/ProgressView'
+import { ScrollView } from 'react-native-gesture-handler'
 
 enum postSubmissionResultType {
-    notLoading,
-    loading,
-    failure,
-    success
+  notLoading,
+  loading,
+  failure,
+  success
 }
 
 export default function GovernmentSportsTeamAddPost() {
@@ -20,6 +24,10 @@ export default function GovernmentSportsTeamAddPost() {
   const [selectedShareID, setSelectedShareID] = useState<string>("")
   const [postName, setPostName] = useState<string>("")
   const [postSubmissionResult, setPostSubmissionResult] = useState<postSubmissionResultType>(postSubmissionResultType.notLoading)
+  const navigate = useNavigate()
+  const [selectedSportId, setSelectedSportId] = useState<string>("")
+  const [selectedTeamId, setSelectedTeamId] = useState<string>("")
+
   async function getShareLink(item: microsoftFileType) {
     const itemPathArray = item.itemGraphPath.split("/")
     if (itemPathArray[itemPathArray.length - 1] === "children"){
@@ -64,13 +72,14 @@ export default function GovernmentSportsTeamAddPost() {
     }
   }
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
-      <Link to="/profile/government/sports">
+    <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
+      <Pressable onPress={() => {navigate("/profile/government/sports")}}>
         <Text>Back</Text>
-      </Link>
+      </Pressable>
       <Text>Add Sports Team Post</Text>
       <TextInput value={postName} onChangeText={(e) => {setPostName(e)}}/>
-      <MicrosoftFilePicker onSelectedFile={(item: microsoftFileType) => {getShareLink(item)}} height={500} width={500} />
+      <PickSportTeam height={400} width={width} onSelect={(e) => {setSelectedSportId(e.sportId); setSelectedTeamId(e.teamId)}} onBack={() => {setSelectedSportId(""); setSelectedTeamId("")}}/>
+      <MicrosoftFilePicker onSelectedFile={(item: microsoftFileType) => {getShareLink(item)}} height={500} width={width} />
       { (selectedShareID !== "") ? 
         <Pressable onPress={() => {
           if (postSubmissionResult === postSubmissionResultType.notLoading){
@@ -82,6 +91,95 @@ export default function GovernmentSportsTeamAddPost() {
       {(postSubmissionResult === postSubmissionResultType.loading) ? <Text>Loading</Text>:null}
       {(postSubmissionResult === postSubmissionResultType.failure) ? <Text>Failure</Text>:null}
       {(postSubmissionResult === postSubmissionResultType.success) ? <Text>Success</Text>:null}
+    </ScrollView>
+  )
+}
+
+function PickSportTeam({width, height, onSelect, onBack}:{width: number, height: number, onSelect: (item: {sportId: string, teamId: string}) => void, onBack: () => void}) {
+  const [currentSports, setCurrentSports] = useState<sportType[]>([])
+  const [dataResult, setDataResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [selectedSport, setSelectedSport] = useState<sportType|undefined>(undefined)
+  const [sportsTeams, setSportTeams] = useState<sportTeamType[]>([])
+  const [sportTeamState, setSportTeamState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+
+  async function loadData() {
+    const result = await getSports()
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setCurrentSports(result.data)
+    }
+    setDataResult(result.result)
+  }
+
+  async function loadTeams() {
+    if (selectedSport !== undefined) {
+      setSportTeamState(loadingStateEnum.loading)
+      const result = await getSportsTeams(selectedSport.id)
+      if (result.result === loadingStateEnum.success && result.data !== undefined) {
+        setSportTeams(result.data)
+      }
+      setSportTeamState(result.result)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  useEffect(() => {
+    loadTeams()
+  }, [selectedSport])
+
+  return (
+    <View style={{width: width, height: height}}>
+      <>
+        { (sportsTeams === undefined || sportTeamState === loadingStateEnum.notStarted) ?
+          <>
+            { (dataResult === loadingStateEnum.loading) ?
+              <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                <ProgressView width={(width < height) ? width * 0.1: height * 0.1} height={(width < height)  ? width * 0.1: height * 0.1}/>
+                <Text>Loading</Text>
+              </View>:
+              <>
+                {(dataResult === loadingStateEnum.success) ?
+                  <>
+                    {currentSports.map((item, id) => (
+                      <Pressable key={id} onPress={() => setSelectedSport(item)}>
+                        <View>
+                          <Text>{item.name}</Text>
+                        </View>
+                      </Pressable>
+                    ))}
+                  </>:<View><Text>Error</Text></View>
+                }
+              </>
+            }
+          </>:
+          <>
+            { (sportTeamState === loadingStateEnum.loading) ?
+              <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                <ProgressView width={(width < height) ? width * 0.1: height * 0.1} height={(width < height)  ? width * 0.1: height * 0.1}/>
+                <Text>Loading</Text>
+              </View>:
+              <>
+                {(sportTeamState === loadingStateEnum.success && selectedSport !== undefined) ?
+                  <View>
+                    <Pressable onPress={() => setSelectedSport(undefined)}>
+                      <Text>Back</Text>
+                    </Pressable>
+                    {sportsTeams.map((item, id) => (
+                      <Pressable key={id} onPress={() => onSelect({sportId: selectedSport.id, teamId: item.teamID})}>
+                        <View>
+                          <Text>{item.teamName}</Text>
+                        </View>
+                      </Pressable>
+                    ))}
+                  </View>:<View><Text>Error</Text></View>
+                }
+              </>
+            }
+          </>
+        }
+      </>
     </View>
   )
 }

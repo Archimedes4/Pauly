@@ -1,64 +1,48 @@
 import { View, Text } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-native'
+import { Link, useNavigate, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
-
-enum currentDataResult{
-  loading,
-  success,
-  error
-}
-
-type sportTeamType = {
-  teamName: string
-  season: number
-  teamID: string
-}
+import { loadingStateEnum } from '../../../../types'
+import { getSportsTeams } from '../../../../Functions/sportsFunctions'
 
 export default function GovernmentSportsTeams() {
   const { sport, id } = useParams()
-  const {siteId} = useSelector((state: RootState) => state.paulyList)
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const navigate = useNavigate()
 
-  const [dataResult, setDataResult] = useState<currentDataResult>(currentDataResult.loading)
+  const [dataResult, setDataResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [currentTeams, setCurrentTeams] = useState<sportTeamType[]>([])
-  async function getTeams(){
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + id +"/items?expand=fields")//TO DO list id
-    if (result.ok) {
-      const data = await result.json()
-      if (data["value"] !== null && data["value"] !== undefined){
-        var resultData: sportTeamType[] = []
-        for (let index = 0; index < data["value"].length; index++) {
-          resultData.push({
-            teamName: data["value"][index]["fields"]["TeamName"],
-            season: data["value"][index]["fields"]["Season"],
-            teamID: data["value"][index]["fields"]["teamID"]
-          })
-        }
-        setCurrentTeams(resultData)
-        setDataResult(currentDataResult.success)
-      } else {
-        setDataResult(currentDataResult.error)
+  
+  async function loadData() {
+    if (id !== undefined) {
+      const result = await getSportsTeams(id)
+      if (result.result === loadingStateEnum.success && result.data !== undefined) {
+        setCurrentTeams(result.data)
       }
+      setDataResult(result.result)
     } else {
-      setDataResult(currentDataResult.error)
+      setDataResult(loadingStateEnum.failed)
     }
   }
+
   useEffect(() => {
-    getTeams()
+    loadData()
   }, [])
   return (
-    <View>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
       <Link to="/profile/government/sports">
         <Text>Back</Text>
       </Link>
       <Text>{sport} Teams</Text>
       <View>
-      { (dataResult === currentDataResult.loading) ?
-        <View><Text>Loading</Text></View>:
+      { (dataResult === loadingStateEnum.loading) ?
         <View>
-        {(dataResult === currentDataResult.success) ?
+          <Text>Loading</Text>
+        </View>:
+        <View>
+        {(dataResult === loadingStateEnum.success) ?
           <View>
           {currentTeams.map((item, idIn) => (
             <Link key={idIn} to={"/profile/government/sports/team/edit/" + sport + "/" + id + "/" + item.teamName + "/" + item.teamID + "/" + item.season}>

@@ -1,12 +1,18 @@
 import { Platform } from "react-native";
 import store from "../../Redux/store";
 
-export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string, secondAuth?: boolean, authenticationToken?: string, headers?: Headers): Promise<Response> {
+export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string | Blob, secondAuth?: boolean, authenticationToken?: string, headers?: Headers): Promise<Response> {
   var headersOut: Headers = new Headers()
   const bearer = `Bearer ${(authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken}`
 
   headersOut.append("Authorization", bearer);
-  headersOut.append("Content-Type", "application/json")
+  if (headers !== undefined) {
+    if (headers.get("Content-Type") === undefined) {
+      headersOut.append("Content-Type", "application/json")
+    }
+  } else {
+    headersOut.append("Content-Type", "application/json")
+  }
 
   headers?.forEach((value: string, key: string) => {
     headersOut.append(key, value)

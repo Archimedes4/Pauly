@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Button, Dimensions, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
-import { Link } from 'react-router-native';
+import { Link, useNavigate } from 'react-router-native';
 import create_UUID from '../../../../Functions/Ultility/CreateUUID';
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
@@ -13,6 +13,8 @@ export default function GovernmentCreateNewSport() {
   const [sportName, setSportName] = useState<string>("")
   const {siteId, sportsListId} = useSelector((state: RootState) => state.paulyList)
   const [createSportLoadingState, setCreateSportLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const navigate = useNavigate()
+
   async function createSport() {
     setCreateSportLoadingState(loadingStateEnum.loading)
     const newSportID: string = create_UUID()
@@ -60,13 +62,17 @@ export default function GovernmentCreateNewSport() {
   }
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
-      <Link to="/profile/government/sports">
+      <Pressable onPress={() => {navigate("/profile/government/sports")}}>
         <Text>Back</Text>
-      </Link>
+      </Pressable>
       <Text>Create New Sport</Text>
       <Text>Sport Name</Text>
       <TextInput value={sportName} onChangeText={setSportName}/>
-      <Pressable onPress={() => {createSport()}}>
+      <Pressable onPress={() => {
+        if (sportName !== "") {
+          createSport()
+        }
+      }}>
         <Text>{(createSportLoadingState === loadingStateEnum.notStarted) ? "Create":(createSportLoadingState === loadingStateEnum.loading) ? "Loading":(createSportLoadingState === loadingStateEnum.success) ? "Created Sport!":"Failed to create sport."}</Text>
       </Pressable>
     </View>

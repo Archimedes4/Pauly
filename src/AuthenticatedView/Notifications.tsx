@@ -377,7 +377,7 @@ function InsightsBlock() {
         </>:
         <>
           <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Files</Text>
-          <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto", marginTop: height * 0.025, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+          <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto", marginTop: height * 0.025, marginBottom: height * 0.025, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
             <View style={{width: width * 0.45}}>
               <TrendingFiles />
             </View>

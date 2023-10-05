@@ -265,6 +265,15 @@ declare global {
     reviewed: boolean
     submissionImage?: string
   }
+  type sportType = {
+    name: string
+    id: string
+  }
+  type sportTeamType = {
+    teamName: string
+    season: number
+    teamID: string
+  }
   type taskType = {
     name: string
     id: string

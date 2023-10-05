@@ -123,22 +123,28 @@ export async function getResourcesSearch(search: string) {
   const searchResult = await callMsGraph("https://graph.microsoft.com/v1.0/search/query", "POST", false, JSON.stringify(searchPayload))
   if (searchResult.ok) {
     const searchData = await searchResult.json()
+    console.log(searchData)
     var batchDataRequests: {id:string; method:string; url:string}[] = []
-    if (searchData["value"] === 1) {
-      for (var index = 0; index < searchData["value"][0]["hits"].length; index++) {
-        if (searchData["value"][0]["hits"][index]["resource"]["channelIdentity"] !== undefined) {
-          const index = store.getState().resources.resourceFollow.findIndex((e) => {e.channelId === searchData["value"][0]["hits"][index]["resource"]["channelIdentity"]["channelId"]})
-          if (index !== -1) {
-            batchDataRequests.push({
-              id: batchDataRequests.length.toString() + 1,
-              method: "GET",
-              url: `/teams/${searchData["value"][0]["hits"][index]["resource"]["channelIdentity"]["teamId"]}/channel${searchData["value"][0]["hits"][index]["resource"]["channelIdentity"]["channelId"]}/message/${searchData["value"][0]["hits"][index]["resource"]["channelIdentity"]["id"]}`
-            })
-          } else {
-            store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
-            return
+    if (searchData["value"].length === 1) {
+      if (searchData["value"][0]["hitsContainers"].length === 1) {
+        for (var index = 0; index < searchData["value"][0]["hitsContainers"][0]["hits"].length; index++) {
+          if (searchData["value"][0]["hitsContainers"][0]["hits"][index]["resource"]["channelIdentity"] !== undefined) {
+            const resourceIndex = store.getState().resources.resourceFollow.findIndex((e) => {return e.channelId === searchData["value"][0]["hitsContainers"][0]["hits"][index]["resource"]["channelIdentity"]["channelId"]})
+            if (resourceIndex !== -1) {
+              batchDataRequests.push({
+                id: batchDataRequests.length.toString() + 1,
+                method: "GET",
+                url: `/teams/${searchData["value"][0]["hitsContainers"][0]["hits"][index]["resource"]["channelIdentity"]["teamId"]}/channels/${searchData["value"][0]["hitsContainers"][0]["hits"][index]["resource"]["channelIdentity"]["channelId"]}/messages/${searchData["value"][0]["hitsContainers"][0]["hits"][index]["resource"]["id"]}`
+              })
+            } else {
+              store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+              return
+            }
           }
         }
+      } else {
+        store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
+        return 
       }
   
       var resourceHeader = new Headers()
@@ -146,12 +152,13 @@ export async function getResourcesSearch(search: string) {
       const batchData = {
         "requests":batchDataRequests
       }
-      const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData))
+      const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
       if (batchResult.ok) {
         const batchResultData = await batchResult.json()
         var outputData: resourceDataType[] = []
         for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
           if (batchResultData["responses"][batchIndex]["status"] === 200) {//TO DO fix ok code
+            console.log(batchResultData["responses"][batchIndex]["body"])
             outputData.push({
               teamId: batchResultData["responses"][batchIndex]["body"]["channelIdentity"]["teamId"],
               conversationId: batchResultData["responses"][batchIndex]["body"]["channelIdentity"]["channelId"],

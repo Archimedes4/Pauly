@@ -51,12 +51,6 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
       const result = await instance.acquireTokenSilent({
         scopes: scopes
       })
-      const apiResult = await instance.acquireTokenSilent({
-        scopes: [`api://${clientId}/api/Test`]
-      })
-      console.log("This is api result", apiResult)
-      dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(apiResult.accessToken))
-      console.log(store.getState().authenticationApiToken)
       dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
       getPaulyLists(result.accessToken)
       getUserProfile(result.accessToken)
@@ -88,11 +82,6 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
           if (await getWantGovernment()) {
             validateGovernmentMode()
           }
-          const apiResult = await instance.acquireTokenSilent({
-            scopes: [`api://${clientId}/api/Test`]
-          })
-          console.log("This is api result", apiResult)
-          dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(apiResult.accessToken))
           getPaulyLists(authResult.accessToken)
           getUserProfile(authResult.accessToken)
           

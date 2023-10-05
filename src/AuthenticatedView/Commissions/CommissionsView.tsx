@@ -189,7 +189,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                       </Pressable>
                       <Pressable onPress={() => pickImage()} style={{marginLeft: "auto", marginRight: "auto", marginTop: 10, backgroundColor: "#ededed", width: width * 0.7, borderRadius: 15, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
                         { (pickImageState === CameraResult.loading) ?
-                          <ProgressView width={14} height={14} style={{margin: 10}}/>:<Text style={{margin: 10, fontWeight: "bold"}}>{(pickImageState === CameraResult.notStarted) ? "CHOOSE PHOTO":(takeImageState === CameraResult.permissionDenied) ? "Permission Denied":(takeImageState === CameraResult.success) ? "USE A DIFFERENT PHOTO":"AN ERROR OCCURED"}</Text>
+                          <ProgressView width={14} height={14} style={{margin: 10}}/>:<Text style={{margin: 10, fontWeight: "bold"}}>{(pickImageState === CameraResult.notStarted) ? "CHOOSE PHOTO":(pickImageState === CameraResult.permissionDenied) ? "Permission Denied":(pickImageState === CameraResult.success) ? "USE A DIFFERENT PHOTO":"AN ERROR OCCURED"}</Text>
                         }
                       </Pressable>
                     </>:null
@@ -201,7 +201,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
               </ScrollView>
               { isOverflowing ?
                 <View style={{height: height * 0.1, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-                  <CommissionClaim commission={commissionData} />
+                  <CommissionClaim commission={commissionData} imageData={(imageUri !== "") ? imageUri:undefined}/>
                 </View>:null
               }
             </View>:
