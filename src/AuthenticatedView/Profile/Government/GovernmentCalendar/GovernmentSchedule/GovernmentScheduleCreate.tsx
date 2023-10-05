@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Button, Pressable } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import TimePicker from '../../../../../UI/DateTimePicker/TimePicker'
-import { Link } from 'react-router-native'
+import { Link, useNavigate } from 'react-router-native'
 import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import create_UUID from '../../../../../Functions/Ultility/CreateUUID'
 import { useSelector } from 'react-redux'
@@ -31,6 +31,7 @@ export default function GovernmentSchedule() {
   const [newPeriods, setNewPeriods] = useState<periodType[]>([])
   const [createScheduleLoadingState, setCreateScheduleLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const [color, setColor] = useState<string>("")
+  const navigate = useNavigate()
   async function submitSchedule() {
     setCreateScheduleLoadingState(loadingStateEnum.loading)
     const data = {
@@ -53,9 +54,9 @@ export default function GovernmentSchedule() {
   useEffect(() => {console.log("This", newPeriods)}, [newPeriods])
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
-      <Link to="/profile/government/calendar">
+      <Pressable onPress={() => {navigate("/profile/government/calendar")}}>
         <Text>Back</Text>
-      </Link>
+      </Pressable>
       <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text>Create Schedule</Text>
       </View>
@@ -79,7 +80,6 @@ export default function GovernmentSchedule() {
       <View style={{height: height * 0.5}}>
       {newPeriods.map((period) => (
         <PeriodBlock period={period} newPeriods={newPeriods} onSetNewPeriods={(out) => {
-          console.log("This is out", out)
           setNewPeriods([...out])
         }}/>
       ))}

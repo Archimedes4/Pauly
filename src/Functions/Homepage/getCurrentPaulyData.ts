@@ -13,9 +13,7 @@ export default async function getCurrentPaulyData() {
       if (fileResult.ok){
         const dataBlob = await fileResult.blob()
         const urlOut = URL.createObjectURL(dataBlob)
-        console.log(urlOut)
         const outputResult = {powerpointBlob: urlOut, powerpointShare: data["powerpointId"], message: data["message"], animationSpeed: data["animationSpeed"], paulyDataState: loadingStateEnum.success}
-        console.log(outputResult)
         store.dispatch(paulyDataSlice.actions.setPaulyData(outputResult))
       } else {
         store.dispatch(paulyDataSlice.actions.setPaulyDataState(loadingStateEnum.failed))

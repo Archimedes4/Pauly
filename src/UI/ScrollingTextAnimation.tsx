@@ -60,7 +60,7 @@ export default function ScrollingTextAnimation({text, width, height}:{text: stri
           </View>
         </Animated.View>:
         <ScrollView style={{width: 99999999}} horizontal={true}>
-          <Text numberOfLines={1} onLayout={(e) => {setChildWidth(e.nativeEvent.layout.width); console.log(e.nativeEvent.layout.width)}} adjustsFontSizeToFit={!(Platform.OS === "ios")} style={{fontFamily: 'GochiHand', color: "white", fontSize: height, height: height}}>{text}</Text>
+          <Text numberOfLines={1} onLayout={(e) => {setChildWidth(e.nativeEvent.layout.width)}} adjustsFontSizeToFit={!(Platform.OS === "ios")} style={{fontFamily: 'GochiHand', color: "white", fontSize: height, height: height}}>{text}</Text>
         </ScrollView>
       }
     </View>

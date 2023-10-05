@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native'
+import { View, Text, Pressable, Platform } from 'react-native'
 import React, { useState } from 'react'
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from "expo-auth-session"
@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { commissionTypeEnum, loadingStateEnum, locationStateEnum } from '../../types';
 import ProgressView from '../../UI/ProgressView';
 import getUsersLocation from '../../Functions/commissions/getLocation';
+import { useMsal } from '@azure/msal-react';
 
 async function claimCommissionPost(commissionId: string, imageShare?: string, location?: locationCoords): Promise<loadingStateEnum> {
   if (store.getState().authenticationApiToken !== "") {
@@ -20,16 +21,22 @@ async function claimCommissionPost(commissionId: string, imageShare?: string, lo
       outResult += `&imageShare=${imageShare}`
     }
     const bearer = `Bearer ${store.getState().authenticationApiToken}`
-    const result = await fetch(`http://localhost:7071/api/SubmitCommission?orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}` + outResult, {
-      headers: {
-        "Authorization":bearer
+    try {
+      const result = await fetch(`http://localhost:7071/api/SubmitCommission?orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`, {
+        headers: {
+          "Authorization":bearer
+        }
+      })
+      if (result.ok){
+        return loadingStateEnum.success
+      } else {
+        return loadingStateEnum.failed
       }
-    })
-    if (result.ok){
-      return loadingStateEnum.success
-    } else {
+    } catch {
       return loadingStateEnum.failed
     }
+
+    
   } else {
     return new Promise<loadingStateEnum>((resolve) => {
       const timeoutId = setTimeout(() => {
@@ -47,7 +54,6 @@ async function claimCommissionPost(commissionId: string, imageShare?: string, lo
 }
 
 export default function CommissionClaim({commission}:{commission: commissionType}) {
-  const authenticationApiToken = useSelector((state: RootState) => state.authenticationApiToken)
   const [claimCommissionState, setClaimCommissionState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const {width} = useSelector((state: RootState) => state.dimentions)
   const [location, setLocation] = useState<undefined | locationCoords>(undefined)
@@ -55,65 +61,22 @@ export default function CommissionClaim({commission}:{commission: commissionType
 
   async function claimCommission() {
     setClaimCommissionState(loadingStateEnum.loading)
-    if (authenticationApiToken === "") {
-      await getAuthToken()
+    if (store.getState().authenticationApiToken === "") {
+      setClaimCommissionState(loadingStateEnum.failed)
+      
     }
     if (commission.value === commissionTypeEnum.ImageLocation || commission.value === commissionTypeEnum.Location) {
       const locationResult = await getUsersLocation(commission)
       if (locationResult.result === locationStateEnum.success && locationResult.data !== undefined) {
-        const result = await claimCommissionPost(commission.commissionId, undefined, (commission.value === commissionTypeEnum.ImageLocation || commission.value === commissionTypeEnum.Location) ? locationResult.data:undefined)
+        const result = await claimCommissionPost(commission.commissionId, undefined, locationResult.data)
         setClaimCommissionState(result)
       } else {
         setClaimCommissionState(loadingStateEnum.failed)
       }
     } else {
-      setClaimCommissionState(loadingStateEnum.failed)
+      const result = await claimCommissionPost(commission.commissionId, undefined, undefined)
+      setClaimCommissionState(result)
     }
-  }
-
-  const discovery: AuthSession.DiscoveryDocument = {
-    authorizationEndpoint: 'https://login.microsoftonline.com/' + tenantId + '/oauth2/v2.0/authorize',
-    tokenEndpoint: 'https://login.microsoftonline.com/' + tenantId + '/oauth2/v2.0/token',
-    revocationEndpoint: 'https://api.fitbit.com/oauth2/revoke',
-  }
-  
-  const redirectUri = AuthSession.makeRedirectUri({
-    scheme: "Archimedes4.Pauly",
-    path: 'auth',
-  });
-  
-    // Request
-  const [request, result, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId,
-      //scope: "api://6f1e349a-7320-4452-9f32-7e6633fe465b/api/Test",
-      extraParams: {responceMode: "query", grant_type: "authorization_code"},
-      scopes: [`api://${clientId}/api/Test`],
-      redirectUri,
-      responseType: "code"
-    },
-    discovery,
-  );
-    
-  async function getAuthToken() {
-    promptAsync().then(async (codeResponse) => {
-      if (request && codeResponse?.type === 'success' && discovery) {
-        const data: string = "client_id=" + clientId + "&scope=api://" + clientId + "/api/.default&code=" + codeResponse.params.code + "&redirect_uri=" + redirectUri + "&grant_type=authorization_code&code_verifier=" + request.codeVerifier
-        const result = await fetch('https://login.microsoftonline.com/' + tenantId + '/oauth2/v2.0/token', {
-          method: "POST",
-          body: data,
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          }
-        })
-        if (!result.ok) {
-          const data = await result.json()
-          store.dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(data["access_token"]))
-        } else {
-          setClaimCommissionState(loadingStateEnum.failed)
-        }
-      }
-    });
   }
 
   return (
@@ -122,7 +85,7 @@ export default function CommissionClaim({commission}:{commission: commissionType
         <View style={{margin: 10}}>
           <ProgressView width={24} height={24}/>
         </View>:
-        <Text style={{margin: 10, fontWeight: "bold"}}>CLAIM COMMISSION</Text>   
+        <Text style={{margin: 10, fontWeight: "bold"}}>{(claimCommissionState === loadingStateEnum.notStarted) ? "CLAIM COMMISSION":(claimCommissionState === loadingStateEnum.success) ? "SUBMISSION SENT":"FAILED TO SEND SUBMISSION"}</Text>   
       }
     </Pressable>
   )

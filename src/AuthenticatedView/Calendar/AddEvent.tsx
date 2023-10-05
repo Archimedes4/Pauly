@@ -150,9 +150,9 @@ function GovernmentCalendarOptions({width, height}:{width: number, height: numbe
         <Text>Student Council</Text>
       </PickerWrapper>
       { (selectedEventType === paulyEventType.schoolDay) ?
-        <View style={{width: 100, height: 100}}>
-          <Text>Selected School Year:</Text>
-          <SelectSchoolDayData width={100} height={100} selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={(e) => {dispatch(addEventSlice.actions.setSelectedSchoolYear(e))}} selectedSchoolDayData={selectedSchoolDayData} setSelectedSchoolDayData={(e) => {dispatch(addEventSlice.actions.setSelectedSchoolDayData(e))}} />
+        <View style={{width: width, height: 100}}>
+          <Text>Selected School Year: {(selectedSchoolYear) ? selectedSchoolYear.name:"None selected"}</Text>
+          <SelectSchoolDayData width={width} height={100}/>
         </View>:null
       }
       { (selectedEventType === paulyEventType.schoolYear) ?

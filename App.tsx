@@ -105,8 +105,6 @@ function AppCore() {
       }
     }
     if (height !== newHeight) {
-      console.log(newHeight)
-      console.log(dimensions.window.height)
       store.dispatch(dimentionsSlice.actions.setDimentionsHeight(newHeight))
     }
   }, [dimensions])

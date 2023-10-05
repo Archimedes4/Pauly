@@ -61,7 +61,7 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
               { (currentBreakPoint >= 1) ?
                 <NavBarComponent width={width * 0.1} height={dimensions.window.height} />:null
               }
-              <View style={{width: dimensions.window.width, height: height, backgroundColor: "#793033"}}>
+              <View style={{width: (currentBreakPoint >= 1) ? width * 0.9:width, height: height, backgroundColor: "#793033"}}>
                 <Routes>
                   <Route path="/" element={<HomePage/>}/>
                   <Route path="/sports" element={<Sports/>}/>

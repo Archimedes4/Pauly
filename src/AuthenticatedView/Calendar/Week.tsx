@@ -17,16 +17,15 @@ export default function Week({width, height}:{width: number, height: number}) {
     // Starting Monday not Sunday
     selectedDate.setDate((selectedDate.getDate() - selectedDate.getDay()));
     for (var i = 0; i < 7; i++) {
-        week.push(
-          new Date(selectedDate)
-        ); 
-        selectedDate.setDate(selectedDate.getDate() +1);
+      week.push(
+        new Date(selectedDate)
+      ); 
+      selectedDate.setDate(selectedDate.getDate() +1);
     }
     return week; 
   }
   useEffect(() => {
     setDaysOfWeek(getDOW(new Date(selectedDateRedux)))
-    console.log(new Date(selectedDateRedux))
   }, [selectedDateRedux])
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>

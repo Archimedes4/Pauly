@@ -1,7 +1,7 @@
 import { View, Text, Button, Pressable, TextInput } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { loadingStateEnum } from '../../../../types';
-import { Link } from 'react-router-native';
+import { Link, useNavigate } from 'react-router-native';
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import { initializePaulyPartOne, initializePaulyPartThree, initializePaulyPartTwo } from '../../../../Functions/initializePauly/initializePauly'
 import { useSelector } from 'react-redux';
@@ -26,6 +26,7 @@ export default function GovernmentAdmin() {
   const [timeElapsed, setTimeElapsed] = useState<string>("Not Started")
   const [createdGroupId, setCreatedGroupId] = useState<string>("")
   const [selectedUpdates, setSelectedUpdates] = useState<string[]>([])
+  const navigate = useNavigate()
 
   //Start Times
   const [startTime, setStartTime] = useState<Date>(new Date())
@@ -207,70 +208,74 @@ export default function GovernmentAdmin() {
   }, [createdGroupId, initResult])
 
   return (
-    <View style={{height: height, width: width, backgroundColor: "white", flexDirection: "row"}}>
-      <Link to="/profile/government">
-        <Text>Back</Text>
-      </Link>
+    <View style={{height: height, width: width, backgroundColor: "white"}}>
       <View>
-        <View style={{height: height * 0.25, width: height * 0.1, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
-          <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partOne) ? "blue":"black", borderRadius: 50}}/>
-          <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
-            <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partTwoLoad) ? "blue":"black",}}/>
-            { (currentInitStage === initStage.partTwoLoad) ?
-              <Text style={{position: "absolute", left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
-            }
-          </View>
-          <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partTwo) ? "blue":"black", borderRadius: 50}}/>
-          <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
-            <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partThreeLoad) ? "blue":"black",}}/>
-            { (currentInitStage === initStage.partThreeLoad) ?
-              <Text style={{position: "absolute", left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
-            }
-          </View>
-          <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partThree) ? "blue":"black", borderRadius: 50}}/>
-        </View>
-      </View>
-      <View>
-        <UserBlock setSelectedUser={setSelectedUser} setInitResult={setInitResult} />
-        <TextInput value={createdGroupId} onChangeText={setCreatedGroupId} placeholder='Group Id'/>
-        <Text>Time Elapsed: {timeElapsed}</Text>
-        <Pressable onPress={() => {if (initResult === loadingStateEnum.notStarted) {initializePauly()}}}>
-          <Text>{(initResult === loadingStateEnum.cannotStart) ?  "Please Pick a User":(initResult === loadingStateEnum.notStarted) ? "initialize Pauly on New Tenant":(initResult ===  loadingStateEnum.loading) ? "Loading " + timeLeft :(initResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+        <Pressable onPress={() => navigate("/profile/government")}>
+          <Text>Back</Text>
         </Pressable>
-        { (initTwoResult !== loadingStateEnum.cannotStart) ?
-          <Pressable onPress={() => {initializePaulyFromPartTwo()}}>
-            <Text>{(initTwoResult === loadingStateEnum.notStarted) ? "Start From Part Two":(initTwoResult === loadingStateEnum.loading) ? "Loading":(initTwoResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
-          </Pressable>:null
-        }
-        { (initThreeResult !== loadingStateEnum.cannotStart) ?
-          <View>
-            {addDataArray.map((addData) => (
-              <View key={"Add_Data_" + addData.id}>
-                { (selectedUpdates.includes(addData.id)) ?
-                  <Pressable style={{width: width * 0.7, backgroundColor: "blue"}} onPress={() => {
-                    var newSelectedUpdates = selectedUpdates
-                    newSelectedUpdates.filter((e) => {return e !== addData.id})
-                    setSelectedUpdates([...newSelectedUpdates])
-                  }}>
-                    <View style={{margin: 5}}>
-                      <Text>{addData.id}</Text>
-                    </View>
-                  </Pressable>:
-                  <Pressable style={{width: width * 0.7, backgroundColor: "white"}} onPress={() => {
-                    setSelectedUpdates([...selectedUpdates, addData.id])
-                  }}>
-                    <View style={{margin: 5}}>
-                      <Text>{addData.id}</Text>
-                    </View>
-                  </Pressable>
-                }
-              </View>
-            ))}
-            <Pressable onPress={() => {initializePaulyFromPartThree()}}>
-              <Text>{(initThreeResult === loadingStateEnum.notStarted) ? "Start From Part Three":(initThreeResult === loadingStateEnum.loading) ? "Loading":(initThreeResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
-            </Pressable>
-          </View>:null
-        }
+      </View>
+      <View style={{flexDirection: "row"}}>
+        <View>
+          <View style={{height: height * 0.25, width: height * 0.1, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+            <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partOne) ? "blue":"black", borderRadius: 50}}/>
+            <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
+              <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partTwoLoad) ? "blue":"black",}}/>
+              { (currentInitStage === initStage.partTwoLoad) ?
+                <Text style={{position: "absolute", left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
+              }
+            </View>
+            <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partTwo) ? "blue":"black", borderRadius: 50}}/>
+            <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
+              <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partThreeLoad) ? "blue":"black",}}/>
+              { (currentInitStage === initStage.partThreeLoad) ?
+                <Text style={{position: "absolute", left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
+              }
+            </View>
+            <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partThree) ? "blue":"black", borderRadius: 50}}/>
+          </View>
+        </View>
+        <View>
+          <UserBlock setSelectedUser={setSelectedUser} setInitResult={setInitResult} />
+          <TextInput value={createdGroupId} onChangeText={setCreatedGroupId} placeholder='Group Id'/>
+          <Text>Time Elapsed: {timeElapsed}</Text>
+          <Pressable onPress={() => {if (initResult === loadingStateEnum.notStarted) {initializePauly()}}}>
+            <Text>{(initResult === loadingStateEnum.cannotStart) ?  "Please Pick a User":(initResult === loadingStateEnum.notStarted) ? "initialize Pauly on New Tenant":(initResult ===  loadingStateEnum.loading) ? "Loading " + timeLeft :(initResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+          </Pressable>
+          { (initTwoResult !== loadingStateEnum.cannotStart) ?
+            <Pressable onPress={() => {initializePaulyFromPartTwo()}}>
+              <Text>{(initTwoResult === loadingStateEnum.notStarted) ? "Start From Part Two":(initTwoResult === loadingStateEnum.loading) ? "Loading":(initTwoResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+            </Pressable>:null
+          }
+          { (initThreeResult !== loadingStateEnum.cannotStart) ?
+            <View>
+              {addDataArray.map((addData) => (
+                <View key={"Add_Data_" + addData.id}>
+                  { (selectedUpdates.includes(addData.id)) ?
+                    <Pressable style={{width: width * 0.7, backgroundColor: "blue"}} onPress={() => {
+                      var newSelectedUpdates = selectedUpdates
+                      newSelectedUpdates.filter((e) => {return e !== addData.id})
+                      setSelectedUpdates([...newSelectedUpdates])
+                    }}>
+                      <View style={{margin: 5}}>
+                        <Text>{addData.id}</Text>
+                      </View>
+                    </Pressable>:
+                    <Pressable style={{width: width * 0.7, backgroundColor: "white"}} onPress={() => {
+                      setSelectedUpdates([...selectedUpdates, addData.id])
+                    }}>
+                      <View style={{margin: 5}}>
+                        <Text>{addData.id}</Text>
+                      </View>
+                    </Pressable>
+                  }
+                </View>
+              ))}
+              <Pressable onPress={() => {initializePaulyFromPartThree()}}>
+                <Text>{(initThreeResult === loadingStateEnum.notStarted) ? "Start From Part Three":(initThreeResult === loadingStateEnum.loading) ? "Loading":(initThreeResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+              </Pressable>
+            </View>:null
+          }
+        </View>
       </View>
     </View>
   )

@@ -371,18 +371,21 @@ function InsightsBlock() {
             <TrendingFiles />
           </View>
           <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Popular Files</Text>
-          <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+          <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15, marginBottom: height * 0.05}}>
             <PopularFiles />
           </View>
         </>:
-        <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto", marginTop: height * 0.025, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
-          <View style={{width: width * 0.45}}>
-            <TrendingFiles />
+        <>
+          <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Files</Text>
+          <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto", marginTop: height * 0.025, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+            <View style={{width: width * 0.45}}>
+              <TrendingFiles />
+            </View>
+            <View style={{width: width * 0.45}}>
+              <PopularFiles />
+            </View>
           </View>
-          <View style={{width: width * 0.45}}>
-            <PopularFiles />
-          </View>
-        </View>
+        </>
       }
     </>
   )
@@ -402,7 +405,7 @@ function PopularFiles() {
             <>
               {trendingData.map((data) => (
                 <Pressable key={"User_Insight_" + data.id} style={{flexDirection: "row"}} onPress={() => {Linking.openURL(data.webUrl)}}>
-                  <View style={{margin: 10}}>
+                  <View style={{margin: 10, flexDirection: "row"}}>
                     <MimeTypeIcon width={14} height={14} mimeType={data.type}/>
                     <Text>{data.title}</Text>
                   </View>

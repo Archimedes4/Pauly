@@ -67,17 +67,17 @@ export default function Calendar() {
           null:<BackButton to='/' style={{zIndex: 100}}/>
         } 
         <View style={{flexDirection: "row", alignItems: "center", height: height * 0.1, width: width}}>
-          <Text style={{fontFamily: "BukhariScript", fontSize: Math.cbrt((width < height) ? width * 0.5:height * 0.1) * 5, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017)}}>Calendar</Text>
-          <CalendarTypePicker width={width * 0.5} height={height * 0.05}/>
+          <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontFamily: "BukhariScript", fontSize: (width < 756) ? (height * 0.04):(height * 0.08), width: width * 0.4, height: height * 0.1, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017), textAlign: "center", verticalAlign: "middle", alignContent: "center", justifyContent: "center", alignItems: "center"}}>Calendar</Text>
+          <CalendarTypePicker width={width * 0.5} height={((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.08}/>
           <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(true)); dispatch(addEventSlice.actions.setIsEditing(false)); dispatch(addEventSlice.actions.setSelectedEvent(undefined))}} style={{
-            height: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.8,
-            width: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.8,
+            height: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.08,
+            width: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.08,
             alignItems: "center", alignContent: "center", justifyContent: "center",
             borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1,
             marginLeft: width * 0.005,
             marginRight: width * 0.005
           }}>
-            <AddIcon width={((width * 0.1) < (height * 0.1)) ? width * 0.05:height * 0.4} height={((width * 0.1) < (height * 0.1)) ? width * 0.05:height * 0.4}/>
+            <AddIcon width={((width * 0.1) < (height * 0.1)) ? width * 0.05:height * 0.04} height={((width * 0.1) < (height * 0.1)) ? width * 0.05:height * 0.04}/>
           </Pressable>
         </View>
       </View> 
@@ -272,6 +272,7 @@ function MonthView({width, height}:{width: number, height: number}) {
 }
 
 function CalendarCardView({value, width, height, calendarWidth}:{value: monthDataType, width: number, height: number, calendarWidth: number}) {
+  const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const dispatch = useDispatch()
   return(
     <>
@@ -291,7 +292,9 @@ function CalendarCardView({value, width, height, calendarWidth}:{value: monthDat
         <>
           { (value.showing) ?
             <View style={{width: width, height: height}}>
-              <Text style={{color: "black"}}>{value.dayData}</Text>
+              <View style={{borderRadius: 50, width: 16, height: 16, backgroundColor: (new Date(selectedDate).getDate() === value.dayData) ? "red":"transparent", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+                <Text style={{color: "black"}}>{value.dayData}</Text>
+              </View>
               <ScrollView style={{width: width, height: height * 0.8}}>
                 {value.events.map((event) => (
                   <Pressable key={"Calendar_Event_" + event.id + "_" + create_UUID()} onPress={() => {dispatch(addEventSlice.actions.setIsEditing(true)); dispatch(addEventSlice.actions.setIsEditing(true)); dispatch(addEventSlice.actions.setIsShowingAddDate(true)); dispatch(addEventSlice.actions.setSelectedEvent(event))}}>

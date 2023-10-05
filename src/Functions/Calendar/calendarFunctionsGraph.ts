@@ -18,8 +18,8 @@ export async function getGraphEvents(url?: string, referenceUrl?: string): Promi
       const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId
       const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId
       const singleValueExtendedProperties: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"]
-      const eventType: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventDataExtensionID})?.value:undefined
-      const eventData: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventTypeExtensionID})?.value:undefined
+      const eventType: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventTypeExtensionID})?.value:undefined
+      const eventData: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventDataExtensionID})?.value:undefined
       newEvents.push({
         id: data["value"][index]["id"],
         name: data["value"][index]["subject"],
@@ -71,6 +71,7 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
   if (result.ok) {
     const data = await result.json()
     console.log(data)
+    console.log(JSON.parse(data["value"][0]["fields"]["scheduleData"]) as periodType[])
     if (data["value"].length !== undefined) {
       if (data["value"].length === 1) {
         const resultSchedule: scheduleType = {
@@ -236,16 +237,14 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
       const outputIds: schoolDayDataCompressedType = JSON.parse(data["value"][index]["singleValueExtendedProperties"].find((e: {id: string, value: string}) => {return e.id === store.getState().paulyList.eventDataExtensionId})["value"])
       const schedule = schedules.get(outputIds.scheduleId)
       const timetable = timetableResult.data.get(outputIds.schoolYearEventId)
-      console.log("This is timetable", timetable, outputIds)
-
       const dressCode = timetable?.dressCode.dressCodeData.find((e) => {return e.id === outputIds.dressCodeId})
       const schoolDay = timetable?.days.find((e) => {return e.id === outputIds.schoolDayId})
       if (schedule !== undefined && timetable !== undefined && dressCode !== undefined && schoolDay !== undefined) {
         schoolDaysResult.push({
           id: data["value"][index]["id"],
           name: data["value"][index]["subject"],
-          startTime: data["value"][index]["start"]["date"],
-          endTime: data["value"][index]["end"]["date"],
+          startTime: data["value"][index]["start"]["dateTime"],
+          endTime: data["value"][index]["end"]["dateTime"],
           eventColor: schedule.color,
           microsoftEvent: true,
           allDay: data["value"][index]["isAllDay"] ? true:false,
@@ -258,7 +257,7 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
           }
         })
       } else {
-        console.log("failed here", outputIds, schedule, timetable, dressCode, schoolDay)
+        return {result: loadingStateEnum.failed}
       }
     }
     return {result: loadingStateEnum.success, data: schoolDaysResult, nextLink: data["@odata.nextLink"]}
@@ -402,8 +401,6 @@ async function getTimetablesFromSchoolYears(schoolYearIds: Map<string, number>, 
       return {result: loadingStateEnum.failed}
     }
   }
-
-  console.log("This is timetable", timetables)
 
   const outputTimetables = new Map<string, timetableType>()
   timetables.forEach((value, key) => {

@@ -34,7 +34,7 @@ export default function PDFView({width, height}:{width: number, height: number})
         <WebViewInject/>:null 
       }
       { (pageNumber < images.length) ?
-        <GestureDetector gesture={Gesture.Fling().onEnd((e) => {console.log(e)})}>
+        <GestureDetector gesture={Gesture.Tap().onEnd((e) => {console.log(e)})}>
           <Image source={{uri: images[pageNumber]}} style={{width: width, height: height, borderRadius: 15}}/>
         </GestureDetector>:null
       }

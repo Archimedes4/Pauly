@@ -6,7 +6,7 @@ import callMsGraph from "./Ultility/microsoftAssets";
 export async function getClasses(): Promise<{result: loadingStateEnum, data?: classType[]}> {
   var classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`
   var batchDataRequests: {id: string, method: string, url: string}[][] = [[]]
-  while (classQuery !== "") {
+  while (classQuery !== undefined) {
     const classResult = await callMsGraph(classQuery)
     if (classResult.ok) {
       const classData = await classResult.json()

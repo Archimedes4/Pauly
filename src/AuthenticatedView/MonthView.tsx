@@ -4,15 +4,14 @@ import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/calend
 import React from "react"
 import { getSchoolDays } from "../Functions/calendar/calendarFunctionsGraph"
 import { useDispatch, useSelector } from "react-redux"
-import { RootState } from "../Redux/store"
+import store, { RootState } from "../Redux/store"
 import { loadingStateEnum } from "../types"
 import { monthViewSlice } from "../Redux/reducers/monthViewReducer"
 
 function MonthBlock({value, width, height, startDate, daySelected}:{value:number, width: number, height: number, startDate: number, daySelected: number}) {
   let textval: number = getDay(value, startDate) ?? 0
   let day = new Date().getDate()
-  const monthViewData = useSelector((state: RootState) => state.monthView).find((e) => {e.startTime === e.endTime})
-  
+  const monthViewData = useSelector((state: RootState) => state.monthView).find((e) => {return new Date(e.startTime).getDate() === textval})
   return(
     <View style={{width: width, height: height, borderColor: "black", borderWidth: 2}} id="This">
       { (value >= (startDate - 1) && value <= daySelected && textval !== 0) ?
@@ -22,16 +21,14 @@ function MonthBlock({value, width, height, startDate, daySelected}:{value:number
       { (textval >= 1) ?
         <View id="Text" style={{width:  width, height: height, justifyContent: "center", alignContent: "center", alignItems: "center", position: "absolute"}}>
           {  (monthViewData !== undefined) ?
-              <View>
+              <>
                 {(monthViewData.schoolDayData !== undefined) ?
-                  <View>
-                    <View>
-                      <Text style={{color: "black", height: height * 0.03, transform: [{translateX: -width * 0.005}, {translateY: height * 0.4}]}}>{monthViewData.schoolDayData.schedule.color}</Text>
-                    </View>
+                  <>
+                    <Text style={{color: "black", fontSize: 10, fontWeight: "bold", position: "absolute", top: 1, right: 3}}>{monthViewData.schoolDayData.schoolDayData.shorthand}</Text>
                     <Text style={{color: "black"}}>{textval}</Text>
-                  </View>:<Text style={{color: "black", zIndex: 2}}>{textval}</Text>
+                  </>:<Text style={{color: "black", zIndex: 2}}>{textval}</Text>
                 }
-              </View>:<Text id="This is text" style={{color: "black", zIndex: 2}}>{textval}</Text>
+              </>:<Text id="This is text" style={{color: "black", zIndex: 2}}>{textval}</Text>
             }
         </View>:null
       }

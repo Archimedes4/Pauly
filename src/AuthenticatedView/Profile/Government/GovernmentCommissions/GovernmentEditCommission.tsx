@@ -1,4 +1,4 @@
-import { View, Text, Button, TextInput, Platform, Dimensions, ScrollView, Animated, Pressable, Switch } from 'react-native'
+import { View, Text, Button, TextInput, Platform, Dimensions, ScrollView, Animated, Pressable, Switch, Image } from 'react-native'
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import Slider from '../../../../UI/Slider/Slider';
 import { Link, useParams } from 'react-router-native'
@@ -421,7 +421,7 @@ function PostSelection({width, height, teamId, channelId, onSelect, onBack}:{wid
                 <>
                   { (post.body !== "<systemEventMessage/>") ?
                     <Pressable key={"Post_"+post.id+"_"+create_UUID()} onPress={() => {onSelect(post.id)}}>
-                      <WebViewCross html={post.body}/>
+                      <WebViewCross html={post.body} width={width * 0.9}/>
                     </Pressable>:null
                   }
                 </>
@@ -535,6 +535,9 @@ function SubmissionView({width, height, submissionData, onClose}:{width: number,
         <Text>Approved: {submissionData.approved ? "TURE":"FALSE"}</Text>
         <Text>Reviewed: {submissionData.reviewed ? "TRUE":"FALSE"}</Text>
         <Text>Id: {submissionData.id}</Text>
+        { submissionData.submissionImage ? 
+          <Text>{submissionData.submissionImage}</Text>:null
+        }
       </View>
       <Pressable onPress={() => changeSubmissionApproved()}>
         <Text>{(changeState === loadingStateEnum.notStarted) ? ((submissionData.approved) ? "REMOVE APPROVAL":"APPROVE"):(changeState === loadingStateEnum.loading) ? "Loading":(changeState === loadingStateEnum.success) ? "Success":"Failed"}</Text>

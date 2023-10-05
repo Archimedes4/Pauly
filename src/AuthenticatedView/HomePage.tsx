@@ -83,41 +83,41 @@ export default function HomePage() {
             </>
           }
         </Pressable>
-        <Link style={{width: width * 0.999, height: height * 0.42}} to="/calendar">
+        <Pressable onPress={() => {navigate("/calendar")}} style={{width: width * 0.999, height: height * 0.42}}>
           <View>
             <View style={{width: width * 1.0, height: height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderTopColor: "black", borderTopWidth: 2, borderBottomColor: "black", borderBottomWidth: 2}}>
               <Text style={{margin: "auto", color: "white"}}>Calendar</Text>
             </View>
             <MonthView width={width * 1.0} height={height * 0.37}/>
           </View>
-        </Link>
+        </Pressable>
         <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
-          <Link to={'/commissions'}>
+          <Pressable onPress={() => {navigate("/commissions")}}>
             <View style={{borderColor: "black", borderWidth: 2}}>
               <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
               <MedalIcon width={width * 0.5} height={height * 0.23} style={{position: "absolute", top: height * 0.01, zIndex: 2}}/>
             </View>
-          </Link>
-          <Link to={'/sports'}>
+          </Pressable>
+          <Pressable onPress={() => {navigate("/sports")}}>
             <View style={{borderColor: "black", borderWidth: 2}}>
               <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
               <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={width * 0.3} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
             </View>
-          </Link>
+          </Pressable>
         </View>
         <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
-          <Link to={'/resources'}>
+          <Pressable onPress={() => {navigate("/resources")}}>
             <View style={{borderColor: "black", borderWidth: 2}}>
               <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
               <BookIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
             </View>
-          </Link >
-          <Link to={'/profile'}>
+          </Pressable>
+          <Pressable onPress={() => {navigate("/profile")}}>
             <View style={{borderColor: "black", borderWidth: 2}}>
               <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
               <PersonIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
             </View>
-          </Link>
+          </Pressable>
         </View>
       </View>
       <View style={{position: "absolute", backgroundColor: "black", width: 4, left: width/2 + 2, bottom: -insets.bottom, height: insets.bottom}}/>

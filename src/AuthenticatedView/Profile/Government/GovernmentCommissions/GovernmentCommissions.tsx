@@ -9,11 +9,13 @@ import getCommissions from '../../../../Functions/commissions/getCommissions'
 import ProgressView from '../../../../UI/ProgressView'
 import getSubmissions from '../../../../Functions/commissions/getSubmissions'
 import create_UUID from '../../../../Functions/Ultility/CreateUUID'
+import { create } from 'domain'
 
 export default function GovernmentCommissions() {
   const {height, width} = useSelector((state: RootState) => state.dimentions)
   const [commissions, setCommissions] = useState<commissionType[]>([])
   const [commissionsState, setCommissionsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const navigate = useNavigate()
 
   async function loadData() {
     const result = await getCommissions()
@@ -30,9 +32,9 @@ export default function GovernmentCommissions() {
   return (
     <View style={{height: height, width: width, backgroundColor: "white"}}>
       <View style={{height: height * 0.1}}>
-        <Link to="/profile/government">
+        <Pressable onPress={() => {navigate("/profile/government")}}>
           <Text>Back</Text>
-        </Link>
+        </Pressable>
         <View style={{width: width, alignItems: "center", justifyContent: "center"}}>
           <Text>Commissions</Text>
         </View>
@@ -44,7 +46,7 @@ export default function GovernmentCommissions() {
             { (commissionsState === loadingStateEnum.success) ?
               <View>
                 {commissions.map((commission) => (
-                  <CommissionBlock commission={commission} />
+                  <CommissionBlock key={`Commission_${commission.commissionId}_${create_UUID()}`} commission={commission} />
                 ))}
               </View>:<Text>Failed</Text>
             }
@@ -52,9 +54,9 @@ export default function GovernmentCommissions() {
         }
       </View>
       <View style={{height: height * 0.05}}>
-        <Link to="/profile/government/commissions/create">
+        <Pressable onPress={() => {navigate("/profile/government/commissions/create")}}>
           <Text>Create New Commission</Text>
-        </Link>
+        </Pressable>
       </View>
     </View>
   )

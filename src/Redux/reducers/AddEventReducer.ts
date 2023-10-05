@@ -10,8 +10,8 @@ type addEventStatesType = {
   allDay: boolean
   isGovernmentEvent: boolean
   selectedTimetable: timetableStringType
-  selectedSchoolDayData: schoolDayDataType
-  selectedSchoolYear: eventType
+  selectedSchoolDayData: schoolDayDataType | undefined
+  selectedSchoolYear: eventType | undefined
   selectedEventType: paulyEventType
   recurringEvent: boolean
   selectedRecurringType: recurringType
@@ -34,36 +34,8 @@ const initalState: addEventStatesType = {
     name: '',
     id: ''
   },
-  selectedSchoolDayData: {
-    schoolDay: {
-      name: '',
-      shorthand: '',
-      id: '',
-      order: 0
-    },
-    schedule: {
-      properName: '',
-      descriptiveName: '',
-      periods: [],
-      id: '',
-      color: ''
-    },
-    semester: semesters.semesterOne,
-    dressCode: {
-      name: '',
-      description: '',
-      id: ''
-    }
-  },
-  selectedSchoolYear: {
-    id: '',
-    name: '',
-    startTime: '',
-    endTime: '',
-    eventColor: '',
-    microsoftEvent: false,
-    allDay: false
-  },
+  selectedSchoolDayData: undefined,
+  selectedSchoolYear: undefined,
   selectedEventType: paulyEventType.personal,
   recurringEvent: false,
   selectedRecurringType: recurringType.daily,

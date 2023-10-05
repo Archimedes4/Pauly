@@ -34,6 +34,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
   const [takeImageState, setTakeImageState] = useState<CameraResult>(CameraResult.notStarted)
   const [pickImageState, setPickerImageState] = useState<CameraResult>(CameraResult.notStarted)
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
+  const [imageHeight, setImageHeight] = useState<number>(0)
 
   async function getPost(teamId: string, channelId: string, messageId: string) {
     setMessageState(loadingStateEnum.loading)
@@ -67,6 +68,11 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
     if (!result.canceled) {
       if (result.assets.length === 1) {
         setImageUri(result.assets[0].uri)
+        Image.getSize(result.assets[0].uri, (imageMeasureWidth, imageMeasureHeight) => {
+          const heightPerWidth = imageMeasureHeight/imageMeasureWidth
+          console.log((width * 0.7) * heightPerWidth)
+          setImageHeight((width * 0.7) * heightPerWidth)
+        })
         setPickerImageState(CameraResult.success)
       } else {
         setPickerImageState(CameraResult.failed)
@@ -88,6 +94,11 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
       if (!result.canceled) {
         if (result.assets.length === 1) {
           setImageUri(result.assets[0].uri)
+          Image.getSize(result.assets[0].uri, (imageMeasureWidth, imageMeasureHeight) => {
+            const heightPerWidth = imageMeasureHeight/imageMeasureWidth
+            console.log((width * 0.7) * heightPerWidth)
+            setImageHeight((width * 0.7) * heightPerWidth)
+          })
           setTakeImageState(CameraResult.success)
         } else {
           setTakeImageState(CameraResult.failed)
@@ -166,7 +177,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                   { (commissionData.value === commissionTypeEnum.Image || commissionData.value === commissionTypeEnum.ImageLocation) ?
                     <>
                       { (imageUri !== "") ?
-                        <Image source={{uri: imageUri}} width={width * 0.7} height={height * 0.3} style={{width: width * 0.7, height: height * 0.3, marginLeft: "auto", marginRight: "auto", alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}/>:
+                        <Image source={{uri: imageUri}} width={width * 0.7} resizeMode='center' style={{width: width * 0.7, height: imageHeight, marginLeft: "auto", marginRight: "auto", alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}/>:
                         <View style={{width: width * 0.7, height: height * 0.3, marginLeft: "auto", marginRight: "auto", alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
                           <Text>No Photo Selected</Text>
                         </View>

@@ -19,14 +19,21 @@ export default async function getEvents() {
   //Personal Calendar
   var outputEvents: eventType[] = []
   //This code is pulled from add events School Years Select
-  var nextUrl: string = `https://graph.microsoft.com/v1.0/me/calendarView?startDateTime="${startDate.toISOString()}&endDateTime=${endDate.toISOString()}`
+  var nextUrl: string = `https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${startDate.toISOString()}&endDateTime=${endDate.toISOString()}`
   while (nextUrl !== "") {
     const furtherResult = await getGraphEvents(nextUrl, "https://graph.microsoft.com/v1.0/me/events/")
+    console.log(furtherResult)
     if (furtherResult.result === loadingStateEnum.success && furtherResult.events !== undefined) {
       outputEvents = [...outputEvents, ...furtherResult.events]
-      url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
+      if (furtherResult.nextLink === undefined) {
+        nextUrl = ""
+        break
+      } else {
+        nextUrl = furtherResult.nextLink
+      }
     } else {
       nextUrl = ""
+      break
     }
   }
   

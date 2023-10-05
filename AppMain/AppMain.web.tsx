@@ -12,12 +12,13 @@ import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsal }
 import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
 import { authenticationApiTokenSlice } from '../src/Redux/reducers/authenticationApiToken'
 import { checkIfGovernmentMode, getWantGovernment, setWantGovernment, validateGovernmentMode } from '../src/Functions/handleGovernmentLogin'
+import store from '../src/Redux/store'
 
 const pca = new PublicClientApplication({
   auth: {
     clientId: clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: "http://localhost:19006/"//TO DO change prod
+    redirectUri: "http://localhost:19006/auth"//TO DO change prod
   }
 });
 
@@ -40,7 +41,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   async function getAuthToken(userInitated: boolean, government?: boolean) {
     // Account selection logic is app dependent. Adjust as needed for different use cases.
     // Set active acccount on page load
-    if (government) {
+    if (government !== undefined) {
       setWantGovernment(government)
     }
 
@@ -53,7 +54,9 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
       const apiResult = await instance.acquireTokenSilent({
         scopes: [`api://${clientId}/api/Test`]
       })
+      console.log("This is api result", apiResult)
       dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(apiResult.accessToken))
+      console.log(store.getState().authenticationApiToken)
       dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
       getPaulyLists(result.accessToken)
       getUserProfile(result.accessToken)
@@ -88,6 +91,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
           const apiResult = await instance.acquireTokenSilent({
             scopes: [`api://${clientId}/api/Test`]
           })
+          console.log("This is api result", apiResult)
           dispatch(authenticationApiTokenSlice.actions.setAuthenticationApiToken(apiResult.accessToken))
           getPaulyLists(authResult.accessToken)
           getUserProfile(authResult.accessToken)
