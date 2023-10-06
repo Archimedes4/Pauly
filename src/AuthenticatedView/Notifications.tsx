@@ -140,17 +140,24 @@ function WidgetView({width, height}:{width: number, height: number}) {
       <View style={{width: width, height: height/3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text style={{color: "white", fontSize: height/6}}>{dow[new Date().getDay()]}</Text>
       </View>
-      <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/6}}>
-        <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
-      </View>
-      <View style={{flexDirection: "row", height: height/2}}>
-        <View style={{height: height * 0.5, width: width * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
-          <Text style={{color: "white", fontWeight: "bold", fontSize: height * 0.4}}>{schoolDayData?.schoolDay.shorthand}</Text>
+      { (schoolDayData !== undefined) ?
+        <>
+          <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/6}}>
+            <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
+          </View>
+          <View style={{flexDirection: "row", height: height/2}}>
+            <View style={{height: height * 0.5, width: width * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+              <Text style={{color: "white", fontWeight: "bold", fontSize: height * 0.4}}>{schoolDayData?.schoolDay.shorthand}</Text>
+            </View>
+            <View style={{height: height * 0.5, width: width * 0.7, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+              <Text style={{color: "white", fontSize: height/3}}>{startTime}</Text>
+            </View>
+          </View>
+        </>:
+        <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/2}}>
+          <Text style={{color: "white"}}>No School</Text>
         </View>
-        <View style={{height: height * 0.5, width: width * 0.7, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-          <Text style={{color: "white", fontSize: height/3}}>{startTime}</Text>
-        </View>
-      </View>
+      }
     </View>
   )
 }
