@@ -45,10 +45,45 @@ export default function PDFView({width, height}:{width: number, height: number})
     convertPdfToImages(powerpointBlob)
   }, [powerpointBlob])
   
+  const singleTap = Gesture.Tap().onEnd((_event, success) => {
+    if (success) {
+      if ((pageIndex + 1) < images.length) {
+        setPageIndex(pageIndex + 1)
+      } else {
+        setPageIndex(0)
+      }
+    }
+  });
+  const doubleTap = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd((_event, success) => {
+      if (success) {
+        if ((pageIndex - 1) >= 1) {
+          setPageIndex(pageIndex - 1)
+        } else {
+          setPageIndex(images.length)
+        }
+      }
+  });
+
+  const taps = Gesture.Exclusive(doubleTap, singleTap);
+  
+  const fling = Gesture.Fling().onEnd(() => {
+    if ((pageIndex + 1) < images.length) {
+      setPageIndex(pageIndex + 1)
+    } else {
+      setPageIndex(0)
+    }
+  })
+
+  const compound = Gesture.Simultaneous(
+    fling, taps
+  )
+
   return (
     <>
       { (pageIndex < images.length) ?
-       <GestureDetector gesture={Gesture.Fling().onEnd((e) => {console.log(e)})}>
+       <GestureDetector gesture={compound}>
         <Image source={{uri: images[pageIndex], width: width, height: height}} style={{borderRadius: 15, width: width, height: height}} height={height} width={width}/>
        </GestureDetector>:null
       }

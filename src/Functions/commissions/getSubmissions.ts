@@ -3,8 +3,8 @@ import { loadingStateEnum, submissionTypeEnum } from "../../types";
 import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getSubmissions(commissionId: string, submissionType: submissionTypeEnum): Promise<{result: loadingStateEnum, data?: submissionType[], nextLink?: string, count?: number}> {
-  const filter: string = (submissionType === submissionTypeEnum.approved) ? "fields/submissionApproved%20ne%20false%20and%20":(submissionType === submissionTypeEnum.unApproved) ? "fields/submissionApproved%20eq%20false%20and%20":(submissionType === submissionTypeEnum.unReviewed) ? "fields/submissionReviewed%20eq%20false%20and%20":""
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$filter=${filter}fields/commissionId%20eq%20'${commissionId}'`, "GET")
+  const filter: string = (submissionType === submissionTypeEnum.approved) ? "%20and%20fields/submissionApproved%20ne%20false":(submissionType === submissionTypeEnum.unApproved) ? "%20and%20fields/submissionApproved%20eq%20false":(submissionType === submissionTypeEnum.unReviewed) ? "%20and%20fields/submissionReviewed%20eq%20false":""
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$select=id&$filter=fields/commissionId%20eq%20'${commissionId}'${filter}`, "GET")
   if (result.ok) {
     const data = await result.json()
 

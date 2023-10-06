@@ -333,7 +333,7 @@ function BoardBlock() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {powerpointBlob, paulyDataState} = useSelector((state: RootState) => state.paulyData)
   return (
-    <View style={{width: width * 0.9, height: height * 0.3, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+    <>
       { (paulyDataState === loadingStateEnum.loading) ?
         <View style={{width: width * 0.9, height: height * 0.3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={100} height={100}/>
@@ -350,13 +350,13 @@ function BoardBlock() {
                 </View>
               }
             </>:
-            <View>
+            <View style={{width: width * 0.9, height: height * 0.3, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
               <Text>Failed</Text>
             </View>
           }
         </>
       }
-    </View>
+    </>
   )
 }
 

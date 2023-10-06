@@ -19,6 +19,8 @@ import getCommission from '../../../../Functions/commissions/getCommission';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
 import { CloseIcon } from '../../../../UI/Icons/Icons';
 import BackButton from '../../../../UI/BackButton';
+import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
+import { unlink } from 'fs';
 
 enum datePickingMode {
   none,
@@ -101,7 +103,7 @@ export default function GovernmentEditCommission() {
     if (submitCommissionState === loadingStateEnum.failed || submitCommissionState === loadingStateEnum.notStarted){
       setSubmitCommissionState(loadingStateEnum.loading)
       const newCommissionID = create_UUID()
-      const data = {
+      const data: any = {
         "fields": {
           //All Commissions
           "Title": commissionName,
@@ -449,6 +451,7 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
   async function loadData() {
     setSubmissionsState(loadingStateEnum.loading)
     const result = await getSubmissions(commissionId, selectedSubmissionMode)
+    console.log(result)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       setSubmissions(result.data)
       setSubmissionsState(result.result)
@@ -489,7 +492,7 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
               { submissions.map((submission) => (
                 <Pressable style={{margin: 10}} onPress={() => setSelectedSubmisson(submission)}>
                   <Text>{submission.userName}</Text>
-                  <Text>{submission.submissionTime.toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
+                  <Text>{new Date(submission.submissionTime).toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
                 </Pressable>
               ))}
             </View>:
@@ -508,6 +511,10 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
 
 function SubmissionView({width, height, submissionData, onClose}:{width: number, height: number, submissionData: submissionType, onClose: () => void}) {
   const [changeState, setChangeState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const [imageState, setImageState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const [imageUri, setImageUri] = useState<string>("")
+  const [imageHeight, setImageHeight] = useState<number>(0)
+
   async function changeSubmissionApproved() {
     setChangeState(loadingStateEnum.loading)
     const data = {
@@ -523,6 +530,27 @@ function SubmissionView({width, height, submissionData, onClose}:{width: number,
       setChangeState(loadingStateEnum.failed)
     }
   }
+
+  async function loadImage() {
+    if (submissionData.submissionImage !== undefined) {
+      setImageState(loadingStateEnum.loading)
+      const shareResult = await getFileWithShareID(submissionData.submissionImage)
+      if (shareResult.result === loadingStateEnum.success && shareResult.url !== undefined) {
+        setImageUri(shareResult.url)
+        setImageState(shareResult.result)
+        Image.getSize(shareResult.url, (imageMeasureWidth, imageMeasureHeight) => {
+          const heightPerWidth = imageMeasureHeight/imageMeasureWidth
+          setImageHeight((width * 0.7) * heightPerWidth)
+        })
+      }
+      setImageState(shareResult.result)
+    }
+  }
+
+  useEffect(() => {
+    loadImage()
+  }, [])
+
   return (
     <View style={{width: width * 0.8, height: height * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: "white"}}>
       <Pressable onPress={() => onClose()} style={{margin: 10}}>
@@ -531,12 +559,24 @@ function SubmissionView({width, height, submissionData, onClose}:{width: number,
       <View style={{width: width * 0.8, alignContent: "center", alignItems: "center"}}>
         <Text>Submission</Text>
         <Text>By: {submissionData.userName}</Text>
-        <Text>Time: {submissionData.submissionTime.toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
+        <Text>Time: {new Date(submissionData.submissionTime).toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
         <Text>Approved: {submissionData.approved ? "TURE":"FALSE"}</Text>
         <Text>Reviewed: {submissionData.reviewed ? "TRUE":"FALSE"}</Text>
         <Text>Id: {submissionData.id}</Text>
         { submissionData.submissionImage ? 
-          <Text>{submissionData.submissionImage}</Text>:null
+          <>
+            { (imageState === loadingStateEnum.loading) ?
+              <View style={{width: width * 0.8, height: height * 0.8, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                <ProgressView width={((width * 0.8) < (height * 0.8)) ? width * 0.3:height*0.3} height={((width * 0.8) < (height * 0.8)) ? width * 0.3:height*0.3} />
+                <Text>Loading</Text>
+              </View>:
+              <>
+                { (imageState === loadingStateEnum.success) ? 
+                  <Image source={{uri: imageUri}} width={width * 0.7} resizeMode='center' style={{width: width * 0.7, height: imageHeight, marginLeft: "auto", marginRight: "auto", alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}/>:<Text>Failed to load image</Text>
+                }
+              </>
+            }
+          </>:null
         }
       </View>
       <Pressable onPress={() => changeSubmissionApproved()}>
