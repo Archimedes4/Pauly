@@ -1,12 +1,12 @@
 # Pauly
-Pauly is a hub for all things school related.
+Pauly is a hub for all things school-related.
 # Backend
-Pauly uses microsoft graph and uses sharepoint lists as a data base
+Pauly uses Microsoft graph and SharePoint lists as a database
 ## Structure 
 ### Calendar
-Calendar is organized into documents of years containing collections of months. These months are formated as a number based on January being 1. Inside each collection documents of days are inside. Each day contains the day, month and year. As well as the school day and schedule id. If the schedule does not have a value it is schedule one (default schedule).
+The calendar is organized into documents of years containing collections of months. These months are formatted as a number based on January being 1. Inside each collection documents of days are inside. Each day contains the day, month, and year. As well as the school day and schedule id. If the schedule does not have a value it is schedule one (default schedule).
 ### Commissions
-Commissions are organized into documents that are named with there commission id. In each document their is a
+Commissions are organized into documents that are named with their commission id. In each document, there is a
 1. Start date
 2. End date
 3. Hidden
@@ -18,15 +18,19 @@ Commissions are organized into documents that are named with there commission id
     3. Image
     4. Image and Location
     5. QR Code
+### Notifications
 
+### Resources
+
+### Sports
 
 ## Setup
-Pauly has a config file named PaulyConfig which contains threee values 
+Pauly has a config file named PaulyConfig which contains three values 
   1. tenant id
-  2. client id (the id of paulys application)
-  3. org id (the id of paulys group)
+  2. Client ID (the ID of Paulys application)
+  3. org id (the id of Pauly's group)
 
-Commands to setup azure services
+Commands to setup Azure services
 
 https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-create
 
@@ -50,9 +54,9 @@ update azure ad app
 ```
     az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['exp://172.20.10.3:8081/--/auth', 'http://localhost:19006/auth']}}"
 ```
-### Extentions
+### Extensions
 > **NOTE**
-> Extentions are automatically setup in the initilization process
+> Extensions are automatically setup in the initialization process
 ```
 {
     "id": "paulyEvents",
