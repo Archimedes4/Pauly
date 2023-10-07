@@ -78,7 +78,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
               <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: blockLength, height:  blockLength}} />
             </View>
             { expandedMode ?
-              <Text style={{fontFamily: "Gochi Hand", color: "white", position: "absolute", top: blockLength * 0.3, left: blockLength * 0.6, fontSize: 50, textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 4, height: 2}, textShadowRadius: 0}} selectable={false}>auly</Text>:null
+              <Text style={{fontFamily: "Gochi Hand", color: "white", position: "absolute", top: blockLength * 0.3, left: blockLength * 0.65, fontSize: blockLength * 0.7, textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 4, height: 2}, textShadowRadius: 0}} selectable={false}>auly</Text>:null
             }
           </View>
         </Pressable>
