@@ -305,52 +305,88 @@ export const sportsApprovedSubmissionsData = {
   "displayName": "SportsApprovedSubmissions",
   "columns": [
     {
-      "name":"FileId",
+      "name":"fileId",
       "text":{ },
       "required": true,
       "indexed": true,
       "enforceUniqueValues": true
     },
     {
-      "name":"Caption",
+      "name":"submissionId",
+      "text":{ },
+      "required": true,
+      "indexed": true,
+      "enforceUniqueValues": true
+    },
+    {
+      "name":"caption",
       "text":{ },
       "required": true
     },
+    {
+      "name":"selectedSportId",
+      "text":{ },
+      "required": true
+    },
+    {
+      "name":"selectedTeamId",
+      "text":{ },
+      "required": true
+    }
   ],
   "list": {
     "template": "genericList"
   }
 }
+
 export const sportsSubmissionsData = {
   "displayName": "SportsSubmissions",
   "columns": [
     {
-      "name":"Accepted",
+      "name":"accepted",
       "boolean":{ },
       "required": true
     },
     {
-      "name":"User",
+      "name":"reviewed",
+      "boolean":{ },
+      "indexed": true,
+      "required": true
+    },
+    {
+      "name":"user",
       "text":{ },
       "required": true
     },
     {
-      "name":"TimeCreated",
+      "name":"timeCreated",
       "text":{ },
       "required": true
     },
     {
-      "name":"SubmissionID",
+      "name":"submissionId",
       "text":{ },
       "required": true,
       "indexed": true,
       "enforceUniqueValues": true
     },
     {
-      "name":"FileId",
+      "name":"fileId",
       "text":{ },
       "required": true
     },
+    {
+      "name":"selectedSportId",
+      "text":{ },
+      "indexed": true,
+      "required": true
+    },
+    {
+      "name":"selectedTeamId",
+      "text":{ },
+      "indexed": true,
+      "required": true
+    }
   ],
   "list": {
     "template": "genericList"

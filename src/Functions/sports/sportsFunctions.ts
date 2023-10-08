@@ -1,6 +1,6 @@
-import store from "../Redux/store"
-import { loadingStateEnum } from "../types"
-import callMsGraph from "./Ultility/microsoftAssets"
+import store from "../../Redux/store"
+import { loadingStateEnum } from "../../types"
+import callMsGraph from "../Ultility/microsoftAssets"
 
 export async function getSports(): Promise<{result: loadingStateEnum, data?: sportType[]}> {
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsListId}/items?expand=fields($select=sportName,sportId)&$select=id`)

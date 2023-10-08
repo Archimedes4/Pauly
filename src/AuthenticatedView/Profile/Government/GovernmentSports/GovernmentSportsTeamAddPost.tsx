@@ -7,23 +7,16 @@ import create_UUID from '../../../../Functions/Ultility/CreateUUID'
 import { useSelector } from 'react-redux'
 import store, { RootState } from '../../../../Redux/store'
 import { loadingStateEnum } from '../../../../types'
-import { getSports, getSportsTeams } from '../../../../Functions/sportsFunctions'
+import { getSports, getSportsTeams } from '../../../../Functions/sports/sportsFunctions'
 import ProgressView from '../../../../UI/ProgressView'
 import { ScrollView } from 'react-native-gesture-handler'
-
-enum postSubmissionResultType {
-  notLoading,
-  loading,
-  failure,
-  success
-}
 
 export default function GovernmentSportsTeamAddPost() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const [selectedShareID, setSelectedShareID] = useState<string>("")
   const [postName, setPostName] = useState<string>("")
-  const [postSubmissionResult, setPostSubmissionResult] = useState<postSubmissionResultType>(postSubmissionResultType.notLoading)
+  const [postSubmissionState, setPostSubmissionState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const navigate = useNavigate()
   const [selectedSportId, setSelectedSportId] = useState<string>("")
   const [selectedTeamId, setSelectedTeamId] = useState<string>("")
@@ -46,29 +39,34 @@ export default function GovernmentSportsTeamAddPost() {
     }
   }
   async function createFileSubmission(fileID: string) {
-    setPostSubmissionResult(postSubmissionResultType.loading)
-    const userIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/me") 
-    if (userIdResult.ok){
-      const userData = await userIdResult.json()
-      const submissionID = create_UUID()
-      const data = {
-        "fields": {
-          "Title": postName,
-          "FileId": fileID,
-          "Accepted":false,
-          "User":userData["id"],
-          "TimeCreated": new Date().toISOString(),
-          "SubmissionID": submissionID
+    if (selectedShareID !== "" && selectedTeamId !== "") {
+      setPostSubmissionState(loadingStateEnum.loading)
+      const userIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/me") 
+      if (userIdResult.ok){
+        const userData = await userIdResult.json()
+        const submissionID = create_UUID()
+        const data = {
+          "fields": {
+            "Title": postName,
+            "fileId": fileID,
+            "accepted":false,
+            "user":userData["id"],
+            "timeCreated": new Date().toISOString(),
+            "submissionId": submissionID,
+            "reviewed":false,
+            "selectedSportId":selectedSportId,
+            "selectedTeamId":selectedTeamId
+          }
         }
-      }
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + `/lists/${store.getState().paulyList.sportsSubmissionsListId}/items`, "POST", false, JSON.stringify(data)) //TO DO fix id
-      if (result.ok){
-        setPostSubmissionResult(postSubmissionResultType.success)
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + `/lists/${store.getState().paulyList.sportsSubmissionsListId}/items`, "POST", false, JSON.stringify(data)) //TO DO fix id
+        if (result.ok){
+          setPostSubmissionState(loadingStateEnum.success)
+        } else {
+          setPostSubmissionState(loadingStateEnum.failed)
+        }
       } else {
-        setPostSubmissionResult(postSubmissionResultType.failure)
+        setPostSubmissionState(loadingStateEnum.failed)
       }
-    } else {
-      setPostSubmissionResult(postSubmissionResultType.failure)
     }
   }
   return (
@@ -82,15 +80,17 @@ export default function GovernmentSportsTeamAddPost() {
       <MicrosoftFilePicker onSelectedFile={(item: microsoftFileType) => {getShareLink(item)}} height={500} width={width} />
       { (selectedShareID !== "") ? 
         <Pressable onPress={() => {
-          if (postSubmissionResult === postSubmissionResultType.notLoading){
+          console.log("pressed")
+          if (postSubmissionState === loadingStateEnum.notStarted && selectedShareID !== "" && selectedTeamId !== ""){
             createFileSubmission(selectedShareID)
+            console.log("Create file submission")
           }}}>
-          <Text>Submit</Text>
+          <Text>{(selectedShareID !== "" && selectedTeamId !== "") ? "Submit":"Select Team"}</Text>
         </Pressable>:null
       }
-      {(postSubmissionResult === postSubmissionResultType.loading) ? <Text>Loading</Text>:null}
-      {(postSubmissionResult === postSubmissionResultType.failure) ? <Text>Failure</Text>:null}
-      {(postSubmissionResult === postSubmissionResultType.success) ? <Text>Success</Text>:null}
+      {(postSubmissionState === loadingStateEnum.loading) ? <Text>Loading</Text>:null}
+      {(postSubmissionState === loadingStateEnum.failed) ? <Text>Failure</Text>:null}
+      {(postSubmissionState === loadingStateEnum.success) ? <Text>Success</Text>:null}
     </ScrollView>
   )
 }
@@ -149,7 +149,10 @@ function PickSportTeam({width, height, onSelect, onBack}:{width: number, height:
                         </View>
                       </Pressable>
                     ))}
-                  </>:<View><Text>Error</Text></View>
+                  </>:
+                  <View>
+                    <Text>Error</Text>
+                  </View>
                 }
               </>
             }
@@ -163,7 +166,7 @@ function PickSportTeam({width, height, onSelect, onBack}:{width: number, height:
               <>
                 {(sportTeamState === loadingStateEnum.success && selectedSport !== undefined) ?
                   <View>
-                    <Pressable onPress={() => setSelectedSport(undefined)}>
+                    <Pressable onPress={() => {setSelectedSport(undefined); setSportTeamState(loadingStateEnum.notStarted); setSportTeams([]); onBack()}}>
                       <Text>Back</Text>
                     </Pressable>
                     {sportsTeams.map((item, id) => (
@@ -173,7 +176,10 @@ function PickSportTeam({width, height, onSelect, onBack}:{width: number, height:
                         </View>
                       </Pressable>
                     ))}
-                  </View>:<View><Text>Error</Text></View>
+                  </View>:
+                  <View>
+                    <Text>Error</Text>
+                  </View>
                 }
               </>
             }

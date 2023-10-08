@@ -1,5 +1,5 @@
 import { View, Text, Button, Pressable, Platform, Image } from 'react-native'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { useMsal } from "@azure/msal-react";
 import { tenantId } from '../../PaulyConfig';
@@ -14,7 +14,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 
 export default function Settings() {
-  const {height, width} = useSelector((state: RootState) => state.dimentions)
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
   const {uri, displayName} = useSelector((state: RootState) => state.microsoftProfileData)
   const navigate = useNavigate()
@@ -38,6 +38,12 @@ export default function Settings() {
       }
     }
   }
+
+  useEffect(() => {
+    if (currentBreakPoint >= 1) {
+      navigate("/")
+    }
+  }, [currentBreakPoint])
   
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
@@ -62,8 +68,8 @@ export default function Settings() {
       </View>
       <View style={{width: width, alignContent: "center", justifyContent: 'center', alignItems: "center"}}>
         { (uri !== "") ?
-          <Image source={{uri: uri}} style={{width: width * 0.5, height: width * 0.5, borderRadius: width * 0.25}}/>:
-          <PersonIcon width={width * 0.5} height={height * 0.2}/>
+          <Image source={{uri: uri}} style={{width: width * 0.3, height: width * 0.3, borderRadius: width * 0.25}}/>:
+          <PersonIcon width={width * 0.4} height={width * 0.4}/>
         }
         <Text style={{color: "white", fontWeight: "bold", fontSize: 24, marginTop: height * 0.05}}>{displayName}</Text>
       </View>

@@ -6,7 +6,6 @@ import { getGraphEvents, getTimetable } from '../../Functions/calendar/calendarF
 import { useDispatch, useSelector } from 'react-redux'
 import store, { RootState } from '../../Redux/store'
 import { orgWideGroupID } from '../../PaulyConfig'
-import { dressCodeData } from '../../Functions/initializePauly/initializePaulyData'
 import { addEventSlice } from '../../Redux/reducers/addEventReducer'
 
 enum pickSchoolDayMode {

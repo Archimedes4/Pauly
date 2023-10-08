@@ -21,6 +21,7 @@ import { CloseIcon } from '../../../../UI/Icons/Icons';
 import BackButton from '../../../../UI/BackButton';
 import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
 import { unlink } from 'fs';
+import { FlatList } from 'react-native-gesture-handler';
 
 enum datePickingMode {
   none,
@@ -489,12 +490,15 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
                   <Text>Approved</Text>
                 </Pressable>
               </View>
-              { submissions.map((submission) => (
-                <Pressable style={{margin: 10}} onPress={() => setSelectedSubmisson(submission)}>
-                  <Text>{submission.userName}</Text>
-                  <Text>{new Date(submission.submissionTime).toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
+              <FlatList
+                data={undefined}
+                renderItem={(submission) => 
+                <Pressable style={{margin: 10}} onPress={() => setSelectedSubmisson(submission.item)}>
+                  <Text>{submission.item.userName}</Text>
+                  <Text>{new Date(submission.item.submissionTime).toLocaleDateString("en-US", {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"})}</Text>
                 </Pressable>
-              ))}
+                }              
+              />
             </View>:
             <View>
               <Text>Failed To Load Submissions</Text>
@@ -503,13 +507,13 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
         </>
       }
       { (selectedSubmission !== undefined) ?
-        <SubmissionView width={width} height={height} submissionData={selectedSubmission} onClose={() => setSelectedSubmisson(undefined)}/>:null
+        <SubmissionView width={width} height={height} setSubmissionData={() => {}} submissionData={selectedSubmission} onClose={() => setSelectedSubmisson(undefined)}/>:null
       }
     </>
   )
 }
 
-function SubmissionView({width, height, submissionData, onClose}:{width: number, height: number, submissionData: submissionType, onClose: () => void}) {
+function SubmissionView({width, height, submissionData, onClose, setSubmissionData}:{width: number, height: number, submissionData: submissionType, onClose: () => void, setSubmissionData: (item: submissionType) => void}) {
   const [changeState, setChangeState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const [imageState, setImageState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const [imageUri, setImageUri] = useState<string>("")

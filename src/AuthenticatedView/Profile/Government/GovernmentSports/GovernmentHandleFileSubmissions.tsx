@@ -5,48 +5,52 @@ import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { RootState } from '../../../../Redux/store'
 import { useSelector } from 'react-redux'
 import create_UUID from '../../../../Functions/Ultility/CreateUUID'
+import getSubmissions from '../../../../Functions/sports/getSubmissions'
+import { loadingStateEnum } from '../../../../types'
+import { FlatList } from 'react-native-gesture-handler'
+import ProgressView from '../../../../UI/ProgressView'
 
-export default function GovernmentHandleFileSubmissions() {
-  const {siteId, sportsSubmissionsListId} = useSelector((state: RootState) => state.paulyList)
+export default function GovernmentHandleFileSubmissions({width, height}:{width: number, height: number}) {
   const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([])
+  const [loadingSubmissionsState, setLoadingSubmissionsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const navigate = useNavigate()
-  async function getSubmissions() {
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/"+siteId+"/lists/"+sportsSubmissionsListId+"/items?expand=fields")
-      if (result.ok){
-          const data = await result.json()
-          console.log(data)
-          var newMediaSubmissions: mediaSubmissionType[] = []
-          if (data["value"].length !== undefined && data["value"].length !== null){
-            for(let index = 0; index < data["value"].length; index++){
-              newMediaSubmissions.push({
-                Title: data["value"][index]["fields"]["Title"],
-                User: data["value"][index]["fields"]["User"],
-                SubmissionID: data["value"][index]["fields"]["SubmissionID"],
-                Accepted: data["value"][index]["fields"]["Accepted"],
-                FileId: data["value"][index]["fields"]["FileId"],
-                ItemID:  data["value"][index]["id"]
-              })
-            }
-            console.log(newMediaSubmissions)
-            setCurrentMediaSubmissions(newMediaSubmissions)
-          }
-      } else {
-        console.log("Uh Oh something has gone wrong")
-      }
+
+  async function loadData() {
+    const result = await getSubmissions()
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setCurrentMediaSubmissions(result.data)
+    } 
+    setLoadingSubmissionsState(result.result)
   }
-  useEffect(() => {getSubmissions()}, [])
+
+  useEffect(() => {loadData()}, [])
   return (
-    <View>
-      <Text>HandleFileSubmissions</Text>
-      {currentMediaSubmissions.map((item) => (
-        <Pressable key={`Submission_${item.SubmissionID}_${create_UUID()}`} onPress={() => navigate("/profile/government/sports/post/review/" + item.SubmissionID)} style={{borderColor: "black", borderWidth: 2}}>
-          <Text>{item.Title}</Text>
-          <Text>Accepted: {(item.Accepted) ? "Yes":"No"}</Text>
-          <Text>{item.SubmissionID}</Text>
-          <Text>{item.User}</Text>
-          <Text>{item.FileId}</Text>
-        </Pressable>
-      ))}
-    </View>
+    <>
+      { (loadingSubmissionsState === loadingStateEnum.loading) ?
+        <View style={{width: width, height: height, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+          <ProgressView width={0} height={0} />
+          <Text>loading</Text>
+        </View>:
+        <>
+          { (loadingSubmissionsState === loadingStateEnum.success) ?
+            <View style={{width: width, height: height, overflow: "hidden"}}>
+              <Text>HandleFileSubmissions</Text>
+              <FlatList
+                data={currentMediaSubmissions}
+                renderItem={(item) => 
+                  <Pressable key={`Submission_${item.item.submissionId}_${create_UUID()}`} onPress={() => navigate("/profile/government/sports/post/review/" + item.item.submissionId)} style={{borderColor: "black", borderWidth: 2}}>
+                    <Text>{item.item.Title}</Text>
+                    <Text>Accepted: {(item.item.accepted) ? "Yes":"No"}</Text>
+                    <Text>Reviewed: {(item.item.reviewed) ? "Yes":"No"}</Text>
+                    <Text>{item.item.user}</Text>
+                  </Pressable>
+                } 
+              />
+            </View>:<Text>Failed</Text>
+
+          }
+        </>
+      }
+    </>
   )
 }

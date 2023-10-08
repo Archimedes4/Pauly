@@ -402,10 +402,13 @@ declare global {
   }
   type mediaSubmissionType = {
     Title: string
-    User: string
-    SubmissionID: string
-    Accepted: boolean
-    FileId: string
-    ItemID: string
+    user: string
+    submissionId: string
+    accepted: boolean
+    reviewed: boolean
+    selectedSportId: string
+    selectedTeamId: string
+    fileId: string
+    itemID: string
   }
 }

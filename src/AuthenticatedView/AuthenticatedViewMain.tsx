@@ -16,7 +16,7 @@ import GovernmentCreateNewTeam from './Profile/Government/GovernmentSports/Gover
 import GovernmentSportsTeams from './Profile/Government/GovernmentSports/GovernmentSportsTeams';
 import GovernmentSportTeamEdit from './Profile/Government/GovernmentSports/GovernmentSportTeamEdit';
 import GovernmentSportsTeamAddPost from './Profile/Government/GovernmentSports/GovernmentSportsTeamAddPost';
-import GovernmentReviewFileSubmission from './Profile/Government/GovernmentSports/GovernmentReviewFileSubmissions/GovernmentReviewFileSubmission';
+import GovernmentReviewFileSubmission from './Profile/Government/GovernmentSports/GovernmentReviewFileSubmission';
 import GovernmentCalendar from './Profile/Government/GovernmentCalendar/GovernmentCalendar';
 import GovernmentSchedual from './Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentSchedule';
 import GovernmentTimetable from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetable';

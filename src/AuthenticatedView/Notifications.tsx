@@ -350,7 +350,7 @@ function BoardBlock() {
           { (paulyDataState === loadingStateEnum.success) ?
             <>
               { (powerpointBlob !== "") ?  
-                <PDFView width={width * 0.9} height={height * 0.3}/>:
+                <PDFView width={width * 0.9}/>:
                 <View style={{width: width * 0.9, height: height * 0.3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
                   <ProgressView width={100} height={100}/>
                   <Text>Loading</Text>

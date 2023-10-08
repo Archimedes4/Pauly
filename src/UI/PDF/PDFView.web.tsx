@@ -9,10 +9,11 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`
 
 
-export default function PDFView({width, height}:{width: number, height: number}) {
+export default function PDFView({width}:{width: number}) {
   const [images, setImages] = useState<string[]>([])
   const [pageIndex, setPageIndex] = useState<number>(0)
   const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
+  const [imageHeight, setImageHeight] = useState<number>(0)
   
   async function convertPdfToImages(url: string) {
     const images: string[] = [];
@@ -80,11 +81,12 @@ export default function PDFView({width, height}:{width: number, height: number})
     fling, taps
   )
 
+
   return (
     <>
       { (pageIndex < images.length) ?
        <GestureDetector gesture={compound}>
-        <Image source={{uri: images[pageIndex], width: width, height: height}} style={{borderRadius: 15, width: width, height: height}} height={height} width={width}/>
+        <Image source={{uri: images[pageIndex], width: width}} style={{borderRadius: 15, width: width, height: imageHeight}} height={imageHeight} width={width}/>
        </GestureDetector>:null
       }
     </>

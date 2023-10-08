@@ -5,7 +5,7 @@ import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
 import { loadingStateEnum } from '../../../../types'
-import { getSportsTeams } from '../../../../Functions/sportsFunctions'
+import { getSportsTeams } from '../../../../Functions/sports/sportsFunctions'
 
 export default function GovernmentSportsTeams() {
   const { sport, id } = useParams()

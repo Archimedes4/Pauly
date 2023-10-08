@@ -10,7 +10,7 @@ import { useMsal } from '@azure/msal-react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../Redux/store'
 import { dataContentTypeOptions, loadingStateEnum } from '../types'
-import getSportsContent from '../Functions/getSportsContent'
+import getSportsContent from '../Functions/sports/getSportsContent'
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 import ProgressView from '../UI/ProgressView'
 import { ResizeMode, Video } from 'expo-av';
