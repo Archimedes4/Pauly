@@ -10,6 +10,7 @@ import { pdfDataSlice } from '../../Redux/reducers/pdfDataReducer';
 export default function PDFView({width, height}:{width: number, height: number}) {
   const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
   const {inject, images, pageNumber} = useSelector((state: RootState) => state.pdfData)
+  const [imageHeight, setImageHeight] = useState<number>(0)
   const dispatch = useDispatch()
 
   async function loadData() {
@@ -27,6 +28,50 @@ export default function PDFView({width, height}:{width: number, height: number})
     loadData()
   }, [])
   
+  const singleTap = Gesture.Tap().onEnd((_event, success) => {
+    if (success) {
+      if ((pageNumber + 1) < images.length) {
+        store.dispatch(pdfDataSlice.actions.increasePageNumber())
+      } else {
+        store.dispatch(pdfDataSlice.actions.setPageNumber(0))
+      }
+    }
+  });
+  const doubleTap = Gesture.Tap()
+    .numberOfTaps(2)
+    .onEnd((_event, success) => {
+      if (success) {
+        if ((pageNumber - 1) >= 1) {
+          store.dispatch(pdfDataSlice.actions.decreasePageNumber())
+        } else if (images.length >= 1) {
+          store.dispatch(pdfDataSlice.actions.setPageNumber(images.length - 1))
+        }
+      }
+  });
+
+  const taps = Gesture.Exclusive(doubleTap, singleTap);
+  
+  const fling = Gesture.Fling().onEnd(() => {
+    if ((pageNumber + 1) < images.length) {
+      store.dispatch(pdfDataSlice.actions.increasePageNumber())
+    } else {
+      store.dispatch(pdfDataSlice.actions.setPageNumber(pageNumber - 1))
+    }
+  })
+
+  const compound = Gesture.Simultaneous(
+    fling, taps
+  )
+
+  useEffect(() => {
+    if (pageNumber < images.length) {
+      Image.getSize(images[pageNumber], (imageMeasureWidth, imageMeasureHeight) => {
+        const heightPerWidth = imageMeasureHeight/imageMeasureWidth
+        console.log((width) * heightPerWidth)
+        setImageHeight(width * heightPerWidth)
+      })
+    }
+  }, [pageNumber, images])
 
   return (
     <>
@@ -34,7 +79,7 @@ export default function PDFView({width, height}:{width: number, height: number})
         <WebViewInject/>:null 
       }
       { (pageNumber < images.length) ?
-        <GestureDetector gesture={Gesture.Tap().onEnd((e) => {console.log(e)})}>
+        <GestureDetector gesture={compound}>
           <Image source={{uri: images[pageNumber]}} style={{width: width, height: height, borderRadius: 15}}/>
         </GestureDetector>:null
       }

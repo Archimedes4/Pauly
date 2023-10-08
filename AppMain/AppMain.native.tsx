@@ -35,40 +35,11 @@ const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Mana
 export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
   const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
   const dispatch = useDispatch()
-  const insets = useSafeAreaInsets();
-
-  // async function getAuthToken() {
-  //   const redirectUri = makeRedirectUri({
-  //     scheme: "Pauly",
-  //     path: 'auth',
-  //   });
-
-  //   const config = {
-  //     issuer: `https://login.microsoftonline.com/${tenantId}/v2.0`,
-  //     clientId: clientId,
-  //     redirectUrl: redirectUri,
-  //     scopes: scopes
-  //   };
-    
-  //   // Log in to get an authentication token
-  //   const authState = await authorize(config).catch((e) => {
-  //     console.log(e)
-  //   })
-    
-  //   // console.log("Done", authState)
-  //   // dispatch(authenticationTokenSlice.actions.setAuthenticationToken(authState.accessToken))
-  //   // getPaulyLists(authState.accessToken)
-  //   // getUserProfile(authState.accessToken)
-
-  // }
-
-  // async function getGovernmentAuthToken() {
-
-  // }
   
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
+
   const redirectUri = makeRedirectUri({
     scheme: "Pauly",
     path: 'auth',
@@ -78,22 +49,29 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
     clientId: clientId,
     redirectUri: redirectUri,
     scopes: scopes,
-    prompt: Prompt.SelectAccount,
-    responseType: ResponseType.Token
+    prompt: Prompt.SelectAccount
   })
 
   async function getAuthToken() {
     if (discovery !== null){
       authRequest.promptAsync(discovery).then(async (res) => {
         if (authRequest && res?.type === 'success' && discovery) {
-          if (res.authentication !== null) {
+          exchangeCodeAsync(
+            {
+              clientId,
+              code: res.params.code,
+              extraParams: authRequest.codeVerifier
+                ? { code_verifier: authRequest.codeVerifier }
+                : undefined,
+              redirectUri,
+            },
+            discovery,
+          ).then((res) => {
             console.log("Done", res)
-            dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.authentication.accessToken))
-            getPaulyLists(res.authentication.accessToken)
-            getUserProfile(res.authentication.accessToken)
-          } else {
-            console.log(res)
-          }
+            dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
+            getPaulyLists(res.accessToken)
+            getUserProfile(res.accessToken)
+          });
       }})
     }
   }
@@ -121,3 +99,34 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
     </>
   )
 }
+
+
+
+// async function getAuthToken() {
+  //   const redirectUri = makeRedirectUri({
+  //     scheme: "Pauly",
+  //     path: 'auth',
+  //   });
+
+  //   const config = {
+  //     issuer: `https://login.microsoftonline.com/${tenantId}/v2.0`,
+  //     clientId: clientId,
+  //     redirectUrl: redirectUri,
+  //     scopes: scopes
+  //   };
+    
+  //   // Log in to get an authentication token
+  //   const authState = await authorize(config).catch((e) => {
+  //     console.log(e)
+  //   })
+    
+  //   // console.log("Done", authState)
+  //   // dispatch(authenticationTokenSlice.actions.setAuthenticationToken(authState.accessToken))
+  //   // getPaulyLists(authState.accessToken)
+  //   // getUserProfile(authState.accessToken)
+
+  // }
+
+  // async function getGovernmentAuthToken() {
+
+  // }
