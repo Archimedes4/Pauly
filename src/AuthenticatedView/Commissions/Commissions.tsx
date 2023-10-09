@@ -87,7 +87,7 @@ export default function Commissions() {
           }
           <Text style={{fontFamily: 'BukhariScript', fontSize:  25}}>Commissions</Text>
         </View>
-        <View style={{height: height * 0.8}}>
+        <View style={{height: (isHoverPicker) ? height * 0.8:height * 0.85}}>
           { (commissionsState === loadingStateEnum.loading) ?
             <View style={{width: width, height: height * 0.9, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
               <ProgressView width={(width < height) ? width * 0.1:height*0.1} height={(width < height) ? width * 0.1:height*0.1} />

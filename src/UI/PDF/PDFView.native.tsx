@@ -6,8 +6,9 @@ import { Platform, Text, Image } from "react-native";
 import WebView from "react-native-webview";
 import { GestureDetector, ScrollView, Gesture } from 'react-native-gesture-handler';
 import { pdfDataSlice } from '../../Redux/reducers/pdfDataReducer';
+import { runOnJS } from 'react-native-reanimated';
 
-export default function PDFView({width, height}:{width: number, height: number}) {
+export default function PDFView({width}:{width: number}) {
   const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
   const {inject, images, pageNumber} = useSelector((state: RootState) => state.pdfData)
   const [imageHeight, setImageHeight] = useState<number>(0)
@@ -20,43 +21,54 @@ export default function PDFView({width, height}:{width: number, height: number})
       var file = new Blob([blob], {type: 'application/pdf'});
       var fileURL = URL.createObjectURL(file);
       dispatch(pdfDataSlice.actions.setInject(fileURL))
-      console.log("logged")
     }
   }
 
   useEffect(() => {
     loadData()
   }, [])
+
+  function tapChangePage() {
+    if ((pageNumber + 1) < images.length) {
+      store.dispatch(pdfDataSlice.actions.increasePageNumber())
+    } else {
+      store.dispatch(pdfDataSlice.actions.setPageNumber(0))
+    }
+  }
+
+  function doubleTapChangePage() {
+    if ((pageNumber - 1) >= 1) {
+      store.dispatch(pdfDataSlice.actions.decreasePageNumber())
+    } else if (images.length >= 1) {
+      store.dispatch(pdfDataSlice.actions.setPageNumber(images.length - 1))
+    }
+  }
+
+  function flingChangePage() {
+    if ((pageNumber + 1) < images.length) {
+      store.dispatch(pdfDataSlice.actions.increasePageNumber())
+    } else {
+      store.dispatch(pdfDataSlice.actions.setPageNumber(pageNumber - 1))
+    }
+  }
   
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {
-      if ((pageNumber + 1) < images.length) {
-        store.dispatch(pdfDataSlice.actions.increasePageNumber())
-      } else {
-        store.dispatch(pdfDataSlice.actions.setPageNumber(0))
-      }
+      runOnJS(tapChangePage)
     }
   });
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd((_event, success) => {
       if (success) {
-        if ((pageNumber - 1) >= 1) {
-          store.dispatch(pdfDataSlice.actions.decreasePageNumber())
-        } else if (images.length >= 1) {
-          store.dispatch(pdfDataSlice.actions.setPageNumber(images.length - 1))
-        }
+        runOnJS(doubleTapChangePage)
       }
   });
 
   const taps = Gesture.Exclusive(doubleTap, singleTap);
   
   const fling = Gesture.Fling().onEnd(() => {
-    if ((pageNumber + 1) < images.length) {
-      store.dispatch(pdfDataSlice.actions.increasePageNumber())
-    } else {
-      store.dispatch(pdfDataSlice.actions.setPageNumber(pageNumber - 1))
-    }
+    runOnJS(flingChangePage)
   })
 
   const compound = Gesture.Simultaneous(
@@ -67,7 +79,6 @@ export default function PDFView({width, height}:{width: number, height: number})
     if (pageNumber < images.length) {
       Image.getSize(images[pageNumber], (imageMeasureWidth, imageMeasureHeight) => {
         const heightPerWidth = imageMeasureHeight/imageMeasureWidth
-        console.log((width) * heightPerWidth)
         setImageHeight(width * heightPerWidth)
       })
     }
@@ -80,7 +91,7 @@ export default function PDFView({width, height}:{width: number, height: number})
       }
       { (pageNumber < images.length) ?
         <GestureDetector gesture={compound}>
-          <Image source={{uri: images[pageNumber]}} style={{width: width, height: height, borderRadius: 15}}/>
+          <Image source={{uri: images[pageNumber]}} style={{width: width, height: imageHeight, borderRadius: 15}}/>
         </GestureDetector>:null
       }
     </>

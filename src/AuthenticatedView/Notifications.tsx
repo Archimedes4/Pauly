@@ -18,6 +18,7 @@ import PDFView from '../UI/PDF/PDFView';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import BackButton from '../UI/BackButton';
 import MimeTypeIcon from '../UI/Icons/MimeTypeIcon';
+import { GraphAPILogo } from '../UI/Icons/Icons';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -121,8 +122,16 @@ export default function Notifications() {
           <Text style={{color: "#FFFFFF"}}>{message}</Text>
         </View>
       </View>
-      <WidgetView width={width * 0.9} height={height * 0.3}/>
-      <BoardBlock />
+      { (currentBreakPoint === 0) ?
+        <>
+          <WidgetView width={width * 0.9} height={height * 0.3}/>
+          <BoardBlock />
+        </>:
+        <View style={{flexDirection: "row", width: width * 0.9, marginLeft: width * 0.05}}>
+          <WidgetView width={width * 0.2} height={height * 0.3}/>
+          <BoardBlock />
+        </View>
+      }
       <TaskBlock />
       <InsightsBlock />
     </ScrollView>
@@ -334,12 +343,12 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
 }
 
 function BoardBlock() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {powerpointBlob, paulyDataState} = useSelector((state: RootState) => state.paulyData)
   return (
     <>
       { (paulyDataState === loadingStateEnum.loading) ?
-        <View style={{width: width * 0.9, height: height * 0.3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, height: height * 0.3, borderRadius: 15, marginTop:  height * 0.03, marginLeft: width * 0.05, marginRight: width * 0.05, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
           <ProgressView width={100} height={100}/>
           <Text>Loading</Text>
         </View>:
@@ -347,14 +356,16 @@ function BoardBlock() {
           { (paulyDataState === loadingStateEnum.success) ?
             <>
               { (powerpointBlob !== "") ?  
-                <PDFView width={width * 0.9}/>:
-                <View style={{width: width * 0.9, height: height * 0.3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, borderRadius: 15, marginTop: height * 0.03, marginLeft: width * 0.05, marginRight: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+                  <PDFView width={(currentBreakPoint === 0) ? width * 0.9:width * 0.7}/>
+                </View>:
+                <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, height: height * 0.3, marginTop: height * 0.03,  marginLeft: width * 0.05, marginRight: width * 0.05, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
                   <ProgressView width={100} height={100}/>
                   <Text>Loading</Text>
                 </View>
               }
             </>:
-            <View style={{width: width * 0.9, height: height * 0.3, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+            <View style={{width: width * 0.9, height: height * 0.3, marginTop:  height * 0.03, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
               <Text>Failed</Text>
             </View>
           }
@@ -371,21 +382,21 @@ function InsightsBlock() {
       { (currentBreakPoint <= 0) ?
         <>
           <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Recent Files</Text>
-          <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+          <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15, overflow: "scroll"}}>
             <TrendingFiles />
           </View>
           <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Popular Files</Text>
-          <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15, marginBottom: height * 0.05}}>
+          <View style={{marginLeft: width * 0.05, marginRight: width * 0.05, width: width * 0.9, height: height * 0.3, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15, marginBottom: height * 0.05, overflow: "scroll"}}>
             <PopularFiles />
           </View>
         </>:
         <>
           <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Files</Text>
           <View style={{width: width * 0.9, flexDirection: "row", marginLeft: "auto", marginRight: "auto", marginTop: height * 0.025, marginBottom: height * 0.025, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
-            <View style={{width: width * 0.45}}>
+            <View style={{width: width * 0.45, overflow: "scroll"}}>
               <TrendingFiles />
             </View>
-            <View style={{width: width * 0.45}}>
+            <View style={{width: width * 0.45, overflow: "visible"}}>
               <PopularFiles />
             </View>
           </View>

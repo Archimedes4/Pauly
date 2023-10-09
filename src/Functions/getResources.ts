@@ -68,9 +68,9 @@ export async function getResources(category?: resourceMode) {
                 for (var attachmentIndex = 0; attachmentIndex < resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"].length; attachmentIndex++) {
                   if (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["contentType"] === "reference") {
                     attachments.push({
-                      webUrl: '',
-                      id: '',
-                      title: '',
+                      webUrl: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["contentUrl"],
+                      id: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["id"],
+                      title: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["name"],
                       type: ''
                     })
                     

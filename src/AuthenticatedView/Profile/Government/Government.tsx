@@ -3,7 +3,7 @@ import React, { ReactNode, useCallback, useContext, useEffect, useState } from '
 import { Link, useNavigate } from 'react-router-native'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { BookIcon, CalendarIcon, GearIcon, GraduationHatIcon, HomeIcon, MedalIcon } from '../../../UI/Icons/Icons';
+import { BookIcon, CalendarIcon, GearIcon, GraduationHatIcon, GraphAPILogo, HomeIcon, MedalIcon } from '../../../UI/Icons/Icons';
 import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 
@@ -12,7 +12,7 @@ function Block({height, width, text, imageSource, children}:{height: number, wid
     <View style={{height: height, width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#444444", borderRadius: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 5}}>
       { (imageSource !== undefined) && <Image source={imageSource} style={{width: width * 0.5, height: height * 0.5}} resizeMode='center'/>}
       { (imageSource === undefined && children !== undefined) && <View style={{width: width * 0.5, height: height * 0.5}}><React.Fragment>{children}</React.Fragment></View> }
-      <Text>{text}</Text>
+      <Text style={{color: "white"}}>{text}</Text>
     </View>
   )
 }
@@ -57,7 +57,9 @@ export default function Government() {
       <View style={{height: height * 0.75, width: width, alignContent: "center", justifyContent: "center", alignItems: "center", marginTop: height * 0.05}}>
         <View style={{height: height * 0.75, width: mainWidth, flexDirection: "row", alignContent: "flex-start",  flexWrap: "wrap", rowGap: (height) * 0.05, columnGap: (width) * 0.05}}>
           <Link to="/profile/government/graph/list">
-            <Block width={100} height={100} text='Graph' imageSource={require('../../../../assets/images/GraphAPILogo.png')} />
+            <Block width={100} height={100} text='Graph'>
+              <GraphAPILogo width={50} height={50}/>
+            </Block>
           </Link>
           <Link to="/profile/government/commissions">
             <Block width={100} height={100} text='Commissions'>

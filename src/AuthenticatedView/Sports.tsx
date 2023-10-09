@@ -26,6 +26,7 @@ export default function Sports() {
   const [teamsState, setTeamsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [selectedSport, setSelectedSport] = useState<sportType | undefined>(undefined)
   const [selectedTeam, setSelectedTeam] = useState<sportTeamType | undefined>(undefined)
+  const [isShowingTeams, setIsShowingTeams] = useState<boolean>(false)
   const [sports, setSports] = useState<sportType[]>([])
   const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([])
   const dispatch = useDispatch()
@@ -85,15 +86,24 @@ export default function Sports() {
       <ScrollView style={{height: height * 0.1, width: width}} horizontal={true}>
         <View>
           {sports.map((sport) => (
-            <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport)}}>
-              <Text>{sport.name}</Text>
+            <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true)}} style={{backgroundColor:  "#444444", borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
+              <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>
+              { (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ?
+                <View>
+                  <Text style={{color: "white", marginBottom: 5}}>{selectedTeam?.teamName}</Text>
+                </View>:null
+              }
             </Pressable>
           ))}
-          {sportsTeams.map((team) => (
-            <View key={`SportTeam_${team.teamID}_${create_UUID()}`}>
-              <Text>{team.teamName}</Text>
-            </View>
-          ))}
+          { isShowingTeams ? 
+            <>
+            {sportsTeams.map((team) => (
+              <Pressable key={`SportTeam_${team.teamID}_${create_UUID()}`} onPress={() => {setSelectedTeam(team); setIsShowingTeams(false)}} style={{backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
+                <Text style={{margin: 5, color: "white"}}>{team.teamName}</Text>
+              </Pressable>
+            ))}
+            </>:null
+          }
         </View>
       </ScrollView>
       {(loadingResult === loadingStateEnum.loading) ?

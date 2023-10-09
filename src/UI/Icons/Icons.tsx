@@ -1,6 +1,6 @@
 import { View, Text, StyleProp, ViewStyle } from 'react-native'
 import React from 'react'
-import Svg, { Circle, Defs, G, LinearGradient, Path, Polygon, Rect, Shape, Stop, SvgProps } from 'react-native-svg'
+import Svg, { Circle, ClipPath, Defs, G, LinearGradient, Path, Polygon, Rect, Shape, Stop, SvgProps, Use } from 'react-native-svg'
 
 interface iconProps {
   width: number;
@@ -420,6 +420,30 @@ export function OneNoteIcon({width, height, style}:iconProps) {
             <Stop offset="1" stopColor="#621F9C"/>
           </LinearGradient>
         </Defs>
+      </G>
+    </Svg>
+  )
+}
+
+export function GraphAPILogo({width, height, style}:iconProps) {
+  return (
+    <Svg id="Layer_1" x="0px" y="0px" viewBox="0 0 48 48" width={width} height={height} style={style}>
+      <G>
+        <Defs>
+          <ClipPath id="SVGID_2_">
+            <Path id="SVGID_1_" d="M34.9,3.2H13.1c-0.7,0-1.4,0.4-1.8,1L0.5,23c-0.4,0.6-0.4,1.4,0,2.1l10.9,18.7c0.4,0.6,1.1,1,1.8,1h21.7c0.7,0,1.4-0.4,1.8-1L47.5,25c0.4-0.6,0.4-1.4,0-2.1L36.7,4.3C36.3,3.6,35.6,3.2,34.9,3.2z"/>
+          </ClipPath>
+        </Defs>
+        <Polygon fill='#28A8EA' clipPath='url(#SVGID_2_)' points="11.3,3.1 15.6,11.1 35.4,3.1"/>
+        <Polygon fill='#0078D4' clipPath='url(#SVGID_2_)' points="11.3,3.1 15.6,11.1 0.2,23.3 0.2,3.1"/>
+        <Polygon fill='#0364B8' clipPath='url(#SVGID_2_)' points="-0.8,24 15.6,11.1 16.5,37.1"/>
+        <Polygon fill='#14447D' clipPath='url(#SVGID_2_)' points="-0.8,24 16.5,37.1 11.5,44.8 0.2,45.2"/>
+        <Polygon fill='#0F335E' clipPath='url(#SVGID_2_)' points="11.5,44.8 16.5,37.1 36.2,45.2"/>
+        <Polygon fill='#0364B8' clipPath='url(#SVGID_2_)' points="16.5,37.1 36.7,24 36.2,45.2"/>
+        <Polygon fill='#28A8EA' clipPath='url(#SVGID_2_)' points="16.5,37.1 15.6,11.1 36.7,24"/>
+        <Polygon fill='#50D9FF' clipPath='url(#SVGID_2_)' points="15.6,11.1 36.2,2.8 36.7,24"/>
+        <Polygon fill='#28A8EA' clipPath='url(#SVGID_2_)' points="36.7,24 36.2,2.8 48.1,3.1 48.1,24"/>
+        <Polygon fill='#0078D4' clipPath='url(#SVGID_2_)' points="36.7,24 36.2,45.9 47.5,45.9 48.1,24"/>
       </G>
     </Svg>
   )
