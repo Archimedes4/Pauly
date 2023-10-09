@@ -6,7 +6,6 @@ import store, { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
 import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
 import { loadingStateEnum, semesters, taskImportanceEnum, taskStatusEnum } from '../types';
-import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import getUsersTasks from '../Functions/homepage/getUsersTasks';
 import ProgressView from '../UI/ProgressView';
@@ -70,10 +69,8 @@ export default function Notifications() {
               }))
               if (schedule !== undefined) {
                 const classResult = await getClassEvents(schedule.id, outputIds.semester, outputIds.schoolYearEventId, schoolDay, new Date(result.event.startTime))
-                console.log("Events", classResult)
                 if (classResult.result === loadingStateEnum.success && classResult.data !== undefined) {
                   if (classResult.data.length >= 1) {
-                    console.log(classResult.data[0].startTime)
                     const startTimeDate = new Date(classResult.data[0].startTime)
                     const hourTime = (((startTimeDate.getHours() % 12) + 1 <= 9) ? `0${((startTimeDate.getHours() % 12) + 1)}`:((startTimeDate.getHours() % 12) + 1))
                     const monthTime = (startTimeDate.getMinutes() <= 9) ? `0${startTimeDate.getMinutes()}`:startTimeDate.getMinutes().toString()

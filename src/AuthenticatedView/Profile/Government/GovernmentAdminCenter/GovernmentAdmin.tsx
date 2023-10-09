@@ -1,7 +1,7 @@
-import { View, Text, Button, Pressable, TextInput } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, Pressable, TextInput } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { loadingStateEnum } from '../../../../types';
-import { Link, useNavigate } from 'react-router-native';
+import { useNavigate } from 'react-router-native';
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import { initializePaulyPartOne, initializePaulyPartThree, initializePaulyPartTwo } from '../../../../Functions/initializePauly/initializePauly'
 import { useSelector } from 'react-redux';

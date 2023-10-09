@@ -45,6 +45,7 @@ export default function Commissions() {
   }
 
   async function loadCommissionData(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean) {
+    dispatch(commissionsSlice.actions.setCommissionsState(loadingStateEnum.loading))
     const result = await getCommissions(undefined, startDate, endDate, claimed)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       dispatch(commissionsSlice.actions.setCurrentCommissions(result.data))
@@ -154,11 +155,11 @@ export default function Commissions() {
   )
 }
 
-function PickerPiece({text, isHoverPicker, setIsHoverPicker}:{text: string, onPress: () => void, isHoverPicker: boolean, setIsHoverPicker: (item: boolean) => void}) {
+function PickerPiece({text, isHoverPicker, setIsHoverPicker, onPress}:{text: string, onPress: () => void, isHoverPicker: boolean, setIsHoverPicker: (item: boolean) => void}) {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const [isSelected, setIsSelected] = useState<boolean>(false)
   return (
-    <Pressable onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+    <Pressable onPress={() => {onPress(); console.log("Pressed")}} onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
       <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text style={{color: "white"}}>{text}</Text>
       </View>

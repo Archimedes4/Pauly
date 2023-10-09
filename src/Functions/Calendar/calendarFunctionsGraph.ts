@@ -70,8 +70,6 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields&$filter=fields/scheduleId%20eq%20'${id}'`)//TO DO fix site id
   if (result.ok) {
     const data = await result.json()
-    console.log(data)
-    console.log(JSON.parse(data["value"][0]["fields"]["scheduleData"]) as periodType[])
     if (data["value"].length !== undefined) {
       if (data["value"].length === 1) {
         const resultSchedule: scheduleType = {
@@ -180,8 +178,10 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
   var firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
   var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", true)
+  console.log(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`)
   if (result.ok) {
     const data = await result.json()
+    console.log(data)
     const scheduleIds = new Map<string, number>()
     const schoolYearIds = new Map<string, number>()
     for (var index = 0; index < data["value"].length; index++) {
@@ -262,6 +262,8 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
     }
     return {result: loadingStateEnum.success, data: schoolDaysResult, nextLink: data["@odata.nextLink"]}
   } else {
+    const data = await result.json()
+    console.log(data)
     return {result: loadingStateEnum.failed}
   }
 }

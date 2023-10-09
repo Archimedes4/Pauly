@@ -9,7 +9,6 @@ import store, { RootState } from '../src/Redux/store'
 import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
 import getUserProfile from '../src/Functions/Ultility/getUserProfile'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import {authorize} from "react-native-app-auth"
 
 import * as WebBrowser from 'expo-web-browser';
 import {
@@ -45,16 +44,19 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
     path: 'auth',
   });
 
-  const authRequest = new AuthRequest({
-    clientId: clientId,
-    redirectUri: redirectUri,
-    scopes: scopes,
-    prompt: Prompt.SelectAccount
-  })
+  const [authRequest, ,promptAsync] =  useAuthRequest(
+    {
+      clientId: clientId,
+      redirectUri: redirectUri,
+      scopes: scopes,
+      prompt: Prompt.SelectAccount
+    },
+    discovery
+  )
 
   async function getAuthToken() {
     if (discovery !== null){
-      authRequest.promptAsync(discovery).then(async (res) => {
+      promptAsync().then(async (res) => {
         if (authRequest && res?.type === 'success' && discovery) {
           exchangeCodeAsync(
             {
@@ -64,28 +66,39 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
                 ? { code_verifier: authRequest.codeVerifier }
                 : undefined,
               redirectUri,
+              scopes: scopes
             },
             discovery,
           ).then((res) => {
-            console.log("Done", res)
             dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
             getPaulyLists(res.accessToken)
             getUserProfile(res.accessToken)
-          });
+          })
       }})
     }
   }
 
   async function getGovernmentAuthToken() {
     if (discovery !== null){
-      authRequest.promptAsync(discovery).then(async (res) => {
+      promptAsync().then(async (res) => {
         if (authRequest && res?.type === 'success' && discovery) {
-          if (res.authentication !== null) {
-            dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.authentication.accessToken))
-            getPaulyLists(res.authentication.accessToken)
-            getUserProfile(res.authentication.accessToken)
+          exchangeCodeAsync(
+            {
+              clientId,
+              code: res.params.code,
+              extraParams: authRequest.codeVerifier
+                ? { code_verifier: authRequest.codeVerifier }
+                : undefined,
+              redirectUri,
+              scopes: scopes
+            },
+            discovery,
+          ).then((res) => {
+            dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
+            getPaulyLists(res.accessToken)
+            getUserProfile(res.accessToken)
             validateGovernmentMode()
-          }
+          })
       }})
     }
   }

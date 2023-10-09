@@ -15,30 +15,50 @@ import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 import ProgressView from '../UI/ProgressView'
 import { ResizeMode, Video } from 'expo-av';
 import BackButton from '../UI/BackButton'
+import create_UUID from '../Functions/Ultility/CreateUUID'
+import { getSports, getSportsTeams } from '../Functions/sports/sportsFunctions'
 
 export default function Sports() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {sportsApprovedSubmissionsListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([])
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [sportsState, setSportsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [teamsState, setTeamsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [selectedSport, setSelectedSport] = useState<sportType | undefined>(undefined)
+  const [selectedTeam, setSelectedTeam] = useState<sportTeamType | undefined>(undefined)
+  const [sports, setSports] = useState<sportType[]>([])
+  const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([])
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
-  }, [])
+  async function loadSports() {
+    const result = await getSports()
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setSports(result.data)
+    }
+    setSportsState(result.result)
+  }
+
+  async function loadTeams(sport: sportType) {
+    const result = await getSportsTeams(sport.id)
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setSportsTeams(result.data)
+    }
+    setTeamsState(result.result)
+  }
 
   async function loadSportsContent() {
     const result = await getSportsContent()
-    setLoadingResult(result.result)
-    console.log(result)
     if (result.result === loadingStateEnum.success && result.sports !== undefined) {
       setSportsPosts(result.sports)
     }
+    setLoadingResult(result.result)
   }
 
   useEffect(() => {
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
     loadSportsContent()
+    loadSports()
   }, [])
 
   const [fontsLoaded] = useFonts({
@@ -58,20 +78,34 @@ export default function Sports() {
     <View style={{height: height, width: width, backgroundColor: "white", overflow: "hidden"}}>
       <View style={{height: height * 0.1, width: width, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         { (currentBreakPoint <= 0) ?
-            <BackButton to='/'/>:null
+          <BackButton to='/'/>:null
         }
         <Text style={{fontFamily: "BukhariScript"}}>Sports</Text>
       </View>
+      <ScrollView style={{height: height * 0.1, width: width}} horizontal={true}>
+        <View>
+          {sports.map((sport) => (
+            <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport)}}>
+              <Text>{sport.name}</Text>
+            </Pressable>
+          ))}
+          {sportsTeams.map((team) => (
+            <View key={`SportTeam_${team.teamID}_${create_UUID()}`}>
+              <Text>{team.teamName}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
       {(loadingResult === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height * 0.7, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={(width < height) ? width * 0.25:height * 0.25} height={(width < height) ? width * 0.5:height * 0.5}/>
           <Text>Loading</Text>
         </View>:
         <> 
-          { (loadingResult === loadingStateEnum.success) ?
-            <ScrollView style={{height: height * 0.8}}>
+          {(loadingResult === loadingStateEnum.success) ?
+            <ScrollView style={{height: height * 0.7}}>
               { sportsPosts.map((item) => (
-                <View style={{marginTop: height * 0.05}}>
+                <View key={`Sport_${item.fileID}_${create_UUID()}`} style={{marginTop: height * 0.05}}>
                 { (item.fileType === dataContentTypeOptions.image) ?
                   <Image style={{width: width * 0.9, height: height * 0.4, marginLeft: width * 0.05, marginRight: width * 0.05}} source={{uri: item.fileID}}/>:null
                 }
@@ -88,9 +122,6 @@ export default function Sports() {
           }
         </>
       }
-      <ScrollView>
-        
-      </ScrollView>
     </View>
   )
 }

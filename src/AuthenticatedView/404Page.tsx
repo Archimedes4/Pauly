@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-native'
+import { useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../Redux/store'
 

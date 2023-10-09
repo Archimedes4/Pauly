@@ -16,6 +16,7 @@ import ProgressView from '../UI/ProgressView'
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer'
 import create_UUID from '../Functions/Ultility/CreateUUID'
 import callMsGraph from '../Functions/Ultility/microsoftAssets'
+import MimeTypeIcon from '../UI/Icons/MimeTypeIcon'
 
 //Resources
 // -> Sports
@@ -88,11 +89,27 @@ export default function Resources() {
                     {resources.map((resource) => (
                       <>
                         { isGovernmentMode ?
-                          <Pressable onPress={() => {setIsShowingCategoryView(true); setSelectedPost({teamId: resource.teamId, conversationId: resource.conversationId, messageId: resource.id})}} key={"Resource_"+resource.id+"_"+create_UUID()} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-                            <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
+                          <Pressable key={`Resource_${resource.id}_${create_UUID()}`} onPress={() => {setIsShowingCategoryView(true); setSelectedPost({teamId: resource.teamId, conversationId: resource.conversationId, messageId: resource.id})}} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                            { (resource.body !== "") ?
+                              <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>:null
+                            }
+                            {resource.attachments?.map((attachment) => (
+                              <View style={{flexDirection: "row"}}>
+                                <MimeTypeIcon width={14} height={14} mimeType={attachment.type}/>
+                                <Text>{attachment.title}</Text>
+                              </View>
+                            ))}
                           </Pressable>:
-                          <View key={"Resource_"+resource.id+"_"+create_UUID()} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-                            <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>
+                          <View key={`Resource_${resource.id}_${create_UUID()}`} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                            { (resource.body !== "") ?
+                              <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>:null
+                            }
+                            {resource.attachments?.map((attachment) => (
+                              <View style={{flexDirection: "row"}}>
+                                <MimeTypeIcon width={14} height={14} mimeType={attachment.type}/>
+                                <Text>{attachment.title}</Text>
+                              </View>
+                            ))}
                           </View>
                         }
                       </>

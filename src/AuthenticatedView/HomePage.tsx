@@ -1,9 +1,7 @@
-import { useEffect, useState, useContext, useCallback } from 'react';
-import { Dimensions, View, Text, Image, Pressable, Platform } from 'react-native';
+import { useEffect, useCallback } from 'react';
+import { View, Text, Image, Pressable } from 'react-native';
 import MonthView from './MonthView';
-import { Link, Navigate, useNavigate } from 'react-router-native';
-import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
-import callMsGraph from '../Functions/Ultility/microsoftAssets';
+import { useNavigate } from 'react-router-native';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
@@ -15,7 +13,6 @@ import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
 import { loadingStateEnum } from '../types';
 import ProgressView from '../UI/ProgressView';
 import React from 'react';
-import { platform } from 'process';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function HomePage() {

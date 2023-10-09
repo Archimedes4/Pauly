@@ -35,25 +35,27 @@ Commands to setup Azure services
 https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-create
 
 ```
-    az ad app create --display-name Pauly   
+  az ad app create --display-name Pauly   
 ```
 
 https://learn.microsoft.com/en-us/cli/azure/ad/signed-in-user?view=azure-cli-latest
 ```
-    az ad signed-in-user show
+  az ad signed-in-user show
 ```
 
 https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#az-ad-app-owner-add
 
 ```
-    az ad app owner add --id {app id} --owner-object-id {user id}
+  az ad app owner add --id {app id} --owner-object-id {user id}
 ```
 
 https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update 
 update azure ad app
 ```
-    az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['exp://172.20.10.3:8081/--/auth', 'http://localhost:19006/auth']}}"
+  az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['http://localhost:19006/auth']},publicClientApplication: {redirectUris: ['Pauly://auth']}}"
 ```
+
+
 ### Extensions
 > **NOTE**
 > Extensions are automatically setup in the initialization process

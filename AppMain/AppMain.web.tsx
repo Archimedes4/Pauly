@@ -87,9 +87,21 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
           
         }
       }
-    }).catch(err=>{
+    }).catch(async err=>{
       // TODO: Handle errors
-      console.log(err);
+      try {
+        const result = await instance.acquireTokenSilent({
+          scopes: scopes
+        })
+        dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
+        if (await getWantGovernment()) {
+          validateGovernmentMode()
+        }
+        getPaulyLists(result.accessToken)
+        getUserProfile(result.accessToken)
+      } catch (e) {
+
+      }
     });
   }
 

@@ -34,6 +34,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
   const [takeImageState, setTakeImageState] = useState<CameraResult>(CameraResult.notStarted)
   const [pickImageState, setPickerImageState] = useState<CameraResult>(CameraResult.notStarted)
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
+  const [evaluatedOverflow, setEvaluatedOverflow] = useState<boolean>(false)
   const [imageHeight, setImageHeight] = useState<number>(0)
 
   async function getPost(teamId: string, channelId: string, messageId: string) {
@@ -158,10 +159,11 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                 <View onLayout={(e) => {
                   if (e.nativeEvent.layout.height >= height * 0.6) {
                     setIsOverflowing(true)
-                    console.log("True")
+                    setEvaluatedOverflow(true)
                   } else {
-                    setIsOverflowing(false)
-                    console.log("False")
+                    if (!evaluatedOverflow) {
+                      setIsOverflowing(false)
+                    }
                   }
                 }}>
                   <View style={{flexDirection: "row", margin: 10, backgroundColor: "#793033", borderRadius: 15, shadowOffset: { width: 2, height: 3 }}}>

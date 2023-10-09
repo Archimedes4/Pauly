@@ -21,9 +21,21 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
     body: body
   };
 
-  //console.log("THis is result for", url, "Auth:", `Bearer ${(authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken}`)
+  var outUrl = url
 
-  const response  = await fetch(url, options)
+  if (Platform.OS !== "web") {
+    const urlArray = url.split("%20")
+    outUrl = ""
+    for (var index = 0; index < urlArray.length; index++) {
+      if (index !== 0) {
+        outUrl += " "+urlArray[index]
+      } else {
+        outUrl += urlArray[index]
+      }
+    }
+  }
+
+  const response  = await fetch(outUrl, options)
   if (response.status === 401) {
     if (secondAuth === undefined){
       // var secondResultOut: Response | null = null

@@ -2,6 +2,7 @@ import { useSelector } from "react-redux"
 import { RootState } from "../../../../../Redux/store"
 import { Pressable, View, Text, TextInput } from "react-native"
 import { CloseIcon, DownIcon, UpIcon, WarningIcon } from "../../../../../UI/Icons/Icons"
+import React from "react"
 
 export default function DressCodeBlock({dressCode, index, dressCodeData, setDressCodeData, selectedDressCodeId, setSelectedDressCodeId}:{dressCode: dressCodeDataType, index: number, dressCodeData: dressCodeDataType[], setDressCodeData: (item: dressCodeDataType[]) => void, selectedDressCodeId: string, setSelectedDressCodeId: (item: string) => void}) {
     const {width, height} = useSelector((state: RootState) => state.dimentions)
