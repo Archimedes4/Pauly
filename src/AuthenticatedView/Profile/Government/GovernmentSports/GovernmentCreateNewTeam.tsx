@@ -59,11 +59,11 @@ export default function GovernmentCreateNewTeam() {
   }
 
   return (
-    <View style={{width: width, height: height}}>
+    <View style={{width: width, height: height, backgroundColor: "white"}}>
       <Link to={"/profile/government/sports/team/" + sport + "/" + id}>
         <Text>Back</Text>
       </Link>
-      <Text>Government Create a new {sport} Team</Text>
+      <Text>Create a new {sport} team</Text>
       <Text>Team Name</Text>
       <TextInput
         value={teamName}

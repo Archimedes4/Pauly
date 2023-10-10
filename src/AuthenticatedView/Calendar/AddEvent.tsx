@@ -195,15 +195,23 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
       }
       <Text>{(selectedEventType === paulyEventType.schoolDay) ? "":"Start "}Date</Text>
       <View style={{flexDirection: "row"}}>
-        <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true)); console.log("Pressed")}}>
+        <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true)); console.log("Pressed")}} style={{margin: 5}}>
           <View style={{flexDirection: "row"}}>
             <Text>{new Date(startDate).toLocaleString("en-us", { month: "long" })} {new Date(startDate).getDate()} {new Date(startDate).getFullYear()}</Text>
-            <CalendarIcon width={14} height={14}/>
+            <CalendarIcon width={24} height={14}/>
           </View>
         </Pressable>
         { allDay ?
-          null:<TimePicker selectedHourMilitary={new Date(startDate).getHours()} selectedMinuteMilitary={new Date(startDate).getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = new Date(startDate); newDate.setHours(e); dispatch(addEventSlice.actions.setStartDate(newDate.toISOString()))}} onSetSelectedMinuteMilitary={(e) => {
-            var newDate = new Date(startDate); newDate.setMinutes(e); dispatch(addEventSlice.actions.setStartDate(newDate.toISOString()))}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
+          null:
+          <View style={{margin: 5}}>
+            <TimePicker
+              selectedHourMilitary={new Date(startDate).getHours()}
+              selectedMinuteMilitary={new Date(startDate).getMinutes()}
+              onSetSelectedHourMilitary={(e) => {var newDate = new Date(startDate); newDate.setHours(e); dispatch(addEventSlice.actions.setStartDate(newDate.toISOString()))}}
+              onSetSelectedMinuteMilitary={(e) => {var newDate = new Date(startDate); newDate.setMinutes(e); dispatch(addEventSlice.actions.setStartDate(newDate.toISOString()))}}
+              dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}
+            />
+          </View>
         }
       </View>
       { (selectedEventType === paulyEventType.schoolDay) ?
@@ -214,11 +222,20 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
             <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingEndDate(true))}} style={{margin: 5}}>
               <View style={{flexDirection: "row"}}>
                 <Text>{new Date(endDate).toLocaleString("en-us", { month: "long" })} {new Date(endDate).getDate()} {new Date(endDate).getFullYear()}</Text>
-                <CalendarIcon width={14} height={14}/>
+                <CalendarIcon width={24} height={14}/>
               </View>
             </Pressable>
             { allDay ?
-              null:<TimePicker selectedHourMilitary={new Date(endDate).getHours()} selectedMinuteMilitary={new Date(endDate).getMinutes()} onSetSelectedHourMilitary={(e) => {var newDate = new Date(endDate); newDate.setHours(e); dispatch(addEventSlice.actions.setEndDate(newDate.toISOString()))}} onSetSelectedMinuteMilitary={(e) => {var newDate = new Date(endDate); newDate.setMinutes(e); dispatch(addEventSlice.actions.setEndDate(newDate.toISOString()))}} dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}/>
+              null:
+              <View style={{margin: 5}}>
+                <TimePicker
+                  selectedHourMilitary={new Date(endDate).getHours()}
+                  selectedMinuteMilitary={new Date(endDate).getMinutes()}
+                  onSetSelectedHourMilitary={(e) => {var newDate = new Date(endDate); newDate.setHours(e); dispatch(addEventSlice.actions.setEndDate(newDate.toISOString()))}}
+                  onSetSelectedMinuteMilitary={(e) => {var newDate = new Date(endDate); newDate.setMinutes(e); dispatch(addEventSlice.actions.setEndDate(newDate.toISOString()))}}
+                  dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}
+                />
+              </View>
             }
           </View>
         </View>

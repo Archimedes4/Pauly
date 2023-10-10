@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle } from 'react-native'
+import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle, Linking } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { getResources, getResourcesSearch } from '../Functions/getResources'
@@ -24,6 +24,20 @@ import MimeTypeIcon from '../UI/Icons/MimeTypeIcon'
 // -> Schedule Annoucments
 // -> School Events
 // -> Annoucments
+
+function checkIfResourceDataJustAttachment(body: string): boolean {
+  if (body.length == 67) {
+    const start = body.slice(0, 15)
+    const end = body.slice(53, 67)
+    if (start === "<attachment id=" && end === "></attachment>") {
+      return false
+    } else {
+      return true
+    }
+  } else {
+    return true
+  }
+}
 
 export default function Resources() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -90,26 +104,34 @@ export default function Resources() {
                       <>
                         { isGovernmentMode ?
                           <Pressable key={`Resource_${resource.id}_${create_UUID()}`} onPress={() => {setIsShowingCategoryView(true); setSelectedPost({teamId: resource.teamId, conversationId: resource.conversationId, messageId: resource.id})}} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-                            { (resource.body !== "") ?
+                            { (resource.body !== "" && checkIfResourceDataJustAttachment(resource.body)) ?
                               <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>:null
                             }
-                            {resource.attachments?.map((attachment) => (
-                              <View style={{flexDirection: "row"}}>
-                                <MimeTypeIcon width={14} height={14} mimeType={attachment.type}/>
-                                <Text>{attachment.title}</Text>
-                              </View>
-                            ))}
+                            { (resource.attachments !== undefined) ?
+                              <View style={{marginLeft: 10, marginBottom: 10, marginRight: 10, marginTop: (resource.body === "" || !checkIfResourceDataJustAttachment(resource.body)) ? 10:0, overflow: "scroll"}}>
+                                {resource.attachments.map((attachment) => (
+                                  <Pressable style={{flexDirection: "row"}} onPress={() => {Linking.openURL(attachment.webUrl)}}>
+                                    <MimeTypeIcon width={14} height={14} mimeType={attachment.type}/>
+                                    <Text>{attachment.title}</Text>
+                                  </Pressable>
+                                ))}
+                              </View>:null
+                            }
                           </Pressable>:
                           <View key={`Resource_${resource.id}_${create_UUID()}`} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
-                            { (resource.body !== "") ?
+                            { (resource.body !== "" && checkIfResourceDataJustAttachment(resource.body)) ?
                               <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>:null
                             }
-                            {resource.attachments?.map((attachment) => (
-                              <View style={{flexDirection: "row"}}>
-                                <MimeTypeIcon width={14} height={14} mimeType={attachment.type}/>
-                                <Text>{attachment.title}</Text>
-                              </View>
-                            ))}
+                            { (resource.attachments !== undefined) ?
+                              <View style={{marginLeft: 10, marginBottom: 10, marginRight: 10, marginTop: (resource.body === "" || !checkIfResourceDataJustAttachment(resource.body)) ? 10:0, overflow: "scroll"}}>
+                                {resource.attachments.map((attachment) => (
+                                  <Pressable style={{flexDirection: "row"}} onPress={() => {Linking.openURL(attachment.webUrl)}}>
+                                    <MimeTypeIcon width={14} height={14} mimeType={attachment.type}/>
+                                    <Text>{attachment.title}</Text>
+                                  </Pressable>
+                                ))}
+                              </View>:null
+                            }
                           </View>
                         }
                       </>
@@ -199,7 +221,7 @@ function PickerPiece({text, item, isHoverPicker, setIsHoverPicker}:{text: string
   const dispatch = useDispatch()
   return (
     <Pressable onPress={() => {dispatch(resourcesSlice.actions.setSelectedResourceMode(item))}} onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF"}}>
-      <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: (item !== selectedResourceMode) ? "#444444":"blue", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+      <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: "#444444", borderWidth: (item !== selectedResourceMode) ? 0:2, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text style={{color: "white"}}>{text}</Text>
       </View>
     </Pressable>

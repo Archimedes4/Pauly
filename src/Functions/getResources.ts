@@ -67,13 +67,20 @@ export async function getResources(category?: resourceMode) {
                 var attachments: resourceType[] = []
                 for (var attachmentIndex = 0; attachmentIndex < resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"].length; attachmentIndex++) {
                   if (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["contentType"] === "reference") {
-                    attachments.push({
-                      webUrl: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["contentUrl"],
-                      id: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["id"],
-                      title: resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["name"],
-                      type: ''
-                    })
-                    
+                    const attachmentResult = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["channelIdentity"]["teamId"]}/channels/${resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["channelIdentity"]["channelId"]}/filesFolder`)
+                    if (attachmentResult.ok) {
+                      const attachmentData = await attachmentResult.json()
+                      const attachmentGetResult = await callMsGraph(`https://graph.microsoft.com/v1.0/drives/${attachmentData["parentReference"]["driveId"]}/items/${resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["id"]}`)
+                      if (attachmentGetResult.ok) {
+                        const attachmentGetResultData = await attachmentGetResult.json()
+                        attachments.push({
+                          webUrl: attachmentGetResultData["webUrl"],
+                          id: attachmentGetResultData["id"],
+                          title: attachmentGetResultData["name"],
+                          type: attachmentGetResultData["file"]["mimeType"]
+                        })
+                      }
+                    }
                   }
                 }
                 const outputData: resourceDataType = {
@@ -88,7 +95,6 @@ export async function getResources(category?: resourceMode) {
               }
             }
           } else {
-            console.log("Failed")
             store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
             return
           }
