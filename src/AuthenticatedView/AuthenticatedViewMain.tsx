@@ -12,7 +12,6 @@ import Sports from './Sports';
 import Calendar from './Calendar/Calendar';
 import GovernmentSports from './Profile/Government/GovernmentSports/GovernmentSports';
 import GovernmentCreateNewSport from './Profile/Government/GovernmentSports/GovernmentCreateNewSport';
-import GovernmentCreateNewTeam from './Profile/Government/GovernmentSports/GovernmentCreateNewTeam';
 import GovernmentSportsTeams from './Profile/Government/GovernmentSports/GovernmentSportsTeams';
 import GovernmentSportTeamEdit from './Profile/Government/GovernmentSports/GovernmentSportTeamEdit';
 import GovernmentSportsTeamAddPost from './Profile/Government/GovernmentSports/GovernmentSportsTeamAddPost';
@@ -95,9 +94,8 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path="/profile/government/sports" element={<GovernmentSports/>}/>
                   <Route path="/profile/government/sports/create" element={<GovernmentCreateNewSport/>}/>
                   <Route path="/profile/government/sports/team/:sport/:id" element={<GovernmentSportsTeams/>}/>
-                  <Route path="/profile/government/sports/team/:sport/:id/create/" element={<GovernmentCreateNewTeam/>}/>
-                  <Route path="/profile/government/sports/team/edit/:sport/:id/:team/:teamId/:season" element={<GovernmentSportTeamEdit />} />
-                  <Route path="/profile/government/sports/post/:sport/:id/:team/:teamId/:season" element={<GovernmentSportsTeamAddPost />} />
+                  <Route path="/profile/government/sports/team/:sport/:id/:teamId" element={<GovernmentSportTeamEdit />} />
+                  <Route path="/profile/government/sports/post/create" element={<GovernmentSportsTeamAddPost />} />
                   <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
                   <Route path="*" element={<PageNotFound />} />
                   {/* TO DO remove went development complete and move to production */}

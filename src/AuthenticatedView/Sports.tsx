@@ -45,7 +45,7 @@ export default function Sports() {
   }
 
   async function loadSportsContent() {
-    const result = await getSportsContent()
+    const result = await getSportsContent(selectedTeam?.teamID)
     if (result.result === loadingStateEnum.success && result.sports !== undefined) {
       setSportsPosts(result.sports)
     }
@@ -54,9 +54,12 @@ export default function Sports() {
 
   useEffect(() => {
     dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
-    loadSportsContent()
     loadSports()
   }, [])
+
+  useEffect(() => {
+    loadSportsContent()
+  }, [selectedTeam])
 
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),
@@ -82,6 +85,9 @@ export default function Sports() {
       <ScrollView style={{height: height * 0.1, width: width}} horizontal={true}>
         <View>
           <View style={{flexDirection: "row"}}>
+            <Pressable style={{backgroundColor:  "#444444", borderWidth: (selectedSport === undefined) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}} onPress={() => {setSelectedTeam(undefined); setSelectedSport(undefined)}}>
+              <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: isShowingTeams ? 5:10}}>{"Highlights"}</Text>
+            </Pressable>
             {sports.map((sport) => (
               <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true)}} style={{backgroundColor:  "#444444", borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
                 <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>

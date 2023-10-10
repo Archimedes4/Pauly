@@ -128,8 +128,10 @@ export default function Notifications() {
           <BoardBlock />
         </>:
         <View style={{flexDirection: "row", width: width * 0.9, marginLeft: width * 0.05}}>
-          <WidgetView width={width * 0.2} height={height * 0.3}/>
           <BoardBlock />
+          <View style={{marginTop: height * 0.03}}>
+            <WidgetView width={width * 0.2} height={height * 0.2}/>
+          </View>
         </View>
       }
       <TaskBlock />
@@ -139,10 +141,11 @@ export default function Notifications() {
 }
 
 function WidgetView({width, height}:{width: number, height: number}) {
+  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {schoolDayData, startTime} = useSelector((state: RootState) => state.homepageData)
   const dow: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   return (
-    <View style={{backgroundColor: "#793033", width: width, height: height, borderRadius: 15, marginLeft: width * 0.05}}>
+    <View style={{backgroundColor: "#793033", width: width, height: height, borderRadius: 15, marginLeft: (currentBreakPoint === 0) ? width * 0.05:0}}>
       <View style={{width: width, height: height/3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text style={{color: "white", fontSize: height/6}}>{dow[new Date().getDay()]}</Text>
       </View>
@@ -334,7 +337,9 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
               dispatch(homepageDataSlice.actions.updateUserTask({task: newTask, index: index}))
               setCurrentText(e)
             }}
-            style={{width: width * 0.9 - 35}}
+            multiline={true}
+            numberOfLines={1}
+            style={{width: width * 0.9 - 40}}
           />
         </View>
       </View>
@@ -348,7 +353,7 @@ function BoardBlock() {
   return (
     <>
       { (paulyDataState === loadingStateEnum.loading) ?
-        <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, height: height * 0.3, borderRadius: 15, marginTop:  height * 0.03, marginLeft: width * 0.05, marginRight: width * 0.05, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+        <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, height: height * 0.3, borderRadius: 15, marginTop:  height * 0.03, marginLeft: (currentBreakPoint === 0) ? width * 0.05:0, marginRight: width * 0.05, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
           <ProgressView width={100} height={100}/>
           <Text>Loading</Text>
         </View>:
@@ -356,16 +361,16 @@ function BoardBlock() {
           { (paulyDataState === loadingStateEnum.success) ?
             <>
               { (powerpointBlob !== "") ?  
-                <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, borderRadius: 15, marginTop: height * 0.03, marginLeft: width * 0.05, marginRight: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+                <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, borderRadius: 15, marginTop: height * 0.03, marginLeft: (currentBreakPoint === 0) ? width * 0.05:0, marginRight: (currentBreakPoint === 0) ? width * 0.05:width * 0.03, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
                   <PDFView width={(currentBreakPoint === 0) ? width * 0.9:width * 0.7}/>
                 </View>:
-                <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, height: height * 0.3, marginTop: height * 0.03,  marginLeft: width * 0.05, marginRight: width * 0.05, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+                <View style={{width: (currentBreakPoint === 0) ? width * 0.9:width * 0.7, height: height * 0.3, marginTop: height * 0.03,  marginLeft: (currentBreakPoint === 0) ? width * 0.05:0, marginRight: (currentBreakPoint === 0) ? width * 0.05:width * 0.03, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
                   <ProgressView width={100} height={100}/>
                   <Text>Loading</Text>
                 </View>
               }
             </>:
-            <View style={{width: width * 0.9, height: height * 0.3, marginTop:  height * 0.03, marginLeft: width * 0.05, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+            <View style={{width: width * 0.9, height: height * 0.3, marginTop:  height * 0.03, marginLeft: (currentBreakPoint === 0) ? width * 0.05:0, backgroundColor: "#FFFFFF", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
               <Text>Failed</Text>
             </View>
           }

@@ -23,6 +23,7 @@ export default function DayView({width, height}:{width: number, height: number})
   const [hourLength, setHourLength] = useState<number>(0)
   const hoursText: string[] = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM","10PM", "11PM"]
   const mainScrollRef = useRef<ScrollView>(null)
+  const [eventsPane, setEventsPane] = useState<number[][]>([[]])//This is a sorted 2d array for calculating the horizintal shift of an event
 
   function setCurrentTimeFunction(hour: number, minuite: number){
     if (minuite.toString().length == 1) {
@@ -102,7 +103,7 @@ export default function DayView({width, height}:{width: number, height: number})
       {currentEvents.map((event) => (
         <>
           { (event.allDay || new Date(event.endTime).getFullYear() !== new Date(selectedDate).getFullYear() || new Date(event.endTime).getMonth() !== new Date(selectedDate).getMonth() || new Date(event.endTime).getDate() !== new Date(selectedDate).getDate()) ?
-            null:<EventBlock event={event} width={width} height={height} />
+            null:<EventBlock event={event} width={width} height={height} eventPane={eventsPane} setEventPane={setEventsPane} />
           }
         </>
       ))}
@@ -116,9 +117,69 @@ export default function DayView({width, height}:{width: number, height: number})
   )
 }
 
-function EventBlock({event, width, height}:{event: eventType, width: number, height: number}) {
+function EventBlock({event, width, height, eventPane, setEventPane}:{event: eventType, width: number, height: number, eventPane: number[][], setEventPane: (item: number[][]) => void}) {
   const EventHeight = computeEventHeight(new Date(event.startTime), new Date(event.endTime), height)
   const Offset = findTimeOffset(new Date(event.startTime), height)
+  function calculateHorizontalShift() {
+    var handeled = false
+    for (var horizontalCheck = 0; horizontalCheck < eventPane.length; horizontalCheck++) {
+      const beforeIndex = eventPane[horizontalCheck].findIndex((e) => e >= Offset)
+      if (beforeIndex !== -1) {
+        if ((beforeIndex - 1) < eventPane[horizontalCheck].length) {
+          if (eventPane[horizontalCheck][beforeIndex - 1] <= Offset) {
+            //Fail Check Next Hoizontal Array
+            continue
+          } else {
+            //Everything Checks Out
+            const afterIndex = eventPane[horizontalCheck].findIndex((e) => e >= (Offset + EventHeight))
+            if (afterIndex !== -1) {
+              if ((afterIndex - 1) < eventPane[horizontalCheck].length) {
+                if (eventPane[horizontalCheck][afterIndex - 1] <= (Offset + EventHeight)) {
+                  //Fails check next horizontal array
+                  continue
+                } else {
+                  //All Good
+                  eventPane[horizontalCheck].push(Offset)
+                  eventPane[horizontalCheck].push(Offset + EventHeight)
+                  eventPane[horizontalCheck].sort()
+                  handeled = true
+                  break
+                }
+              } else {
+                //Error
+                continue
+              }
+            } else {
+              //All Good
+              var newEvents: number[][] = eventPane
+              newEvents[horizontalCheck].push(Offset)
+              newEvents[horizontalCheck].push(Offset + EventHeight)
+              // [...eventPane[horizontalCheck], Offset, Offset + EventHeight])
+              eventPane[horizontalCheck].sort()
+              handeled = true
+              break
+            }
+          }
+        } else {
+          //Error
+          continue
+        }
+      } else {
+        eventPane[horizontalCheck].push(Offset)
+        eventPane[horizontalCheck].push(Offset + EventHeight)
+        eventPane[horizontalCheck].sort()
+        break
+      }  
+    }
+    if (!handeled) {
+      eventPane.push([])
+      eventPane[eventPane.length-1].push(Offset)
+      eventPane[eventPane.length-1].push(Offset + EventHeight)
+    }
+  }
+
+
+
   return (
     <View key={"Event_"+create_UUID()} style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0}}>
       <View style={{width: width * 0.9, height: EventHeight, position: "absolute", backgroundColor: event.eventColor, opacity: 0.3, zIndex: -1}}/>

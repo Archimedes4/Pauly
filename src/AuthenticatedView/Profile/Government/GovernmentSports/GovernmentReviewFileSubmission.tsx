@@ -83,6 +83,7 @@ export default function GovernmentReviewFileSubmission() {
                 "Title": currentSubmissionInfomration.Title,
                 "fileId": currentSubmissionInfomration.fileId,
                 "caption": currentSubmissionInfomration.Title,
+                "submissionId": currentSubmissionInfomration.submissionId,
                 "selectedSportId": currentSubmissionInfomration.selectedSportId,
                 "selectedTeamId": currentSubmissionInfomration.selectedTeamId
               }

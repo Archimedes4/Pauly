@@ -1,21 +1,17 @@
-import { View, Text, Dimensions, Pressable, TextInput, Switch, ScrollView, useWindowDimensions } from 'react-native'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-native'
+import { View, Text, Pressable, ScrollView, useWindowDimensions } from 'react-native'
+import React, { useCallback, useEffect } from 'react'
 import { findFirstDayinMonth } from '../../Functions/calendar/calendarFunctions';
 import create_UUID from '../../Functions/Ultility/CreateUUID';
 import DayView from "./DayView"
 import Week from './Week';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { orgWideGroupID } from '../../PaulyConfig';
 import AddEvent from './AddEvent';
 import CalendarTypePicker from '../../UI/CalendarTypePicker';
 import { AddIcon, ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
-import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
-import { useMsal } from '@azure/msal-react';
 import { calendarMode, loadingStateEnum } from '../../types';
 import getEvents from '../../Functions/calendar/getEvents';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
@@ -66,20 +62,7 @@ export default function Calendar() {
         { (currentBreakPoint >= 1) ?
           null:<BackButton to='/' style={{zIndex: 100}}/>
         } 
-        <View style={{flexDirection: "row", alignItems: "center", height: height * 0.1, width: width}}>
-          <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontFamily: "BukhariScript", fontSize: (width < 756) ? (height * 0.04):(height * 0.08), width: width * 0.4, height: height * 0.1, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017), textAlign: "center", verticalAlign: "middle", alignContent: "center", justifyContent: "center", alignItems: "center"}}>Calendar</Text>
-          <CalendarTypePicker width={width * 0.5} height={((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.08}/>
-          <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(true)); dispatch(addEventSlice.actions.setIsEditing(false)); dispatch(addEventSlice.actions.setSelectedEvent(undefined))}} style={{
-            height: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.08,
-            width: ((width * 0.1) < (height * 0.1)) ? width * 0.1:height * 0.08,
-            alignItems: "center", alignContent: "center", justifyContent: "center",
-            borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1,
-            marginLeft: width * 0.005,
-            marginRight: width * 0.005
-          }}>
-            <AddIcon width={((width * 0.1) < (height * 0.1)) ? width * 0.05:height * 0.04} height={((width * 0.1) < (height * 0.1)) ? width * 0.05:height * 0.04}/>
-          </Pressable>
-        </View>
+        <TopView width={width} height={height * 0.1} />
       </View> 
       <View style={{height: height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
@@ -158,17 +141,23 @@ function MonthView({width, height}:{width: number, height: number}) {
     for (let index = 0; index < 42; index++) {
       if (index >= firstDayWeek && (index - firstDayWeek) < (lastDay.getDate())){
         //In the current month
-        var events: eventType[] = []
-        const check: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1))
+        var events: eventType[] = [] //The result events of that day
+        
+        //Check is the current date
+        const checkStart: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1), 0, 0)
+        const checkEnd: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 2), 0, 0)
         for (var indexEvent = 0; indexEvent < currentEvents.length; indexEvent++) {
-          const event: eventType = currentEvents[indexEvent]
-          const startTimeDate = new Date(event.startTime)
-          const endTimeDate = new Date(event.endTime)
-          if (check >= startTimeDate && check <= endTimeDate) {
-            //Event is on the date
-            if (check.getTime() !== new Date(event.endTime).getTime()) {
-              events.push(event)
-            }
+          const event: eventType = currentEvents[indexEvent] //Event to be checked
+         
+          const startTimeDate = new Date(event.startTime) //String to date
+          const endTimeDate = new Date(event.endTime)//String to date
+
+          //First check if starts before date and ends after or on day
+          if (startTimeDate <= checkStart && endTimeDate >= checkStart) {
+            events.push(event)
+          } else if (startTimeDate >= checkStart && startTimeDate <= checkEnd) {
+            //Second check if starts on day
+            events.push(event)
           }
         }
         monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID(), events: events})
@@ -180,6 +169,7 @@ function MonthView({width, height}:{width: number, height: number}) {
   }
 
   useEffect(() => {
+    console.log("Looking")
     getMonthData(new Date(selectedDate))
   }, [selectedDate, currentEvents])
 
@@ -189,9 +179,9 @@ function MonthView({width, height}:{width: number, height: number}) {
 
   return (
     <>
-      <View style={{height: height/8, width: width, justifyContent: "center", alignItems: "center", alignContent: "center"}}>
+      <View style={{height: height/8, width: width, justifyContent: "center", alignContent: "center"}}>
         <View style={{flexDirection: "row"}}>
-          <View style={{width: width * 0.6, flexDirection: "row"}}>
+          <View style={{width: width * 0.6, flexDirection: "row", marginRight: "auto"}}>
             <Text numberOfLines={1} adjustsFontSizeToFit style={{fontSize: 30}}>{new Date(selectedDate).toLocaleString("en-us", { month: "long" })} {new Date(selectedDate).getFullYear()}</Text>
           </View>
           <View>
@@ -254,19 +244,6 @@ function MonthView({width, height}:{width: number, height: number}) {
             </View>
           ))}
       </View>
-      { (width <= 519) ?
-        <ScrollView>
-          { ((new Date(selectedDate).getDate() - 1) <= monthData.length) ?
-            <>
-              {monthData[new Date(selectedDate).getDate() - 1].events.map((event) => (
-                <View>
-                  <Text>{event.name}</Text>
-                </View>
-              ))}
-            </>:null
-          }
-        </ScrollView>:null
-      }
     </>
   )
 }
@@ -279,7 +256,7 @@ function CalendarCardView({value, width, height, calendarWidth}:{value: monthDat
       { (calendarWidth <= 519) ?
         <>
           { (value.showing) ?
-            <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+            <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: (value.dayData === new Date(selectedDate).getDate()) ? height/2:0, backgroundColor: (value.dayData === new Date(selectedDate).getDate()) ? "#ededed":"white"}}>
               <Text style={{color: "black"}}>{value.dayData}</Text>
               { (value.events.length >= 1) ?
                 <View style={{backgroundColor: "black", borderRadius: 50, width: (width < height) ? width* 0.25:height * 0.25, height: (width < height) ? width* 0.25:height * 0.25}}/>:
@@ -307,5 +284,25 @@ function CalendarCardView({value, width, height, calendarWidth}:{value: monthDat
         </>
       }
     </>
+  )
+}
+
+function TopView({width, height}:{width: number, height: number}) {
+  const dispatch = useDispatch()
+  return (
+    <View style={{flexDirection: "row", alignItems: "center", height: height, width: width}}>
+      <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontFamily: "BukhariScript", fontSize: (width < 756) ? (height * 0.4):(height * 0.8), width: width * 0.4, height: height, color: "white", marginLeft: width * 0.05, marginRight: (width * 0.00316227766017) * (width * 0.0316227766017), textAlign: "center", verticalAlign: "middle", alignContent: "center", justifyContent: "center", alignItems: "center"}}>Calendar</Text>
+      <CalendarTypePicker width={width * 0.5} height={((width * 0.1) < (height)) ? width * 0.1:height * 0.8}/>
+      <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(true)); dispatch(addEventSlice.actions.setIsEditing(false)); dispatch(addEventSlice.actions.setSelectedEvent(undefined))}} style={{
+        height: ((width * 0.1) < (height)) ? width * 0.1:height * 0.8,
+        width: ((width * 0.1) < (height)) ? width * 0.1:height * 0.8,
+        alignItems: "center", alignContent: "center", justifyContent: "center",
+        borderRadius: 50, backgroundColor: "#7d7d7d", shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 1,
+        marginLeft: width * 0.005,
+        marginRight: width * 0.005
+      }}>
+        <AddIcon width={((width * 0.1) < (height)) ? width * 0.05:height * 0.4} height={((width * 0.1) < (height)) ? width * 0.05:height * 0.4}/>
+      </Pressable>
+    </View>  
   )
 }

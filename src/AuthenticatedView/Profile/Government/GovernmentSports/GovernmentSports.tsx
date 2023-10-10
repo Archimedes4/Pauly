@@ -65,7 +65,7 @@ export default function GovernmentSports() {
         <Pressable onPress={() => navigate("/profile/government/sports/create")}>
           <Text>Create Sport</Text>
         </Pressable>
-        <Pressable onPress={() => navigate("/profile/government/sports/post/0/0/0/0/0")}>
+        <Pressable onPress={() => navigate("/profile/government/sports/post/create")}>
           <Text>Create Post</Text>
         </Pressable>
       </View>

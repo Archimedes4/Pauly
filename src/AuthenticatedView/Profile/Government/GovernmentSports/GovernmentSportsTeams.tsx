@@ -83,18 +83,21 @@ export default function GovernmentSportsTeams() {
         {(dataResult === loadingStateEnum.success) ?
           <>
           {currentTeams.map((item, idIn) => (
-            <Pressable key={idIn} onPress={() => navigate(`/profile/government/sports/team/edit/${sport}/${id}/${item.teamName}/${item.teamID}/${item.season}`)}>
+            <Pressable key={idIn} onPress={() => navigate(`/profile/government/sports/team/${sport}/${id}/${item.teamID}`)}>
               <Text style={{margin: 10}}>{item.teamName}</Text>
             </Pressable>
           ))}
-          </>:<View><Text>Error</Text></View>
+          </>:
+          <View>
+            <Text>Error</Text>
+          </View>
         }
         </View>
       }
       </View>
-      <Link to={"/profile/government/sports/team/" + sport + "/" + id + "/create"}>
+      <Pressable onPress={() => navigate(`/profile/government/sports/team/${sport}/${id}/create`)}>
         <Text>Create New Team</Text>
-      </Link>
+      </Pressable>
     </View>
   )
 }

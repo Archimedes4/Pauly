@@ -1,10 +1,9 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { Pressable, View, Text, Switch, TextInput, Button } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { Pressable, View, Text, Switch, TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import store, { RootState } from "../../Redux/store";
+import { RootState } from "../../Redux/store";
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
 import DatePicker from "../../UI/DateTimePicker/DatePicker";
-import Dropdown from "../../UI/Dropdown";
 import { CalendarIcon, CloseIcon } from "../../UI/Icons/Icons";
 import TimePicker from "../../UI/DateTimePicker/TimePicker";
 import callMsGraph from "../../Functions/Ultility/microsoftAssets";
@@ -13,7 +12,6 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { loadingStateEnum, paulyEventType} from "../../types";
 import PickerWrapper from "../../UI/Pickers/Picker";
-import create_UUID from "../../Functions/Ultility/CreateUUID";
 import SelectSchoolDayData from "./SelectSchoolDayData";
 import updateEvent from "../../Functions/updateEvent";
 import { addEventSlice } from "../../Redux/reducers/addEventReducer";
@@ -80,38 +78,6 @@ export default function AddEvent({width, height}:{width: number, height: number}
           </Pressable>
           <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
           <DateAndTimeSection width={width} height={height}/>
-          <Text>Reocurring Event</Text>
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={recurringEvent ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={(e) => {
-              dispatch(addEventSlice.actions.setRecurringEvent(e))
-            }}
-            value={recurringEvent}
-          />
-          { recurringEvent ?
-            <View style={{zIndex: 100}}>
-              <Dropdown onSetSelectedIndex={(item) => {
-                if (item >= 0 && item <= 3){
-                  dispatch(addEventSlice.actions.setSelectedRecurringType(item))
-                } 
-              }} selectedIndex={selectedRecurringType} style={{height: height * 0.04}} expandedStyle={{height: height * 0.12, backgroundColor: "white"}}>
-                <View>
-                  <Text>Daily</Text>
-                </View>
-                <View>
-                  <Text>Weekly</Text>
-                </View>
-                <View>
-                  <Text>Monthly</Text>
-                </View>
-                <View>
-                  <Text>Yearly</Text>
-                </View>
-              </Dropdown>
-            </View>:null
-          }
           { isGovernmentMode ?
             <GovernmentCalendarOptions width={width} height={height}/>:null
           }
@@ -198,7 +164,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
         <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true)); console.log("Pressed")}} style={{margin: 5}}>
           <View style={{flexDirection: "row"}}>
             <Text>{new Date(startDate).toLocaleString("en-us", { month: "long" })} {new Date(startDate).getDate()} {new Date(startDate).getFullYear()}</Text>
-            <CalendarIcon width={24} height={14}/>
+            <CalendarIcon width={24} height={15}/>
           </View>
         </Pressable>
         { allDay ?
@@ -222,7 +188,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
             <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingEndDate(true))}} style={{margin: 5}}>
               <View style={{flexDirection: "row"}}>
                 <Text>{new Date(endDate).toLocaleString("en-us", { month: "long" })} {new Date(endDate).getDate()} {new Date(endDate).getFullYear()}</Text>
-                <CalendarIcon width={24} height={14}/>
+                <CalendarIcon width={24} height={15}/>
               </View>
             </Pressable>
             { allDay ?
@@ -243,3 +209,37 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
     </View>
   )
 }
+
+
+{/* <Text>Reocurring Event</Text>
+          <Switch
+            trackColor={{false: '#767577', true: '#81b0ff'}}
+            thumbColor={recurringEvent ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={(e) => {
+              dispatch(addEventSlice.actions.setRecurringEvent(e))
+            }}
+            value={recurringEvent}
+          />
+          { recurringEvent ?
+            <View style={{zIndex: 100}}>
+              <Dropdown onSetSelectedIndex={(item) => {
+                if (item >= 0 && item <= 3){
+                  dispatch(addEventSlice.actions.setSelectedRecurringType(item))
+                } 
+              }} selectedIndex={selectedRecurringType} style={{height: height * 0.04}} expandedStyle={{height: height * 0.12, backgroundColor: "white"}}>
+                <View>
+                  <Text>Daily</Text>
+                </View>
+                <View>
+                  <Text>Weekly</Text>
+                </View>
+                <View>
+                  <Text>Monthly</Text>
+                </View>
+                <View>
+                  <Text>Yearly</Text>
+                </View>
+              </Dropdown>
+            </View>:null
+          } */}
