@@ -45,7 +45,7 @@ export default function Sports() {
   }
 
   async function loadSportsContent() {
-    const result = await getSportsContent(selectedTeam?.teamID)
+    const result = await getSportsContent(selectedTeam?.teamId)
     if (result.result === loadingStateEnum.success && result.sports !== undefined) {
       setSportsPosts(result.sports)
     }
@@ -103,7 +103,7 @@ export default function Sports() {
             { isShowingTeams ? 
               <>
               {sportsTeams.map((team) => (
-                <Pressable key={`SportTeam_${team.teamID}_${create_UUID()}`} onPress={() => {setSelectedTeam(team); setIsShowingTeams(false)}} style={{backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
+                <Pressable key={`SportTeam_${team.teamId}_${create_UUID()}`} onPress={() => {setSelectedTeam(team); setIsShowingTeams(false)}} style={{backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
                   <Text style={{margin: 5, color: "white"}}>{team.teamName}</Text>
                 </Pressable>
               ))}

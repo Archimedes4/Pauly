@@ -170,7 +170,7 @@ function PickSportTeam({width, height, onSelect, onBack}:{width: number, height:
                       <Text>Back</Text>
                     </Pressable>
                     {sportsTeams.map((item, id) => (
-                      <Pressable key={id} onPress={() => onSelect({sportId: selectedSport.id, teamId: item.teamID})}>
+                      <Pressable key={id} onPress={() => onSelect({sportId: selectedSport.id, teamId: item.teamId})}>
                         <View>
                           <Text>{item.teamName}</Text>
                         </View>

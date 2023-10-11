@@ -338,7 +338,6 @@ export const sportsApprovedSubmissionsData = {
     "template": "genericList"
   }
 }
-
 export const sportsSubmissionsData = {
   "displayName": "SportsSubmissions",
   "columns": [

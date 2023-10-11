@@ -204,6 +204,13 @@ declare global {
     name: string,
     id: string
   }  
+  type governmentRosterType = {
+    name: string
+    id: string
+    position?: string
+    playerNumber?: string
+    posts?: string[]
+  }
   type locationCoords = {
     latCoordinate: number
     lngCoordinate: number
@@ -234,6 +241,13 @@ declare global {
   type roomType = {
     name: string,
     id: string
+  }
+  type rosterType = {
+    name: string
+    id: string
+    position: string
+    playerNumber?: string
+    posts?: string[]
   }
   type schoolDayDataCompressedType = {
     schoolDayId: string,
@@ -272,7 +286,7 @@ declare global {
   type sportTeamType = {
     teamName: string
     season: number
-    teamID: string
+    teamId: string
   }
   type taskType = {
     name: string

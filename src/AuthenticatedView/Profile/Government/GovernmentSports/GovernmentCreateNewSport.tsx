@@ -29,15 +29,24 @@ export default function GovernmentCreateNewSport() {
       "displayName":newSportID,
       "columns": [
         {
-          "name": "TeamName",
-          "text": { }
+          "name": "teamName",
+          "text": { },
+          "required": true
         },
         {
-          "name": "Season",
-          "number": { }
+          "name": "season",
+          "number": { },
+          "required": true
         },
         {
-          "name": "teamID",
+          "name": "teamId",
+          "text": { },
+          "required": true,
+          "indexed": true,
+          "enforceUniqueValues": true
+        },
+        {
+          "name":"microsoftTeamId",
           "text": { }
         }
       ],

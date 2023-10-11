@@ -31,9 +31,9 @@ export async function getSportsTeams(sportId: string): Promise<{result: loadingS
       var resultData: sportTeamType[] = []
       for (let index = 0; index < data["value"].length; index++) {
         resultData.push({
-          teamName: data["value"][index]["fields"]["TeamName"],
-          season: data["value"][index]["fields"]["Season"],
-          teamID: data["value"][index]["fields"]["teamID"]
+          teamName: data["value"][index]["fields"]["teamName"],
+          season: data["value"][index]["fields"]["season"],
+          teamId: data["value"][index]["fields"]["teamId"]
         })
       }
       return {result: loadingStateEnum.success, data: resultData}
