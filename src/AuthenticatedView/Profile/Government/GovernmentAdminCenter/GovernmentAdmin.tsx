@@ -163,9 +163,7 @@ export default function GovernmentAdmin() {
   }, [currentInitStage])
 
   useEffect(() => {
-    console.log("Logged")
     if (currentInitStage !== initStage.notStarted) {
-      console.log("Logged 1")
       const interval = setInterval(() => {
         var miliSecondsPast = new Date().getTime() - startTime.getTime()
         
@@ -193,7 +191,6 @@ export default function GovernmentAdmin() {
         setTimeElapsed(hoursLeftString + ":" + minutesLeftString + ":" + secondsLeftString)
       }, 1000);
       if (currentInitStage === initStage.done) {
-        console.log("Cleared")
         return clearInterval(interval);
       }
       return () => clearInterval(interval);

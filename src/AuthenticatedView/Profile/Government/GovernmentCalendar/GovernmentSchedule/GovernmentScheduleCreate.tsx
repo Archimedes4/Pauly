@@ -51,7 +51,6 @@ export default function GovernmentSchedule() {
       setCreateScheduleLoadingState(loadingStateEnum.failed)
     }
   }
-  useEffect(() => {console.log("This", newPeriods)}, [newPeriods])
   return (
     <View style={{width: width, height: height, backgroundColor: "white"}}>
       <Pressable onPress={() => {navigate("/profile/government/calendar")}}>

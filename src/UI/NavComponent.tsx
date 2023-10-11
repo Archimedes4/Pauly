@@ -110,7 +110,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
             }
             <View style={{height: iconLength, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: blockLength - iconLength}}>
               { expandedMode ?
-                <Text style={{color: "white", marginLeft: 8, pointerEvents: "none"}}>{displayName}</Text>:null
+                <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{color: "white", marginLeft: 8, pointerEvents: "none", width: blockLength * 2.5}}>{displayName}</Text>:null
               }  
             </View>   
           </View>

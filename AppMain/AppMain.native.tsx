@@ -138,34 +138,3 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
     </>
   )
 }
-
-
-
-// async function getAuthToken() {
-  //   const redirectUri = makeRedirectUri({
-  //     scheme: "Pauly",
-  //     path: 'auth',
-  //   });
-
-  //   const config = {
-  //     issuer: `https://login.microsoftonline.com/${tenantId}/v2.0`,
-  //     clientId: clientId,
-  //     redirectUrl: redirectUri,
-  //     scopes: scopes
-  //   };
-    
-  //   // Log in to get an authentication token
-  //   const authState = await authorize(config).catch((e) => {
-  //     console.log(e)
-  //   })
-    
-  //   // console.log("Done", authState)
-  //   // dispatch(authenticationTokenSlice.actions.setAuthenticationToken(authState.accessToken))
-  //   // getPaulyLists(authState.accessToken)
-  //   // getUserProfile(authState.accessToken)
-
-  // }
-
-  // async function getGovernmentAuthToken() {
-
-  // }

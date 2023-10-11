@@ -118,6 +118,9 @@ Pauly has a config file named PaulyConfig which contains three values these valu
   2. Client ID (the ID of Paulys application)
   3. org id (the id of Pauly's group)
 
+### Setp #3 Initilize Pauly
+![Graph Permissions](./ReamMeImages/GraphPermissions.png)
+
 ## Graph Permissions
 > **Reference**
 > https://learn.microsoft.com/en-us/graph/permissions-reference

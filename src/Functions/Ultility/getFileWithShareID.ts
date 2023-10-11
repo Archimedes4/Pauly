@@ -14,7 +14,6 @@ export default async function getFileWithShareID(shareID: string): Promise<{resu
       } else if (data["file"]["mimeType"] === "application/vnd.openxmlformats-officedocument.presentationml.presentation"){
         return {result: loadingStateEnum.success, url: data["@microsoft.graph.downloadUrl"], contentType: dataContentTypeOptions.pdf}
       } else {
-        console.log("Failed Here")
         return {result: loadingStateEnum.failed}
       }
     } else {

@@ -40,7 +40,6 @@ export default function GovernmentReviewFileSubmission() {
     if (submissionID !== undefined) {
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items?expand=fields&filter=fields/submissionId%20eq%20'${submissionID}'`)
       if (result.ok) {
-        console.log("Went here")
         const data = await result.json()
         if (data["value"] !== undefined){
           if (data["value"].length === 1){
@@ -149,7 +148,6 @@ export default function GovernmentReviewFileSubmission() {
 
   useEffect(() => {
     if (submissionID !== undefined){
-      console.log(submissionID)
       getSubmissionInformation()
     }
   }, [submissionID])

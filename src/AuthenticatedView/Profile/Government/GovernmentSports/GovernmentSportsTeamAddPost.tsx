@@ -80,10 +80,8 @@ export default function GovernmentSportsTeamAddPost() {
       <MicrosoftFilePicker onSelectedFile={(item: microsoftFileType) => {getShareLink(item)}} height={500} width={width} />
       { (selectedShareID !== "") ? 
         <Pressable onPress={() => {
-          console.log("pressed")
           if (postSubmissionState === loadingStateEnum.notStarted && selectedShareID !== "" && selectedTeamId !== ""){
             createFileSubmission(selectedShareID)
-            console.log("Create file submission")
           }}}>
           <Text>{(selectedShareID !== "" && selectedTeamId !== "") ? "Submit":"Select Team"}</Text>
         </Pressable>:null

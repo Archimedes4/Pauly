@@ -4,7 +4,6 @@ import callMsGraph from "../Ultility/microsoftAssets";
 
 //Gets points when given an array of commission ids
 async function getPointsBatch(commissions: string[]): Promise<{result: loadingStateEnum, points: number}> {
-  console.log(commissions)
   var outputRequests: {id: string, method: string, url: string}[] = []
   for (var index = 0; index < commissions.length; index++) {
     outputRequests.push({

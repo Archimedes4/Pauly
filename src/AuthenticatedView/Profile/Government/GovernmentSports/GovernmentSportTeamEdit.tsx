@@ -58,7 +58,6 @@ export default function GovernmentCreateNewTeam() {
           }
         }
       }
-      console.log("request")
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items/${teamListItemId}`, "PATCH", false, JSON.stringify(data))
       if (result.ok){
         setCreateTeamLoadingState(loadingStateEnum.success)
@@ -182,7 +181,6 @@ export default function GovernmentCreateNewTeam() {
           const teamResult = await getMicrosoftTeam(data["value"][0]["fields"]["microsoftTeamId"])
           if (teamResult.result === loadingStateEnum.success && teamResult.data !== undefined) {
             setSelectedMicrosoftTeam(teamResult.data)
-            console.log(teamResult.data)
             setTeamDataState(loadingStateEnum.success)
           } else {
             setTeamDataState(loadingStateEnum.failed)
@@ -372,7 +370,6 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
         setMembersState(loadingStateEnum.failed)
       }
     } else {
-      console.log("TEAM RESULT FAILED", teamId)
       setMembersState(loadingStateEnum.failed)
     }
   }

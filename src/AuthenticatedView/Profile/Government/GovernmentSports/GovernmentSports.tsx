@@ -21,9 +21,6 @@ export default function GovernmentSports() {
     const result = await getSports()
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       setCurrentSports(result.data)
-      console.log(result.data)
-    } else {
-      console.log("failed")
     }
     setDataResult(result.result)
   }

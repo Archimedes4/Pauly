@@ -23,7 +23,6 @@ export default function MicrosoftGraphEditGroup() {
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + id)
       if (result.ok) {
         const data = await result.json()
-        console.log(data)
         setGroupLoadingState(loadingStateEnum.success)
       } else {
         setGroupLoadingState(loadingStateEnum.failed)

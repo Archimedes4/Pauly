@@ -52,7 +52,7 @@ export default function Government() {
         </Pressable>:null
       }
       <View style={{height: height * 0.2, width: width, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
-        <Text style={{fontFamily: "BukhariScript", fontSize: 100}}>Government</Text>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontFamily: "BukhariScript", fontSize: height * 0.09, height: height * 0.13, width: width * 0.8, textAlign: "center", textAlignVertical: "center", verticalAlign: "middle"}}>Government</Text>
       </View>
       <View style={{height: height * 0.75, width: width, alignContent: "center", justifyContent: "center", alignItems: "center", marginTop: height * 0.05}}>
         <View style={{height: height * 0.75, width: mainWidth, flexDirection: "row", alignContent: "flex-start",  flexWrap: "wrap", rowGap: (height) * 0.05, columnGap: (width) * 0.05}}>

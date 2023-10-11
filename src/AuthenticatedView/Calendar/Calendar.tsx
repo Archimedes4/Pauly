@@ -153,9 +153,9 @@ function MonthView({width, height}:{width: number, height: number}) {
           const endTimeDate = new Date(event.endTime)//String to date
 
           //First check if starts before date and ends after or on day
-          if (startTimeDate <= checkStart && endTimeDate >= checkStart) {
+          if (startTimeDate <= checkStart && endTimeDate > checkStart) {
             events.push(event)
-          } else if (startTimeDate >= checkStart && startTimeDate <= checkEnd) {
+          } else if (startTimeDate > checkStart && startTimeDate < checkEnd) {
             //Second check if starts on day
             events.push(event)
           }
@@ -169,7 +169,6 @@ function MonthView({width, height}:{width: number, height: number}) {
   }
 
   useEffect(() => {
-    console.log("Looking")
     getMonthData(new Date(selectedDate))
   }, [selectedDate, currentEvents])
 
@@ -222,24 +221,26 @@ function MonthView({width, height}:{width: number, height: number}) {
           ))}
         </View>
         { Array.from(Array(7).keys()).map((valueRow) => (
-            <View key={"Row_"+valueRow+"_"+create_UUID()} style={{flexDirection: "row"}}>
+            <View key={`Row_${valueRow}_${create_UUID()}`} style={{flexDirection: "row"}}>
               { monthData.map((value, id) => (
-                <View key={value.id}>
+                <>
                   {(id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
-                    <View>
+                    <>
                       { value.showing ?
                         <Pressable onPress={() => {
                           const d = new Date();
                           d.setFullYear(new Date(selectedDate).getFullYear(), new Date(selectedDate).getMonth(), value.dayData);
                           dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
-                        }} key={value.id}>
+                        }} key={`CalendarButton_${value.id}_${create_UUID()}`}>
                           <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
                         </Pressable>:
-                        <View key={value.id}><CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/></View>
+                        <View key={`CalendarSpacer_${create_UUID()}`}>
+                          <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
+                        </View>
                       }
-                    </View>:null
+                    </>:null
                   }
-                </View>
+                </>
               ))}
             </View>
           ))}
@@ -269,7 +270,7 @@ function CalendarCardView({value, width, height, calendarWidth}:{value: monthDat
         <>
           { (value.showing) ?
             <View style={{width: width, height: height}}>
-              <View style={{borderRadius: 50, width: 16, height: 16, backgroundColor: (new Date(selectedDate).getDate() === value.dayData) ? "red":"transparent", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+              <View style={{borderRadius: 50, width: 16, height: 16, backgroundColor: (new Date().getDate() === value.dayData) ? "red":"transparent", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
                 <Text style={{color: "black"}}>{value.dayData}</Text>
               </View>
               <ScrollView style={{width: width, height: height * 0.8}}>

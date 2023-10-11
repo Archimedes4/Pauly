@@ -219,6 +219,7 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
   const [currentText, setCurrentText] = useState(task.name)
   const [mounted, setMounted] = useState(false)
   const dispatch = useDispatch()
+
   async function updateTaskStatus(status: taskStatusEnum) {
     setUpdateTaskState(loadingStateEnum.loading)
     const data = {
@@ -231,6 +232,7 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
       setUpdateTaskState(loadingStateEnum.failed)
     }
   }
+
   async function updateText() {
     const data = {
       "title":userTasks[index].name
@@ -272,7 +274,6 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`, "DELETE")
       if (result.ok) {
         const index = store.getState().homepageData.userTasks.findIndex((e) => e.id === task.id)
-        console.log(index)
         if (index !== -1){
           dispatch(homepageDataSlice.actions.popUserTask(index))
         }
@@ -288,10 +289,7 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
       const taskNameSave = store.getState().homepageData.userTasks[index].name
       setTimeout(() => {
         if (store.getState().homepageData.userTasks[index].name === taskNameSave) {
-          console.log("ran")
           updateText() 
-        } else {
-          console.log("Not ran")
         }
       }, 1500)
     }
@@ -306,15 +304,15 @@ function TaskItem({task, index}:{task: taskType, index: number}) {
   }, [currentText])
 
   return (
-    <Swipeable onSwipeableOpen={(e) => {console.log(e, "Logged")}} renderRightActions={() => <>
+    <Swipeable renderRightActions={() => <>
       {task.excess ?
         null:<DeleteTask onDelete={() => deleteTask()}/>
       }
     </>}>
       <View style={{flexDirection: "row", width: width * 0.9}}>
-        <Pressable onPress={(e) => {
+        <Pressable onPress={() => {
           setChecked(!checked)
-          if (e) {
+          if (!checked) {
             updateTaskStatus(taskStatusEnum.completed)
           } else {
             updateTaskStatus(taskStatusEnum.notStarted)

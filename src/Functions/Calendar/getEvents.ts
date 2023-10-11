@@ -22,7 +22,6 @@ export default async function getEvents() {
   var nextUrl: string = `https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${startDate.toISOString()}&endDateTime=${endDate.toISOString()}`
   while (nextUrl !== "") {
     const furtherResult = await getGraphEvents(nextUrl, "https://graph.microsoft.com/v1.0/me/events/")
-    console.log(furtherResult)
     if (furtherResult.result === loadingStateEnum.success && furtherResult.events !== undefined) {
       outputEvents = [...outputEvents, ...furtherResult.events]
       if (furtherResult.nextLink === undefined) {

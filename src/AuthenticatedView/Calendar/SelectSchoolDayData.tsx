@@ -37,14 +37,9 @@ export default function SelectSchoolDayData({width, height}:{width: number, heig
 
   useEffect(() => {
     if (selectedSchoolYear !== undefined && timetable === undefined){
-      console.log("loading Data", selectedSchoolYear)
       if (selectedSchoolYear.paulyEventData !== undefined) {
         loadData(selectedSchoolYear.paulyEventData)
-      } else {
-        console.log("failed  on this thing")
       }
-    } else {
-      console.log("This is a no go", selectedSchoolYear !== undefined, timetable === undefined)
     }
   }, [schoolDayMode, selectedSchoolYear])
 

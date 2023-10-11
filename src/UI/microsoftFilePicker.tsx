@@ -79,7 +79,6 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/joinedTeams")//TO DO make sure this works on live tenancy
       if (result.ok){
         const data = await result.json()
-        console.log("This is teams data", data)
         if (data["error"] === undefined){
           const NewData: teamsGroupType[] = []
           for(var index = 0; index < data["value"].length; index++){
@@ -87,7 +86,6 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
               NewData.push({TeamName: data["value"][index]["displayName"], TeamId: data["value"][index]["id"], TeamDescription: data["value"][index]["description"]})
             }
           }
-          console.log("This is the new teams", NewData)
           setUsersTeams(NewData)
         }
       }
@@ -97,7 +95,6 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
       if (result.ok){
         const data = await result.json()
-        console.log(data)
       }
     }
 
@@ -121,7 +118,6 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
                 <ScrollView style={{height: height - 20}}>
                     { fileBackAvaliable ? <button onClick={() => {
                         const microsftPathArray = microsoftPath.split("/")
-                        console.log(microsftPathArray)
                         microsftPathArray.pop()
                         microsftPathArray.pop()
                         microsftPathArray.pop()

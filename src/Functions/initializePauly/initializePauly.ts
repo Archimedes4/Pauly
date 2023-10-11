@@ -25,15 +25,11 @@ export async function initializePaulyPartOne(secondUserId: string): Promise<{res
       ],
       "securityEnabled": false
     }
-    console.log(createGroupData)
     const createGroupResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups", "POST", false, JSON.stringify(createGroupData))
     if (createGroupResult.ok){
       const createGroupResultData = await createGroupResult.json()
-      console.log(createGroupResultData["id"])
       return {result: loadingStateEnum.success, groupId: createGroupResultData["id"]}
     } else {
-      const data = await createGroupResult.json()
-      console.log("Failed Here", data)
       return {result: loadingStateEnum.failed}
     }
   } else {
@@ -42,7 +38,6 @@ export async function initializePaulyPartOne(secondUserId: string): Promise<{res
 }
 
 export async function initializePaulyPartTwo(groupId: string): Promise<loadingStateEnum> {
-  console.log("Started for part two")
   const teamsData = {
     "template@odata.bind": "https://graph.microsoft.com/v1.0/teamsTemplates('standard')",
     "group@odata.bind": "https://graph.microsoft.com/v1.0/groups('" + groupId + "')"
@@ -84,8 +79,6 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
     }
   }
 
-  console.log("Started for", secondRun ? "true":"false")
-
   //TO DO think about 409 if only half  of list where created and then interuption
   for (var index = 0; index < addDataArray.length; index++) {
     const callData = addDataArray[index]
@@ -101,7 +94,6 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
       paulyListNewData["fields"][callData.id] = data["id"]
     }
   }
-  console.log("Ended for")
   if (getPaulyListResultData["fields"] !== undefined) {
     if (getPaulyListResultData["fields"]["eventTypeExtensionId"] !== undefined) {
       paulyListNewData["fields"]["eventTypeExtensionId"] = getPaulyListResultData["fields"]["eventTypeExtensionId"] 

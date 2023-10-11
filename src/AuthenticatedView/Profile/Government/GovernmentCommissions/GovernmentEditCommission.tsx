@@ -77,6 +77,7 @@ export default function GovernmentEditCommission() {
       setGetCommissionResult(result.result) 
     }
   }
+
   async function deleteCommission() {
     if (commissionItemId === "" || deleteCommissionResult === loadingStateEnum.loading || deleteCommissionResult === loadingStateEnum.success) {return}
     setDeleteCommissionResult(loadingStateEnum.loading)
@@ -140,7 +141,6 @@ export default function GovernmentEditCommission() {
         setSubmitCommissionState(loadingStateEnum.success)
       } else {
         const data = await result.json()
-        console.log(data)
         setSubmitCommissionState(loadingStateEnum.failed)
       }
     }
@@ -298,7 +298,7 @@ function PostSelectionContainer({width, height, selectedChannelId, selectedTeamI
       { (currentPostPickingMode === postPickingMode.channel) ?
         <ChannelSelection width={width} height={height} teamId={selectedTeamId} 
         onSelect={(e) => {setSelectedChannelId(e); setCurrentPostPickingMode(postPickingMode.post)}}
-        onBack={() => {console.log("This was called"); setSelectedChannelId(""); setSelectedTeamId(""); setCurrentPostPickingMode(postPickingMode.team)}}/>:null
+        onBack={() => {setSelectedChannelId(""); setSelectedTeamId(""); setCurrentPostPickingMode(postPickingMode.team)}}/>:null
       }
       { (currentPostPickingMode === postPickingMode.post) ?
         <PostSelection width={width} height={height} teamId={selectedTeamId} channelId={selectedChannelId} onSelect={setSelectedPostId} onBack={() => {setSelectedPostId(""); setSelectedChannelId(""); setCurrentPostPickingMode(postPickingMode.channel)}}/>:null
@@ -452,7 +452,6 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
   async function loadData() {
     setSubmissionsState(loadingStateEnum.loading)
     const result = await getSubmissions(commissionId, selectedSubmissionMode)
-    console.log(result)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       setSubmissions(result.data)
       setSubmissionsState(result.result)

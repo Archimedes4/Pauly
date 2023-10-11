@@ -90,10 +90,14 @@ export default function GovernmentHomePage() {
             />
           </View>
         </View>
-        <Text>Select Powerpoint: {selectedPowerpoint?.name}</Text>
-        <MicrosoftFilePicker height={height * 0.6} width={width} onSelectedFile={(selectedFile) => {
-          setSelectedPowerpoint(selectedFile)
-        }}/>
+        <View>
+          <View>
+            <Text style={{margin: 5}}>Select Powerpoint: {selectedPowerpoint?.name}</Text>
+          </View>
+          <MicrosoftFilePicker height={height * 0.6} width={width} onSelectedFile={(selectedFile) => {
+            setSelectedPowerpoint(selectedFile)
+          }}/>
+        </View>
         <Pressable onPress={async () => {
           if (selectedPowerpoint !== undefined) {
             const shareId = await createShareId(selectedPowerpoint)

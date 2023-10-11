@@ -108,13 +108,15 @@ function GovernmentCalendarOptions({width, height}:{width: number, height: numbe
   const dispatch = useDispatch()
   return (
     <>
-      <PickerWrapper selectedIndex={selectedEventType} onSetSelectedIndex={(e) => {dispatch(addEventSlice.actions.setSelectedEventType(e))}} width={width} height={height * 0.05}>
-        <Text>Personal</Text>
-        <Text>Regular</Text>
-        <Text>School Day </Text>
-        <Text>School Year</Text>
-        <Text>Student Council</Text>
-      </PickerWrapper>
+      <View>
+        <PickerWrapper selectedIndex={selectedEventType} onSetSelectedIndex={(e) => {dispatch(addEventSlice.actions.setSelectedEventType(e))}} width={width} height={height * 0.05}>
+          <Text numberOfLines={1} style={{fontSize: 8}}>Personal</Text>
+          <Text numberOfLines={1} style={{fontSize: 8}}>Regular</Text>
+          <Text numberOfLines={1} style={{fontSize: 8}}>School Day </Text>
+          <Text numberOfLines={1} style={{fontSize: 8}}>School Year</Text>
+          <Text numberOfLines={1} style={{fontSize: 8}}>Student Council</Text>
+        </PickerWrapper>
+      </View>
       { (selectedEventType === paulyEventType.schoolDay) ?
         <View style={{width: width, height: 100}}>
           <Text>Selected School Year: {(selectedSchoolYear) ? selectedSchoolYear.name:"None selected"}</Text>

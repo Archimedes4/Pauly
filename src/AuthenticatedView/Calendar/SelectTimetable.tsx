@@ -25,7 +25,6 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
               id: dataResult["value"][index]["fields"]["timetableId"]
             })
           } catch (e) {
-            console.log("Error", e)
             //TO DO unimportant but this shouldn't be able to happen if this doesn't work most likly invalid data has somehow gotten into the schedule data column of the schedule list
           }
         }

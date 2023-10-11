@@ -71,7 +71,6 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
         setImageUri(result.assets[0].uri)
         Image.getSize(result.assets[0].uri, (imageMeasureWidth, imageMeasureHeight) => {
           const heightPerWidth = imageMeasureHeight/imageMeasureWidth
-          console.log((width * 0.7) * heightPerWidth)
           setImageHeight((width * 0.7) * heightPerWidth)
         })
         setPickerImageState(CameraResult.success)

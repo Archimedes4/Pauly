@@ -289,6 +289,13 @@ declare global {
     season: number
     teamId: string
   }
+  type schoolUserType = {
+    name: string
+    id: string
+    role: string
+    grade: "9"|"10"|"11"|"12"
+    student: boolean
+  }
   type taskType = {
     name: string
     id: string

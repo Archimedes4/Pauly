@@ -57,7 +57,6 @@ export default function GovernmentClassesEdit() {
         const eventResult = await getEvent(extensionData["schoolYearEventId"])
         const roomResult = await getRoom(extensionData["roomId"])
         if (eventResult.result === loadingStateEnum.success && roomResult.result === loadingStateEnum.success && eventResult.data !== undefined && roomResult.data !== undefined) {
-          console.log("Here")
           setSelectedRoom(roomResult.data)
           setSelectedSchoolYear(eventResult.data)
         } else {
@@ -277,7 +276,7 @@ function DayBlock({day, periods, dayIndex, setPeriods, selectedTimetable}:{day: 
               newPeriods[dayIndex] = index;
               setPeriods([...newPeriods]);
             }
-          }} expanded={selected} setExpanded={(e) => {setSelected(e); console.log("called")}} style={{ backgroundColor: "white", zIndex: -2}} expandedStyle={{backgroundColor: "blue", zIndex: 101, position: "absolute"}} options={["unchosen", ...Array.from(selectedTimetable.schedules[0].periods).flatMap((_item, index) => ((index + 1).toString()))]} children={''} />
+          }} expanded={selected} setExpanded={(e) => {setSelected(e)}} style={{ backgroundColor: "white", zIndex: -2}} expandedStyle={{backgroundColor: "blue", zIndex: 101, position: "absolute"}} options={["unchosen", ...Array.from(selectedTimetable.schedules[0].periods).flatMap((_item, index) => ((index + 1).toString()))]} children={''} />
           :<Text>Something went wrong please reload the page.</Text>
         }
       </View>

@@ -37,8 +37,8 @@ import GovernmentDressCode from './Profile/Government/GovernmentCalendar/Governm
 import GovernmentDressCodeEdit from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentTimetableEdit from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
 import { NativeRouter, Route, Routes } from 'react-router-native';
-import { View, ScaledSize, Text } from 'react-native';
-import React from 'react';
+import { View, ScaledSize, Text, Pressable } from 'react-native';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -49,11 +49,13 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
   const {height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
   const isShowingProfileBlock = useSelector((state: RootState) => state.isShowingProfileBlock)
   const insets = useSafeAreaInsets();
+  const [overide, setOveride] = useState<boolean>(false)
   return (
     <>
-      { (siteId !== "" && authenticationToken !== "") ? 
+      { ((siteId !== "" || overide) && authenticationToken !== "") ? 
         <View style={{width: width, top: -insets.top}}>
           <NativeRouter>
             <View style={{flexDirection: "row", width: width}}>
@@ -111,6 +113,11 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
         <View style={{width: width, top: -insets.top, height: height, alignContent: "center", alignItems: 'center', justifyContent: "center"}}>
           <ProgressView width={14} height={14}/>
           <Text style={{color: "white"}}>Loading</Text>
+          { isGovernmentMode ?
+            <Pressable onPress={() => {setOveride(true)}} style={{margin: 5}}>
+              <Text style={{color: "white"}}>Overide</Text>
+            </Pressable>:null
+          }
         </View>
       }
     </>

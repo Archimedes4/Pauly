@@ -74,7 +74,6 @@ export default function GovernmentTimetableEdit() {
         for (let index = 0; index < dataResult["value"].length; index++) {
           try {
             const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[]
-            console.log(scheduleData)
             newLoadedSchedules.push({
               properName: dataResult["value"][index]["fields"]["scheduleProperName"],
               descriptiveName: dataResult["value"][index]["fields"]["scheduleDescriptiveName"],

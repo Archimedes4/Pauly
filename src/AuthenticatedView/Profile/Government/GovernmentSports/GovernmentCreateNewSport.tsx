@@ -62,7 +62,6 @@ export default function GovernmentCreateNewSport() {
         setCreateSportLoadingState(loadingStateEnum.success)
       } else {
         const resultData = await result.json()
-        console.log(resultData)
         setCreateSportLoadingState(loadingStateEnum.failed)
       }
     } else {

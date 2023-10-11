@@ -62,7 +62,6 @@ export default async function getSubmissions(commissionId: string, submissionTyp
         return {result: loadingStateEnum.failed}
       }
     }
-    console.log(output)
     return {result: loadingStateEnum.success, data: output, nextLink: data["@odata.nextLink"], count: data["value"].length}
   } else {
     return {result: loadingStateEnum.failed}

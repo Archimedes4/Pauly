@@ -247,9 +247,6 @@ function SearchBox() {
       setTimeout(() => {
         if (store.getState().resources.searchValue === searchValueSave) {
           getSearchData()
-          console.log("ran")
-        } else {
-          console.log("Not ran")
         }
       }, 1500)
     } else {
