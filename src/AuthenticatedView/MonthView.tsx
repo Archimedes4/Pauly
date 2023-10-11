@@ -48,7 +48,6 @@ export default function MonthView({width, height}:{width: number, height: number
   async function loadData() {
     if (monthViewData.length <= 0) {
       const result = await getSchoolDays(new Date())
-      console.log(result)
       if (result.result === loadingStateEnum.success && result.data !== undefined) {
         dispatch(monthViewSlice.actions.setMonthViewData(result.data))
       } 

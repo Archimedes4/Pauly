@@ -22,6 +22,7 @@ import BackButton from '../../../../UI/BackButton';
 import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
 import { unlink } from 'fs';
 import { FlatList } from 'react-native-gesture-handler';
+import updateCommission from '../../../../Functions/commissions/updateCommission';
 
 enum datePickingMode {
   none,
@@ -68,11 +69,14 @@ export default function GovernmentEditCommission() {
     if (id !== undefined) {
       const result = await getCommission(id)
       if (result.result === loadingStateEnum.success && result.data !== undefined) {
+        //TO DO add all values
         setCommissionItemId(result.data.itemId)
         setCommissionName(result.data.title)
         setAllowMultipleSubmissions(result.data.allowMultipleSubmissions)
         setIsHidden(result.data.hidden)
         setMaxNumberOfClaims(result.data.maxNumberOfClaims)
+        setIsTimed(result.data.timed)
+        setPoints(result.data.points)
       }
       setGetCommissionResult(result.result) 
     }
@@ -101,48 +105,11 @@ export default function GovernmentEditCommission() {
     }
   }, [])
 
-  async function createCommission() {
-    if (submitCommissionState === loadingStateEnum.failed || submitCommissionState === loadingStateEnum.notStarted){
+  async function loadUpdateCommission() {
+    if ((submitCommissionState === loadingStateEnum.failed || submitCommissionState === loadingStateEnum.notStarted) && id !== undefined) {
       setSubmitCommissionState(loadingStateEnum.loading)
-      const newCommissionID = create_UUID()
-      const data: any = {
-        "fields": {
-          //All Commissions
-          "Title": commissionName,
-          "timed":isTimed,
-          "points":points,
-          "hidden":isHidden,
-          "maxNumberOfClaims":maxNumberOfClaims,
-          "allowMultipleSubmissions":allowMultipleSubmissions,
-          "commissionID": newCommissionID,
-          "value":selectedCommissionType + 1
-        }
-      }
-      if (selectedPostId !== "") {
-        data["fields"]["postTeamId"] = selectedTeamId
-        data["fields"]["postChannelId"] = selectedChannelId
-        data["fields"]["postId"] = selectedPostId
-      }
-      if (isTimed) {
-        data["fields"]["startDate"] = startDate.toISOString().replace(/.\d+Z$/g, "Z")
-        data["fields"]["endDate"] = endDate.toISOString().replace(/.\d+Z$/g, "Z")
-      }
-      if (selectedCommissionType === commissionTypeEnum.Location || selectedCommissionType === commissionTypeEnum.ImageLocation) {
-        data["fields"]["proximity"] = proximity
-        data["fields"]["coordinateLat"] = selectedPositionIn.lat
-        data["fields"]["coordinateLng"] = selectedPositionIn.lng
-      }
-      if (selectedCommissionType === commissionTypeEnum.QRCode) {
-        data["fields"]["qrCodeData"] = "[]"
-      }
-
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items", "POST", false, JSON.stringify(data))//TO DO fix this id
-      if (result.ok){
-        setSubmitCommissionState(loadingStateEnum.success)
-      } else {
-        const data = await result.json()
-        setSubmitCommissionState(loadingStateEnum.failed)
-      }
+      const result = await updateCommission(isCreating, commissionName, isTimed, points, isHidden, maxNumberOfClaims, allowMultipleSubmissions, selectedCommissionType, selectedPostId, selectedTeamId, selectedChannelId, startDate, endDate, ((id !== "create") ? id:create_UUID()), proximity, selectedPositionIn, commissionItemId)
+      setSubmitCommissionState(result)
     }
   }
 
@@ -259,8 +226,8 @@ export default function GovernmentEditCommission() {
             <CommissionSubmissions commissionId={id} width={width} height={height * 0.5} />
           </View>:null
         }
-        <Pressable onPress={() => {createCommission()}}>
-          <Text>{(submitCommissionState === loadingStateEnum.notStarted) ? "Create Commission":(submitCommissionState === loadingStateEnum.loading) ? "Loading":(submitCommissionState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+        <Pressable onPress={() => {loadUpdateCommission()}}>
+          <Text>{(submitCommissionState === loadingStateEnum.notStarted) ? (isCreating ? "Create Commission":"Save Changes"):(submitCommissionState === loadingStateEnum.loading) ? "Loading":(submitCommissionState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
         </Pressable>
         { (!isCreating) ?
           <Pressable onPress={() => {deleteCommission()}}>

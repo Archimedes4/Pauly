@@ -73,7 +73,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
     <Pressable id={"Pressable"} onHoverIn={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}} onHoverOut={() => {dispatch(expandedModeSlice.actions.setExpandedMode(false))}}>
       <View id="Main" style={{backgroundColor: "#793033", height: height, overflow: "hidden", width: (expandedMode) ? (width * 2.5):width, alignItems: "center"}}>
         <Pressable style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? (width * 2.5):width, margin: 0, marginTop: blockLength * 0.4, marginBottom: blockLength * 0.4}]} onPress={() => {dispatch(expandedModeSlice.actions.setExpandedMode(!expandedMode))}} onHoverIn={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
-          <View style={{flexDirection: "row", width: expandedMode ? blockLength * 2.5:blockLength, height: blockLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined, pointerEvents: 'none'}}>
+          <View style={{flexDirection: "row", width: expandedMode ? blockLength * 2.5:blockLength, height: blockLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined}} pointerEvents={'none'}>
             <View style={{position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined}}>
               <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: blockLength, height:  blockLength}} />
             </View>
@@ -110,7 +110,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
             }
             <View style={{height: iconLength, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: blockLength - iconLength}}>
               { expandedMode ?
-                <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{color: "white", marginLeft: 8, pointerEvents: "none", width: blockLength * 2.5}}>{displayName}</Text>:null
+                <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{color: "white", marginLeft: 8, width: blockLength * 2.5}} selectable={false}>{displayName}</Text>:null
               }  
             </View>   
           </View>

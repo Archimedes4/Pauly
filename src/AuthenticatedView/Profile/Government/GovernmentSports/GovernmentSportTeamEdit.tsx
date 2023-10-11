@@ -341,6 +341,7 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
           })
         }
         var rosters: governmentRosterType[] = []
+        console.log(users, teamResultData)
         for (var teamIndex = 0; teamIndex < teamResultData["value"].length; teamIndex++) {
           const userData = users.findIndex((e) => {return e.id === teamResultData["value"][teamIndex]["playerId"]})
           if (userData !== -1) {

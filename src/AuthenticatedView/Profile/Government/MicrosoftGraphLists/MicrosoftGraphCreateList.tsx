@@ -54,9 +54,9 @@ export default function MicrosoftGraphCreateList() {
       }
     }
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists", "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
-    console.log(result)
+    
     const data = await result.json()
-    console.log(data)
+
   }
   return (
     <View style={{width: width}}>
