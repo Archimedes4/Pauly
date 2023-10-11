@@ -24,8 +24,8 @@ export default function GovernmentHomePage() {
     const [isAutoUpdatingText, setIsAutoUpdatingText] = useState<boolean>(false)
 
     async function loadCurrentPaultData() {
-      const result = await getCurrentPaulyData(siteId)
-      setLoadContentLoadingState(result)
+      const result = await getCurrentPaulyData()
+      setLoadContentLoadingState(loadingStateEnum.success)
     }
     async function createShareId(item: microsoftFileType): Promise<string | undefined> {
       const data = {
@@ -95,8 +95,12 @@ export default function GovernmentHomePage() {
           setSelectedPowerpoint(selectedFile)
         }}/>
         <Pressable onPress={async () => {
-          const shareId = await createShareId(selectedPowerpoint)
-          updatePaulyData("powerpointId", shareId)
+          if (selectedPowerpoint !== undefined) {
+            const shareId = await createShareId(selectedPowerpoint)
+            if ((shareId) !== undefined) {
+              updatePaulyData("powerpointId", shareId)
+            }
+          }
         }}>
           <Text>Save Changes</Text>
         </Pressable>

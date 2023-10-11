@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Dimensions, Button, Pressable } from 'react-native'
+import { View, Text, TextInput, Dimensions, Button, Pressable, ListRenderItemInfo } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-native'
 import {convertYearToSchoolYear} from '../../../../Functions/calendar/calendarFunctions'
@@ -8,7 +8,7 @@ import { loadingStateEnum } from '../../../../types';
 import store, { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { getTeams } from '../../../../Functions/groupsData';
-import { FlatList } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import ProgressView from '../../../../UI/ProgressView';
 
 export default function GovernmentCreateNewTeam() {
@@ -43,12 +43,22 @@ export default function GovernmentCreateNewTeam() {
   async function updateTeam() { //This function will also create a team
     setCreateTeamLoadingState(loadingStateEnum.loading)
     if (!isCreatingTeam) {
-      const data = {
+      var data: object = {
         "fields": {
           "teamName": teamName,
           "season": season
         }
       }
+      if (selectedMicrosoftTeam !== undefined) {
+        data = {
+          "fields": {
+            "teamName": teamName,
+            "season": season,
+            "microsoftTeamId": selectedMicrosoftTeam.id
+          }
+        }
+      }
+      console.log("request")
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items/${teamListItemId}`, "PATCH", false, JSON.stringify(data))
       if (result.ok){
         setCreateTeamLoadingState(loadingStateEnum.success)
@@ -57,12 +67,22 @@ export default function GovernmentCreateNewTeam() {
       }
     } else {
       const newTeamId = create_UUID()
-      const data = {
+      var data: object = {
         "fields": {
           "Title": "",
           "teamName": teamName,
           "season": season,
           "teamId": newTeamId
+        }
+      }
+      if (selectedMicrosoftTeam !== undefined) {
+        data = {
+          "fields": {
+            "teamName": teamName,
+            "season": season,
+            "teamId":newTeamId,
+            "microsoftTeamId": selectedMicrosoftTeam.id
+          }
         }
       }
       const listData = {
@@ -101,7 +121,7 @@ export default function GovernmentCreateNewTeam() {
             "id":"1",
             "method":"POST",
             "url":`/sites/${siteId}/lists/${id}/items`,
-            "body":JSON.stringify(data),
+            "body":data,
             "headers": {
               "Content-Type": "application/json"
             }
@@ -111,7 +131,7 @@ export default function GovernmentCreateNewTeam() {
             "method":"POST",
             "dependsOn": ["1"],
             "url":`/sites/${siteId}/lists`,
-            "body":JSON.stringify(listData),
+            "body":listData,
             "headers": {
               "Content-Type": "application/json"
             }
@@ -151,7 +171,7 @@ export default function GovernmentCreateNewTeam() {
 
   async function getTeamData() {
     setTeamDataState(loadingStateEnum.loading)
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items?expand=fields($select=teamId,teamName,season)&$filter=fields/teamId%20eq%20'${teamId}'&$select=id`)
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items?expand=fields($select=teamId,teamName,season,microsoftTeamId)&$filter=fields/teamId%20eq%20'${teamId}'&$select=id`)
     if (result.ok) {
       const data = await result.json()
       if (data["value"].length === 1) {
@@ -162,6 +182,7 @@ export default function GovernmentCreateNewTeam() {
           const teamResult = await getMicrosoftTeam(data["value"][0]["fields"]["microsoftTeamId"])
           if (teamResult.result === loadingStateEnum.success && teamResult.data !== undefined) {
             setSelectedMicrosoftTeam(teamResult.data)
+            console.log(teamResult.data)
             setTeamDataState(loadingStateEnum.success)
           } else {
             setTeamDataState(loadingStateEnum.failed)
@@ -193,59 +214,82 @@ export default function GovernmentCreateNewTeam() {
   return (
     <>
       { (isCreatingTeam || teamDataState === loadingStateEnum.success) ?
-        <View style={{width: width, height: height, backgroundColor: "white"}}>
+        <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
           <Pressable onPress={() => navigate(`/profile/government/sports/team/${sport}/${id}`)}>
             <Text>Back</Text>
           </Pressable>
-          <Text>{(isCreatingTeam) ? `Create a new ${sport} team`:`Edit the ${teamName} ${sport} Team`}</Text>
-          <View style={{flexDirection: "row"}}>
-            <Text>Team Name:</Text>
-            <TextInput
-              value={teamName}
-              onChangeText={text => setTeamName(text)}
-              placeholder='Team Name'
-            />
+          <View>
+            <Text>{(isCreatingTeam) ? `Create a new ${sport} team`:`Edit the ${teamName} ${sport} Team`}</Text>
           </View>
-          <Text>Season</Text>
-          <Text>{convertYearToSchoolYear(season)}</Text>
-          <TextInput 
-            keyboardType='numeric'
-            onChangeText={(text)=> {
-              if (text === ""){
-                setSeason(0)
-              } else {
-                setSeason(parseFloat(text))
-              }
-            }}
-            value={season.toString()}
-            maxLength={10}  //setting limit of input
-          />
-          <Text>Selected Team</Text>
-          { (selectedMicrosoftTeam !== undefined) ?
-            <Pressable onPress={() => {setSelectedMicrosoftTeam(undefined)}}>
-              <Text>{selectedMicrosoftTeam.name}</Text>
-            </Pressable>:null
-          }
-          <FlatList
-            data={teams}
-            renderItem={(team) => (
-              <>
-                { (team.item.id !== selectedMicrosoftTeam?.id) ?
-                  <Pressable key={`Team_${team.item.id}_${create_UUID()}`}  onPress={() => {setSelectedMicrosoftTeam(team.item)}}>
-                    <Text>{team.item.name}</Text>
-                  </Pressable>:null
+          <View style={{margin: 10, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: "#FFFFFF", borderRadius: 15}}>
+            <View style={{margin: 5}}>
+              <View style={{flexDirection: "row"}}>
+                <Text>Team Name:</Text>
+                <TextInput
+                  value={teamName}
+                  onChangeText={text => setTeamName(text)}
+                  placeholder='Team Name'
+                />
+              </View>
+              <View>
+                <Text>Season</Text>
+                <Text>{convertYearToSchoolYear(season)}</Text>
+                <TextInput 
+                  keyboardType='numeric'
+                  onChangeText={(text)=> {
+                    if (text === ""){
+                      setSeason(0)
+                    } else {
+                      setSeason(parseFloat(text))
+                    }
+                  }}
+                  value={season.toString()}
+                  maxLength={10}  //setting limit of input
+                />
+              </View>
+            </View>
+          </View>
+          <View style={{height: height * 0.5, margin: 10, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: "#FFFFFF", borderRadius: 15}}>
+            <View style={{margin: 10, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: "#FFFFFF", borderRadius: 15}}>
+              <View style={{margin: 5}}>
+                <Text>Selected Team</Text>
+                { (selectedMicrosoftTeam !== undefined) ?
+                  <Pressable onPress={() => {setSelectedMicrosoftTeam(undefined)}}>
+                    <Text>{selectedMicrosoftTeam.name}</Text>
+                  </Pressable>:<Text>NO TEAM SELECTED</Text>
                 }
-              </>
-            )}
-          />
+              </View>
+            </View>
+            <View style={{marginLeft: 5, marginRight: 5}}>
+              <FlatList
+                data={teams}
+                renderItem={(team) => (
+                  <>
+                    { (team.item.id !== selectedMicrosoftTeam?.id) ?
+                      <Pressable key={`Team_${team.item.id}_${create_UUID()}`}  onPress={() => {setSelectedMicrosoftTeam(team.item)}}>
+                        <Text>{team.item.name}</Text>
+                      </Pressable>:null
+                    }
+                  </>
+                )}
+              />
+            </View>
+          </View>
           { (selectedMicrosoftTeam === undefined) ?
             <View>
               <Text>Select a team in order to get a roster</Text>
             </View>:
-            <View>
-              <Text>Roster</Text>
-              <RosterBlock microsoftTeamId={selectedMicrosoftTeam.id} width={100} height={100} teamId={selectedMicrosoftTeam.id}/>
-            </View>
+            <>
+              { (isCreatingTeam || teamId === undefined) ?
+                <View>
+                  <Text>Please Create the team and return later to finish the roster</Text>
+                </View>:
+                <View>
+                  <Text>Roster</Text>
+                  <RosterBlock microsoftTeamId={selectedMicrosoftTeam.id} width={100} height={100} teamId={teamId}/>
+                </View>
+              }
+            </>
           }
 
           <Pressable style={{margin: 10, backgroundColor: "red", borderRadius: 15}} onPress={() => deleteTeam()}>
@@ -260,7 +304,7 @@ export default function GovernmentCreateNewTeam() {
           }}>
             <Text style={{margin: 10}}>{(createTeamLoadingState === loadingStateEnum.notStarted) ? (isCreatingTeam ? "CREATE TEAM":"UPDATE TEAM"):(createTeamLoadingState === loadingStateEnum.loading) ? "LOADING":(createTeamLoadingState === loadingStateEnum.success) ? "SUCCESS":"FAILED"}</Text>
           </Pressable>
-        </View>:
+        </ScrollView>:
         <>
           { (teamDataState === loadingStateEnum.loading) ?
             <View style={{width: width, height: height, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
@@ -282,10 +326,6 @@ export default function GovernmentCreateNewTeam() {
 
 function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: string, width: number, height: number, teamId: string}) {
   const [membersState, setMembersState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-
-  const [playerNumber, setPlayerNumber] = useState<string>("")
-  const [position, setPosition] = useState<string>("")
-
   const [members, setMembers] = useState<governmentRosterType[]>([])
 
   async function getMembers() {
@@ -295,12 +335,44 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${microsoftTeamId}/members`)
       if (result.ok) {
         const data = await result.json()
-        console.log(data)
+        var users: microsoftUserType[] = []
+        for (var index = 0; index < data["value"].length; index++) {
+          users.push({
+            id: data["value"][index]["id"],
+            displayName: data["value"][index]["displayName"]
+          })
+        }
+        var rosters: governmentRosterType[] = []
+        for (var teamIndex = 0; teamIndex < teamResultData["value"].length; teamIndex++) {
+          const userData = users.findIndex((e) => {return e.id === teamResultData["value"][teamIndex]["playerId"]})
+          if (userData !== -1) {
+            rosters.push({
+              name: users[userData].displayName,
+              id: teamResultData["value"][teamIndex]["fields"]["playerId"],
+              listItemId: teamResultData["value"][teamIndex]["id"],
+              position: teamResultData["value"][teamIndex]["fields"]["position"],
+              playerNumber: teamResultData["value"][teamIndex]["fields"]["playerNumber"],
+              posts: (teamResultData["value"][teamIndex]["fields"]["posts"] !== undefined) ? JSON.parse(teamResultData["value"][teamIndex]["fields"]["playerNumber"]):undefined
+            })
+            const save = users[0]
+            users[0] = users[userData]
+            users[userData] = save
+            users.shift()
+          }
+        }
+        for (var index = 0; index < users.length; index++) {
+          rosters.push({
+            name: users[index].displayName,
+            id: users[index].id
+          })
+        }
+        setMembers(rosters)
         setMembersState(loadingStateEnum.success)
       } else {
         setMembersState(loadingStateEnum.failed)
       }
     } else {
+      console.log("TEAM RESULT FAILED", teamId)
       setMembersState(loadingStateEnum.failed)
     }
   }
@@ -310,31 +382,109 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
   }, [])
 
   return (
-    <View style={{width: width, height: height}}>
-      <FlatList
-        data={members}
-        renderItem={(member) => (
-          <View key={`Member_${member.item.id}_${create_UUID()}`}>
-            <Text>{member.item.name}</Text>
-            <View style={{flexDirection: "row"}}>
-              <Text>Player Number:</Text>
-              <TextInput value={member.item.playerNumber} onChangeText={(e) => {
-                var save = members
-                save[member.index].playerNumber = e
-                setMembers(save)
-              }}/>
-            </View>
-            <View>
-              <Text>Position:</Text>
-              <TextInput value={member.item.position} onChangeText={(e) => {
-                 var save = members
-                 save[member.index].position = e
-                 setMembers(save)
-              }}/>
-            </View>
-          </View>
-        )}
-        />
+      <>
+        { (membersState === loadingStateEnum.loading) ?
+          <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+            <ProgressView width={width * 0.1} height={height * 0.1}/>
+            <Text>Loading</Text>
+          </View>:
+          <>
+            { (membersState === loadingStateEnum.success) ?
+              <View>
+                <FlatList
+                  data={members}
+                  renderItem={(member) => (
+                    <RosterBlockItem members={members} setMembers={setMembers} member={member} teamId={teamId}/>
+                  )}
+                />
+              </View>:
+              <View>
+                <Text>Failed</Text>
+              </View>
+            }
+          </>
+        }
+      </>
+  )
+}
+
+function RosterBlockItem({member, members, setMembers, teamId}:{members: governmentRosterType[], setMembers: (item: governmentRosterType[]) => void, member: ListRenderItemInfo<governmentRosterType>, teamId: string}) {
+  const [rosterState, setRosterState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+
+  async function createMemberItem(member: governmentRosterType) {
+    const index = members.findIndex((e) => {return e.id === member.id})
+    if (index === -1) {
+      setRosterState(loadingStateEnum.failed)
+      return
+    }
+    setRosterState(loadingStateEnum.loading)
+    const data = {
+      "fields":{
+        "playerNumber":member.playerNumber,
+        "position":member.position
+      }
+    }
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items`, "POST", undefined, JSON.stringify(data))
+    if (result.ok) {
+      const data = await result.json()
+      var save = members
+      save[index].listItemId = data["id"]
+      setMembers(save)
+      setRosterState(loadingStateEnum.success)
+    } else {
+      setRosterState(loadingStateEnum.failed)
+    }
+  }
+
+  async function updatePlayerData(member: governmentRosterType) {
+    if (member.listItemId !== undefined) {
+      setRosterState(loadingStateEnum.loading)
+      const data = {
+        "fields":{
+          "playerNumber":member.playerNumber,
+          "position":member.position
+        }
+      }
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items/${member.listItemId}`, "PATCH", undefined, JSON.stringify(data))
+      if (result.ok) {
+        setRosterState(loadingStateEnum.success)
+      } else {
+        setRosterState(loadingStateEnum.failed)
+      }
+    } else {
+      createMemberItem(member)
+    }
+  }
+  return (
+    <View key={`Member_${member.item.id}_${create_UUID()}`} style={{margin: 5}}>
+      <View>
+        { (rosterState === loadingStateEnum.loading) ?
+          <ProgressView width={14} height={14}/>:
+          <>
+            { (rosterState === loadingStateEnum.success || rosterState === loadingStateEnum.notStarted) ?
+              <View style={{width: 14, height: 14, borderRadius: 7, backgroundColor: "green"}}/>:
+              <View style={{width: 14, height: 14, borderRadius: 7, backgroundColor: "red"}}/>
+            }
+          </>
+        }
+      </View>
+      <Text>{member.item.name}</Text>
+      <View style={{flexDirection: "row"}}>
+        <Text>Player Number:</Text>
+        <TextInput value={member.item.playerNumber} onChangeText={(e) => {
+          var save = members
+          save[member.index].playerNumber = e
+          setMembers(save)
+        }} onBlur={() => {updatePlayerData(member.item)}}/>
+      </View>
+      <View style={{flexDirection: "row"}}>
+        <Text>Position:</Text>
+        <TextInput value={member.item.position} onChangeText={(e) => {
+          var save = members
+          save[member.index].position = e
+          setMembers(save)
+        }} onBlur={() => {updatePlayerData(member.item)}}/>
+      </View>
     </View>
   )
 }

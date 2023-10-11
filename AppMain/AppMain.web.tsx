@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Login from '../src/login'
 import AuthenticatedViewMain from '../src/AuthenticatedView/AuthenticatedViewMain'
 import { clientId, tenantId } from '../src/PaulyConfig'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
 import getUserProfile from '../src/Functions/Ultility/getUserProfile'
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer'
@@ -12,7 +12,7 @@ import { AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate, useMsal }
 import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
 import { authenticationApiTokenSlice } from '../src/Redux/reducers/authenticationApiToken'
 import { checkIfGovernmentMode, getWantGovernment, setWantGovernment, validateGovernmentMode } from '../src/Functions/handleGovernmentLogin'
-import store from '../src/Redux/store'
+import store, { RootState } from '../src/Redux/store'
 
 const pca = new PublicClientApplication({
   auth: {
@@ -22,7 +22,7 @@ const pca = new PublicClientApplication({
   }
 });
 
-const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"]
+const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All", "TeamMember.Read.All"]
 
 export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
   return (
@@ -37,6 +37,7 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
 function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
   const { instance } = useMsal();
   const dispatch = useDispatch()
+  const authenticationCall = useSelector((state: RootState) => state.authenticationCall);
 
   async function getAuthToken(userInitated: boolean, government?: boolean) {
     // Account selection logic is app dependent. Adjust as needed for different use cases.
@@ -57,6 +58,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
       if (await getWantGovernment()) {
         checkIfGovernmentMode()
       }
+  
     }
 
     instance.addEventCallback((event: any) => {
@@ -108,6 +110,17 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
   useEffect(() => {
     getAuthToken(false)
   }, [])
+
+  async function refreshToken() {
+    const result = await instance.acquireTokenSilent({
+      scopes: scopes
+    })
+    dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
+  }
+
+  useEffect(() => {
+    refreshToken()
+  }, [authenticationCall])
 
   return (
     <SafeAreaView style={{width: dimensions.window.width, height: dimensions.window.height, zIndex: 2, position: "absolute", left: 0, top: 0}}>

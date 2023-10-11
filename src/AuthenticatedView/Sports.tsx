@@ -13,6 +13,8 @@ import { ResizeMode, Video } from 'expo-av';
 import BackButton from '../UI/BackButton'
 import create_UUID from '../Functions/Ultility/CreateUUID'
 import { getSports, getSportsTeams } from '../Functions/sports/sportsFunctions'
+import getRoster from '../Functions/sports/getRoster';
+import { FlatList } from 'react-native-gesture-handler';
 
 export default function Sports() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -24,6 +26,7 @@ export default function Sports() {
   const [selectedTeam, setSelectedTeam] = useState<sportTeamType | undefined>(undefined)
   const [isShowingTeams, setIsShowingTeams] = useState<boolean>(false)
   const [sports, setSports] = useState<sportType[]>([])
+  const [isShowingRoster, setIsShowingRoster] = useState<boolean>(false)
   const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([])
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -85,28 +88,56 @@ export default function Sports() {
       <ScrollView style={{height: height * 0.1, width: width}} horizontal={true}>
         <View>
           <View style={{flexDirection: "row"}}>
-            <Pressable style={{backgroundColor:  "#444444", borderWidth: (selectedSport === undefined) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}} onPress={() => {setSelectedTeam(undefined); setSelectedSport(undefined)}}>
-              <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: isShowingTeams ? 5:10}}>{"Highlights"}</Text>
-            </Pressable>
-            {sports.map((sport) => (
-              <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true)}} style={{backgroundColor:  "#444444", borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
-                <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>
-                { (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ?
-                  <View>
-                    <Text style={{color: "white", marginBottom: 5, marginLeft: 10, marginRight: 10}}>{selectedTeam?.teamName}</Text>
-                  </View>:null
-                }
-              </Pressable>
-            ))}
+            <>
+              { (sportsState === loadingStateEnum.loading) ?
+                <View style={{width: (isShowingTeams) ? height * 0.05:height * 0.1, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                  <ProgressView width={15} height={15}/>
+                </View>:
+                <>
+                  { (sportsState === loadingStateEnum.success) ?
+                    <>
+                      <Pressable style={{backgroundColor:  "#444444", borderWidth: (selectedSport === undefined) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}} onPress={() => {setSelectedTeam(undefined); setSelectedSport(undefined); setIsShowingRoster(false)}}>
+                        <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: isShowingTeams ? 5:10}}>{"Highlights"}</Text>
+                      </Pressable>
+                      {sports.map((sport) => (
+                        <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true); setIsShowingRoster(false)}} style={{backgroundColor:  "#444444", borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
+                          <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>
+                          { (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ?
+                            <View>
+                              <Text style={{color: "white", marginBottom: 5, marginLeft: 10, marginRight: 10}}>{selectedTeam?.teamName}</Text>
+                            </View>:null
+                          }
+                        </Pressable>
+                      ))}
+                    </>:
+                    <View>
+                      <Text>Failed</Text>
+                    </View>
+                  }
+                </>
+              }
+            </>
           </View>
           <View style={{flexDirection: "row"}}>
             { isShowingTeams ? 
               <>
-              {sportsTeams.map((team) => (
-                <Pressable key={`SportTeam_${team.teamId}_${create_UUID()}`} onPress={() => {setSelectedTeam(team); setIsShowingTeams(false)}} style={{backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
-                  <Text style={{margin: 5, color: "white"}}>{team.teamName}</Text>
-                </Pressable>
-              ))}
+                { (sportsState === loadingStateEnum.loading) ?
+                  <View style={{width: width, height: height * 0.05, alignContent: "center", alignItems: 'center', justifyContent: "center"}}>
+                    <ProgressView width={15} height={15} />
+                  </View>:
+                  <>
+                    { (sportsState === loadingStateEnum.success) ?
+                      <>
+                        {sportsTeams.map((team) => (
+                          <Pressable key={`SportTeam_${team.teamId}_${create_UUID()}`} onPress={() => {setSelectedTeam(team); setIsShowingTeams(false); setIsShowingRoster(false)}} style={{backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
+                            <Text style={{margin: 5, color: "white"}}>{team.teamName}</Text>
+                          </Pressable>
+                        ))}
+                      </>:
+                      <Text>Failed to load Sports</Text>
+                    }
+                  </>
+                }
               </>:null
             }
           </View>
@@ -120,16 +151,31 @@ export default function Sports() {
         <> 
           {(loadingResult === loadingStateEnum.success) ?
             <ScrollView style={{height: height * 0.7}}>
-              { sportsPosts.map((item) => (
-                <View key={`Sport_${item.fileID}_${create_UUID()}`} style={{marginTop: height * 0.05}}>
-                { (item.fileType === dataContentTypeOptions.image) ?
-                  <Image style={{width: width * 0.9, height: height * 0.4, marginLeft: width * 0.05, marginRight: width * 0.05}} source={{uri: item.fileID}}/>:null
-                }
-                { (item.fileType === dataContentTypeOptions.video) ?
-                  <Video useNativeControls source={{uri: item.fileID}} resizeMode={ResizeMode.COVER} style={{width: width * 0.9, height: height * 0.4, alignSelf: 'stretch', marginLeft: width * 0.05, marginRight: width * 0.05}} videoStyle={{width: width * 0.9, height: height * 0.4}}/>:null
-                }
-                </View>
-              ))
+              { (selectedTeam !== undefined) ?
+                <Pressable onPress={() => setIsShowingRoster(true)}>
+                  <Text>Roster</Text>
+                </Pressable>:null
+              }
+              { (isShowingRoster && selectedTeam !== undefined) ?
+                <RosterView teamId={selectedTeam.teamId} width={width} height={height * 0.7} />:
+                <>
+                  { sportsPosts.map((item) => (
+                    <View key={`Sport_${item.fileID}_${create_UUID()}`} style={{marginTop: height * 0.05}}>
+                    { (item.fileType === dataContentTypeOptions.image) ?
+                      <View style={{width: width * 0.9, height: height * 0.4, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, marginLeft: width * 0.05, marginRight: width * 0.05, borderRadius: 15}}>
+                        <Text style={{position: "absolute", left: 5, bottom: 5, zIndex: 100}}>{item.caption}</Text>
+                        <Image style={{width: width * 0.9, height: height * 0.4, marginLeft: width * 0.05, marginRight: width * 0.05, borderRadius: 15}} source={{uri: item.fileID}}/>
+                      </View>:null
+                    }
+                    { (item.fileType === dataContentTypeOptions.video) ?
+                      <View style={{width: width * 0.9, height: height * 0.4, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, marginLeft: width * 0.05, marginRight: width * 0.05, borderRadius: 15}}>
+                        <Text style={{position: "absolute", left: 5, bottom: 5, zIndex: 100}}>{item.caption}</Text>
+                        <Video useNativeControls source={{uri: item.fileID}} resizeMode={ResizeMode.COVER} style={{width: width * 0.9, height: height * 0.4, alignSelf: 'stretch', borderRadius: 15}} videoStyle={{width: width * 0.9, height: height * 0.4}}/>
+                      </View>:null
+                    }
+                    </View>
+                  ))}
+                </>
               }
             </ScrollView>:
             <View>  
@@ -139,5 +185,48 @@ export default function Sports() {
         </>
       }
     </View>
+  )
+}
+
+function RosterView({teamId, width, height}:{teamId: string, width: number, height: number}) {
+  const [rosterLoadingState, setRosterLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [roster, setRoster] = useState<rosterType[]>([])
+  async function loadRoster() {
+    const result = await getRoster(teamId)
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setRoster(result.data)
+    }
+    setRosterLoadingState(result.result)
+  }
+  useEffect(() => {
+    loadRoster()
+  }, [])
+
+  return (
+    <>
+      { (rosterLoadingState === loadingStateEnum.loading) ?
+        <View style={{width: width, height: height, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+          <ProgressView width={width * 0.1} height={height * 0.1}/>
+          <Text>Loading</Text>
+        </View>:
+        <>
+          { (rosterLoadingState === loadingStateEnum.success) ?
+            <View>
+              <FlatList 
+                data={roster}
+                renderItem={(item) => (
+                  <View>
+                    <Text>{item.item.name}</Text>
+                  </View>
+                )}
+              />
+            </View>:
+            <View>
+              <Text>Something went wrong loading the roster</Text>
+            </View>
+          }
+        </>
+      }
+    </>
   )
 }

@@ -207,6 +207,7 @@ declare global {
   type governmentRosterType = {
     name: string
     id: string
+    listItemId?: string
     position?: string
     playerNumber?: string
     posts?: string[]

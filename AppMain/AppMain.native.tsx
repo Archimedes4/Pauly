@@ -24,16 +24,18 @@ import * as AuthSession from 'expo-auth-session';
 import { StatusBar } from 'expo-status-bar'
 import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
 import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin'
+import { authenticationRefreshTokenSlice } from '../src/Redux/reducers/authenticationRefreshTokenReducer'
 
 if (Platform.OS === "web") {
   WebBrowser.maybeCompleteAuthSession();
 }
 
-const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All"]
+const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All", "TeamMember.Read.All"]
 
 export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
   const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
   const dispatch = useDispatch()
+  const authenticationCall = useSelector((state: RootState) => state.authenticationCall);
   
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
@@ -49,7 +51,7 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
       clientId: clientId,
       redirectUri: redirectUri,
       scopes: scopes,
-      prompt: Prompt.SelectAccount
+      prompt: Prompt.Consent
     },
     discovery
   )
@@ -70,6 +72,9 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
             },
             discovery,
           ).then((res) => {
+            if (res.refreshToken !== undefined) {
+              dispatch(authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(res.refreshToken))
+            }
             dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
             getPaulyLists(res.accessToken)
             getUserProfile(res.accessToken)
@@ -102,6 +107,27 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
       }})
     }
   }
+
+  async function refreshToken() {
+    if (discovery !== null) {
+      try {
+        const result = await AuthSession.refreshAsync({
+          refreshToken: store.getState().authenticationRefreshToken,
+          clientId: clientId,
+          scopes: scopes
+        }, discovery)
+        dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
+      } catch {
+        dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""))
+      }
+    } else {
+      dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""))
+    }
+  }
+
+  useEffect(() => {
+    refreshToken()
+  }, [authenticationCall])
 
   return (
     <>

@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import store from "../../Redux/store";
+import { authenticationCallSlice } from "../../Redux/reducers/authenticationCallReducer";
 
 export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string | Blob, secondAuth?: boolean, authenticationToken?: string, headers?: Headers): Promise<Response> {
   var headersOut: Headers = new Headers()
@@ -38,15 +39,7 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
   const response  = await fetch(outUrl, options)
   if (response.status === 401) {
     if (secondAuth === undefined){
-      // var secondResultOut: Response | null = null
-      // const getNewResult = async function () {
-      //     if (previousValue !== store.getState().authenticationToken){
-      //         const secondResult = await callMsGraph(url, method, perfer, body, secondAuth, authenticationToken)
-      //         secondResultOut = secondResult
-      //         return unsubscribe()
-      //     }
-      // }
-      // const unsubscribe = store.subscribe(getNewResult)
+      store.dispatch(authenticationCallSlice.actions.setAuthenticationCallIncrement())
       const previousValue: string = store.getState().authenticationToken
       return new Promise((resolve) => {
         const unsubscribe = store.subscribe(async () => {

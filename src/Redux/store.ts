@@ -22,6 +22,7 @@ import isGovernmentModeReducer from './reducers/isGovernmentModeReducer';
 import commissionsReducer from './reducers/commissionsReducer';
 import pdfDataReducer from './reducers/pdfDataReducer';
 import monthViewReducer from './reducers/monthViewReducer';
+import authenticationCallReducer from './reducers/authenticationCallReducer';
 
 const store = configureStore({
   reducer: {
@@ -29,6 +30,7 @@ const store = configureStore({
     authenticationToken: authenticationTokenReducer,
     authenticationApiToken: authenticationApiTokenReducer,
     authenticationRefreshToken: authenticationRefreshTokenReducer,
+    authenticationCall: authenticationCallReducer,
     commissions: commissionsReducer,
     currentEvents: currentEventsReducer,
     currentEventsLastCalled: currentEventsLastCalledReducer,
