@@ -457,7 +457,7 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
                 </Pressable>
               </View>
               <FlatList
-                data={undefined}
+                data={submissions}
                 renderItem={(submission) => 
                 <Pressable style={{margin: 10}} onPress={() => setSelectedSubmisson(submission.item)}>
                   <Text>{submission.item.userName}</Text>

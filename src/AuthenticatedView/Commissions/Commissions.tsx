@@ -26,6 +26,7 @@ export default function Commissions() {
   const {height, width} = useSelector((state: RootState) => state.dimentions)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const {commissionNextLink} = useSelector((state: RootState) => state.commissions)
   const {currentCommissions, selectedCommission, commissionsState, points} = useSelector((state: RootState) => state.commissions)
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
@@ -36,17 +37,23 @@ export default function Commissions() {
 
   async function loadData() {
     const pointResult = await getPoints()
-    const commissionsResult = await getCommissions()
-    if (commissionsResult.result === loadingStateEnum.success, commissionsResult.data !== undefined) {
-      dispatch(commissionsSlice.actions.setCurrentCommissions(commissionsResult.data))
+    if (pointResult.result === loadingStateEnum.success && pointResult.data !== undefined) {
+      dispatch(commissionsSlice.actions.setPoints(pointResult.data))
+      const commissionsResult = await getCommissions()
+      if (commissionsResult.result === loadingStateEnum.success, commissionsResult.data !== undefined) {
+        dispatch(commissionsSlice.actions.setCurrentCommissions(commissionsResult.data))
+      }
+      dispatch(commissionsSlice.actions.setCommissionNextLink(commissionsResult.nextLink))
+      dispatch(commissionsSlice.actions.setCommissionsState(commissionsResult.result))
+    } else {
+      dispatch(commissionsSlice.actions.setCommissionsState(pointResult.result))
     }
-    dispatch(commissionsSlice.actions.setCommissionsState(commissionsResult.result))
     //TO DO pagination
   }
 
-  async function loadCommissionData(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean) {
+  async function loadCommissionData(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean, nextLink?: string) {
     dispatch(commissionsSlice.actions.setCommissionsState(loadingStateEnum.loading))
-    const result = await getCommissions(undefined, startDate, endDate, claimed)
+    const result = await getCommissions(nextLink, startDate, endDate, claimed)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       dispatch(commissionsSlice.actions.setCurrentCommissions(result.data))
     }
@@ -127,7 +134,7 @@ export default function Commissions() {
                   }
                   keyExtractor={item => item?.commissionId + "_" + create_UUID()}
                   onEndReachedThreshold={1}
-                  onEndReached={() => {}}
+                  onEndReached={() => {loadCommissionData(undefined, undefined, undefined, commissionNextLink)}}
                 />:
                 <View>
                   <Text>Failed</Text>
