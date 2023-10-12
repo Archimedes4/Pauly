@@ -43,6 +43,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ProfileBlock from './Profile/ProfileBlock';
 import ProgressView from '../UI/ProgressView';
 import Students from './Students';
+import GovernmentStudents from './Profile/Government/GovernmentStudents';
+import { Colors } from '../types';
 
 export default function AuthenticatedView({dimensions, width}:{dimensions: {window: ScaledSize,screen: ScaledSize}, width: number}) {
   const {height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -80,6 +82,7 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
                   <Route path="/profile/government/commissions/:id" element={<GovernmentEditCommission/>}/>
                   <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />
+                  <Route path="/profile/government/students" element={<GovernmentStudents />} />
                   <Route path="/profile/government/classes" element={<GovernmentClasses />} />
                   <Route path="/profile/government/classes/edit/:id" element={<GovernmentClassesEdit />} />
                   <Route path="/profile/government/classes/room" element={<GovernmentRooms />} />
@@ -109,10 +112,10 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
         </View>:
         <View style={{width: width, top: -insets.top, height: height, alignContent: "center", alignItems: 'center', justifyContent: "center"}}>
           <ProgressView width={14} height={14}/>
-          <Text style={{color: "white"}}>Loading</Text>
+          <Text style={{color: Colors.white}}>Loading</Text>
           { isGovernmentMode ?
             <Pressable onPress={() => {setOveride(true)}} style={{margin: 5}}>
-              <Text style={{color: "white"}}>Overide</Text>
+              <Text style={{color: Colors.white}}>Overide</Text>
             </Pressable>:null
           }
         </View>

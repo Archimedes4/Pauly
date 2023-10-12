@@ -3,7 +3,7 @@
 
 import { orgWideGroupID } from "../../PaulyConfig";
 import callMsGraph from "../Ultility/microsoftAssets";
-import { loadingStateEnum, semesters } from "../../types";
+import { Colors, loadingStateEnum, semesters } from "../../types";
 import store from "../../Redux/store";
 import getDressCode from "../homepage/getDressCode";
 import batchRequest from "../Ultility/batchRequest";
@@ -26,7 +26,7 @@ export async function getGraphEvents(url?: string, referenceUrl?: string): Promi
         startTime: data["value"][index]["start"]["dateTime"],
         endTime: data["value"][index]["end"]["dateTime"],
         allDay: data["value"][index]["isAllDay"],
-        eventColor: "white",
+        eventColor: Colors.white,
         paulyEventType: (eventType === "schoolYear") ? "schoolYear":(eventType === "schoolDay") ? "schoolDay":undefined,
         paulyEventData: eventData,
         microsoftEvent: true,
@@ -50,7 +50,7 @@ export async function getEvent(id: string): Promise<{result: loadingStateEnum, d
       startTime: data["start"]["dateTime"],
       endTime: data["end"]["dateTime"],
       allDay: data["isAllDay"],
-      eventColor: "white",
+      eventColor: Colors.white,
       microsoftEvent: true,
       microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["id"]
     }
@@ -154,7 +154,7 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
               startTime: data["value"][index]["start"]["dateTime"],
               endTime: data["value"][index]["end"]["dateTime"],
               allDay: data["value"][index]["isAllDay"],
-              eventColor: "white",
+              eventColor: Colors.whitewhitewhitewhitewhitewhite,
               microsoftEvent: true,
               microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],
               paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID})?.value === "schoolDay") ? "schoolDay":undefined,

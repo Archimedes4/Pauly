@@ -63,7 +63,7 @@ export default function Commissions() {
   }
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: Colors.white}))
   }, [])
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export default function Commissions() {
   
   return (
     <>
-      <View style={{width: width, height: height, backgroundColor: "white"}}>
+      <View style={{width: width, height: height, backgroundColor: Colors.white}}>
         <View style={{width: width, height: height * 0.1, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           { (currentBreakPoint <= 0) ?
             <BackButton to='/'/>:null
@@ -112,7 +112,7 @@ export default function Commissions() {
                         <View style={{flexDirection: "row", margin: 10, backgroundColor: "#793033", borderRadius: 15, shadowOffset: { width: 2, height: 3 }}}>
                           <View style={{margin: 10, flexDirection: "row"}}> 
                             <Image source={require("../../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: 50, height:  50}} />
-                            <Text style={{fontSize: 45, color: "white", fontFamily: 'BukhariScript', width: 100, paddingLeft: 10}}>{points}</Text>
+                            <Text style={{fontSize: 45, color: Colors.white, fontFamily: 'BukhariScript', width: 100, paddingLeft: 10}}>{points}</Text>
                           </View>
                         </View>:
                         <>
@@ -149,7 +149,7 @@ export default function Commissions() {
           }
         </View>
         <Pressable style={{height: (isHoverPicker) ? height * 0.1:height * 0.05}} onHoverIn={() => {setIsHoverPicker(true)}} onHoverOut={() => {setIsHoverPicker(false)}}>
-          <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
+          <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: Colors.white}} showsHorizontalScrollIndicator={false}>
             <PickerPiece text='All' onPress={() => {loadCommissionData()}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
             <PickerPiece text='Current' onPress={() => {loadCommissionData({date: new Date(), filter: "ge"}, {date: new Date(), filter: "le"})}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
             <PickerPiece text='Past' onPress={() => {loadCommissionData({date: new Date(), filter: "le"}, {date: new Date(), filter: "le"})}} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
@@ -173,7 +173,7 @@ function PickerPiece({text, isHoverPicker, setIsHoverPicker, onPress}:{text: str
   return (
     <Pressable onPress={() => {onPress()}} onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
       <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-        <Text style={{color: "white"}}>{text}</Text>
+        <Text style={{color: Colors.white}}>{text}</Text>
       </View>
     </Pressable>
   )

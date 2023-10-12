@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { RootState } from '../../../../../Redux/store'
 import { useSelector } from 'react-redux'
 import { Link, useParams } from 'react-router-native'
-import { loadingStateEnum } from '../../../../../types'
+import { Colors, loadingStateEnum } from '../../../../../types'
 import getDressCode from '../../../../../Functions/homepage/getDressCode'
 
 export default function GovernmentDressCodeEdit() {
@@ -25,7 +25,7 @@ export default function GovernmentDressCodeEdit() {
   }, [])
 
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <Link to="/profile/government/calendar/dresscode">
         <Text>Back</Text>
       </Link>

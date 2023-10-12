@@ -56,7 +56,7 @@ export default function Sports() {
   }
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: Colors.white}))
     loadSports()
   }, [])
 
@@ -78,8 +78,8 @@ export default function Sports() {
     return null;
   }
   return (
-    <View style={{height: height, width: width, backgroundColor: "white", overflow: "hidden"}}>
-      <View style={{height: height * 0.1, width: width, backgroundColor: '#444444', alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+    <View style={{height: height, width: width, backgroundColor: Colors.white, overflow: "hidden"}}>
+      <View style={{height: height * 0.1, width: width, backgroundColor: Colors.darkGray, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         { (currentBreakPoint <= 0) ?
           <BackButton to='/'/>:null
         }
@@ -97,14 +97,14 @@ export default function Sports() {
                   { (sportsState === loadingStateEnum.success) ?
                     <>
                       <Pressable style={{backgroundColor:  "#444444", borderWidth: (selectedSport === undefined) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}} onPress={() => {setSelectedTeam(undefined); setSelectedSport(undefined); setIsShowingRoster(false)}}>
-                        <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: isShowingTeams ? 5:10}}>{"Highlights"}</Text>
+                        <Text style={{margin: isShowingTeams ? 5:10, color: Colors.white, marginBottom: isShowingTeams ? 5:10}}>{"Highlights"}</Text>
                       </Pressable>
                       {sports.map((sport) => (
                         <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true); setIsShowingRoster(false)}} style={{backgroundColor:  "#444444", borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
-                          <Text style={{margin: isShowingTeams ? 5:10, color: "white", marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>
+                          <Text style={{margin: isShowingTeams ? 5:10, color: Colors.white, marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>
                           { (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ?
                             <View>
-                              <Text style={{color: "white", marginBottom: 5, marginLeft: 10, marginRight: 10}}>{selectedTeam?.teamName}</Text>
+                              <Text style={{color: Colors.white, marginBottom: 5, marginLeft: 10, marginRight: 10}}>{selectedTeam?.teamName}</Text>
                             </View>:null
                           }
                         </Pressable>
@@ -130,7 +130,7 @@ export default function Sports() {
                       <>
                         {sportsTeams.map((team) => (
                           <Pressable key={`SportTeam_${team.teamId}_${create_UUID()}`} onPress={() => {setSelectedTeam(team); setIsShowingTeams(false); setIsShowingRoster(false)}} style={{backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
-                            <Text style={{margin: 5, color: "white"}}>{team.teamName}</Text>
+                            <Text style={{margin: 5, color: Colors.white}}>{team.teamName}</Text>
                           </Pressable>
                         ))}
                       </>:

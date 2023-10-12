@@ -31,7 +31,7 @@ export default function GovernmentCommissions() {
 
   useEffect(() => {loadData()}, [])
   return (
-    <View style={{height: height, width: width, backgroundColor: "white"}}>
+    <View style={{height: height, width: width, backgroundColor: Colors.white}}>
       <View style={{height: height * 0.1}}>
         <Pressable onPress={() => {navigate("/profile/government")}}>
           <Text>Back</Text>
@@ -91,7 +91,7 @@ function CommissionBlock({commission}:{commission: commissionType}) {
       </View>
       { (unclaimedCount !== "0") ?
         <View key={create_UUID()} style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "red", position: "absolute", alignContent: "center", alignItems: "center", justifyContent: "center", top: -2, left: width-25}}>
-          <Text style={{color: "white"}}>{unclaimedCount}</Text>
+          <Text style={{color: Colors.white}}>{unclaimedCount}</Text>
         </View>:null
       }
       {
@@ -103,7 +103,7 @@ function CommissionBlock({commission}:{commission: commissionType}) {
       {
         (unclaimedState === loadingStateEnum.failed) ?
         <View key={create_UUID()} style={{width: 20, height: 20, borderRadius: 50, backgroundColor: "red", position: "absolute", alignContent: "center", alignItems: "center", justifyContent: "center", top: -2, left: width-25}}>
-          <Text style={{color: "white"}}>!</Text>
+          <Text style={{color: Colors.white}}>!</Text>
         </View>:null
       }
     </Pressable>

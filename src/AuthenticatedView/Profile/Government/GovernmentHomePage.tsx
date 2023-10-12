@@ -7,7 +7,7 @@ import { useMsal } from '@azure/msal-react';
 import store, { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
 import getCurrentPaulyData from '../../../Functions/homepage/getCurrentPaulyData';
-import { loadingStateEnum } from '../../../types';
+import { Colors, loadingStateEnum } from '../../../types';
 
 export default function GovernmentHomePage() {
     const {paulyDataListId, siteId} = useSelector((state: RootState) => state.paulyList)
@@ -64,7 +64,7 @@ export default function GovernmentHomePage() {
     }, [])
 
     return (
-      <View style={{width: width, height: height, backgroundColor: "white"}}>
+      <View style={{width: width, height: height, backgroundColor: Colors.white}}>
         <Link to="/profile/government/">
           <Text>Back</Text>
         </Link>

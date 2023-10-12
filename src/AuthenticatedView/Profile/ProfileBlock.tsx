@@ -33,7 +33,7 @@ export default function ProfileBlock({width}:{width: number}) {
     }
   }
   return (
-    <Pressable onPress={() => signOut()} style={{position: "absolute", bottom: 0, left: (expandedMode) ? (width * 2.5):width, backgroundColor: "white", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, margin: 5, borderRadius: 15}}>
+    <Pressable onPress={() => signOut()} style={{position: "absolute", bottom: 0, left: (expandedMode) ? (width * 2.5):width, backgroundColor: Colors.white, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, margin: 5, borderRadius: 15}}>
       <Text numberOfLines={1} style={{fontSize: 20, margin: 10}}>Sign Out</Text>
     </Pressable>
   )

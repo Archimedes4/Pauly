@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
 import { loadingStateEnum, semesters } from '../../../../types'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
+import { FlatList } from 'react-native-gesture-handler'
+import create_UUID from '../../../../Functions/Ultility/CreateUUID'
 
 
 export default function GovernmentClasses() {
@@ -47,19 +49,22 @@ export default function GovernmentClasses() {
   }, [])
 
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <View>
-      <Link to="/profile/government/">
-        <Text>Back</Text>
-      </Link>
-      <Text>Classes</Text>
+        <Pressable onPress={() => navigate("/profile/government/")}>
+          <Text>Back</Text>
+        </Pressable>
+        <Text>Classes</Text>
       </View>
       <ScrollView style={{height: height * 0.85}}>
-        {classes.map((classMap) => (
-          <Pressable key={"Class_"+classMap.id} onPress={() => {navigate("/profile/government/classes/edit/" + classMap.id)}}>
-            <Text style={{margin: 10}}>{classMap.name}</Text>
-          </Pressable>
-        ))}
+        <FlatList 
+          data={classes}
+          renderItem={(classMap) => (
+            <Pressable key={`Class_${classMap.item.id}_${create_UUID()}`} onPress={() => {navigate(`/profile/government/classes/edit/${classMap.item.id}`)}} style={{backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15, margin: 10}}>
+              <Text style={{margin: 10}}>{classMap.item.name}</Text>
+            </Pressable>
+          )}
+        />
       </ScrollView>
       <Pressable onPress={() => {
         navigate("/profile/government/classes/room")

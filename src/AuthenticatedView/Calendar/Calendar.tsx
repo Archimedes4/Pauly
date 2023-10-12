@@ -29,7 +29,7 @@ export default function Calendar() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: Colors.white}))
   }, [])
 
 
@@ -66,7 +66,7 @@ export default function Calendar() {
       </View> 
       <View style={{height: height * 0.9}}>
       { (selectedCalendarMode === calendarMode.month) ?
-        <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "white"}}>
+        <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: Colors.white}}>
           <MonthViewMain width={width * 0.9} height={height * 0.9} />
         </View>:null
       }
@@ -74,7 +74,7 @@ export default function Calendar() {
         <Week width={width * 1.0} height={height * 0.9} />:null
       }
       { (selectedCalendarMode === calendarMode.day) ?
-        <View style={{width: width, height: height * 0.9, alignItems: "center", alignContent: "center", justifyContent: "center", backgroundColor: "white"}}>
+        <View style={{width: width, height: height * 0.9, alignItems: "center", alignContent: "center", justifyContent: "center", backgroundColor: Colors.white}}>
           <DayView width={width * 0.9} height={height * 0.9} />
         </View>:null
       }
@@ -94,7 +94,7 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
   return (
     <>
       { (width <= 519) ?
-        <ScrollView style={{backgroundColor: "white", height: height, width: width}}>
+        <ScrollView style={{backgroundColor: Colors.white, height: height, width: width}}>
           <MonthView width={width} height={height * 0.8} /> 
           { (new Date(selectedDate).getDate() <= monthData.length) ?
             <>
@@ -106,7 +106,7 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
             </>:null
           }
         </ScrollView>:
-         <View style={{backgroundColor: "white", height: height, width: width}}>
+         <View style={{backgroundColor: Colors.white, height: height, width: width}}>
           <MonthView width={width} height={height} />
         </View>
       }
@@ -257,7 +257,7 @@ function CalendarCardView({value, width, height, calendarWidth}:{value: monthDat
       { (calendarWidth <= 519) ?
         <>
           { (value.showing) ?
-            <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: (value.dayData === new Date(selectedDate).getDate()) ? height/2:0, backgroundColor: (value.dayData === new Date(selectedDate).getDate()) ? "#ededed":"white"}}>
+            <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: (value.dayData === new Date(selectedDate).getDate()) ? height/2:0, backgroundColor: (value.dayData === new Date(selectedDate).getDate()) ? "#ededed":Colors.white}}>
               <Text style={{color: "black"}}>{value.dayData}</Text>
               { (value.events.length >= 1) ?
                 <View style={{backgroundColor: "black", borderRadius: 50, width: (width < height) ? width* 0.25:height * 0.25, height: (width < height) ? width* 0.25:height * 0.25}}/>:
@@ -294,7 +294,7 @@ function TopView({width, height}:{width: number, height: number}) {
   return (
     <View style={{flexDirection: "row", alignItems: "center", height: height, width: width}}>
       <View style={{width: width * 0.45 - (((width * 0.1) < (height)) ? width * 0.15:(height + width * 0.025)), height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontFamily: "BukhariScript", fontSize: (currentBreakPoint === 0) ? (height * 0.35):(height * 0.7), width: width * 0.4, height: (currentBreakPoint === 0) ? (height * 0.5):(height * 0.9), color: "white", textAlign: "center", verticalAlign: "middle", alignContent: "center", justifyContent: "center", alignItems: "center"}}>Calendar</Text>
+        <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{fontFamily: "BukhariScript", fontSize: (currentBreakPoint === 0) ? (height * 0.35):(height * 0.7), width: width * 0.4, height: (currentBreakPoint === 0) ? (height * 0.5):(height * 0.9), color: Colors.white, textAlign: "center", verticalAlign: "middle", alignContent: "center", justifyContent: "center", alignItems: "center"}}>Calendar</Text>
       </View>
       <View style={{width: width * 0.55}}>
         <View style={{marginLeft: width * 0.05}}>

@@ -44,7 +44,7 @@ export default function SegmentedPicker({width, height, selectedIndex, setSelect
                     </Pressable>
                 ))}
                 <Animated.View style={{transform: [{translateX: pan}], zIndex: -1}}>
-                    <View style={{ height: height * 0.95, width: compoentWidth - compoentWidth * 0.01, backgroundColor: "white", top: height * 0.025, borderRadius: 20, position: "absolute", zIndex: -1, alignItems: "center", alignContent: "center", justifyContent: "center"}} />
+                    <View style={{ height: height * 0.95, width: compoentWidth - compoentWidth * 0.01, backgroundColor: Colors.white, top: height * 0.025, borderRadius: 20, position: "absolute", zIndex: -1, alignItems: "center", alignContent: "center", justifyContent: "center"}} />
                 </Animated.View>
             </View>
         </>

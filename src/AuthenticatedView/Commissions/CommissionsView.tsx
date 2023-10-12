@@ -137,7 +137,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
   }
 
   return (
-    <View style={{width: width * 0.9, height: height * 0.8, backgroundColor: "white", shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
+    <View style={{width: width * 0.9, height: height * 0.8, backgroundColor: Colors.white, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>
       { (commissionState === loadingStateEnum.loading) ?
         <View style={{height: height * 0.8, width: width * 0.9, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
           <ProgressView width={(width * 0.8 < height * 0.7) ? width * 0.4:height * 0.35} height={(width * 0.8 < height * 0.7) ? width * 0.4:height * 0.35}/>
@@ -168,7 +168,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                   <View style={{flexDirection: "row", margin: 10, backgroundColor: "#793033", borderRadius: 15, shadowOffset: { width: 2, height: 3 }}}>
                     <View style={{margin: 10, flexDirection: "row"}}> 
                       <Image source={require("../../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: 50, height:  50}} />
-                      <Text style={{fontSize: 45, color: "white", fontFamily: 'BukhariScript', width: 100, paddingLeft: 10}}>{commissionData.points}</Text>
+                      <Text style={{fontSize: 45, color: Colors.white, fontFamily: 'BukhariScript', width: 100, paddingLeft: 10}}>{commissionData.points}</Text>
                     </View>
                   </View>
                   <View style={{marginLeft: width * 0.05}}>

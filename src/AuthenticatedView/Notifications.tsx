@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 import { Link } from 'react-router-native';
 import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
-import { loadingStateEnum, semesters, taskImportanceEnum, taskStatusEnum } from '../types';
+import { Colors, loadingStateEnum, semesters, taskImportanceEnum, taskStatusEnum } from '../types';
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import getUsersTasks from '../Functions/homepage/getUsersTasks';
 import ProgressView from '../UI/ProgressView';
@@ -76,17 +76,17 @@ export default function Notifications() {
   }, [siteId])
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "white", bottom: "white"}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.white, bottom: Colors.white}))
   }, []) 
 
   return (
-    <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
+    <ScrollView style={{width: width, height: height, backgroundColor: Colors.white}}>
       { (currentBreakPoint === 0) ?
         <BackButton to='/'/>:null
       }
       <View style={{width: width, height: height * 0.1, marginTop: (currentBreakPoint === 0) ? 10:0}}>
         <View style={{width: width * 0.9, height: height * 0.07, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#444444", marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
-          <Text style={{color: "#FFFFFF"}}>{message}</Text>
+          <Text style={{color: Colors.white}}>{message}</Text>
         </View>
       </View>
       { (currentBreakPoint === 0) ?
@@ -114,24 +114,24 @@ function WidgetView({width, height}:{width: number, height: number}) {
   return (
     <View style={{backgroundColor: "#793033", width: width, height: height, borderRadius: 15, marginLeft: (currentBreakPoint === 0) ? width * 0.05:0}}>
       <View style={{width: width, height: height/3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-        <Text style={{color: "white", fontSize: height/6}}>{dow[new Date().getDay()]}</Text>
+        <Text style={{color: Colors.white, fontSize: height/6}}>{dow[new Date().getDay()]}</Text>
       </View>
       { (schoolDayData !== undefined) ?
         <>
           <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/6}}>
-            <Text style={{color: "white"}}>{schoolDayData?.schedule.descriptiveName}</Text>
+            <Text style={{color: Colors.white}}>{schoolDayData?.schedule.descriptiveName}</Text>
           </View>
           <View style={{flexDirection: "row", height: height/2}}>
             <View style={{height: height * 0.5, width: width * 0.3, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
-              <Text style={{color: "white", fontWeight: "bold", fontSize: height * 0.4}}>{schoolDayData?.schoolDay.shorthand}</Text>
+              <Text style={{color: Colors.white, fontWeight: "bold", fontSize: height * 0.4}}>{schoolDayData?.schoolDay.shorthand}</Text>
             </View>
             <View style={{height: height * 0.5, width: width * 0.7, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-              <Text style={{color: "white", fontSize: height/3}}>{startTime}</Text>
+              <Text style={{color: Colors.white, fontSize: height/3}}>{startTime}</Text>
             </View>
           </View>
         </>:
         <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/2}}>
-          <Text style={{color: "white"}}>No School</Text>
+          <Text style={{color: Colors.white}}>No School</Text>
         </View>
       }
     </View>

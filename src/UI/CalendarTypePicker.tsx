@@ -61,7 +61,7 @@ export default function CalendarTypePicker({width, height }:PickerWrapperProps) 
           <Text style={{textAlign: "center", fontSize: Math.sqrt((compoentWidth * 0.8)*height/5)}}>Day</Text>
         </Pressable>
         <Animated.View style={{transform: [{translateX: pan}], zIndex: -1}}>
-          <View style={{ height: height * 0.95, width: compoentWidth - compoentWidth * 0.01, backgroundColor: "white", top: height * 0.025, borderRadius: 20, position: "absolute", zIndex: -1, alignItems: "center", alignContent: "center", justifyContent: "center"}} />
+          <View style={{ height: height * 0.95, width: compoentWidth - compoentWidth * 0.01, backgroundColor: Colors.white, top: height * 0.025, borderRadius: 20, position: "absolute", zIndex: -1, alignItems: "center", alignContent: "center", justifyContent: "center"}} />
         </Animated.View>
       </View>
     </>

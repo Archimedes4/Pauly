@@ -25,7 +25,7 @@ export default function GovernmentDressCode() {
   }, [])
 
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
         <Link to="/profile/government/calendar">
           <Text>Back</Text>
         </Link>

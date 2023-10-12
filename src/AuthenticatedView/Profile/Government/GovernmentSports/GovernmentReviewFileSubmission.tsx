@@ -159,12 +159,12 @@ export default function GovernmentReviewFileSubmission() {
   return (
     <>
       { (loadingState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <Text>Loading</Text>
         </View>:
         <>
           { (loadingState === loadingStateEnum.success && currentSubmissionInfomration !== undefined) ?
-          <View style={{width: width, height: height, backgroundColor: "white"}}>
+          <View style={{width: width, height: height, backgroundColor: Colors.whitewhitewhitewhitewhitewhite}}>
             <Pressable onPress={() => navigate("/profile/government/sports")}>
               <Text>Back</Text>
             </Pressable>

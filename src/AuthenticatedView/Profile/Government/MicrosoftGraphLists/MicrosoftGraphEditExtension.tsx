@@ -41,7 +41,7 @@ export default function MicrosoftGraphEditExtension() {
         }
     }
   return (
-    <View style={{overflow: "hidden", height: height, width: width, backgroundColor: "white"}}>
+    <View style={{overflow: "hidden", height: height, width: width, backgroundColor: Colors.white}}>
         <Link to={"/profile/government/graph/" + mode}>
             <Text>Back</Text>
         </Link>

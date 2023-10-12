@@ -3,12 +3,13 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../Redux/store'
+import { Colors } from '../../../../types'
 
 export default function GovernmentCalendar() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const navigate = useNavigate()
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.whitewhite}}>
       <Link to="/profile/government/">
         <Text>Back</Text>
       </Link>

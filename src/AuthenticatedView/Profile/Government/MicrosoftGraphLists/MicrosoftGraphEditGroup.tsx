@@ -41,7 +41,7 @@ export default function MicrosoftGraphEditGroup() {
 
     useEffect(() => {getListItems()}, [])
     return (
-        <View style={{overflow: "hidden", height: height, width: width, backgroundColor: "white"}}>
+        <View style={{overflow: "hidden", height: height, width: width, backgroundColor: Colors.white}}>
             <Link to="/profile/government/graph/group">
               <Text>Back</Text>
             </Link>

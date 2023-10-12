@@ -4,7 +4,7 @@ import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import create_UUID from '../../../../../Functions/Ultility/CreateUUID';
 import { Link } from 'react-router-native';
 import { DownIcon, UpIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
-import { loadingStateEnum } from '../../../../../types';
+import { Colors, loadingStateEnum } from '../../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
 import getDressCodeData from '../../../../../Functions/homepage/getDressCodeData';
@@ -105,7 +105,7 @@ export default function GovernmentTimetableEdit() {
     getDressCodes()
   }, [])
   return (
-    <View style={{height: height, width: width, overflow: "scroll", backgroundColor: "white"}}>
+    <View style={{height: height, width: width, overflow: "scroll", backgroundColor: Colors.white}}>
       <Link to="/profile/government/calendar/timetable/">
         <Text>Back</Text>
       </Link>
@@ -179,7 +179,7 @@ export default function GovernmentTimetableEdit() {
             { (dressCodeState === loadingStateEnum.success) ?
               <View>
                 { dressCodes.map((dressCode) => (
-                  <ListItem title={dressCode.name} width={width * 0.8} onPress={() => {setSelectedDressCode(dressCode)}} style={{backgroundColor: (selectedDressCode?.id === dressCode.id) ? "blue":"white"}}/>
+                  <ListItem title={dressCode.name} width={width * 0.8} onPress={() => {setSelectedDressCode(dressCode)}} style={{backgroundColor: (selectedDressCode?.id === dressCode.id) ? "blue":Colors.white}}/>
                 ))}
               </View>:<Text>Failed</Text>
             }

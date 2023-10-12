@@ -59,7 +59,7 @@ export default function GovernmentSportsTeams() {
   }, [])
 
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.whitewhitewhitewhitewhite}}>
       <Link to="/profile/government/sports">
         <Text>Back</Text>
       </Link>

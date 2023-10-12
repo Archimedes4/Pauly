@@ -127,7 +127,7 @@ export default function MicrosoftGraphOverview() {
     getExtensions()
   }, [])
   return (
-    <View style={{height: height, width: width, backgroundColor: "white"}}>
+    <View style={{height: height, width: width, backgroundColor: Colors.white}}>
       <Link to="/profile/government">
         <Text>Back</Text>
       </Link>

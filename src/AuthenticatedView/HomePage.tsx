@@ -83,7 +83,7 @@ export default function HomePage() {
         <Pressable onPress={() => {navigate("/calendar")}} style={{width: width * 0.999, height: height * 0.42}}>
           <View>
             <View style={{width: width * 1.0, height: height * 0.05, alignItems: "center", alignContent: "center", justifyContent: "center", borderTopColor: "black", borderTopWidth: 2, borderBottomColor: "black", borderBottomWidth: 2}}>
-              <Text style={{margin: "auto", color: "white"}}>Calendar</Text>
+              <Text style={{margin: "auto", color: Colors.white}}>Calendar</Text>
             </View>
             <MonthView width={width * 1.0} height={height * 0.37}/>
           </View>

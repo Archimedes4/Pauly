@@ -31,7 +31,7 @@ export default async function createEvent() {
         name: dataOut["subject"],
         startTime: dataOut["start"]["dateTime"],
         endTime: dataOut["end"]["dateTime"],
-        eventColor: "white",
+        eventColor: Colors.white,
         microsoftEvent: true,
         microsoftReference: `https://graph.microsoft.com/v1.0/me/events/${dataOut["id"]}`,
         allDay: false
@@ -107,7 +107,7 @@ export default async function createEvent() {
         name: dataOut["subject"],
         startTime: dataOut["start"]["dateTime"],
         endTime: dataOut["end"]["dateTime"],
-        eventColor: "white",
+        eventColor: Colors.white,
         paulyEventType: (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) ? "schoolDay" : (store.getState().addEvent.selectedEventType === paulyEventType.schoolYear) ? "schoolYear" : undefined,
         paulyEventData: (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) ? JSON.stringify(store.getState().addEvent.selectedSchoolDayData) : (store.getState().addEvent.selectedEventType === paulyEventType.schoolYear) ? store.getState().addEvent.selectedTimetable.id : undefined,
         microsoftEvent: true,

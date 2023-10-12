@@ -35,7 +35,7 @@ export default function GovermentRoomsCreate() {
   }
 
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.whitewhite}}>
       <Pressable onPress={() => {navigate("/profile/government/classes/room")}}>
         <Text>Back</Text>
       </Pressable>

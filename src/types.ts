@@ -438,3 +438,10 @@ declare global {
     itemID: string
   }
 }
+
+export class Colors {
+  static white = "#FFFFFF"
+  static maroon = "#793033"
+  static lightGray = "#ededed"
+  static darkGray = "#444444"
+}

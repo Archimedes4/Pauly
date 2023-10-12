@@ -28,7 +28,7 @@ export default function Week({width, height}:{width: number, height: number}) {
     setDaysOfWeek(getDOW(new Date(selectedDateRedux)))
   }, [selectedDateRedux])
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <View>
       {/* 768 TO DO get dimentiosn value*/}
       {(false) ?
@@ -48,7 +48,7 @@ export default function Week({width, height}:{width: number, height: number}) {
               <Pressable onPress={() => {
                 dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(day.toISOString()))
               }} key={day.getDay() + "_" + create_UUID()} style={{width: width * 0.08888888888888889, height: width * 0.08888888888888889, margin: width * 0.01111111111111111, borderRadius: 50, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center", borderColor: (day.getDate() === new Date(selectedDateRedux).getDate()) ? "black":"#793033", borderWidth: (new Date().getDate() === day.getDate() || day.getDate() === new Date(selectedDateRedux).getDate()) ? 5:0}}>
-                <Text style={{color: "white"}}>{day.getDate()}</Text>
+                <Text style={{color: Colors.white}}>{day.getDate()}</Text>
               </Pressable>
             ))}
             <Pressable style={{margin: width * 0.01111111111111111}} onPress={() => {
@@ -62,7 +62,7 @@ export default function Week({width, height}:{width: number, height: number}) {
         </View>
       }
       </View>
-      <View style={{height: (false) ? height:(height - width * 0.179), width: width, alignContent: "center", alignItems: "center", backgroundColor: "white"}}>
+      <View style={{height: (false) ? height:(height - width * 0.179), width: width, alignContent: "center", alignItems: "center", backgroundColor: Colors.white}}>
         <DayView width={width * 0.95} height={(false) ? height * 0.757:height}/>
       </View>
     </View>

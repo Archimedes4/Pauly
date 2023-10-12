@@ -70,7 +70,7 @@ export default function GovernmentSportsTeamAddPost() {
     }
   }
   return (
-    <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
+    <ScrollView style={{width: width, height: height, backgroundColor: Colors.white}}>
       <Pressable onPress={() => {navigate("/profile/government/sports")}}>
         <Text>Back</Text>
       </Pressable>

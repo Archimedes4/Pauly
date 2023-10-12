@@ -4,7 +4,7 @@ import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets';
 import { Link, useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
-import { loadingStateEnum } from '../../../../../types';
+import { Colors, loadingStateEnum } from '../../../../../types';
 
 export default function GovernmentSchedule() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
@@ -44,7 +44,7 @@ export default function GovernmentSchedule() {
     getSchedules()
   }, [])
   return (
-    <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
+    <ScrollView style={{width: width, height: height, backgroundColor: Colors.white}}>
       <Pressable onPress={() => navigate("/profile/government/calendar")}>
         <Text>Back</Text>
       </Pressable>

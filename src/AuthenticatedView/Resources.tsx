@@ -11,7 +11,7 @@ import { useFonts } from 'expo-font';
 import WebViewCross from '../UI/WebViewCross'
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 import BackButton from '../UI/BackButton'
-import { loadingStateEnum, resourceMode } from '../types'
+import { Colors, loadingStateEnum, resourceMode } from '../types'
 import ProgressView from '../UI/ProgressView'
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer'
 import create_UUID from '../Functions/Ultility/CreateUUID'
@@ -55,7 +55,7 @@ export default function Resources() {
   }
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: "white"}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: Colors.white}))
   }, [])
 
   useEffect(() => {
@@ -82,14 +82,14 @@ export default function Resources() {
   return (
     <>  
       <View style={{height: height, width: width}}>
-        <View style={{height: height * 0.1, width: width, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{height: height * 0.1, width: width, backgroundColor: Colors.darkGray, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           { (currentBreakPoint <= 0) ?
             <BackButton to='/'/>:null
           }
           <Text style={{fontFamily: "BukhariScript"}}>Resources</Text>
         </View>
         <SearchBox />
-        <View style={{width: width, height: height * 0.05, backgroundColor: "#ededed"}}/>
+        <View style={{width: width, height: height * 0.05, backgroundColor: Colors.lightGray}}/>
         <ScrollView style={{height: (isHoverPicker) ? height * 0.75:height * 0.8, backgroundColor: "#ededed"}}>
           <>
             { (loadingState === loadingStateEnum.loading) ?
@@ -103,7 +103,7 @@ export default function Resources() {
                     {resources.map((resource) => (
                       <>
                         { isGovernmentMode ?
-                          <Pressable key={`Resource_${resource.id}_${create_UUID()}`} onPress={() => {setIsShowingCategoryView(true); setSelectedPost({teamId: resource.teamId, conversationId: resource.conversationId, messageId: resource.id})}} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                          <Pressable key={`Resource_${resource.id}_${create_UUID()}`} onPress={() => {setIsShowingCategoryView(true); setSelectedPost({teamId: resource.teamId, conversationId: resource.conversationId, messageId: resource.id})}} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: Colors.white, borderRadius: 15, marginBottom: height * 0.01}}>
                             { (resource.body !== "" && checkIfResourceDataJustAttachment(resource.body)) ?
                               <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>:null
                             }
@@ -118,7 +118,7 @@ export default function Resources() {
                               </View>:null
                             }
                           </Pressable>:
-                          <View key={`Resource_${resource.id}_${create_UUID()}`} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: "white", borderRadius: 15, marginBottom: height * 0.01}}>
+                          <View key={`Resource_${resource.id}_${create_UUID()}`} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: Colors.white, borderRadius: 15, marginBottom: height * 0.01}}>
                             { (resource.body !== "" && checkIfResourceDataJustAttachment(resource.body)) ?
                               <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>:null
                             }
@@ -143,7 +143,7 @@ export default function Resources() {
           </>
         </ScrollView>
         <Pressable style={{height: (isHoverPicker) ? height * 0.1:height * 0.05}} onHoverIn={() => {setIsHoverPicker(true)}} onHoverOut={() => {setIsHoverPicker(false)}}>
-          <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: "white"}} showsHorizontalScrollIndicator={false}>
+          <ScrollView horizontal={true} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: width, backgroundColor: Colors.white}} showsHorizontalScrollIndicator={false}>
             <PickerPiece key={"Button_"+create_UUID()} text='Home' item={resourceMode.home} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
             <PickerPiece key={"Button_"+create_UUID()} text='Sports' item={resourceMode.sports} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
             <PickerPiece key={"Button_"+create_UUID()} text='Advancement' item={resourceMode.advancement} isHoverPicker={isHoverPicker} setIsHoverPicker={setIsHoverPicker}/>
@@ -222,7 +222,7 @@ function PickerPiece({text, item, isHoverPicker, setIsHoverPicker}:{text: string
   return (
     <Pressable onPress={() => {dispatch(resourcesSlice.actions.setSelectedResourceMode(item))}} onHoverIn={() => {setIsHoverPicker(true); setIsSelected(true)}} onHoverOut={() => setIsSelected(false)} style={{height: (isHoverPicker) ? height * 0.1:height * 0.05, width: (isSelected) ?  ((currentBreakPoint >= 2) ? (width*0.3):width * 0.6):((currentBreakPoint >= 2) ? (width*0.2):width * 0.4), alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF"}}>
       <View style={{height: (isHoverPicker) ? height * 0.06:height * 0.03, width: (isSelected) ? ((currentBreakPoint >= 2) ? (width*0.28):width * 0.46):((currentBreakPoint >= 2) ? (width*0.18):width * 0.36), marginLeft: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, marginRight: (currentBreakPoint >= 2) ? (width*0.01):width*0.02, backgroundColor: "#444444", borderWidth: (item !== selectedResourceMode) ? 0:2, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-        <Text style={{color: "white"}}>{text}</Text>
+        <Text style={{color: Colors.white}}>{text}</Text>
       </View>
     </Pressable>
   )
@@ -256,7 +256,7 @@ function SearchBox() {
 
   return (
     <View key={"Search_View_Top"} style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", position: "absolute", top: height * 0.1 - 19, zIndex: 2}}>
-      <View key={"Search_View_Mid"} style={{width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 25, flexDirection: "row", backgroundColor: "white"}}>
+      <View key={"Search_View_Mid"} style={{width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 25, flexDirection: "row", backgroundColor: Colors.white}}>
         { isOverflowing ?
           null:
           <View key={"Search_View_Search_Icon"} style={{width: 20, height: 40, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 10}}>

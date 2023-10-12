@@ -89,7 +89,7 @@ export default async function getClassEvents(scheduleId: string, semester: semes
             name: classResult.data[index].name,
             startTime: startDate.toISOString(),
             endTime: endDate.toISOString(),
-            eventColor: "white",
+            eventColor: Colors.white,
             microsoftEvent: false,
             allDay: false
           })

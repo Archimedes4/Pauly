@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import store, { RootState } from '../../../Redux/store'
 import callMsGraph from '../../../Functions/Ultility/microsoftAssets'
-import { loadingStateEnum, resourceResponce } from '../../../types'
+import { Colors, loadingStateEnum, resourceResponce } from '../../../types'
 import { Link } from 'react-router-native'
 import ProgressView from '../../../UI/ProgressView'
 import getResource from '../../../Functions/getResources'
@@ -164,7 +164,7 @@ export default function GovernmentResources() {
     getTeams()
   }, [])
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <View style={{height: height * 0.1}}>
         <Link to="/profile/government">
           <Text>Back</Text>

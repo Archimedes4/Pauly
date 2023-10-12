@@ -30,7 +30,7 @@ export default function GovernmentSports() {
   }, [])
 
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <View style={{height: height * 0.1}}>
         <Link to="/profile/government/">
           <Text>Back</Text>

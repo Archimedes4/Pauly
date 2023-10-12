@@ -114,7 +114,7 @@ export default function GovernmentEditCommission() {
   }
 
   return (
-    <View style={{overflow: "hidden", width: width, height: height, backgroundColor: "white"}}>
+    <View style={{overflow: "hidden", width: width, height: height, backgroundColor: Colors.white}}>
       <ScrollView style={{height: height, width: width, zIndex: 1}}>
         <BackButton to="/profile/government/commissions"/>
         <View style={{alignContent: "center", alignItems: "center", justifyContent: "center"}}>
@@ -236,7 +236,7 @@ export default function GovernmentEditCommission() {
         }
       </ScrollView>
     
-      <View style={{height: height * 0.8, width: width * 0.8, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "white":"transparent", borderRadius: 15, shadowColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "black":"transparent", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, alignItems: "center", justifyContent: "center", alignContent: "center"}} pointerEvents={(currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? 'auto':'none'}>
+      <View style={{height: height * 0.8, width: width * 0.8, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? Colors.white:"transparent", borderRadius: 15, shadowColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "black":"transparent", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, alignItems: "center", justifyContent: "center", alignContent: "center"}} pointerEvents={(currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? 'auto':'none'}>
         { (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ?
           <DatePicker 
             selectedDate={(currentDatePickingMode === datePickingMode.start) ? startDate:endDate} 
@@ -292,7 +292,7 @@ function GroupSelection({width, height, onSelect}:{width: number, height: number
   return (
     <>
       { (groupsState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={(width < height) ? width * 0.3:height * 0.3} height={(width < height) ? width * 0.3:height * 0.3}/>
           <Text>Loading</Text>
         </View>:
@@ -333,7 +333,7 @@ function ChannelSelection({width, height, teamId, onSelect, onBack}:{width: numb
   return (
     <>
       { (channelState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={(width < height) ? width * 0.3:height * 0.3} height={(width < height) ? width * 0.3:height * 0.3}/>
           <Text>Loading</Text>
         </View>:
@@ -377,7 +377,7 @@ function PostSelection({width, height, teamId, channelId, onSelect, onBack}:{wid
   return (
     <>
       { (postsState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={(width < height) ? width * 0.3:height * 0.3} height={(width < height) ? width * 0.3:height * 0.3}/>
           <Text>Loading</Text>
         </View>:
@@ -439,7 +439,7 @@ function CommissionSubmissions({commissionId, width, height}:{commissionId: stri
   return (
     <>
       { (submissiosState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <Text>Loading</Text>
         </View>:
         <>
@@ -522,7 +522,7 @@ function SubmissionView({width, height, submissionData, onClose, setSubmissionDa
   }, [])
 
   return (
-    <View style={{width: width * 0.8, height: height * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: "white"}}>
+    <View style={{width: width * 0.8, height: height * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: Colors.white}}>
       <Pressable onPress={() => onClose()} style={{margin: 10}}>
         <CloseIcon width={12} height={12}/>
       </Pressable>

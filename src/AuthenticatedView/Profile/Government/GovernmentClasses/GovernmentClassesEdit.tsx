@@ -147,7 +147,7 @@ export default function GovernmentClassesEdit() {
 
   return (
     <>
-      <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
+      <ScrollView style={{width: width, height: height, backgroundColor: Colors.white}}>
         { (classState === loadingStateEnum.loading) ?
           <View>
             <Pressable onPress={() => {
@@ -159,7 +159,7 @@ export default function GovernmentClassesEdit() {
           </View>:
           <View>
             { (classState === loadingStateEnum.success) ?
-              <View style={{width: width, height: height, backgroundColor: "white"}}>
+              <View style={{width: width, height: height, backgroundColor: Colors.white}}>
                 <Pressable onPress={() => {
                   navigate("/profile/government/classes")
                 }}>
@@ -245,7 +245,7 @@ export default function GovernmentClassesEdit() {
         }
       </ScrollView>
       { isShowingClassConfirmMenu ? 
-        <View style={{width: width * 0.8, height: height * 0.8, top: height * 0.1, left: width * 0.1, borderRadius: 15, backgroundColor: "white", position: "absolute", shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
+        <View style={{width: width * 0.8, height: height * 0.8, top: height * 0.1, left: width * 0.1, borderRadius: 15, backgroundColor: Colors.white, position: "absolute", shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10}}>
           <Pressable onPress={() => {setIsShowingClassConfirmMenu(false)}}>
             <CloseIcon width={14} height={14} />
           </Pressable>
@@ -276,7 +276,7 @@ function DayBlock({day, periods, dayIndex, setPeriods, selectedTimetable}:{day: 
               newPeriods[dayIndex] = index;
               setPeriods([...newPeriods]);
             }
-          }} expanded={selected} setExpanded={(e) => {setSelected(e)}} style={{ backgroundColor: "white", zIndex: -2}} expandedStyle={{backgroundColor: "blue", zIndex: 101, position: "absolute"}} options={["unchosen", ...Array.from(selectedTimetable.schedules[0].periods).flatMap((_item, index) => ((index + 1).toString()))]} children={''} />
+          }} expanded={selected} setExpanded={(e) => {setSelected(e)}} style={{ backgroundColor: Colors.white, zIndex: -2}} expandedStyle={{backgroundColor: "blue", zIndex: 101, position: "absolute"}} options={["unchosen", ...Array.from(selectedTimetable.schedules[0].periods).flatMap((_item, index) => ((index + 1).toString()))]} children={''} />
           :<Text>Something went wrong please reload the page.</Text>
         }
       </View>

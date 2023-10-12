@@ -3,6 +3,7 @@ import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'reac
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Colors } from '../types';
 
 export default function ScrollingTextAnimation({text, width, height}:{text: string, width: number, height: number}) {
   const pan = useRef(new Animated.Value(0)).current
@@ -53,14 +54,14 @@ export default function ScrollingTextAnimation({text, width, height}:{text: stri
       { (childWidth !== 0) ? 
         <Animated.View style={{transform: [{translateX: pan}]}}>
           <View style={{width: childWidth + childWidth * 0.01, height: height, overflow: "hidden", position: "absolute", left: childWidth + childWidth * 0.01}}>
-            <Text style={{fontFamily: 'GochiHand', color: "white", fontSize: height, height: height}}>{text}</Text>
+            <Text style={{fontFamily: 'GochiHand', color: Colors.white, fontSize: height, height: height}}>{text}</Text>
           </View>
           <View style={{width: childWidth + childWidth * 0.01, height: height, position: "absolute", left: 0}}>
-            <Text style={{fontFamily: 'GochiHand', color: "white", fontSize: height, height: height, position: "absolute"}}>{text}</Text>
+            <Text style={{fontFamily: 'GochiHand', color: Colors.white, fontSize: height, height: height, position: "absolute"}}>{text}</Text>
           </View>
         </Animated.View>:
         <ScrollView style={{width: 99999999}} horizontal={true}>
-          <Text numberOfLines={1} onLayout={(e) => {setChildWidth(e.nativeEvent.layout.width)}} adjustsFontSizeToFit={!(Platform.OS === "ios")} style={{fontFamily: 'GochiHand', color: "white", fontSize: height, height: height}}>{text}</Text>
+          <Text numberOfLines={1} onLayout={(e) => {setChildWidth(e.nativeEvent.layout.width)}} adjustsFontSizeToFit={!(Platform.OS === "ios")} style={{fontFamily: 'GochiHand', color: Colors.white, fontSize: height, height: height}}>{text}</Text>
         </ScrollView>
       }
     </View>

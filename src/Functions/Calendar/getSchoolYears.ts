@@ -20,7 +20,7 @@ export default async function getSchoolYears(nextLink?: string): Promise<{ resul
             startTime: data["value"][index]["start"]["dateTime"],
             endTime: data["value"][index]["end"]["dateTime"],
             allDay: data["value"][index]["isAllDay"],
-            eventColor: "white",
+            eventColor: Colors.white,
             paulyEventType:  (eventData.find((e) => {return e.id === eventTypeExtensionID})?.value === "schoolYear") ? "schoolYear":undefined,
             paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID})?.value,
             microsoftEvent: true,

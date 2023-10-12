@@ -220,7 +220,7 @@ export default function GovernmentCreateNewTeam() {
   return (
     <>
       { (isCreatingTeam || teamDataState === loadingStateEnum.success) ?
-        <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
+        <ScrollView style={{width: width, height: height, backgroundColor: Colors.white}}>
           <Pressable onPress={() => navigate(`/profile/government/sports/team/${sport}/${id}`)} >
             <Text>Back</Text>
           </Pressable>
@@ -314,7 +314,7 @@ export default function GovernmentCreateNewTeam() {
         </ScrollView>:
         <>
           { (teamDataState === loadingStateEnum.loading) ?
-            <View style={{width: width, height: height, backgroundColor: "white", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+            <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
               <ProgressView width={width * 0.1} height={height * 0.1}/>
               <Text>Loading</Text>
             </View>:

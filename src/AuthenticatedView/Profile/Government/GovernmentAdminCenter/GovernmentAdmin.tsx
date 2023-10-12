@@ -1,6 +1,6 @@
 import { View, Text, Pressable, TextInput } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { loadingStateEnum } from '../../../../types';
+import { Colors, loadingStateEnum } from '../../../../types';
 import { useNavigate } from 'react-router-native';
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import { initializePaulyPartOne, initializePaulyPartThree, initializePaulyPartTwo } from '../../../../Functions/initializePauly/initializePauly'
@@ -205,7 +205,7 @@ export default function GovernmentAdmin() {
   }, [createdGroupId, initResult])
 
   return (
-    <View style={{height: height, width: width, backgroundColor: "white"}}>
+    <View style={{height: height, width: width, backgroundColor: Colors.white}}>
       <View>
         <Pressable onPress={() => navigate("/profile/government")}>
           <Text>Back</Text>
@@ -257,7 +257,7 @@ export default function GovernmentAdmin() {
                         <Text>{addData.id}</Text>
                       </View>
                     </Pressable>:
-                    <Pressable style={{width: width * 0.7, backgroundColor: "white"}} onPress={() => {
+                    <Pressable style={{width: width * 0.7, backgroundColor: Colors.white}} onPress={() => {
                       setSelectedUpdates([...selectedUpdates, addData.id])
                     }}>
                       <View style={{margin: 5}}>

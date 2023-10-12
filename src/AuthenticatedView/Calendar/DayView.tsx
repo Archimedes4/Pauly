@@ -98,14 +98,14 @@ export default function DayView({width, height}:{width: number, height: number})
   }, [selectedDate])
 
   return (
-    <ScrollView style={{height: height, width: width, backgroundColor: "white"}} ref={mainScrollRef}>
+    <ScrollView style={{height: height, width: width, backgroundColor: Colors.white}} ref={mainScrollRef}>
       <>
         { isShowingTime ?
           <>
             {hoursText.map((value) => (
               <View key={value+"_"+create_UUID()} style={{flexDirection: "row", height: hourLength}}>
                 { (calculateIfShowing(value, new Date(selectedDate))) ?  
-                  <Text style={{color: (colorScheme == "dark") ? "white":"black"}}>{value}</Text>:null
+                  <Text style={{color: (colorScheme == "dark") ? Colors.white:"black"}}>{value}</Text>:null
                 }
                 <View style={{backgroundColor: "black", width: width * 0.9, height: 6, position: "absolute", right: 0, borderRadius: 25}} />
               </View>

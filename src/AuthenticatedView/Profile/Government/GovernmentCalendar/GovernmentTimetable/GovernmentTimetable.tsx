@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 export default function GovernmentTimetable() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <View style={{height: height * 0.1}}>
         <Link to="/profile/government/calendar/">
           <Text>Back</Text>

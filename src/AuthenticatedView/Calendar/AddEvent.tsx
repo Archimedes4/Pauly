@@ -10,7 +10,7 @@ import callMsGraph from "../../Functions/Ultility/microsoftAssets";
 import SelectTimetable from "./SelectTimetable";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { loadingStateEnum, paulyEventType} from "../../types";
+import { Colors, loadingStateEnum, paulyEventType} from "../../types";
 import PickerWrapper from "../../UI/Pickers/Picker";
 import SelectSchoolDayData from "./SelectSchoolDayData";
 import updateEvent from "../../Functions/updateEvent";
@@ -60,7 +60,7 @@ export default function AddEvent({width, height}:{width: number, height: number}
   }
 
   return (
-    <View style={{backgroundColor: "white", width: width, height: height, borderRadius: 5, borderWidth: 5}}>
+    <View style={{backgroundColor: Colors.white, width: width, height: height, borderRadius: 5, borderWidth: 5}}>
       { (isPickingStartDate || isPickingEndDate) ?
         <DatePicker 
           selectedDate={isPickingStartDate ? (new Date(startDate)):new Date(endDate)} 
@@ -229,7 +229,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
                 if (item >= 0 && item <= 3){
                   dispatch(addEventSlice.actions.setSelectedRecurringType(item))
                 } 
-              }} selectedIndex={selectedRecurringType} style={{height: height * 0.04}} expandedStyle={{height: height * 0.12, backgroundColor: "white"}}>
+              }} selectedIndex={selectedRecurringType} style={{height: height * 0.04}} expandedStyle={{height: height * 0.12, backgroundColor: Colors.white}}>
                 <View>
                   <Text>Daily</Text>
                 </View>

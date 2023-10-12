@@ -24,7 +24,7 @@ function NavBarBlock({des, expandedMode, blockLength, children, text, width, set
             </React.Fragment>
           </View>
           { expandedMode ? 
-            <Text style={{position: "absolute", left: blockLength, color: "white", marginLeft: 8}}>{text}</Text>:null
+            <Text style={{position: "absolute", left: blockLength, color: Colors.white, marginLeft: 8}}>{text}</Text>:null
           }
         </View>
       </View>
@@ -78,7 +78,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
               <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: blockLength, height:  blockLength}} />
             </View>
             { expandedMode ?
-              <Text style={{fontFamily: "Gochi Hand", color: "white", position: "absolute", top: blockLength * 0.3, left: blockLength * 0.65, fontSize: blockLength * 0.7, textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 4, height: 2}, textShadowRadius: 0}} selectable={false}>auly</Text>:null
+              <Text style={{fontFamily: "Gochi Hand", color: Colors.whitewhitewhitewhitewhite, position: "absolute", top: blockLength * 0.3, left: blockLength * 0.65, fontSize: blockLength * 0.7, textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 4, height: 2}, textShadowRadius: 0}} selectable={false}>auly</Text>:null
             }
           </View>
         </Pressable>
@@ -113,7 +113,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
             }
             <View style={{height: iconLength, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: blockLength - iconLength}}>
               { expandedMode ?
-                <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{color: "white", marginLeft: 8, width: blockLength * 2.5}} selectable={false}>{displayName}</Text>:null
+                <Text adjustsFontSizeToFit={true} numberOfLines={1} style={{color: Colors.white, marginLeft: 8, width: blockLength * 2.5}} selectable={false}>{displayName}</Text>:null
               }  
             </View>   
           </View>

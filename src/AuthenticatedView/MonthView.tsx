@@ -15,8 +15,8 @@ function MonthBlock({value, width, height, startDate, daySelected}:{value:number
   return(
     <View style={{width: width, height: height, borderColor: "black", borderWidth: 2}} id="This">
       { (value >= (startDate - 1) && value <= daySelected && textval !== 0) ?
-        <View style={{width: width, position: "absolute", height: height, borderColor: "black", backgroundColor: (day == (textval)) ? "red":(day >= (textval + 1)) ? "gray":(monthViewData !== undefined) ? monthViewData.eventColor:"white"}} />
-        :<View style={{backgroundColor: "white", width: width, height: height}}/>
+        <View style={{width: width, position: "absolute", height: height, borderColor: "black", backgroundColor: (day == (textval)) ? "red":(day >= (textval + 1)) ? "gray":(monthViewData !== undefined) ? monthViewData.eventColor:Colors.white}} />
+        :<View style={{backgroundColor: Colors.white, width: width, height: height}}/>
       }
       { (textval >= 1) ?
         <View id="Text" style={{width:  width, height: height, justifyContent: "center", alignContent: "center", alignItems: "center", position: "absolute"}}>

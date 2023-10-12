@@ -5,7 +5,7 @@ import { RootState } from '../../../../../Redux/store'
 import create_UUID from '../../../../../Functions/Ultility/CreateUUID'
 import { Link } from 'react-router-native'
 import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
-import { loadingStateEnum } from '../../../../../types'
+import { Colors, loadingStateEnum } from '../../../../../types'
 import DressCodeBlock from './DressCodeBlock'
 
 export default function GovernmentDressCodeCreate() {
@@ -36,7 +36,7 @@ export default function GovernmentDressCodeCreate() {
     }
   }
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <Link to="/profile/government/calendar/dresscode">
         <Text>Back</Text>
       </Link>
