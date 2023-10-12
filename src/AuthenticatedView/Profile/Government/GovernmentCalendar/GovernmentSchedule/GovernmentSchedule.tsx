@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native'
+import { View, Text, Pressable, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets';
-import { Link } from 'react-router-native';
+import { Link, useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
 import { loadingStateEnum } from '../../../../../types';
@@ -11,6 +11,7 @@ export default function GovernmentSchedule() {
   const {scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
+  const navigate = useNavigate()
   async function getSchedules() {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + scheduleListId +"/items?expand=fields")
     if (result.ok){
@@ -24,7 +25,8 @@ export default function GovernmentSchedule() {
               properName: dataResult["value"][index]["fields"]["scheduleProperName"],
               descriptiveName: dataResult["value"][index]["fields"]["scheduleDescriptiveName"],
               id: dataResult["value"][index]["fields"]["scheduleId"],
-              periods: scheduleData
+              periods: scheduleData,
+              color: dataResult["value"][index]["fields"]["scheduleColor"]
             })
           } catch {
             setLoadingState(loadingStateEnum.failed)
@@ -42,10 +44,10 @@ export default function GovernmentSchedule() {
     getSchedules()
   }, [])
   return (
-    <View style={{width: width, height: height, backgroundColor: "white"}}>
-      <Link to="/">
+    <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
+      <Pressable onPress={() => navigate("/profile/government/calendar")}>
         <Text>Back</Text>
-      </Link>
+      </Pressable>
       <Text>Schedules</Text>
       { (loadingState === loadingStateEnum.loading) ?
         <Text>Loading</Text>:null
@@ -53,11 +55,11 @@ export default function GovernmentSchedule() {
       { (loadingState === loadingStateEnum.success) ?
         <View>
           { loadedSchedules.map((schedule) => (
-            <Link to={"/profile/government/calendar/schedule/edit/" + schedule.id} key={schedule.id}>
+            <Pressable onPress={() => navigate(`/profile/government/calendar/schedule/${schedule.id}`)} key={schedule.id}>
               <View>
                 <Text>{schedule.properName}</Text>
               </View>
-            </Link>
+            </Pressable>
           ))
           }
         </View>:null
@@ -65,9 +67,9 @@ export default function GovernmentSchedule() {
       { (loadingState === loadingStateEnum.failed) ?
         <Text>Failure</Text>:null
       }
-      <Link to="/profile/government/calendar/schedule/create">
+      <Pressable onPress={() => navigate("/profile/government/calendar/schedule/create")}>
         <Text>Create New</Text>
-      </Link>
-    </View>
+      </Pressable>
+    </ScrollView>
   )
 }

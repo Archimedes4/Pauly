@@ -3,7 +3,7 @@ import React, { useCallback, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { useMsal } from "@azure/msal-react";
 import { tenantId } from '../../PaulyConfig';
-import { GearIcon, GovernmentIcon, PersonIcon } from '../../UI/Icons/Icons';
+import { GearIcon, GovernmentIcon, PersonIcon, StudentSearchIcon } from '../../UI/Icons/Icons';
 import BackButton from '../../UI/BackButton';
 import { DiscoveryDocument, revokeAsync, useAutoDiscovery } from 'expo-auth-session';
 import store, { RootState } from '../../Redux/store';
@@ -76,6 +76,10 @@ export default function Settings() {
       <Pressable onPress={() => {signOut()}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", alignContent: "center", justifyContent: "center", marginTop: height * 0.05}}>
         <Text style={{fontWeight: "bold"}}>SIGN OUT</Text>
       </Pressable>
+      <Pressable onPress={() => {navigate("/students")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", marginTop: height * 0.05}}>
+          <StudentSearchIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
+          <Text>Students</Text>
+        </Pressable>
       { isGovernmentMode ?
         <Pressable onPress={() => {navigate("/profile/government")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: "white", alignItems: "center", marginTop: height * 0.05}}>
           <GovernmentIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>

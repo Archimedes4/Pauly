@@ -191,6 +191,7 @@ export default function Sports() {
 function RosterView({teamId, width, height}:{teamId: string, width: number, height: number}) {
   const [rosterLoadingState, setRosterLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [roster, setRoster] = useState<rosterType[]>([])
+  
   async function loadRoster() {
     const result = await getRoster(teamId)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
@@ -198,6 +199,7 @@ function RosterView({teamId, width, height}:{teamId: string, width: number, heig
     }
     setRosterLoadingState(result.result)
   }
+
   useEffect(() => {
     loadRoster()
   }, [])

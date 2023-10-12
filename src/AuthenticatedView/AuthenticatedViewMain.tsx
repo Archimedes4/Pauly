@@ -19,13 +19,11 @@ import GovernmentReviewFileSubmission from './Profile/Government/GovernmentSport
 import GovernmentCalendar from './Profile/Government/GovernmentCalendar/GovernmentCalendar';
 import GovernmentSchedual from './Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentSchedule';
 import GovernmentTimetable from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetable';
-import GovernmentScheduleCreate from './Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleCreate';
 import GovernmentScheduleEdit from './Profile/Government/GovernmentCalendar/GovernmentSchedule/GovernmentScheduleEdit';
 import GovernmentClasses from './Profile/Government/GovernmentClasses/GovernmentClasses';
 import GovernmentClassesEdit from './Profile/Government/GovernmentClasses/GovernmentClassesEdit';
 import GovernmentHomePage from './Profile/Government/GovernmentHomePage';
 import NavBarComponent from '../UI/NavComponent';
-import Testing from './Profile/Government/Testing';
 import PageNotFound from './404Page';
 import GovernmentAdmin from './Profile/Government/GovernmentAdminCenter/GovernmentAdmin';
 import GovernmentRooms from './Profile/Government/GovernmentClasses/GovernmentRooms';
@@ -44,6 +42,7 @@ import { RootState } from '../Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ProfileBlock from './Profile/ProfileBlock';
 import ProgressView from '../UI/ProgressView';
+import Students from './Students';
 
 export default function AuthenticatedView({dimensions, width}:{dimensions: {window: ScaledSize,screen: ScaledSize}, width: number}) {
   const {height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -71,6 +70,7 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path="/resources" element={<Resources/>}/>
                   <Route path="/commissions" element={<Commissions/>}/>
                   <Route path="/profile" element={<Settings/>}/>
+                  <Route path="/students" element={<Students />} />
                   <Route path="/profile/government" element={<Government />}/>
                   <Route path="/profile/government/resources" element={<GovernmentResources />} />
                   <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
@@ -86,8 +86,7 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path="/profile/government/classes/room/create" element={<GovernmentRoomsCreate />} />
                   <Route path="/profile/government/calendar" element={<GovernmentCalendar />} />
                   <Route path="/profile/government/calendar/schedule" element={<GovernmentSchedual />} />
-                  <Route path="/profile/government/calendar/schedule/create" element={<GovernmentScheduleCreate />} />
-                  <Route path="/profile/government/calendar/schedule/edit/:scheduleId" element={<GovernmentScheduleEdit />} />
+                  <Route path="/profile/government/calendar/schedule/:scheduleId" element={<GovernmentScheduleEdit />} />
                   <Route path="/profile/government/calendar/timetable" element={<GovernmentTimetable />} />
                   <Route path="/profile/government/calendar/timetable/:id" element={<GovernmentTimetableEdit/>} />
                   <Route path="/profile/government/calendar/dresscode" element={<GovernmentDressCode />} />
@@ -100,8 +99,6 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path="/profile/government/sports/post/create" element={<GovernmentSportsTeamAddPost />} />
                   <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
                   <Route path="*" element={<PageNotFound />} />
-                  {/* TO DO remove went development complete and move to production */}
-                  <Route path="/testing" element={<Testing />} />
                 </Routes>
               </View>
               { (currentBreakPoint >= 1 && isShowingProfileBlock) ?

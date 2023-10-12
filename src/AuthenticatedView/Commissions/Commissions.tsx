@@ -30,6 +30,7 @@ export default function Commissions() {
   const {currentCommissions, selectedCommission, commissionsState, points} = useSelector((state: RootState) => state.commissions)
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
+
   const dispatch = useDispatch()
   const navigate = useNavigate();
 
@@ -102,10 +103,9 @@ export default function Commissions() {
             </View>:
             <View>
               { (commissionsState === loadingStateEnum.success) ?
-              
-                <FlatList style={{height: height * 0.9}} 
+                <FlatList
+                  style={{height: height * 0.9}} 
                   data={[undefined, ...currentCommissions]}
-                  
                   renderItem={({item, index}) =>
                     <>
                       { (index === 0) ?
@@ -134,7 +134,12 @@ export default function Commissions() {
                   }
                   keyExtractor={item => item?.commissionId + "_" + create_UUID()}
                   onEndReachedThreshold={1}
-                  onEndReached={() => {loadCommissionData(undefined, undefined, undefined, commissionNextLink)}}
+                  onEndReached={() => {
+                    if (commissionNextLink !== undefined) {
+                      loadCommissionData(undefined, undefined, undefined, commissionNextLink)
+                    }
+                  }}
+                  initialNumToRender={currentCommissions.length}
                 />:
                 <View>
                   <Text>Failed</Text>

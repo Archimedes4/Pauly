@@ -33,12 +33,9 @@ export default function ProfileBlock({width}:{width: number}) {
     }
   }
   return (
-    <View style={{position: "absolute", bottom: 0, left: (expandedMode) ? (width * 2.5):width, backgroundColor: "white", width: width, height: height * 0.15}}>
-      <Text>ProfileBlock</Text>
-      <Pressable onPress={() => signOut()}>
-        <Text>Sign Out</Text>
-      </Pressable>
-    </View>
+    <Pressable onPress={() => signOut()} style={{position: "absolute", bottom: 0, left: (expandedMode) ? (width * 2.5):width, backgroundColor: "white", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, margin: 5, borderRadius: 15}}>
+      <Text numberOfLines={1} style={{fontSize: 20, margin: 10}}>Sign Out</Text>
+    </Pressable>
   )
 }
 

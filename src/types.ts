@@ -292,8 +292,9 @@ declare global {
   type schoolUserType = {
     name: string
     id: string
+    mail: string
     role: string
-    grade: "9"|"10"|"11"|"12"
+    grade?: "9"|"10"|"11"|"12"
     student: boolean
   }
   type taskType = {

@@ -96,8 +96,7 @@ export default function GovernmentCreateNewTeam() {
           },
           {
             "name": "position",
-            "text": { },
-            "required": true
+            "text": { }
           },
           {
             "name": "playerNumber",
@@ -327,7 +326,7 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
   const [members, setMembers] = useState<governmentRosterType[]>([])
 
   async function getMembers() {
-    const teamResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items`)
+    const teamResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items?$expand=fields($select=playerId,position,playerNumber,posts)&$select=id`)
     if (teamResult.ok) {
       const teamResultData = await teamResult.json()
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${microsoftTeamId}/members`)
@@ -336,14 +335,15 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
         var users: microsoftUserType[] = []
         for (var index = 0; index < data["value"].length; index++) {
           users.push({
-            id: data["value"][index]["id"],
+            id: data["value"][index]["userId"],
             displayName: data["value"][index]["displayName"]
           })
         }
         var rosters: governmentRosterType[] = []
         console.log(users, teamResultData)
         for (var teamIndex = 0; teamIndex < teamResultData["value"].length; teamIndex++) {
-          const userData = users.findIndex((e) => {return e.id === teamResultData["value"][teamIndex]["playerId"]})
+          const userData = users.findIndex((e) => {return e.id === teamResultData["value"][teamIndex]["fields"]["playerId"]})
+          console.log(userData)
           if (userData !== -1) {
             rosters.push({
               name: users[userData].displayName,
@@ -368,6 +368,7 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
         setMembers(rosters)
         setMembersState(loadingStateEnum.success)
       } else {
+        const data = await result.json()
         setMembersState(loadingStateEnum.failed)
       }
     } else {
@@ -419,7 +420,8 @@ function RosterBlockItem({member, members, setMembers, teamId}:{members: governm
     const data = {
       "fields":{
         "playerNumber":member.playerNumber,
-        "position":member.position
+        "position":member.position,
+        "playerId":member.id
       }
     }
     const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items`, "POST", undefined, JSON.stringify(data))

@@ -23,6 +23,7 @@ import commissionsReducer from './reducers/commissionsReducer';
 import pdfDataReducer from './reducers/pdfDataReducer';
 import monthViewReducer from './reducers/monthViewReducer';
 import authenticationCallReducer from './reducers/authenticationCallReducer';
+import studentSearchReducer from './reducers/studentSearchReducer';
 
 const store = configureStore({
   reducer: {
@@ -50,7 +51,8 @@ const store = configureStore({
     safeAreaColors: safeAreaColorsReducer,
     tasks: tasksReducer,
     tasksDeltaLink: tasksDeltaReducer,
-    selectedDate: selectedDateReducer
+    selectedDate: selectedDateReducer,
+    studentSearch: studentSearchReducer
   }
 });
 

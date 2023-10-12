@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-native'
 //import {IoPersonCircleOutline} from "react-native-vector-icons/io5"
 import {Image, StyleSheet, View, Dimensions, Pressable, Text } from "react-native"
 import { Path, Svg, G } from 'react-native-svg'
-import {BookIcon, CalendarIcon, GovernmentIcon, HomeIcon, MedalIcon, PersonIcon} from './Icons/Icons'
+import {BookIcon, CalendarIcon, GovernmentIcon, HomeIcon, MedalIcon, PersonIcon, StudentSearchIcon} from './Icons/Icons'
 import store, { RootState } from '../Redux/store'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFonts } from 'expo-font';
@@ -96,6 +96,9 @@ export default function NavBarComponent({width, height}:{width: number, height: 
         </NavBarBlock>
         <NavBarBlock des='/sports' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Sports'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
           <Image source={require("../../assets/images/Football.png")} resizeMode='contain' style={{width: iconLength, height: iconLength}}/>
+        </NavBarBlock>
+        <NavBarBlock des='/students' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Students'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
+          <StudentSearchIcon width={iconLength} height={iconLength}/>
         </NavBarBlock>
         { isGovernmentMode ?
           <NavBarBlock des='/profile/government' expandedMode={expandedMode} blockLength={blockLength} iconLength={iconLength} text={'Government'} width={width} setIsExpandedMode={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>

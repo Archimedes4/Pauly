@@ -15,7 +15,7 @@ export default async function getRoster(teamId: string): Promise<{result: loadin
         batchData.push([])
       }
       batchData[batchIndex].push({
-        id: (index % 20).toString(),
+        id: (index + 1 - (20 * batchIndex)).toString(),
         method: "GET",
         url: `/users/${data["value"][index]["fields"]["playerId"]}`
       })
@@ -42,7 +42,7 @@ export default async function getRoster(teamId: string): Promise<{result: loadin
             id: data["value"][index]["fields"]["playerId"],
             position: data["value"][index]["fields"]["position"],
             playerNumber: data["value"][index]["fields"]["playerNumber"],
-            posts: (data["value"][index]["fields"]["playerId"] !== undefined) ? JSON.parse(data["value"][index]["fields"]["posts"]):undefined
+            posts: (data["value"][index]["fields"]["posts"] !== undefined) ? JSON.parse(data["value"][index]["fields"]["posts"]):undefined
           })
         } else {
           return {result: loadingStateEnum.failed}
