@@ -51,7 +51,7 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
       clientId: clientId,
       redirectUri: redirectUri,
       scopes: scopes,
-      prompt: Prompt.Consent
+      prompt: Prompt.SelectAccount
     },
     discovery
   )

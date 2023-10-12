@@ -10,10 +10,11 @@ import { useNavigate } from 'react-router-native'
 import { SearchIcon } from '../UI/Icons/Icons'
 import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer'
 import BackButton from '../UI/BackButton'
+import create_UUID from '../Functions/Ultility/CreateUUID'
 
 export default function Students() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {usersState} = useSelector((state: RootState) => state.studentSearch)
+  const {usersState, users, nextLink} = useSelector((state: RootState) => state.studentSearch)
   
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -107,7 +108,26 @@ export default function Students() {
                 }
               }}/>
               <View style={{height: height * 0.8}}>
-                
+                <FlatList 
+                  key={`FlatList_${create_UUID()}`}
+                  data={users}
+                  renderItem={(user) => (
+                    <View key={`StudentBlock_${user.item.id}_${create_UUID()}`} style={{height: 150, width: 150, marginTop: 25, marginBottom: 25, marginLeft: "auto", marginRight: "auto", backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>
+                      <View style={{margin: 10}}>
+                        <Text>{user.item.name}</Text>
+                        { (user.item.student) ?
+                          <Text>{user.item.grade}</Text>:null
+                        }
+                      </View>
+                    </View>
+                  )}
+                  numColumns={(Math.floor(width/200) !== 0) ? Math.floor(width/200):1}
+                  onEndReached={() => {
+                    if (nextLink !== undefined) {
+                      getUsers(nextLink)
+                    }
+                  }}
+                />
               </View>
             </View>:
             <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? "#793033":"#FFFFFF"}}>
@@ -120,32 +140,6 @@ export default function Students() {
         </> 
       }
     </>
-  )
-}
-
-function FlatListContainer({getUsers}:{getUsers: (item: string | undefined) => void}) {
-  const { nextLink, users } = useSelector((state: RootState) => state.studentSearch)
-  const { width } = useSelector((state: RootState) => state.dimentions)
-  return (
-    <FlatList 
-      data={users}
-      renderItem={(user) => (
-        <View style={{height: 150, width: 150, marginTop: 25, marginBottom: 25, marginLeft: "auto", marginRight: "auto", backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>
-          <View style={{margin: 10}}>
-            <Text>{user.item.name}</Text>
-            { (user.item.student) ?
-              <Text>{user.item.grade}</Text>:null
-            }
-          </View>
-        </View>
-      )}
-      numColumns={(Math.floor(width/200) !== 0) ? Math.floor(width/200):1}
-      onEndReached={() => {
-        if (nextLink !== undefined) {
-          getUsers(nextLink)
-        }
-      }}
-    />
   )
 }
 
