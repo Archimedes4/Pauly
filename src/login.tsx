@@ -19,6 +19,7 @@ export default function Login({onGetAuthToken, onGetGovernmentAuthToken, width}:
 
   useEffect(() => {
     dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop("#793033"))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorBottom("#793033"))
   }, [])
 
   useEffect(() => {

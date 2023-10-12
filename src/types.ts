@@ -207,6 +207,7 @@ declare global {
   type governmentRosterType = {
     name: string
     id: string
+    imageShareId?: string
     listItemId?: string
     position?: string
     playerNumber?: string
@@ -246,7 +247,8 @@ declare global {
   type rosterType = {
     name: string
     id: string
-    position: string
+    imageShareId?: string
+    position?: string
     playerNumber?: string
     posts?: string[]
   }
@@ -367,7 +369,8 @@ declare global {
     parentDriveId: string
     parentPath: string
     itemGraphPath: string,
-    callPath: string
+    callPath: string,
+    type: string
   }
   type paulyDataType = {
     message: string

@@ -149,7 +149,7 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
   const style: ViewStyle = (Platform.OS === "web") ? {outlineStyle: "none"}:{}
   const [mounted, setMounted] = useState<boolean>(false)
-
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (mounted) {
@@ -174,7 +174,8 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
           </View>
         }
         <View key={"Search_View_Input"}>
-          <TextInput key={"Search_TextInput"} placeholder='Search' placeholderTextColor={"black"} value={searchValue} onChangeText={(e) => {}} style={[{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0}, style]} enterKeyHint='search' inputMode='search'/>
+          <TextInput key={"Search_TextInput"} placeholder='Search' placeholderTextColor={"black"} value={searchValue} 
+          onChangeText={(e) => {dispatch(studentSearchSlice.actions.setStudentSearch(e))}} style={[{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0}, style]} enterKeyHint='search' inputMode='search'/>
           <View
             style={{height: 0, alignSelf: 'flex-start', overflow: "hidden"}}
             onLayout={e => {

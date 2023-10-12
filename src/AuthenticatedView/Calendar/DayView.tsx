@@ -11,6 +11,9 @@ import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
 import create_UUID from "../../Functions/Ultility/CreateUUID"
 import React from "react"
+import getClassEventsFromDay from "../../Functions/getClassEventsFromDay"
+import getClassEvents from "../../Functions/getClassEventsTimetable"
+import { loadingStateEnum } from "../../types"
 
 export default function DayView({width, height}:{width: number, height: number}) {
   const colorScheme = useColorScheme();
@@ -24,6 +27,7 @@ export default function DayView({width, height}:{width: number, height: number})
   const hoursText: string[] = ["12AM", "1AM", "2AM", "3AM", "4AM", "5AM", "6AM", "7AM", "8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM","10PM", "11PM"]
   const mainScrollRef = useRef<ScrollView>(null)
   const [eventsPane, setEventsPane] = useState<number[][]>([[]])//This is a sorted 2d array for calculating the horizintal shift of an event
+  const [schoolEvents, setSchoolEvents] = useState<eventType[]>()
 
   function setCurrentTimeFunction(hour: number, minuite: number){
     if (minuite.toString().length == 1) {
@@ -42,7 +46,6 @@ export default function DayView({width, height}:{width: number, height: number})
   }
 
   function loadCalendarContent() {
-    //GetStudentSchedule()
     const currentDate = new Date
     const resultHeightTopOffset = findTimeOffset(currentDate, height)
     setHeightOffsetTop(resultHeightTopOffset)
@@ -51,7 +54,6 @@ export default function DayView({width, height}:{width: number, height: number})
     const hourInt = currentDate.getHours()
     setCurrentTimeFunction(hourInt, minuiteInt)
     mainScrollRef.current?.scrollTo({ x: 0, y: resultHeightTopOffset, animated: false});
-    console.log("This", resultHeightTopOffset)
   }
 
   function updateOnTimeChange() {
@@ -84,6 +86,17 @@ export default function DayView({width, height}:{width: number, height: number})
     loadCalendarContent()
   }, [])
 
+  async function getClassesEvents() {
+    const result = await getClassEventsFromDay()
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setSchoolEvents(result.data)
+    }
+  }
+
+  useEffect(() => {
+    getClassesEvents()
+  }, [selectedDate])
+
   return (
     <ScrollView style={{height: height, width: width, backgroundColor: "white"}} ref={mainScrollRef}>
       <>
@@ -106,6 +119,9 @@ export default function DayView({width, height}:{width: number, height: number})
             null:<EventBlock event={event} width={width} height={height} eventPane={eventsPane} setEventPane={setEventsPane} />
           }
         </>
+      ))}
+      {schoolEvents?.map((event) => (
+        <EventBlock event={event} width={width} height={height} eventPane={eventsPane} setEventPane={setEventsPane} />
       ))}
       { (new Date(selectedDate).getDate() === new Date().getDate() && new Date(selectedDate).getMonth() === new Date().getMonth() && new Date(selectedDate).getFullYear() === new Date().getFullYear()) ?
         <View style={{position: "absolute", top: heightOffsetTop, height: height * 0.005, width: width, flexDirection: "row", alignItems: "center"}}>

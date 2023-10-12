@@ -217,8 +217,19 @@ function RosterView({teamId, width, height}:{teamId: string, width: number, heig
               <FlatList 
                 data={roster}
                 renderItem={(item) => (
-                  <View>
-                    <Text>{item.item.name}</Text>
+                  <View style={{backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5}}>
+                    <View style={{flexDirection: "row"}}>
+                      <Text>{item.item.name}</Text>
+                      {(item.item.playerNumber !== undefined) ?
+                        <Text>{item.item.playerNumber}</Text>:null
+                      }
+                      {(item.item.position !== undefined) ?
+                        <Text>{item.item.playerNumber}</Text>:null
+                      }
+                      {(item.item.imageShareId !== undefined) ?
+                        <Image source={{uri: item.item.playerNumber}} style={{width: 20, height: 20}}/>:null
+                      }
+                    </View> 
                   </View>
                 )}
               />

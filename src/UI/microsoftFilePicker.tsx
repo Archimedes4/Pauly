@@ -5,6 +5,8 @@ import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import { DocumentIcon, FolderIcon } from './Icons/Icons';
 import store from '../Redux/store';
 import { idText } from 'typescript';
+import MimeTypeIcon from './Icons/MimeTypeIcon';
+import create_UUID from '../Functions/Ultility/CreateUUID';
 
 enum MicrosoftUploadModeType {
   ShareLink,
@@ -21,59 +23,12 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
 }) {
 
     const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([])
-    const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
-    const [microsoftPath, setMicrosoftPath] = useState<string>("https://graph.microsoft.com/v1.0/me/drive/root/children")
     const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
-    const [fileBackAvaliable, setFilesBackAvaliable] = useState<boolean>(false)
     const [shareLinkString, setShareLinkString] = useState<string>("")
 
     useEffect(() => {
-        getUserMicrosoftFiles(microsoftPath)
-        getUserTeams()
+      getUserTeams()
     }, [])
-
-    async function getUserMicrosoftFiles(path: string) {
-      const result = await callMsGraph(path)
-      if (result.ok){
-        const data = await result.json()
-        console.log(data)
-        if (data["error"] === undefined){
-          var newFiles: microsoftFileType [] = []
-          for(var index = 0; index <= data["value"].length; index++){
-            if (data['value'][index] !== undefined){
-              if ("@microsoft.graph.downloadUrl" in data["value"][index]){
-                newFiles.push(
-                {
-                  name: data["value"][index]["name"], 
-                  id: data["value"][index]["id"], 
-                  lastModified: data["value"][index]["lastModifiedDateTime"], 
-                  folder: false, 
-                  parentDriveId: data["value"][index]["parentReference"]["driveId"], 
-                  parentPath: data["value"][index]["parentReference"]["path"],
-                  itemGraphPath: path,
-                  callPath: "https://graph.microsoft.com/v1.0/me/drives/" + data["value"][index]["parentReference"]["driveId"] + "/items/" + data["value"][index]["id"]
-                })
-              } else {
-                newFiles.push(
-                {
-                  name: data["value"][index]["name"], 
-                  id: data["value"][index]["id"], 
-                  lastModified: data["value"][index]["lastModifiedDateTime"], 
-                  folder: true, 
-                  parentDriveId: data["value"][index]["parentReference"]["driveId"],
-                  parentPath: data["value"][index]["parentReference"]["path"],
-                  itemGraphPath: "FOLDER",
-                  callPath: ""
-                })
-              }
-            }
-          }
-          setUsersFies(newFiles)
-        }
-      } else {
-        //TO DO handle error
-      }
-    }
 
     async function getUserTeams() {
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/joinedTeams")//TO DO make sure this works on live tenancy
@@ -107,56 +62,15 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
               }
             </View>
             <View>
-            <View style={{width: 500}}>
-              <Picker selectedIndex={(selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 0:(selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 1:2} onSetSelectedIndex={(item: number) => {(item === 0) ? setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Personal):(item === 1) ? setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.ShareLink):setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Site)}} width={500} height={30} >
+            <View style={{width: width}}>
+              <Picker selectedIndex={(selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 0:(selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 1:2} onSetSelectedIndex={(item: number) => {(item === 0) ? setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Personal):(item === 1) ? setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.ShareLink):setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Site)}} width={width} height={30} >
                 <Text style={{margin: 0, padding: 0}}>Personal</Text>
                 <Text style={{margin: 0, padding: 0}}>Link</Text>
                 <Text style={{margin: 0, padding: 0}}>Teams</Text>
               </Picker>
             </View>
             { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 
-                <ScrollView style={{height: height - 20}}>
-                    { fileBackAvaliable ? <button onClick={() => {
-                        const microsftPathArray = microsoftPath.split("/")
-                        microsftPathArray.pop()
-                        microsftPathArray.pop()
-                        microsftPathArray.pop()
-                        var outputString = ""
-                        for(var index = 0; index < microsftPathArray.length; index++){
-                            outputString += microsftPathArray[index] + "/"
-                        }
-                        outputString += "/items/root/children"
-                        setMicrosoftPath(outputString)
-                        getUserMicrosoftFiles(outputString)
-                        setFilesBackAvaliable(false)
-                    }}>Back</button>:null
-
-                    }
-                    { usersFiles.map((file) => (
-                        <View>
-                            {file.folder ? 
-                                <Pressable onPress={() => {
-                                  setMicrosoftPath("https://graph.microsoft.com/v1.0/drives/" + file.parentDriveId + "/items/" + file.id + "/children")
-                                  getUserMicrosoftFiles("https://graph.microsoft.com/v1.0/drives/" + file.parentDriveId + "/items/" + file.id + "/children")
-                                  setFilesBackAvaliable(true)
-                                }}>
-                                  <View style={{flexDirection: "row"}}>
-                                    <FolderIcon width={20} height={20}/>
-                                    <Text style={{padding: 0, margin: 0}}>{file.name}</Text>
-                                  </View>
-                                </Pressable>:
-                                <Pressable onPress={() => {
-                                  onSelectedFile(file)
-                                }}>
-                                  <View style={{flexDirection: "row"}}>
-                                    <DocumentIcon width={20} height={20}/>
-                                    <Text style={{padding: 0, margin: 0}}>{file.name}</Text>
-                                  </View>
-                                </Pressable>
-                            }
-                        </View>))
-                    }
-                </ScrollView>:null
+              <PersonalBlock height={height} onSelectedFile={onSelectedFile} />:null
             }
             { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 
                 <View>
@@ -193,3 +107,97 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
             </View>
         </View>
 )}
+
+
+function PersonalBlock({height, onSelectedFile}:{height: number, onSelectedFile: (item: microsoftFileType) => void}) {
+  const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
+  const [microsoftPath, setMicrosoftPath] = useState<string>("https://graph.microsoft.com/v1.0/me/drive/root/children")
+  const [fileBackAvaliable, setFilesBackAvaliable] = useState<boolean>(false)
+  async function getUserMicrosoftFiles(path: string) {
+    const result = await callMsGraph(path)
+    if (result.ok){
+      const data = await result.json()
+      console.log(data)
+      if (data["error"] === undefined){
+        var newFiles: microsoftFileType [] = []
+        for(var index = 0; index <= data["value"].length; index++){
+          if (data['value'][index] !== undefined){
+            if (data["value"][index]["folder"] === undefined){
+              newFiles.push(
+              {
+                name: data["value"][index]["name"],
+                id: data["value"][index]["id"],
+                lastModified: data["value"][index]["lastModifiedDateTime"],
+                folder: false,
+                parentDriveId: data["value"][index]["parentReference"]["driveId"],
+                parentPath: data["value"][index]["parentReference"]["path"],
+                itemGraphPath: path,
+                callPath: "https://graph.microsoft.com/v1.0/me/drives/" + data["value"][index]["parentReference"]["driveId"] + "/items/" + data["value"][index]["id"],
+                type: data["value"][index]["file"]["mimeType"]
+              })
+            } else {
+              newFiles.push(
+              {
+                name: data["value"][index]["name"],
+                id: data["value"][index]["id"],
+                lastModified: data["value"][index]["lastModifiedDateTime"],
+                folder: true,
+                parentDriveId: data["value"][index]["parentReference"]["driveId"],
+                parentPath: data["value"][index]["parentReference"]["path"],
+                itemGraphPath: "FOLDER",
+                callPath: "",
+                type: 'Folder'
+              })
+            }
+          }
+        }
+        setUsersFies(newFiles)
+      }
+    } else {
+      //TO DO handle error
+    }
+  }
+
+  useEffect(() => {
+    getUserMicrosoftFiles(microsoftPath)
+  }, [])
+  return (
+    <ScrollView style={{height: height - 20}}>
+      { fileBackAvaliable ? 
+      <Pressable onPress={() => {
+        const microsftPathArray = microsoftPath.split("/")
+        microsftPathArray.pop()
+        microsftPathArray.pop()
+        microsftPathArray.pop()
+        var outputString = ""
+        for(var index = 0; index < microsftPathArray.length; index++){
+            outputString += microsftPathArray[index] + "/"
+        }
+        outputString += "/items/root/children"
+        setMicrosoftPath(outputString)
+        getUserMicrosoftFiles(outputString)
+        setFilesBackAvaliable(false)
+      }}>
+        <Text>Back</Text>
+      </Pressable>:null
+
+      }
+      { usersFiles.map((file) => (
+        <Pressable onPress={() => {
+          if (file.folder) {
+            setMicrosoftPath("https://graph.microsoft.com/v1.0/drives/" + file.parentDriveId + "/items/" + file.id + "/children")
+            getUserMicrosoftFiles("https://graph.microsoft.com/v1.0/drives/" + file.parentDriveId + "/items/" + file.id + "/children")
+            setFilesBackAvaliable(true)
+          } else {
+            onSelectedFile(file)
+          }
+        }} key={`Users_${file.id}_${create_UUID()}`}>
+          <View style={{flexDirection: "row"}}>
+            <MimeTypeIcon width={20} height={20} mimeType={file.type}/>
+            <Text style={{padding: 0, margin: 0}}>{file.name}</Text>
+          </View>
+        </Pressable>    
+      ))}
+  </ScrollView>
+  )
+}

@@ -27,7 +27,7 @@ export default async function getRoster(teamId: string): Promise<{result: loadin
         if (batchResult.data[index].status === 200) { //TO DO check okay response code
           outUsers.push({
             id: batchResult.data[index].body["id"],
-            displayName: batchResult.data[index].body["displayName"]
+            displayName: batchResult.data[index].body["displayName"],
           })
         } else {
           return {result: loadingStateEnum.failed}
@@ -40,6 +40,7 @@ export default async function getRoster(teamId: string): Promise<{result: loadin
           outputRosters.push({
             name: userData.displayName,
             id: data["value"][index]["fields"]["playerId"],
+            imageShareId: data["value"][index]["fields"]["imageShareId"],
             position: data["value"][index]["fields"]["position"],
             playerNumber: data["value"][index]["fields"]["playerNumber"],
             posts: (data["value"][index]["fields"]["posts"] !== undefined) ? JSON.parse(data["value"][index]["fields"]["posts"]):undefined

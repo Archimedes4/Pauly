@@ -1,15 +1,18 @@
-import { View, Text, TextInput, Dimensions, Button, Pressable, ListRenderItemInfo } from 'react-native'
+import { View, Text, TextInput, Dimensions, Button, Pressable, ListRenderItemInfo, Image } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-native'
 import {convertYearToSchoolYear} from '../../../../Functions/calendar/calendarFunctions'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import create_UUID from '../../../../Functions/Ultility/CreateUUID';
-import { loadingStateEnum } from '../../../../types';
+import { dataContentTypeOptions, loadingStateEnum } from '../../../../types';
 import store, { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { getTeams } from '../../../../Functions/groupsData';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import ProgressView from '../../../../UI/ProgressView';
+import MicrosoftFilePicker from '../../../../UI/microsoftFilePicker';
+import { CloseIcon } from '../../../../UI/Icons/Icons';
+import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
 
 export default function GovernmentCreateNewTeam() {
   const { sport, id, teamId } = useParams()
@@ -30,6 +33,8 @@ export default function GovernmentCreateNewTeam() {
   const [teams, setTeams] = useState<groupType[]>([])
   const [teamsNextLink, setTeamsNextLink] = useState<undefined | string>(undefined)
   const [selectedMicrosoftTeam, setSelectedMicrosoftTeam] = useState<groupType | undefined>(undefined)
+  const [isSelectingFile, setIsSelectingFile] = useState<boolean>(false)
+  const [selectedFile, setSelectedFile] = useState<string>("")
 
   async function loadMicrosftTeams() {
     const result = await getTeams("https://graph.microsoft.com/v1.0/groups?$filter=resourceProvisioningOptions/Any(x:x%20eq%20'Team')")
@@ -105,6 +110,10 @@ export default function GovernmentCreateNewTeam() {
           {
             "name": "posts",
             "text": {"allowMultipleLines": true},
+          },
+          {
+            "name": "imageShareId",
+            "text": { }
           }
         ],
         "list":
@@ -212,7 +221,7 @@ export default function GovernmentCreateNewTeam() {
     <>
       { (isCreatingTeam || teamDataState === loadingStateEnum.success) ?
         <ScrollView style={{width: width, height: height, backgroundColor: "white"}}>
-          <Pressable onPress={() => navigate(`/profile/government/sports/team/${sport}/${id}`)}>
+          <Pressable onPress={() => navigate(`/profile/government/sports/team/${sport}/${id}`)} >
             <Text>Back</Text>
           </Pressable>
           <View>
@@ -253,7 +262,8 @@ export default function GovernmentCreateNewTeam() {
                 { (selectedMicrosoftTeam !== undefined) ?
                   <Pressable onPress={() => {setSelectedMicrosoftTeam(undefined)}}>
                     <Text>{selectedMicrosoftTeam.name}</Text>
-                  </Pressable>:<Text>NO TEAM SELECTED</Text>
+                  </Pressable>:
+                  <Text>NO TEAM SELECTED</Text>
                 }
               </View>
             </View>
@@ -283,13 +293,13 @@ export default function GovernmentCreateNewTeam() {
                 </View>:
                 <View>
                   <Text>Roster</Text>
-                  <RosterBlock microsoftTeamId={selectedMicrosoftTeam.id} width={100} height={100} teamId={teamId}/>
+                  <RosterBlock microsoftTeamId={selectedMicrosoftTeam.id} width={100} height={100} teamId={teamId} selectedFile={selectedFile} setIsSelectingFile={setIsSelectingFile} setSelectedFile={setSelectedFile} isSelectingFile={isSelectingFile}/>
                 </View>
               }
             </>
           }
 
-          <Pressable style={{margin: 10, backgroundColor: "red", borderRadius: 15}} onPress={() => deleteTeam()}>
+          <Pressable style={{margin: 10, backgroundColor: "red", borderRadius: 15, zIndex: -100}} onPress={() => deleteTeam()}>
             <Text style={{margin: 10}}>Delete Team</Text>
           </Pressable>
           <Pressable onPress={() => {
@@ -317,16 +327,19 @@ export default function GovernmentCreateNewTeam() {
           }
         </>
       }
+      { isSelectingFile ?
+        <RosterSelectFile setIsSelectingFile={setIsSelectingFile} setSelectedFile={setSelectedFile} />:null
+      }
     </>
   )
 }
 
-function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: string, width: number, height: number, teamId: string}) {
+function RosterBlock({microsoftTeamId, width, height, teamId, setIsSelectingFile, selectedFile, isSelectingFile, setSelectedFile}:{microsoftTeamId: string, width: number, height: number, teamId: string, selectedFile: string, setSelectedFile: (item: string) => void, isSelectingFile: boolean, setIsSelectingFile: (item: boolean) => void}) {
   const [membersState, setMembersState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [members, setMembers] = useState<governmentRosterType[]>([])
 
   async function getMembers() {
-    const teamResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items?$expand=fields($select=playerId,position,playerNumber,posts)&$select=id`)
+    const teamResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items?$expand=fields($select=playerId,position,playerNumber,posts,imageShareId)&$select=id`)
     if (teamResult.ok) {
       const teamResultData = await teamResult.json()
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${microsoftTeamId}/members`)
@@ -349,6 +362,7 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
               name: users[userData].displayName,
               id: teamResultData["value"][teamIndex]["fields"]["playerId"],
               listItemId: teamResultData["value"][teamIndex]["id"],
+              imageShareId: teamResultData["value"][teamIndex]["fields"]["imageShareId"],
               position: teamResultData["value"][teamIndex]["fields"]["position"],
               playerNumber: teamResultData["value"][teamIndex]["fields"]["playerNumber"],
               posts: (teamResultData["value"][teamIndex]["fields"]["posts"] !== undefined) ? JSON.parse(teamResultData["value"][teamIndex]["fields"]["playerNumber"]):undefined
@@ -393,7 +407,7 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
                 <FlatList
                   data={members}
                   renderItem={(member) => (
-                    <RosterBlockItem members={members} setMembers={setMembers} member={member} teamId={teamId}/>
+                    <RosterBlockItem members={members} setMembers={setMembers} member={member} teamId={teamId} selectedFile={selectedFile} setIsSelectingFile={setIsSelectingFile} setSelectedFile={setSelectedFile} isSelectingFile={isSelectingFile}/>
                   )}
                 />
               </View>:
@@ -407,8 +421,10 @@ function RosterBlock({microsoftTeamId, width, height, teamId}:{microsoftTeamId: 
   )
 }
 
-function RosterBlockItem({member, members, setMembers, teamId}:{members: governmentRosterType[], setMembers: (item: governmentRosterType[]) => void, member: ListRenderItemInfo<governmentRosterType>, teamId: string}) {
+function RosterBlockItem({member, members, setMembers, teamId, setIsSelectingFile, isSelectingFile, selectedFile, setSelectedFile}:{members: governmentRosterType[], setMembers: (item: governmentRosterType[]) => void, member: ListRenderItemInfo<governmentRosterType>, teamId: string, selectedFile: string, setSelectedFile: (item: string) => void, isSelectingFile: boolean, setIsSelectingFile: (item: boolean) => void}) {
   const [rosterState, setRosterState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const [callingSelectedFile, setIsCallingSelectedFile] = useState<boolean>(false)
+  const [imageUrl, setImageUrl] = useState<string>("")
 
   async function createMemberItem(member: governmentRosterType) {
     const index = members.findIndex((e) => {return e.id === member.id})
@@ -442,7 +458,8 @@ function RosterBlockItem({member, members, setMembers, teamId}:{members: governm
       const data = {
         "fields":{
           "playerNumber":member.playerNumber,
-          "position":member.position
+          "position":member.position,
+          "imageShareId":member.imageShareId
         }
       }
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items/${member.listItemId}`, "PATCH", undefined, JSON.stringify(data))
@@ -455,6 +472,39 @@ function RosterBlockItem({member, members, setMembers, teamId}:{members: governm
       createMemberItem(member)
     }
   }
+  
+
+  useEffect(() => {
+    if (callingSelectedFile) {
+      var save = members
+      save[member.index].imageShareId = selectedFile
+      setSelectedFile("") 
+      setMembers(save)
+      updatePlayerData(save[member.index])
+    }
+    if (isSelectingFile === false) {
+      setIsCallingSelectedFile(false)
+    }
+  }, [isSelectingFile, selectedFile])
+
+  async function loadImage() {
+    if (member.item.imageShareId !== undefined) {
+      const result = await getFileWithShareID(member.item.imageShareId)
+      console.log(result)
+      if (result.result === loadingStateEnum.success && result.url && result.contentType === dataContentTypeOptions.image) {
+        setImageUrl(result.url)
+      } else {
+        setImageUrl("")
+      }
+    } else {
+      setImageUrl("")
+    }
+  }
+
+  useEffect(() => {
+    loadImage()
+  }, [member.item.imageShareId])
+
   return (
     <View key={`Member_${member.item.id}_${create_UUID()}`} style={{margin: 5}}>
       <View>
@@ -484,6 +534,45 @@ function RosterBlockItem({member, members, setMembers, teamId}:{members: governm
           save[member.index].position = e
           setMembers(save)
         }} onBlur={() => {updatePlayerData(member.item)}}/>
+      </View>
+      { (imageUrl !== "") ?
+        <Image source={{uri: imageUrl}} style={{width: 100, height: 100}}/>:null
+      }
+      <Pressable onPress={() => {setIsSelectingFile(true); setIsCallingSelectedFile(true)}}>
+        <Text>Choose Player Image</Text>
+      </Pressable>
+    </View>
+  )
+}
+
+function RosterSelectFile({setIsSelectingFile, setSelectedFile}:{setIsSelectingFile: (item: boolean) => void, setSelectedFile: (item: string) => void}) {
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  return (
+    <View style={{height: height, width: width, position: "absolute", zIndex: 200, top: 0, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: "#ededed"}}>
+      <Pressable onPress={() => {setIsSelectingFile(false)}} style={{position: "absolute", top: height * 0.05, left: height * 0.05}}>
+        <CloseIcon width={20} height={20}/>
+      </Pressable>
+      <View style={{height: height * 0.8, width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: "#FFFFFF", borderRadius: 15}}>
+        <View style={{margin: 10}}>
+          <MicrosoftFilePicker height={height * 0.8 - 5} width={width * 0.8 - 5} onSelectedFile={async (file) => {
+            const data = {
+              "type": "view",
+              "scope": "organization"
+            }
+            const result = await callMsGraph(file.callPath + "/createLink", "POST", false, JSON.stringify(data))
+            if (result.ok){
+              const data = await result.json()
+              if (data["shareId"] !== undefined) {
+                setSelectedFile(data["shareId"])
+                setIsSelectingFile(false)
+              } else {
+                setIsSelectingFile(false)
+              }
+            } else {
+              setIsSelectingFile(false)
+            }
+          }} />
+        </View>
       </View>
     </View>
   )
