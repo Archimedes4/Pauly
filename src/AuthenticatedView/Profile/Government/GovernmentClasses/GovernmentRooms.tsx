@@ -1,11 +1,10 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import store, { RootState } from '../../../../Redux/store'
 import { useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
-import { loadingStateEnum } from '../../../../types'
-import { getRooms } from '../../../../Functions/getRooms'
+import { Colors, loadingStateEnum } from '../../../../types'
+import { getRooms } from '../../../../Functions/classesFunctions'
 
 export default function GovernmentRooms() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)

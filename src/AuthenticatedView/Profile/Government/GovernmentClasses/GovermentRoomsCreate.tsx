@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../../../../Redux/store';
-import { loadingStateEnum } from '../../../../types';
+import { Colors, loadingStateEnum } from '../../../../types';
 import { WarningIcon } from '../../../../UI/Icons/Icons';
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import create_UUID from '../../../../Functions/Ultility/CreateUUID';
@@ -35,7 +35,7 @@ export default function GovermentRoomsCreate() {
   }
 
   return (
-    <View style={{width: width, height: height, backgroundColor: Colors.whitewhite}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <Pressable onPress={() => {navigate("/profile/government/classes/room")}}>
         <Text>Back</Text>
       </Pressable>

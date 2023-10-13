@@ -3,7 +3,7 @@ import React, {useContext, useEffect, useState} from 'react'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { Link, useParams } from 'react-router-native';
 import PickerWrapper from '../../../../UI/Pickers/Picker';
-import { loadingStateEnum } from '../../../../types';
+import { Colors, loadingStateEnum } from '../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 import { clientId } from '../../../../PaulyConfig';

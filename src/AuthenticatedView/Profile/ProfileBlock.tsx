@@ -8,6 +8,7 @@ import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser'
 import { useMsal } from '@azure/msal-react'
 import { clientId, tenantId } from '../../PaulyConfig'
 import { revokeAsync } from 'expo-auth-session'
+import { Colors } from '../../types'
 
 export default function ProfileBlock({width}:{width: number}) {
   const expandedMode = useSelector((state: RootState) => state.expandedMode)

@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { useSelector } from 'react-redux'
 import store, { RootState } from '../../../../Redux/store'
-import { loadingStateEnum } from '../../../../types'
+import { Colors, loadingStateEnum } from '../../../../types'
 import { getSportsTeams } from '../../../../Functions/sports/sportsFunctions'
 import { WarningIcon } from '../../../../UI/Icons/Icons'
 
@@ -59,7 +59,7 @@ export default function GovernmentSportsTeams() {
   }, [])
 
   return (
-    <View style={{width: width, height: height, backgroundColor: Colors.whitewhitewhitewhitewhite}}>
+    <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <Link to="/profile/government/sports">
         <Text>Back</Text>
       </Link>

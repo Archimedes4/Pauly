@@ -9,15 +9,15 @@ export default function MicrosoftGraphEdit() {
     const { mode } = useParams()
   return (
     <View>
-        { (mode === "list") ?
-            <MicrosoftGraphEditList />:null
-        }
-        { (mode === "group") ?
-            <MicrosoftGraphEditGroup />:null
-        }
-        { (mode === "extension") ?
-            <MicrosoftGraphEditExtension />:null
-        }
+      { (mode === "list") ?
+        <MicrosoftGraphEditList />:null
+      }
+      { (mode === "group") ?
+        <MicrosoftGraphEditGroup />:null
+      }
+      { (mode === "extension") ?
+        <MicrosoftGraphEditExtension />:null
+      }
     </View>
   )
 }

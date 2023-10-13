@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { BookIcon, CalendarIcon, GearIcon, GraduationHatIcon, GraphAPILogo, HomeIcon, MedalIcon, StudentSearchIcon } from '../../../UI/Icons/Icons';
 import { RootState } from '../../../Redux/store';
 import { useSelector } from 'react-redux';
+import { Colors } from '../../../types';
 
 function Block({height, width, text, imageSource, children}:{height: number, width: number, text: string, imageSource?: ImageSourcePropType, children?: ReactNode}) {
   return (

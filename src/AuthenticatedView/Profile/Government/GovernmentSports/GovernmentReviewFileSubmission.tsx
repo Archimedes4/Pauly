@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from 'react-router-native';
 import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../../../../Redux/store';
-import { dataContentTypeOptions, loadingStateEnum } from '../../../../types';
+import { Colors, dataContentTypeOptions, loadingStateEnum } from '../../../../types';
 import { ResizeMode, Video } from 'expo-av';
 // import Video from 'react-native-video';
 
@@ -164,7 +164,7 @@ export default function GovernmentReviewFileSubmission() {
         </View>:
         <>
           { (loadingState === loadingStateEnum.success && currentSubmissionInfomration !== undefined) ?
-          <View style={{width: width, height: height, backgroundColor: Colors.whitewhitewhitewhitewhitewhite}}>
+          <View style={{width: width, height: height, backgroundColor: Colors.white}}>
             <Pressable onPress={() => navigate("/profile/government/sports")}>
               <Text>Back</Text>
             </Pressable>

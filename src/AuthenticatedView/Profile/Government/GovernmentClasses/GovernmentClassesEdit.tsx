@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import store, { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
-import { loadingStateEnum, semesters } from '../../../../types';
+import { Colors, loadingStateEnum, semesters } from '../../../../types';
 import { useNavigate, useParams } from 'react-router-native';
-import { getRoom, getRooms } from '../../../../Functions/getRooms';
 import getSchoolYears from '../../../../Functions/calendar/getSchoolYears';
 import SegmentedPicker from '../../../../UI/Pickers/SegmentedPicker';
 import { getEvent, getTimetable } from '../../../../Functions/calendar/calendarFunctionsGraph';
 import { CloseIcon, WarningIcon } from '../../../../UI/Icons/Icons';
 import Dropdown from '../../../../UI/Dropdown';
+import { getRoom, getRooms } from '../../../../Functions/classesFunctions';
 
 export default function GovernmentClassesEdit() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)

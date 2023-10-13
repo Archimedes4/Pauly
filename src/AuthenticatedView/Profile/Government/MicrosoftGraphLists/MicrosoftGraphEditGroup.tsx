@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-native'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
 import { CopyIcon } from '../../../../UI/Icons/Icons';
 import * as Clipboard from 'expo-clipboard';
-import { loadingStateEnum } from '../../../../types';
+import { Colors, loadingStateEnum } from '../../../../types';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
 
@@ -48,13 +48,17 @@ export default function MicrosoftGraphEditGroup() {
             <Text>MicrosoftGraphEditList</Text>
             <View style={{flexDirection: "row"}}>
               <Text>{id}</Text>
-              { isCoppiedToClipboard ?
-                <Pressable onPress={async () => {await Clipboard.setStringAsync(id)}}>
-                  <Text>Copied To Clipboard!</Text>
-                </Pressable>:
-                <Pressable onPress={async () => {await Clipboard.setStringAsync(id); setIsCoppiedToClipboard(true)}}>
-                  <CopyIcon width={14} height={14}/>
-                </Pressable>
+              { (id !== undefined) ?
+                <>
+                  { isCoppiedToClipboard ?
+                    <Pressable onPress={async () => {await Clipboard.setStringAsync(id)}}>
+                      <Text>Copied To Clipboard!</Text>
+                    </Pressable>:
+                    <Pressable onPress={async () => {await Clipboard.setStringAsync(id); setIsCoppiedToClipboard(true)}}>
+                      <CopyIcon width={14} height={14}/>
+                    </Pressable>
+                  } 
+                </>:null
               }
             </View>
             <Pressable onPress={() => {deleteGroup()}}>

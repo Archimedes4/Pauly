@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-native';
 import create_UUID from '../../../../Functions/Ultility/CreateUUID';
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
-import { loadingStateEnum } from '../../../../types';
+import { Colors, loadingStateEnum } from '../../../../types';
 
 export default function GovernmentCreateNewSport() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)

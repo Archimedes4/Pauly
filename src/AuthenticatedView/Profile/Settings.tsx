@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
+import { Colors } from '../../types';
 
 export default function Settings() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)

@@ -509,17 +509,10 @@ export const noClassData = {
       "indexed": true
     },
     {
-      "name":"classOffDay",
+      "name":"classDate",
       "text":{ },
-      "required": true
-    },
-    {
-      "name":"startTime",
-      "text": { }
-    },
-    {
-      "name":"endTime",
-      "text": { }
+      "required": true,
+      "indexed": true
     }
   ],
   "list": {

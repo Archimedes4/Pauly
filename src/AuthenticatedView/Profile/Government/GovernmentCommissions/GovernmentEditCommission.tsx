@@ -8,7 +8,7 @@ import create_UUID from '../../../../Functions/Ultility/CreateUUID';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../../../../Redux/store';
 import SegmentedPicker from "../../../../UI/Pickers/SegmentedPicker"
-import { commissionTypeEnum, loadingStateEnum, submissionTypeEnum } from '../../../../types';
+import { Colors, commissionTypeEnum, loadingStateEnum, submissionTypeEnum } from '../../../../types';
 import DatePicker from '../../../../UI/DateTimePicker/DatePicker';
 import TimePicker from '../../../../UI/DateTimePicker/TimePicker';
 import TimePickerDate from '../../../../UI/DateTimePicker/TimePickerDate';

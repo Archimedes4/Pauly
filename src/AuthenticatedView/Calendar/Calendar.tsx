@@ -18,7 +18,7 @@ import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer'
 import BackButton from '../../UI/BackButton';
 import { addEventSlice } from '../../Redux/reducers/addEventReducer';
 import { monthDataSlice } from '../../Redux/reducers/monthDataReducer'
-import { getClasses } from '../../Functions/getClassEventsTimetable';
+import { getClasses } from '../../Functions/classes/getClassEventsTimetable';
 
 const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 
