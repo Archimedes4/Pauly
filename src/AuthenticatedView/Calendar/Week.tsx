@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
 import { ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
+import { Colors } from '../../types';
 
 export default function Week({width, height}:{width: number, height: number}) {
   //const pageData = useContext(pageDataContext);
@@ -47,7 +48,7 @@ export default function Week({width, height}:{width: number, height: number}) {
             {daysOfWeek.map((day) => (
               <Pressable onPress={() => {
                 dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(day.toISOString()))
-              }} key={day.getDay() + "_" + create_UUID()} style={{width: width * 0.08888888888888889, height: width * 0.08888888888888889, margin: width * 0.01111111111111111, borderRadius: 50, backgroundColor: "#444444", alignContent: "center", alignItems: "center", justifyContent: "center", borderColor: (day.getDate() === new Date(selectedDateRedux).getDate()) ? "black":"#793033", borderWidth: (new Date().getDate() === day.getDate() || day.getDate() === new Date(selectedDateRedux).getDate()) ? 5:0}}>
+              }} key={day.getDay() + "_" + create_UUID()} style={{width: width * 0.08888888888888889, height: width * 0.08888888888888889, margin: width * 0.01111111111111111, borderRadius: 50, backgroundColor: Colors.darkGray, alignContent: "center", alignItems: "center", justifyContent: "center", borderColor: (day.getDate() === new Date(selectedDateRedux).getDate()) ? "black":"#793033", borderWidth: (new Date().getDate() === day.getDate() || day.getDate() === new Date(selectedDateRedux).getDate()) ? 5:0}}>
                 <Text style={{color: Colors.white}}>{day.getDate()}</Text>
               </Pressable>
             ))}

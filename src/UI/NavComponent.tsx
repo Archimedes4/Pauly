@@ -10,12 +10,13 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { expandedModeSlice } from '../Redux/reducers/expandedModeReducer'
 import { isShowingProfileBlockSlice } from '../Redux/reducers/isShowingProfileBlockReducer'
+import { Colors } from '../types'
 
 function NavBarBlock({des, expandedMode, blockLength, children, text, width, setIsExpandedMode}:{des: string, expandedMode: boolean, blockLength: number, iconLength: number, text: string, children: ReactNode, width: number, setIsExpandedMode: () => void}) {
   const [isHover, setIsHover] = useState<boolean>(false)
   const navigation = useNavigate()
   return (
-    <Pressable style={{height: blockLength, width: (expandedMode) ? (width * 2.5):width, backgroundColor: isHover ? '#444444':'transparent', alignItems: "center"}} onPress={() => {navigation(des)}} onHoverIn={() => {setIsHover(true); setIsExpandedMode()}} onHoverOut={() => {setIsHover(false)}}>
+    <Pressable style={{height: blockLength, width: (expandedMode) ? (width * 2.5):width, backgroundColor: isHover ? Colors.darkGray:'transparent', alignItems: "center"}} onPress={() => {navigation(des)}} onHoverIn={() => {setIsHover(true); setIsExpandedMode()}} onHoverOut={() => {setIsHover(false)}}>
       <View style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? blockLength * 2.5:blockLength, margin: 0, position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined, alignItems: "center"}]}>
         <View id='ViewHigh' style={{width: (expandedMode) ? blockLength * 2.5:blockLength, flexDirection: "row", margin: "auto", padding: 0, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
           <View style={[{height: blockLength, width: blockLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined, alignItems: "center", justifyContent: "center"}]}>
@@ -78,7 +79,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
               <Image source={require("../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: blockLength, height:  blockLength}} />
             </View>
             { expandedMode ?
-              <Text style={{fontFamily: "Gochi Hand", color: Colors.whitewhitewhitewhitewhite, position: "absolute", top: blockLength * 0.3, left: blockLength * 0.65, fontSize: blockLength * 0.7, textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 4, height: 2}, textShadowRadius: 0}} selectable={false}>auly</Text>:null
+              <Text style={{fontFamily: "Gochi Hand", color: Colors.white, position: "absolute", top: blockLength * 0.3, left: blockLength * 0.65, fontSize: blockLength * 0.7, textShadowColor: 'rgba(0, 0, 0, 1)', textShadowOffset: {width: 4, height: 2}, textShadowRadius: 0}} selectable={false}>auly</Text>:null
             }
           </View>
         </Pressable>

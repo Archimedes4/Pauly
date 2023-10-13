@@ -5,7 +5,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../Redux/store'
-import { dataContentTypeOptions, loadingStateEnum } from '../types'
+import { Colors, dataContentTypeOptions, loadingStateEnum } from '../types'
 import getSportsContent from '../Functions/sports/getSportsContent'
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 import ProgressView from '../UI/ProgressView'
@@ -56,7 +56,7 @@ export default function Sports() {
   }
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: Colors.white}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.darkGray, bottom: Colors.white}))
     loadSports()
   }, [])
 
@@ -96,11 +96,11 @@ export default function Sports() {
                 <>
                   { (sportsState === loadingStateEnum.success) ?
                     <>
-                      <Pressable style={{backgroundColor:  "#444444", borderWidth: (selectedSport === undefined) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}} onPress={() => {setSelectedTeam(undefined); setSelectedSport(undefined); setIsShowingRoster(false)}}>
+                      <Pressable style={{backgroundColor:  Colors.darkGray, borderWidth: (selectedSport === undefined) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}} onPress={() => {setSelectedTeam(undefined); setSelectedSport(undefined); setIsShowingRoster(false)}}>
                         <Text style={{margin: isShowingTeams ? 5:10, color: Colors.white, marginBottom: isShowingTeams ? 5:10}}>{"Highlights"}</Text>
                       </Pressable>
                       {sports.map((sport) => (
-                        <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true); setIsShowingRoster(false)}} style={{backgroundColor:  "#444444", borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
+                        <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true); setIsShowingRoster(false)}} style={{backgroundColor:  Colors.darkGray, borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
                           <Text style={{margin: isShowingTeams ? 5:10, color: Colors.white, marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>
                           { (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ?
                             <View>
@@ -129,7 +129,7 @@ export default function Sports() {
                     { (sportsState === loadingStateEnum.success) ?
                       <>
                         {sportsTeams.map((team) => (
-                          <Pressable key={`SportTeam_${team.teamId}_${create_UUID()}`} onPress={() => {setSelectedTeam(team); setIsShowingTeams(false); setIsShowingRoster(false)}} style={{backgroundColor: "#444444", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
+                          <Pressable key={`SportTeam_${team.teamId}_${create_UUID()}`} onPress={() => {setSelectedTeam(team); setIsShowingTeams(false); setIsShowingRoster(false)}} style={{backgroundColor: Colors.darkGray, borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
                             <Text style={{margin: 5, color: Colors.white}}>{team.teamName}</Text>
                           </Pressable>
                         ))}

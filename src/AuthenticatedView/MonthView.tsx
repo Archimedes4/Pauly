@@ -5,7 +5,7 @@ import React from "react"
 import { getSchoolDays } from "../Functions/calendar/calendarFunctionsGraph"
 import { useDispatch, useSelector } from "react-redux"
 import store, { RootState } from "../Redux/store"
-import { loadingStateEnum } from "../types"
+import { Colors, loadingStateEnum } from "../types"
 import { monthViewSlice } from "../Redux/reducers/monthViewReducer"
 
 function MonthBlock({value, width, height, startDate, daySelected}:{value:number, width: number, height: number, startDate: number, daySelected: number}) {

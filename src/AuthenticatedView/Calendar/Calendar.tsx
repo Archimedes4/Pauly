@@ -12,7 +12,7 @@ import { AddIcon, ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
-import { calendarMode, loadingStateEnum } from '../../types';
+import { Colors, calendarMode, loadingStateEnum } from '../../types';
 import getEvents from '../../Functions/calendar/getEvents';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 import BackButton from '../../UI/BackButton';
@@ -29,7 +29,7 @@ export default function Calendar() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#444444", bottom: Colors.white}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.darkGray, bottom: Colors.white}))
   }, [])
 
 
@@ -58,7 +58,7 @@ export default function Calendar() {
 
   return (
     <View>
-      <View style={{height: height * 0.1, backgroundColor: '#444444'}}>
+      <View style={{height: height * 0.1, backgroundColor: Colors.darkGray}}>
         { (currentBreakPoint >= 1) ?
           null:<BackButton to='/' style={{zIndex: 100}}/>
         } 

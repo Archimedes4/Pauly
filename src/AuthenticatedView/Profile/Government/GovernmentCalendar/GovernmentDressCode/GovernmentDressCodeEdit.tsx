@@ -13,11 +13,13 @@ export default function GovernmentDressCodeEdit() {
   const [getDressCodeState, setDressCodeState] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function loadData() {
-    const result = await getDressCode(id)
-    if (result.result === loadingStateEnum.success && result.data !== undefined) {
-      
+    if (id !== undefined) {
+      const result = await getDressCode(id)
+      if (result.result === loadingStateEnum.success && result.data !== undefined) {
+        
+      }
+      setDressCodeState(result.result)
     }
-    setDressCodeState(result.result)
   }
 
   useEffect(() => {

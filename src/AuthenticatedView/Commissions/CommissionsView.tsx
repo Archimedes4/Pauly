@@ -4,7 +4,7 @@ import callMsGraph from '../../Functions/Ultility/microsoftAssets'
 import { useParams } from 'react-router-native';
 import { RootState } from '../../Redux/store';
 import { useSelector } from 'react-redux';
-import { commissionTypeEnum, loadingStateEnum } from '../../types';
+import { Colors, commissionTypeEnum, loadingStateEnum } from '../../types';
 import CommissionClaim from './CommissionClaim';
 import { CloseIcon } from '../../UI/Icons/Icons';
 import getCommission from '../../Functions/commissions/getCommission';

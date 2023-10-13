@@ -13,7 +13,7 @@ import create_UUID from "../../Functions/Ultility/CreateUUID"
 import React from "react"
 import getClassEventsFromDay from "../../Functions/getClassEventsFromDay"
 import getClassEvents from "../../Functions/getClassEventsTimetable"
-import { loadingStateEnum } from "../../types"
+import { Colors, loadingStateEnum } from "../../types"
 
 export default function DayView({width, height}:{width: number, height: number}) {
   const colorScheme = useColorScheme();

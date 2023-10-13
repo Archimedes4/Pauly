@@ -12,7 +12,7 @@ export default function PageNotFound() {
   return (
     <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
       <Text>Page Not Found</Text>
-      <Pressable onPress={() => {navigate("/")}} onHoverIn={() => {setIsButtonHover(true)}} onHoverOut={() => {setIsButtonHover(false)}} style={{height: height * 0.09, width: width * 0.5, borderRadius: 50, backgroundColor: isBottonHover ? "#444444":Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: isBottonHover ? Colors.white:"black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, marginTop: (width < height) ? width * 0.1:height * 0.1}}>
+      <Pressable onPress={() => {navigate("/")}} onHoverIn={() => {setIsButtonHover(true)}} onHoverOut={() => {setIsButtonHover(false)}} style={{height: height * 0.09, width: width * 0.5, borderRadius: 50, backgroundColor: isBottonHover ? Colors.darkGray:Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center", shadowColor: isBottonHover ? Colors.white:"black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, marginTop: (width < height) ? width * 0.1:height * 0.1}}>
         <Text style={{textAlign: "center", color: isBottonHover ? Colors.white:"black", fontWeight: "bold"}}>RETURN HOME</Text>
       </Pressable>
     </View>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../../Redux/store'
-import { loadingStateEnum } from '../../../../../types'
+import { Colors, loadingStateEnum } from '../../../../../types'
 import ListItem from '../../../../../UI/ListItem'
 import getDressCodeData from '../../../../../Functions/homepage/getDressCodeData'
 

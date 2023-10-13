@@ -85,7 +85,7 @@ export default function Notifications() {
         <BackButton to='/'/>:null
       }
       <View style={{width: width, height: height * 0.1, marginTop: (currentBreakPoint === 0) ? 10:0}}>
-        <View style={{width: width * 0.9, height: height * 0.07, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: "#444444", marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
+        <View style={{width: width * 0.9, height: height * 0.07, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: Colors.darkGray, marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
           <Text style={{color: Colors.white}}>{message}</Text>
         </View>
       </View>
@@ -118,7 +118,7 @@ function WidgetView({width, height}:{width: number, height: number}) {
       </View>
       { (schoolDayData !== undefined) ?
         <>
-          <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/6}}>
+          <View style={{backgroundColor: Colors.darkGray, alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/6}}>
             <Text style={{color: Colors.white}}>{schoolDayData?.schedule.descriptiveName}</Text>
           </View>
           <View style={{flexDirection: "row", height: height/2}}>
@@ -130,7 +130,7 @@ function WidgetView({width, height}:{width: number, height: number}) {
             </View>
           </View>
         </>:
-        <View style={{backgroundColor: "#444444", alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/2}}>
+        <View style={{backgroundColor: Colors.darkGray, alignItems: "center", alignContent: "center", justifyContent: "center", width: width, height: height/2}}>
           <Text style={{color: Colors.white}}>No School</Text>
         </View>
       }

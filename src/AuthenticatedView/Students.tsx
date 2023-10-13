@@ -1,6 +1,6 @@
 import { View, Text, Pressable, TextInput, ViewStyle, Platform } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { loadingStateEnum } from '../types'
+import { Colors, loadingStateEnum } from '../types'
 import { useDispatch, useSelector } from 'react-redux'
 import store, { RootState } from '../Redux/store'
 import callMsGraph from '../Functions/Ultility/microsoftAssets'
