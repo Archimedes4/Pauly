@@ -1,6 +1,6 @@
 import { orgWideGroupID } from "../../PaulyConfig";
 import store from "../../Redux/store";
-import { loadingStateEnum } from "../../types";
+import { Colors, loadingStateEnum } from "../../types";
 import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getSchoolYears(nextLink?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {

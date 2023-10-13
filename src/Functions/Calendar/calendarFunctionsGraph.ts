@@ -154,7 +154,7 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
               startTime: data["value"][index]["start"]["dateTime"],
               endTime: data["value"][index]["end"]["dateTime"],
               allDay: data["value"][index]["isAllDay"],
-              eventColor: Colors.whitewhitewhitewhitewhitewhite,
+              eventColor: Colors.white,
               microsoftEvent: true,
               microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],
               paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID})?.value === "schoolDay") ? "schoolDay":undefined,

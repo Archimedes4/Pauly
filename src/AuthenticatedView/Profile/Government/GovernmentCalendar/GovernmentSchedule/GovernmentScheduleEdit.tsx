@@ -1,6 +1,5 @@
 import { View, Text, TextInput, Button, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import TimePicker from '../../../../../UI/DateTimePicker/TimePicker'
 import { useNavigate } from 'react-router-native'
 import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
 import create_UUID from '../../../../../Functions/Ultility/CreateUUID'
@@ -8,6 +7,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../../../../Redux/store'
 import { Colors, loadingStateEnum } from '../../../../../types'
 import { WarningIcon } from '../../../../../UI/Icons/Icons'
+import { TimePickerModal } from 'react-native-paper-dates';
 
 function isValidHexaCode(input: string) {
   // Define the regular expression pattern for a valid hexadecimal color code
@@ -33,6 +33,9 @@ export default function GovernmentSchedule() {
   const [color, setColor] = useState<string>("")
 
   const [isCreatingSchedule, setIsCreatingSchedule] = useState<boolean>(false)
+
+  const [isSelectingStartTime, setIsSelectingStartTime] = useState<boolean>(false)
+  const [isSelectingEndTime, setIsSelectingEndTime] = useState<boolean>(false)
 
   const navigate = useNavigate()
   async function submitSchedule() {
@@ -93,8 +96,34 @@ export default function GovernmentSchedule() {
         }
         <TextInput value={color} onChangeText={(text) => {setColor(text)}}/>
       </View>
-      <TimePicker selectedHourMilitary={newPeriodHourStart} selectedMinuteMilitary={newPeriodMinuteStart} onSetSelectedHourMilitary={setNewPeriodHourStart} onSetSelectedMinuteMilitary={setNewPeriodMinuteStart}/>
-      <TimePicker selectedHourMilitary={newPeriodHourEnd} selectedMinuteMilitary={newPeriodMinuteEnd} onSetSelectedHourMilitary={setNewPeriodHourEnd} onSetSelectedMinuteMilitary={setNewPeriodMinuteEnd}/>
+      <Pressable onPress={() => setIsSelectingStartTime(true)}>
+        <Text>Pick start time</Text>
+      </Pressable>
+      <TimePickerModal
+        hours={newPeriodHourStart}
+        minutes={newPeriodMinuteStart} 
+        visible={isSelectingStartTime} 
+        onDismiss={() => setIsSelectingStartTime(false)} 
+        onConfirm={(e) => {
+          setNewPeriodHourStart(e.hours)
+          setNewPeriodMinuteStart(e.minutes)
+          setIsSelectingStartTime(false)
+        }}
+      />
+      <Pressable onPress={() => setIsSelectingEndTime(true)}>
+        <Text>Pick end time</Text>
+      </Pressable>
+      <TimePickerModal
+        hours={newPeriodHourEnd}
+        minutes={newPeriodMinuteEnd} 
+        visible={isSelectingEndTime} 
+        onDismiss={() => setIsSelectingEndTime(false)} 
+        onConfirm={(e) => {
+          setNewPeriodHourEnd(e.hours)
+          setNewPeriodMinuteEnd(e.minutes)
+          setIsSelectingEndTime(false)
+        }}
+      />
       { (newPeriods.length < 20) ?
         <Button title="Add Period" onPress={() => {setNewPeriods([...newPeriods, {startHour: newPeriodHourStart, startMinute: newPeriodMinuteStart, endHour: newPeriodHourEnd, endMinute: newPeriodMinuteEnd, id: create_UUID()}])}}/>:null
       }

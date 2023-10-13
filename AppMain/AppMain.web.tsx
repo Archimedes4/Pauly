@@ -49,16 +49,20 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
       instance.setActiveAccount(accounts[0]);
-      const result = await instance.acquireTokenSilent({
-        scopes: scopes
-      })
-      dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
-      getPaulyLists(result.accessToken)
-      getUserProfile(result.accessToken)
-      if (await getWantGovernment()) {
-        checkIfGovernmentMode()
+      const accountResult = await instance.getActiveAccount()
+      if (accountResult !== null) {
+        const result = await instance.acquireTokenSilent({
+          scopes: scopes
+        })
+        dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
+        getPaulyLists(result.accessToken)
+        getUserProfile(result.accessToken)
+        if (await getWantGovernment()) {
+          checkIfGovernmentMode()
+        }
+      } else {
+        
       }
-  
     }
 
     instance.addEventCallback((event: any) => {

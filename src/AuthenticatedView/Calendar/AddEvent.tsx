@@ -3,9 +3,7 @@ import { Pressable, View, Text, Switch, TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Redux/store";
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
-import DatePicker from "../../UI/DateTimePicker/DatePicker";
 import { CalendarIcon, CloseIcon } from "../../UI/Icons/Icons";
-import TimePicker from "../../UI/DateTimePicker/TimePicker";
 import callMsGraph from "../../Functions/Ultility/microsoftAssets";
 import SelectTimetable from "./SelectTimetable";
 import { useFonts } from 'expo-font';
@@ -16,6 +14,8 @@ import SelectSchoolDayData from "./SelectSchoolDayData";
 import updateEvent from "../../Functions/updateEvent";
 import { addEventSlice } from "../../Redux/reducers/addEventReducer";
 import React from "react";
+import { TimePickerModal } from 'react-native-paper-dates';
+import { DatePickerModal } from 'react-native-paper-dates';
 
 export default function AddEvent({width, height}:{width: number, height: number}) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate)
@@ -61,44 +61,30 @@ export default function AddEvent({width, height}:{width: number, height: number}
 
   return (
     <View style={{backgroundColor: Colors.white, width: width, height: height, borderRadius: 5, borderWidth: 5}}>
-      { (isPickingStartDate || isPickingEndDate) ?
-        <DatePicker 
-          selectedDate={isPickingStartDate ? (new Date(startDate)):new Date(endDate)} 
-          onSetSelectedDate={(e) => {
-            if (isPickingStartDate) {
-              dispatch(addEventSlice.actions.setStartDate(e)); dispatch(addEventSlice.actions.setIsPickingStartDate(false))
-            } else {
-              dispatch(addEventSlice.actions.setEndDate(e)); dispatch(addEventSlice.actions.setIsPickingEndDate(false))
-            }}} 
-          width={width} height={height} onCancel={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(false)); dispatch(addEventSlice.actions.setIsPickingEndDate(false))}} 
-          allowedDatesRange={(selectedEventType === paulyEventType.schoolDay && selectedSchoolYear !== undefined) ? {startDate: new Date(selectedSchoolYear.startTime), endDate: new Date(selectedSchoolYear.endTime)}:undefined}/>:
-        <View>
-          <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false))}}>
-            <CloseIcon width={10} height={10}/>
-          </Pressable>
-          <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
-          <DateAndTimeSection width={width} height={height}/>
-          { isGovernmentMode ?
-            <GovernmentCalendarOptions width={width} height={height}/>:null
-          }
-          <View style={{width: width, alignContent: 'center', alignItems: "center", justifyContent: "center"}}>
-            <Pressable onPress={() => {
-              dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.loading))
-              updateEvent()
-            }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
-              <Text style={{zIndex: -1}}>{isEditing ? "Save":(createEventState === loadingStateEnum.notStarted) ? "CREATE":(createEventState === loadingStateEnum.loading) ? "Loading":(createEventState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
-            </Pressable>
-          </View>
-          { isEditing ? 
-            <Pressable onPress={() => {
-              dispatch(addEventSlice.actions.setIsShowingAddDate(false))
-              deleteEvent()
-            }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
-              <Text style={{zIndex: -1}}>Delete</Text>
-            </Pressable>:null
-          } 
-        </View>
+      <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false))}}>
+        <CloseIcon width={10} height={10}/>
+      </Pressable>
+      <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
+      <DateAndTimeSection width={width} height={height}/>
+      { isGovernmentMode ?
+        <GovernmentCalendarOptions width={width} height={height}/>:null
       }
+      <View style={{width: width, alignContent: 'center', alignItems: "center", justifyContent: "center"}}>
+        <Pressable onPress={() => {
+          dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.loading))
+          updateEvent()
+        }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
+          <Text style={{zIndex: -1}}>{isEditing ? "Save":(createEventState === loadingStateEnum.notStarted) ? "CREATE":(createEventState === loadingStateEnum.loading) ? "Loading":(createEventState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+        </Pressable>
+      </View>
+      { isEditing ? 
+        <Pressable onPress={() => {
+          dispatch(addEventSlice.actions.setIsShowingAddDate(false))
+          deleteEvent()
+        }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
+          <Text style={{zIndex: -1}}>Delete</Text>
+        </Pressable>:null
+      } 
     </View>
   )
 }
@@ -134,10 +120,37 @@ function GovernmentCalendarOptions({width, height}:{width: number, height: numbe
 }
 
 function DateAndTimeSection({width, height}:{width: number, height: number}) {
-  const {selectedEventType, eventName, allDay, startDate, endDate} = useSelector((state: RootState) => state.addEvent)
+  const {selectedEventType, eventName, allDay, startDate, endDate, isPickingStartDate, isPickingEndDate} = useSelector((state: RootState) => state.addEvent)
   const dispatch = useDispatch()
+  const [endDatePickerVisable, setEndDatePickerVisable] = useState<boolean>(false)
+  const [startDatePickerVisable, setStartDatePickerVisable] = useState<boolean>(false)
   return (
     <View>
+      <DatePickerModal
+        locale="en"
+        mode="single"
+        
+        visible={isPickingStartDate}
+        onDismiss={() => dispatch(addEventSlice.actions.setIsPickingStartDate(false))}
+        date={new Date(endDate)}
+        onConfirm={(e) => {
+          if (e.date !== undefined) {
+            dispatch(addEventSlice.actions.setStartDate(e.date.toISOString()))
+          }
+        }}
+      />
+      <DatePickerModal
+        locale="en"
+        mode="single"
+        visible={isPickingEndDate}
+        onDismiss={() => dispatch(addEventSlice.actions.setIsPickingEndDate(false))}
+        date={new Date(endDate)}
+        onConfirm={(e) => {
+          if (e.date !== undefined) {
+            dispatch(addEventSlice.actions.setEndDate(e.date.toISOString()))
+          }
+        }}
+      />
       { (selectedEventType === paulyEventType.schoolDay) ?
         null:
         <View>
@@ -165,19 +178,30 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
       <View style={{flexDirection: "row"}}>
         <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true)); console.log("Pressed")}} style={{margin: 5}}>
           <View style={{flexDirection: "row"}}>
-            <Text>{new Date(startDate).toLocaleString("en-us", { month: "long" })} {new Date(startDate).getDate()} {new Date(startDate).getFullYear()}</Text>
+            <Text>{new Date(startDate).toLocaleString("en-us", { month: "long" })} {new Date(startDate).getDate()} {new Date(startDate).getFullYear()} {new Date(startDate).getHours()} {new Date(startDate).getMinutes()}</Text>
             <CalendarIcon width={24} height={15}/>
           </View>
         </Pressable>
         { allDay ?
           null:
           <View style={{margin: 5}}>
-            <TimePicker
-              selectedHourMilitary={new Date(startDate).getHours()}
-              selectedMinuteMilitary={new Date(startDate).getMinutes()}
-              onSetSelectedHourMilitary={(e) => {var newDate = new Date(startDate); newDate.setHours(e); dispatch(addEventSlice.actions.setStartDate(newDate.toISOString()))}}
-              onSetSelectedMinuteMilitary={(e) => {var newDate = new Date(startDate); newDate.setMinutes(e); dispatch(addEventSlice.actions.setStartDate(newDate.toISOString()))}}
-              dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}
+            <Pressable onPress={() => {setStartDatePickerVisable(true)}}>
+              <Text>Pick Start Time</Text>
+            </Pressable>
+            <TimePickerModal
+              hours={new Date(startDate).getHours()}
+              minutes={new Date(startDate).getMinutes()} 
+              visible={startDatePickerVisable} 
+              onDismiss={() => setStartDatePickerVisable(false)} 
+              onConfirm={(e) => {
+                console.log(e)
+                var newDate = new Date(startDate)
+                newDate.setHours(e.hours)
+                newDate.setMinutes(e.minutes)
+                console.log(newDate)
+                dispatch(addEventSlice.actions.setStartDate(newDate.toISOString()))
+                setStartDatePickerVisable(false)
+              }}
             />
           </View>
         }
@@ -189,19 +213,27 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
           <View style={{flexDirection: "row"}}>
             <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingEndDate(true))}} style={{margin: 5}}>
               <View style={{flexDirection: "row"}}>
-                <Text>{new Date(endDate).toLocaleString("en-us", { month: "long" })} {new Date(endDate).getDate()} {new Date(endDate).getFullYear()}</Text>
+                <Text>{new Date(endDate).toLocaleString("en-us", { month: "long" })} {new Date(endDate).getDate()} {new Date(endDate).getFullYear()} {new Date(endDate).getHours()} {new Date(endDate).getMinutes()}</Text>
                 <CalendarIcon width={24} height={15}/>
               </View>
             </Pressable>
             { allDay ?
               null:
               <View style={{margin: 5}}>
-                <TimePicker
-                  selectedHourMilitary={new Date(endDate).getHours()}
-                  selectedMinuteMilitary={new Date(endDate).getMinutes()}
-                  onSetSelectedHourMilitary={(e) => {var newDate = new Date(endDate); newDate.setHours(e); dispatch(addEventSlice.actions.setEndDate(newDate.toISOString()))}}
-                  onSetSelectedMinuteMilitary={(e) => {var newDate = new Date(endDate); newDate.setMinutes(e); dispatch(addEventSlice.actions.setEndDate(newDate.toISOString()))}}
-                  dimentions={{hourHeight: 12, hourWidth: width/12, minuteHeight: 12, minuteWidth: width/12, timeHeight: 12, timeWidth: width/18}}
+                <Pressable onPress={() => {setEndDatePickerVisable(true)}}>
+                  <Text>Pick End Time</Text>
+                </Pressable>
+                <TimePickerModal
+                  hours={new Date(endDate).getHours()}
+                  minutes={new Date(endDate).getMinutes()} 
+                  visible={endDatePickerVisable} 
+                  onDismiss={() => setEndDatePickerVisable(false)} onConfirm={(e) => {
+                    var newDate = new Date(endDate)
+                    newDate.setHours(e.hours)
+                    newDate.setMinutes(e.minutes)
+                    dispatch(addEventSlice.actions.setEndDate(newDate.toISOString()))
+                    setEndDatePickerVisable(false)
+                  }}
                 />
               </View>
             }

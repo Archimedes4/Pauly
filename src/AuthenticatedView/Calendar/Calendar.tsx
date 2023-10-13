@@ -99,7 +99,7 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
           { (new Date(selectedDate).getDate() <= monthData.length) ?
             <>
               {monthData[new Date(selectedDate).getDate() - 1].events.map((event) => (
-                <View>
+                <View key={create_UUID()}>
                   <Text>{event.name}</Text>
                 </View>
               ))}
@@ -215,7 +215,7 @@ function MonthView({width, height}:{width: number, height: number}) {
       <View style={{width: width}}>
         <View style={{flexDirection: "row"}}>
           {daysInWeek.map((DOW) => (
-            <View key={create_UUID()} style={{width: width/7, height: height/8, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
+            <View key={`DOW_${create_UUID()}`} style={{width: width/7, height: height/8, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
               <Text style={{color: "black"}}>{DOW}</Text>
             </View>
           ))}
@@ -232,10 +232,10 @@ function MonthView({width, height}:{width: number, height: number}) {
                           d.setFullYear(new Date(selectedDate).getFullYear(), new Date(selectedDate).getMonth(), value.dayData);
                           dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
                         }} key={`CalendarButton_${value.id}_${create_UUID()}`}>
-                          <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
+                          <CalendarCardView key={`CalendarCardView_${create_UUID()}`} width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
                         </Pressable>:
                         <View key={`CalendarSpacer_${create_UUID()}`}>
-                          <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
+                          <CalendarCardView key={`CalendarCardView_${create_UUID()}`} width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
                         </View>
                       }
                     </>:null

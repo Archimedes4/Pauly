@@ -444,4 +444,5 @@ export class Colors {
   static maroon = "#793033"
   static lightGray = "#ededed"
   static darkGray = "#444444"
+  static black = "#000000"
 }

@@ -1,7 +1,7 @@
-import { View, Text, Button, TextInput, Platform, Dimensions, ScrollView, Animated, Pressable, Switch, Image } from 'react-native'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import { View, Text, TextInput, ScrollView, Pressable, Switch, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import Slider from '../../../../UI/Slider/Slider';
-import { Link, useParams } from 'react-router-native'
+import { useParams } from 'react-router-native'
 import MapWeb from '../../../../UI/Map/Map.web';
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import create_UUID from '../../../../Functions/Ultility/CreateUUID';
@@ -9,9 +9,6 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '../../../../Redux/store';
 import SegmentedPicker from "../../../../UI/Pickers/SegmentedPicker"
 import { Colors, commissionTypeEnum, loadingStateEnum, submissionTypeEnum } from '../../../../types';
-import DatePicker from '../../../../UI/DateTimePicker/DatePicker';
-import TimePicker from '../../../../UI/DateTimePicker/TimePicker';
-import TimePickerDate from '../../../../UI/DateTimePicker/TimePickerDate';
 import ProgressView from '../../../../UI/ProgressView';
 import { getChannels, getPosts, getTeams } from '../../../../Functions/groupsData';
 import WebViewCross from '../../../../UI/WebViewCross';
@@ -20,9 +17,9 @@ import getSubmissions from '../../../../Functions/commissions/getSubmissions';
 import { CloseIcon } from '../../../../UI/Icons/Icons';
 import BackButton from '../../../../UI/BackButton';
 import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
-import { unlink } from 'fs';
 import { FlatList } from 'react-native-gesture-handler';
 import updateCommission from '../../../../Functions/commissions/updateCommission';
+import { TimePickerModal } from 'react-native-paper-dates';
 
 enum datePickingMode {
   none,
@@ -60,7 +57,11 @@ export default function GovernmentEditCommission() {
   const [selectedTeamId, setSelectedTeamId] = useState<string>("")
   const [selectedChannelId, setSelectedChannelId] = useState<string>("")
   const [selectedPostId, setSelectedPostId] = useState<string>("")
-
+  const [endDatePickerVisable, setEndDatePickerVisable] = useState<boolean>(false)
+  const [startDatePickerVisable, setStartDatePickerVisable] = useState<boolean>(false)
+  const [endDateDatePickerVisable, setEndDateDatePickerVisable] = useState<boolean>(false)
+  const [startDateDatePickerVisable, setStartDateDatePickerVisable] = useState<boolean>(false)
+  
   const [isCreating, setIsCreating] = useState<boolean>(false)
 
   const {id} = useParams()
@@ -162,14 +163,42 @@ export default function GovernmentEditCommission() {
           <View>
             <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
               <Text>Start Date</Text>
-              <TimePickerDate date={startDate} setDate={setStartDate} />
+              <Pressable onPress={() => {setStartDatePickerVisable(true)}}>
+                <Text>Pick Start Time</Text>
+              </Pressable>
+              <TimePickerModal
+                hours={new Date(startDate).getHours()}
+                minutes={new Date(startDate).getMinutes()} 
+                visible={startDatePickerVisable} 
+                onDismiss={() => setStartDatePickerVisable(false)} onConfirm={(e) => {
+                  var newDate = new Date(startDate)
+                  newDate.setHours(e.hours)
+                  newDate.setMinutes(e.minutes)
+                  setStartDate(newDate)
+                  setStartDatePickerVisable(false)
+                }}
+              />
               <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
                 <Text>Pick Start Date</Text>
               </Pressable>
             </View>
             <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
               <Text>End Date</Text>
-              <TimePickerDate date={endDate} setDate={setEndDate} />
+              <Pressable onPress={() => {setStartDatePickerVisable(true)}}>
+                <Text>Pick Start Time</Text>
+              </Pressable>
+              <TimePickerModal
+                hours={new Date(startDate).getHours()}
+                minutes={new Date(startDate).getMinutes()} 
+                visible={startDatePickerVisable} 
+                onDismiss={() => setStartDatePickerVisable(false)} onConfirm={(e) => {
+                  var newDate = new Date(startDate)
+                  newDate.setHours(e.hours)
+                  newDate.setMinutes(e.minutes)
+                  setStartDate(newDate)
+                  setStartDatePickerVisable(false)
+                }}
+              />
               <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
             </View>
           </View>:null
@@ -237,13 +266,13 @@ export default function GovernmentEditCommission() {
       </ScrollView>
     
       <View style={{height: height * 0.8, width: width * 0.8, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? Colors.white:"transparent", borderRadius: 15, shadowColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "black":"transparent", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, alignItems: "center", justifyContent: "center", alignContent: "center"}} pointerEvents={(currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? 'auto':'none'}>
-        { (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ?
+        {/* { (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ?
           <DatePicker 
             selectedDate={(currentDatePickingMode === datePickingMode.start) ? startDate:endDate} 
             onSetSelectedDate={(date) => {if (currentDatePickingMode === datePickingMode.end) {setEndDate(date)} else if (currentDatePickingMode === datePickingMode.start) {setStartDate(date)}}}
             width={width * 0.7} height={height * 0.7} onCancel={() => {setCurrentDatePickingMode(datePickingMode.none)}}
           />:null
-        }
+        } */}
       </View>
     </View>
   )

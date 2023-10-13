@@ -16,6 +16,8 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { DefaultTheme, PaperProvider } from 'react-native-paper';
+import { Colors } from './src/types';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -123,14 +125,44 @@ function AppCore() {
   );
 }
 
+const theme = {
+  ...DefaultTheme,
+  roundness: 2,
+  colors: {
+    primary: Colors.darkGray, //ALL G
+    primaryContainer: Colors.maroon,
+    secondary: "green",
+    secondaryContainer: Colors.maroon,
+    tertiary: Colors.darkGray,
+    tertiaryContainer: Colors.white,
+    surface: Colors.white, //ALL G
+    surfaceVariant: Colors.maroon, //ALL G this is the circle
+    background: Colors.maroon, 
+    backdrop: "rgba(237, 237, 237, 0.77)", //NEEDS OPACITY
+    outline: Colors.black, //ALL G
+    outlineVariant: Colors.white,
+    inversePrimary: Colors.white,
+    shadow: Colors.black,
+    scrim: Colors.white,
+    onSurfaceVariant: Colors.black,
+    onPrimary: Colors.white,
+    onSurface: Colors.white,
+    onTertiary: Colors.white,
+    onPrimaryContainer: Colors.white,
+    onBackground: Colors.black
+  },
+};
+
 function App() {
   return (
     <Provider store={store}>
-      <SafeAreaProvider>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-         <AppCore />
-        </GestureHandlerRootView>
-      </SafeAreaProvider>
+      <PaperProvider theme={theme}>
+        <SafeAreaProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <AppCore />
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </PaperProvider>
     </Provider>
   )
 }
