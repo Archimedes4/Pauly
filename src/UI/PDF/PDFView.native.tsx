@@ -45,6 +45,7 @@ export default function PDFView({width}:{width: number}) {
   }
 
   function flingChangePage() {
+    console.log("Fling")
     if ((pageNumber + 1) < images.length) {
       store.dispatch(pdfDataSlice.actions.increasePageNumber())
     } else {
@@ -53,6 +54,7 @@ export default function PDFView({width}:{width: number}) {
   }
   
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
+    console.log("Tap")
     if (success) {
       runOnJS(tapChangePage)
     }
@@ -60,6 +62,7 @@ export default function PDFView({width}:{width: number}) {
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd((_event, success) => {
+      console.log("Double Tap")
       if (success) {
         runOnJS(doubleTapChangePage)
       }
@@ -90,7 +93,7 @@ export default function PDFView({width}:{width: number}) {
         <WebViewInject/>:null 
       }
       { (pageNumber < images.length) ?
-        <GestureDetector gesture={compound}>
+        <GestureDetector  gesture={compound}>
           <Image source={{uri: images[pageNumber]}} style={{width: width, height: imageHeight, borderRadius: 15}}/>
         </GestureDetector>:null
       }

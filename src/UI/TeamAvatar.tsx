@@ -1,6 +1,7 @@
 import { View, Text, Image } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { pageDataContext } from '../Redux/AccessTokenContext';
+import store from '../Redux/store'
+import callMsGraph from '../Functions/Ultility/microsoftAssets'
 
 enum loadingResult {
     loading,
@@ -10,16 +11,12 @@ enum loadingResult {
 }
 
 export default function TeamAvatar({teamId}:{teamId: string}) {
-  const pageData = useContext(pageDataContext);
   const [teamAvatarDataUrl, setTeamAvatarDataUrl] = useState("")
   const [currentLoadingResult, setCurrentLoadingResult] = useState<loadingResult>(loadingResult.loading)
 
   async function getTeamsAvatar(teamId: string) {
     try{
-      const response = await fetch("https://graph.microsoft.com/v1.0/teams/"+teamId+"/photo/$value", {method: "Get", headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + pageData
-        },})
+      const response = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${teamId}/photo/$value`)
       if (response.ok){
         const dataBlob = await response.blob()
         var reader = new FileReader();

@@ -12,14 +12,13 @@ import ProgressView from '../UI/ProgressView';
 import getInsightData from '../Functions/homepage/getInsightData';
 import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
-import getClassEvents from '../Functions/classes/getClassEventsTimetable';
 import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
 import PDFView from '../UI/PDF/PDFView';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import BackButton from '../UI/BackButton';
 import MimeTypeIcon from '../UI/Icons/MimeTypeIcon';
 import { GraphAPILogo } from '../UI/Icons/Icons';
-import getClassEventsFromDay from '../Functions/classes/getClassEventsFromDay';
+import { getClassEventsFromDay } from '../Functions/classesFunctions';
 
 //Get Messages
 // Last Chat Message Channels Included

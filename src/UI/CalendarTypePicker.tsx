@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addEventSlice } from '../Redux/reducers/addEventReducer'
 import { RootState } from '../Redux/store'
+import { Colors } from '../types'
 
 interface PickerWrapperProps {
   width: number

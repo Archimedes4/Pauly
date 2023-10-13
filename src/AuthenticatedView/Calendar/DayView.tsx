@@ -11,9 +11,8 @@ import { useSelector } from "react-redux"
 import { RootState } from "../../Redux/store"
 import create_UUID from "../../Functions/Ultility/CreateUUID"
 import React from "react"
-import getClassEventsFromDay from "../../Functions/classes/getClassEventsFromDay"
-import getClassEvents from "../../Functions/classes/getClassEventsTimetable"
 import { Colors, loadingStateEnum } from "../../types"
+import { getClassEventsFromDay } from "../../Functions/classesFunctions"
 
 export default function DayView({width, height}:{width: number, height: number}) {
   const colorScheme = useColorScheme();
