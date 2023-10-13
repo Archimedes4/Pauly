@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: {top: string, bottom: string} = {top: "#793033", bottom: "#793033"}
+const initalState: {top: string, bottom: string} = {top: Colors.maroon, bottom: Colors.maroon}
 
 export const safeAreaColorsSlice = createSlice({
   name: "safeAreaColors",

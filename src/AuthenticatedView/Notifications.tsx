@@ -112,7 +112,7 @@ function WidgetView({width, height}:{width: number, height: number}) {
   const {schoolDayData, startTime} = useSelector((state: RootState) => state.homepageData)
   const dow: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   return (
-    <View style={{backgroundColor: "#793033", width: width, height: height, borderRadius: 15, marginLeft: (currentBreakPoint === 0) ? width * 0.05:0}}>
+    <View style={{backgroundColor: Colors.maroon, width: width, height: height, borderRadius: 15, marginLeft: (currentBreakPoint === 0) ? width * 0.05:0}}>
       <View style={{width: width, height: height/3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         <Text style={{color: Colors.white, fontSize: height/6}}>{dow[new Date().getDay()]}</Text>
       </View>

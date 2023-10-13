@@ -72,7 +72,7 @@ export default function NavBarComponent({width, height}:{width: number, height: 
     
   return (
     <Pressable id={"Pressable"} onHoverIn={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}} onHoverOut={() => {dispatch(expandedModeSlice.actions.setExpandedMode(false))}}>
-      <View id="Main" style={{backgroundColor: "#793033", height: height, overflow: "hidden", width: (expandedMode) ? (width * 2.5):width, alignItems: "center"}}>
+      <View id="Main" style={{backgroundColor: Colors.maroon, height: height, overflow: "hidden", width: (expandedMode) ? (width * 2.5):width, alignItems: "center"}}>
         <Pressable style={[styles.LinkStyle, {height: blockLength, width: (expandedMode) ? (width * 2.5):width, margin: 0, marginTop: blockLength * 0.4, marginBottom: blockLength * 0.4}]} onPress={() => {dispatch(expandedModeSlice.actions.setExpandedMode(!expandedMode))}} onHoverIn={() => {dispatch(expandedModeSlice.actions.setExpandedMode(true))}}>
           <View style={{flexDirection: "row", width: expandedMode ? blockLength * 2.5:blockLength, height: blockLength, position: expandedMode ? "absolute":"relative", left: expandedMode ? (width - blockLength)/2:undefined}} pointerEvents={'none'}>
             <View style={{position: expandedMode ? "absolute":"relative", left: expandedMode ? 0:undefined}}>

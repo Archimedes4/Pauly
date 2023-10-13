@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { Colors } from '../../types';
 
-const initalState: string = "#793033"
+const initalState: string = Colors.maroon
 
 export const statusBarColorSlice = createSlice({
   name: "statusBarColor",

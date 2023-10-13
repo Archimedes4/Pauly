@@ -165,7 +165,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
                     }
                   }
                 }}>
-                  <View style={{flexDirection: "row", margin: 10, backgroundColor: "#793033", borderRadius: 15, shadowOffset: { width: 2, height: 3 }}}>
+                  <View style={{flexDirection: "row", margin: 10, backgroundColor: Colors.maroon, borderRadius: 15, shadowOffset: { width: 2, height: 3 }}}>
                     <View style={{margin: 10, flexDirection: "row"}}> 
                       <Image source={require("../../../assets/images/PaulyLogo.png")} resizeMode='contain' style={{width: 50, height:  50}} />
                       <Text style={{fontSize: 45, color: Colors.white, fontFamily: 'BukhariScript', width: 100, paddingLeft: 10}}>{commissionData.points}</Text>

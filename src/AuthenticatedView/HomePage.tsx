@@ -29,7 +29,7 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: "#793033", bottom: "#793033"}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.maroon, bottom: Colors.maroon}))
   }, [])
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function HomePage() {
 
   return (
     <>
-      <View style={{backgroundColor: "#793033", overflow: "hidden"}}>
+      <View style={{backgroundColor: Colors.maroon, overflow: "hidden"}}>
         <Pressable style={{width: width * 1.0, height: height * 0.08}} onPress={() => {navigate("/notifications")}}>
           { (paulyDataState === loadingStateEnum.loading) ?
             <View style={{width: width * 1.0, height: height * 0.08, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
@@ -91,13 +91,13 @@ export default function HomePage() {
         <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
           <Pressable onPress={() => {navigate("/commissions")}}>
             <View style={{borderColor: "black", borderWidth: 2}}>
-              <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
+              <View style={{backgroundColor: Colors.maroon, width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
               <MedalIcon width={width * 0.5} height={height * 0.23} style={{position: "absolute", top: height * 0.01, zIndex: 2}}/>
             </View>
           </Pressable>
           <Pressable onPress={() => {navigate("/sports")}}>
             <View style={{borderColor: "black", borderWidth: 2}}>
-              <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
+              <View style={{backgroundColor: Colors.maroon, width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
               <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={width * 0.3} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
             </View>
           </Pressable>
@@ -105,13 +105,13 @@ export default function HomePage() {
         <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>
           <Pressable onPress={() => {navigate("/resources")}}>
             <View style={{borderColor: "black", borderWidth: 2}}>
-              <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
+              <View style={{backgroundColor: Colors.maroon, width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
               <BookIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
             </View>
           </Pressable>
           <Pressable onPress={() => {navigate("/profile")}}>
             <View style={{borderColor: "black", borderWidth: 2}}>
-              <View style={{backgroundColor: "#793033", width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
+              <View style={{backgroundColor: Colors.maroon, width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black"}} />
               <PersonIcon width={width * 0.5} height={height * 0.25} style={{position: "absolute", zIndex: 2}}/>
             </View>
           </Pressable>

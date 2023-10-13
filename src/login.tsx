@@ -19,8 +19,8 @@ export default function Login({onGetAuthToken, onGetGovernmentAuthToken, width}:
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop("#793033"))
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorBottom("#793033"))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop(Colors.maroon))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorBottom(Colors.maroon))
   }, [])
 
   useEffect(() => {

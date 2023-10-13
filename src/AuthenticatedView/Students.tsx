@@ -89,13 +89,13 @@ export default function Students() {
   return (
     <>
       { (usersState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? "#793033":"#FFFFFF", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:"#FFFFFF", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={14} height={14} />
           <Text>Loading</Text>
         </View>:
         <>
           { (usersState === loadingStateEnum.success) ?
-            <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? "#793033":"#FFFFFF"}}>
+            <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:"#FFFFFF"}}>
               <View style={{height: height * 0.15}}>
                 <BackButton to='/profile'/>
                 <Text>Students</Text>
@@ -130,7 +130,7 @@ export default function Students() {
                 />
               </View>
             </View>:
-            <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? "#793033":"#FFFFFF"}}>
+            <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:"#FFFFFF"}}>
               <Pressable onPress={() => {navigate("/")}}>
                 <Text>Back</Text>
               </Pressable>
