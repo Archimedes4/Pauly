@@ -10,7 +10,7 @@ export default async function getSubmissions(commissionId: string, submissionTyp
 
     //Get Users
     var batchRequests: {id: string, method: string, url: string}[][] = [] 
-    var users: object = {}
+    var users: any = {}
     for (var index = 0; index < data["value"].length; index++) {
       if ((index%20) === 0) {
         batchRequests.push([])

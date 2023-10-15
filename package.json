@@ -50,6 +50,7 @@
     "react-qr-code": "^2.0.12",
     "react-redux": "^8.1.2",
     "react-router-native": "^6.16.0",
+    "reanimated-color-picker": "^2.4.0",
     "redux": "^4.2.1",
     "typescript": "^5.2.2"
   },

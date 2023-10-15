@@ -89,7 +89,7 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path="/profile/government/classes/room/create" element={<GovernmentRoomsCreate />} />
                   <Route path="/profile/government/calendar" element={<GovernmentCalendar />} />
                   <Route path="/profile/government/calendar/schedule" element={<GovernmentSchedual />} />
-                  <Route path="/profile/government/calendar/schedule/:scheduleId" element={<GovernmentScheduleEdit />} />
+                  <Route path="/profile/government/calendar/schedule/:id" element={<GovernmentScheduleEdit />} />
                   <Route path="/profile/government/calendar/timetable" element={<GovernmentTimetable />} />
                   <Route path="/profile/government/calendar/timetable/:id" element={<GovernmentTimetableEdit/>} />
                   <Route path="/profile/government/calendar/dresscode" element={<GovernmentDressCode />} />

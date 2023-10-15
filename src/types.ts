@@ -124,7 +124,7 @@ declare global {
     id: string
     status: number
     headers: object | undefined
-    body: object | undefined
+    body: any | undefined
   }
   type calendarCourseType = {
     name: String
@@ -445,4 +445,5 @@ export class Colors {
   static lightGray = "#ededed"
   static darkGray = "#444444"
   static black = "#000000"
+  static danger = "red"
 }

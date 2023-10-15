@@ -140,7 +140,7 @@ const theme = {
     background: Colors.maroon, 
     backdrop: "rgba(237, 237, 237, 0.77)", //NEEDS OPACITY
     outline: Colors.black, //ALL G
-    outlineVariant: Colors.white,
+    outlineVariant: Colors.black,
     inversePrimary: Colors.white,
     shadow: Colors.black,
     scrim: Colors.white,

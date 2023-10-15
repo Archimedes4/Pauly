@@ -129,7 +129,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
       <DatePickerModal
         locale="en"
         mode="single"
-        
+        label="Select Date"
         visible={isPickingStartDate}
         onDismiss={() => dispatch(addEventSlice.actions.setIsPickingStartDate(false))}
         date={new Date(endDate)}
@@ -142,6 +142,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
       <DatePickerModal
         locale="en"
         mode="single"
+        label="Select Date"
         visible={isPickingEndDate}
         onDismiss={() => dispatch(addEventSlice.actions.setIsPickingEndDate(false))}
         date={new Date(endDate)}

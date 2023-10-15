@@ -1,26 +1,36 @@
-import { View, Text } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-native';
+//Andrew Mainella
+//October 14 2023
+//Pauly
+//GovernmentTimetable.tsx
+//
+//An timetable selector that direcets to creating a new timetable or editing one.
+//
+
+import { View, Text, Pressable } from 'react-native'
+import React from 'react'
+import { useNavigate } from 'react-router-native';
 import SelectTimetable from '../../../../Calendar/SelectTimetable';
 import { RootState } from '../../../../../Redux/store';
 import { useSelector } from 'react-redux';
+import { Colors } from '../../../../../types';
 
 export default function GovernmentTimetable() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const navigate = useNavigate()
   return (
     <View style={{width: width, height: height, backgroundColor: Colors.white}}>
       <View style={{height: height * 0.1}}>
-        <Link to="/profile/government/calendar/">
+        <Pressable onPress={() => navigate("/profile/government/calendar/")}>
           <Text>Back</Text>
-        </Link>
+        </Pressable>
         <Text>Timetables</Text>
       </View>
       <View style={{height: height * 0.85}}>
         <SelectTimetable governmentMode={true} />
       </View>
-      <Link to="/profile/government/calendar/timetable/create">
+      <Pressable onPress={() => navigate("/profile/government/calendar/timetable/create")}>
         <Text>Create New</Text>
-      </Link>
+      </Pressable>
     </View>
   )
 }

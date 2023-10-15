@@ -66,8 +66,8 @@ export async function getEvent(id: string): Promise<{result: loadingStateEnum, d
   }
 }
 
-export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields&$filter=fields/scheduleId%20eq%20'${id}'`)//TO DO fix site id
+export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType, listItemId?: string}> {
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleData,scheduleId,scheduleColor)&$filter=fields/scheduleId%20eq%20'${id}'&$select=id`)
   if (result.ok) {
     const data = await result.json()
     if (data["value"].length !== undefined) {
@@ -79,7 +79,7 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
           id: data["value"][0]["fields"]["scheduleId"],
           color:  data["value"][0]["fields"]["scheduleColor"]
         }
-        return {result: loadingStateEnum.success, schedule: resultSchedule}
+        return {result: loadingStateEnum.success, schedule: resultSchedule, listItemId: data["value"][0]["id"]}
       } else {
         return {result: loadingStateEnum.failed, schedule: undefined}
       }

@@ -148,24 +148,22 @@ export default function GovernmentTimetableEdit() {
         { (scheduleState === loadingStateEnum.success) ?
           <View>
             {loadedSchedules.map((item, index) => (
-              <View>
+              <>
               { (selectedSchedules.length === 0) ?
                 <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
                   <View>
                     <Text>{item.properName}</Text>
                   </View>
                 </Pressable>:
-                <View>
+                <>
                   { (loadedSchedules[0].periods.length === item.periods.length) ?
                     <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
-                      <View>
-                        <Text>{item.properName}</Text>
-                      </View>
+                      <Text>{item.properName}</Text>
                     </Pressable>:null
                   }
-                </View>
+                </>
               }
-              </View>
+              </>
             ))}
           </View>:null
         }
