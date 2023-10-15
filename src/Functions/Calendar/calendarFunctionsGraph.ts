@@ -90,7 +90,37 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
     return {result: loadingStateEnum.failed, schedule: undefined}
   }
 }
-  
+
+export async function getSchedules(): Promise<{result: loadingStateEnum, data?: scheduleType[], nextLink?: string}> {
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields`)
+  if (result.ok){
+    const dataResult = await result.json()
+    if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
+      var newLoadedSchedules: scheduleType[] = []
+      for (let index = 0; index < dataResult["value"].length; index++) {
+        try {
+          const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[]
+          newLoadedSchedules.push({
+            properName: dataResult["value"][index]["fields"]["scheduleProperName"],
+            descriptiveName: dataResult["value"][index]["fields"]["scheduleDescriptiveName"],
+            id: dataResult["value"][index]["fields"]["scheduleId"],
+            periods: scheduleData,
+            color: dataResult["value"][index]["fields"]["scheduleColor"]
+          })
+        } catch {
+          return {result: loadingStateEnum.failed}
+          //TO DO unimportant but this shouldn't be able to happen if this doesn't work most likly invalid data has somehow gotten into the schedule data column of the schedule list
+        }
+      }
+      return {result: loadingStateEnum.success, data: newLoadedSchedules, nextLink: dataResult["@odata.nextLink"]}
+    } else {
+      return {result: loadingStateEnum.failed}
+    }
+  } else {
+    return {result: loadingStateEnum.failed}
+  }
+}
+
 export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items?expand=fields&$filter=fields/timetableId%20eq%20'${timetableId}'`)
   if (result.ok) {

@@ -12,7 +12,7 @@ type resourceGroupType = {
   name: string,
   id: string,
   error: boolean,
-  channels?: channelType[]
+  channels: channelType[]
 }  
 
 function ChannelBlock({group, groups, groupIndex, setGroups, selectedGroup, channel, channelIndex}:{group: resourceGroupType, groups: resourceGroupType[], groupIndex: number, setGroups: (item: resourceGroupType[]) => void, selectedGroup: string, channel: channelType, channelIndex: number}) {
@@ -146,12 +146,15 @@ export default function GovernmentResources() {
             error: (channelGetResult.result === resourceResponce.failed) ? true:false
           })
         }
+      } else {
+        setGetTeamsState(loadingStateEnum.failed)
+        return
       }
       resultGroups.push({
         name: data["value"][index]["displayName"],
         id: data["value"][index]["id"],
         error: (getResult.ok) ? true:false,
-        channels: (getResult.ok) ? channelResult:undefined
+        channels:  channelResult
       })
     }
     setGetTeamsState(loadingStateEnum.success)

@@ -9,16 +9,16 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
 import getDressCodeData from '../../../../../Functions/homepage/getDressCodeData';
 import ListItem from '../../../../../UI/ListItem';
+import { getSchedules } from '../../../../../Functions/calendar/calendarFunctionsGraph';
 
 //TO DO longest amount of school days is 20 make sure this is enforced
 export default function GovernmentTimetableEdit() {
-  const {timetablesListId, scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)
+  const {timetablesListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const {width, height} = useSelector((state: RootState) => state.dimentions)
 
   const [isEditing, setIsEditing] = useState<boolean>(false)
 
   //Loading States
-  const [scheduleState, setScheduleState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [dressCodeState, setDressCodeState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [createTimetableLoadingState, setCreateTimetableLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
 
@@ -27,9 +27,9 @@ export default function GovernmentTimetableEdit() {
   const [selectedSchedules, setSelectedSchedules] = useState<scheduleType[]>([])
   const [dressCodes, setDressCodes] = useState<dressCodeType[]>([])
   const [selectedDressCode, setSelectedDressCode] = useState<dressCodeType | undefined>(undefined)
-  const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   const [schoolDays, setSchoolDays] = useState<schoolDayType[]>([])
   const [selectedDefaultSchedule, setSelectedDefaultSchedule] = useState<scheduleType | undefined>(undefined)
+  
   async function createTimetable() {
     if (selectedDefaultSchedule !== undefined && selectedDressCode !== undefined){
       //Check to make sure all have the same number of periods 
@@ -65,33 +65,7 @@ export default function GovernmentTimetableEdit() {
       }
     }
   }
-  async function getSchedules() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + scheduleListId + "/items?expand=fields")
-    if (result.ok){
-      const dataResult = await result.json()
-      if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
-        var newLoadedSchedules: scheduleType[] = []
-        for (let index = 0; index < dataResult["value"].length; index++) {
-          try {
-            const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[]
-            newLoadedSchedules.push({
-              properName: dataResult["value"][index]["fields"]["scheduleProperName"],
-              descriptiveName: dataResult["value"][index]["fields"]["scheduleDescriptiveName"],
-              id: dataResult["value"][index]["fields"]["scheduleId"],
-              periods: scheduleData,
-              color: dataResult["value"][0]["fields"]["scheduleColor"]
-            })
-          } catch {
-            //TO DO unimportant but this shouldn't be able to happen if this doesn't work most likly invalid data has somehow gotten into the schedule data column of the schedule list
-          }
-        }
-        setLoadedSchedules(newLoadedSchedules)
-        setScheduleState(loadingStateEnum.success)
-      }
-    } else {
-      setScheduleState(loadingStateEnum.failed)
-    }
-  }
+
   async function getDressCodes() {
     const result = await getDressCodeData()
     setDressCodeState(result.result)
@@ -101,7 +75,6 @@ export default function GovernmentTimetableEdit() {
   }
 
   useEffect(() => {
-    getSchedules()
     getDressCodes()
   }, [])
   return (
@@ -121,53 +94,7 @@ export default function GovernmentTimetableEdit() {
       <View>
         <TextInput value={timetableName} onChangeText={(e) => {setTimetableName(e)}} placeholder='Timetable Name'/>
       </View>
-      <Text>Scheduals</Text>
-      <Text>Selected Schedules</Text>
-      <ScrollView style={{height: height * 0.4}}>
-        {selectedSchedules.map((item) => (
-          <View style={{height: height * 0.05}} key={"SelectedSchedule_" + item.id}>
-            <Text>{item.properName}</Text>
-            { (selectedDefaultSchedule?.id !== item.id) ?
-            <Pressable style={{backgroundColor: "blue", height: height * 0.02}}>
-              <Text>Select As Default</Text>
-            </Pressable>:null
-            }
-          </View>
-        ))}
-      </ScrollView>
-      <View style={{alignItems: "center"}}>
-        <Text>Other Schedules</Text>
-      </View>
-      <ScrollView style={{height: height * 0.4}}>
-        { (scheduleState === loadingStateEnum.loading) ?
-          <Text>Loading</Text>:null
-        }
-        { (scheduleState === loadingStateEnum.failed) ?
-          <Text>Failed</Text>:null
-        }
-        { (scheduleState === loadingStateEnum.success) ?
-          <View>
-            {loadedSchedules.map((item, index) => (
-              <>
-              { (selectedSchedules.length === 0) ?
-                <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
-                  <View>
-                    <Text>{item.properName}</Text>
-                  </View>
-                </Pressable>:
-                <>
-                  { (loadedSchedules[0].periods.length === item.periods.length) ?
-                    <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
-                      <Text>{item.properName}</Text>
-                    </Pressable>:null
-                  }
-                </>
-              }
-              </>
-            ))}
-          </View>:null
-        }
-      </ScrollView>
+      <ScheduleBlock selectedSchedules={selectedSchedules} setSelectedSchedules={setSelectedSchedules} selectedDefaultSchedule={selectedDefaultSchedule} setSelectedDefaultSchedule={setSelectedDefaultSchedule}/>
       <SchoolDays height={height} schoolDays={schoolDays} setSchoolDays={setSchoolDays} />
       <Text>Dress Codes</Text>
       <View>
@@ -273,5 +200,72 @@ function SchoolDayItem({item, index, schoolDays, setSchoolDays}:{item: schoolDay
         </View>
       </View>
     </Pressable>
+  )
+}
+
+function ScheduleBlock({selectedSchedules, setSelectedSchedules, selectedDefaultSchedule, setSelectedDefaultSchedule}:{selectedSchedules: scheduleType[], setSelectedSchedules: (item: scheduleType[]) => void, selectedDefaultSchedule: scheduleType | undefined, setSelectedDefaultSchedule: (item: scheduleType) => void}) {
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
+  const [scheduleState, setScheduleState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  async function loadSchedules() {
+    const result = await getSchedules()
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setLoadedSchedules(result.data)
+    }
+    setScheduleState(result.result)
+  }
+  useEffect(() => {
+    loadSchedules()
+  }, [])
+  return (
+    <View>
+      <Text>Scheduals</Text>
+      <Text>Selected Schedules</Text>
+      <ScrollView style={{height: height * 0.4}}>
+        {selectedSchedules.map((item) => (
+          <View style={{height: height * 0.05}} key={"SelectedSchedule_" + item.id}>
+            <Text>{item.properName}</Text>
+            { (selectedDefaultSchedule?.id !== item.id) ?
+            <Pressable style={{backgroundColor: "blue", height: height * 0.02}}>
+              <Text>Select As Default</Text>
+            </Pressable>:null
+            }
+          </View>
+        ))}
+      </ScrollView>
+      <View style={{alignItems: "center"}}>
+        <Text>Other Schedules</Text>
+      </View>
+      <ScrollView style={{height: height * 0.4}}>
+        { (scheduleState === loadingStateEnum.loading) ?
+          <Text>Loading</Text>:null
+        }
+        { (scheduleState === loadingStateEnum.failed) ?
+          <Text>Failed</Text>:null
+        }
+        { (scheduleState === loadingStateEnum.success) ?
+          <View>
+            {loadedSchedules.map((item, index) => (
+              <>
+              { (selectedSchedules.length === 0) ?
+                <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
+                  <View>
+                    <Text>{item.properName}</Text>
+                  </View>
+                </Pressable>:
+                <>
+                  { (loadedSchedules[0].periods.length === item.periods.length) ?
+                    <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
+                      <Text>{item.properName}</Text>
+                    </Pressable>:null
+                  }
+                </>
+              }
+              </>
+            ))}
+          </View>:null
+        }
+      </ScrollView>
+    </View>
   )
 }

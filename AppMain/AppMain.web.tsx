@@ -2,7 +2,7 @@ import { SafeAreaView, ScaledSize} from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Login from '../src/login'
 import AuthenticatedViewMain from '../src/AuthenticatedView/AuthenticatedViewMain'
-import { clientId, tenantId } from '../src/PaulyConfig'
+import { clientId, scopes, tenantId } from '../src/PaulyConfig'
 import { useDispatch, useSelector } from 'react-redux'
 import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
 import getUserProfile from '../src/Functions/Ultility/getUserProfile'
@@ -21,8 +21,6 @@ const pca = new PublicClientApplication({
     redirectUri: "http://localhost:19006/auth"//TO DO change prod
   }
 });
-
-const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All", "TeamMember.Read.All"]
 
 export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
   return (
@@ -61,7 +59,7 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
           checkIfGovernmentMode()
         }
       } else {
-        
+
       }
     }
 

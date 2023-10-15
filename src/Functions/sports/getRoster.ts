@@ -4,7 +4,7 @@ import batchRequest from "../Ultility/batchRequest";
 import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getRoster(teamId: string): Promise<{result: loadingStateEnum, data?: rosterType[]}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items?$expand=fields($select=playerId,position,playerNumber,posts)&$select=id`)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items?$expand=fields($select=playerId,position,playerNumber,posts,imageShareId)&$select=id`)
   if (result.ok) {
     const data = await result.json()
     const batchData: {id: string, method: "GET" | "POST", url: string}[][] = []

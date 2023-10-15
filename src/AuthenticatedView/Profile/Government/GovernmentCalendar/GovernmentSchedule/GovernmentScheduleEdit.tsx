@@ -28,6 +28,8 @@ export default function GovernmentSchedule() {
   const {id} = useParams()
   const {width, height} = useSelector((state: RootState) => state.dimentions)
 
+  const [scheduleListId, setScheduleListId] = useState<string | undefined>(undefined)
+
   const [scheduleProperName, setScheduleProperName] = useState<string>("")
   const [scheduleDescriptiveName, setScheduleDescriptiveName] = useState<string>("")
   const [newPeriods, setNewPeriods] = useState<periodType[]>([])
@@ -38,34 +40,60 @@ export default function GovernmentSchedule() {
 
   const [createScheduleLoadingState, setCreateScheduleLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const [loadScheduleState, setLoadScheduleState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-
+  const [deleteState, setDeleteState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  
   const navigate = useNavigate()
   async function submitSchedule() {
     setCreateScheduleLoadingState(loadingStateEnum.loading)
-    const data = {
-      "fields": {
-        "Title":scheduleProperName,
-        "scheduleId":create_UUID(),
-        "scheduleProperName":scheduleProperName,
-        "scheduleDescriptiveName":scheduleDescriptiveName,
-        "scheduleColor":color,
-        "scheduleData":JSON.stringify(newPeriods)
+    if (isCreatingSchedule) {
+      const data = {
+        "fields": {
+          "Title":scheduleProperName,
+          "scheduleId":create_UUID(),
+          "scheduleProperName":scheduleProperName,
+          "scheduleDescriptiveName":scheduleDescriptiveName,
+          "scheduleColor":color,
+          "scheduleData":JSON.stringify(newPeriods)
+        }
       }
-    }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items`, "POST", false, JSON.stringify(data))
-    if (result.ok){
-      setCreateScheduleLoadingState(loadingStateEnum.success)
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items`, "POST", false, JSON.stringify(data))
+      if (result.ok){
+        setCreateScheduleLoadingState(loadingStateEnum.success)
+      } else {
+        setCreateScheduleLoadingState(loadingStateEnum.failed)
+      }
+    } else if (scheduleListId !== undefined) {
+      const data = {
+        "fields": {
+          "Title":scheduleProperName,
+          "scheduleProperName":scheduleProperName,
+          "scheduleDescriptiveName":scheduleDescriptiveName,
+          "scheduleColor":color,
+          "scheduleData":JSON.stringify(newPeriods)
+        }
+      }
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items/${scheduleListId}`, "PATCH", false, JSON.stringify(data))
+      if (result.ok){
+        setCreateScheduleLoadingState(loadingStateEnum.success)
+      } else {
+        setCreateScheduleLoadingState(loadingStateEnum.failed)
+      }
     } else {
       setCreateScheduleLoadingState(loadingStateEnum.failed)
     }
   }
 
   async function deleteFunction() {
-    const result = await callMsGraph("", "DELETE")
-    if (result.ok) {
-
+    if (scheduleListId !== undefined) {
+      setDeleteState(loadingStateEnum.loading)
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items/${scheduleListId}`, "DELETE")
+      if (result.ok) {
+        setDeleteState(loadingStateEnum.success)
+      } else {
+        setDeleteState(loadingStateEnum.failed)
+      }
     } else {
-
+      setDeleteState(loadingStateEnum.failed)
     }
   }
 
@@ -77,6 +105,7 @@ export default function GovernmentSchedule() {
         setScheduleDescriptiveName(result.schedule.descriptiveName)
         setColor(result.schedule.color)
         setNewPeriods(result.schedule.periods)
+        setScheduleListId(result.listItemId)
       }
       setLoadScheduleState(result.result)
     } else {
@@ -94,7 +123,7 @@ export default function GovernmentSchedule() {
 
   return (
     <>
-      { (isCreatingSchedule || loadScheduleState === loadingStateEnum.success) ?
+      { ((isCreatingSchedule || loadScheduleState === loadingStateEnum.success) && (deleteState !== loadingStateEnum.success)) ?
         <ScrollView style={{width: width, height: height, backgroundColor: Colors.white}}>
           <Pressable onPress={() => {navigate("/profile/government/calendar/schedule")}}>
             <Text>Back</Text>
@@ -172,12 +201,12 @@ export default function GovernmentSchedule() {
             if (createScheduleLoadingState === loadingStateEnum.notStarted && isValidHexaCode(color)) {
               submitSchedule()
             }
-          }} disabled={!isValidHexaCode}>
-            <Text>{(!isValidHexaCode(color)) ? "Cannot Start":(createScheduleLoadingState === loadingStateEnum.notStarted) ? "Create Schedule":(createScheduleLoadingState === loadingStateEnum.loading) ? "Loading":(createScheduleLoadingState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+          }} style={{margin: 10, backgroundColor: Colors.white, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>
+            <Text style={{margin: 10}}>{(!isValidHexaCode(color)) ? "Cannot Start":(createScheduleLoadingState === loadingStateEnum.notStarted) ? `${(isCreatingSchedule) ? "Create":"Save"} Schedule`:(createScheduleLoadingState === loadingStateEnum.loading) ? "Loading":(createScheduleLoadingState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
           </Pressable>
           { !isCreatingSchedule ? 
-            <Pressable style={{margin: 10, backgroundColor: Colors.danger}}>
-              <Text style={{margin: 10}}>DELETE</Text>
+            <Pressable onPress={() => deleteFunction()} style={{margin: 10, backgroundColor: Colors.danger, borderRadius: 15}}>
+              <Text style={{margin: 10}}>{(deleteState == loadingStateEnum.notStarted) ? "DELETE":(deleteState === loadingStateEnum.loading) ? "LOADING":"FAILED"}</Text>
             </Pressable>:null
           }
         </ScrollView>:
@@ -190,12 +219,22 @@ export default function GovernmentSchedule() {
               <ProgressView width={width * 0.1} height={height * 0.1}/>
               <Text>Loading</Text>
             </View>:
-            <View style={{width: width, height: height, backgroundColor: Colors.white}}>
-              <Pressable onPress={() => {navigate("/profile/government/calendar/schedule")}}>
-                <Text>Back</Text>
-              </Pressable>
-              <Text>Failed</Text>
-            </View>
+            <>
+              { (deleteState === loadingStateEnum.success) ?
+                <View style={{width: width, height: height, backgroundColor: Colors.white}}>
+                  <Pressable onPress={() => {navigate("/profile/government/calendar/schedule")}}>
+                    <Text>Back</Text>
+                  </Pressable>
+                  <Text>Schedule Deleted</Text>
+                </View>:
+                <View style={{width: width, height: height, backgroundColor: Colors.white}}>
+                  <Pressable onPress={() => {navigate("/profile/government/calendar/schedule")}}>
+                    <Text>Back</Text>
+                  </Pressable>
+                  <Text>Failed</Text>
+                </View>
+              }
+            </>
           }
         </>
       }
@@ -223,7 +262,7 @@ function PeriodBlock({period, periods, onSetNewPeriods}:{period: periodType, per
     }
   }
   return (
-    <View key={`Period_${period.id}_${create_UUID()}`} style={{margin: 10, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15, marginLeft: 5, marginRight: 5}}>
+    <View key={`Period_${period.id}_${create_UUID()}`} style={{margin: 10, backgroundColor: Colors.white, shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15, marginLeft: 5, marginRight: 5}}>
       <View style={{margin: 10}}>
         <View style={{flexDirection: "row", marginBottom: 10}}>
           <Text>{period.startHour}:{period.startMinute}</Text>

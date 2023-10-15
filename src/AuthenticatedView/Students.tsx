@@ -59,8 +59,9 @@ export default function Students() {
     }
   }
 
-  async function getUsers(url?: string) {
-    const result = await callMsGraph(url ? url:`https://graph.microsoft.com/v1.0/users`)
+  async function getUsers(url?: string, search?: string) {
+    const filter = search ? `&$search="displayName:${search}"`:""
+    const result = await callMsGraph(url ? url:`https://graph.microsoft.com/v1.0/users?$select=displayName,id,mail${filter}`)
     if (result.ok) {
       const data = await result.json()
       var outputUsers: schoolUserType[] = []
@@ -78,6 +79,7 @@ export default function Students() {
       dispatch(studentSearchSlice.actions.setNextLink(data["@odata.nextLink"]))
       dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.success))
     } else {
+      const data = await result.json()
       dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
     }
   }
@@ -102,7 +104,8 @@ export default function Students() {
               </View>
               <SearchBox getUsers={(e) => {
                 if (e !== "") {
-                  getUsers(e)
+                  getUsers(undefined, e)
+                  dispatch(studentSearchSlice.actions.setNextLink(undefined))
                 } else {
                   getUsers()
                 }
@@ -145,7 +148,7 @@ export default function Students() {
 
 function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {searchValue} = useSelector((state: RootState) => state.resources)
+  const {searchText} = useSelector((state: RootState) => state.studentSearch)
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
   const style: ViewStyle = (Platform.OS === "web") ? {outlineStyle: "none"}:{}
   const [mounted, setMounted] = useState<boolean>(false)
@@ -153,7 +156,7 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
 
   useEffect(() => {
     if (mounted) {
-      const searchValueSave = searchValue
+      const searchValueSave = searchText
       setTimeout(() => {
         if (store.getState().studentSearch.searchText === searchValueSave) {
           getUsers(store.getState().studentSearch.searchText)
@@ -162,7 +165,7 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
     } else {
       setMounted(true)
     }
-  }, [searchValue])
+  }, [searchText])
 
   return (
     <View key={"Search_View_Top"} style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", position: "absolute", top: height * 0.1 - 19, zIndex: 2}}>
@@ -174,7 +177,7 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
           </View>
         }
         <View key={"Search_View_Input"}>
-          <TextInput key={"Search_TextInput"} placeholder='Search' placeholderTextColor={"black"} value={searchValue} 
+          <TextInput key={"Search_TextInput"} placeholder='Search' placeholderTextColor={"black"} value={searchText} 
           onChangeText={(e) => {dispatch(studentSearchSlice.actions.setStudentSearch(e))}} style={[{width: isOverflowing ? width * 0.8 - 20:width * 0.8 - 50, height: 20, margin: 10, borderWidth: 0}, style]} enterKeyHint='search' inputMode='search'/>
           <View
             style={{height: 0, alignSelf: 'flex-start', overflow: "hidden"}}
@@ -185,7 +188,7 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
                 setIsOverflowing(false)
               }
             }} key={"Search_View_Text"}>
-            <Text style={{color: 'white'}}>{searchValue}</Text>
+            <Text style={{color: 'white'}}>{searchText}</Text>
           </View>
         </View>
       </View>

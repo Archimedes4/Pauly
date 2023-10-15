@@ -41,7 +41,7 @@ export default function SegmentedPicker({width, height, selectedIndex, setSelect
             setSelectedIndex(index)
             fadeIn(index)
           }} style={{position: "absolute", width: compoentWidth, height: height, alignItems: "center", alignContent: "center", justifyContent: "center", transform: [{translateX: index * compoentWidth}]}}>
-            <Text adjustsFontSizeToFit={true} style={{textAlignVertical: "center", textAlign: "center", height: height, width: compoentWidth}}>{option}</Text>
+            <Text adjustsFontSizeToFit={true} style={{textAlignVertical: "center", textAlign: "center", width: compoentWidth}}>{option}</Text>
           </Pressable>
         ))}
         <Animated.View style={{transform: [{translateX: pan}], zIndex: -1}}>

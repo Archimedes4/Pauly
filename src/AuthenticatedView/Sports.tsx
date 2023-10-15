@@ -15,6 +15,8 @@ import create_UUID from '../Functions/Ultility/CreateUUID'
 import { getSports, getSportsTeams } from '../Functions/sports/sportsFunctions'
 import getRoster from '../Functions/sports/getRoster';
 import { FlatList } from 'react-native-gesture-handler';
+import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
+import SegmentedPicker from '../UI/Pickers/SegmentedPicker';
 
 export default function Sports() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -77,6 +79,7 @@ export default function Sports() {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
     <View style={{height: height, width: width, backgroundColor: Colors.white, overflow: "hidden"}}>
       <View style={{height: height * 0.1, width: width, backgroundColor: Colors.darkGray, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
@@ -85,7 +88,7 @@ export default function Sports() {
         }
         <Text style={{fontFamily: "BukhariScript"}}>Sports</Text>
       </View>
-      <ScrollView style={{height: height * 0.1, width: width}} horizontal={true}>
+      <ScrollView style={{height: (isShowingTeams) ? height * 0.1:undefined, width: width}} horizontal={true}>
         <View>
           <View style={{flexDirection: "row"}}>
             <>
@@ -152,9 +155,13 @@ export default function Sports() {
           {(loadingResult === loadingStateEnum.success) ?
             <ScrollView style={{height: height * 0.7}}>
               { (selectedTeam !== undefined) ?
-                <Pressable onPress={() => setIsShowingRoster(true)}>
-                  <Text>Roster</Text>
-                </Pressable>:null
+                <SegmentedPicker selectedIndex={(isShowingRoster) ? 1:0} setSelectedIndex={(e) => {
+                  if (e === 0) {
+                    setIsShowingRoster(false)
+                  } else if (e === 1) {
+                    setIsShowingRoster(true)
+                  }
+                }} options={["Highlights", "Roster"]} width={width} height={25}/>:null
               }
               { (isShowingRoster && selectedTeam !== undefined) ?
                 <RosterView teamId={selectedTeam.teamId} width={width} height={height * 0.7} />:
@@ -194,6 +201,7 @@ function RosterView({teamId, width, height}:{teamId: string, width: number, heig
   
   async function loadRoster() {
     const result = await getRoster(teamId)
+    console.log(result)
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       setRoster(result.data)
     }
@@ -203,6 +211,20 @@ function RosterView({teamId, width, height}:{teamId: string, width: number, heig
   useEffect(() => {
     loadRoster()
   }, [])
+
+  const [fontsLoaded] = useFonts({
+    'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <>
@@ -214,20 +236,23 @@ function RosterView({teamId, width, height}:{teamId: string, width: number, heig
         <>
           { (rosterLoadingState === loadingStateEnum.success) ?
             <View>
+              <View style={{flexDirection: "row", marginTop: 10, marginBottom: 5}}>
+                <Text style={{marginLeft: 35, width: width * 0.4}}>Player</Text>
+                <Text style={{width: width * 0.3}}>Player Number</Text>
+                <Text>Position</Text>
+              </View>
               <FlatList 
                 data={roster}
                 renderItem={(item) => (
-                  <View style={{backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5}}>
-                    <View style={{flexDirection: "row"}}>
-                      <Text>{item.item.name}</Text>
+                  <View style={{backgroundColor: ((item.index % 2) === 0) ? Colors.white:Colors.lightGray}}>
+                    <View style={{flexDirection: "row", margin: 10}}>
+                      <RosterImage id={item.item.imageShareId}/>
+                      <Text style={{marginLeft: 5, width: width * 0.4}}>{item.item.name}</Text>
                       {(item.item.playerNumber !== undefined) ?
-                        <Text>{item.item.playerNumber}</Text>:null
+                        <Text style={{width: width * 0.3}}>{item.item.playerNumber}</Text>:null
                       }
                       {(item.item.position !== undefined) ?
-                        <Text>{item.item.playerNumber}</Text>:null
-                      }
-                      {(item.item.imageShareId !== undefined) ?
-                        <Image source={{uri: item.item.playerNumber}} style={{width: 20, height: 20}}/>:null
+                        <Text>{item.item.position}</Text>:null
                       }
                     </View> 
                   </View>
@@ -237,6 +262,53 @@ function RosterView({teamId, width, height}:{teamId: string, width: number, heig
             <View>
               <Text>Something went wrong loading the roster</Text>
             </View>
+          }
+        </>
+      }
+    </>
+  )
+}
+
+function RosterImage({id}:{id?: string}) {
+  const [imageUrl, setImageUrl] = useState<string>("")
+  const [imageState, setImageState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  async function loadData(imageId: string) {
+    setImageState(loadingStateEnum.loading)
+    const result = await getFileWithShareID(imageId)
+    if (result.result === loadingStateEnum.success && result.url !== undefined) {
+      setImageUrl(result.url)
+      setImageState(loadingStateEnum.success)
+    } else {
+      setImageState(loadingStateEnum.failed)
+    }
+  }
+  useEffect(() => {
+    if (id !== undefined) {
+      loadData(id)
+    }
+  }, [id])
+
+  return (
+    <>
+      { (imageState === loadingStateEnum.loading) ?
+        <View style={{width: 20, height: 20, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+          <ProgressView width={14} height={14}/>
+        </View>:
+        <>
+          { (imageState === loadingStateEnum.success) ?
+            <View>
+              <Image source={{uri: imageUrl}} style={{width: 20,height: 20, borderRadius: 10}}/>
+            </View>:
+            <>
+              { (imageState === loadingStateEnum.notStarted) ?
+                <View style={{width: 20, height: 20}}>
+
+                </View>:
+                <View>
+                  <Text>Failed</Text>
+                </View>
+              }
+            </>
           }
         </>
       }

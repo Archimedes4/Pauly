@@ -8,43 +8,24 @@ import { Colors, loadingStateEnum } from '../../../../../types';
 import { FlatList } from 'react-native-gesture-handler';
 import ProgressView from '../../../../../UI/ProgressView';
 import { he } from 'react-native-paper-dates';
+import { getSchedules } from '../../../../../Functions/calendar/calendarFunctionsGraph';
 
 export default function GovernmentSchedule() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {scheduleListId, siteId} = useSelector((state: RootState) => state.paulyList)
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([])
   const navigate = useNavigate()
-  async function getSchedules() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + scheduleListId +"/items?expand=fields")
-    if (result.ok){
-      const dataResult = await result.json()
-      if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
-        var newLoadedSchedules: scheduleType[] = []
-        for (let index = 0; index < dataResult["value"].length; index++) {
-          try {
-            const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[]
-            newLoadedSchedules.push({
-              properName: dataResult["value"][index]["fields"]["scheduleProperName"],
-              descriptiveName: dataResult["value"][index]["fields"]["scheduleDescriptiveName"],
-              id: dataResult["value"][index]["fields"]["scheduleId"],
-              periods: scheduleData,
-              color: dataResult["value"][index]["fields"]["scheduleColor"]
-            })
-          } catch {
-            setLoadingState(loadingStateEnum.failed)
-            //TO DO unimportant but this shouldn't be able to happen if this doesn't work most likly invalid data has somehow gotten into the schedule data column of the schedule list
-          }
-        }
-        setLoadedSchedules(newLoadedSchedules)
-        setLoadingState(loadingStateEnum.success)
-      }
-    } else {
-      setLoadingState(loadingStateEnum.failed)
+  
+  async function loadSchedules() {
+    const result = await getSchedules()
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setLoadedSchedules(result.data)
     }
+    setLoadingState(result.result)
   }
+
   useEffect(() => {
-    getSchedules()
+    loadSchedules()
   }, [])
   return (
     <ScrollView style={{width: width, height: height, backgroundColor: Colors.white}}>

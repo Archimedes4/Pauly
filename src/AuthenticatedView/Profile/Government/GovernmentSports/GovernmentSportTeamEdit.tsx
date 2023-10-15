@@ -395,29 +395,29 @@ function RosterBlock({microsoftTeamId, width, height, teamId, setIsSelectingFile
   }, [])
 
   return (
-      <>
-        { (membersState === loadingStateEnum.loading) ?
-          <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-            <ProgressView width={width * 0.1} height={height * 0.1}/>
-            <Text>Loading</Text>
-          </View>:
-          <>
-            { (membersState === loadingStateEnum.success) ?
-              <View>
-                <FlatList
-                  data={members}
-                  renderItem={(member) => (
-                    <RosterBlockItem members={members} setMembers={setMembers} member={member} teamId={teamId} selectedFile={selectedFile} setIsSelectingFile={setIsSelectingFile} setSelectedFile={setSelectedFile} isSelectingFile={isSelectingFile}/>
-                  )}
-                />
-              </View>:
-              <View>
-                <Text>Failed</Text>
-              </View>
-            }
-          </>
-        }
-      </>
+    <>
+      { (membersState === loadingStateEnum.loading) ?
+        <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+          <ProgressView width={width * 0.1} height={height * 0.1}/>
+          <Text>Loading</Text>
+        </View>:
+        <>
+          { (membersState === loadingStateEnum.success) ?
+            <View>
+              <FlatList
+                data={members}
+                renderItem={(member) => (
+                  <RosterBlockItem members={members} setMembers={setMembers} member={member} teamId={teamId} selectedFile={selectedFile} setIsSelectingFile={setIsSelectingFile} setSelectedFile={setSelectedFile} isSelectingFile={isSelectingFile}/>
+                )}
+              />
+            </View>:
+            <View>
+              <Text>Failed</Text>
+            </View>
+          }
+        </>
+      }
+    </>
   )
 }
 
@@ -524,15 +524,15 @@ function RosterBlockItem({member, members, setMembers, teamId, setIsSelectingFil
         <TextInput value={member.item.playerNumber} onChangeText={(e) => {
           var save = members
           save[member.index].playerNumber = e
-          setMembers(save)
-        }} onBlur={() => {updatePlayerData(member.item)}}/>
+          setMembers([...save])
+        }} onFocus={() => {}} onBlur={() => {updatePlayerData(member.item)}}/>
       </View>
       <View style={{flexDirection: "row"}}>
         <Text>Position:</Text>
         <TextInput value={member.item.position} onChangeText={(e) => {
           var save = members
           save[member.index].position = e
-          setMembers(save)
+          setMembers([...save])
         }} onBlur={() => {updatePlayerData(member.item)}}/>
       </View>
       { (imageUrl !== "") ?

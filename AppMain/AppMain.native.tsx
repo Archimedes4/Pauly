@@ -1,36 +1,21 @@
-import { View, Text, ScaledSize, Linking, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { ScaledSize, Platform } from 'react-native'
+import React, { useEffect } from 'react'
 import Login from '../src/login'
 import AuthenticatedView from '../src/AuthenticatedView/AuthenticatedViewMain'
-import { clientId, tenantId } from '../src/PaulyConfig'
+import { clientId, scopes, tenantId } from '../src/PaulyConfig'
 import { useDispatch, useSelector } from 'react-redux'
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer'
 import store, { RootState } from '../src/Redux/store'
 import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
 import getUserProfile from '../src/Functions/Ultility/getUserProfile'
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-
 import * as WebBrowser from 'expo-web-browser';
-import {
-  AuthRequest,
-  Prompt,
-  ResponseType,
-  exchangeCodeAsync,
-  makeRedirectUri,
-  useAuthRequest,
-  useAutoDiscovery,
-} from 'expo-auth-session';
-import * as AuthSession from 'expo-auth-session';
-import { StatusBar } from 'expo-status-bar'
-import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer'
+import { Prompt, exchangeCodeAsync, makeRedirectUri, refreshAsync, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
 import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin'
 import { authenticationRefreshTokenSlice } from '../src/Redux/reducers/authenticationRefreshTokenReducer'
 
 if (Platform.OS === "web") {
   WebBrowser.maybeCompleteAuthSession();
 }
-
-const scopes = ["User.Read", "User.ReadBasic.All", "Sites.Read.All", "Sites.Manage.All", "ChannelMessage.Read.All", "Chat.ReadWrite", "Calendars.ReadWrite", "Team.ReadBasic.All", "Group.ReadWrite.All", "Tasks.ReadWrite", "Channel.ReadBasic.All", "Application.ReadWrite.All", "TeamMember.Read.All"]
 
 export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
   const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
@@ -111,7 +96,7 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
   async function refreshToken() {
     if (discovery !== null) {
       try {
-        const result = await AuthSession.refreshAsync({
+        const result = await refreshAsync({
           refreshToken: store.getState().authenticationRefreshToken,
           clientId: clientId,
           scopes: scopes
