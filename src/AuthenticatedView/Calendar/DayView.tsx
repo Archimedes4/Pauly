@@ -4,6 +4,7 @@
 //
 //  Created by Andrew Mainella on 2023-07-21.
 //
+
 import { useEffect, useRef, useState } from "react"
 import {View, ScrollView, useColorScheme, Text} from "react-native"
 import { calculateIfShowing, computeEventHeight, findTimeOffset, isDateToday } from "../../Functions/calendar/calendarFunctions"
@@ -192,8 +193,6 @@ function EventBlock({event, width, height, eventPane, setEventPane}:{event: even
       eventPane[eventPane.length-1].push(Offset + EventHeight)
     }
   }
-
-
 
   return (
     <View key={"Event_"+create_UUID()} style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0}}>

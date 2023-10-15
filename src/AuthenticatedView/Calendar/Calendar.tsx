@@ -12,7 +12,7 @@ import { AddIcon, ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
-import { Colors, calendarMode, loadingStateEnum } from '../../types';
+import { Colors, calendarMode } from '../../types';
 import getEvents from '../../Functions/calendar/getEvents';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 import BackButton from '../../UI/BackButton';
