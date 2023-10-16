@@ -285,6 +285,7 @@ declare global {
   type sportType = {
     name: string
     id: string
+    svgData: string
   }
   type sportTeamType = {
     teamName: string
@@ -298,6 +299,7 @@ declare global {
     role: string
     grade?: "9"|"10"|"11"|"12"
     student: boolean
+    imageId: string
   }
   type taskType = {
     name: string
@@ -381,6 +383,7 @@ declare global {
   }
   type paulyListType =  {
     siteId: string, 
+    studentFilesListId: string,
     commissionListId: string,
     commissionSubmissionsListId: string
     paulyDataListId: string,

@@ -17,6 +17,7 @@ import getRoster from '../Functions/sports/getRoster';
 import { FlatList } from 'react-native-gesture-handler';
 import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
 import SegmentedPicker from '../UI/Pickers/SegmentedPicker';
+import SVGXml from '../UI/SVGXml/SVGXml';
 
 export default function Sports() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -30,6 +31,7 @@ export default function Sports() {
   const [sports, setSports] = useState<sportType[]>([])
   const [isShowingRoster, setIsShowingRoster] = useState<boolean>(false)
   const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([])
+  const [sportsSelectHeight, setSportsSelectHeight] = useState<number>(34)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -88,7 +90,7 @@ export default function Sports() {
         }
         <Text style={{fontFamily: "BukhariScript"}}>Sports</Text>
       </View>
-      <ScrollView style={{height: (isShowingTeams) ? height * 0.1:undefined, width: width}} horizontal={true}>
+      <ScrollView style={{height: (isShowingTeams) ? height * 0.1:sportsSelectHeight, width: width}} horizontal={true}>
         <View>
           <View style={{flexDirection: "row"}}>
             <>
@@ -103,13 +105,22 @@ export default function Sports() {
                         <Text style={{margin: isShowingTeams ? 5:10, color: Colors.white, marginBottom: isShowingTeams ? 5:10}}>{"Highlights"}</Text>
                       </Pressable>
                       {sports.map((sport) => (
-                        <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true); setIsShowingRoster(false)}} style={{backgroundColor:  Colors.darkGray, borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}>
-                          <Text style={{margin: isShowingTeams ? 5:10, color: Colors.white, marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>
-                          { (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ?
-                            <View>
-                              <Text style={{color: Colors.white, marginBottom: 5, marginLeft: 10, marginRight: 10}}>{selectedTeam?.teamName}</Text>
-                            </View>:null
-                          }
+                        <Pressable key={`SportButton_${sport.id}_${create_UUID()}`} 
+                          onLayout={(e) => {setSportsSelectHeight(e.nativeEvent.layout.height)}}
+                          onPress={() => {setSelectedSport(sport); loadTeams(sport); setIsShowingTeams(true); setIsShowingRoster(false)}}
+                          style={{backgroundColor:  Colors.darkGray, borderWidth: (selectedSport?.id === sport.id) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}}
+                        >
+                          <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 10}}>
+                            <SVGXml xml={sport.svgData} width={20} height={20} />
+                            <View style={{marginLeft: 4}}>
+                              <Text style={{margin: isShowingTeams ? 5:10, marginLeft: 2, color: Colors.white, marginBottom: (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ? 0:isShowingTeams ? 5:10}}>{sport.name}</Text>
+                              { (sport.id === selectedSport?.id && selectedTeam !== undefined && !isShowingTeams) ?
+                                <View>
+                                  <Text style={{color: Colors.white, marginBottom: 5, marginLeft: 2, marginRight: 10}}>{selectedTeam?.teamName}</Text>
+                                </View>:null
+                              }
+                            </View>
+                          </View>
                         </Pressable>
                       ))}
                     </>:
@@ -147,21 +158,23 @@ export default function Sports() {
         </View>
       </ScrollView>
       {(loadingResult === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height * 0.7, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height * 0.8 + (isShowingTeams ? 0:(height * 0.1 - sportsSelectHeight)), alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={(width < height) ? width * 0.25:height * 0.25} height={(width < height) ? width * 0.5:height * 0.5}/>
           <Text>Loading</Text>
         </View>:
         <> 
           {(loadingResult === loadingStateEnum.success) ?
-            <ScrollView style={{height: height * 0.7}}>
+            <ScrollView style={{height: height * 0.8}}>
               { (selectedTeam !== undefined) ?
-                <SegmentedPicker selectedIndex={(isShowingRoster) ? 1:0} setSelectedIndex={(e) => {
-                  if (e === 0) {
-                    setIsShowingRoster(false)
-                  } else if (e === 1) {
-                    setIsShowingRoster(true)
-                  }
-                }} options={["Highlights", "Roster"]} width={width} height={25}/>:null
+                <View style={{marginLeft: 5, marginRight: 10, marginTop: 10}}>
+                  <SegmentedPicker selectedIndex={(isShowingRoster) ? 1:0} setSelectedIndex={(e) => {
+                    if (e === 0) {
+                      setIsShowingRoster(false)
+                    } else if (e === 1) {
+                      setIsShowingRoster(true)
+                    }
+                  }} options={["Highlights", "Roster"]} width={width-16} height={25}/>
+                </View>:null
               }
               { (isShowingRoster && selectedTeam !== undefined) ?
                 <RosterView teamId={selectedTeam.teamId} width={width} height={height * 0.7} />:

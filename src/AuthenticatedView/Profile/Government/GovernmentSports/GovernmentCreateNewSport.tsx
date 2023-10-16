@@ -6,12 +6,15 @@ import create_UUID from '../../../../Functions/Ultility/CreateUUID';
 import { RootState } from '../../../../Redux/store';
 import { useSelector } from 'react-redux';
 import { Colors, loadingStateEnum } from '../../../../types';
+import { Image } from 'expo-image';
+import SVGXml from '../../../../UI/SVGXml/SVGXml';
 
 export default function GovernmentCreateNewSport() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
 
   const [sportName, setSportName] = useState<string>("")
   const {siteId, sportsListId} = useSelector((state: RootState) => state.paulyList)
+  const [svgData, setSvgData] = useState<string>(``)
   const [createSportLoadingState, setCreateSportLoadingState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   const navigate = useNavigate()
 
@@ -21,8 +24,9 @@ export default function GovernmentCreateNewSport() {
     const data = {
       "fields": {
         Title: "",
-        sportName: sportName,
-        sportId: newSportID
+        "sportName": sportName,
+        "sportId": newSportID,
+        "sportSvg": svgData
       }
     }
     const listData = {
@@ -55,9 +59,9 @@ export default function GovernmentCreateNewSport() {
         "template": " genericList"
       }
     }
-    const resultList = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" +siteId + "/lists", "POST", false, JSON.stringify(listData))
+    const resultList = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists`, "POST", false, JSON.stringify(listData))
     if (resultList.ok){
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" +siteId + "/lists/" + sportsListId + "/items", "POST", false, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${sportsListId}/items`, "POST", false, JSON.stringify(data))
       if (result.ok){
         setCreateSportLoadingState(loadingStateEnum.success)
       } else {
@@ -76,8 +80,10 @@ export default function GovernmentCreateNewSport() {
       <Text>Create New Sport</Text>
       <Text>Sport Name</Text>
       <TextInput value={sportName} onChangeText={setSportName}/>
+      <TextInput value={svgData} onChangeText={(e) => {setSvgData(e)}} multiline={true} numberOfLines={25}/>
+      <SVGXml xml={svgData} width={100} height={100}/>
       <Pressable onPress={() => {
-        if (sportName !== "") {
+        if (sportName !== "" && svgData !== "") {
           createSport()
         }
       }}>

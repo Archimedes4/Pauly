@@ -103,10 +103,10 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
                   <Route path="*" element={<PageNotFound />} />
                 </Routes>
+                { (currentBreakPoint >= 1 && isShowingProfileBlock) ?
+                  <ProfileBlock width={width * 0.1} />:null
+                }
               </View>
-              { (currentBreakPoint >= 1 && isShowingProfileBlock) ?
-                <ProfileBlock width={width * 0.1} />:null
-              }
             </View>
           </NativeRouter>
         </View>:

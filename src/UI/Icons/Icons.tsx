@@ -462,6 +462,18 @@ export function StudentSearchIcon({width, height, style}:iconProps) {
   )
 }
 
+export function TimeIcon({width, height, style}:iconProps) {
+  return (
+    <Svg width={width} height={height} style={style} viewBox="0 0 24 24" fill="none">
+      <G id="SVGRepo_iconCarrier">
+        <Path d="M12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <Path d="M12 6V12" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <Path d="M16.24 16.24L12 12" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/> 
+      </G>
+    </Svg>
+  )
+}
+
 //function MessagingIcon() {
   //     return (
   //         <Svg  viewBox="0 0 498.000000 268.000000"preserveAspectRatio="xMidYMid meet">

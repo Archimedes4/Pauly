@@ -3,7 +3,7 @@ import { loadingStateEnum } from "../../types"
 import callMsGraph from "../Ultility/microsoftAssets"
 
 export async function getSports(): Promise<{result: loadingStateEnum, data?: sportType[]}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsListId}/items?expand=fields($select=sportName,sportId)&$select=id`)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsListId}/items?expand=fields($select=sportName,sportId,sportSvg)&$select=id`)
   if (result.ok) {
     const data = await result.json()
     if (data["value"] !== null && data["value"] !== undefined){
@@ -11,7 +11,8 @@ export async function getSports(): Promise<{result: loadingStateEnum, data?: spo
       for (let index = 0; index < data["value"].length; index++) {
         resultData.push({
           name: data["value"][index]["fields"]["sportName"],
-          id: data["value"][index]["fields"]["sportId"]
+          id: data["value"][index]["fields"]["sportId"],
+          svgData: data["value"][index]["fields"]["sportSvg"]
         })
       }
       return {result: loadingStateEnum.success, data: resultData}

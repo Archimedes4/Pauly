@@ -136,6 +136,7 @@ export default function DayView({width, height}:{width: number, height: number})
 function EventBlock({event, width, height, eventPane, setEventPane}:{event: eventType, width: number, height: number, eventPane: number[][], setEventPane: (item: number[][]) => void}) {
   const EventHeight = computeEventHeight(new Date(event.startTime), new Date(event.endTime), height)
   const Offset = findTimeOffset(new Date(event.startTime), height)
+  const [horizontalShift, setHorizontalShift] = useState<number>(0)
   function calculateHorizontalShift() {
     var handeled = false
     for (var horizontalCheck = 0; horizontalCheck < eventPane.length; horizontalCheck++) {
@@ -184,15 +185,23 @@ function EventBlock({event, width, height, eventPane, setEventPane}:{event: even
         eventPane[horizontalCheck].push(Offset)
         eventPane[horizontalCheck].push(Offset + EventHeight)
         eventPane[horizontalCheck].sort()
+        handeled = true
         break
       }  
+      
     }
+
     if (!handeled) {
       eventPane.push([])
       eventPane[eventPane.length-1].push(Offset)
       eventPane[eventPane.length-1].push(Offset + EventHeight)
     }
+    setHorizontalShift(width * horizontalCheck)
   }
+
+  useEffect(() => {
+    calculateHorizontalShift()
+  }, [])
 
   return (
     <View key={"Event_"+create_UUID()} style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0}}>

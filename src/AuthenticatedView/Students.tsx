@@ -1,9 +1,8 @@
 import { View, Text, Pressable, TextInput, ViewStyle, Platform } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Colors, loadingStateEnum } from '../types'
 import { useDispatch, useSelector } from 'react-redux'
 import store, { RootState } from '../Redux/store'
-import callMsGraph from '../Functions/Ultility/microsoftAssets'
 import ProgressView from '../UI/ProgressView'
 import { FlatList } from 'react-native-gesture-handler'
 import { useNavigate } from 'react-router-native'
@@ -11,6 +10,9 @@ import { SearchIcon } from '../UI/Icons/Icons'
 import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer'
 import BackButton from '../UI/BackButton'
 import create_UUID from '../Functions/Ultility/CreateUUID'
+import getUsers from '../Functions/getUsers'
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 export default function Students() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -19,75 +21,28 @@ export default function Students() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
-  function checkIfStudent(role: string): {result: boolean, grade?: "9"|"10"|"11"|"12"} {
-    if (role.length >= 20) {
-      const reversed = role.split("").reverse().join("");
-      const slice = reversed.slice(0, 15);
-      if (slice == "ac.sredasurcog@") {
-        const getMonth = new Date().getMonth()
-        var schoolYear = new Date().getFullYear()
-        if (schoolYear.toString().length >= 4){
-          if (getMonth > 6) {
-            schoolYear++
-          } 
-          const reverseYearTwelve = schoolYear.toString().slice(2, 4).split("").reverse().join("");
-          schoolYear++
-          const reverseYearEleven = schoolYear.toString().slice(2, 4).split("").reverse().join("");
-          schoolYear++
-          const reverseYearTen = schoolYear.toString().slice(2, 4).split("").reverse().join("");
-          schoolYear++
-          const reverseYearNine = schoolYear.toString().slice(2, 4).split("").reverse().join("");
-          if (reversed.slice(16, 17) === reverseYearTwelve) {
-            return {result: true, grade: "12"}
-          } else if (reversed.slice(16, 17) === reverseYearEleven) {
-            return {result: true, grade: "11"}
-          } else if (reversed.slice(16, 17) === reverseYearTen) {
-            return {result: true, grade: "10"}
-          } else if (reversed.slice(16, 17) === reverseYearNine) {
-            return {result: true, grade: "9"}
-          } else {
-            return {result: false}
-          }
-        } else {
-          return {result: false}
-        }
-      } else {
-        return {result: false}
-      }
-    } else {
-      return {result: false}
-    }
-  }
-
-  async function getUsers(url?: string, search?: string) {
-    const filter = search ? `&$search="displayName:${search}"`:""
-    const result = await callMsGraph(url ? url:`https://graph.microsoft.com/v1.0/users?$select=displayName,id,mail${filter}`)
-    if (result.ok) {
-      const data = await result.json()
-      var outputUsers: schoolUserType[] = []
-      for (var index = 0; index < data["value"].length; index++) {
-        outputUsers.push({
-          name: data["value"][index]["displayName"],
-          id: data["value"][index]["id"],
-          mail: data["value"][index]["mail"],
-          role: data["value"][index]["mail"],
-          grade: checkIfStudent(data["value"][index]["mail"]).grade,
-          student: checkIfStudent(data["value"][index]["mail"]).result
-        })
-      }
-      dispatch(studentSearchSlice.actions.setStudentUsers(outputUsers))
-      dispatch(studentSearchSlice.actions.setNextLink(data["@odata.nextLink"]))
-      dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.success))
-    } else {
-      const data = await result.json()
-      dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
-    }
+  async function loadUsers() {
+    getUsers()
   }
 
   useEffect(() => {
-    getUsers()
+    loadUsers()
   }, [])
   
+  const [fontsLoaded] = useFonts({
+    'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <>
       { (usersState === loadingStateEnum.loading) ?
@@ -98,9 +53,9 @@ export default function Students() {
         <>
           { (usersState === loadingStateEnum.success) ?
             <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:"#FFFFFF"}}>
-              <View style={{height: height * 0.15}}>
+              <View style={{height: height * 0.15, width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: Colors.darkGray}}>
                 <BackButton to='/profile'/>
-                <Text>Students</Text>
+                <Text style={{fontFamily: 'BukhariScript'}}>Students</Text>
               </View>
               <SearchBox getUsers={(e) => {
                 if (e !== "") {
@@ -168,7 +123,7 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
   }, [searchText])
 
   return (
-    <View key={"Search_View_Top"} style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", position: "absolute", top: height * 0.1 - 19, zIndex: 2}}>
+    <View key={"Search_View_Top"} style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", position: "absolute", top: height * 0.15 - 19, zIndex: 2}}>
       <View key={"Search_View_Mid"} style={{width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 25, flexDirection: "row", backgroundColor: Colors.white}}>
         { isOverflowing ?
           null:

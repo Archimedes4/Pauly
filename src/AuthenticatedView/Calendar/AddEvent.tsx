@@ -3,7 +3,7 @@ import { Pressable, View, Text, Switch, TextInput } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Redux/store";
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
-import { CalendarIcon, CloseIcon } from "../../UI/Icons/Icons";
+import { CalendarIcon, CloseIcon, TimeIcon } from "../../UI/Icons/Icons";
 import callMsGraph from "../../Functions/Ultility/microsoftAssets";
 import SelectTimetable from "./SelectTimetable";
 import { useFonts } from 'expo-font';
@@ -137,6 +137,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
           if (e.date !== undefined) {
             dispatch(addEventSlice.actions.setStartDate(e.date.toISOString()))
           }
+          dispatch(addEventSlice.actions.setIsPickingStartDate(false))
         }}
       />
       <DatePickerModal
@@ -150,6 +151,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
           if (e.date !== undefined) {
             dispatch(addEventSlice.actions.setEndDate(e.date.toISOString()))
           }
+          dispatch(addEventSlice.actions.setIsPickingEndDate(false))
         }}
       />
       { (selectedEventType === paulyEventType.schoolDay) ?
@@ -177,17 +179,24 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
       }
       <Text>{(selectedEventType === paulyEventType.schoolDay) ? "":"Start "}Date</Text>
       <View style={{flexDirection: "row"}}>
-        <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true)); console.log("Pressed")}} style={{margin: 5}}>
-          <View style={{flexDirection: "row"}}>
-            <Text>{new Date(startDate).toLocaleString("en-us", { month: "long" })} {new Date(startDate).getDate()} {new Date(startDate).getFullYear()} {new Date(startDate).getHours()} {new Date(startDate).getMinutes()}</Text>
+        <View style={{flexDirection: "row", margin: 10}}>
+          <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true))}}>
+            <Text>{new Date(startDate).toLocaleString("en-us", { month: "long" })} {new Date(startDate).getDate()} {new Date(startDate).getFullYear()} </Text>
+          </Pressable>
+          { (!allDay) ?
+            <Pressable onPress={() => {setStartDatePickerVisable(true)}}>
+              <Text>{(new Date(startDate).getHours() % 12) || 12}:{(new Date(startDate).getMinutes().toString().length === 1) ? `0${new Date(startDate).getMinutes()}`:new Date(startDate).getMinutes()} {new Date(startDate).getHours() >= 12 ? 'pm' : 'am'}</Text>
+            </Pressable>:null
+          }
+          <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingStartDate(true))}}>
             <CalendarIcon width={24} height={15}/>
-          </View>
-        </Pressable>
+          </Pressable>
+        </View>
         { allDay ?
           null:
           <View style={{margin: 5}}>
-            <Pressable onPress={() => {setStartDatePickerVisable(true)}}>
-              <Text>Pick Start Time</Text>
+            <Pressable onPress={() => {setStartDatePickerVisable(true)}} style={{height: 26.4, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+              <TimeIcon width={15} height={15}/>
             </Pressable>
             <TimePickerModal
               hours={new Date(startDate).getHours()}
@@ -212,17 +221,24 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
         <View>
           <Text>End Date</Text>
           <View style={{flexDirection: "row"}}>
-            <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingEndDate(true))}} style={{margin: 5}}>
-              <View style={{flexDirection: "row"}}>
-                <Text>{new Date(endDate).toLocaleString("en-us", { month: "long" })} {new Date(endDate).getDate()} {new Date(endDate).getFullYear()} {new Date(endDate).getHours()} {new Date(endDate).getMinutes()}</Text>
+            <View style={{flexDirection: "row", margin: 10}}>
+              <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingEndDate(true))}}>
+                <Text>{new Date(endDate).toLocaleString("en-us", { month: "long" })} {new Date(endDate).getDate()} {new Date(endDate).getFullYear()} </Text>
+              </Pressable>
+              { (!allDay) ?
+                <Pressable onPress={() => {setEndDatePickerVisable(true)}}>
+                  <Text>{(new Date(endDate).getHours() % 12) || 12}:{(new Date(endDate).getMinutes().toString().length === 1) ? `0${new Date(endDate).getMinutes()}`:new Date(endDate).getMinutes()} {new Date(endDate).getHours() >= 12 ? 'pm' : 'am'}</Text>
+                </Pressable>:null
+              }
+              <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsPickingEndDate(true))}}>
                 <CalendarIcon width={24} height={15}/>
-              </View>
-            </Pressable>
+              </Pressable>
+            </View>
             { allDay ?
               null:
               <View style={{margin: 5}}>
-                <Pressable onPress={() => {setEndDatePickerVisable(true)}}>
-                  <Text>Pick End Time</Text>
+                <Pressable onPress={() => {setEndDatePickerVisable(true)}} style={{height: 26.4, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+                  <TimeIcon width={15} height={15}/>
                 </Pressable>
                 <TimePickerModal
                   hours={new Date(endDate).getHours()}

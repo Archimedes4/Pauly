@@ -223,10 +223,10 @@ function ScheduleBlock({selectedSchedules, setSelectedSchedules, selectedDefault
       <Text>Selected Schedules</Text>
       <ScrollView style={{height: height * 0.4}}>
         {selectedSchedules.map((item) => (
-          <View style={{height: height * 0.05}} key={"SelectedSchedule_" + item.id}>
+          <View style={{height: height * 0.03 + 16}} key={"SelectedSchedule_" + item.id}>
             <Text>{item.properName}</Text>
             { (selectedDefaultSchedule?.id !== item.id) ?
-            <Pressable style={{backgroundColor: "blue", height: height * 0.02}}>
+            <Pressable onPress={() => {setSelectedDefaultSchedule(item)}} style={{backgroundColor: "blue", height: 16}}>
               <Text>Select As Default</Text>
             </Pressable>:null
             }
@@ -244,18 +244,26 @@ function ScheduleBlock({selectedSchedules, setSelectedSchedules, selectedDefault
           <Text>Failed</Text>:null
         }
         { (scheduleState === loadingStateEnum.success) ?
-          <View>
+          <>
             {loadedSchedules.map((item, index) => (
               <>
-              { (selectedSchedules.length === 0) ?
-                <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
-                  <View>
-                    <Text>{item.properName}</Text>
-                  </View>
+              { (selectedSchedules.length <= 0) ?
+                <Pressable key={`Timetable_${item.id}_${create_UUID()}`} onPress={() => {
+                  setSelectedSchedules([...selectedSchedules, item]); 
+                  const newLoadedSchedules = loadedSchedules.filter((e) => {return e.id !== item.id})
+                  setLoadedSchedules([...newLoadedSchedules]);
+                  if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}
+                }}>
+                  <Text>{item.properName}</Text>
                 </Pressable>:
                 <>
-                  { (loadedSchedules[0].periods.length === item.periods.length) ?
-                    <Pressable onPress={() => {setSelectedSchedules([...selectedSchedules, item]); const newLoadedSchedules = loadedSchedules.splice(index, index); setLoadedSchedules([...newLoadedSchedules]); if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}}} key={"OtherSchedule_" + item.id}>
+                  { (selectedSchedules[0].periods.length === item.periods.length) ?
+                    <Pressable key={`Timetable_${item.id}_${create_UUID()}`} onPress={() => {
+                      setSelectedSchedules([...selectedSchedules, item]); 
+                      const newLoadedSchedules = loadedSchedules.filter((e) => {return e.id !== item.id})
+                      setLoadedSchedules([...newLoadedSchedules]);
+                      if (selectedDefaultSchedule === undefined) {setSelectedDefaultSchedule(item)}
+                    }}>
                       <Text>{item.properName}</Text>
                     </Pressable>:null
                   }
@@ -263,7 +271,7 @@ function ScheduleBlock({selectedSchedules, setSelectedSchedules, selectedDefault
               }
               </>
             ))}
-          </View>:null
+          </>:null
         }
       </ScrollView>
     </View>

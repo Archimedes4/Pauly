@@ -2,12 +2,12 @@ import { orgWideGroupID } from "../PaulyConfig"
 import { addEventSlice } from "../Redux/reducers/addEventReducer"
 import { currentEventsSlice } from "../Redux/reducers/currentEventReducer"
 import store from "../Redux/store"
-import { loadingStateEnum, paulyEventType } from "../types"
+import { Colors, loadingStateEnum, paulyEventType } from "../types"
 import callMsGraph from "./Ultility/microsoftAssets"
 
 export default async function createEvent() {
   if (store.getState().addEvent.selectedEventType === paulyEventType.personal) {
-    var data = {
+    var data: any = {
       "subject": store.getState().addEvent.eventName,
       "start": {
         "dateTime": store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z"),
@@ -42,7 +42,7 @@ export default async function createEvent() {
       store.dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.failed))
     }
   } else {
-    var data = {
+    var data: any = {
       "subject": store.getState().addEvent.eventName,
       "start": {
         "dateTime": store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z"),
@@ -53,14 +53,19 @@ export default async function createEvent() {
         "timeZone": "Central America Standard Time"
       }
     }
+    const schoolDay = store.getState().addEvent.selectedSchoolDayData
     if (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) {
-      if (store.getState().addEvent.selectedSchoolDayData === undefined) return loadingStateEnum.failed
-      data["start"]["dateTime"] = store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-      var newEndDate = new Date(store.getState().addEvent.startDate)
-      newEndDate.setDate(new Date(store.getState().addEvent.startDate).getDate() + 1)
-      data["end"]["dateTime"] = newEndDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-      data["isAllDay"] = true
-      data["subject"] = store.getState().addEvent.selectedSchoolDayData.schoolDay.name + " " + store.getState().addEvent.selectedSchoolDayData.schedule.properName
+      if (schoolDay !== undefined) {
+        if (store.getState().addEvent.selectedSchoolDayData === undefined) return loadingStateEnum.failed
+        data["start"]["dateTime"] = store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
+        var newEndDate = new Date(store.getState().addEvent.startDate)
+        newEndDate.setDate(new Date(store.getState().addEvent.startDate).getDate() + 1)
+        data["end"]["dateTime"] = newEndDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
+        data["isAllDay"] = true
+        data["subject"] = schoolDay.schoolDay.name + " " +  schoolDay.schedule.properName
+      } else {
+        store.dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.failed))
+      }
     } else if (store.getState().addEvent.allDay) {
       data["start"]["dateTime"] = store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
       data["end"]["dateTime"] = store.getState().addEvent.endDate.replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
@@ -77,14 +82,14 @@ export default async function createEvent() {
           "value":store.getState().addEvent.selectedTimetable.id
         }
       ]
-    } else if (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay && store.getState().addEvent.selectedSchoolDayData !== undefined) {
+    } else if (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay && schoolDay !== undefined) {
       const selectedSchoolDayDataCompressed: schoolDayDataCompressedType = {
-        schoolDayId: store.getState().addEvent.selectedSchoolDayData.schoolDay.id,
-        scheduleId: store.getState().addEvent.selectedSchoolDayData.schedule.id,
-        dressCodeId: store.getState().addEvent.selectedSchoolDayData.dressCode.id,
-        semester: store.getState().addEvent.selectedSchoolDayData.semester,
-        dressCodeIncentiveId: store.getState().addEvent.selectedSchoolDayData.dressCodeIncentive?.id,
-        schoolYearEventId: store.getState().addEvent.selectedSchoolYear.id
+        schoolDayId: schoolDay.schoolDay.id,
+        scheduleId: schoolDay.schedule.id,
+        dressCodeId: schoolDay.dressCode.id,
+        semester: schoolDay.semester,
+        dressCodeIncentiveId: (schoolDay.dressCodeIncentive?.id === undefined) ? "":schoolDay.dressCodeIncentive?.id,
+        schoolYearEventId: schoolDay.schoolDay.id
       }
       data["singleValueExtendedProperties"] = [
         {

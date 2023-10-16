@@ -5,6 +5,11 @@ export const paulyListData = {
   // "name":"PaulyList",
   "columns": [
     {
+      "name":"studentFilesListId",
+      "text":{},
+      "required":true
+    },
+    {
       "name":"commissionListId",
       "text":{},
       "required": true
@@ -88,6 +93,30 @@ export const paulyListData = {
       "name":"noClassListId",
       "text":{},
       "required": true
+    }
+  ],
+  "list": {
+    "template": "genericList"
+  }
+}
+export const studentFilesData = {
+  "displayName": "StudentFiles",
+  "columns": [
+    {
+      "name":"createdTime",
+      "text":{}
+    },
+    {
+      "name":"driveItemId",
+      "text":{},
+      "required": true
+    },
+    {
+      "name":"userId",
+      "text":{ },
+      "required": true,
+      "indexed": true,
+      "enforceUniqueValues": true
     }
   ],
   "list": {
@@ -288,6 +317,11 @@ export const sportsData = {
       "name":"sportName",
       "text":{ },
       "required": true
+    },
+    {
+      "name":"sportSvg",
+      "text":{"allowMultipleLines": true},
+      "required":true
     },
     {
       "name":"sportId",
@@ -581,6 +615,12 @@ export const addDataArray: addDataType[] = [
     data: paulyClassExtensionData,
     urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
     id: "classExtensionId"
+  },
+  {
+    data: studentFilesData,
+    urlOne: "https://graph.microsoft.com/v1.0/sites/",
+    urlTwo:  "/lists",
+    id: "studentFilesListId"
   },
   {
     data: commissionsData,
