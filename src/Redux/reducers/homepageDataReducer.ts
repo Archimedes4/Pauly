@@ -10,6 +10,7 @@ type homepageStatesType = {
   userTasks: taskType[]
   schoolDayData: undefined | schoolDayDataType
   startTime: string
+  isShowingCompleteTasks: boolean
 }
 
 const initalState: homepageStatesType = {
@@ -26,7 +27,8 @@ const initalState: homepageStatesType = {
     excess: true
   }],
   schoolDayData: undefined,
-  startTime: ""
+  startTime: "",
+  isShowingCompleteTasks: false
 }
 
 export const homepageDataSlice = createSlice({
@@ -69,6 +71,9 @@ export const homepageDataSlice = createSlice({
     },
     setStartTime: (state, action: PayloadAction<string>) => {
       state.startTime = action.payload
+    },
+    setIsShowingCompletedTasks: (state, action: PayloadAction<boolean>) => {
+      state.isShowingCompleteTasks = action.payload
     }
   }
 })

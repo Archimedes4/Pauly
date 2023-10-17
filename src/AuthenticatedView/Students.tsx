@@ -102,14 +102,18 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
     setIsLoading(true)
     var newUser: any = {}
     Object.assign(newUser, user.item)
-    if (user.item.imageId !== "noImage" && user.item.imageState !== loadingStateEnum.success && user.item.imageState !== loadingStateEnum.failed && user.item.imageState !== loadingStateEnum.loading) {
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/drive/items/${user.item.imageId}/content`)
+    if (user.item.imageDownloadUrl !== "noImage" && user.item.imageState !== loadingStateEnum.success && user.item.imageState !== loadingStateEnum.failed && user.item.imageState !== loadingStateEnum.loading) {
+      const result = await callMsGraph(user.item.imageDownloadUrl)
       if (result.ok) {
-        setIsLoading(false)
+        
+        console.log("Download")
         const data = await result.blob()
+        console.log("Download Blob")
         const urlOut = URL.createObjectURL(data)
+        console.log("Download Url")
         newUser.imageState = loadingStateEnum.success
         newUser.imageDataUrl = urlOut
+        setIsLoading(false)
         store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}))
       } else {
         newUser.imageState = loadingStateEnum.failed
@@ -123,7 +127,6 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
 
   useEffect(() => {
     getImage()
-    console.log(user)
   }, [])
 
   return (

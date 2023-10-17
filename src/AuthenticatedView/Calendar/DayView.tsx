@@ -204,7 +204,7 @@ function EventBlock({event, width, height, eventPane, setEventPane}:{event: even
   }, [])
 
   return (
-    <View key={"Event_"+create_UUID()} style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0}}>
+    <View key={"Event_"+create_UUID()} style={{width: width * 0.9, height: EventHeight, top: Offset, position: "absolute", right: 0, borderColor: Colors.maroon, borderLeftWidth: 3}}>
       <View style={{width: width * 0.9, height: EventHeight, position: "absolute", backgroundColor: event.eventColor, opacity: 0.3, zIndex: -1}}/>
       <Text style={{opacity: 1}}>{event.name}</Text>
       <Text>{new Date(event.startTime).toLocaleString("en-us", {hour: "numeric", minute: "numeric"})} to {new Date(event.endTime).toLocaleString("en-us", {hour: "numeric", minute: "numeric"})}</Text>

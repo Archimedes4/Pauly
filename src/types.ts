@@ -305,7 +305,7 @@ declare global {
     role: string
     grade?: "9"|"10"|"11"|"12"
     student: boolean
-    imageId: string
+    imageDownloadUrl: string
     imageState: loadingStateEnum
     imageDataUrl?: string
   }

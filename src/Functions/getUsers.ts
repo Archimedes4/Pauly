@@ -61,33 +61,74 @@ export default async function getUsers(url?: string, search?: string) {
       method: "GET",
       keys: {array: userIds}
     })
-    var imagesIds = new Map<string, string>()
+    var imagesIdsMap = new Map<string, string>() //Key is userId, value is image data id
+    var imageIdsArray: string[] = []
     if (batchResult.result === loadingStateEnum.success && batchResult.data !== undefined) {
       for (var batchIndex = 0; batchIndex < batchResult.data.length; batchIndex++) {
         if (batchResult.data[batchIndex].status === 200) { //TO DO OK
           if (batchResult.data[batchIndex].body["value"].length === 1) {
-            imagesIds.set(batchResult.data[batchIndex].body["value"][0]["fields"]["userId"], batchResult.data[batchIndex].body["value"][0]["fields"]["itemId"])
+            imagesIdsMap.set(batchResult.data[batchIndex].body["value"][0]["fields"]["userId"], batchResult.data[batchIndex].body["value"][0]["fields"]["itemId"])
+            imageIdsArray.push(batchResult.data[batchIndex].body["value"][0]["fields"]["itemId"])
           }
         } else {
           store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
           return
         }
       }
+    } else {
+      store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
+      return
     }
+    const batchResultDownloadUrls = await largeBatch(undefined, {
+      firstUrl: `/sites/${store.getState().paulyList.siteId}/drive/items/`,
+      secondUrl: "?select=id,content.downloadUrl",
+      method: "GET",
+      keys: {array: imageIdsArray}
+    })
+    var imagesDownloadUrls = new Map<string, string>() //Key is the item id on the sharepoint and value is the downlad url
+    if (batchResultDownloadUrls.result === loadingStateEnum.success && batchResultDownloadUrls.data !== undefined) {
+      for (var batchIndex = 0; batchIndex < batchResultDownloadUrls.data.length; batchIndex++) {
+        if (batchResultDownloadUrls.data[batchIndex].status === 200) { //TO DO OK
+          imagesDownloadUrls.set(batchResultDownloadUrls.data[batchIndex].body["id"], batchResultDownloadUrls.data[batchIndex].body["@microsoft.graph.downloadUrl"])
+        } else {
+          store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
+          return
+        }
+      }
+    } else {
+      store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
+      return
+    }
+
+
     var outputUsers: schoolUserType[] = []
     for (var index = 0; index < data["value"].length; index++) {
-      const imageId = imagesIds.get(data["value"][index]["id"])
+      const imageId = imagesIdsMap.get(data["value"][index]["id"])
       if (imageId !== undefined) {
-        outputUsers.push({
-          name: data["value"][index]["displayName"],
-          id: data["value"][index]["id"],
-          mail: data["value"][index]["mail"],
-          role: data["value"][index]["mail"],
-          grade: checkIfStudent(data["value"][index]["mail"]).grade,
-          student: checkIfStudent(data["value"][index]["mail"]).result,
-          imageId: imageId,
-          imageState: loadingStateEnum.notStarted
-        })
+        const imageDownloadUrl = imagesDownloadUrls.get(imageId)
+        if (imageDownloadUrl !== undefined) {
+          outputUsers.push({
+            name: data["value"][index]["displayName"],
+            id: data["value"][index]["id"],
+            mail: data["value"][index]["mail"],
+            role: data["value"][index]["mail"],
+            grade: checkIfStudent(data["value"][index]["mail"]).grade,
+            student: checkIfStudent(data["value"][index]["mail"]).result,
+            imageDownloadUrl: imageDownloadUrl,
+            imageState: loadingStateEnum.notStarted
+          })
+        } else {
+          outputUsers.push({
+            name: data["value"][index]["displayName"],
+            id: data["value"][index]["id"],
+            mail: data["value"][index]["mail"],
+            role: data["value"][index]["mail"],
+            grade: checkIfStudent(data["value"][index]["mail"]).grade,
+            student: checkIfStudent(data["value"][index]["mail"]).result,
+            imageDownloadUrl: "noImage",
+            imageState: loadingStateEnum.cannotStart
+          })
+        }
       } else {
         outputUsers.push({
           name: data["value"][index]["displayName"],
@@ -96,7 +137,7 @@ export default async function getUsers(url?: string, search?: string) {
           role: data["value"][index]["mail"],
           grade: checkIfStudent(data["value"][index]["mail"]).grade,
           student: checkIfStudent(data["value"][index]["mail"]).result,
-          imageId: "noImage",
+          imageDownloadUrl: "noImage",
           imageState: loadingStateEnum.cannotStart
         })
       }
