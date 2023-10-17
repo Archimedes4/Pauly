@@ -107,16 +107,21 @@ export const studentFilesData = {
       "text":{}
     },
     {
-      "name":"driveItemId",
+      "name":"itemId",//This is the item id not drive item id
       "text":{},
       "required": true
+    },
+    {
+      "name":"selected",
+      "boolean":{},
+      "required":true,
+      "indexed":true
     },
     {
       "name":"userId",
       "text":{ },
       "required": true,
       "indexed": true,
-      "enforceUniqueValues": true
     }
   ],
   "list": {
@@ -585,32 +590,9 @@ export const paulyClassExtensionData = {
     }
   ]
 }
-export const paulyUserData = {
-  "id":"paulyUser",
-  "description":"Pauly User Data",
-  "targetTypes": [
-    "User"
-  ],
-  "owner":clientId,
-  "properties": [
-    {
-      "name":"imageId",
-      "type":"String"
-    },
-    {
-      "name":"role",
-      "type":"String"
-    }
-  ]
-}
 
 //Add data array
 export const addDataArray: addDataType[] = [
-  {
-    data: paulyUserData,
-    urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",
-    id: "userExtensionId"
-  },
   {
     data: paulyClassExtensionData,
     urlOne: "https://graph.microsoft.com/v1.0/schemaExtensions",

@@ -1,6 +1,7 @@
 import { studentSearchSlice } from "../Redux/reducers/studentSearchReducer";
 import store from "../Redux/store";
 import { loadingStateEnum } from "../types";
+import largeBatch from "./Ultility/batchRequest";
 import callMsGraph from "./Ultility/microsoftAssets";
 
 function checkIfStudent(role: string): {result: boolean, grade?: "9"|"10"|"11"|"12"} {
@@ -50,23 +51,80 @@ export default async function getUsers(url?: string, search?: string) {
   const result = await callMsGraph(url ? url:`https://graph.microsoft.com/v1.0/users?$select=displayName,id,mail${filter}`, "GET", undefined, undefined, undefined, undefined, (search) ? headers:undefined)
   if (result.ok) {
     const data = await result.json()
+    var userIds: string[] = []
+    for (var index = 0; index < data["value"].length; index++) {
+      userIds.push(data["value"][index]["id"])
+    }
+    const batchResult = await largeBatch(undefined, {
+      firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items?$expand=fields&$filter=fields/userId%20eq%20'`,
+      secondUrl: "'%20and%20fields/selected%20eq%20true",
+      method: "GET",
+      keys: {array: userIds}
+    })
+    var imagesIds = new Map<string, string>()
+    if (batchResult.result === loadingStateEnum.success && batchResult.data !== undefined) {
+      for (var batchIndex = 0; batchIndex < batchResult.data.length; batchIndex++) {
+        if (batchResult.data[batchIndex].status === 200) { //TO DO OK
+          if (batchResult.data[batchIndex].body["value"].length === 1) {
+            imagesIds.set(batchResult.data[batchIndex].body["value"][0]["fields"]["userId"], batchResult.data[batchIndex].body["value"][0]["fields"]["itemId"])
+          }
+        } else {
+          store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
+          return
+        }
+      }
+    }
     var outputUsers: schoolUserType[] = []
     for (var index = 0; index < data["value"].length; index++) {
-      outputUsers.push({
-        name: data["value"][index]["displayName"],
-        id: data["value"][index]["id"],
-        mail: data["value"][index]["mail"],
-        role: data["value"][index]["mail"],
-        grade: checkIfStudent(data["value"][index]["mail"]).grade,
-        student: checkIfStudent(data["value"][index]["mail"]).result,
-        imageId: ""
-      })
+      const imageId = imagesIds.get(data["value"][index]["id"])
+      if (imageId !== undefined) {
+        outputUsers.push({
+          name: data["value"][index]["displayName"],
+          id: data["value"][index]["id"],
+          mail: data["value"][index]["mail"],
+          role: data["value"][index]["mail"],
+          grade: checkIfStudent(data["value"][index]["mail"]).grade,
+          student: checkIfStudent(data["value"][index]["mail"]).result,
+          imageId: imageId,
+          imageState: loadingStateEnum.notStarted
+        })
+      } else {
+        outputUsers.push({
+          name: data["value"][index]["displayName"],
+          id: data["value"][index]["id"],
+          mail: data["value"][index]["mail"],
+          role: data["value"][index]["mail"],
+          grade: checkIfStudent(data["value"][index]["mail"]).grade,
+          student: checkIfStudent(data["value"][index]["mail"]).result,
+          imageId: "noImage",
+          imageState: loadingStateEnum.cannotStart
+        })
+      }
     }
+
     store.dispatch(studentSearchSlice.actions.setStudentUsers(outputUsers))
     store.dispatch(studentSearchSlice.actions.setNextLink(data["@odata.nextLink"]))
     store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.success))
   } else {
-    const data = await result.json()
     store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
+  }
+}
+
+export async function getStudentData(userId: string): Promise<{result: loadingStateEnum, data?: studentInformationType[]}> {
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items?$expand=fields&$filter=fields/userId%20eq%20'${userId}'`)
+  if (result.ok) {
+    const data = await result.json()
+    var resultData: studentInformationType[] = []
+    for (var index = 0; index < data["value"].length; index++) {
+      resultData.push({
+        listId: data["value"][index]["fields"]["id"],
+        driveId: data["value"][index]["fields"]["itemId"],
+        selected: data["value"][index]["fields"]["selected"],
+        createdTime: data["value"][index]["fields"]["createdTime"]
+      })
+    }
+    return {result: loadingStateEnum.success, data: resultData}
+  } else {
+    return {result: loadingStateEnum.failed}
   }
 }

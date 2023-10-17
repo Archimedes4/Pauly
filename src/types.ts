@@ -282,6 +282,12 @@ declare global {
     reviewed: boolean
     submissionImage?: string
   }
+  type studentInformationType = {
+    listId: string
+    driveId: string
+    selected: boolean
+    createdTime: string
+  }
   type sportType = {
     name: string
     id: string
@@ -300,6 +306,8 @@ declare global {
     grade?: "9"|"10"|"11"|"12"
     student: boolean
     imageId: string
+    imageState: loadingStateEnum
+    imageDataUrl?: string
   }
   type taskType = {
     name: string
@@ -394,11 +402,11 @@ declare global {
     timetablesListId: string,
     resourceListId: string,
     dressCodeListId: string,
+    roomListId: string,
     eventTypeExtensionId: string,
     eventDataExtensionId: string,
     classExtensionId: string,
-    resourceExtensionId: string,
-    roomListId: string
+    resourceExtensionId: string
   }
   type sportPost = {
     caption: string,

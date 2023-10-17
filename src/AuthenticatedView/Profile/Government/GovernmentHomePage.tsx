@@ -90,11 +90,11 @@ export default function GovernmentHomePage() {
             />
           </View>
         </View>
-        <View>
+        <View style={{marginBottom: 20}}>
           <View>
             <Text style={{margin: 5}}>Select Powerpoint: {selectedPowerpoint?.name}</Text>
           </View>
-          <MicrosoftFilePicker height={height * 0.6} width={width} onSelectedFile={(selectedFile) => {
+          <MicrosoftFilePicker height={height * 0.6 - 15} width={width} onSelectedFile={(selectedFile) => {
             setSelectedPowerpoint(selectedFile)
           }}/>
         </View>

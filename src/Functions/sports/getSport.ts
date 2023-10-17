@@ -11,7 +11,7 @@ export default async function getSport(id: string): Promise<{result: loadingStat
         name: data["value"][0]["fields"]["sportName"],
         id: data["value"][0]["fields"]["sportId"],
         svgData: data["value"][0]["fields"]["sportSvg"]
-      }, listId: data["value"][0]["id"]}
+      }, listId: data["value"][0]["fields"]["id"]}
     } else {
       return {result: loadingStateEnum.failed}
     }

@@ -19,6 +19,17 @@ export const studentSearchSlice = createSlice({
     setNextLink: (state, action: PayloadAction<string | undefined>) => {
       state.nextLink = action.payload
     },
+    setStudentUserByIndex: (state, action: PayloadAction<{index: number, user: schoolUserType}>) => {
+      if (action.payload.index < state.users.length) {
+        state.users[action.payload.index] = action.payload.user
+      }
+    },
+    setStudentUserById: (state, action: PayloadAction<{id: string, user: schoolUserType}>) => {
+      const findIndex = state.users.findIndex((e) => {return e.id === action.payload.id})
+      if (findIndex !== -1) {
+        state.users[findIndex] = action.payload.user
+      }
+    }
   }
 })
 

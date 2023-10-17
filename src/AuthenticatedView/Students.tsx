@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput, ViewStyle, Platform } from 'react-native'
+import { View, Text, Pressable, TextInput, ViewStyle, Platform, ListRenderItemInfo, Image } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Colors, loadingStateEnum } from '../types'
 import { useDispatch, useSelector } from 'react-redux'
@@ -6,13 +6,14 @@ import store, { RootState } from '../Redux/store'
 import ProgressView from '../UI/ProgressView'
 import { FlatList } from 'react-native-gesture-handler'
 import { useNavigate } from 'react-router-native'
-import { SearchIcon } from '../UI/Icons/Icons'
+import { PersonIcon, SearchIcon } from '../UI/Icons/Icons'
 import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer'
 import BackButton from '../UI/BackButton'
 import create_UUID from '../Functions/Ultility/CreateUUID'
 import getUsers from '../Functions/getUsers'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import callMsGraph from '../Functions/Ultility/microsoftAssets'
 
 export default function Students() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -65,19 +66,13 @@ export default function Students() {
                   getUsers()
                 }
               }}/>
-              <View style={{height: height * 0.8}}>
+              <View style={{width: width, height: height * 0.05}}/>
+              <View style={{height: height * 0.75}}>
                 <FlatList 
                   key={`FlatList_${create_UUID()}`}
                   data={users}
                   renderItem={(user) => (
-                    <View key={`StudentBlock_${user.item.id}_${create_UUID()}`} style={{height: 150, width: 150, marginTop: 25, marginBottom: 25, marginLeft: "auto", marginRight: "auto", backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>
-                      <View style={{margin: 10}}>
-                        <Text>{user.item.name}</Text>
-                        { (user.item.student) ?
-                          <Text>{user.item.grade}</Text>:null
-                        }
-                      </View>
-                    </View>
+                    <StudentBlock user={user} />
                   )}
                   numColumns={(Math.floor(width/200) !== 0) ? Math.floor(width/200):1}
                   onEndReached={() => {
@@ -98,6 +93,63 @@ export default function Students() {
         </> 
       }
     </>
+  )
+}
+
+function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  async function getImage() {
+    setIsLoading(true)
+    var newUser: any = {}
+    Object.assign(newUser, user.item)
+    if (user.item.imageId !== "noImage" && user.item.imageState !== loadingStateEnum.success && user.item.imageState !== loadingStateEnum.failed && user.item.imageState !== loadingStateEnum.loading) {
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/drive/items/${user.item.imageId}/content`)
+      if (result.ok) {
+        setIsLoading(false)
+        const data = await result.blob()
+        const urlOut = URL.createObjectURL(data)
+        newUser.imageState = loadingStateEnum.success
+        newUser.imageDataUrl = urlOut
+        store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}))
+      } else {
+        newUser.imageState = loadingStateEnum.failed
+        store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}))
+        setIsLoading(false)
+      }
+    } else {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getImage()
+    console.log(user)
+  }, [])
+
+  return (
+    <View key={`StudentBlock_${user.item.id}`} style={{height: 175, width: 150, marginTop: 25, marginBottom: 25, marginLeft: 20, marginRight: 20, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>        
+      <View style={{height: 150, width: 150, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        { (isLoading) ?
+          <>
+            <ProgressView width={14} height={14}/>
+            <Text>Loading</Text>
+          </>:
+          <>
+            { (user.item.imageState === loadingStateEnum.success && user.item.imageDataUrl !== undefined) ?
+              <Image source={{uri: user.item.imageDataUrl}} style={{width: 150, height: 150, borderRadius: 5}}/>: 
+              <PersonIcon width={150} height={150}/>
+              
+            }
+          </>
+        }
+      </View>
+      <View style={{flexDirection: "row", height: 14}}>
+        <Text style={{marginLeft: 5}}>{user.item.name}</Text>
+        {(user.item.student) ?
+          <Text>{user.item.grade}</Text>:null
+        }
+      </View>
+    </View>
   )
 }
 

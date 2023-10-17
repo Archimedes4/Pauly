@@ -4,12 +4,13 @@ import BackButton from '../../../UI/BackButton'
 import MicrosoftFilePicker from '../../../UI/microsoftFilePicker'
 import { useDispatch, useSelector } from 'react-redux'
 import store, { RootState } from '../../../Redux/store'
-import getUsers from '../../../Functions/getUsers'
+import getUsers, { getStudentData } from '../../../Functions/getUsers'
 import { CloseIcon, SearchIcon } from '../../../UI/Icons/Icons'
 import { studentSearchSlice } from '../../../Redux/reducers/studentSearchReducer'
 import { Colors, loadingStateEnum } from '../../../types'
 import callMsGraph from '../../../Functions/Ultility/microsoftAssets'
 import ProgressView from '../../../UI/ProgressView'
+import addImage from '../../../Functions/addImage'
 
 export default function GovernmentStudents() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -63,18 +64,29 @@ export default function GovernmentStudents() {
   )
 }
 
+enum filePickingModeEnum {
+  notStarted,
+  select,
+  create
+}
+
 function StudentItem({e}:{e: ListRenderItemInfo<schoolUserType>}) {
-  const [isSelectingFile, setIsSelectingFile] = useState<boolean>(false)
-  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const {height, width} = useSelector((state: RootState) => state.dimentions)
+  const [filePickingMode, setFilePickingMode] = useState<filePickingModeEnum>(filePickingModeEnum.notStarted)
   return (
     <View style={{flexDirection: "row"}}>
       <Text>{e.item.name}</Text>
-      <Pressable onPress={() => {setIsSelectingFile(true)}}>
+      <Pressable onPress={() => {setFilePickingMode(filePickingModeEnum.select)}}>
         <Text>Choose File</Text>
       </Pressable>
-      <Modal visible={isSelectingFile} animationType='slide' transparent={true} style={{width: width * 0.8}} onRequestClose={() => setIsSelectingFile(false)}>
-        <Pressable onPress={() => setIsSelectingFile(false)} style={{position: "absolute", left: 0, height: height, zIndex: -1, width: width}}/>
-        <StudentsSelectFile setIsSelectingFile={setIsSelectingFile} setSelectedFile={(e) => {}} />
+      <Modal visible={(filePickingMode !== filePickingModeEnum.notStarted)} animationType='slide' transparent={true} style={{width: width * 0.8}} onRequestClose={() => setFilePickingMode(filePickingModeEnum.notStarted)}>
+        <Pressable onPress={() => setFilePickingMode(filePickingModeEnum.notStarted)} style={{position: "absolute", left: 0, height: height, zIndex: -1, width: width}}/>
+        <>
+          { (filePickingMode === filePickingModeEnum.create) ?
+            <StudentsSelectFile setFilePickingMode={setFilePickingMode} userId={e.item.id} />:
+            <SelectMainFile userId={e.item.id} setFilePickingMode={setFilePickingMode}/>
+          }
+        </>
       </Modal>
     </View>
   )
@@ -130,71 +142,198 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
   )
 }
 
-function StudentsSelectFile({setIsSelectingFile, setSelectedFile}:{setIsSelectingFile: (item: boolean) => void, setSelectedFile: (item: string) => void}) {
+function StudentsSelectFile({setFilePickingMode, userId}:{setFilePickingMode: (item: filePickingModeEnum) => void, userId: string}) {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [isReviewing, setIsReviewing] = useState<boolean>(false)
-  async function addImage() {
+  const [selectedFile, setSelectedFile] = useState<microsoftFileType | undefined>(undefined)
+  const [addImageState, setAddImageState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
 
-    const data = {
-      "requests": [
-        {
-          "id":"1",
-          "method":"POST",
-          "url":`/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items`,
-          "body":"",
-          "headers":{
-            "Content-Type": "application/json"
-          }
-        },
-        {
-          "id":"2",
-          "method":"POST",
-          "url":`/sites/${store.getState().paulyList.siteId}/drive/root`,
-          "dependsOn":["1"],
-          "body":"",
-          "headers":{
-            "Content-Type": "application/json"
-          }
-        }
-      ]
+  async function loadAddImage() {
+    if (selectedFile !== undefined ) {
+      setAddImageState(loadingStateEnum.loading)
+      const result = await addImage(userId, selectedFile)
+      setAddImageState(result)
     }
   }
+
   return (
     <View style={{height: height, width: width, position: "absolute", zIndex: 200, top: 0, right: 0, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: Colors.lightGray}}>
-      <Pressable onPress={() => {setIsSelectingFile(false)}} style={{position: "absolute", top: height * 0.05, left: height * 0.05}}>
+      <Pressable onPress={() => {setFilePickingMode(filePickingModeEnum.select)}} style={{position: "absolute", top: height * 0.05, left: height * 0.05}}>
         <CloseIcon width={20} height={20}/>
       </Pressable>
       <>
         {!isReviewing ?
           <View style={{height: height * 0.8, width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: Colors.white, borderRadius: 15}}>
             <View style={{margin: 10}}>
-              <MicrosoftFilePicker height={height * 0.8 - 5} width={width * 0.8 - 5} onSelectedFile={async (file) => {
-                const data = {
-                  "type": "view",
-                  "scope": "organization"
-                }
-                const result = await callMsGraph(file.callPath + "/createLink", "POST", false, JSON.stringify(data))
-                if (result.ok){
-                  const data = await result.json()
-                  if (data["shareId"] !== undefined) {
-                    setSelectedFile(data["shareId"])
-                    setIsSelectingFile(false)
-                  } else {
-                    setIsSelectingFile(false)
-                  }
-                } else {
-                  setIsSelectingFile(false)
-                }
-              }} />
+              <MicrosoftFilePicker height={height * 0.8 - 5} width={width * 0.8 - 5} onSelectedFile={(file) => {
+                setIsReviewing(true)
+                setSelectedFile(file)
+              }}/>
             </View>
           </View>:
           <View style={{height: height * 0.8, width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: Colors.white, borderRadius: 15}}>
             <View style={{margin: 10}}>
-              <Text>Confirm</Text>
+              {(selectedFile !== undefined) ?
+                <Pressable onPress={() => {loadAddImage()}}>
+                  <Text>{(addImageState === loadingStateEnum.notStarted) ? "Confirm":(addImageState === loadingStateEnum.loading) ? "Loading":(addImageState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+                </Pressable>:null
+              }
             </View>
           </View>
         }
       </>
     </View>
+  )
+}
+
+function SelectMainFile({userId, setFilePickingMode}:{userId: string, setFilePickingMode: (item: filePickingModeEnum) => void}) {
+  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const [fileData, setFileData] = useState<studentInformationType[]>([]);
+  const [fileState, setFileState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [selectedFileListId, setSelectedFileListId] = useState<string>("")
+
+  async function loadData() {
+    const result = await getStudentData(userId)
+    if (result.result === loadingStateEnum.success && result.data !== undefined){
+      setFileState(loadingStateEnum.success)
+      setFileData(result.data)
+      const selectedFileList = result.data.find((e) => {return e.selected})
+      if (selectedFileList !== undefined) {
+        setSelectedFileListId(selectedFileList.listId)
+      }
+    } else {
+      setFileState(loadingStateEnum.failed)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  return (
+    <View style={{height: height, width: width, position: "absolute", zIndex: 200, top: 0, right: 0, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: Colors.lightGray}}>
+      <Pressable onPress={() => {setFilePickingMode(filePickingModeEnum.notStarted)}} style={{position: "absolute", top: height * 0.05, left: height * 0.05}}>
+        <CloseIcon width={20} height={20}/>
+      </Pressable>
+      <View style={{height: height * 0.8, width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: Colors.white, borderRadius: 15}}>
+        <View style={{margin: 10}}>
+          {(fileState === loadingStateEnum.loading) ?
+            <View>
+              <Text>Loading</Text>
+            </View>:
+            <>
+              { (fileState === loadingStateEnum.success) ?
+                <FlatList 
+                  data={fileData}
+                  renderItem={(file) => (
+                    <StudentSelectFileBlock key={`${file.item.listId}_${file.item.createdTime}`} file={file} setFileData={setFileData} fileData={fileData} selectedFileListId={selectedFileListId} setSelectedFileListId={setSelectedFileListId} />
+                  ) }
+                />:
+                <View>
+                  <Text>Failed</Text>
+                </View>
+              }
+            </>
+          } 
+          <Pressable onPress={() => setFilePickingMode(filePickingModeEnum.create)}>
+            <Text>Create</Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
+  )
+}
+
+function StudentSelectFileBlock({file, selectedFileListId, setSelectedFileListId, fileData, setFileData}:{file: ListRenderItemInfo<studentInformationType>, setFileData: (item: studentInformationType[]) => void, fileData: studentInformationType[], selectedFileListId: string, setSelectedFileListId: (item: string) => void}) {
+  const [updateState, setUpdateState] = useState(loadingStateEnum.notStarted)
+
+  async function changeSelection(listItemId: string) {
+    setUpdateState(loadingStateEnum.loading)
+    if (selectedFileListId !== "") {
+      const unselectedIndex = fileData.findIndex((e) => {return e.listId === selectedFileListId})
+      if (unselectedIndex !== -1) {
+        var newFileData = fileData
+        newFileData[file.index].selected = false
+        const unselectListData = {
+          "fields":{
+            "selected":false
+          }
+        }
+        const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${selectedFileListId}`, "PATCH", undefined, JSON.stringify(unselectListData))
+        if (result.ok) {
+          const selectListData = {
+            "fields":{
+              "selected":true
+            }
+          }
+          const secondResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", undefined, JSON.stringify(selectListData))
+          if (secondResult.ok) {
+            setSelectedFileListId(listItemId)
+            newFileData[file.index].selected = true
+            setFileData([...newFileData])
+            setUpdateState(loadingStateEnum.success)
+          } else {
+            setUpdateState(loadingStateEnum.failed)
+          }
+        } else {
+          setFileData([...newFileData])
+          setUpdateState(loadingStateEnum.failed)
+        }
+      } else {
+        setUpdateState(loadingStateEnum.failed)
+      }
+    } else {
+      const selectListData = {
+        "fields":{
+          "selected":true
+        }
+      }
+      const secondResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", undefined, JSON.stringify(selectListData))
+      if (secondResult.ok) {
+        var newFileData = fileData
+        newFileData[file.index].selected = true
+        setFileData([...newFileData])
+        setSelectedFileListId(listItemId)
+        setUpdateState(loadingStateEnum.success)
+      } else {
+        setUpdateState(loadingStateEnum.failed)
+      }
+    }
+  }
+
+  async function removeSelection(listItemId: string) {
+    setUpdateState(loadingStateEnum.loading)
+    const selectListData = {
+      "fields":{
+        "selected":false
+      }
+    }
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", undefined, JSON.stringify(selectListData))
+    if (result.ok) {
+      setSelectedFileListId("")
+      var newFileData = fileData
+      newFileData[file.index].selected = false
+      setFileData([...newFileData])
+      setUpdateState(loadingStateEnum.success)
+    } else {
+      setUpdateState(loadingStateEnum.failed)
+    }
+  }
+  return (
+    <Pressable onPress={() => {
+      if (file.item.selected) {
+        removeSelection(file.item.listId)
+      } else {
+        changeSelection(file.item.listId)
+      }
+    }} style={{backgroundColor: (file.item.selected) ? Colors.lightGray:Colors.white, borderRadius: 15, shadowColor: Colors.black, shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, flexDirection: "row"}}>
+      <>
+        { (updateState === loadingStateEnum.loading) ?
+          <ProgressView width={14} height={14}/>:
+          <View style={{width: 14, height:14, backgroundColor: (updateState === loadingStateEnum.success || loadingStateEnum.notStarted) ? "green":Colors.danger, borderRadius: 7}}/>
+        }
+      </>
+      <Text style={{margin: 10}}>{new Date(file.item.createdTime).toLocaleDateString()}</Text>
+    </Pressable>
   )
 }

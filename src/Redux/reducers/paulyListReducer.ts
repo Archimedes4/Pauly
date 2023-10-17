@@ -6,7 +6,7 @@ export const paulyListSlice = createSlice({
   name: "paulyList",
   initialState: initalState,
   reducers: {
-    setPaulyList: (state, action: PayloadAction<paulyListType>) => {
+    setPaulyList: (_state, action: PayloadAction<paulyListType>) => {
       return action.payload
     }
   }

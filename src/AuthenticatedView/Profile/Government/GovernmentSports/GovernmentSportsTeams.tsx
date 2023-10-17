@@ -120,14 +120,28 @@ function SportsUpdateModel({isPickingSvg, setIsPickingSvg, id}:{isPickingSvg: bo
   const [svgData, setSvgData] = useState<string>("")
   const [listId, setListId] = useState<string>("")
   const [getSportState, setGetSportState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [updateSportState, setUpdateSportState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
   async function updateSport() {
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/"${store.getState().paulyList.sportsListId}/items/`)
+    setUpdateSportState(loadingStateEnum.loading)
+    const data = {
+      "fields":{
+        "sportSvg":svgData
+      }
+    }
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsListId}/items/${listId}`, "PATCH", undefined, JSON.stringify(data))
+    if (result.ok) {
+      setUpdateSportState(loadingStateEnum.success)
+    } else {
+      const data = await result.json()
+      setUpdateSportState(loadingStateEnum.failed)
+    }
   }
 
   async function loadSport() {
     const result = await getSport(id)
     if (result.result === loadingStateEnum.success && result.data !== undefined && result.listId !== undefined) {
       setListId(result.listId)
+      setSvgData(result.data.svgData)
       setGetSportState(loadingStateEnum.success)
     } else {
       setGetSportState(loadingStateEnum.failed)
@@ -153,7 +167,7 @@ function SportsUpdateModel({isPickingSvg, setIsPickingSvg, id}:{isPickingSvg: bo
               <Text>Svg</Text>
               <SVGXml xml={svgData} width={100} height={100}/>
               <TextInput value={svgData} onChangeText={(e) => {setSvgData(e)}} multiline={true} numberOfLines={25}/>
-              <Pressable>
+              <Pressable onPress={() => updateSport()}>
                 <Text>Confirm</Text>
               </Pressable>
               <Pressable onPress={() => setIsPickingSvg(false)}>
