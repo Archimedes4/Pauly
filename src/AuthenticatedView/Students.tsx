@@ -71,7 +71,6 @@ export default function Students() {
                   getUsers()
                 }
               }}/>
-              <View style={{width: width, height: height * 0.05}}/>
               <View style={{height: height * 0.75}}>
                 <FlatList 
                   key={`FlatList_${create_UUID()}`}
@@ -79,7 +78,7 @@ export default function Students() {
                   renderItem={(user) => (
                     <StudentBlock user={user} />
                   )}
-                  numColumns={(Math.floor(width/200) !== 0) ? Math.floor(width/200):1}
+                  numColumns={(Math.floor(width/190) !== 0) ? Math.floor(((width%190) >= 0.75) ? (width/190):((width + 190)/190)):1}
                   onEndReached={() => {
                     if (nextLink !== undefined) {
                       getUsers(nextLink)
@@ -102,12 +101,11 @@ export default function Students() {
 }
 
 function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   async function getImage() {
     var newUser: any = {}
     Object.assign(newUser, user.item)
     if (user.item.imageDownloadUrl !== "noImage" && user.item.imageState !== loadingStateEnum.success && user.item.imageState !== loadingStateEnum.failed && user.item.imageState !== loadingStateEnum.loading) {
-      setIsLoading(true)
       var updateStateUser: any = {}
       Object.assign(updateStateUser, user.item)
       updateStateUser.imageState = loadingStateEnum.loading
@@ -118,12 +116,10 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
         const urlOut = URL.createObjectURL(data)
         newUser.imageState = loadingStateEnum.success
         newUser.imageDataUrl = urlOut
-        setIsLoading(false)
         store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}))
       } else {
         newUser.imageState = loadingStateEnum.failed
         store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}))
-        setIsLoading(false)
       }
     }
   }
@@ -132,10 +128,20 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
     getImage()
   }, [])
 
+  function calculateMarginEnds(widthIn: number): number {
+    const numberOfBlocks = Math.floor(((widthIn%190) >= 0.75) ? (widthIn/190):((widthIn + 190)/190))
+    const widthRemaining = widthIn - ((numberOfBlocks - 1) * 190) - 150
+    if (widthRemaining/2 >= 120) {
+      return 20
+    } else {
+      return widthRemaining/2
+    }
+  }
+
   return (
-    <View key={`StudentBlock_${user.item.id}`} style={{height: 175, width: 150, marginTop: 25, marginBottom: 25, marginLeft: 20, marginRight: 20, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>        
+    <View key={`StudentBlock_${user.item.id}`} style={{height: 175, width: 150, marginTop: 25, marginBottom: 25, marginLeft: (user.index%(Math.floor(((width%190) >= 0.75) ? width/190:(width+ 190)/190)) === 0) ? calculateMarginEnds(width):20, marginRight: (user.index%(Math.floor(((width%190) >= 0.75) ? width/190:(width+ 190)/190) - 1) === 0 && user.index !== 0) ? calculateMarginEnds(width):20, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>        
       <View style={{height: 150, width: 150, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
-        { (isLoading) ?
+        { (user.item.imageState === loadingStateEnum.loading) ?
           <>
             <ProgressView width={14} height={14}/>
             <Text>Loading</Text>
@@ -144,7 +150,6 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
             { (user.item.imageState === loadingStateEnum.success && user.item.imageDataUrl !== undefined) ?
               <Image source={{uri: user.item.imageDataUrl}} style={{width: 150, height: 150, borderRadius: 5}}/>: 
               <PersonIcon width={150} height={150}/>
-              
             }
           </>
         }
