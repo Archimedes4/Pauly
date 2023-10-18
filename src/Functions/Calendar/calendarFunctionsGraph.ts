@@ -10,7 +10,7 @@ import batchRequest from "../Ultility/batchRequest";
 
 //Defaults to org wide events
 export async function getGraphEvents(url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
-  const result = await callMsGraph((url !== undefined) ? url:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`, "GET", true)
+  const result = await callMsGraph((url !== undefined) ? url:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
   if (result.ok){
     const data = await result.json()
     var newEvents: eventType[] = []
@@ -41,7 +41,7 @@ export async function getGraphEvents(url?: string, referenceUrl?: string): Promi
 
 //Gets an event from paulys team
 export async function getEvent(id: string): Promise<{result: loadingStateEnum, data?: eventType}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`, "GET", true)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
   if (result.ok){
     const data = await result.json()
     var event: eventType = {
@@ -168,7 +168,7 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
 export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadingStateEnum; event?: eventType; }> {
   const startDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0)).toISOString().slice(0, -1) + "0000"
   const endDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 0)).toISOString().slice(0, -1) + "0000"
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + `/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')%20and%20start/dateTime%20eq%20'${startDate}'%20and%20end/dateTime%20eq%20'${endDate}'`, "GET", true)
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + `/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')%20and%20start/dateTime%20eq%20'${startDate}'%20and%20end/dateTime%20eq%20'${endDate}'`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
   if (result.ok) {
     const data = await result.json()
     for(var index = 0; index < data["value"].length; index++){
@@ -206,7 +206,7 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
 export async function getSchoolDays(date: Date): Promise<{result: loadingStateEnum, data?: eventType[], nextLink?: string}> {
   var firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
   var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", true)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
   if (result.ok) {
     const data = await result.json()
     const scheduleIds = new Map<string, number>()

@@ -59,9 +59,9 @@ export default function GovernmentCreateNewSport() {
         "template": " genericList"
       }
     }
-    const resultList = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists`, "POST", false, JSON.stringify(listData))
+    const resultList = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists`, "POST", JSON.stringify(listData))
     if (resultList.ok){
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${sportsListId}/items`, "POST", false, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${sportsListId}/items`, "POST", JSON.stringify(data))
       if (result.ok){
         setCreateSportLoadingState(loadingStateEnum.success)
       } else {

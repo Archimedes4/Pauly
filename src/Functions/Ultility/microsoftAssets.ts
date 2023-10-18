@@ -2,23 +2,26 @@ import { Platform } from "react-native";
 import store from "../../Redux/store";
 import { authenticationCallSlice } from "../../Redux/reducers/authenticationCallReducer";
 
-export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", perfer?: boolean, body?: string | Blob, secondAuth?: boolean, authenticationToken?: string, headers?: Headers): Promise<Response> {
-  var headersOut: Headers = new Headers()
-  const bearer = `Bearer ${(authenticationToken !== undefined) ? authenticationToken:store.getState().authenticationToken}`
+export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", body?: string | Blob, headersIn?: {key: string, value: string}[], secondAuth?: boolean): Promise<Response> {
+  var headers: Headers = new Headers()
+  const bearer = `Bearer ${store.getState().authenticationToken}`
 
-  headersOut.append("Authorization", bearer);
-  headersOut.append("Content-Type", "application/json")
+  headers.append("Authorization", bearer);
+  headers.append("Content-Type", "application/json")
 
-  headers?.forEach((value: string, key: string) => {
-    headersOut.append(key, value)
-  })
-  if (perfer){
-    headersOut.append('Prefer','outlook.timezone="Central America Standard Time"')
+  if (headersIn !== undefined) {
+    for (var headerIndex = 0; headerIndex < headersIn?.length; headerIndex++) {
+      headers.append(headersIn[headerIndex].key, headersIn[headerIndex].value)
+    }
   }
+
+  // if (perfer){
+  //   headers.append('Prefer','outlook.timezone="Central America Standard Time"')
+  // }
 
   const options = {
     method: (method) ? method:"GET",
-    headers: headersOut,
+    headers: headers,
     body: body
   };
 
@@ -45,7 +48,7 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
         const unsubscribe = store.subscribe(async () => {
           const newValue = store.getState().authenticationToken;
           if (newValue !== previousValue) {
-            const result = await callMsGraph(url, method, perfer, body, true, authenticationToken)
+            const result = await callMsGraph(url, method, body, headersIn, true)
             resolve(result)
             unsubscribe(); // Unsubscribe after getting the new result
           }

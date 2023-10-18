@@ -86,9 +86,9 @@ export default function GovernmentEditCommission() {
   async function deleteCommission() {
     if (commissionItemId === "" || deleteCommissionResult === loadingStateEnum.loading || deleteCommissionResult === loadingStateEnum.success) {return}
     setDeleteCommissionResult(loadingStateEnum.loading)
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + commissionListId + "/items/" + commissionItemId, "DELETE")
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${commissionListId}/items/${commissionItemId}`, "DELETE")
     if (result.ok) {
-      const deleteList = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + `/lists/${id}`, "DELETE")
+      const deleteList = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}`, "DELETE")
       if (deleteList.ok){
         setDeleteCommissionResult(loadingStateEnum.success)
       } else {
@@ -522,7 +522,7 @@ function SubmissionView({width, height, submissionData, onClose, setSubmissionDa
         "submissionReviewed":true
       }
     }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items/${submissionData.itemId}`, "PATCH", undefined, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items/${submissionData.itemId}`, "PATCH", JSON.stringify(data))
     if (result.ok) {
       setChangeState(loadingStateEnum.success)
     } else {

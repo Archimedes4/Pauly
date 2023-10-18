@@ -128,7 +128,7 @@ function SportsUpdateModel({isPickingSvg, setIsPickingSvg, id}:{isPickingSvg: bo
         "sportSvg":svgData
       }
     }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsListId}/items/${listId}`, "PATCH", undefined, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsListId}/items/${listId}`, "PATCH", JSON.stringify(data))
     if (result.ok) {
       setUpdateSportState(loadingStateEnum.success)
     } else {

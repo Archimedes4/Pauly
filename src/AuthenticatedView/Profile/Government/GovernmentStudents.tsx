@@ -259,14 +259,14 @@ function StudentSelectFileBlock({file, selectedFileListId, setSelectedFileListId
             "selected":false
           }
         }
-        const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${selectedFileListId}`, "PATCH", undefined, JSON.stringify(unselectListData))
+        const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${selectedFileListId}`, "PATCH", JSON.stringify(unselectListData))
         if (result.ok) {
           const selectListData = {
             "fields":{
               "selected":true
             }
           }
-          const secondResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", undefined, JSON.stringify(selectListData))
+          const secondResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", JSON.stringify(selectListData))
           if (secondResult.ok) {
             setSelectedFileListId(listItemId)
             newFileData[file.index].selected = true
@@ -288,7 +288,7 @@ function StudentSelectFileBlock({file, selectedFileListId, setSelectedFileListId
           "selected":true
         }
       }
-      const secondResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", undefined, JSON.stringify(selectListData))
+      const secondResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", JSON.stringify(selectListData))
       if (secondResult.ok) {
         var newFileData = fileData
         newFileData[file.index].selected = true
@@ -308,7 +308,7 @@ function StudentSelectFileBlock({file, selectedFileListId, setSelectedFileListId
         "selected":false
       }
     }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", undefined, JSON.stringify(selectListData))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items/${listItemId}`, "PATCH", JSON.stringify(selectListData))
     if (result.ok) {
       setSelectedFileListId("")
       var newFileData = fileData

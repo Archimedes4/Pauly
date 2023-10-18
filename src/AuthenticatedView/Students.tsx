@@ -14,6 +14,7 @@ import getUsers from '../Functions/getUsers'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import callMsGraph from '../Functions/Ultility/microsoftAssets'
+import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
 
 export default function Students() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
@@ -28,6 +29,10 @@ export default function Students() {
 
   useEffect(() => {
     loadUsers()
+  }, [])
+
+  useEffect(() => {
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.darkGray, bottom: (currentBreakPoint === 0) ? Colors.maroon:Colors.white}))
   }, [])
   
   const [fontsLoaded] = useFonts({
@@ -47,13 +52,13 @@ export default function Students() {
   return (
     <>
       { (usersState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:"#FFFFFF", alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+        <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
           <ProgressView width={14} height={14} />
           <Text>Loading</Text>
         </View>:
         <>
           { (usersState === loadingStateEnum.success) ?
-            <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:"#FFFFFF"}}>
+            <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:Colors.white}}>
               <View style={{height: height * 0.15, width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: Colors.darkGray}}>
                 <BackButton to='/profile'/>
                 <Text style={{fontFamily: 'BukhariScript'}}>Students</Text>

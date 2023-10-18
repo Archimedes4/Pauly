@@ -36,7 +36,7 @@ async function getSubmissions(commissionIds: string[]): Promise<{result: loading
     const requestData = {
       "requests":outputRequests[index]
     }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items`, "POST", undefined, JSON.stringify(requestData))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items`, "POST", JSON.stringify(requestData))
     if (result.ok) {
       const data = await result.json()
       for (var responseIndex = 0; responseIndex < data["responses"].length; responseIndex++) {
@@ -163,9 +163,8 @@ async function getCommissionsBatch(commissions: unclaimedCommissionSubmissionTyp
   const batchData = {
     "requests":outputRequests
   }
-  var resourceHeader = new Headers()
-  resourceHeader.append("Accept", "application/json")
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
+
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
   if (result.ok) {
     const data = await result.json()
     var commissionsResult: commissionType[] = []

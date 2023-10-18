@@ -27,7 +27,7 @@ function ChannelBlock({group, groups, groupIndex, setGroups, selectedGroup, chan
         "resourceConversationId":channel.id
       }
     }
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.resourceListId + "/items", "POST", false, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.resourceListId}/items`, "POST", JSON.stringify(data))
     if (result.ok){
       var outGroups: resourceGroupType[] = groups
       outGroups[groupIndex].channels[channelIndex].selected = true

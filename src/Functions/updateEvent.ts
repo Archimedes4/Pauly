@@ -23,7 +23,7 @@ export default async function createEvent() {
       data["end"]["dateTime"] = store.getState().addEvent.endDate.replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
       data["isAllDay"] = true
     }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/events`, "POST", true, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/events`, "POST", JSON.stringify(data))
     if (result.ok){
       const dataOut = await result.json()
       const resultEvent: eventType = {
@@ -104,7 +104,7 @@ export default async function createEvent() {
     }
     if (store.getState().addEvent.recurringEvent) {
     }
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", true, JSON.stringify(data))
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events", "POST", JSON.stringify(data))
     if (result.ok){
       const dataOut = await result.json()
       const resultEvent: eventType = {

@@ -22,7 +22,7 @@
         "keychain-access-groups":["com.microsoft.identity.universalstorage", "com.microsoft.adalcache"],
         "LSApplicationQueriesSchemes": ["msauthv2", "msauthv3"]
       },
-      "buildNumber":"49",
+      "buildNumber":"50",
       "usesNonExemptEncryption": false
     },
     "android": {

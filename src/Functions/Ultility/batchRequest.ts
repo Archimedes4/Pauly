@@ -42,14 +42,13 @@ export default async function largeBatch(defaultBatchData?: {id: string, method:
   } else {
     return {result: loadingStateEnum.failed}
   }
-  var resourceHeader = new Headers()
-  resourceHeader.append("Accept", "application/json")
+
   var output: batchResponseType[] = []
   for (var index = 0; index < data.length; index++) {
     const batchData = {
       "requests":data[index]
     }
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
     if (result.ok) {
       const batchResultData = await result.json()
       for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {

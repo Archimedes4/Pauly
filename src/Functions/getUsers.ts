@@ -46,9 +46,8 @@ function checkIfStudent(role: string): {result: boolean, grade?: "9"|"10"|"11"|"
 
 export default async function getUsers(url?: string, search?: string) {
   const filter = search ? `&$search="displayName:${search}"`:""
-  const headers = new Headers()
-  headers.append("ConsistencyLevel", "eventual")
-  const result = await callMsGraph(url ? url:`https://graph.microsoft.com/v1.0/users?$select=displayName,id,mail${filter}`, "GET", undefined, undefined, undefined, undefined, (search) ? headers:undefined)
+
+  const result = await callMsGraph(url ? url:`https://graph.microsoft.com/v1.0/users?$select=displayName,id,mail${filter}`, "GET", undefined, (search) ? [{key: "ConsistencyLevel", value: "eventual"}]:undefined)
   if (result.ok) {
     const data = await result.json()
     var userIds: string[] = []

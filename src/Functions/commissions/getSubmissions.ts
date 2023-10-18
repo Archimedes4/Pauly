@@ -27,7 +27,7 @@ export default async function getSubmissions(commissionId: string, submissionTyp
       }
       const batchHeaders = new Headers()
       batchHeaders.append("Accept", "application/json")
-      const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData))
+      const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData))
       if (result.ok) {
         const batchResultData = await batchResult.json()
         for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {

@@ -25,7 +25,7 @@ export default function GovermentRoomsCreate() {
           "roomName":roomName
         }
       }
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.roomListId +"/items?expand=fields", "POST", false, JSON.stringify(items))
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.roomListId +"/items?expand=fields", "POST", JSON.stringify(items))
       if (result.ok){
         setCreateRoomState(loadingStateEnum.success)
       } else {

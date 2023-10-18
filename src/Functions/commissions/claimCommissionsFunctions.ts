@@ -34,7 +34,7 @@ export async function addImage(base64: string): Promise<{result: loadingStateEnu
           },
           "deferCommit": true
         }
-        const resumableSessionResult = await callMsGraph(`https://graph.microsoft.com/v1.0/me/drive/items/${rootIdData["id"]}:/Pauly_Image_${imageUUID}_Submission${(types[fileBlob.type])}:/createUploadSession`, "POST", undefined, JSON.stringify(resumableSessionData))
+        const resumableSessionResult = await callMsGraph(`https://graph.microsoft.com/v1.0/me/drive/items/${rootIdData["id"]}:/Pauly_Image_${imageUUID}_Submission${(types[fileBlob.type])}:/createUploadSession`, "POST", JSON.stringify(resumableSessionData))
         if (resumableSessionResult.ok) {
           const resumableSessionResultData = await resumableSessionResult.json()
           var uploadUrl: string = resumableSessionResultData["uploadUrl"]
@@ -74,7 +74,7 @@ export async function addImage(base64: string): Promise<{result: loadingStateEnu
                   "type": "view",
                   "scope": "organization"
                 }
-                const createLinkResult = await callMsGraph(`https://graph.microsoft.com/v1.0/me/drive/items/${uploadCompleteResultData["id"]}/createLink`, "POST", false, JSON.stringify(createLinkMainData))
+                const createLinkResult = await callMsGraph(`https://graph.microsoft.com/v1.0/me/drive/items/${uploadCompleteResultData["id"]}/createLink`, "POST", JSON.stringify(createLinkMainData))
                 if (createLinkResult.ok){
                   const createLinkData = await createLinkResult.json()
                   return {result: loadingStateEnum.success, data: createLinkData["shareId"]}

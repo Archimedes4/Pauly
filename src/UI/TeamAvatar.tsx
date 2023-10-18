@@ -1,18 +1,11 @@
 import { View, Text, Image } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
-import store from '../Redux/store'
+import React, { useEffect, useState } from 'react'
 import callMsGraph from '../Functions/Ultility/microsoftAssets'
-
-enum loadingResult {
-    loading,
-    success,
-    failure,
-    unauthenticated
-}
+import { loadingStateEnum } from '../types'
 
 export default function TeamAvatar({teamId}:{teamId: string}) {
   const [teamAvatarDataUrl, setTeamAvatarDataUrl] = useState("")
-  const [currentLoadingResult, setCurrentLoadingResult] = useState<loadingResult>(loadingResult.loading)
+  const [currentLoadingResult, setCurrentLoadingResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
 
   async function getTeamsAvatar(teamId: string) {
     try{
@@ -25,34 +18,30 @@ export default function TeamAvatar({teamId}:{teamId: string}) {
         var base64data = reader.result;                
           if (base64data !== null){
             setTeamAvatarDataUrl(base64data.toString())
-            setCurrentLoadingResult(loadingResult.success)
+            setCurrentLoadingResult(loadingStateEnum.success)
           } else {
-            setCurrentLoadingResult(loadingResult.failure)
+            setCurrentLoadingResult(loadingStateEnum.failed)
           }
         }
       } else {
-        if (response.status === 401){
-          setCurrentLoadingResult(loadingResult.unauthenticated)
-        } else {
-          setCurrentLoadingResult(loadingResult.failure)
-        }
+        setCurrentLoadingResult(loadingStateEnum.failed)
       }
     } catch {
-      setCurrentLoadingResult(loadingResult.failure)
+      setCurrentLoadingResult(loadingStateEnum.failed)
     }
   }
   useEffect(() => {
-    setCurrentLoadingResult(loadingResult.loading)
+    setCurrentLoadingResult(loadingStateEnum.loading)
     getTeamsAvatar(teamId)
   }, [teamId])
 
   return (
     <View>
-      {(currentLoadingResult === loadingResult.loading) ?
+      {(currentLoadingResult === loadingStateEnum.loading) ?
         <View>
           <Text>Loading</Text>
         </View>:<View>
-          {(currentLoadingResult === loadingResult.success) ?
+          {(currentLoadingResult === loadingStateEnum.success) ?
             <View>
               { (teamAvatarDataUrl !== "") &&
                 <Image width={100} height={100} style={{width: 100, height: 100}} source={{uri: teamAvatarDataUrl}}/>

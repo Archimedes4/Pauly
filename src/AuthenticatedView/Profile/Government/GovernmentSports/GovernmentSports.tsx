@@ -1,7 +1,6 @@
-import { View, Text, Dimensions, Pressable } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { View, Text, Pressable } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
 import { Colors, loadingStateEnum } from '../../../../types';
 import { RootState } from '../../../../Redux/store';

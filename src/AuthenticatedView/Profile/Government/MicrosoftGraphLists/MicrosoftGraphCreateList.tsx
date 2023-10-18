@@ -53,7 +53,7 @@ export default function MicrosoftGraphCreateList() {
         "template": " genericList"
       }
     }
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists", "POST", false, JSON.stringify(listData))//sites/8td1tk.onmicrosoft.com/sites
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists`, "POST", JSON.stringify(listData))
     
     const data = await result.json()
 

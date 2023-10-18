@@ -50,14 +50,12 @@ export async function getResources(category?: resourceMode) {
       batchCount++
     }
   }
-  var resourceHeader = new Headers()
-  resourceHeader.append("Accept", "application/json")
   for (var index = 0; index < batchDataRequests.length; index++) {
     const batchData = {
       "requests":batchDataRequests[index]
     }
     if (batchDataRequests[index].length !== 0){
-      const resourceRsp = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", false, JSON.stringify(batchData), undefined, undefined, resourceHeader)
+      const resourceRsp = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
       if (resourceRsp.ok){
         const resourceResponceData = await resourceRsp.json()
         for (var responceIndex = 0; responceIndex < resourceResponceData["responses"].length; responceIndex++) {
@@ -126,7 +124,7 @@ export async function getResourcesSearch(search: string) {
       }
     ]
   }
-  const searchResult = await callMsGraph("https://graph.microsoft.com/v1.0/search/query", "POST", false, JSON.stringify(searchPayload))
+  const searchResult = await callMsGraph("https://graph.microsoft.com/v1.0/search/query", "POST", JSON.stringify(searchPayload))
   if (searchResult.ok) {
     const searchData = await searchResult.json()
     console.log(searchData)
@@ -153,12 +151,10 @@ export async function getResourcesSearch(search: string) {
         return 
       }
   
-      var resourceHeader = new Headers()
-      resourceHeader.append("Accept", "application/json")
       const batchData = {
         "requests":batchDataRequests
       }
-      const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
+      const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
       if (batchResult.ok) {
         const batchResultData = await batchResult.json()
         var outputData: resourceDataType[] = []

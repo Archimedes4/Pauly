@@ -1,5 +1,5 @@
 import { View, Text, Button, Pressable, Platform, Image } from 'react-native'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-native'
 import { useMsal } from "@azure/msal-react";
 import { tenantId } from '../../PaulyConfig';
@@ -8,17 +8,20 @@ import BackButton from '../../UI/BackButton';
 import { DiscoveryDocument, revokeAsync, useAutoDiscovery } from 'expo-auth-session';
 import store, { RootState } from '../../Redux/store';
 import { authenticationTokenSlice } from '../../Redux/reducers/authenticationTokenReducer';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import { Colors } from '../../types';
+import { Colors, loadingStateEnum } from '../../types';
+import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 
 export default function Settings() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
   const {uri, displayName} = useSelector((state: RootState) => state.microsoftProfileData)
+  const [imageLoadState, setImageLoadState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
@@ -39,6 +42,10 @@ export default function Settings() {
       }
     }
   }
+
+  useEffect(() => {
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.maroon, bottom: Colors.maroon}))
+  }, [])
 
   useEffect(() => {
     if (currentBreakPoint >= 1) {
@@ -68,8 +75,8 @@ export default function Settings() {
         <Text style={{fontFamily: 'BukhariScript', fontSize: 45, color: Colors.white}}>Settings</Text>
       </View>
       <View style={{width: width, alignContent: "center", justifyContent: 'center', alignItems: "center"}}>
-        { (uri !== "") ?
-          <Image source={{uri: uri}} style={{width: width * 0.3, height: width * 0.3, borderRadius: width * 0.25}}/>:
+        { (uri !== "" && imageLoadState !== loadingStateEnum.failed) ?
+          <Image source={{uri: uri}} onError={(e) => {setImageLoadState(loadingStateEnum.failed); console.log(e.nativeEvent.error)}} style={{width: width * 0.3, height: width * 0.3, borderRadius: width * 0.25}}/>:
           <PersonIcon width={width * 0.4} height={width * 0.4}/>
         }
         <Text style={{color: Colors.white, fontWeight: "bold", fontSize: 24, marginTop: height * 0.05}}>{displayName}</Text>

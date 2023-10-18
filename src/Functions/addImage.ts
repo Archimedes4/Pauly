@@ -17,7 +17,7 @@ export default async function addImage(userId: string, selectedFile: microsoftFi
         "id": siteData["id"]
       }
     }
-    const copyResult = await callMsGraph(`${selectedFile.callPath}/copy?@microsoft.graph.conflictBehavior=rename`, "POST", undefined, JSON.stringify(copyPayload))
+    const copyResult = await callMsGraph(`${selectedFile.callPath}/copy?@microsoft.graph.conflictBehavior=rename`, "POST", JSON.stringify(copyPayload))
     if (copyResult.ok) {
       const copyData = await copyResult.headers.get("Location")
    
@@ -54,7 +54,7 @@ export default async function addImage(userId: string, selectedFile: microsoftFi
             "selected":false
           }
         }
-        const studentListResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items`, "POST", undefined, JSON.stringify(studentData))
+        const studentListResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items`, "POST", JSON.stringify(studentData))
         if (studentListResult.ok) {
           return loadingStateEnum.success
         } else {

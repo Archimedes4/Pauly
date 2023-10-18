@@ -29,10 +29,10 @@ export default function GovernmentHomePage() {
     }
     async function createShareId(item: microsoftFileType): Promise<string | undefined> {
       const data = {
-        "type": "view",
+        "type": "edit",
         "scope": "organization"
       }
-      const result = await callMsGraph(item.callPath + "/createLink", "POST", false, JSON.stringify(data))
+      const result = await callMsGraph(item.callPath + "/createLink", "POST", JSON.stringify(data))
       if (result.ok){
         const data = await result.json()
         return data["shareId"]
@@ -41,9 +41,9 @@ export default function GovernmentHomePage() {
       }
     }
     async function updatePaulyData(key: string, data: string){
-      var dataOut = {}
+      var dataOut: any = {}
       dataOut[key] = data
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + paulyDataListId + "/items/1/fields", "PATCH", false, JSON.stringify(dataOut))//TO DO fix list ids
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${paulyDataListId}/items/1/fields`, "PATCH", JSON.stringify(dataOut))//TO DO fix list ids
       if (result.ok){ 
         setNewMessageState(loadingStateEnum.success)
       } else {

@@ -1,7 +1,6 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FlatList, Pressable, ScrollView, Text, View, Image } from 'react-native'
-import { Link, useNavigate } from 'react-router-native';
-import callMsGraph from '../../Functions/Ultility/microsoftAssets';
+import { useNavigate } from 'react-router-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch, useSelector } from 'react-redux';

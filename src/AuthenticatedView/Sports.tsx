@@ -88,7 +88,7 @@ export default function Sports() {
         { (currentBreakPoint <= 0) ?
           <BackButton to='/'/>:null
         }
-        <Text style={{fontFamily: "BukhariScript"}}>Sports</Text>
+        <Text style={{fontFamily: "BukhariScript", color: "white", fontSize: height * 0.06}}>Sports</Text>
       </View>
       <ScrollView style={{height: (isShowingTeams) ? height * 0.1:sportsSelectHeight, width: width}} horizontal={true}>
         <View>
@@ -101,7 +101,7 @@ export default function Sports() {
                 <>
                   { (sportsState === loadingStateEnum.success) ?
                     <>
-                      <Pressable style={{backgroundColor:  Colors.darkGray, borderWidth: (selectedSport === undefined) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}} onPress={() => {setSelectedTeam(undefined); setSelectedSport(undefined); setIsShowingRoster(false)}}>
+                      <Pressable style={{backgroundColor:  Colors.darkGray, borderWidth: (selectedSport === undefined) ? 3:0, borderColor: "black", borderRadius: 15, alignContent: "center", alignItems: "center", justifyContent: "center", marginLeft: 3, marginTop: 3}} onPress={() => {setSelectedTeam(undefined); setSportsTeams([]); setSelectedSport(undefined); setIsShowingRoster(false); setIsShowingTeams(false)}}>
                         <Text style={{margin: isShowingTeams ? 5:10, color: Colors.white, marginBottom: isShowingTeams ? 5:10}}>{"Highlights"}</Text>
                       </Pressable>
                       {sports.map((sport) => (

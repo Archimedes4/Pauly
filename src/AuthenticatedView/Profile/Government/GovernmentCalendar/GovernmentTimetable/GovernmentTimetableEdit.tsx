@@ -57,7 +57,7 @@ export default function GovernmentTimetableEdit() {
           "timetableDressCodeId":selectedDressCode.id
         }
       }
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + timetablesListId +"/items?expand=fields", "POST", false, JSON.stringify(data))//TO DO fix site id
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId }/lists/${timetablesListId}/items?expand=fields`, "POST", JSON.stringify(data))//TO DO fix site id
       if (result.ok){
         setCreateTimetableLoadingState(loadingStateEnum.success)
       } else {

@@ -16,9 +16,8 @@ async function getPointsBatch(commissions: string[]): Promise<{result: loadingSt
   const batchData = {
     "requests":outputRequests
   }
-  var resourceHeader = new Headers()
-  resourceHeader.append("Accept", "application/json")
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData), undefined, undefined, resourceHeader)
+
+  const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
   if (result.ok) {
     const data = await result.json()
     var pointsResult = 0

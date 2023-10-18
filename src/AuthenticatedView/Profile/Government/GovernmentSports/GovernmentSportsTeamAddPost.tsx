@@ -29,7 +29,7 @@ export default function GovernmentSportsTeamAddPost() {
         "type": "view",
         "scope": "organization"
       }
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/drives/" + item.parentDriveId + "/items/" + item.id + "/createLink", "POST", false, JSON.stringify(data))
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/drives/" + item.parentDriveId + "/items/" + item.id + "/createLink", "POST", JSON.stringify(data))
       if (result.ok){
         const dataOut = await result.json()
         setSelectedShareID(dataOut["shareId"])
@@ -58,7 +58,7 @@ export default function GovernmentSportsTeamAddPost() {
             "selectedTeamId":selectedTeamId
           }
         }
-        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + `/lists/${store.getState().paulyList.sportsSubmissionsListId}/items`, "POST", false, JSON.stringify(data)) //TO DO fix id
+        const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + `/lists/${store.getState().paulyList.sportsSubmissionsListId}/items`, "POST", JSON.stringify(data)) //TO DO fix id
         if (result.ok){
           setPostSubmissionState(loadingStateEnum.success)
         } else {

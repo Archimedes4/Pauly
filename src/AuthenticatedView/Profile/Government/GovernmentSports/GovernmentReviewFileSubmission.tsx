@@ -104,9 +104,7 @@ export default function GovernmentReviewFileSubmission() {
           }
         ]
       }
-      var resourceHeader = new Headers()
-      resourceHeader.append("Accept", "application/json")
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", false, JSON.stringify(data), undefined, undefined, resourceHeader)
+      const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(data), [{key: "Accept", value: "application/json"}])
       if (result.ok){
         var newInformation = currentSubmissionInfomration
         newInformation.accepted = true
@@ -127,7 +125,7 @@ export default function GovernmentReviewFileSubmission() {
         }
       }
       setDenySubmissionState(loadingStateEnum.loading)
-      const result = await callMsGraph(`/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items/${currentSubmissionInfomration.itemID}`, "PATCH", undefined, JSON.stringify(data))
+      const result = await callMsGraph(`/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items/${currentSubmissionInfomration.itemID}`, "PATCH", JSON.stringify(data))
       if (result.ok) {
         setDenySubmissionState(loadingStateEnum.success)
       } else {

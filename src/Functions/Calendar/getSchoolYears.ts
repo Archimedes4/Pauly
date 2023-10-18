@@ -4,7 +4,7 @@ import { Colors, loadingStateEnum } from "../../types";
 import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getSchoolYears(nextLink?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
-  const result = await callMsGraph(nextLink ? nextLink:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", true)
+  const result = await callMsGraph(nextLink ? nextLink:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
   if (result.ok){
     const data = await result.json()
     var newEvents: eventType[] = []

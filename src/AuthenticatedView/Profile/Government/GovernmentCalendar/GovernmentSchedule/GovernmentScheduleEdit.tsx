@@ -56,7 +56,7 @@ export default function GovernmentSchedule() {
           "scheduleData":JSON.stringify(newPeriods)
         }
       }
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items`, "POST", false, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items`, "POST", JSON.stringify(data))
       if (result.ok){
         setCreateScheduleLoadingState(loadingStateEnum.success)
       } else {
@@ -72,7 +72,7 @@ export default function GovernmentSchedule() {
           "scheduleData":JSON.stringify(newPeriods)
         }
       }
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items/${scheduleListId}`, "PATCH", false, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items/${scheduleListId}`, "PATCH", JSON.stringify(data))
       if (result.ok){
         setCreateScheduleLoadingState(loadingStateEnum.success)
       } else {

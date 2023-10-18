@@ -1,6 +1,6 @@
-import { View, Text, TextInput, Dimensions, Button, Pressable, ListRenderItemInfo, Image } from 'react-native'
-import React, { useState, useEffect, useContext } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-native'
+import { View, Text, TextInput, Pressable, ListRenderItemInfo, Image } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-native'
 import {convertYearToSchoolYear} from '../../../../Functions/calendar/calendarFunctions'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import create_UUID from '../../../../Functions/Ultility/CreateUUID';
@@ -63,7 +63,7 @@ export default function GovernmentCreateNewTeam() {
           }
         }
       }
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items/${teamListItemId}`, "PATCH", false, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items/${teamListItemId}`, "PATCH", JSON.stringify(data))
       if (result.ok){
         setCreateTeamLoadingState(loadingStateEnum.success)
       } else {
@@ -145,7 +145,7 @@ export default function GovernmentCreateNewTeam() {
           }
         ]
       }
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/$batch`, "POST", undefined, JSON.stringify(batchData))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/$batch`, "POST", JSON.stringify(batchData))
       if (result.ok){
         setCreateTeamLoadingState(loadingStateEnum.success)
       } else {
@@ -440,7 +440,7 @@ function RosterBlockItem({member, members, setMembers, teamId, setIsSelectingFil
         "playerId":member.id
       }
     }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items`, "POST", undefined, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items`, "POST", JSON.stringify(data))
     if (result.ok) {
       const data = await result.json()
       var save = members
@@ -462,7 +462,7 @@ function RosterBlockItem({member, members, setMembers, teamId, setIsSelectingFil
           "imageShareId":member.imageShareId
         }
       }
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items/${member.listItemId}`, "PATCH", undefined, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items/${member.listItemId}`, "PATCH", JSON.stringify(data))
       if (result.ok) {
         setRosterState(loadingStateEnum.success)
       } else {
@@ -552,14 +552,14 @@ function RosterSelectFile({setIsSelectingFile, setSelectedFile}:{setIsSelectingF
       <Pressable onPress={() => {setIsSelectingFile(false)}} style={{position: "absolute", top: height * 0.05, left: height * 0.05}}>
         <CloseIcon width={20} height={20}/>
       </Pressable>
-      <View style={{height: height * 0.8, width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: "#FFFFFF", borderRadius: 15}}>
+      <View style={{height: height * 0.8, width: width * 0.8, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, backgroundColor: Colors.white, borderRadius: 15}}>
         <View style={{margin: 10}}>
           <MicrosoftFilePicker height={height * 0.8 - 5} width={width * 0.8 - 5} onSelectedFile={async (file) => {
             const data = {
               "type": "view",
               "scope": "organization"
             }
-            const result = await callMsGraph(file.callPath + "/createLink", "POST", false, JSON.stringify(data))
+            const result = await callMsGraph(file.callPath + "/createLink", "POST", JSON.stringify(data))
             if (result.ok){
               const data = await result.json()
               if (data["shareId"] !== undefined) {

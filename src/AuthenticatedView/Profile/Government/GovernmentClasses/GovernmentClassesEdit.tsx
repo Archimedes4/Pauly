@@ -128,7 +128,7 @@ export default function GovernmentClassesEdit() {
         }
       })
       
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${id}`, "PATCH", undefined, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${id}`, "PATCH", JSON.stringify(data))
       if (result.ok){
         setUpdateClassState(loadingStateEnum.success)
       } else {

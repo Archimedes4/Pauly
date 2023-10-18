@@ -201,7 +201,7 @@ function TaskItem({task}:{task: ListRenderItemInfo<taskType>}) {
     const data = {
       "status":(status === taskStatusEnum.notStarted) ? "notStarted":(status === taskStatusEnum.inProgress) ? "inProgress":(status === taskStatusEnum.completed) ? "completed":(status === taskStatusEnum.waitingOnOthers) ? "waitingOnOthers":"deferred",
     }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`, "PATCH", undefined, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`, "PATCH", JSON.stringify(data))
     if (result.ok) {
       setUpdateTaskState(loadingStateEnum.success) 
     } else {
@@ -214,14 +214,14 @@ function TaskItem({task}:{task: ListRenderItemInfo<taskType>}) {
       "title":userTasks[task.index].name
     }
     if (task.item.excess === false) {
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`, "PATCH", undefined, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`, "PATCH", JSON.stringify(data))
       if (result.ok) {
         setUpdateTaskState(loadingStateEnum.success)
       } else {
         setUpdateTaskState(loadingStateEnum.failed)
       }
     } else {
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks`, "POST", undefined, JSON.stringify(data))
+      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks`, "POST", JSON.stringify(data))
       if (result.ok) {
         const data = await result.json()
         dispatch(homepageDataSlice.actions.updateUserTask({task: {

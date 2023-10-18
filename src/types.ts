@@ -213,6 +213,10 @@ declare global {
     playerNumber?: string
     posts?: string[]
   }
+  type headerType = {
+    key: string
+    value: string
+  }
   type locationCoords = {
     latCoordinate: number
     lngCoordinate: number

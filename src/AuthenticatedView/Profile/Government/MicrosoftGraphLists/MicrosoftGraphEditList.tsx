@@ -6,6 +6,7 @@ import { CopyIcon } from '../../../../UI/Icons/Icons';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../Redux/store';
+import { Colors } from '../../../../types';
 
 export default function MicrosoftGraphEditList() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
@@ -26,7 +27,7 @@ export default function MicrosoftGraphEditList() {
     const data = {
       "indexed": "true" 
     }
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/"+ id + "/columns/" + columnId, "PATCH", false, JSON.stringify(data))//TO DO fix ids
+    const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/"+ id + "/columns/" + columnId, "PATCH", JSON.stringify(data))//TO DO fix ids
     if (result.ok){
       const data = await result.json()
       var newColumnData: listColumnType[] = currentColumns
@@ -67,7 +68,7 @@ export default function MicrosoftGraphEditList() {
   }
   useEffect(() => {getListItems(); getColumns()}, [])
   return (
-    <View style={{overflow: "hidden", width: width, height: height, backgroundColor: Colors.whitewhite}}>
+    <View style={{overflow: "hidden", width: width, height: height, backgroundColor: Colors.white}}>
       <Link to="/profile/government/graph/list">
         <Text>Back</Text>
       </Link>

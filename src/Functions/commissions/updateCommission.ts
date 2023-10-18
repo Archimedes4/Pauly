@@ -54,7 +54,7 @@ export default async function updateCommission(
       data["fields"]["qrCodeData"] = "[]"
     }
 
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items${(!isCreating) ? `/${commissionItemId}`:""}`, (isCreating) ? "POST":"PATCH", false, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items${(!isCreating) ? `/${commissionItemId}`:""}`, (isCreating) ? "POST":"PATCH", JSON.stringify(data))
     if (result.ok){
       return loadingStateEnum.success
     } else {
