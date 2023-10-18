@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from 'react'
+/*
+  Andrew Mainella
+  18 October 2023
+  Pauly
+*/
+
+import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text, Pressable, TextInput, Linking, ScrollView, ListRenderItemInfo, Switch } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
@@ -17,6 +23,8 @@ import BackButton from '../UI/BackButton';
 import MimeTypeIcon from '../UI/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '../Functions/classesFunctions';
 import { FlatList } from 'react-native-gesture-handler';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -76,6 +84,20 @@ export default function Notifications() {
     dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.white, bottom: Colors.white}))
   }, []) 
 
+  const [fontsLoaded] = useFonts({
+    'Comfortaa-Regular': require('../../assets/fonts/Comfortaa-Regular.ttf'),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <ScrollView style={{width: width, height: height, backgroundColor: Colors.white}}>
       { (currentBreakPoint === 0) ?
@@ -83,7 +105,7 @@ export default function Notifications() {
       }
       <View style={{width: width, height: height * 0.1, marginTop: (currentBreakPoint === 0) ? 10:0}}>
         <View style={{width: width * 0.9, height: height * 0.07, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, backgroundColor: Colors.darkGray, marginLeft: width * 0.05, marginRight: width * 0.05, marginTop: height * 0.015, marginBottom: height * 0.015}}>
-          <Text style={{color: Colors.white}}>{message}</Text>
+          <Text style={{color: Colors.white, fontFamily: "Comfortaa-Regular"}}>{message}</Text>
         </View>
       </View>
       { (currentBreakPoint === 0) ?
@@ -203,6 +225,11 @@ function TaskItem({task}:{task: ListRenderItemInfo<taskType>}) {
     }
     const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`, "PATCH", JSON.stringify(data))
     if (result.ok) {
+      var newItem: any = {}
+      Object.assign(newItem, task.item)
+      newItem.status = status
+      console.log("This is new Item", newItem)
+      dispatch(homepageDataSlice.actions.updateUserTask({index: task.index, task: newItem}))
       setUpdateTaskState(loadingStateEnum.success) 
     } else {
       setUpdateTaskState(loadingStateEnum.failed)

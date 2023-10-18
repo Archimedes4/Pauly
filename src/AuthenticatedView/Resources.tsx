@@ -1,11 +1,10 @@
 import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle, Linking } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-native'
+import { useNavigate } from 'react-router-native'
 import { getResources, getResourcesSearch } from '../Functions/getResources'
 import { useDispatch, useSelector } from 'react-redux'
 import store, { RootState } from '../Redux/store'
-import { AddIcon, CloseIcon, SearchIcon } from '../UI/Icons/Icons'
-import WebView from 'react-native-webview'
+import { CloseIcon, SearchIcon } from '../UI/Icons/Icons'
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import WebViewCross from '../UI/WebViewCross'
@@ -41,7 +40,7 @@ function checkIfResourceDataJustAttachment(body: string): boolean {
 
 export default function Resources() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {resources, loadingState, searchValue, selectedResourceMode} = useSelector((state: RootState) => state.resources)
+  const {resources, loadingState, selectedResourceMode} = useSelector((state: RootState) => state.resources)
   const {siteId} = useSelector((state: RootState) => state.paulyList)
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
   const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
@@ -174,7 +173,7 @@ function GovernmentCategoryView({teamId, channelId, messageId, onClose}:{teamId:
         "value":(selectedCategory === resourceMode.sports) ? "sports":(selectedCategory === resourceMode.advancement) ? "advancement":(selectedCategory === resourceMode.schoolEvents) ? "schoolEvents":(selectedCategory === resourceMode.annoucments) ? "annoucments":(selectedCategory === resourceMode.fitness) ? "fitness":"files"
       }
     ]}
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/messages/${messageId}`, "PATCH", undefined, JSON.stringify(data))
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/messages/${messageId}`, "PATCH", JSON.stringify(data))
     if (result.ok) {
       setCategoryState(loadingStateEnum.success)
     } else {

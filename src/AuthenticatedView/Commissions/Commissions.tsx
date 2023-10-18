@@ -92,7 +92,7 @@ export default function Commissions() {
           { (currentBreakPoint <= 0) ?
             <BackButton to='/'/>:null
           }
-          <Text style={{fontFamily: 'BukhariScript', fontSize:  25}}>Commissions</Text>
+          <Text style={{fontFamily: 'BukhariScript', fontSize:  25, color: Colors.white}}>Commissions</Text>
         </View>
         <View style={{height: (isHoverPicker) ? height * 0.8:height * 0.85}}>
           { (commissionsState === loadingStateEnum.loading) ?

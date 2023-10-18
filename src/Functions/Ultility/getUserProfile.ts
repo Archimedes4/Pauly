@@ -13,5 +13,11 @@ export default async function getUserProfile(accessToken: string) {
       const profileData = await profileResult.json()
       store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileData({uri: urlOut, displayName: profileData["displayName"], id: profileData["id"]}))
     }
+  } else {
+    const profileResult = await callMsGraph("https://graph.microsoft.com/v1.0/me", "GET")
+    if (profileResult.ok){
+      const profileData = await profileResult.json()
+      store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileData({uri: "", displayName: profileData["displayName"], id: profileData["id"]}))
+    }
   }
 }

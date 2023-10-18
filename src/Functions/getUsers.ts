@@ -49,11 +49,14 @@ export default async function getUsers(url?: string, search?: string) {
 
   const result = await callMsGraph(url ? url:`https://graph.microsoft.com/v1.0/users?$select=displayName,id,mail${filter}`, "GET", undefined, (search) ? [{key: "ConsistencyLevel", value: "eventual"}]:undefined)
   if (result.ok) {
+    //Getting user Ids from result
     const data = await result.json()
     var userIds: string[] = []
     for (var index = 0; index < data["value"].length; index++) {
       userIds.push(data["value"][index]["id"])
     }
+
+    //Getting selected user images from student files list in a batch request. 
     const batchResult = await largeBatch(undefined, {
       firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items?$expand=fields&$filter=fields/userId%20eq%20'`,
       secondUrl: "'%20and%20fields/selected%20eq%20true",
@@ -65,22 +68,26 @@ export default async function getUsers(url?: string, search?: string) {
     if (batchResult.result === loadingStateEnum.success && batchResult.data !== undefined) {
       for (var batchIndex = 0; batchIndex < batchResult.data.length; batchIndex++) {
         if (batchResult.data[batchIndex].status === 200) { //TO DO OK
-          if (batchResult.data[batchIndex].body["value"].length === 1) {
+          if (batchResult.data[batchIndex].body["value"].length === 1) { //Checking to make suare only one item is selected
             imagesIdsMap.set(batchResult.data[batchIndex].body["value"][0]["fields"]["userId"], batchResult.data[batchIndex].body["value"][0]["fields"]["itemId"])
             imageIdsArray.push(batchResult.data[batchIndex].body["value"][0]["fields"]["itemId"])
           }
         } else {
+          //Batch Response Failed
           store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
           return
         }
       }
     } else {
+      //Batch Failed
       store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
       return
     }
+
+    //Getting downloadUrls for images
     const batchResultDownloadUrls = await largeBatch(undefined, {
       firstUrl: `/sites/${store.getState().paulyList.siteId}/drive/items/`,
-      secondUrl: "?select=id,content.downloadUrl",
+      secondUrl: "?$expand=thumbnails($select=c300x400_crop)&$select=id",//?select=id,content.downloadUrl
       method: "GET",
       keys: {array: imageIdsArray}
     })
@@ -88,13 +95,15 @@ export default async function getUsers(url?: string, search?: string) {
     if (batchResultDownloadUrls.result === loadingStateEnum.success && batchResultDownloadUrls.data !== undefined) {
       for (var batchIndex = 0; batchIndex < batchResultDownloadUrls.data.length; batchIndex++) {
         if (batchResultDownloadUrls.data[batchIndex].status === 200) { //TO DO OK
-          imagesDownloadUrls.set(batchResultDownloadUrls.data[batchIndex].body["id"], batchResultDownloadUrls.data[batchIndex].body["@microsoft.graph.downloadUrl"])
+          imagesDownloadUrls.set(batchResultDownloadUrls.data[batchIndex].body["id"], batchResultDownloadUrls.data[batchIndex].body["thumbnails"][0]["c300x400_crop"]["url"])
         } else {
+          //Get Image failed
           store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
           return
         }
       }
     } else {
+      //Getting images batch failed
       store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
       return
     }
@@ -146,6 +155,7 @@ export default async function getUsers(url?: string, search?: string) {
     store.dispatch(studentSearchSlice.actions.setNextLink(data["@odata.nextLink"]))
     store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.success))
   } else {
+    //Getting users failed
     store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.failed))
   }
 }

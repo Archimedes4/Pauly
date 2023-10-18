@@ -4,7 +4,7 @@ import callMsGraph from "./Ultility/microsoftAssets"
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
 
 async function getResourceFollows() {
-  var nextLink = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.resourceListId}/items?expand=fields`
+  var nextLink = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.resourceListId}/items?expand=fields($select=resourceGroupId,resourceConversationId)&$select=id`
   while (nextLink !== "") {
     const result = await callMsGraph(nextLink)
     if (result.ok) {
@@ -92,9 +92,6 @@ export async function getResources(category?: resourceMode) {
                 output.push(outputData)
               }
             }
-          } else {
-            store.dispatch(resourcesSlice.actions.setResourcesState(loadingStateEnum.failed))
-            return
           }
         }
       } else {
@@ -127,7 +124,6 @@ export async function getResourcesSearch(search: string) {
   const searchResult = await callMsGraph("https://graph.microsoft.com/v1.0/search/query", "POST", JSON.stringify(searchPayload))
   if (searchResult.ok) {
     const searchData = await searchResult.json()
-    console.log(searchData)
     var batchDataRequests: {id:string; method:string; url:string}[] = []
     if (searchData["value"].length === 1) {
       if (searchData["value"][0]["hitsContainers"].length === 1) {

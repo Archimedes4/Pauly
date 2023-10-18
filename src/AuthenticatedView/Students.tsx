@@ -61,7 +61,7 @@ export default function Students() {
             <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:Colors.white}}>
               <View style={{height: height * 0.15, width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: Colors.darkGray}}>
                 <BackButton to='/profile'/>
-                <Text style={{fontFamily: 'BukhariScript'}}>Students</Text>
+                <Text style={{fontFamily: 'BukhariScript', color: Colors.white}}>Students</Text>
               </View>
               <SearchBox getUsers={(e) => {
                 if (e !== "") {
@@ -104,18 +104,18 @@ export default function Students() {
 function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   async function getImage() {
-    setIsLoading(true)
     var newUser: any = {}
     Object.assign(newUser, user.item)
     if (user.item.imageDownloadUrl !== "noImage" && user.item.imageState !== loadingStateEnum.success && user.item.imageState !== loadingStateEnum.failed && user.item.imageState !== loadingStateEnum.loading) {
+      setIsLoading(true)
+      var updateStateUser: any = {}
+      Object.assign(updateStateUser, user.item)
+      updateStateUser.imageState = loadingStateEnum.loading
+      store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: updateStateUser}))
       const result = await callMsGraph(user.item.imageDownloadUrl)
       if (result.ok) {
-        
-        console.log("Download")
         const data = await result.blob()
-        console.log("Download Blob")
         const urlOut = URL.createObjectURL(data)
-        console.log("Download Url")
         newUser.imageState = loadingStateEnum.success
         newUser.imageDataUrl = urlOut
         setIsLoading(false)
@@ -125,8 +125,6 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
         store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}))
         setIsLoading(false)
       }
-    } else {
-      setIsLoading(false)
     }
   }
 
@@ -152,7 +150,7 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
         }
       </View>
       <View style={{flexDirection: "row", height: 14}}>
-        <Text style={{marginLeft: 5}}>{user.item.name}</Text>
+        <Text style={{marginLeft: 5, marginTop: 2}}>{user.item.name}</Text>
         {(user.item.student) ?
           <Text>{user.item.grade}</Text>:null
         }

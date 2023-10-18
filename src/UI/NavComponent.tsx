@@ -1,9 +1,7 @@
-import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react'
-import {Link, useNavigate} from 'react-router-native'
-//import {IoPersonCircleOutline} from "react-native-vector-icons/io5"
-import {Image, StyleSheet, View, Dimensions, Pressable, Text } from "react-native"
-import { Path, Svg, G } from 'react-native-svg'
-import {BookIcon, CalendarIcon, GovernmentIcon, HomeIcon, MedalIcon, PersonIcon, StudentSearchIcon} from './Icons/Icons'
+import React, { ReactNode, useCallback, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-native'
+import { Image, StyleSheet, View, Pressable, Text } from "react-native"
+import { BookIcon, CalendarIcon, GovernmentIcon, HomeIcon, MedalIcon, PersonIcon, StudentSearchIcon } from './Icons/Icons'
 import store, { RootState } from '../Redux/store'
 import { useDispatch, useSelector } from 'react-redux'
 import { useFonts } from 'expo-font';

@@ -10,14 +10,10 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
   headers.append("Content-Type", "application/json")
 
   if (headersIn !== undefined) {
-    for (var headerIndex = 0; headerIndex < headersIn?.length; headerIndex++) {
+    for (var headerIndex = 0; headerIndex < headersIn.length; headerIndex++) {
       headers.append(headersIn[headerIndex].key, headersIn[headerIndex].value)
     }
   }
-
-  // if (perfer){
-  //   headers.append('Prefer','outlook.timezone="Central America Standard Time"')
-  // }
 
   const options = {
     method: (method) ? method:"GET",

@@ -29,7 +29,7 @@ export default function GovernmentHomePage() {
     }
     async function createShareId(item: microsoftFileType): Promise<string | undefined> {
       const data = {
-        "type": "edit",
+        "type": "view",
         "scope": "organization"
       }
       const result = await callMsGraph(item.callPath + "/createLink", "POST", JSON.stringify(data))

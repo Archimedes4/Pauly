@@ -3,7 +3,8 @@ import { dataContentTypeOptions } from "../../types";
 import callMsGraph from "./microsoftAssets"
 
 export default async function getFileWithShareID(shareID: string): Promise<{result: loadingStateEnum, url?: string; contentType?: dataContentTypeOptions }> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/shares/${shareID}/driveItem`)
+  
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/shares/${shareID}/driveItem`, "GET", undefined, [{key: "Prefer", value: "redeemSharingLink"}])
   if (result.ok){
     const data = await result.json()
     if (data["@microsoft.graph.downloadUrl"] !== undefined && data["@microsoft.graph.downloadUrl"] !== null){
