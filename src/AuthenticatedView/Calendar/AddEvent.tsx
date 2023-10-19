@@ -1,27 +1,31 @@
-import { useCallback, useEffect, useState } from "react";
+/*
+  Andrew Mainella
+  October 18 2023
+  Pauly
+  AddEvent.tsx
+*/
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, View, Text, Switch, TextInput } from "react-native";
+import { TimePickerModal } from 'react-native-paper-dates';
+import { DatePickerModal } from 'react-native-paper-dates';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Redux/store";
 import { currentEventsSlice } from "../../Redux/reducers/currentEventReducer";
-import { CalendarIcon, CloseIcon, TimeIcon } from "../../UI/Icons/Icons";
+import { addEventSlice } from "../../Redux/reducers/addEventReducer";
 import callMsGraph from "../../Functions/Ultility/microsoftAssets";
 import SelectTimetable from "./SelectTimetable";
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+import SelectSchoolDayData from "./SelectSchoolDayData";
 import { Colors, loadingStateEnum, paulyEventType} from "../../types";
 import PickerWrapper from "../../UI/Pickers/Picker";
-import SelectSchoolDayData from "./SelectSchoolDayData";
+import { CalendarIcon, CloseIcon, TimeIcon } from "../../UI/Icons/Icons";
 import updateEvent from "../../Functions/updateEvent";
-import { addEventSlice } from "../../Redux/reducers/addEventReducer";
-import React from "react";
-import { TimePickerModal } from 'react-native-paper-dates';
-import { DatePickerModal } from 'react-native-paper-dates';
 
 export default function AddEvent({width, height}:{width: number, height: number}) {
-  const selectedDate = useSelector((state: RootState) => state.selectedDate)
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
   const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
-  const {selectedEventType, isPickingStartDate, isPickingEndDate, eventName, allDay, isEditing, isShowingAddDate, selectedEvent, createEventState, recurringEvent, selectedRecurringType, startDate, endDate} = useSelector((state: RootState) => state.addEvent)
+  const {selectedEventType, isEditing, selectedEvent, createEventState} = useSelector((state: RootState) => state.addEvent)
   const dispatch = useDispatch()
   
   useEffect(() => {
@@ -61,7 +65,7 @@ export default function AddEvent({width, height}:{width: number, height: number}
 
   return (
     <View style={{backgroundColor: Colors.white, width: width, height: height, borderRadius: 5, borderWidth: 5}}>
-      <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false))}}>
+      <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false)); dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.notStarted))}}>
         <CloseIcon width={10} height={10}/>
       </Pressable>
       <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
@@ -132,10 +136,12 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
         label="Select Date"
         visible={isPickingStartDate}
         onDismiss={() => dispatch(addEventSlice.actions.setIsPickingStartDate(false))}
-        date={new Date(endDate)}
+        date={new Date(startDate)}
         onConfirm={(e) => {
+          console.log(e.date)
           if (e.date !== undefined) {
-            dispatch(addEventSlice.actions.setStartDate(e.date.toISOString()))
+            const oldDate = new Date(startDate)
+            dispatch(addEventSlice.actions.setStartDate(new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate(), oldDate.getHours(), oldDate.getMinutes()).toISOString()))
           }
           dispatch(addEventSlice.actions.setIsPickingStartDate(false))
         }}
@@ -149,7 +155,8 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
         date={new Date(endDate)}
         onConfirm={(e) => {
           if (e.date !== undefined) {
-            dispatch(addEventSlice.actions.setEndDate(e.date.toISOString()))
+            const oldDate = new Date(endDate)
+            dispatch(addEventSlice.actions.setStartDate(new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate(), oldDate.getHours(), oldDate.getMinutes()).toISOString()))
           }
           dispatch(addEventSlice.actions.setIsPickingEndDate(false))
         }}

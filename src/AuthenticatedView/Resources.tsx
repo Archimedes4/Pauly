@@ -85,7 +85,7 @@ export default function Resources() {
           { (currentBreakPoint <= 0) ?
             <BackButton to='/'/>:null
           }
-          <Text style={{fontFamily: "BukhariScript"}}>Resources</Text>
+          <Text style={{fontFamily: "BukhariScript", color: Colors.white}}>Resources</Text>
         </View>
         <SearchBox />
         <View style={{width: width, height: height * 0.05, backgroundColor: Colors.lightGray}}/>

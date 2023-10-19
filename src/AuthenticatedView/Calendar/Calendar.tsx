@@ -99,14 +99,14 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
           { (new Date(selectedDate).getDate() <= monthData.length) ?
             <>
               {monthData[new Date(selectedDate).getDate() - 1].events.map((event) => (
-                <View key={create_UUID()}>
+                <View key={event.id}>
                   <Text>{event.name}</Text>
                 </View>
               ))}
             </>:null
           }
         </ScrollView>:
-         <View style={{backgroundColor: Colors.white, height: height, width: width}}>
+        <View style={{backgroundColor: Colors.white, height: height, width: width}}>
           <MonthView width={width} height={height} />
         </View>
       }
@@ -116,7 +116,7 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
 
 function MonthView({width, height}:{width: number, height: number}) {
   //const [monthData, setMonthData] = useState<monthDataType[]>([])
-  const daysInWeek: String[] = ["Sat", "Mon", "Tue", "Wen", "Thu", "Fri", "Sun"]
+  const daysInWeek: String[] = ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"]
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
   const selectedDate: string =  useSelector((state: RootState) => state.selectedDate)
   const monthData = useSelector((state: RootState) => state.monthData)
@@ -215,14 +215,14 @@ function MonthView({width, height}:{width: number, height: number}) {
       <View style={{width: width}}>
         <View style={{flexDirection: "row"}}>
           {daysInWeek.map((DOW) => (
-            <View key={`DOW_${create_UUID()}`} style={{width: width/7, height: height/8, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
+            <View key={`DOW_${DOW})}`} style={{width: width/7, height: height/8, alignItems: "center", alignContent: "center", justifyContent: "center"}}>
               <Text style={{color: "black"}}>{DOW}</Text>
             </View>
           ))}
         </View>
         { Array.from(Array(7).keys()).map((valueRow) => (
-            <View key={`Row_${valueRow}_${create_UUID()}`} style={{flexDirection: "row"}}>
-              { monthData.map((value, id) => (
+            <View key={`Row_${valueRow}`} style={{flexDirection: "row"}}>
+              {monthData.map((value, id) => (
                 <>
                   {(id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
                     <>
@@ -231,11 +231,11 @@ function MonthView({width, height}:{width: number, height: number}) {
                           const d = new Date();
                           d.setFullYear(new Date(selectedDate).getFullYear(), new Date(selectedDate).getMonth(), value.dayData);
                           dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
-                        }} key={`CalendarButton_${value.id}_${create_UUID()}`}>
-                          <CalendarCardView key={`CalendarCardView_${create_UUID()}`} width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
+                        }} key={`CalendarButton_${value.id}`}>
+                          <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
                         </Pressable>:
                         <View key={`CalendarSpacer_${create_UUID()}`}>
-                          <CalendarCardView key={`CalendarCardView_${create_UUID()}`} width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
+                          <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
                         </View>
                       }
                     </>:null
