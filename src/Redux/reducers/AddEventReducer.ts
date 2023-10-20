@@ -72,7 +72,7 @@ export const addEventSlice = createSlice({
     setSelectedTimetable: (state, action: PayloadAction<timetableStringType>) => {
       return {...state, selectedTimetable: action.payload}
     },
-    setSelectedSchoolDayData: (state, action: PayloadAction<schoolDayDataType>) => {
+    setSelectedSchoolDayData: (state, action: PayloadAction<schoolDayDataType | undefined>) => {
       return {...state, selectedSchoolDayData: action.payload}
     },
     setSelectedSchoolYear: (state, action: PayloadAction<eventType>) => {

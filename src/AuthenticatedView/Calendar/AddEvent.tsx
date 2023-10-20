@@ -4,6 +4,7 @@
   Pauly
   AddEvent.tsx
 */
+
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from "react";
@@ -47,8 +48,6 @@ export default function AddEvent({width, height}:{width: number, height: number}
     }
   }
 
-  const [selectedSchoolYear, setSelectedSchoolYear] = useState<eventType | undefined>(undefined)
-
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });
@@ -64,31 +63,33 @@ export default function AddEvent({width, height}:{width: number, height: number}
   }
 
   return (
-    <View style={{backgroundColor: Colors.white, width: width, height: height, borderRadius: 5, borderWidth: 5}}>
-      <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false)); dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.notStarted))}}>
-        <CloseIcon width={10} height={10}/>
-      </Pressable>
-      <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
-      <DateAndTimeSection width={width} height={height}/>
-      { isGovernmentMode ?
-        <GovernmentCalendarOptions width={width} height={height}/>:null
-      }
-      <View style={{width: width, alignContent: 'center', alignItems: "center", justifyContent: "center"}}>
-        <Pressable onPress={() => {
-          dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.loading))
-          updateEvent()
-        }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
-          <Text style={{zIndex: -1}}>{isEditing ? "Save":(createEventState === loadingStateEnum.notStarted) ? "CREATE":(createEventState === loadingStateEnum.loading) ? "Loading":(createEventState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+    <View style={{backgroundColor: Colors.white, width: width + 30, height: height, borderRadius: 5, borderWidth: 5}}>
+      <View style={{margin: 10, width: width}}>
+        <Pressable onPress={() => {dispatch(addEventSlice.actions.setIsShowingAddDate(false)); dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.notStarted))}}>
+          <CloseIcon width={10} height={10}/>
         </Pressable>
+        <Text style={{fontFamily: "BukhariScript"}}>Add Event</Text>
+        <DateAndTimeSection width={width} height={height}/>
+        { isGovernmentMode ?
+          <GovernmentCalendarOptions width={width} height={height}/>:null
+        }
+        <View style={{width: width, alignContent: 'center', alignItems: "center", justifyContent: "center"}}>
+          <Pressable onPress={() => {
+            dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.loading))
+            updateEvent()
+          }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
+            <Text style={{zIndex: -1}}>{isEditing ? "Save":(createEventState === loadingStateEnum.notStarted) ? "CREATE":(createEventState === loadingStateEnum.loading) ? "Loading":(createEventState === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+          </Pressable>
+        </View>
+        { isEditing ? 
+          <Pressable onPress={() => {
+            dispatch(addEventSlice.actions.setIsShowingAddDate(false))
+            deleteEvent()
+          }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
+            <Text style={{zIndex: -1}}>Delete</Text>
+          </Pressable>:null
+        } 
       </View>
-      { isEditing ? 
-        <Pressable onPress={() => {
-          dispatch(addEventSlice.actions.setIsShowingAddDate(false))
-          deleteEvent()
-        }} style={{width: 100, height: 50, backgroundColor: "#00a4db", alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 2}}>
-          <Text style={{zIndex: -1}}>Delete</Text>
-        </Pressable>:null
-      } 
     </View>
   )
 }
@@ -100,11 +101,11 @@ function GovernmentCalendarOptions({width, height}:{width: number, height: numbe
     <>
       <View>
         <PickerWrapper selectedIndex={selectedEventType} onSetSelectedIndex={(e) => {dispatch(addEventSlice.actions.setSelectedEventType(e))}} width={width} height={height * 0.05}>
-          <Text numberOfLines={1} style={{fontSize: 8}}>Personal</Text>
-          <Text numberOfLines={1} style={{fontSize: 8}}>Regular</Text>
-          <Text numberOfLines={1} style={{fontSize: 8}}>School Day </Text>
-          <Text numberOfLines={1} style={{fontSize: 8}}>School Year</Text>
-          <Text numberOfLines={1} style={{fontSize: 8}}>Student Council</Text>
+          <Text numberOfLines={1} style={{fontSize: 8}} key={"Personal"}>Personal</Text>
+          <Text numberOfLines={1} style={{fontSize: 8}} key={"Regular"}>Regular</Text>
+          <Text numberOfLines={1} style={{fontSize: 8}} key={"Day"}>School Day </Text>
+          <Text numberOfLines={1} style={{fontSize: 8}} key={"Year"}>School Year</Text>
+          <Text numberOfLines={1} style={{fontSize: 8}} key={"Council"}>Student Council</Text>
         </PickerWrapper>
       </View>
       { (selectedEventType === paulyEventType.schoolDay) ?
@@ -131,7 +132,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
   return (
     <View>
       <DatePickerModal
-        locale="en"
+        locale={'en'}
         mode="single"
         label="Select Date"
         visible={isPickingStartDate}
@@ -147,16 +148,19 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
         }}
       />
       <DatePickerModal
-        locale="en"
+        locale={''}
         mode="single"
         label="Select Date"
         visible={isPickingEndDate}
         onDismiss={() => dispatch(addEventSlice.actions.setIsPickingEndDate(false))}
         date={new Date(endDate)}
         onConfirm={(e) => {
+          console.log(e.date)
           if (e.date !== undefined) {
             const oldDate = new Date(endDate)
-            dispatch(addEventSlice.actions.setStartDate(new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate(), oldDate.getHours(), oldDate.getMinutes()).toISOString()))
+            const newDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate(), oldDate.getHours(), oldDate.getMinutes()).toISOString()
+            console.log(newDate)
+            dispatch(addEventSlice.actions.setEndDate(newDate))
           }
           dispatch(addEventSlice.actions.setIsPickingEndDate(false))
         }}
@@ -171,7 +175,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
             style={{width: width * 0.8, height: height * 0.05, borderBottomColor: '#000000', borderBottomWidth: 1, marginLeft: width * 0.01}}
           />
           { (selectedEventType !== paulyEventType.schoolYear) ?
-            <View style={{flexDirection: "row"}}>
+            <View style={{flexDirection: "row", marginTop: 5, marginBottom: 5}}>
               <Text>All Day</Text>
               <Switch
                 trackColor={{false: '#767577', true: '#81b0ff'}}

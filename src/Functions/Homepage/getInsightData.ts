@@ -1,11 +1,20 @@
+/*
+  Andrew Mainella
+  20 October 2023
+  Pauly
+  getInsightData.ts
+
+  used to get insight files that are used on the notification page.
+*/
 import { loadingStateEnum } from "../../types";
 import callMsGraph from "../Ultility/microsoftAssets";
 
 export default async function getInsightData(): Promise<insightResult> {
-  const usedResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/insights/used")
+  //Get used https://learn.microsoft.com/en-us/graph/api/insights-list-used?view=graph-rest-1.0&tabs=http
+  const usedResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/insights/used?$select=resourceReference,resourceVisualization")
   var userOutData: resourceType[] = []
-  var userState: loadingStateEnum = loadingStateEnum.loading
-  if (usedResult.ok) {
+  var userState: loadingStateEnum = loadingStateEnum.loading //State of getting users data
+  if (usedResult.ok) { //Check if result success
     const userData = await usedResult.json()
     for (var index = 0; index < userData["value"].length; index++){
       userOutData.push({
@@ -19,9 +28,11 @@ export default async function getInsightData(): Promise<insightResult> {
   } else {
     userState = loadingStateEnum.failed
   }
-  const trendingResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/insights/trending")
+
+  //Get trending https://learn.microsoft.com/en-us/graph/api/insights-list-trending?view=graph-rest-1.0&tabs=http
+  const trendingResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/insights/trending?$select=resourceReference,resourceVisualization")
   const trendingOutData: resourceType[] = []
-  var trendingState = loadingStateEnum.loading
+  var trendingState = loadingStateEnum.loading //state of getting trendings data
   if (trendingResult.ok) {
     const trendingData = await trendingResult.json()
     for (var index = 0; index < trendingData["value"].length; index++){
@@ -29,7 +40,7 @@ export default async function getInsightData(): Promise<insightResult> {
         webUrl: trendingData["value"][index]["resourceReference"]["webUrl"],
         id: trendingData["value"][index]["resourceReference"]["id"],
         title: trendingData["value"][index]["resourceVisualization"]["title"],
-        type: trendingData["value"][index]["resourceVisualization"]["title"]
+        type: trendingData["value"][index]["resourceVisualization"]["type"]
       })
     }
     trendingState = loadingStateEnum.success

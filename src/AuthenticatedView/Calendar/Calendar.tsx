@@ -221,29 +221,29 @@ function MonthView({width, height}:{width: number, height: number}) {
           ))}
         </View>
         { Array.from(Array(7).keys()).map((valueRow) => (
-            <View key={`Row_${valueRow}`} style={{flexDirection: "row"}}>
-              {monthData.map((value, id) => (
-                <>
-                  {(id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
-                    <>
-                      { value.showing ?
-                        <Pressable onPress={() => {
-                          const d = new Date();
-                          d.setFullYear(new Date(selectedDate).getFullYear(), new Date(selectedDate).getMonth(), value.dayData);
-                          dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
-                        }} key={`CalendarButton_${value.id}`}>
-                          <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
-                        </Pressable>:
-                        <View key={`CalendarSpacer_${create_UUID()}`}>
-                          <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
-                        </View>
-                      }
-                    </>:null
-                  }
-                </>
-              ))}
-            </View>
-          ))}
+          <View key={`Row_${valueRow}`} style={{flexDirection: "row"}}>
+            {monthData.map((value, id) => (
+              <>
+                {(id >= valueRow * 7 && id <= valueRow * 7 + 6) ?
+                  <>
+                    { value.showing ?
+                      <Pressable onPress={() => {
+                        const d = new Date();
+                        d.setFullYear(new Date(selectedDate).getFullYear(), new Date(selectedDate).getMonth(), value.dayData);
+                        dispatch(selectedDateSlice.actions.setCurrentEventsLastCalled(d.toISOString()))
+                      }} key={`CalendarButton_${value.id}`}>
+                        <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
+                      </Pressable>:
+                      <View key={`CalendarSpacer_${create_UUID()}`}>
+                        <CalendarCardView width={width / 7} height={height / 8} value={value} calendarWidth={width}/>
+                      </View>
+                    }
+                  </>:null
+                }
+              </>
+            ))}
+          </View>
+        ))}
       </View>
     </>
   )

@@ -203,7 +203,7 @@ function TaskBlock() {
 
 function DeleteTask({onDelete}:{onDelete: () => void}) {
   return (
-    <Pressable onPress={() => onDelete()}>
+    <Pressable onPress={() => onDelete()} style={{marginLeft: 10, marginRight: 10}}>
       <Text>Delete</Text>
     </Pressable>
   )
@@ -312,7 +312,7 @@ function TaskItem({task}:{task: ListRenderItemInfo<taskType>}) {
             null:<DeleteTask onDelete={() => deleteTask()}/>
           }
         </>}>
-          <View style={{flexDirection: "row", width: width * 0.9}}>
+          <View style={{flexDirection: "row", width: width * 0.9, paddingTop: 5, paddingBottom: 5}}>
             <Pressable onPress={() => {
               setChecked(!checked)
               if (!checked) {

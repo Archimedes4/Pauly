@@ -54,6 +54,7 @@ export default async function createEvent() {
       }
     }
     const schoolDay = store.getState().addEvent.selectedSchoolDayData
+    const schoolYearId = store.getState().addEvent.selectedSchoolYear?.id
     if (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay) {
       if (schoolDay !== undefined) {
         if (store.getState().addEvent.selectedSchoolDayData === undefined) return loadingStateEnum.failed
@@ -82,14 +83,14 @@ export default async function createEvent() {
           "value":store.getState().addEvent.selectedTimetable.id
         }
       ]
-    } else if (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay && schoolDay !== undefined) {
+    } else if (store.getState().addEvent.selectedEventType === paulyEventType.schoolDay && schoolDay !== undefined && schoolYearId !== undefined) {
       const selectedSchoolDayDataCompressed: schoolDayDataCompressedType = {
         schoolDayId: schoolDay.schoolDay.id,
         scheduleId: schoolDay.schedule.id,
         dressCodeId: schoolDay.dressCode.id,
         semester: schoolDay.semester,
         dressCodeIncentiveId: (schoolDay.dressCodeIncentive?.id === undefined) ? "":schoolDay.dressCodeIncentive?.id,
-        schoolYearEventId: schoolDay.schoolDay.id
+        schoolYearEventId: schoolYearId
       }
       data["singleValueExtendedProperties"] = [
         {
@@ -120,6 +121,7 @@ export default async function createEvent() {
         allDay: false
       }
       store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent))
+      store.dispatch(addEventSlice.actions.setSelectedSchoolDayData(undefined))
       store.dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.success))
     } else {
       store.dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.failed))

@@ -1,21 +1,29 @@
-import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle, Linking } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-native'
-import { getResources, getResourcesSearch } from '../Functions/getResources'
-import { useDispatch, useSelector } from 'react-redux'
-import store, { RootState } from '../Redux/store'
-import { CloseIcon, SearchIcon } from '../UI/Icons/Icons'
+/*
+  Andrew Mainella
+  20 October 2023
+  Pauly
+  Resources.tsx
+  This is the main component for the resources section of pauly.
+  See README.md for more information about the resources section.
+*/
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import WebViewCross from '../UI/WebViewCross'
+import React, { useCallback, useEffect, useState } from 'react'
+import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle, Linking } from 'react-native'
+import { useNavigate } from 'react-router-native'
+import { useDispatch, useSelector } from 'react-redux'
+import store, { RootState } from '../Redux/store'
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
-import BackButton from '../UI/BackButton'
 import { Colors, loadingStateEnum, resourceMode } from '../types'
+import { CloseIcon, SearchIcon } from '../UI/Icons/Icons'
+import WebViewCross from '../UI/WebViewCross'
+import BackButton from '../UI/BackButton'
 import ProgressView from '../UI/ProgressView'
+import MimeTypeIcon from '../UI/Icons/MimeTypeIcon'
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer'
 import create_UUID from '../Functions/Ultility/CreateUUID'
 import callMsGraph from '../Functions/Ultility/microsoftAssets'
-import MimeTypeIcon from '../UI/Icons/MimeTypeIcon'
+import { getResources, getResourcesSearch } from '../Functions/getResources'
 
 //Resources
 // -> Sports
@@ -102,7 +110,7 @@ export default function Resources() {
                     {resources.map((resource) => (
                       <>
                         { isGovernmentMode ?
-                          <Pressable key={`Resource_${resource.id}_${create_UUID()}`} onPress={() => {setIsShowingCategoryView(true); setSelectedPost({teamId: resource.teamId, conversationId: resource.conversationId, messageId: resource.id})}} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: Colors.white, borderRadius: 15, marginBottom: height * 0.01}}>
+                          <Pressable key={`Resource_${resource.id}`} onPress={() => {setIsShowingCategoryView(true); setSelectedPost({teamId: resource.teamId, conversationId: resource.conversationId, messageId: resource.id})}} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: Colors.white, borderRadius: 15, marginBottom: height * 0.01}}>
                             { (resource.body !== "" && checkIfResourceDataJustAttachment(resource.body)) ?
                               <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>:null
                             }
@@ -117,14 +125,14 @@ export default function Resources() {
                               </View>:null
                             }
                           </Pressable>:
-                          <View key={`Resource_${resource.id}_${create_UUID()}`} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: Colors.white, borderRadius: 15, marginBottom: height * 0.01}}>
+                          <View key={`Resource_${resource.id}`} style={{width: width * 0.8, marginLeft: "auto", marginRight: "auto", backgroundColor: Colors.white, borderRadius: 15, marginBottom: height * 0.01}}>
                             { (resource.body !== "" && checkIfResourceDataJustAttachment(resource.body)) ?
                               <WebViewCross width={width * 0.8 - 20} html={(resource.html) ? resource.body:`<div><div>${resource.body}</div></div>`}/>:null
                             }
                             { (resource.attachments !== undefined) ?
                               <View style={{marginLeft: 10, marginBottom: 10, marginRight: 10, marginTop: (resource.body === "" || !checkIfResourceDataJustAttachment(resource.body)) ? 10:0, overflow: "scroll"}}>
                                 {resource.attachments.map((attachment) => (
-                                  <Pressable style={{flexDirection: "row"}} onPress={() => {Linking.openURL(attachment.webUrl)}}>
+                                  <Pressable key={attachment.id} style={{flexDirection: "row"}} onPress={() => {Linking.openURL(attachment.webUrl)}}>
                                     <MimeTypeIcon width={14} height={14} mimeType={attachment.type}/>
                                     <Text>{attachment.title}</Text>
                                   </Pressable>

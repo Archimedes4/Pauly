@@ -4,10 +4,10 @@ import store from "../../Redux/store";
 import { paulyListSlice } from "../../Redux/reducers/paulyListReducer";
 
 export default async function getPaulyLists() {
-  const getRootSiteIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/sites/root", "GET")
+  const getRootSiteIdResult = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/sites/root?$select=id", "GET")
   if (getRootSiteIdResult.ok){
     const getRootSiteIdResultData = await getRootSiteIdResult.json()
-    const paulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyList/items?expand=fields", "GET")
+    const paulyListResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData["id"]}/lists/PaulyList/items?expand=fields&$select=id`, "GET")
     if (paulyListResult.ok){
       const paulyListResultData = await paulyListResult.json()
       //TO DO make the value secure meaning that others cannot add to the pauly list
