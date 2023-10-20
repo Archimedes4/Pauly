@@ -59,13 +59,13 @@ export default function Calendar() {
   return (
     <View>
       <View style={{height: height * 0.1, backgroundColor: Colors.darkGray}}>
-        { (currentBreakPoint >= 1) ?
+        {(currentBreakPoint >= 1) ?
           null:<BackButton to='/' style={{zIndex: 100}}/>
         } 
         <TopView width={width} height={height * 0.1} />
       </View> 
       <View style={{height: height * 0.9}}>
-      { (selectedCalendarMode === calendarMode.month) ?
+      {(selectedCalendarMode === calendarMode.month) ?
         <View style={{width: width, alignContent: "center", alignItems: "center", justifyContent: "center", backgroundColor: Colors.white}}>
           <MonthViewMain width={width * 0.9} height={height * 0.9} />
         </View>:null
@@ -93,7 +93,8 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
   const selectedDate: string =  useSelector((state: RootState) => state.selectedDate)
   return (
     <>
-      { (width <= 519) ?
+      {/*Chosing between large mode with each day having expanded calendars and reduced mode with list of events on each day.*/}
+      {(width <= 519) ?
         <ScrollView style={{backgroundColor: Colors.white, height: height, width: width}}>
           <MonthView width={width} height={height * 0.8} /> 
           { (new Date(selectedDate).getDate() <= monthData.length) ?
@@ -115,7 +116,6 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
 }
 
 function MonthView({width, height}:{width: number, height: number}) {
-  //const [monthData, setMonthData] = useState<monthDataType[]>([])
   const daysInWeek: String[] = ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"]
   const currentEvents = useSelector((state: RootState) => state.currentEvents)
   const selectedDate: string =  useSelector((state: RootState) => state.selectedDate)

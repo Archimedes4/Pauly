@@ -1,25 +1,25 @@
-import { View, Text, TextInput, ScrollView, Pressable, Switch, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Slider from '../../../../UI/Slider/Slider';
+import { View, Text, TextInput, ScrollView, Pressable, Switch, Image } from 'react-native'
 import { useParams } from 'react-router-native'
-import MapWeb from '../../../../UI/Map/Map.web';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/Ultility/CreateUUID';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { FlatList } from 'react-native-gesture-handler';
+import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 import store, { RootState } from '../../../../Redux/store';
-import SegmentedPicker from "../../../../UI/Pickers/SegmentedPicker"
 import { Colors, commissionTypeEnum, loadingStateEnum, submissionTypeEnum } from '../../../../types';
+import SegmentedPicker from "../../../../UI/Pickers/SegmentedPicker"
 import ProgressView from '../../../../UI/ProgressView';
-import { getChannels, getPosts, getTeams } from '../../../../Functions/groupsData';
 import WebViewCross from '../../../../UI/WebViewCross';
+import { CloseIcon } from '../../../../UI/Icons/Icons';
+import MapWeb from '../../../../UI/Map/Map.web';
+import Slider from '../../../../UI/Slider/Slider';
+import BackButton from '../../../../UI/BackButton';
+import { getChannels, getPosts, getTeams } from '../../../../Functions/groupsData';
 import getCommission from '../../../../Functions/commissions/getCommission';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
-import { CloseIcon } from '../../../../UI/Icons/Icons';
-import BackButton from '../../../../UI/BackButton';
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import create_UUID from '../../../../Functions/Ultility/CreateUUID';
 import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
-import { FlatList } from 'react-native-gesture-handler';
 import updateCommission from '../../../../Functions/commissions/updateCommission';
-import { TimePickerModal } from 'react-native-paper-dates';
 
 enum datePickingMode {
   none,
@@ -57,10 +57,10 @@ export default function GovernmentEditCommission() {
   const [selectedTeamId, setSelectedTeamId] = useState<string>("")
   const [selectedChannelId, setSelectedChannelId] = useState<string>("")
   const [selectedPostId, setSelectedPostId] = useState<string>("")
+  const [endTimePickerVisable, setEndTimePickerVisable] = useState<boolean>(false)
+  const [startTimePickerVisable, setStartTimePickerVisable] = useState<boolean>(false)
   const [endDatePickerVisable, setEndDatePickerVisable] = useState<boolean>(false)
   const [startDatePickerVisable, setStartDatePickerVisable] = useState<boolean>(false)
-  const [endDateDatePickerVisable, setEndDateDatePickerVisable] = useState<boolean>(false)
-  const [startDateDatePickerVisable, setStartDateDatePickerVisable] = useState<boolean>(false)
   
   const [isCreating, setIsCreating] = useState<boolean>(false)
 
@@ -82,7 +82,6 @@ export default function GovernmentEditCommission() {
       setGetCommissionResult(result.result) 
     }
   }
-
   async function deleteCommission() {
     if (commissionItemId === "" || deleteCommissionResult === loadingStateEnum.loading || deleteCommissionResult === loadingStateEnum.success) {return}
     setDeleteCommissionResult(loadingStateEnum.loading)
@@ -163,14 +162,14 @@ export default function GovernmentEditCommission() {
           <View>
             <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
               <Text>Start Date</Text>
-              <Pressable onPress={() => {setStartDatePickerVisable(true)}}>
+              <Pressable style={{margin: 5}} onPress={() => {setStartDatePickerVisable(true)}}>
                 <Text>Pick Start Time</Text>
               </Pressable>
               <TimePickerModal
                 hours={new Date(startDate).getHours()}
                 minutes={new Date(startDate).getMinutes()} 
-                visible={startDatePickerVisable} 
-                onDismiss={() => setStartDatePickerVisable(false)} onConfirm={(e) => {
+                visible={startTimePickerVisable} 
+                onDismiss={() => setStartTimePickerVisable(false)} onConfirm={(e) => {
                   var newDate = new Date(startDate)
                   newDate.setHours(e.hours)
                   newDate.setMinutes(e.minutes)
@@ -178,28 +177,63 @@ export default function GovernmentEditCommission() {
                   setStartDatePickerVisable(false)
                 }}
               />
-              <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
+              <Pressable style={{margin: 5}} onPress={() => {setCurrentDatePickingMode(datePickingMode.start)}}>
                 <Text>Pick Start Date</Text>
               </Pressable>
+              <DatePickerModal
+                locale={''}
+                mode="single"
+                label="Select Date"
+                visible={startDatePickerVisable}
+                onDismiss={() => setStartDatePickerVisable(false)}
+                date={new Date(endDate)}
+                onConfirm={(e) => {
+                  if (e.date !== undefined) {
+                    const oldDate = new Date(endDate)
+                    const newDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate(), oldDate.getHours(), oldDate.getMinutes())
+                    setStartDate(newDate)
+                  }
+                  setStartDatePickerVisable(false)
+                }}
+              />
             </View>
             <View style={{alignContent: "center", alignItems: "center", justifyContent: "center", width: width}}>
               <Text>End Date</Text>
-              <Pressable onPress={() => {setStartDatePickerVisable(true)}}>
-                <Text>Pick Start Time</Text>
+              <Pressable style={{margin: 5}} onPress={() => {setStartTimePickerVisable(true)}}>
+                <Text>Pick End Time</Text>
               </Pressable>
               <TimePickerModal
-                hours={new Date(startDate).getHours()}
-                minutes={new Date(startDate).getMinutes()} 
-                visible={startDatePickerVisable} 
-                onDismiss={() => setStartDatePickerVisable(false)} onConfirm={(e) => {
+                hours={new Date(endDate).getHours()}
+                minutes={new Date(endDate).getMinutes()} 
+                visible={endTimePickerVisable} 
+                onDismiss={() => setEndTimePickerVisable(false)} onConfirm={(e) => {
                   var newDate = new Date(startDate)
                   newDate.setHours(e.hours)
                   newDate.setMinutes(e.minutes)
-                  setStartDate(newDate)
-                  setStartDatePickerVisable(false)
+                  setEndDate(newDate)
+                  setEndTimePickerVisable(false)
                 }}
               />
-              <Pressable onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}><Text>Pick End Date</Text></Pressable>
+              <Pressable style={{margin: 5}} onPress={() => {setCurrentDatePickingMode(datePickingMode.end)}}>
+                <Text>Pick End Date</Text>
+              </Pressable>
+              <DatePickerModal
+                locale={''}
+                mode="single"
+                label="Select Date"
+                visible={endDatePickerVisable}
+                onDismiss={() => setEndDatePickerVisable(false)}
+                date={new Date(endDate)}
+                onConfirm={(e) => {
+                  console.log(e.date)
+                  if (e.date !== undefined) {
+                    const oldDate = new Date(endDate)
+                    const newDate = new Date(e.date.getFullYear(), e.date.getMonth(), e.date.getDate(), oldDate.getHours(), oldDate.getMinutes())
+                    setEndDate(newDate)
+                  }
+                  setEndDatePickerVisable(false)
+                }}
+              />
             </View>
           </View>:null
         }
