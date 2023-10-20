@@ -175,7 +175,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
             style={{width: width * 0.8, height: height * 0.05, borderBottomColor: '#000000', borderBottomWidth: 1, marginLeft: width * 0.01}}
           />
           { (selectedEventType !== paulyEventType.schoolYear) ?
-            <View style={{flexDirection: "row", marginTop: 5, marginBottom: 5}}>
+            <View style={{flexDirection: "row", marginTop: 7, marginBottom: 7}}>
               <Text>All Day</Text>
               <Switch
                 trackColor={{false: '#767577', true: '#81b0ff'}}
@@ -183,6 +183,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={(e) => {dispatch(addEventSlice.actions.setAllDay(e))}}
                 value={allDay}
+                style={{marginLeft: 10}}
               />
             </View>:null
           }

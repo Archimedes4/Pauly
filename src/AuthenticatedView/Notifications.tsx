@@ -5,7 +5,7 @@
 */
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { View, Text, Pressable, TextInput, Linking, ScrollView, ListRenderItemInfo, Switch } from 'react-native'
+import { View, Text, Pressable, TextInput, Linking, ScrollView, ListRenderItemInfo, Switch, Animated } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
@@ -25,6 +25,7 @@ import { getClassEventsFromDay } from '../Functions/classesFunctions';
 import { FlatList } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { TrashIcon } from '../UI/Icons/Icons';
 
 //Get Messages
 // Last Chat Message Channels Included
@@ -201,10 +202,10 @@ function TaskBlock() {
   )
 }
 
-function DeleteTask({onDelete}:{onDelete: () => void}) {
+function DeleteTask({onDelete}:{onDelete: () => void, e: Animated.AnimatedInterpolation<string | number>}) {
   return (
-    <Pressable onPress={() => onDelete()} style={{marginLeft: 10, marginRight: 10}}>
-      <Text>Delete</Text>
+    <Pressable onPress={() => onDelete()} style={{paddingLeft: 10, paddingRight: 10, backgroundColor: Colors.danger}}>
+      <TrashIcon width={14} height={14}/>
     </Pressable>
   )
 }
@@ -307,9 +308,9 @@ function TaskItem({task}:{task: ListRenderItemInfo<taskType>}) {
   return (
     <>
       { (isShowingCompleteTasks || task.item.status !== taskStatusEnum.completed) ?
-        <Swipeable renderRightActions={() => <>
+        <Swipeable renderRightActions={(e) => <>
           {task.item.excess ?
-            null:<DeleteTask onDelete={() => deleteTask()}/>
+            null:<DeleteTask  e={e} onDelete={() => deleteTask()}/>
           }
         </>}>
           <View style={{flexDirection: "row", width: width * 0.9, paddingTop: 5, paddingBottom: 5}}>

@@ -1,6 +1,6 @@
 import { View, Text, Pressable, ViewStyle } from 'react-native'
 import React from 'react'
-import { Link, useNavigate } from 'react-router-native'
+import { useNavigate } from 'react-router-native'
 import create_UUID from '../Functions/Ultility/CreateUUID'
 import { Colors } from '../types';
 

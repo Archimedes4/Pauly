@@ -14,7 +14,7 @@ export default async function getEvents() {
   //Start of month that the selected date is in
   const startDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1)
   //End of month that the selected date is in
-  const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
+  const endDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1)
   
   //Personal Calendar
   var outputEvents: eventType[] = []

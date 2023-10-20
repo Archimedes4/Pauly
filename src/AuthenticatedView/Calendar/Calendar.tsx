@@ -257,8 +257,8 @@ function CalendarCardView({value, width, height, calendarWidth}:{value: monthDat
       { (calendarWidth <= 519) ?
         <>
           { (value.showing) ?
-            <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: (value.dayData === new Date(selectedDate).getDate()) ? height/2:0, backgroundColor: (value.dayData === new Date(selectedDate).getDate()) ? "#ededed":Colors.white}}>
-              <Text style={{color: "black"}}>{value.dayData}</Text>
+            <View style={{width: width, height: height, alignContent: "center", alignItems: "center", justifyContent: "center", borderRadius: height/2, backgroundColor: (value.dayData === new Date(selectedDate).getDate()) ? Colors.lightGray:(value.dayData === new Date().getDate() && new Date(selectedDate).getMonth() === new Date().getMonth() && new Date(selectedDate).getFullYear() === new Date().getFullYear()) ? Colors.darkGray:Colors.white}}>
+              <Text style={{color: (value.dayData === new Date().getDate() && new Date(selectedDate).getMonth() === new Date().getMonth() && new Date(selectedDate).getFullYear() === new Date().getFullYear() && new Date(selectedDate).getDate() !== value.dayData) ? Colors.black:Colors.white}}>{value.dayData}</Text>
               { (value.events.length >= 1) ?
                 <View style={{backgroundColor: "black", borderRadius: 50, width: (width < height) ? width* 0.25:height * 0.25, height: (width < height) ? width* 0.25:height * 0.25}}/>:
                 <View style={{backgroundColor: "transparent", borderRadius: 50, width: (width < height) ? width* 0.25:height * 0.25, height: (width < height) ? width* 0.25:height * 0.25}}/>
