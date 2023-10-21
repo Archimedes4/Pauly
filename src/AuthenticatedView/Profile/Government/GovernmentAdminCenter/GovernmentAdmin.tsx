@@ -1,12 +1,12 @@
-import { View, Text, Pressable, TextInput } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { Colors, loadingStateEnum } from '../../../../types';
-import { useNavigate } from 'react-router-native';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
-import { initializePaulyPartOne, initializePaulyPartThree, initializePaulyPartTwo } from '../../../../Functions/initializePauly/initializePauly'
+import React, { useEffect, useState } from 'react';
+import { View, Text, Pressable, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-native';
+import { initializePaulyPartOne, initializePaulyPartThree, initializePaulyPartTwo } from '../../../../Functions/initializePauly/initializePauly';
 import { RootState } from '../../../../Redux/store';
 import { addDataArray } from '../../../../Functions/initializePauly/initializePaulyData';
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import { Colors, loadingStateEnum } from '../../../../types';
 
 enum initStage {
   notStarted,

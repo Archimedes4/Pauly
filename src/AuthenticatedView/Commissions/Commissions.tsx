@@ -1,75 +1,66 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { FlatList, Pressable, ScrollView, Text, View, Image } from 'react-native'
-import { useNavigate } from 'react-router-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import React, { useCallback, useEffect, useState } from 'react'
+import { FlatList, Pressable, ScrollView, Text, View, Image } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
+import CommissionsView from './CommissionsView';
+import { commissionsSlice } from '../../Redux/reducers/commissionsReducer';
 import { RootState } from '../../Redux/store';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
+import create_UUID from '../../Functions/Ultility/CreateUUID';
 import getPoints from '../../Functions/commissions/getPoints';
 import getCommissions from '../../Functions/commissions/getCommissions';
-import { Colors, loadingStateEnum } from '../../types';
-import CommissionsView from './CommissionsView';
 import ProgressView from '../../UI/ProgressView';
 import BackButton from '../../UI/BackButton';
-import { commissionsSlice } from '../../Redux/reducers/commissionsReducer';
-import create_UUID from '../../Functions/Ultility/CreateUUID';
-
-enum CommissionMode{
-  Before,
-  Current,
-  Upcoming
-}
+import { Colors, loadingStateEnum } from '../../types';
 
 export default function Commissions() {
-  const {height, width} = useSelector((state: RootState) => state.dimentions)
-  const {siteId} = useSelector((state: RootState) => state.paulyList)
-  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {commissionNextLink} = useSelector((state: RootState) => state.commissions)
-  const {currentCommissions, selectedCommission, commissionsState, points} = useSelector((state: RootState) => state.commissions)
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
+  const {siteId} = useSelector((state: RootState) => state.paulyList);
+  const {commissionNextLink} = useSelector((state: RootState) => state.commissions);
+  const {currentCommissions, selectedCommission, commissionsState, points} = useSelector((state: RootState) => state.commissions);
 
-  const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
+  const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   //Loading States
 
   async function loadData() {
-    const pointResult = await getPoints()
+    const pointResult = await getPoints();
     if (pointResult.result === loadingStateEnum.success && pointResult.data !== undefined) {
-      dispatch(commissionsSlice.actions.setPoints(pointResult.data))
-      const commissionsResult = await getCommissions()
+      dispatch(commissionsSlice.actions.setPoints(pointResult.data));
+      const commissionsResult = await getCommissions();
       if (commissionsResult.result === loadingStateEnum.success, commissionsResult.data !== undefined) {
-        dispatch(commissionsSlice.actions.setCurrentCommissions(commissionsResult.data))
+        dispatch(commissionsSlice.actions.setCurrentCommissions(commissionsResult.data));
       }
-      dispatch(commissionsSlice.actions.setCommissionNextLink(commissionsResult.nextLink))
-      dispatch(commissionsSlice.actions.setCommissionsState(commissionsResult.result))
+      dispatch(commissionsSlice.actions.setCommissionNextLink(commissionsResult.nextLink));
+      dispatch(commissionsSlice.actions.setCommissionsState(commissionsResult.result));
     } else {
-      dispatch(commissionsSlice.actions.setCommissionsState(pointResult.result))
+      dispatch(commissionsSlice.actions.setCommissionsState(pointResult.result));
     }
     //TO DO pagination
   }
 
   async function loadCommissionData(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date: Date, filter: "ge"|"le"}, claimed?: boolean, nextLink?: string) {
-    dispatch(commissionsSlice.actions.setCommissionsState(loadingStateEnum.loading))
-    const result = await getCommissions(nextLink, startDate, endDate, claimed)
+    dispatch(commissionsSlice.actions.setCommissionsState(loadingStateEnum.loading));
+    const result = await getCommissions(nextLink, startDate, endDate, claimed);
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
-      dispatch(commissionsSlice.actions.setCurrentCommissions(result.data))
+      dispatch(commissionsSlice.actions.setCurrentCommissions(result.data));
     }
-    dispatch(commissionsSlice.actions.setCommissionsState(result.result))
-    dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink))
+    dispatch(commissionsSlice.actions.setCommissionsState(result.result));
+    dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink));
   }
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.darkGray, bottom: Colors.white}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.darkGray, bottom: Colors.white}));
   }, [])
 
   useEffect(() => {
     if (siteId !== "") {
-      loadData()
+      loadData();
     }
-  }, [siteId])
+  }, [siteId]);
 
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),

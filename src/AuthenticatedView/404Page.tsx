@@ -1,13 +1,13 @@
-import { View, Text, Pressable } from 'react-native'
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-native'
-import { useSelector } from 'react-redux'
-import { RootState } from '../Redux/store'
-import { Colors } from '../types'
+import React, { useState } from 'react';
+import { View, Text, Pressable } from 'react-native';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-native';
+import { RootState } from '../Redux/store';
+import { Colors } from '../types';
 
 export default function PageNotFound() {
-  const {height, width} = useSelector((state: RootState) => state.dimentions)
-  const [isBottonHover, setIsButtonHover] = useState<boolean>(false)
+  const {height, width} = useSelector((state: RootState) => state.dimentions);
+  const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
   const navigate = useNavigate();
   return (
     <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>

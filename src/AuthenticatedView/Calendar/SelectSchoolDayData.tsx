@@ -1,12 +1,12 @@
-import { View, Text, Pressable, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { loadingStateEnum, semesters } from '../../types'
-import create_UUID from '../../Functions/Ultility/CreateUUID'
-import { getGraphEvents, getTimetable } from '../../Functions/calendar/calendarFunctionsGraph'
-import { useDispatch, useSelector } from 'react-redux'
-import store, { RootState } from '../../Redux/store'
-import { orgWideGroupID } from '../../PaulyConfig'
-import { addEventSlice } from '../../Redux/reducers/addEventReducer'
+import React, { useEffect, useState } from 'react';
+import { View, Text, Pressable, ScrollView } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import create_UUID from '../../Functions/Ultility/CreateUUID';
+import { getGraphEvents, getTimetable } from '../../Functions/calendar/calendarFunctionsGraph';
+import { orgWideGroupID } from '../../PaulyConfig';
+import { addEventSlice } from '../../Redux/reducers/addEventReducer';
+import store, { RootState } from '../../Redux/store';
+import { loadingStateEnum, semesters } from '../../types';
 
 enum pickSchoolDayMode {
   schoolYear,
@@ -18,27 +18,27 @@ enum pickSchoolDayMode {
 }
 
 export default function SelectSchoolDayData({width, height}:{width: number, height: number}) {
-  const [schoolDayMode, setSchoolDayMode] = useState<pickSchoolDayMode>(pickSchoolDayMode.schoolYear)
-  const [timetableState, setTimetableState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
-  const [timetable, setTimetable] = useState<timetableType | undefined>(undefined)
-  const {selectedSchoolDayData, selectedSchoolYear, selectedTimetable} = useSelector((state: RootState) => state.addEvent)
-  const dispatch = useDispatch()
+  const [schoolDayMode, setSchoolDayMode] = useState<pickSchoolDayMode>(pickSchoolDayMode.schoolYear);
+  const [timetableState, setTimetableState] = useState<loadingStateEnum>(loadingStateEnum.notStarted);
+  const [timetable, setTimetable] = useState<timetableType | undefined>(undefined);
+  const {selectedSchoolDayData, selectedSchoolYear} = useSelector((state: RootState) => state.addEvent);
+  const dispatch = useDispatch();
 
   async function loadData(id: string) {
-    setTimetableState(loadingStateEnum.loading)
-    const result = await getTimetable(id)
+    setTimetableState(loadingStateEnum.loading);
+    const result = await getTimetable(id);
     if (result.result === loadingStateEnum.success && result.timetable !== undefined) {
-      setTimetable(result.timetable)
-      setTimetableState(loadingStateEnum.success)
+      setTimetable(result.timetable);
+      setTimetableState(loadingStateEnum.success);
     } else {
-      setTimetableState(loadingStateEnum.failed)
+      setTimetableState(loadingStateEnum.failed);
     }
   }
 
   useEffect(() => {
     if (selectedSchoolYear !== undefined && timetable === undefined){
       if (selectedSchoolYear.paulyEventData !== undefined) {
-        loadData(selectedSchoolYear.paulyEventData)
+        loadData(selectedSchoolYear.paulyEventData);
       }
     }
   }, [schoolDayMode, selectedSchoolYear])

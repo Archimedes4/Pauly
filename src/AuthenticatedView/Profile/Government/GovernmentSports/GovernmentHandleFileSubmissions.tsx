@@ -1,14 +1,20 @@
-import { View, Text, Pressable } from 'react-native'
+/*
+  Andrew Mainella
+  20 October 2023
+  Pauly
+  GovernmentHandleFileSubmissions.tsx
+*/
 import React, { useEffect, useState } from 'react'
+import { View, Text, Pressable } from 'react-native'
+import { FlatList } from 'react-native-gesture-handler'
 import { useNavigate } from 'react-router-native'
 import create_UUID from '../../../../Functions/Ultility/CreateUUID'
 import getSubmissions from '../../../../Functions/sports/getSubmissions'
 import { loadingStateEnum } from '../../../../types'
-import { FlatList } from 'react-native-gesture-handler'
 import ProgressView from '../../../../UI/ProgressView'
 
 export default function GovernmentHandleFileSubmissions({width, height}:{width: number, height: number}) {
-  const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([])
+  const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([]);
   const [loadingSubmissionsState, setLoadingSubmissionsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const navigate = useNavigate()
 

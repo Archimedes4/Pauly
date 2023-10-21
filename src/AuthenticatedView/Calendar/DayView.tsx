@@ -168,8 +168,8 @@ function EventBlock({event, width, height, eventPane, setEventPane}:{event: even
               }
             } else {
               //All Good
-              let newEvents: number[][] = eventPane
-              newEvents[horizontalCheck].push(Offset)
+              let newEvents: number[][] = eventPane;
+              newEvents[horizontalCheck].push(Offset);
               newEvents[horizontalCheck].push(Offset + EventHeight)
               // [...eventPane[horizontalCheck], Offset, Offset + EventHeight])
               eventPane[horizontalCheck].sort()

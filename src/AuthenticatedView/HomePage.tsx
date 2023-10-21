@@ -2,17 +2,17 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect, useCallback } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
-import MonthView from './MonthView';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigate } from 'react-router-native';
 import { useDispatch, useSelector } from 'react-redux';
+import MonthView from './MonthView';
 import store, { RootState } from '../Redux/store';
-import { BookIcon, MedalIcon, PersonIcon } from '../UI/Icons/Icons';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
-import { Colors, loadingStateEnum } from '../types';
 import ProgressView from '../UI/ProgressView';
+import { BookIcon, MedalIcon, PersonIcon } from '../UI/Icons/Icons';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors, loadingStateEnum } from '../types';
 
 export default function HomePage() {
   const navigate = useNavigate();

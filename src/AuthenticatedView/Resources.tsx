@@ -8,22 +8,22 @@
 */
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import React, { useCallback, useEffect, useState } from 'react'
-import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle, Linking } from 'react-native'
-import { useNavigate } from 'react-router-native'
-import { useDispatch, useSelector } from 'react-redux'
-import store, { RootState } from '../Redux/store'
-import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
-import { Colors, loadingStateEnum, resourceMode } from '../types'
-import { CloseIcon, SearchIcon } from '../UI/Icons/Icons'
-import WebViewCross from '../UI/WebViewCross'
-import BackButton from '../UI/BackButton'
-import ProgressView from '../UI/ProgressView'
-import MimeTypeIcon from '../UI/Icons/MimeTypeIcon'
-import { resourcesSlice } from '../Redux/reducers/resourcesReducer'
-import create_UUID from '../Functions/Ultility/CreateUUID'
-import callMsGraph from '../Functions/Ultility/microsoftAssets'
-import { getResources, getResourcesSearch } from '../Functions/getResources'
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, ScrollView, TextInput, Platform, Pressable, ViewStyle, Linking } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-native';
+import store, { RootState } from '../Redux/store';
+import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
+import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
+import create_UUID from '../Functions/Ultility/CreateUUID';
+import callMsGraph from '../Functions/Ultility/microsoftAssets';
+import { getResources, getResourcesSearch } from '../Functions/getResources';
+import { CloseIcon, SearchIcon } from '../UI/Icons/Icons';
+import WebViewCross from '../UI/WebViewCross';
+import BackButton from '../UI/BackButton';
+import ProgressView from '../UI/ProgressView';
+import MimeTypeIcon from '../UI/Icons/MimeTypeIcon';
+import { Colors, loadingStateEnum, resourceMode } from '../types';
 
 //Resources
 // -> Sports
@@ -47,18 +47,17 @@ function checkIfResourceDataJustAttachment(body: string): boolean {
 }
 
 export default function Resources() {
-  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {resources, loadingState, selectedResourceMode} = useSelector((state: RootState) => state.resources)
-  const {siteId} = useSelector((state: RootState) => state.paulyList)
-  const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false)
-  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
-  const [isShowingCategoryView, setIsShowingCategoryView] = useState<boolean>(false)
-  const [selectedPost, setSelectedPost] = useState<undefined | {teamId: string, conversationId: string, messageId: string}>(undefined)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
+  const {resources, loadingState, selectedResourceMode} = useSelector((state: RootState) => state.resources);
+  const {siteId} = useSelector((state: RootState) => state.paulyList);
+  const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode);
+  const [isShowingCategoryView, setIsShowingCategoryView] = useState<boolean>(false);
+  const [selectedPost, setSelectedPost] = useState<undefined | {teamId: string, conversationId: string, messageId: string}>(undefined);
+  const dispatch = useDispatch();
 
   async function loadData() {
-    await getResources(selectedResourceMode)
+    await getResources(selectedResourceMode);
   }
 
   useEffect(() => {

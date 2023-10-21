@@ -1,15 +1,14 @@
+import React, { useEffect, useState } from 'react'
 import { View, Text,Pressable } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import DayView from './DayView';
 import create_UUID from '../../Functions/Ultility/CreateUUID';
-import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
-import { ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
 import { Colors } from '../../types';
+import { ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
 
 export default function Week({width, height}:{width: number, height: number}) {
-  //const pageData = useContext(pageDataContext);
   const selectedDateRedux: string =  useSelector((state: RootState) => state.selectedDate)
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([])
   const dispatch = useDispatch()

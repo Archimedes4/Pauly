@@ -1,7 +1,7 @@
 import { View, Text, Image, Pressable } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
-import { Link, useNavigate, useParams } from 'react-router-native';
+import { useNavigate, useParams } from 'react-router-native';
 import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../../../../Redux/store';

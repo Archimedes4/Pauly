@@ -1,23 +1,22 @@
-import { View, Text, Image, ScrollView, Pressable } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-native'
+import { ResizeMode, Video } from 'expo-av';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../Redux/store'
-import { Colors, dataContentTypeOptions, loadingStateEnum } from '../types'
-import getSportsContent from '../Functions/sports/getSportsContent'
-import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer'
-import ProgressView from '../UI/ProgressView'
-import { ResizeMode, Video } from 'expo-av';
-import BackButton from '../UI/BackButton'
-import create_UUID from '../Functions/Ultility/CreateUUID'
-import { getSports, getSportsTeams } from '../Functions/sports/sportsFunctions'
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, Image, ScrollView, Pressable, FlatList } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-native';
+import { RootState } from '../Redux/store';
+import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
+import getSportsContent from '../Functions/sports/getSportsContent';
+import create_UUID from '../Functions/Ultility/CreateUUID';
+import { getSports, getSportsTeams } from '../Functions/sports/sportsFunctions';
 import getRoster from '../Functions/sports/getRoster';
-import { FlatList } from 'react-native-gesture-handler';
 import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
 import SegmentedPicker from '../UI/Pickers/SegmentedPicker';
 import SVGXml from '../UI/SVGXml/SVGXml';
+import BackButton from '../UI/BackButton';
+import ProgressView from '../UI/ProgressView';
+import { Colors, dataContentTypeOptions, loadingStateEnum } from '../types'
 
 export default function Sports() {
   const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)

@@ -1,19 +1,18 @@
-import { View, Text, Button, Pressable, Image } from 'react-native'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../Functions/Ultility/microsoftAssets'
-import { useParams } from 'react-router-native';
-import { RootState } from '../../Redux/store';
-import { useSelector } from 'react-redux';
-import { Colors, commissionTypeEnum, loadingStateEnum } from '../../types';
-import CommissionClaim from './CommissionClaim';
-import { CloseIcon } from '../../UI/Icons/Icons';
-import getCommission from '../../Functions/commissions/getCommission';
-import ProgressView from '../../UI/ProgressView';
-import * as ImagePicker from 'expo-image-picker';
-import WebViewCross from '../../UI/WebViewCross';
-import { ScrollView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useCallback, useEffect, useState } from 'react'
+import { View, Text, Pressable, Image } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../Redux/store';
+import CommissionClaim from './CommissionClaim';
+import getCommission from '../../Functions/commissions/getCommission';
+import callMsGraph from '../../Functions/Ultility/microsoftAssets';
+import ProgressView from '../../UI/ProgressView';
+import { CloseIcon } from '../../UI/Icons/Icons';
+import WebViewCross from '../../UI/WebViewCross';
+import { Colors, commissionTypeEnum, loadingStateEnum } from '../../types';
 
 enum CameraResult {
   notStarted,

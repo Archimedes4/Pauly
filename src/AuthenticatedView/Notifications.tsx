@@ -4,6 +4,8 @@
   Pauly
 */
 
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 import React, { useState, useEffect, useCallback } from 'react'
 import { View, Text, Pressable, TextInput, Linking, ScrollView, ListRenderItemInfo, Switch, Animated } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,8 +25,6 @@ import BackButton from '../UI/BackButton';
 import MimeTypeIcon from '../UI/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '../Functions/classesFunctions';
 import { FlatList } from 'react-native-gesture-handler';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { TrashIcon } from '../UI/Icons/Icons';
 
 //Get Messages
@@ -48,41 +48,41 @@ import { TrashIcon } from '../UI/Icons/Icons';
 //Assignments (problem is hard to test)
 
 export default function Notifications() {
-  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {siteId} = useSelector((state: RootState) => state.paulyList)
-  const {message, animationSpeed, powerpointBlob} = useSelector((state: RootState) => state.paulyData)
-  const dispatch = useDispatch()
+  const {width, height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
+  const {siteId} = useSelector((state: RootState) => state.paulyList);
+  const {message} = useSelector((state: RootState) => state.paulyData);
+  const dispatch = useDispatch();
 
   async function loadData() {
     if (siteId !== ""){
       //Calendar Data
-      getClassEventsFromDay()
+      getClassEventsFromDay();
 
       //Insights
-      const insightResult = await getInsightData()
-      dispatch(homepageDataSlice.actions.setTrendingData(insightResult.trendingData))
-      dispatch(homepageDataSlice.actions.setTrendingState(insightResult.trendingState))
-      dispatch(homepageDataSlice.actions.setUserData(insightResult.userData))
-      dispatch(homepageDataSlice.actions.setUserState(insightResult.userState))
+      const insightResult = await getInsightData();
+      dispatch(homepageDataSlice.actions.setTrendingData(insightResult.trendingData));
+      dispatch(homepageDataSlice.actions.setTrendingState(insightResult.trendingState));
+      dispatch(homepageDataSlice.actions.setUserData(insightResult.userData));
+      dispatch(homepageDataSlice.actions.setUserState(insightResult.userState));
 
       //Pauly Data
-      await getCurrentPaulyData()
+      await getCurrentPaulyData();
 
       //List Data 
-      const taskResult = await getUsersTasks()
+      const taskResult = await getUsersTasks();
       if (taskResult.result === loadingStateEnum.success && taskResult.data !== undefined) {
-        dispatch(homepageDataSlice.actions.setUserTasks(taskResult.data))
-      }
-      dispatch(homepageDataSlice.actions.setTaskState(taskResult.result))
+        dispatch(homepageDataSlice.actions.setUserTasks(taskResult.data));
+      };
+      dispatch(homepageDataSlice.actions.setTaskState(taskResult.result));
     }
   }
 
   useEffect(() => {
-    loadData()
-  }, [siteId])
+    loadData();
+  }, [siteId]);
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.white, bottom: Colors.white}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.white, bottom: Colors.white}));
   }, []) 
 
   const [fontsLoaded] = useFonts({
@@ -128,9 +128,9 @@ export default function Notifications() {
 }
 
 function WidgetView({width, height}:{width: number, height: number}) {
-  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {schoolDayData, startTime} = useSelector((state: RootState) => state.homepageData)
-  const dow: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
+  const {schoolDayData, startTime} = useSelector((state: RootState) => state.homepageData);
+  const dow: string[] = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   return (
     <View style={{backgroundColor: Colors.maroon, width: width, height: height, borderRadius: 15, marginLeft: (currentBreakPoint === 0) ? width * 0.05:0}}>
       <View style={{width: width, height: height/3, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
@@ -159,8 +159,8 @@ function WidgetView({width, height}:{width: number, height: number}) {
 }
 
 function TaskBlock() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {taskState, userTasks, isShowingCompleteTasks} = useSelector((state: RootState) => state.homepageData)
+  const {width, height} = useSelector((state: RootState) => state.dimentions);
+  const {taskState, userTasks, isShowingCompleteTasks} = useSelector((state: RootState) => state.homepageData);
   return (
     <View style={{width: width}}>
       <Text style={{fontSize: 24, marginLeft: width * 0.05, marginTop: height * 0.03, marginBottom: height * 0.02}}>Tasks</Text>
@@ -211,29 +211,29 @@ function DeleteTask({onDelete}:{onDelete: () => void, e: Animated.AnimatedInterp
 }
 
 function TaskItem({task}:{task: ListRenderItemInfo<taskType>}) {
-  const [checked, setChecked] = useState<boolean>((task.item.status === taskStatusEnum.completed))
-  const [updateTaskState, setUpdateTaskState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
-  const {width} = useSelector((state: RootState) => state.dimentions)
-  const { userTasks, isShowingCompleteTasks } = useSelector((state: RootState) => state.homepageData)
-  const [currentText, setCurrentText] = useState(task.item.name)
-  const [mounted, setMounted] = useState(false)
-  const dispatch = useDispatch()
+  const [checked, setChecked] = useState<boolean>((task.item.status === taskStatusEnum.completed));
+  const [updateTaskState, setUpdateTaskState] = useState<loadingStateEnum>(loadingStateEnum.notStarted);
+  const {width} = useSelector((state: RootState) => state.dimentions);
+  const { userTasks, isShowingCompleteTasks } = useSelector((state: RootState) => state.homepageData);
+  const [currentText, setCurrentText] = useState(task.item.name);
+  const [mounted, setMounted] = useState(false);
+  const dispatch = useDispatch();
 
   async function updateTaskStatus(status: taskStatusEnum) {
-    setUpdateTaskState(loadingStateEnum.loading)
+    setUpdateTaskState(loadingStateEnum.loading);
     const data = {
       "status":(status === taskStatusEnum.notStarted) ? "notStarted":(status === taskStatusEnum.inProgress) ? "inProgress":(status === taskStatusEnum.completed) ? "completed":(status === taskStatusEnum.waitingOnOthers) ? "waitingOnOthers":"deferred",
-    }
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`, "PATCH", JSON.stringify(data))
+    };
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`, "PATCH", JSON.stringify(data));
     if (result.ok) {
-      let newItem: any = {}
-      Object.assign(newItem, task.item)
-      newItem.status = status
-      console.log("This is new Item", newItem)
-      dispatch(homepageDataSlice.actions.updateUserTask({index: task.index, task: newItem}))
-      setUpdateTaskState(loadingStateEnum.success) 
+      let newItem: any = {};
+      Object.assign(newItem, task.item);
+      newItem.status = status;
+      console.log("This is new Item", newItem);
+      dispatch(homepageDataSlice.actions.updateUserTask({index: task.index, task: newItem}));
+      setUpdateTaskState(loadingStateEnum.success);
     } else {
-      setUpdateTaskState(loadingStateEnum.failed)
+      setUpdateTaskState(loadingStateEnum.failed);
     }
   }
 

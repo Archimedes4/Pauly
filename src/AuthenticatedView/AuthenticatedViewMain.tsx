@@ -1,3 +1,8 @@
+import React, { useState } from 'react';
+import { View, ScaledSize, Text, Pressable } from 'react-native';
+import { useSelector } from 'react-redux';
+import { NativeRouter, Route, Routes } from 'react-router-native';
+
 import HomePage from './HomePage';
 import Commissions from './Commissions/Commissions';
 import Notifications from './Notifications';
@@ -34,10 +39,6 @@ import GovernmentDressCodeCreate from './Profile/Government/GovernmentCalendar/G
 import GovernmentDressCode from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
 import GovernmentDressCodeEdit from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentTimetableEdit from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
-import { NativeRouter, Route, Routes } from 'react-router-native';
-import { View, ScaledSize, Text, Pressable } from 'react-native';
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ProfileBlock from './Profile/ProfileBlock';

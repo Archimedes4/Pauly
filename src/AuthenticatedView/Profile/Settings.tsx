@@ -1,57 +1,57 @@
-import { View, Text, Button, Pressable, Platform, Image } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-native'
-import { useMsal } from "@azure/msal-react";
-import { tenantId } from '../../PaulyConfig';
-import { GearIcon, GovernmentIcon, PersonIcon, StudentSearchIcon } from '../../UI/Icons/Icons';
-import BackButton from '../../UI/BackButton';
-import { DiscoveryDocument, revokeAsync, useAutoDiscovery } from 'expo-auth-session';
-import store, { RootState } from '../../Redux/store';
-import { authenticationTokenSlice } from '../../Redux/reducers/authenticationTokenReducer';
-import { useDispatch, useSelector } from 'react-redux';
 import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
+import { useMsal } from "@azure/msal-react";
+import { DiscoveryDocument, revokeAsync, useAutoDiscovery } from 'expo-auth-session';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import { Colors, loadingStateEnum } from '../../types';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, Pressable, Platform, Image } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-native';
+import { tenantId } from '../../PaulyConfig';
+import store, { RootState } from '../../Redux/store';
+import { authenticationTokenSlice } from '../../Redux/reducers/authenticationTokenReducer';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
+import { GearIcon, GovernmentIcon, PersonIcon, StudentSearchIcon } from '../../UI/Icons/Icons';
+import BackButton from '../../UI/BackButton';
+import { Colors, loadingStateEnum } from '../../types';
 
 export default function Settings() {
-  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
-  const {uri, displayName} = useSelector((state: RootState) => state.microsoftProfileData)
-  const [imageLoadState, setImageLoadState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode);
+  const {uri, displayName} = useSelector((state: RootState) => state.microsoftProfileData);
+  const [imageLoadState, setImageLoadState] = useState<loadingStateEnum>(loadingStateEnum.loading);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
-  const { instance } = useMsal()
+  const { instance } = useMsal();
   
   function signOut() {
     if (Platform.OS === "web") {
-      const account = instance.getActiveAccount()
+      const account = instance.getActiveAccount();
       if (account !== null) {
-        signOutWeb(instance, account)
+        signOutWeb(instance, account);
       } else {
-        signOutWeb(instance)
+        signOutWeb(instance);
       }
     } else {
       if (discovery !== null) {
-        signOutNative(discovery)
+        signOutNative(discovery);
       }
     }
   }
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.maroon, bottom: Colors.maroon}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.maroon, bottom: Colors.maroon}));
   }, [])
 
   useEffect(() => {
     if (currentBreakPoint >= 1) {
-      navigate("/")
+      navigate("/");
     }
-  }, [currentBreakPoint])
+  }, [currentBreakPoint]);
   
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
