@@ -3,14 +3,14 @@ import store from "../../Redux/store";
 import { authenticationCallSlice } from "../../Redux/reducers/authenticationCallReducer";
 
 export default async function callMsGraph(url: string, method?: "GET" | "POST" | "PATCH" | "DELETE" | "PUT", body?: string | Blob, headersIn?: {key: string, value: string}[], secondAuth?: boolean): Promise<Response> {
-  var headers: Headers = new Headers()
+  let headers: Headers = new Headers()
   const bearer = `Bearer ${store.getState().authenticationToken}`
 
   headers.append("Authorization", bearer);
   headers.append("Content-Type", "application/json")
 
   if (headersIn !== undefined) {
-    for (var headerIndex = 0; headerIndex < headersIn.length; headerIndex++) {
+    for (let headerIndex = 0; headerIndex < headersIn.length; headerIndex++) {
       headers.append(headersIn[headerIndex].key, headersIn[headerIndex].value)
     }
   }
@@ -21,12 +21,12 @@ export default async function callMsGraph(url: string, method?: "GET" | "POST" |
     body: body
   };
 
-  var outUrl = url
+  let outUrl = url
 
   if (Platform.OS !== "web") {
     const urlArray = url.split("%20")
     outUrl = ""
-    for (var index = 0; index < urlArray.length; index++) {
+    for (let index = 0; index < urlArray.length; index++) {
       if (index !== 0) {
         outUrl += " "+urlArray[index]
       } else {

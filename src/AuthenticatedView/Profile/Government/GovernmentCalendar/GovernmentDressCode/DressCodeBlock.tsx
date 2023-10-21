@@ -20,7 +20,7 @@ export default function DressCodeBlock({dressCode, index, dressCodeData, setDres
                   placeholder='Dress Code Name'
                   value={dressCode.name}
                   onChangeText={(e) => {
-                    var newDressCodeData = dressCodeData
+                    let newDressCodeData = dressCodeData
                     newDressCodeData[index].name = e
                     setDressCodeData([...newDressCodeData])
                   }}
@@ -37,7 +37,7 @@ export default function DressCodeBlock({dressCode, index, dressCodeData, setDres
                   placeholder='Dress Code Description'
                   value={dressCode.description}
                   onChangeText={(e) => {
-                    var newDressCodeData = dressCodeData
+                    let newDressCodeData = dressCodeData
                     newDressCodeData[index].description = e
                     setDressCodeData([...newDressCodeData])
                   }}

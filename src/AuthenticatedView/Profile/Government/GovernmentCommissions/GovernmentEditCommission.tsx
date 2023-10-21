@@ -170,7 +170,7 @@ export default function GovernmentEditCommission() {
                 minutes={new Date(startDate).getMinutes()} 
                 visible={startTimePickerVisable} 
                 onDismiss={() => setStartTimePickerVisable(false)} onConfirm={(e) => {
-                  var newDate = new Date(startDate)
+                  let newDate = new Date(startDate)
                   newDate.setHours(e.hours)
                   newDate.setMinutes(e.minutes)
                   setStartDate(newDate)
@@ -207,7 +207,7 @@ export default function GovernmentEditCommission() {
                 minutes={new Date(endDate).getMinutes()} 
                 visible={endTimePickerVisable} 
                 onDismiss={() => setEndTimePickerVisable(false)} onConfirm={(e) => {
-                  var newDate = new Date(startDate)
+                  let newDate = new Date(startDate)
                   newDate.setHours(e.hours)
                   newDate.setMinutes(e.minutes)
                   setEndDate(newDate)

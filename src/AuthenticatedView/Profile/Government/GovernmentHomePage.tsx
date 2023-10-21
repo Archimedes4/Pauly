@@ -41,7 +41,7 @@ export default function GovernmentHomePage() {
       }
     }
     async function updatePaulyData(key: string, data: string){
-      var dataOut: any = {}
+      let dataOut: any = {}
       dataOut[key] = data
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${paulyDataListId}/items/1/fields`, "PATCH", JSON.stringify(dataOut))//TO DO fix list ids
       if (result.ok){ 

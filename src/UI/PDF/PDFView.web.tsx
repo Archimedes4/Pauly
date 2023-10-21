@@ -20,9 +20,9 @@ export default function PDFView({width}:{width: number}) {
     const dataResult = await fetch(url)
     if (dataResult.ok) {
       const blob = await dataResult.blob()
-      var file = new Blob([blob], {type: 'application/pdf'});
-      var fileURL = URL.createObjectURL(file);
-      var docInitParams: DocumentInitParameters = {url: fileURL}
+      let file = new Blob([blob], {type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
+      let docInitParams: DocumentInitParameters = {url: fileURL}
       
       const pdf = await PDFJS.getDocument(docInitParams).promise
       const canvas = document.createElement("canvas"); //Fail

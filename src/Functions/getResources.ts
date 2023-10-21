@@ -4,7 +4,7 @@ import callMsGraph from "./Ultility/microsoftAssets"
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
 
 async function getResourceFollows() {
-  var nextLink = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.resourceListId}/items?expand=fields($select=resourceGroupId,resourceConversationId)&$select=id`
+  let nextLink = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.resourceListId}/items?expand=fields($select=resourceGroupId,resourceConversationId)&$select=id`
   while (nextLink !== "") {
     const result = await callMsGraph(nextLink)
     if (result.ok) {
@@ -14,8 +14,8 @@ async function getResourceFollows() {
       } else {
         nextLink = ""
       }
-      var output: resourceFollowType[] = []
-      for (var index = 0; index < data["value"].length; index++) {
+      let output: resourceFollowType[] = []
+      for (let index = 0; index < data["value"].length; index++) {
         output.push({
           teamId: data["value"][index]["fields"]["resourceGroupId"],
           channelId: data["value"][index]["fields"]["resourceConversationId"]
@@ -35,10 +35,10 @@ export async function getResources(category?: resourceMode) {
   await getResourceFollows()
   const categoryString = (category === resourceMode.sports) ? "sports":(category === resourceMode.advancement) ? "advancement":(category === resourceMode.schoolEvents) ? "schoolEvents":(category === resourceMode.annoucments) ? "annoucments":(category === resourceMode.fitness) ? "fitness":"files"
   const categoryFilter = `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.resourceExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.resourceExtensionId}'%20and%20ep/value%20eq%20'${categoryString}')`
-  var output: resourceDataType[] = []
-  var batchDataRequests: {id:string; method:string; url:string}[][] = [[]]
-  var batchCount = 0
-  for (var index = 0; index < store.getState().resources.resourceFollow.length; index++) {
+  let output: resourceDataType[] = []
+  let batchDataRequests: {id:string; method:string; url:string}[][] = [[]]
+  let batchCount = 0
+  for (let index = 0; index < store.getState().resources.resourceFollow.length; index++) {
     //resourceGroupId
     batchDataRequests[batchCount].push({
       "id": (index + 1).toString(),
@@ -50,7 +50,7 @@ export async function getResources(category?: resourceMode) {
       batchCount++
     }
   }
-  for (var index = 0; index < batchDataRequests.length; index++) {
+  for (let index = 0; index < batchDataRequests.length; index++) {
     const batchData = {
       "requests":batchDataRequests[index]
     }
@@ -58,12 +58,12 @@ export async function getResources(category?: resourceMode) {
       const resourceRsp = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
       if (resourceRsp.ok){
         const resourceResponceData = await resourceRsp.json()
-        for (var responceIndex = 0; responceIndex < resourceResponceData["responses"].length; responceIndex++) {
+        for (let responceIndex = 0; responceIndex < resourceResponceData["responses"].length; responceIndex++) {
           if (resourceResponceData["responses"][responceIndex]["status"] === 200) {
-            for (var dataIndex = 0; dataIndex < resourceResponceData["responses"][responceIndex]["body"]["value"].length; dataIndex++) {
+            for (let dataIndex = 0; dataIndex < resourceResponceData["responses"][responceIndex]["body"]["value"].length; dataIndex++) {
               if (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["body"]["content"] !== "<systemEventMessage/>") {
-                var attachments: resourceType[] = []
-                for (var attachmentIndex = 0; attachmentIndex < resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"].length; attachmentIndex++) {
+                let attachments: resourceType[] = []
+                for (let attachmentIndex = 0; attachmentIndex < resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"].length; attachmentIndex++) {
                   if (resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["attachments"][attachmentIndex]["contentType"] === "reference") {
                     const attachmentResult = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["channelIdentity"]["teamId"]}/channels/${resourceResponceData["responses"][responceIndex]["body"]["value"][dataIndex]["channelIdentity"]["channelId"]}/filesFolder`)
                     if (attachmentResult.ok) {
@@ -124,10 +124,10 @@ export async function getResourcesSearch(search: string) {
   const searchResult = await callMsGraph("https://graph.microsoft.com/v1.0/search/query", "POST", JSON.stringify(searchPayload))
   if (searchResult.ok) {
     const searchData = await searchResult.json()
-    var batchDataRequests: {id:string; method:string; url:string}[] = []
+    let batchDataRequests: {id:string; method:string; url:string}[] = []
     if (searchData["value"].length === 1) {
       if (searchData["value"][0]["hitsContainers"].length === 1) {
-        for (var index = 0; index < searchData["value"][0]["hitsContainers"][0]["hits"].length; index++) {
+        for (let index = 0; index < searchData["value"][0]["hitsContainers"][0]["hits"].length; index++) {
           if (searchData["value"][0]["hitsContainers"][0]["hits"][index]["resource"]["channelIdentity"] !== undefined) {
             const resourceIndex = store.getState().resources.resourceFollow.findIndex((e) => {return e.channelId === searchData["value"][0]["hitsContainers"][0]["hits"][index]["resource"]["channelIdentity"]["channelId"]})
             if (resourceIndex !== -1) {
@@ -153,8 +153,8 @@ export async function getResourcesSearch(search: string) {
       const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
       if (batchResult.ok) {
         const batchResultData = await batchResult.json()
-        var outputData: resourceDataType[] = []
-        for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
+        let outputData: resourceDataType[] = []
+        for (let batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
           if (batchResultData["responses"][batchIndex]["status"] === 200) {//TO DO fix ok code
             console.log(batchResultData["responses"][batchIndex]["body"])
             outputData.push({

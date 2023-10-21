@@ -30,7 +30,7 @@ export default function MicrosoftGraphEditList() {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/"+ id + "/columns/" + columnId, "PATCH", JSON.stringify(data))//TO DO fix ids
     if (result.ok){
       const data = await result.json()
-      var newColumnData: listColumnType[] = currentColumns
+      let newColumnData: listColumnType[] = currentColumns
       const index = newColumnData.findIndex((e) => {e.id === columnId})
       if (index !== -1){
         newColumnData[index].indexed = true
@@ -45,7 +45,7 @@ export default function MicrosoftGraphEditList() {
     if (result.ok) {
       const data = await result.json()
       if (data["value"].length !== undefined){
-        var newCurrentColumns: listColumnType[] = []
+        let newCurrentColumns: listColumnType[] = []
         for(let index = 0; index < data["value"].length; index++){
           newCurrentColumns.push({
             columnGroup: data["value"][index]["columnGroup"],

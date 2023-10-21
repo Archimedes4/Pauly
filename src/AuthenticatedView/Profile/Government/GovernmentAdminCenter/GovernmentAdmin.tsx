@@ -128,7 +128,7 @@ export default function GovernmentAdmin() {
   useEffect(() => {
     if (currentInitStage === initStage.partTwoLoad || currentInitStage === initStage.partThreeLoad) {
       const interval = setInterval(() => {
-        var miliSecondsPassed = new Date().getTime() - startTime.getTime()
+        let miliSecondsPassed = new Date().getTime() - startTime.getTime()
         if (currentInitStage === initStage.partTwoLoad) {
           miliSecondsPassed = new Date().getTime() - partOneStartTime.getTime()
         } else if (currentInitStage === initStage.partThreeLoad) {
@@ -137,14 +137,14 @@ export default function GovernmentAdmin() {
         
         const miliSecondsLeft = 900000 - miliSecondsPassed
         const totalSecondsLeft = miliSecondsLeft/1000
-        var minutesLeft: number = Math.floor(totalSecondsLeft/60)
-        var secondsLeft: number = Math.ceil(totalSecondsLeft%60)
+        let minutesLeft: number = Math.floor(totalSecondsLeft/60)
+        let secondsLeft: number = Math.ceil(totalSecondsLeft%60)
         if (secondsLeft === 60){
           minutesLeft++
           secondsLeft = 0
         }
-        var minutesLeftString: string = minutesLeft.toString()
-        var secondsLeftString: string = secondsLeft.toString()
+        let minutesLeftString: string = minutesLeft.toString()
+        let secondsLeftString: string = secondsLeft.toString()
         if (minutesLeft <= 9){
           minutesLeftString = "0" + minutesLeftString
         }
@@ -165,20 +165,20 @@ export default function GovernmentAdmin() {
   useEffect(() => {
     if (currentInitStage !== initStage.notStarted) {
       const interval = setInterval(() => {
-        var miliSecondsPast = new Date().getTime() - startTime.getTime()
+        let miliSecondsPast = new Date().getTime() - startTime.getTime()
         
         const totalSecondsLeft = miliSecondsPast/1000
-        var totalMinutesPast: number = Math.floor(totalSecondsLeft/60)
-        var minutesPast: number = Math.ceil(totalMinutesPast%60)
-        var hoursPast: number = Math.floor(totalMinutesPast/60)
-        var secondsPast: number = Math.ceil(totalSecondsLeft%60)
+        let totalMinutesPast: number = Math.floor(totalSecondsLeft/60)
+        let minutesPast: number = Math.ceil(totalMinutesPast%60)
+        let hoursPast: number = Math.floor(totalMinutesPast/60)
+        let secondsPast: number = Math.ceil(totalSecondsLeft%60)
         if (secondsPast === 60){
           minutesPast++
           secondsPast = 0
         }
-        var hoursLeftString: string = hoursPast.toString()
-        var minutesLeftString: string = minutesPast.toString()
-        var secondsLeftString: string = secondsPast.toString()
+        let hoursLeftString: string = hoursPast.toString()
+        let minutesLeftString: string = minutesPast.toString()
+        let secondsLeftString: string = secondsPast.toString()
         if (minutesPast <= 9){
           minutesLeftString = "0" + minutesLeftString
         }
@@ -249,7 +249,7 @@ export default function GovernmentAdmin() {
                 <View key={"Add_Data_" + addData.id}>
                   { (selectedUpdates.includes(addData.id)) ?
                     <Pressable style={{width: width * 0.7, backgroundColor: "blue"}} onPress={() => {
-                      var newSelectedUpdates = selectedUpdates
+                      let newSelectedUpdates = selectedUpdates
                       newSelectedUpdates.filter((e) => {return e !== addData.id})
                       setSelectedUpdates([...newSelectedUpdates])
                     }}>
@@ -296,8 +296,8 @@ function UserBlock({setSelectedUser, setInitResult}:{setSelectedUser: (item: mic
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/users?$top=10")
     if (result.ok){
       const data = await result.json()
-      var newUsers: microsoftUserType[] = []
-      for (var index = 0; index < data["value"].length; index++){
+      let newUsers: microsoftUserType[] = []
+      for (let index = 0; index < data["value"].length; index++){
         newUsers.push({
           id: data["value"][index]["id"],
           displayName: data["value"][index]["displayName"]

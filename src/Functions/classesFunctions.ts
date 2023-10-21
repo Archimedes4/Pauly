@@ -10,8 +10,8 @@ export async function getRooms(nextLink?: string, search?: string): Promise<{res
   const result = await callMsGraph(nextLink ? nextLink:"https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.roomListId +"/items?expand=fields" +  search)
   if (result.ok){
     const data = await result.json()
-    var resultArray: roomType[] = []
-    for (var index = 0; index < data["value"].length; index++){
+    let resultArray: roomType[] = []
+    for (let index = 0; index < data["value"].length; index++){
       resultArray.push({
         name: data["value"][index]["fields"]["roomName"],
         id: data["value"][index]["fields"]["roomId"]
@@ -42,8 +42,8 @@ export async function getRoom(roomId: string): Promise<{result: loadingStateEnum
 }
 
 export async function getClasses(): Promise<{result: loadingStateEnum, data?: classType[]}> {
-  var classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`
-  var batchDataRequests: {id: string, method: string, url: string}[][] = [[]]
+  let classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`
+  let batchDataRequests: {id: string, method: string, url: string}[][] = [[]]
   while (classQuery !== undefined) {
     const classResult = await callMsGraph(classQuery)
     if (classResult.ok) {
@@ -53,7 +53,7 @@ export async function getClasses(): Promise<{result: loadingStateEnum, data?: cl
       //Batch Request perfroming a get request on each class group
 
       //Format Data
-      for (var index = 0; index < classData["value"].length; index++) {
+      for (let index = 0; index < classData["value"].length; index++) {
         batchDataRequests[Math.floor(index/20)].push({
           id: (index + 1).toString(),
           method: "GET",
@@ -67,15 +67,15 @@ export async function getClasses(): Promise<{result: loadingStateEnum, data?: cl
   //Run Queries
   const batchHeaders = new Headers()
   batchHeaders.append("Accept", "application/json")
-  var classes: classType[] = []
-  for (var index = 0; index < batchDataRequests.length; index++) {
+  let classes: classType[] = []
+  for (let index = 0; index < batchDataRequests.length; index++) {
     const batchData = {
       "requests":batchDataRequests[index]
     }
     const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData))
     if (batchResult.ok){
       const batchResultData = await batchResult.json()
-      for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
+      for (let batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
         if (batchResultData["responses"][batchIndex]["status"] === 200) {
           if (batchResultData["responses"][batchIndex]["body"][store.getState().paulyList.classExtensionId] !== undefined) {
             classes.push({
@@ -106,19 +106,19 @@ export async function getClassEvents(scheduleId: string, semester: semesters, sc
   const scheduleResult = await getSchedule(scheduleId)
   const classResult = await getClasses()
   if (scheduleResult.result === loadingStateEnum.success && classResult.result === loadingStateEnum.success && classResult.data !== undefined && scheduleResult.schedule !== undefined) {
-    var outputEvents: eventType[] = []
-    for (var index = 0; index < classResult.data.length; index++) {
+    let outputEvents: eventType[] = []
+    for (let index = 0; index < classResult.data.length; index++) {
       if (classResult.data[index].schoolYearId === schoolYearEventId && classResult.data[index].semester === semester) {
         //This check should never fail
         if (classResult.data[index].periods.length > schoolDay.order){
           //Find Time
           const period: number = classResult.data[index].periods[schoolDay.order]
           const periodData = scheduleResult.schedule.periods[period]
-          var startDate: Date = new Date(date.toISOString())
+          let startDate: Date = new Date(date.toISOString())
           startDate.setHours(periodData.startHour)
           startDate.setMinutes(periodData.startMinute)
           startDate.setSeconds(0)
-          var endDate: Date = date
+          let endDate: Date = date
           endDate.setHours(periodData.endHour)
           endDate.setMinutes(periodData.endMinute)
           endDate.setSeconds(0)

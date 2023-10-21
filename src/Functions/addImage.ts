@@ -21,8 +21,8 @@ export default async function addImage(userId: string, selectedFile: microsoftFi
     if (copyResult.ok) {
       const copyData = await copyResult.headers.get("Location")
    
-      var notComplete = true
-      var resourceId = ""
+      let notComplete = true
+      let resourceId = ""
 
       while (notComplete) {
         if (copyData !== null) {
@@ -71,7 +71,7 @@ export default async function addImage(userId: string, selectedFile: microsoftFi
     return loadingStateEnum.failed
   }
 
-  // var userExtensionData: any = {}
+  // let userExtensionData: any = {}
   // userExtensionData[store.getState().paulyList.userExtensionId] = {
   //   "imageId":""
   // }

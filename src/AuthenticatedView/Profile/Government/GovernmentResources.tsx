@@ -29,14 +29,14 @@ function ChannelBlock({group, groups, groupIndex, setGroups, selectedGroup, chan
     }
     const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.resourceListId}/items`, "POST", JSON.stringify(data))
     if (result.ok){
-      var outGroups: resourceGroupType[] = groups
+      let outGroups: resourceGroupType[] = groups
       outGroups[groupIndex].channels[channelIndex].selected = true
       outGroups[groupIndex].channels[channelIndex].loading = false
       setGroups(outGroups)
       setIsSelected(true)
       setIsLoading(false)
     } else {
-      var outGroups: resourceGroupType[] = groups
+      let outGroups: resourceGroupType[] = groups
       outGroups[groupIndex].channels[channelIndex].loading = false
       setGroups(outGroups)
       setIsLoading(false)
@@ -48,20 +48,20 @@ function ChannelBlock({group, groups, groupIndex, setGroups, selectedGroup, chan
     if (itemResult.result === resourceResponce.found && itemResult.itemId !== undefined) {
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.resourceListId + "/items/" + itemResult.itemId, "DELETE")
       if (result.ok){
-        var outGroups: resourceGroupType[] = groups
+        let outGroups: resourceGroupType[] = groups
         outGroups[groupIndex].channels[channelIndex].selected = false
         outGroups[groupIndex].channels[channelIndex].loading = false
         setGroups(outGroups)
         setIsSelected(false)
         setIsLoading(false)
       } else {
-        var outGroups: resourceGroupType[] = groups
+        let outGroups: resourceGroupType[] = groups
         outGroups[groupIndex].channels[channelIndex].loading = false
         setGroups(outGroups)
         setIsLoading(false)
       }
     } else {
-      var outGroups: resourceGroupType[] = groups
+      let outGroups: resourceGroupType[] = groups
       outGroups[groupIndex].channels[channelIndex].loading = false
       setGroups(outGroups)
       setIsLoading(false)
@@ -79,7 +79,7 @@ function ChannelBlock({group, groups, groupIndex, setGroups, selectedGroup, chan
               thumbColor={isSelected ? '#f5dd4b' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={(e) => {
-                var outGroups: resourceGroupType[] = groups
+                let outGroups: resourceGroupType[] = groups
                 outGroups[groupIndex].channels[channelIndex].loading = true
                 setGroups(outGroups)
                 setIsLoading(true)
@@ -130,13 +130,13 @@ export default function GovernmentResources() {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups?$filter=resourceProvisioningOptions/Any(x:x eq 'Team')")
     if (!result.ok) {setGetTeamsState(loadingStateEnum.failed); return}
     const data = await result.json()
-    var resultGroups: resourceGroupType[] = []
-    for (var index = 0; index < data["value"].length; index++) {
+    let resultGroups: resourceGroupType[] = []
+    for (let index = 0; index < data["value"].length; index++) {
       const getResult = await callMsGraph("https://graph.microsoft.com/v1.0/teams/" + data["value"][index]["id"] + "/allChannels")
-      var channelResult: channelType[] = []
+      let channelResult: channelType[] = []
       if (getResult.ok) {
         const getResultData = await getResult.json()
-        for (var indexResult = 0; indexResult < getResultData["value"].length; indexResult++) {
+        for (let indexResult = 0; indexResult < getResultData["value"].length; indexResult++) {
           const channelGetResult = await getResource(data["value"][index]["id"], getResultData["value"][indexResult]["id"])
           channelResult.push({
             id: getResultData["value"][indexResult]["id"],

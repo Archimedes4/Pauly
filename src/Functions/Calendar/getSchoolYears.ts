@@ -7,8 +7,8 @@ export default async function getSchoolYears(nextLink?: string): Promise<{ resul
   const result = await callMsGraph(nextLink ? nextLink:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
   if (result.ok){
     const data = await result.json()
-    var newEvents: eventType[] = []
-    for(var index = 0; index < data["value"].length; index++) {
+    let newEvents: eventType[] = []
+    for(let index = 0; index < data["value"].length; index++) {
       const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId
       const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId
       if (data["value"][index]["singleValueExtendedProperties"] !== undefined) {

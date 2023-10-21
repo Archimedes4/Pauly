@@ -1,5 +1,5 @@
 import { View, Text, Animated, Easing, Platform } from 'react-native'
-import React, { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { ScrollView } from 'react-native-gesture-handler';

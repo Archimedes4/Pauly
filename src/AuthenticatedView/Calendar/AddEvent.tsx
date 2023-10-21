@@ -217,7 +217,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
               onDismiss={() => setStartDatePickerVisable(false)} 
               onConfirm={(e) => {
                 console.log(e)
-                var newDate = new Date(startDate)
+                let newDate = new Date(startDate)
                 newDate.setHours(e.hours)
                 newDate.setMinutes(e.minutes)
                 console.log(newDate)
@@ -257,7 +257,7 @@ function DateAndTimeSection({width, height}:{width: number, height: number}) {
                   minutes={new Date(endDate).getMinutes()} 
                   visible={endDatePickerVisable} 
                   onDismiss={() => setEndDatePickerVisable(false)} onConfirm={(e) => {
-                    var newDate = new Date(endDate)
+                    let newDate = new Date(endDate)
                     newDate.setHours(e.hours)
                     newDate.setMinutes(e.minutes)
                     dispatch(addEventSlice.actions.setEndDate(newDate.toISOString()))

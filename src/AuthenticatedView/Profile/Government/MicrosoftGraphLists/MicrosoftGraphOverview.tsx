@@ -47,7 +47,7 @@ export default function MicrosoftGraphOverview() {
     if (result.ok){
       const data = await result.json()
       if (data["value"] !== undefined){
-        var incomingLists: listType[] = []
+        let incomingLists: listType[] = []
         for(let index = 0; index < data["value"].length; index++){
           incomingLists.push({
             displayName: data["value"][index]["displayName"],
@@ -78,13 +78,13 @@ export default function MicrosoftGraphOverview() {
   }
 
   async function getExtensions() {
-    var schemaExtensionsUrl = "https://graph.microsoft.com/v1.0/schemaExtensions?$filter=owner%20eq%20'" + clientId + "'"
-    var resultData: extensionType[] = []
+    let schemaExtensionsUrl = "https://graph.microsoft.com/v1.0/schemaExtensions?$filter=owner%20eq%20'" + clientId + "'"
+    let resultData: extensionType[] = []
     while (schemaExtensionsUrl !== "") {
       const result = await callMsGraph(schemaExtensionsUrl)
       if (!result.ok) {setSchemaLoadingState(loadingStateEnum.failed); return}
       const data = await result.json()
-      for (var index = 0; index < data["value"].length; index++) {
+      for (let index = 0; index < data["value"].length; index++) {
         resultData.push({
           description: data["value"][index]["description"],
           id: data["value"][index]["id"]
@@ -97,8 +97,8 @@ export default function MicrosoftGraphOverview() {
     const applicationResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions")
     if (applicationResult.ok) {
       const applicationData = await applicationResult.json()
-      var resultData: extensionType[] = []
-      for (var index = 0; index < applicationData["value"].length; index++) {
+      let resultData: extensionType[] = []
+      for (let index = 0; index < applicationData["value"].length; index++) {
         resultData.push({
           description: applicationData["value"][index]["description"],
           id: applicationData["value"][index]["id"]

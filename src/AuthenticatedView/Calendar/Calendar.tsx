@@ -135,18 +135,18 @@ function MonthView({width, height}:{width: number, height: number}) {
 
   function getMonthData(selectedDate: Date) {
     //Check if this month
-    var lastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
+    let lastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
     const firstDayWeek = findFirstDayinMonth(selectedDate)
-    var monthDataResult: monthDataType[] = []
+    let monthDataResult: monthDataType[] = []
     for (let index = 0; index < 42; index++) {
       if (index >= firstDayWeek && (index - firstDayWeek) < (lastDay.getDate())){
         //In the current month
-        var events: eventType[] = [] //The result events of that day
+        let events: eventType[] = [] //The result events of that day
         
         //Check is the current date
         const checkStart: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1), 0, 0)
         const checkEnd: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 2), 0, 0)
-        for (var indexEvent = 0; indexEvent < currentEvents.length; indexEvent++) {
+        for (let indexEvent = 0; indexEvent < currentEvents.length; indexEvent++) {
           const event: eventType = currentEvents[indexEvent] //Event to be checked
          
           const startTimeDate = new Date(event.startTime) //String to date

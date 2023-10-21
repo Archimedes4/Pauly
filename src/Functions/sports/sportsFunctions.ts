@@ -7,7 +7,7 @@ export async function getSports(): Promise<{result: loadingStateEnum, data?: spo
   if (result.ok) {
     const data = await result.json()
     if (data["value"] !== null && data["value"] !== undefined){
-      var resultData: sportType[] = []
+      let resultData: sportType[] = []
       for (let index = 0; index < data["value"].length; index++) {
         resultData.push({
           name: data["value"][index]["fields"]["sportName"],
@@ -29,7 +29,7 @@ export async function getSportsTeams(sportId: string): Promise<{result: loadingS
   if (result.ok) {
     const data = await result.json()
     if (data["value"] !== null && data["value"] !== undefined){
-      var resultData: sportTeamType[] = []
+      let resultData: sportTeamType[] = []
       for (let index = 0; index < data["value"].length; index++) {
         resultData.push({
           teamName: data["value"][index]["fields"]["teamName"],

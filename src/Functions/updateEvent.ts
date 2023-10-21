@@ -7,7 +7,7 @@ import callMsGraph from "./Ultility/microsoftAssets"
 
 export default async function createEvent() {
   if (store.getState().addEvent.selectedEventType === paulyEventType.personal) {
-    var data: any = {
+    let data: any = {
       "subject": store.getState().addEvent.eventName,
       "start": {
         "dateTime": store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z"),
@@ -42,7 +42,7 @@ export default async function createEvent() {
       store.dispatch(addEventSlice.actions.setCreateEventState(loadingStateEnum.failed))
     }
   } else {
-    var data: any = {
+    let data: any = {
       "subject": store.getState().addEvent.eventName,
       "start": {
         "dateTime": store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z"),
@@ -59,7 +59,7 @@ export default async function createEvent() {
       if (schoolDay !== undefined) {
         if (store.getState().addEvent.selectedSchoolDayData === undefined) return loadingStateEnum.failed
         data["start"]["dateTime"] = store.getState().addEvent.startDate.replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-        var newEndDate = new Date(store.getState().addEvent.startDate)
+        let newEndDate = new Date(store.getState().addEvent.startDate)
         newEndDate.setDate(new Date(store.getState().addEvent.startDate).getDate() + 1)
         data["end"]["dateTime"] = newEndDate.toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
         data["isAllDay"] = true

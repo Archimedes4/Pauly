@@ -32,11 +32,11 @@ export default function MicrosoftGraphCreateList() {
   const [newColumnName, setNewColumnName] = useState<string>("")
 
   async function createList(){
-    var columnData: object[] = []
+    let columnData: object[] = []
 
     for(let index = 0; index < columns.length; index++){
       const key: string = columns[index].key
-      var newData: object = {
+      let newData: object = {
         name: columns[index].name,
         text:{}
       }
@@ -108,7 +108,7 @@ export default function MicrosoftGraphCreateList() {
       </View>
       <Button title={selectedColumnType} onPress={() => {setIsShowingTypeWindow(!isShowingTypeWindow)}}/>
       <Button title='Add Column' onPress={() => {
-        var columnData = {}
+        let columnData = {}
         if (selectedColumnType === "text"){
           columnData = {
             "allowMultipleLines": true,

@@ -5,7 +5,7 @@ import callMsGraph from "../Ultility/microsoftAssets";
 
 //deltaRunAgain is send if the delta link has failed or the responce 410 meaning syncronization is needed.
 export default async function getUsersTasks(deltaRunAgain?: boolean): Promise<{result: loadingStateEnum, data?: taskType[]}> {
-  var deltaMode = false
+  let deltaMode = false
   if (store.getState().tasksDeltaLink !== "" && deltaRunAgain !== true) {deltaMode = true}
   const url = (deltaMode) ? store.getState().tasksDeltaLink:"https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/delta"
   const tasksResult = await callMsGraph(url)
@@ -14,8 +14,8 @@ export default async function getUsersTasks(deltaRunAgain?: boolean): Promise<{r
     if (taskData["@odata.deltaLink"] !== undefined){
       store.dispatch(taskDeltaSlice.actions.setTaskDeltaLink(taskData["@odata.deltaLink"]))
     }
-    var resultTasks: taskType[] = []
-    for (var index = 0; index < taskData["value"].length; index++){
+    let resultTasks: taskType[] = []
+    for (let index = 0; index < taskData["value"].length; index++){
       resultTasks.push({
         name: taskData["value"][index]["title"],
         id: taskData["value"][index]["id"],

@@ -9,7 +9,7 @@ export default async function getSportsContent(team?: string): Promise<{result: 
   if (result.ok){
     const dataResult = await result.json()
     if (dataResult["value"].length !== undefined){
-      var newSportsPosts: sportPost[] = []
+      let newSportsPosts: sportPost[] = []
       for (let index = 0; index < dataResult["value"].length; index++){
         const shareResult = await getFileWithShareID(dataResult["value"][index]["fields"]["fileId"])
         if (shareResult.result === loadingStateEnum.success && shareResult.contentType !== undefined && shareResult.url !== undefined) {

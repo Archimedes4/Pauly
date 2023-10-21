@@ -37,11 +37,11 @@ export async function addImage(base64: string): Promise<{result: loadingStateEnu
         const resumableSessionResult = await callMsGraph(`https://graph.microsoft.com/v1.0/me/drive/items/${rootIdData["id"]}:/Pauly_Image_${imageUUID}_Submission${(types[fileBlob.type])}:/createUploadSession`, "POST", JSON.stringify(resumableSessionData))
         if (resumableSessionResult.ok) {
           const resumableSessionResultData = await resumableSessionResult.json()
-          var uploadUrl: string = resumableSessionResultData["uploadUrl"]
+          let uploadUrl: string = resumableSessionResultData["uploadUrl"]
           if (resumableSessionResultData["nextExpectedRanges"].length === 1) {
-            var nextExpectedRange: string = resumableSessionResultData["nextExpectedRanges"][0]
-            var remaining: number = fileBlob.size
-            var uploaded: number = 0
+            let nextExpectedRange: string = resumableSessionResultData["nextExpectedRanges"][0]
+            let remaining: number = fileBlob.size
+            let uploaded: number = 0
             if (nextExpectedRange === `${uploaded}-`) {
               while (remaining > 0) { //TO DO Check that this works
                 const uploadBlob = fileBlob.slice(uploaded, (remaining >= 5242880) ? 5242880:remaining)
@@ -105,7 +105,7 @@ export async function addImage(base64: string): Promise<{result: loadingStateEnu
 }
 
 export async function claimCommissionPost(auth: string, commissionId: string, imageShare?: string, location?: locationCoords): Promise<loadingStateEnum> {
-  var outResult: string = ""
+  let outResult: string = ""
   if (location) {
     outResult += `&latCoordinate=${location.latCoordinate}&lngCoordinate=${location.lngCoordinate}` 
   }

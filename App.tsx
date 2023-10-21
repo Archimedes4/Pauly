@@ -66,8 +66,8 @@ function AppCore() {
     const newWidth = dimensions.window.width - insets.left - insets.right
     const newHeight = dimensions.window.height - insets.bottom - insets.top
     if (oldWidth !== newWidth) {
-      var oldCurrentBreakPointMode: breakPointMode = store.getState().dimentions.currentBreakPoint
-      var currentBreakPoint: breakPointMode = breakPointMode.xSmall
+      let oldCurrentBreakPointMode: breakPointMode = store.getState().dimentions.currentBreakPoint
+      let currentBreakPoint: breakPointMode = breakPointMode.xSmall
       if (newWidth >= 1200) {
         //extraLarge ≥1200px
         currentBreakPoint = breakPointMode.xLarge

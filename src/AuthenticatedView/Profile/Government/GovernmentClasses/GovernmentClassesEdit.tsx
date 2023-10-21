@@ -96,7 +96,7 @@ export default function GovernmentClassesEdit() {
       const result = await getTimetable(selectedSchoolYear.paulyEventData)
       if (result.result === loadingStateEnum.success && result.timetable !== undefined){
         if (result.timetable.days.length !== periods.length) {
-          var newArray = Array.from(Array(result.timetable.days.length))
+          let newArray = Array.from(Array(result.timetable.days.length))
           newArray.fill(0, 0, newArray.length)
           setPeriods(newArray)
         }
@@ -272,7 +272,7 @@ function DayBlock({day, periods, dayIndex, setPeriods, selectedTimetable}:{day: 
         { (selectedTimetable?.schedules.length >= 1 && periods.length >= dayIndex) ?
           <Dropdown selectedIndex={periods[dayIndex]} onSetSelectedIndex={(index) => {
             if (periods.length >= dayIndex) {
-              var newPeriods = periods;
+              let newPeriods = periods;
               newPeriods[dayIndex] = index;
               setPeriods([...newPeriods]);
             }

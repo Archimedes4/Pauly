@@ -6,8 +6,8 @@ export default async function getDressCodeData(): Promise<{result: loadingStateE
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.dressCodeListId}/items?expand=fields`)
   if (result.ok) {
     const data = await result.json()
-    var newDressCodes: dressCodeType[] = []
-    for (var index = 0; index < data["value"].length; index++) {
+    let newDressCodes: dressCodeType[] = []
+    for (let index = 0; index < data["value"].length; index++) {
       try{
         newDressCodes.push({
           name: data["value"][index]["fields"]["dressCodeName"],

@@ -9,9 +9,9 @@ export default async function getSubmissions(commissionId: string, submissionTyp
     const data = await result.json()
 
     //Get Users
-    var batchRequests: {id: string, method: string, url: string}[][] = [] 
-    var users: any = {}
-    for (var index = 0; index < data["value"].length; index++) {
+    let batchRequests: {id: string, method: string, url: string}[][] = [] 
+    let users: any = {}
+    for (let index = 0; index < data["value"].length; index++) {
       if ((index%20) === 0) {
         batchRequests.push([])
       }
@@ -21,7 +21,7 @@ export default async function getSubmissions(commissionId: string, submissionTyp
         url: `/users/${data["value"][index]["fields"]["userId"]}?$select=id,displayName`
       })
     }
-    for (var index = 0; index < batchRequests.length; index++) {
+    for (let index = 0; index < batchRequests.length; index++) {
       const batchData = {
         "requests":batchRequests[index]
       }
@@ -30,7 +30,7 @@ export default async function getSubmissions(commissionId: string, submissionTyp
       const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData))
       if (result.ok) {
         const batchResultData = await batchResult.json()
-        for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
+        for (let batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
           if (batchResultData["responses"][batchIndex]["status"] === 200) {
             Object.defineProperty(users, batchResultData["responses"][batchIndex]["body"]["id"], {
               value: batchResultData["responses"][batchIndex]["body"]["displayName"]
@@ -45,8 +45,8 @@ export default async function getSubmissions(commissionId: string, submissionTyp
     }
 
     //Return Output
-    var output: submissionType[] = []
-    for (var index = 0; index < data["value"].length; index++) {
+    let output: submissionType[] = []
+    for (let index = 0; index < data["value"].length; index++) {
       const name = users[data["value"][index]["fields"]["userId"]]
       if (name !== undefined){
         output.push({

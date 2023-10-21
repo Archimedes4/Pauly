@@ -17,7 +17,7 @@ import { getSchedule } from '../../../../../Functions/calendar/calendarFunctions
 function isValidHexaCode(input: string) {
   // Define the regular expression pattern for a valid hexadecimal color code
   // It matches either a 6-character or 3-character code, preceded by a #
-  var hexaPattern = /^#(?:[0-9a-fA-F]{3,4}){1,2}$/;
+  let hexaPattern = /^#(?:[0-9a-fA-F]{3,4}){1,2}$/;
 
   // Test the input against the pattern using the test() method
   return hexaPattern.test(input);
@@ -247,7 +247,7 @@ function PeriodBlock({period, periods, onSetNewPeriods}:{period: periodType, per
   const [isSelectingEndTime, setIsSelectingEndTime] = useState<boolean>(false)
 
   function deleteItem(period: periodType) {
-    var newNewPeriodsArray: periodType[] = periods
+    let newNewPeriodsArray: periodType[] = periods
     if (newNewPeriodsArray.length === 1){
       newNewPeriodsArray.pop()
       onSetNewPeriods(newNewPeriodsArray)
@@ -276,7 +276,7 @@ function PeriodBlock({period, periods, onSetNewPeriods}:{period: periodType, per
           visible={isSelectingStartTime} 
           onDismiss={() => setIsSelectingStartTime(false)} 
           onConfirm={(e) => {
-            var newPeriods: periodType[] = periods
+            let newPeriods: periodType[] = periods
             const update = newPeriods.findIndex((e) => {return e.id === period.id})
             if (update !== -1){
               newPeriods[update].startHour = e.hours
@@ -303,7 +303,7 @@ function PeriodBlock({period, periods, onSetNewPeriods}:{period: periodType, per
           visible={isSelectingEndTime} 
           onDismiss={() => setIsSelectingEndTime(false)} 
           onConfirm={(e) => {
-            var newPeriods: periodType[] = periods
+            let newPeriods: periodType[] = periods
             const update = newPeriods.findIndex((e) => {return e.id === period.id})
             if (update !== -1){
               newPeriods[update].endHour = e.hours

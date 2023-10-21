@@ -36,7 +36,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
         const data = await result.json()
         if (data["error"] === undefined){
           const NewData: teamsGroupType[] = []
-          for(var index = 0; index < data["value"].length; index++){
+          for(let index = 0; index < data["value"].length; index++){
             if (data["value"][index] !== undefined){
               NewData.push({TeamName: data["value"][index]["displayName"], TeamId: data["value"][index]["id"], TeamDescription: data["value"][index]["description"]})
             }
@@ -80,7 +80,7 @@ export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, o
                   </View>
                   <Pressable onPress={() => {
                     //TO DO make this work
-                    var base64Value = btoa(shareLinkString)
+                    let base64Value = btoa(shareLinkString)
                     base64Value.replace("/", "_")
                     base64Value.replace("+", "-")
                     base64Value.trimEnd()
@@ -119,8 +119,8 @@ function PersonalBlock({height, onSelectedFile}:{height: number, onSelectedFile:
       const data = await result.json()
       console.log(data)
       if (data["error"] === undefined){
-        var newFiles: microsoftFileType [] = []
-        for(var index = 0; index <= data["value"].length; index++){
+        let newFiles: microsoftFileType [] = []
+        for(let index = 0; index <= data["value"].length; index++){
           if (data['value'][index] !== undefined){
             if (data["value"][index]["folder"] === undefined){
               newFiles.push(
@@ -169,8 +169,8 @@ function PersonalBlock({height, onSelectedFile}:{height: number, onSelectedFile:
         microsftPathArray.pop()
         microsftPathArray.pop()
         microsftPathArray.pop()
-        var outputString = ""
-        for(var index = 0; index < microsftPathArray.length; index++){
+        let outputString = ""
+        for(let index = 0; index < microsftPathArray.length; index++){
             outputString += microsftPathArray[index] + "/"
         }
         outputString += "/items/root/children"

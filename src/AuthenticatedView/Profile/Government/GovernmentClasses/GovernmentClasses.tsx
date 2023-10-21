@@ -20,8 +20,8 @@ export default function GovernmentClasses() {
     if (groupResult.ok) {
       const groupResultData = await groupResult.json()
       if (groupResultData["value"] !== undefined){
-        var outputData: classType[] = []
-        for(var index = 0; index < groupResultData["value"].length; index++) {
+        let outputData: classType[] = []
+        for(let index = 0; index < groupResultData["value"].length; index++) {
           outputData.push({
             name: groupResultData["value"][index]["displayName"],
             id: groupResultData["value"][index]["id"],

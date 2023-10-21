@@ -14,10 +14,10 @@ export default function Week({width, height}:{width: number, height: number}) {
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([])
   const dispatch = useDispatch()
   function getDOW(selectedDate: Date) {
-    var week: Date[] = []
+    let week: Date[] = []
     // Starting Monday not Sunday
     selectedDate.setDate((selectedDate.getDate() - selectedDate.getDay()));
-    for (var i = 0; i < 7; i++) {
+    for (let i = 0; i < 7; i++) {
       week.push(
         new Date(selectedDate)
       ); 

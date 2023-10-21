@@ -48,7 +48,7 @@ export default function GovernmentCreateNewTeam() {
   async function updateTeam() { //This function will also create a team
     setCreateTeamLoadingState(loadingStateEnum.loading)
     if (!isCreatingTeam) {
-      var data: object = {
+      let data: object = {
         "fields": {
           "teamName": teamName,
           "season": season
@@ -71,7 +71,7 @@ export default function GovernmentCreateNewTeam() {
       }
     } else {
       const newTeamId = create_UUID()
-      var data: object = {
+      let data: object = {
         "fields": {
           "Title": "",
           "teamName": teamName,
@@ -345,16 +345,16 @@ function RosterBlock({microsoftTeamId, width, height, teamId, setIsSelectingFile
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${microsoftTeamId}/members`)
       if (result.ok) {
         const data = await result.json()
-        var users: microsoftUserType[] = []
-        for (var index = 0; index < data["value"].length; index++) {
+        let users: microsoftUserType[] = []
+        for (let index = 0; index < data["value"].length; index++) {
           users.push({
             id: data["value"][index]["userId"],
             displayName: data["value"][index]["displayName"]
           })
         }
-        var rosters: governmentRosterType[] = []
+        let rosters: governmentRosterType[] = []
         console.log(users, teamResultData)
-        for (var teamIndex = 0; teamIndex < teamResultData["value"].length; teamIndex++) {
+        for (let teamIndex = 0; teamIndex < teamResultData["value"].length; teamIndex++) {
           const userData = users.findIndex((e) => {return e.id === teamResultData["value"][teamIndex]["fields"]["playerId"]})
           console.log(userData)
           if (userData !== -1) {
@@ -373,7 +373,7 @@ function RosterBlock({microsoftTeamId, width, height, teamId, setIsSelectingFile
             users.shift()
           }
         }
-        for (var index = 0; index < users.length; index++) {
+        for (let index = 0; index < users.length; index++) {
           rosters.push({
             name: users[index].displayName,
             id: users[index].id
@@ -443,7 +443,7 @@ function RosterBlockItem({member, members, setMembers, teamId, setIsSelectingFil
     const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${teamId}/items`, "POST", JSON.stringify(data))
     if (result.ok) {
       const data = await result.json()
-      var save = members
+      let save = members
       save[index].listItemId = data["id"]
       setMembers(save)
       setRosterState(loadingStateEnum.success)
@@ -476,7 +476,7 @@ function RosterBlockItem({member, members, setMembers, teamId, setIsSelectingFil
 
   useEffect(() => {
     if (callingSelectedFile) {
-      var save = members
+      let save = members
       save[member.index].imageShareId = selectedFile
       setSelectedFile("") 
       setMembers(save)
@@ -522,7 +522,7 @@ function RosterBlockItem({member, members, setMembers, teamId, setIsSelectingFil
       <View style={{flexDirection: "row"}}>
         <Text>Player Number:</Text>
         <TextInput value={member.item.playerNumber} onChangeText={(e) => {
-          var save = members
+          let save = members
           save[member.index].playerNumber = e
           setMembers([...save])
         }} onFocus={() => {}} onBlur={() => {updatePlayerData(member.item)}}/>
@@ -530,7 +530,7 @@ function RosterBlockItem({member, members, setMembers, teamId, setIsSelectingFil
       <View style={{flexDirection: "row"}}>
         <Text>Position:</Text>
         <TextInput value={member.item.position} onChangeText={(e) => {
-          var save = members
+          let save = members
           save[member.index].position = e
           setMembers([...save])
         }} onBlur={() => {updatePlayerData(member.item)}}/>

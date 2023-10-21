@@ -10,7 +10,7 @@ export default async function getSubmissions(): Promise<{result: loadingStateEnu
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items?expand=fields`)
   if (result.ok){
     const data = await result.json()
-    var newMediaSubmissions: mediaSubmissionType[] = []
+    let newMediaSubmissions: mediaSubmissionType[] = []
     if (data["value"] !== undefined){
       for(let index = 0; index < data["value"].length; index++){
         newMediaSubmissions.push({

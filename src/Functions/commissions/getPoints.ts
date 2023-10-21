@@ -4,8 +4,8 @@ import callMsGraph from "../Ultility/microsoftAssets";
 
 //Gets points when given an array of commission ids
 async function getPointsBatch(commissions: string[]): Promise<{result: loadingStateEnum, points: number}> {
-  var outputRequests: {id: string, method: string, url: string}[] = []
-  for (var index = 0; index < commissions.length; index++) {
+  let outputRequests: {id: string, method: string, url: string}[] = []
+  for (let index = 0; index < commissions.length; index++) {
     outputRequests.push({
       id: (index + 1).toString(),
       method: "GET",
@@ -20,10 +20,10 @@ async function getPointsBatch(commissions: string[]): Promise<{result: loadingSt
   const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
   if (result.ok) {
     const data = await result.json()
-    var pointsResult = 0
-    for (var requestIndex = 0; requestIndex < data["responses"].length; requestIndex++) {
+    let pointsResult = 0
+    for (let requestIndex = 0; requestIndex < data["responses"].length; requestIndex++) {
       if (data["responses"][requestIndex].status === 200) {
-        for (var index = 0; index < data["responses"][requestIndex]["body"]["value"].length; index++) {
+        for (let index = 0; index < data["responses"][requestIndex]["body"]["value"].length; index++) {
           pointsResult += data["responses"][requestIndex]["body"]["value"][index]["fields"]["points"]
         }
       } else {
@@ -37,14 +37,14 @@ async function getPointsBatch(commissions: string[]): Promise<{result: loadingSt
 }
 
 export default async function getPoints(): Promise<{result: loadingStateEnum, data?: number}> {
-  var nextUrl =  `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$filter=fields/userId%20eq%20'${store.getState().microsoftProfileData.id}'%20and%20fields/submissionApproved%20ne%20false`
-  var points: number = 0
-  var commissions: string[] = []
+  let nextUrl =  `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$filter=fields/userId%20eq%20'${store.getState().microsoftProfileData.id}'%20and%20fields/submissionApproved%20ne%20false`
+  let points: number = 0
+  let commissions: string[] = []
   while (nextUrl !== "") {
     const submissionResultClaimed = await callMsGraph(nextUrl)
     if (!submissionResultClaimed.ok) {return {result: loadingStateEnum.failed}}
     const submissionResultClaimedData = await submissionResultClaimed.json()
-    for (var index = 0; index < submissionResultClaimedData["value"].length; index++){
+    for (let index = 0; index < submissionResultClaimedData["value"].length; index++){
       if (submissionResultClaimedData["value"][0]["fields"]["submissionApproved"] === true){
         commissions.push(submissionResultClaimedData["value"][0]["fields"]["commissionId"])
         if (commissions.length >= 20) {

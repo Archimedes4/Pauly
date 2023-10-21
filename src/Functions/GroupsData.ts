@@ -6,8 +6,8 @@ export async function getTeams(nextLink?: string): Promise<{result: loadingState
   if (groupResult.ok) {
     const groupResultData = await groupResult.json()
     if (groupResultData["value"] !== undefined){
-      var outputData: groupType[] = []
-      for(var index = 0; index < groupResultData["value"].length; index++) {
+      let outputData: groupType[] = []
+      for(let index = 0; index < groupResultData["value"].length; index++) {
         outputData.push({
           name: groupResultData["value"][index]["displayName"],
           id: groupResultData["value"][index]["id"]
@@ -26,8 +26,8 @@ export async function getChannels(teamId: string, nextLink?: string): Promise<{r
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${teamId}/allChannels`)
   if (result.ok) {
     const data = await result.json()
-    var output: channelType[] = []
-    for (var index = 0; index < data["value"].length; index++) {
+    let output: channelType[] = []
+    for (let index = 0; index < data["value"].length; index++) {
       output.push({
         id: data["value"][index]["id"],
         displayName: data["value"][index]["displayName"],
@@ -46,8 +46,8 @@ export async function getPosts(teamId: string, channelId: string): Promise<{resu
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/messages`)
   if (result.ok) {
     const data = await result.json()
-    var output: resourceDataType[] = []
-    for (var index = 0; index < data["value"].length; index++) {
+    let output: resourceDataType[] = []
+    for (let index = 0; index < data["value"].length; index++) {
       output.push({
         id: data["value"][index]["id"],
         body: data["value"][index]["body"]["content"],

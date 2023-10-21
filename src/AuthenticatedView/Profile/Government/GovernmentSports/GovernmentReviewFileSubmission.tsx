@@ -106,7 +106,7 @@ export default function GovernmentReviewFileSubmission() {
       }
       const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(data), [{key: "Accept", value: "application/json"}])
       if (result.ok){
-        var newInformation = currentSubmissionInfomration
+        let newInformation = currentSubmissionInfomration
         newInformation.accepted = true
         newInformation.reviewed = true
         setCurrentSubmissionInformation(currentSubmissionInfomration)

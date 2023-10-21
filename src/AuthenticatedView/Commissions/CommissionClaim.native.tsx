@@ -28,7 +28,7 @@ export default function CommissionClaim({commission, imageData}:{commission: com
           clientId: clientId,
           scopes: [`api://${clientId}/api/Test`]
         }, discovery)
-        var outImageUrl: string = ""
+        let outImageUrl: string = ""
         if ((commission.value === commissionTypeEnum.Image || commission.value === commissionTypeEnum.ImageLocation) && imageData !== undefined) {
           const outImage = await addImage(imageData)
           if (outImage.result === loadingStateEnum.success && outImage.data !== undefined) {

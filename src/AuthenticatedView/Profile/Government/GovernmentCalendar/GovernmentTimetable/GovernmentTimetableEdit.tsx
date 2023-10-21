@@ -33,7 +33,7 @@ export default function GovernmentTimetableEdit() {
   async function createTimetable() {
     if (selectedDefaultSchedule !== undefined && selectedDressCode !== undefined){
       //Check to make sure all have the same number of periods 
-      for (var index = 0; index < selectedSchedules.length; index++){
+      for (let index = 0; index < selectedSchedules.length; index++){
         if (selectedSchedules[index].periods.length !== selectedDefaultSchedule.periods.length){
           setCreateTimetableLoadingState(loadingStateEnum.failed)
           return
@@ -42,8 +42,8 @@ export default function GovernmentTimetableEdit() {
 
       //Create Timetable
       setCreateTimetableLoadingState(loadingStateEnum.loading)
-      var scheduals = []
-      for (var index = 0; index < selectedSchedules.length; index++) {
+      let scheduals = []
+      for (let index = 0; index < selectedSchedules.length; index++) {
         scheduals.push(selectedSchedules[index].id)
       }
       const data = {
@@ -145,7 +145,7 @@ function SchoolDayItem({item, index, schoolDays, setSchoolDays}:{item: schoolDay
             <Text>Name: </Text>
             { selected ?
               <TextInput value={item.name} onChangeText={(e) => {
-                var newSchoolDays = schoolDays
+                let newSchoolDays = schoolDays
                 newSchoolDays[index].name = e
                 setSchoolDays([...newSchoolDays])
               }}/>:<Text>{item.name}</Text>
@@ -158,7 +158,7 @@ function SchoolDayItem({item, index, schoolDays, setSchoolDays}:{item: schoolDay
             <Text>Shorthand: </Text>
             { selected ?
               <TextInput maxLength={1} value={item.shorthand} onChangeText={(e) => {
-                var newSchoolDays = schoolDays
+                let newSchoolDays = schoolDays
                 newSchoolDays[index].shorthand = e
                 setSchoolDays([...newSchoolDays])
               }}/>:<Text>{item.shorthand}</Text>
@@ -168,7 +168,7 @@ function SchoolDayItem({item, index, schoolDays, setSchoolDays}:{item: schoolDay
         <View>
           {(item.order !== 0) ? 
           <Pressable onPress={() => {
-            var newSchoolDays = schoolDays
+            let newSchoolDays = schoolDays
             newSchoolDays[index].order = newSchoolDays[index].order - 1
             newSchoolDays[index - 1].order = newSchoolDays[index - 1].order + 1
             const saveCurrent = newSchoolDays[index]
@@ -180,7 +180,7 @@ function SchoolDayItem({item, index, schoolDays, setSchoolDays}:{item: schoolDay
           </Pressable>:null}
           {((item.order + 1) < schoolDays.length) ? 
           <Pressable onPress={() => {
-            var newSchoolDays = schoolDays
+            let newSchoolDays = schoolDays
             newSchoolDays[index].order = newSchoolDays[index].order + 1
             newSchoolDays[index + 1].order = newSchoolDays[index + 1].order - 1
             const saveCurrent = newSchoolDays[index]
@@ -191,7 +191,7 @@ function SchoolDayItem({item, index, schoolDays, setSchoolDays}:{item: schoolDay
             <DownIcon width={10} height={10} />
           </Pressable>:null}
           <Pressable onPress={() => {
-            var newSchoolDays = schoolDays
+            let newSchoolDays = schoolDays
             newSchoolDays.splice(index, 1)
             setSchoolDays([...newSchoolDays])
           }}>

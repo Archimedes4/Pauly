@@ -226,7 +226,7 @@ function TaskItem({task}:{task: ListRenderItemInfo<taskType>}) {
     }
     const result = await callMsGraph(`https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`, "PATCH", JSON.stringify(data))
     if (result.ok) {
-      var newItem: any = {}
+      let newItem: any = {}
       Object.assign(newItem, task.item)
       newItem.status = status
       console.log("This is new Item", newItem)
@@ -328,7 +328,7 @@ function TaskItem({task}:{task: ListRenderItemInfo<taskType>}) {
               <TextInput 
                 value={task.item.name}
                 onChangeText={(e) => {
-                  var newTask: taskType = {
+                  let newTask: taskType = {
                     name: task.item.name,
                     id: task.item.id,
                     importance: task.item.importance,

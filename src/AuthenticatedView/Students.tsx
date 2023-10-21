@@ -103,10 +103,10 @@ export default function Students() {
 function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
   async function getImage() {
-    var newUser: any = {}
+    let newUser: any = {}
     Object.assign(newUser, user.item)
     if (user.item.imageDownloadUrl !== "noImage" && user.item.imageState !== loadingStateEnum.success && user.item.imageState !== loadingStateEnum.failed && user.item.imageState !== loadingStateEnum.loading) {
-      var updateStateUser: any = {}
+      let updateStateUser: any = {}
       Object.assign(updateStateUser, user.item)
       updateStateUser.imageState = loadingStateEnum.loading
       store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: updateStateUser}))

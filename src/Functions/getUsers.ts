@@ -10,7 +10,7 @@ function checkIfStudent(role: string): {result: boolean, grade?: "9"|"10"|"11"|"
     const slice = reversed.slice(0, 15);
     if (slice == "ac.sredasurcog@") {
       const getMonth = new Date().getMonth()
-      var schoolYear = new Date().getFullYear()
+      let schoolYear = new Date().getFullYear()
       if (schoolYear.toString().length >= 4){
         if (getMonth > 6) {
           schoolYear++
@@ -51,8 +51,8 @@ export default async function getUsers(url?: string, search?: string) {
   if (result.ok) {
     //Getting user Ids from result
     const data = await result.json()
-    var userIds: string[] = []
-    for (var index = 0; index < data["value"].length; index++) {
+    let userIds: string[] = []
+    for (let index = 0; index < data["value"].length; index++) {
       userIds.push(data["value"][index]["id"])
     }
 
@@ -63,10 +63,10 @@ export default async function getUsers(url?: string, search?: string) {
       method: "GET",
       keys: {array: userIds}
     })
-    var imagesIdsMap = new Map<string, string>() //Key is userId, value is image data id
-    var imageIdsArray: string[] = []
+    let imagesIdsMap = new Map<string, string>() //Key is userId, value is image data id
+    let imageIdsArray: string[] = []
     if (batchResult.result === loadingStateEnum.success && batchResult.data !== undefined) {
-      for (var batchIndex = 0; batchIndex < batchResult.data.length; batchIndex++) {
+      for (let batchIndex = 0; batchIndex < batchResult.data.length; batchIndex++) {
         if (batchResult.data[batchIndex].status === 200) { //TO DO OK
           if (batchResult.data[batchIndex].body["value"].length === 1) { //Checking to make suare only one item is selected
             imagesIdsMap.set(batchResult.data[batchIndex].body["value"][0]["fields"]["userId"], batchResult.data[batchIndex].body["value"][0]["fields"]["itemId"])
@@ -91,9 +91,9 @@ export default async function getUsers(url?: string, search?: string) {
       method: "GET",
       keys: {array: imageIdsArray}
     })
-    var imagesDownloadUrls = new Map<string, string>() //Key is the item id on the sharepoint and value is the downlad url
+    let imagesDownloadUrls = new Map<string, string>() //Key is the item id on the sharepoint and value is the downlad url
     if (batchResultDownloadUrls.result === loadingStateEnum.success && batchResultDownloadUrls.data !== undefined) {
-      for (var batchIndex = 0; batchIndex < batchResultDownloadUrls.data.length; batchIndex++) {
+      for (let batchIndex = 0; batchIndex < batchResultDownloadUrls.data.length; batchIndex++) {
         if (batchResultDownloadUrls.data[batchIndex].status === 200) { //TO DO OK
           imagesDownloadUrls.set(batchResultDownloadUrls.data[batchIndex].body["id"], batchResultDownloadUrls.data[batchIndex].body["thumbnails"][0]["c300x400_crop"]["url"])
         } else {
@@ -109,8 +109,8 @@ export default async function getUsers(url?: string, search?: string) {
     }
 
 
-    var outputUsers: schoolUserType[] = []
-    for (var index = 0; index < data["value"].length; index++) {
+    let outputUsers: schoolUserType[] = []
+    for (let index = 0; index < data["value"].length; index++) {
       const imageId = imagesIdsMap.get(data["value"][index]["id"])
       if (imageId !== undefined) {
         const imageDownloadUrl = imagesDownloadUrls.get(imageId)
@@ -164,8 +164,8 @@ export async function getStudentData(userId: string): Promise<{result: loadingSt
   const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items?$expand=fields&$filter=fields/userId%20eq%20'${userId}'`)
   if (result.ok) {
     const data = await result.json()
-    var resultData: studentInformationType[] = []
-    for (var index = 0; index < data["value"].length; index++) {
+    let resultData: studentInformationType[] = []
+    for (let index = 0; index < data["value"].length; index++) {
       resultData.push({
         listId: data["value"][index]["fields"]["id"],
         driveId: data["value"][index]["fields"]["itemId"],

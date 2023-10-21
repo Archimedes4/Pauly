@@ -18,8 +18,8 @@ export default function PDFView({width}:{width: number}) {
     const dataResult = await fetch(powerpointBlob)
     if (dataResult.ok) {
       const blob = await dataResult.blob()
-      var file = new Blob([blob], {type: 'application/pdf'});
-      var fileURL = URL.createObjectURL(file);
+      let file = new Blob([blob], {type: 'application/pdf'});
+      let fileURL = URL.createObjectURL(file);
       dispatch(pdfDataSlice.actions.setInject(fileURL))
     }
   }
@@ -130,41 +130,41 @@ function WebViewInject() {
               if (!dataResult.ok) {window.ReactNativeWebView.postMessage('failed'); return}
               const data = await dataResult.blob()
 
-              var fileURL = URL.createObjectURL(data);
-              var docInitParams = {url: fileURL}
-              var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
-              var PDFJS = window['pdfjs-dist/build/pdf'];
+              let fileURL = URL.createObjectURL(data);
+              let docInitParams = {url: fileURL}
+              let url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
+              let PDFJS = window['pdfjs-dist/build/pdf'];
               try {
                 PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
               } catch (e) {
                 window.ReactNativeWebView.postMessage('failed')
               } 
               
-              var loadingTask = PDFJS.getDocument(docInitParams);
+              let loadingTask = PDFJS.getDocument(docInitParams);
               loadingTask.promise.then(function(pdf) {
           
-                var canvasdiv = document.getElementById('canvas');
-                var totalPages = pdf.numPages
-                var data = [];
+                let canvasdiv = document.getElementById('canvas');
+                let totalPages = pdf.numPages
+                let data = [];
           
                 for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
                   pdf.getPage(pageNumber).then(function(page) {
           
-                    var scale = 1.5;
-                    var viewport = page.getViewport({ scale: scale });
+                    let scale = 1.5;
+                    let viewport = page.getViewport({ scale: scale });
           
-                    var canvas = document.createElement('canvas');
+                    let canvas = document.createElement('canvas');
                     canvasdiv.appendChild(canvas);
           
                     // Prepare canvas using PDF page dimensions
-                    var context = canvas.getContext('2d');
+                    let context = canvas.getContext('2d');
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
           
                     // Render PDF page into canvas context
-                    var renderContext = { canvasContext: context, viewport: viewport };
+                    let renderContext = { canvasContext: context, viewport: viewport };
           
-                    var renderTask = page.render(renderContext);
+                    let renderTask = page.render(renderContext);
                     renderTask.promise.then(function() {
                       data.push(canvas.toDataURL('image/png'))
                      

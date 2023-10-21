@@ -12,10 +12,10 @@ export default function TeamAvatar({teamId}:{teamId: string}) {
       const response = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${teamId}/photo/$value`)
       if (response.ok){
         const dataBlob = await response.blob()
-        var reader = new FileReader();
+        let reader = new FileReader();
         reader.readAsDataURL(dataBlob); 
         reader.onloadend = function() {
-        var base64data = reader.result;                
+        let base64data = reader.result;                
           if (base64data !== null){
             setTeamAvatarDataUrl(base64data.toString())
             setCurrentLoadingResult(loadingStateEnum.success)

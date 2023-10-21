@@ -3,20 +3,20 @@
 //Calendar functions
 
 export function getDaysInMonth(input: Date): number{
-  var d = new Date();
+  let d = new Date();
   d.setFullYear(input.getFullYear(), input.getMonth() + 1, 0)
   return d.getDate()
 }
 
 export function getDay(value: number, startdate: number): number | undefined {
-  var offset: number = 0
-  let var1: number = value/5.0
-  let var2: number = Math.floor(var1)
-  let var4: number = var2 * 2
-  offset += var4
+  let offset: number = 0
+  let let1: number = value/5.0
+  let let2: number = Math.floor(let1)
+  let let4: number = let2 * 2
+  offset += let4
   let result: number = ((value - startdate) + 2) + offset
-  var month = new Date()
-  var d = new Date(month.getFullYear(), month.getMonth() + 1, 0)
+  let month = new Date()
+  let d = new Date(month.getFullYear(), month.getMonth() + 1, 0)
   let DayInt = d.getDate()
   if (result >= (DayInt + 1)) {
       return undefined
@@ -25,8 +25,8 @@ export function getDay(value: number, startdate: number): number | undefined {
 }
 
 export function findFirstDayinMonth(currentTime: Date): number {
-  var year = currentTime.getFullYear()
-  var month = currentTime.getMonth()
+  let year = currentTime.getFullYear()
+  let month = currentTime.getMonth()
   const weekDay = new Date(year, month).getDay()  
   return weekDay
   //Returns a which weekday day is the first day of the month.
@@ -64,7 +64,7 @@ export function calculateIfShowing(value: String, Time: Date): boolean { //TO DO
     const hourInt = Time.getHours()
     const minuiteInt = Time.getMinutes()
     if (minuiteInt + 15 >= 60){
-      var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
+      let resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
       resepctiveTime += (hourInt > 12) ? "PM":"AM"
       if (resepctiveTime === value){
         return false
@@ -72,7 +72,7 @@ export function calculateIfShowing(value: String, Time: Date): boolean { //TO DO
         return true
       }
     } else if (minuiteInt - 15 <= 0) {
-      var resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
+      let resepctiveTime: string = "" + (hourInt > 12) ? (hourInt - 12).toString():hourInt.toString()
       resepctiveTime += (hourInt > 12) ? "PM":"AM"
       if (resepctiveTime === value){
         return false
@@ -92,7 +92,7 @@ export function findTimeOffset(time: Date, height: number): number {
   let minutieWidth = (height * 0.1)/60
   let hourInt = time.getHours() 
   let minuiteInt = time.getMinutes()
-  var returnOffset = (hourWidth * hourInt) + (minutieWidth * minuiteInt)
+  let returnOffset = (hourWidth * hourInt) + (minutieWidth * minuiteInt)
   // + (hourWidth/2)
   return returnOffset
 }
@@ -101,7 +101,7 @@ export function findTimeOffset(time: Date, height: number): number {
 //Andrew was here April 13, 2023
 
 export function computeEventHeight(fromDate: Date, toDate: Date, height: number): number {
-  var delta = toDate.getTime() - fromDate.getTime()
+  let delta = toDate.getTime() - fromDate.getTime()
   if (delta >= 86400000) {
     delta = 86400000
   }

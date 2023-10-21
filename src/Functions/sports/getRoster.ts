@@ -8,8 +8,8 @@ export default async function getRoster(teamId: string): Promise<{result: loadin
   if (result.ok) {
     const data = await result.json()
     const batchData: {id: string, method: "GET" | "POST", url: string}[][] = []
-    var batchIndex = -1
-    for (var index = 0; index < data["value"].length; index++) {
+    let batchIndex = -1
+    for (let index = 0; index < data["value"].length; index++) {
       if ((index % 20) === 0) {
         batchIndex++
         batchData.push([])
@@ -23,7 +23,7 @@ export default async function getRoster(teamId: string): Promise<{result: loadin
     const batchResult = await batchRequest(batchData)
     if (batchResult.result === loadingStateEnum.success && batchResult.data !== undefined) {
       const outUsers: microsoftUserType[] = []
-      for (var index = 0; index < batchResult.data.length; index++) {
+      for (let index = 0; index < batchResult.data.length; index++) {
         if (batchResult.data[index].status === 200) { //TO DO check okay response code
           outUsers.push({
             id: batchResult.data[index].body["id"],
@@ -33,8 +33,8 @@ export default async function getRoster(teamId: string): Promise<{result: loadin
           return {result: loadingStateEnum.failed}
         }
       }
-      var outputRosters: rosterType[] = []
-      for (var index = 0; index < data["value"].length; index++) {
+      let outputRosters: rosterType[] = []
+      for (let index = 0; index < data["value"].length; index++) {
         const userData = outUsers.find((e) => {return e.id === data["value"][index]["fields"]["playerId"]})
         if (userData !== undefined) {
           outputRosters.push({

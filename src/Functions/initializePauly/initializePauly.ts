@@ -61,10 +61,10 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
   if (!getRootSiteIdResult.ok){return loadingStateEnum.failed}
   const getRootSiteIdResultData = await getRootSiteIdResult.json()
   
-  var paulyListNewData: {"fields": any} = {"fields":{"Title":"Main"}}
+  let paulyListNewData: {"fields": any} = {"fields":{"Title":"Main"}}
 
   //Check if already data
-  var secondRun: boolean = false
+  let secondRun: boolean = false
   const getPaulyListResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists/PaulyList/items/1?expand=fields")
   if (!getPaulyListResult.ok && getPaulyListResult.status !== 404){console.log("second run failed"); return loadingStateEnum.failed}
   const getPaulyListResultData = await getPaulyListResult.json()
@@ -80,7 +80,7 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
   }
 
   //TO DO think about 409 if only half  of list where created and then interuption
-  for (var index = 0; index < addDataArray.length; index++) {
+  for (let index = 0; index < addDataArray.length; index++) {
     const callData = addDataArray[index]
     if (getPaulyListResultData["fields"] !== undefined) {
       if (getPaulyListResultData["fields"][callData.id] !== undefined) {
@@ -123,7 +123,7 @@ export async function initializePaulyPartThree(groupId: string, update?: string[
   if (paulyListNewData["fields"]["paulyDataListId"] === undefined) {
     const paulyDataResult = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + getRootSiteIdResultData["id"] + "/lists", "POST", JSON.stringify(paulyDataData))
     if (!paulyDataResult.ok) {return loadingStateEnum.failed}
-    var paulyDataResultData = await paulyDataResult.json()
+    let paulyDataResultData = await paulyDataResult.json()
     const paulyDataNewData = {
       "fields": {
         "Title":"Main",

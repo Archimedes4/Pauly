@@ -2,13 +2,13 @@ import { loadingStateEnum } from "../../types";
 import callMsGraph from "./microsoftAssets";
 
 export default async function largeBatch(defaultBatchData?: {id: string, method: "GET" | "POST", url: string}[][], createData?: {firstUrl: string, secondUrl: string, keys: {array?: string[], map?: Map<string, any>}, method: "GET" | "POST"}): Promise<{result: loadingStateEnum, data?: batchResponseType[]}> {
-  var data: {id: string, method: "GET" | "POST", url: string}[][] = []
+  let data: {id: string, method: "GET" | "POST", url: string}[][] = []
   if (defaultBatchData) {
     data = defaultBatchData
   } else if (createData) {
-    var batchIndex = 0
+    let batchIndex = 0
     if (createData.keys.array !== undefined){
-      for (var createDataIndex = 0; createDataIndex < createData.keys.array.length; createDataIndex++) {
+      for (let createDataIndex = 0; createDataIndex < createData.keys.array.length; createDataIndex++) {
         if (batchIndex >= data.length) {
           data.push([])
         }
@@ -22,7 +22,7 @@ export default async function largeBatch(defaultBatchData?: {id: string, method:
         }
       }
     } else if (createData.keys.map !== undefined) {
-      var createDataIndexMap = 0
+      let createDataIndexMap = 0
       createData.keys.map.forEach((value, key) => {
         if (batchIndex >= data.length) {
           data.push([])
@@ -43,15 +43,15 @@ export default async function largeBatch(defaultBatchData?: {id: string, method:
     return {result: loadingStateEnum.failed}
   }
 
-  var output: batchResponseType[] = []
-  for (var index = 0; index < data.length; index++) {
+  let output: batchResponseType[] = []
+  for (let index = 0; index < data.length; index++) {
     const batchData = {
       "requests":data[index]
     }
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
     if (result.ok) {
       const batchResultData = await result.json()
-      for (var batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
+      for (let batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
         output.push({
           method: "GET",
           id: batchResultData["responses"][batchIndex]["id"],

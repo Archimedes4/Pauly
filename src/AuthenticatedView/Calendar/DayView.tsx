@@ -138,8 +138,8 @@ function EventBlock({event, width, height, eventPane, setEventPane}:{event: even
   const Offset = findTimeOffset(new Date(event.startTime), height)
   const [horizontalShift, setHorizontalShift] = useState<number>(0)
   function calculateHorizontalShift() {
-    var handeled = false
-    for (var horizontalCheck = 0; horizontalCheck < eventPane.length; horizontalCheck++) {
+    let handeled = false
+    for (let horizontalCheck = 0; horizontalCheck < eventPane.length; horizontalCheck++) {
       const beforeIndex = eventPane[horizontalCheck].findIndex((e) => e >= Offset)
       if (beforeIndex !== -1) {
         if ((beforeIndex - 1) < eventPane[horizontalCheck].length) {
@@ -168,7 +168,7 @@ function EventBlock({event, width, height, eventPane, setEventPane}:{event: even
               }
             } else {
               //All Good
-              var newEvents: number[][] = eventPane
+              let newEvents: number[][] = eventPane
               newEvents[horizontalCheck].push(Offset)
               newEvents[horizontalCheck].push(Offset + EventHeight)
               // [...eventPane[horizontalCheck], Offset, Offset + EventHeight])

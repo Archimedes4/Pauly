@@ -7,7 +7,7 @@ function getFilter(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date:
   const startDateString = startDate?.date.toISOString().replace(/.\d+Z$/g, "Z")
   const endDateString = endDate?.date.toISOString().replace(/.\d+Z$/g, "Z")
   if (startDate || endDate) {
-    var filter = "&$filter="
+    let filter = "&$filter="
     if (startDate) {
       filter += `fields/startDate%20${startDate.filter}%20${startDateString}`
     }
@@ -20,8 +20,8 @@ function getFilter(startDate?: {date: Date, filter: "ge"|"le"}, endDate?: {date:
 }
 
 async function getSubmissions(commissionIds: string[]): Promise<{result: loadingStateEnum, data?: Map<string, {claimCount: number, submissionsCount: number, reviewedCount: number}>}> {
-  var outputRequests: {id: string, method: string, url: string}[][] = [[]]
-  for (var index = 0; index < commissionIds.length; index++) {
+  let outputRequests: {id: string, method: string, url: string}[][] = [[]]
+  for (let index = 0; index < commissionIds.length; index++) {
     outputRequests[Math.floor(index/20)].push({
       id: (index + 1).toString(),
       method: "GET",
@@ -31,17 +31,17 @@ async function getSubmissions(commissionIds: string[]): Promise<{result: loading
       outputRequests.push([])
     }
   }
-  var outputMap = new Map<string, {claimCount: number, submissionsCount: number, reviewedCount: number}>()
-  for (var index = 0; outputRequests.length < index; index++) {
+  let outputMap = new Map<string, {claimCount: number, submissionsCount: number, reviewedCount: number}>()
+  for (let index = 0; outputRequests.length < index; index++) {
     const requestData = {
       "requests":outputRequests[index]
     }
     const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items`, "POST", JSON.stringify(requestData))
     if (result.ok) {
       const data = await result.json()
-      for (var responseIndex = 0; responseIndex < data["responses"].length; responseIndex++) {
+      for (let responseIndex = 0; responseIndex < data["responses"].length; responseIndex++) {
         if (data["responses"][responseIndex]["status"] === 200) {
-          for (var dataIndex = 0; dataIndex < data["respone"][index]["body"].length; dataIndex++) {
+          for (let dataIndex = 0; dataIndex < data["respone"][index]["body"].length; dataIndex++) {
             if (data["respone"][index]["body"]["@odata.nextLink"] !== undefined) {
               if (outputRequests[outputRequests.length - 1].length < 20) {
                 outputRequests[outputRequests.length - 1].push({
@@ -58,7 +58,7 @@ async function getSubmissions(commissionIds: string[]): Promise<{result: loading
                 })
               }
             }
-            for (var valueIndex = 0; valueIndex < data["respone"][index]["body"]["value"].length; valueIndex++) {
+            for (let valueIndex = 0; valueIndex < data["respone"][index]["body"]["value"].length; valueIndex++) {
               if (outputMap.has(data["respone"][index]["body"]["value"][valueIndex]["commissionId"])) {
                 const mapData = outputMap.get(data["respone"][index]["body"]["value"][valueIndex]["commissionId"])
                 if (mapData !== undefined) {
@@ -103,12 +103,12 @@ export default async function getCommissions(nextLink?: string, startDate?: {dat
       const data = await result.json()
       if (data["value"] !== null && data["value"] !== undefined){
         const commissionsIds: string[] = []
-        for (var index = 0; index < data["value"].length; index++) {
+        for (let index = 0; index < data["value"].length; index++) {
           commissionsIds.push(data["value"][index]["fields"]["commissionId"])
         }
         const submissions = await getSubmissions(commissionsIds)
         if (submissions.result === loadingStateEnum.success && submissions.data !== undefined) {
-          var resultCommissions: commissionType[] = []
+          let resultCommissions: commissionType[] = []
           for (let index = 0; index < data["value"].length; index++) {
             const submissionData = submissions.data.get(data["value"][index]["fields"]["commissionID"] as string)
             resultCommissions.push({
@@ -152,8 +152,8 @@ type unclaimedCommissionSubmissionType = {
 
 //Gets points when given an array of commission ids
 async function getCommissionsBatch(commissions: unclaimedCommissionSubmissionType[]): Promise<{result: loadingStateEnum, data?: commissionType[]}> {
-  var outputRequests: {id: string, method: string, url: string}[] = []
-  for (var index = 0; index < commissions.length; index++) {
+  let outputRequests: {id: string, method: string, url: string}[] = []
+  for (let index = 0; index < commissions.length; index++) {
     outputRequests.push({
       id: (index + 1).toString(),
       method: "GET",
@@ -167,10 +167,10 @@ async function getCommissionsBatch(commissions: unclaimedCommissionSubmissionTyp
   const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
   if (result.ok) {
     const data = await result.json()
-    var commissionsResult: commissionType[] = []
-    for (var requestIndex = 0; requestIndex < data["responses"].length; requestIndex++) {
+    let commissionsResult: commissionType[] = []
+    for (let requestIndex = 0; requestIndex < data["responses"].length; requestIndex++) {
       if (data["responses"][requestIndex].status === 200) {
-        for (var index = 0; index < data["responses"][requestIndex]["body"]["value"].length; index++) {
+        for (let index = 0; index < data["responses"][requestIndex]["body"]["value"].length; index++) {
           commissionsResult.push({
             itemId: data["responses"][requestIndex]["body"]["value"][index]["id"],
             title: data["responses"][requestIndex]["body"]["value"][index]["fields"]["Title"],
@@ -200,14 +200,14 @@ async function getCommissionsBatch(commissions: unclaimedCommissionSubmissionTyp
 }
 
 export async function getUnclaimedCommissions(): Promise<{result: loadingStateEnum, data?: commissionType[]}> {
-  var nextUrl =  `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$filter=fields/userId%20eq%20'${store.getState().microsoftProfileData.id}'%20and%20fields/submissionApproved%20ne%20false`
+  let nextUrl =  `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items?expand=fields&$filter=fields/userId%20eq%20'${store.getState().microsoftProfileData.id}'%20and%20fields/submissionApproved%20ne%20false`
   //The first value in the map is the commission id and the second is the submissions count b/c all are unclaimed
-  var commissionsMap = new Map<string, number>()
+  let commissionsMap = new Map<string, number>()
   while (nextUrl !== "") {
     const submissionResultClaimed = await callMsGraph(nextUrl)
     if (!submissionResultClaimed.ok) {return {result: loadingStateEnum.failed}}
     const submissionResultClaimedData = await submissionResultClaimed.json()
-    for (var index = 0; index < submissionResultClaimedData["value"].length; index++){
+    for (let index = 0; index < submissionResultClaimedData["value"].length; index++){
       if (submissionResultClaimedData["value"][index]["fields"]["submissionApproved"] === false){
         if (commissionsMap.has(submissionResultClaimedData["value"][index]["fields"]["commissionId"])) {
           const count = commissionsMap.get(submissionResultClaimedData["value"][index]["fields"]["commissionId"])
@@ -226,7 +226,7 @@ export async function getUnclaimedCommissions(): Promise<{result: loadingStateEn
     }
   }
   const commissionsBatchData: unclaimedCommissionSubmissionType[][] = [[]]
-  var batchIndex = 0
+  let batchIndex = 0
   commissionsMap.forEach((value, key) => {
     commissionsBatchData[batchIndex].push({
       commissionId: key,
@@ -238,8 +238,8 @@ export async function getUnclaimedCommissions(): Promise<{result: loadingStateEn
     }
   })
 
-  var outCommissions: commissionType[] = []
-  for (var index = 0; index < commissionsBatchData.length; index++) {
+  let outCommissions: commissionType[] = []
+  for (let index = 0; index < commissionsBatchData.length; index++) {
     const result = await getCommissionsBatch(commissionsBatchData[index])
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
       outCommissions = [...outCommissions, ...result.data]
