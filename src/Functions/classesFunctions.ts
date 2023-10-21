@@ -6,76 +6,75 @@ import { Colors, loadingStateEnum, semesters } from "../types";
 import { getSchedule } from "./calendar/calendarFunctionsGraph";
 
 export async function getRooms(nextLink?: string, search?: string): Promise<{result: loadingStateEnum, data?: roomType[], nextLink?: string}> {
-  const searchFilter = (search) ? `&$filter=fields/roomName%20eq%20${search}`:""
-  const result = await callMsGraph(nextLink ? nextLink:"https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.roomListId +"/items?expand=fields" +  search)
+  const searchFilter = (search) ? `&$filter=fields/roomName%20eq%20${search}`:""; //TODO deal with search filter
+  const result = await callMsGraph(nextLink ? nextLink:"https://graph.microsoft.com/v1.0/sites/" + store.getState().paulyList.siteId + "/lists/" + store.getState().paulyList.roomListId +"/items?expand=fields" +  search);
   if (result.ok){
-    const data = await result.json()
-    let resultArray: roomType[] = []
-    for (let index = 0; index < data["value"].length; index++){
+    const data = await result.json();
+    let resultArray: roomType[] = [];
+    for (let index = 0; index < data["value"].length; index += 1){
       resultArray.push({
         name: data["value"][index]["fields"]["roomName"],
         id: data["value"][index]["fields"]["roomId"]
-      })
-    }
-    return {result: loadingStateEnum.success, data: resultArray, nextLink: data["@odata.nextLink"]}
+      });
+    };
+    return {result: loadingStateEnum.success, data: resultArray, nextLink: data["@odata.nextLink"]};
   } else {
-    return {result: loadingStateEnum.failed}
+    return {result: loadingStateEnum.failed};
   }
 }
 
 export async function getRoom(roomId: string): Promise<{result: loadingStateEnum, data?: roomType}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.roomListId}/items?expand=fields&fields/roomId%20eq%20'${roomId}'`)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.roomListId}/items?expand=fields&fields/roomId%20eq%20'${roomId}'`);
   if (result.ok) {
-    const data = await result.json()
+    const data = await result.json();
     if (data["value"].length === 0){
-      
       return {result: loadingStateEnum.success, data: {
         name: data["value"][0]["fields"]["roomName"],
         id: data["value"][0]["feilds"]["ro0mId"]
-      }}
+      }};
     } else {
-      return {result: loadingStateEnum.failed}
-    }
+      return {result: loadingStateEnum.failed};
+    };
   } else {
-    return {result: loadingStateEnum.failed}
-  }
+    return {result: loadingStateEnum.failed};
+  };
 }
 
 export async function getClasses(): Promise<{result: loadingStateEnum, data?: classType[]}> {
-  let classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`
-  let batchDataRequests: {id: string, method: string, url: string}[][] = [[]]
+  let classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`;
+  let batchDataRequests: {id: string, method: string, url: string}[][] = [[]];
   while (classQuery !== undefined) {
-    const classResult = await callMsGraph(classQuery)
+    const classResult = await callMsGraph(classQuery);
     if (classResult.ok) {
-      const classData = await classResult.json()
-      classQuery = classData["@odata.nextLink"]
+      const classData = await classResult.json();
+      classQuery = classData["@odata.nextLink"];
 
       //Batch Request perfroming a get request on each class group
 
       //Format Data
-      for (let index = 0; index < classData["value"].length; index++) {
+      for (let index = 0; index < classData["value"].length; index += 1) {
         batchDataRequests[Math.floor(index/20)].push({
           id: (index + 1).toString(),
           method: "GET",
           url: `/groups/${classData["value"][index]["id"]}?$select=displayName,id,${store.getState().paulyList.classExtensionId}`
-        })
-      }
+        });
+      };
     } else {
-      return {result: loadingStateEnum.failed}
+      return {result: loadingStateEnum.failed};
     }
   }
   //Run Queries
-  const batchHeaders = new Headers()
-  batchHeaders.append("Accept", "application/json")
-  let classes: classType[] = []
-  for (let index = 0; index < batchDataRequests.length; index++) {
+  const batchHeaders = new Headers();
+  batchHeaders.append("Accept", "application/json");
+  let classes: classType[] = [];
+  for (let index = 0; index < batchDataRequests.length; index += 1) {
     const batchData = {
       "requests":batchDataRequests[index]
-    }
-    const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(batchData))
+    };
+    const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData))
     if (batchResult.ok){
       const batchResultData = await batchResult.json()
-      for (let batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex++) {
+      for (let batchIndex = 0; batchIndex < batchResultData["responses"].length; batchIndex += 1) {
         if (batchResultData["responses"][batchIndex]["status"] === 200) {
           if (batchResultData["responses"][batchIndex]["body"][store.getState().paulyList.classExtensionId] !== undefined) {
             classes.push({
@@ -107,7 +106,7 @@ export async function getClassEvents(scheduleId: string, semester: semesters, sc
   const classResult = await getClasses()
   if (scheduleResult.result === loadingStateEnum.success && classResult.result === loadingStateEnum.success && classResult.data !== undefined && scheduleResult.schedule !== undefined) {
     let outputEvents: eventType[] = []
-    for (let index = 0; index < classResult.data.length; index++) {
+    for (let index = 0; index < classResult.data.length; index += 1) {
       if (classResult.data[index].schoolYearId === schoolYearEventId && classResult.data[index].semester === semester) {
         //This check should never fail
         if (classResult.data[index].periods.length > schoolDay.order){

@@ -1,17 +1,17 @@
-import { ScaledSize, Platform } from 'react-native'
-import React, { useEffect } from 'react'
-import Login from '../src/login'
-import AuthenticatedView from '../src/AuthenticatedView/AuthenticatedViewMain'
-import { clientId, scopes, tenantId } from '../src/PaulyConfig'
-import { useDispatch, useSelector } from 'react-redux'
-import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer'
-import store, { RootState } from '../src/Redux/store'
-import getPaulyLists from '../src/Functions/Ultility/getPaulyLists'
-import getUserProfile from '../src/Functions/Ultility/getUserProfile'
-import * as WebBrowser from 'expo-web-browser';
 import { Prompt, exchangeCodeAsync, makeRedirectUri, refreshAsync, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
-import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin'
-import { authenticationRefreshTokenSlice } from '../src/Redux/reducers/authenticationRefreshTokenReducer'
+import * as WebBrowser from 'expo-web-browser';
+import React, { useEffect } from 'react';
+import { ScaledSize, Platform } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import Login from '../src/login';
+import AuthenticatedView from '../src/AuthenticatedView/AuthenticatedViewMain';
+import { clientId, scopes, tenantId } from '../src/PaulyConfig';
+import { authenticationRefreshTokenSlice } from '../src/Redux/reducers/authenticationRefreshTokenReducer';
+import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer';
+import store, { RootState } from '../src/Redux/store';
+import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin';
+import getPaulyLists from '../src/Functions/Ultility/getPaulyLists';
+import getUserProfile from '../src/Functions/Ultility/getUserProfile';
 
 if (Platform.OS === "web") {
   WebBrowser.maybeCompleteAuthSession();
@@ -61,8 +61,8 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
               dispatch(authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(res.refreshToken))
             }
             dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
-            getPaulyLists(res.accessToken)
-            getUserProfile(res.accessToken)
+            getPaulyLists()
+            getUserProfile()
           })
       }})
     }
@@ -85,8 +85,8 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
             discovery,
           ).then((res) => {
             dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
-            getPaulyLists(res.accessToken)
-            getUserProfile(res.accessToken)
+            getPaulyLists()
+            getUserProfile()
             validateGovernmentMode()
           })
       }})

@@ -37,27 +37,27 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
   const [imageHeight, setImageHeight] = useState<number>(0)
 
   async function getPost(teamId: string, channelId: string, messageId: string) {
-    setMessageState(loadingStateEnum.loading)
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/messages/${messageId}`)
+    setMessageState(loadingStateEnum.loading);
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/messages/${messageId}`);
     if (result.ok) {
-      const data = await result.json()
-      setMessageData(data["body"]["content"])
-      setMessageState(loadingStateEnum.success)
+      const data = await result.json();
+      setMessageData(data["body"]["content"]);
+      setMessageState(loadingStateEnum.success);
     } else {
-      setMessageState(loadingStateEnum.failed)
-    }
-  }
+      setMessageState(loadingStateEnum.failed);
+    };
+  };
 
   async function getCommissionInformation() {
-    const result = await getCommission(id)
+    const result = await getCommission(id);
     if (result.result === loadingStateEnum.success && result.data !== undefined) {
-      setCommissionData(result.data)
+      setCommissionData(result.data);
       if (result.data?.postData !== undefined) {
-        getPost(result.data.postData.teamId, result.data.postData.channelId, result.data.postData.postId)
-      }
-    }
-    setCommissionState(result.result)
-  }
+        getPost(result.data.postData.teamId, result.data.postData.channelId, result.data.postData.postId);
+      };
+    };
+    setCommissionState(result.result);
+  };
   
   async function pickImage() {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -72,54 +72,53 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
           const heightPerWidth = imageMeasureHeight/imageMeasureWidth
           setImageHeight((width * 0.7) * heightPerWidth)
         })
-        setPickerImageState(CameraResult.success)
+        setPickerImageState(CameraResult.success);
       } else {
-        setPickerImageState(CameraResult.failed)
-      }
+        setPickerImageState(CameraResult.failed);
+      };
     } else {
-      setPickerImageState(CameraResult.notStarted)
+      setPickerImageState(CameraResult.notStarted);
     }
   }
   const [status, requestPermission] = ImagePicker.useCameraPermissions();
 
   async function takeImage() {
-    setTakeImageState(CameraResult.loading)
+    setTakeImageState(CameraResult.loading);
     if (status?.status === ImagePicker.PermissionStatus.GRANTED) {
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: false,
         allowsMultipleSelection: false,
         mediaTypes: ImagePicker.MediaTypeOptions.Images
-      })
+      });
       if (!result.canceled) {
         if (result.assets.length === 1) {
-          setImageUri(result.assets[0].uri)
+          setImageUri(result.assets[0].uri);
           Image.getSize(result.assets[0].uri, (imageMeasureWidth, imageMeasureHeight) => {
-            const heightPerWidth = imageMeasureHeight/imageMeasureWidth
-            setImageHeight((width * 0.7) * heightPerWidth)
-          })
-          setTakeImageState(CameraResult.success)
+            const heightPerWidth = imageMeasureHeight/imageMeasureWidth;
+            setImageHeight((width * 0.7) * heightPerWidth);
+          });
+          setTakeImageState(CameraResult.success);
         } else {
-          setTakeImageState(CameraResult.failed)
-        }
+          setTakeImageState(CameraResult.failed);
+        };
       } else {
-        setTakeImageState(CameraResult.notStarted)
-      }
+        setTakeImageState(CameraResult.notStarted);
+      };
     } else {
       if (status?.canAskAgain) {
-        const permissionResult = await requestPermission()
+        const permissionResult = await requestPermission();
         if (permissionResult.granted) {
-          takeImage()
+          takeImage();
         } else {
-          setTakeImageState(CameraResult.permissionDenied)
-        }
+          setTakeImageState(CameraResult.permissionDenied);
+        };
       } else {
-        setTakeImageState(CameraResult.goToSettings)
-      }
-      
-    }
-  }
+        setTakeImageState(CameraResult.goToSettings);
+      }; 
+    };
+  };
 
-  useEffect(() => {getCommissionInformation()}, [id])
+  useEffect(() => {getCommissionInformation()}, [id]);
 
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
@@ -133,7 +132,7 @@ export default function CommissionsView({id, onClose}:{id: string, onClose: () =
 
   if (!fontsLoaded) {
     return null;
-  }
+  };
 
   return (
     <View style={{width: width * 0.9, height: height * 0.8, backgroundColor: Colors.white, shadowColor: "black", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, borderRadius: 15}}>

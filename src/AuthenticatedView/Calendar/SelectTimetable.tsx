@@ -18,7 +18,7 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
       const dataResult = await result.json();
       if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
         let newLoadedTimetables: timetableStringType[] = [];
-        for (let index = 0; index < dataResult["value"].length; index++) {
+        for (let index = 0; index < dataResult["value"].length; index += 1) {
           try {
             newLoadedTimetables.push({
               name: dataResult["value"][index]["fields"]["timetableName"],

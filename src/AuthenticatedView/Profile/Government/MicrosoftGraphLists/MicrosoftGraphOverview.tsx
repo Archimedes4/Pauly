@@ -48,7 +48,7 @@ export default function MicrosoftGraphOverview() {
       const data = await result.json()
       if (data["value"] !== undefined){
         let incomingLists: listType[] = []
-        for(let index = 0; index < data["value"].length; index++){
+        for(let index = 0; index < data["value"].length; index += 1){
           incomingLists.push({
             displayName: data["value"][index]["displayName"],
             listId: data["value"][index]["id"],
@@ -84,14 +84,14 @@ export default function MicrosoftGraphOverview() {
       const result = await callMsGraph(schemaExtensionsUrl)
       if (!result.ok) {setSchemaLoadingState(loadingStateEnum.failed); return}
       const data = await result.json()
-      for (let index = 0; index < data["value"].length; index++) {
+      for (let index = 0; index < data["value"].length; index += 1) {
         resultData.push({
           description: data["value"][index]["description"],
           id: data["value"][index]["id"]
-        })
-      }
-      if (data["@odata.nextLink"] !== undefined) {schemaExtensionsUrl = data["@odata.nextLink"]} else {schemaExtensionsUrl = ""}
-    }
+        });
+      };
+      if (data["@odata.nextLink"] !== undefined) {schemaExtensionsUrl = data["@odata.nextLink"]} else {schemaExtensionsUrl = ""};
+    };
     setApplicationExtensions(resultData)
 
     const applicationResult = await callMsGraph("https://graph.microsoft.com/v1.0/schemaExtensions")
@@ -104,28 +104,29 @@ export default function MicrosoftGraphOverview() {
           id: applicationData["value"][index]["id"]
         })
       }
-      setExtensions(resultData)
-      setSchemaLoadingState(loadingStateEnum.success)
+      setExtensions(resultData);
+      setSchemaLoadingState(loadingStateEnum.success);
     } else {
-      setSchemaLoadingState(loadingStateEnum.failed)
-    }
-  }
+      setSchemaLoadingState(loadingStateEnum.failed);
+    };
+  };
 
   useEffect(() => {
     if (mode === "list") {
-      setSelectedGraphMode(graphMode.list)
+      setSelectedGraphMode(graphMode.list);
     } else if (mode === "group") {
-      setSelectedGraphMode(graphMode.group)
+      setSelectedGraphMode(graphMode.group);
     } else if (mode === "extension") {
-      setSelectedGraphMode(graphMode.extension)
-    }
-  }, [mode])
+      setSelectedGraphMode(graphMode.extension);
+    };
+  }, [mode]);
 
   useEffect(() => {
-    getLists()
-    loadData()
-    getExtensions()
-  }, [])
+    getLists();
+    loadData();
+    getExtensions();
+  }, []);
+  
   return (
     <View style={{height: height, width: width, backgroundColor: Colors.white}}>
       <Link to="/profile/government">

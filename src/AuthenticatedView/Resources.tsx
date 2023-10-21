@@ -49,7 +49,6 @@ function checkIfResourceDataJustAttachment(body: string): boolean {
 export default function Resources() {
   const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
   const {resources, loadingState, selectedResourceMode} = useSelector((state: RootState) => state.resources);
-  const {siteId} = useSelector((state: RootState) => state.paulyList);
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
   const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode);
   const [isShowingCategoryView, setIsShowingCategoryView] = useState<boolean>(false);
@@ -65,12 +64,10 @@ export default function Resources() {
   }, [])
 
   useEffect(() => {
-    if (siteId !== "") {
-      loadData()
-    }
-  }, [siteId, selectedResourceMode])
+    loadData()
+  }, [selectedResourceMode])
 
-
+  //Fonts
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../assets/fonts/BukhariScript.ttf'),
   });
@@ -235,28 +232,26 @@ function PickerPiece({text, item, isHoverPicker, setIsHoverPicker}:{text: string
 }
 
 function SearchBox() {
+  //Dimentsions
   const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {searchValue} = useSelector((state: RootState) => state.resources)
-  const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
-  const style: ViewStyle = (Platform.OS === "web") ? {outlineStyle: "none"}:{}
-  const dispatch = useDispatch()
+
   const [mounted, setMounted] = useState<boolean>(false)
+  const {searchValue} = useSelector((state: RootState) => state.resources)
+  const [isOverflowing, setIsOverflowing] = useState<boolean>(false) //Boolean true if text overflowing. This is telling the search icon to show or not.
+  const style = (Platform.OS === "web") ? {outlineStyle: "none"}:undefined //Style to remove ourline around textbox on web
+  const dispatch = useDispatch()
 
-  async function getSearchData() {
-    const result = await getResourcesSearch(searchValue)
-    console.log(result)
-  }
-
+  //Getting search results on value chage
   useEffect(() => {
-    if (mounted) {
-      const searchValueSave = searchValue
-      setTimeout(() => {
-        if (store.getState().resources.searchValue === searchValueSave) {
-          getSearchData()
+    if (mounted) { //Checking so that this isn't called on start
+      const searchValueSave = searchValue //saving value to check if change in 1.5 s
+      setTimeout(() => { //Waiting 1.5s
+        if (store.getState().resources.searchValue === searchValueSave) { //Checking if value changed
+          getResourcesSearch(searchValue) //getting search data
         }
       }, 1500)
     } else {
-      setMounted(true)
+      setMounted(true) //Setting that it has been called on start
     }
   }, [searchValue])
 

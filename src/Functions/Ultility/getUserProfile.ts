@@ -2,7 +2,7 @@ import { microsoftProfileDataSlice } from "../../Redux/reducers/microsoftProfile
 import store from "../../Redux/store"
 import callMsGraph from "./microsoftAssets"
 
-export default async function getUserProfile(accessToken: string) {
+export default async function getUserProfile() {
   const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/photo/$value", "GET")
   //TO DO return error
   if (result.ok) {

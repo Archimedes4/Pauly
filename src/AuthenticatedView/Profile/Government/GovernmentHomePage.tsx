@@ -41,24 +41,25 @@ export default function GovernmentHomePage() {
       }
     }
     async function updatePaulyData(key: string, data: string){
-      let dataOut: any = {}
-      dataOut[key] = data
+      let dataOut: any = {};
+      dataOut[key] = data;
       const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${paulyDataListId}/items/1/fields`, "PATCH", JSON.stringify(dataOut))//TO DO fix list ids
       if (result.ok){ 
-        setNewMessageState(loadingStateEnum.success)
+        setNewMessageState(loadingStateEnum.success);
       } else {
-        setNewMessageState(loadingStateEnum.failed)
-      }
-    }
+        setNewMessageState(loadingStateEnum.failed);
+      };
+    };
 
     useEffect(() => {
-      const storeText = newMessageText
+      const storeText = newMessageText;
       setTimeout(() => {
         if (isAutoUpdatingText && newMessageText === storeText) {
-          updatePaulyData("message", newMessageText)
-        }
-      }, 2000)
-    }, [newMessageText])
+          updatePaulyData("message", newMessageText);
+        };
+      }, 2000);
+    }, [newMessageText]);
+
     useEffect(() => {
       loadCurrentPaultData()
     }, [])

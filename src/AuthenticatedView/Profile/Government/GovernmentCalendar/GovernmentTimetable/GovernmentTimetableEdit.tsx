@@ -43,8 +43,8 @@ export default function GovernmentTimetableEdit() {
       //Create Timetable
       setCreateTimetableLoadingState(loadingStateEnum.loading)
       let scheduals = []
-      for (let index = 0; index < selectedSchedules.length; index++) {
-        scheduals.push(selectedSchedules[index].id)
+      for (let index = 0; index < selectedSchedules.length; index += 1) {
+        scheduals.push(selectedSchedules[index].id);
       }
       const data = {
         "fields": {

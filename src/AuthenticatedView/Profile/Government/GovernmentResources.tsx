@@ -131,12 +131,12 @@ export default function GovernmentResources() {
     if (!result.ok) {setGetTeamsState(loadingStateEnum.failed); return}
     const data = await result.json()
     let resultGroups: resourceGroupType[] = []
-    for (let index = 0; index < data["value"].length; index++) {
+    for (let index = 0; index < data["value"].length; index += 1) {
       const getResult = await callMsGraph("https://graph.microsoft.com/v1.0/teams/" + data["value"][index]["id"] + "/allChannels")
       let channelResult: channelType[] = []
       if (getResult.ok) {
         const getResultData = await getResult.json()
-        for (let indexResult = 0; indexResult < getResultData["value"].length; indexResult++) {
+        for (let indexResult = 0; indexResult < getResultData["value"].length; indexResult += 1) {
           const channelGetResult = await getResource(data["value"][index]["id"], getResultData["value"][indexResult]["id"])
           channelResult.push({
             id: getResultData["value"][indexResult]["id"],

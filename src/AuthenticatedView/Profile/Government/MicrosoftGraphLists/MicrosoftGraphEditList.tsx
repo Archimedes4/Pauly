@@ -1,7 +1,7 @@
-import { View, Text, Dimensions, Button, Pressable } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-native'
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
+import { View, Text, Button, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-native';
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import { CopyIcon } from '../../../../UI/Icons/Icons';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
@@ -9,11 +9,13 @@ import { RootState } from '../../../../Redux/store';
 import { Colors } from '../../../../types';
 
 export default function MicrosoftGraphEditList() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {siteId} = useSelector((state: RootState) => state.paulyList)
-  const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([])
-  const { id } = useParams()
+  const {width, height} = useSelector((state: RootState) => state.dimentions);
+  const {siteId} = useSelector((state: RootState) => state.paulyList);
+  const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([]);
+  const { id } = useParams();
   const [isCoppiedToClipboard, setIsCoppiedToClipboard] = useState<boolean>(false)
+
+  const navigate = useNavigate()
 
   async function getListItems() {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId +"/lists/" + id + "/items?expand=fields")
@@ -46,7 +48,7 @@ export default function MicrosoftGraphEditList() {
       const data = await result.json()
       if (data["value"].length !== undefined){
         let newCurrentColumns: listColumnType[] = []
-        for(let index = 0; index < data["value"].length; index++){
+        for(let index = 0; index < data["value"].length; index += 1){
           newCurrentColumns.push({
             columnGroup: data["value"][index]["columnGroup"],
             description: data["value"][index]["description"],
@@ -69,10 +71,10 @@ export default function MicrosoftGraphEditList() {
   useEffect(() => {getListItems(); getColumns()}, [])
   return (
     <View style={{overflow: "hidden", width: width, height: height, backgroundColor: Colors.white}}>
-      <Link to="/profile/government/graph/list">
+      <Pressable onPress={() => navigate("/profile/government/graph/list")}>
         <Text>Back</Text>
-      </Link>
-      <Text>MicrosoftGraphEditList</Text>
+      </Pressable>
+      <Text>Microsoft Graph Edit List</Text>
       <View style={{flexDirection: "row"}}>
         <Text>{id}</Text>
         { isCoppiedToClipboard ?

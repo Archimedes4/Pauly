@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { View, Text, Pressable, TextInput, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-native';
 import { initializePaulyPartOne, initializePaulyPartThree, initializePaulyPartTwo } from '../../../../Functions/initializePauly/initializePauly';
@@ -127,7 +127,7 @@ export default function GovernmentAdmin() {
 
   useEffect(() => {
     if (currentInitStage === initStage.partTwoLoad || currentInitStage === initStage.partThreeLoad) {
-      const interval = setInterval(() => {
+      const interval: ReturnType<typeof setInterval> = setInterval(() => {
         let miliSecondsPassed = new Date().getTime() - startTime.getTime()
         if (currentInitStage === initStage.partTwoLoad) {
           miliSecondsPassed = new Date().getTime() - partOneStartTime.getTime()
@@ -140,8 +140,8 @@ export default function GovernmentAdmin() {
         let minutesLeft: number = Math.floor(totalSecondsLeft/60)
         let secondsLeft: number = Math.ceil(totalSecondsLeft%60)
         if (secondsLeft === 60){
-          minutesLeft++
-          secondsLeft = 0
+          minutesLeft += 1;
+          secondsLeft = 0;
         }
         let minutesLeftString: string = minutesLeft.toString()
         let secondsLeftString: string = secondsLeft.toString()
@@ -173,8 +173,8 @@ export default function GovernmentAdmin() {
         let hoursPast: number = Math.floor(totalMinutesPast/60)
         let secondsPast: number = Math.ceil(totalSecondsLeft%60)
         if (secondsPast === 60){
-          minutesPast++
-          secondsPast = 0
+          minutesPast += 1;
+          secondsPast = 0;
         }
         let hoursLeftString: string = hoursPast.toString()
         let minutesLeftString: string = minutesPast.toString()
@@ -221,14 +221,14 @@ export default function GovernmentAdmin() {
                 <Text style={{position: "absolute", left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
               }
             </View>
-            <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partTwo) ? "blue":"black", borderRadius: 50}}/>
-            <View style={{height: height * 0.025, width: height* 0.05, alignItems: "center", justifyContent: "center", alignContent: "center"}}>
-              <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partThreeLoad) ? "blue":"black",}}/>
+            <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partTwo) ? 'blue':Colors.black, borderRadius: 50}}/>
+            <View style={{height: height * 0.025, width: height* 0.05, alignItems: 'center', justifyContent: 'center', alignContent: 'center'}}>
+              <View style={{height: height * 0.025, width: height * 0.005, backgroundColor: (currentInitStage === initStage.partThreeLoad) ? 'blue':Colors.black,}}/>
               { (currentInitStage === initStage.partThreeLoad) ?
-                <Text style={{position: "absolute", left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
+                <Text style={{position: 'absolute', left: height * 0.03, top: height * 0.01}}>{timeLeft}</Text>:null
               }
             </View>
-            <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partThree) ? "blue":"black", borderRadius: 50}}/>
+            <View style={{height: height * 0.05, width: height* 0.05, backgroundColor: (currentInitStage === initStage.partThree) ? 'blue':Colors.black, borderRadius: 50}}/>
           </View>
         </View>
         <View>
@@ -236,19 +236,19 @@ export default function GovernmentAdmin() {
           <TextInput value={createdGroupId} onChangeText={setCreatedGroupId} placeholder='Group Id'/>
           <Text>Time Elapsed: {timeElapsed}</Text>
           <Pressable onPress={() => {if (initResult === loadingStateEnum.notStarted) {initializePauly()}}}>
-            <Text>{(initResult === loadingStateEnum.cannotStart) ?  "Please Pick a User":(initResult === loadingStateEnum.notStarted) ? "initialize Pauly on New Tenant":(initResult ===  loadingStateEnum.loading) ? "Loading " + timeLeft :(initResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+            <Text>{(initResult === loadingStateEnum.cannotStart) ?  'Please Pick a User':(initResult === loadingStateEnum.notStarted) ? 'initialize Pauly on New Tenant':(initResult ===  loadingStateEnum.loading) ? `Loading ${timeLeft}`:(initResult === loadingStateEnum.success) ? 'Success':'Failed'}</Text>
           </Pressable>
           { (initTwoResult !== loadingStateEnum.cannotStart) ?
             <Pressable onPress={() => {initializePaulyFromPartTwo()}}>
-              <Text>{(initTwoResult === loadingStateEnum.notStarted) ? "Start From Part Two":(initTwoResult === loadingStateEnum.loading) ? "Loading":(initTwoResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+              <Text>{(initTwoResult === loadingStateEnum.notStarted) ? 'Start From Part Two':(initTwoResult === loadingStateEnum.loading) ? 'Loading':(initTwoResult === loadingStateEnum.success) ? 'Success':'Failed'}</Text>
             </Pressable>:null
           }
           { (initThreeResult !== loadingStateEnum.cannotStart) ?
             <View>
               {addDataArray.map((addData) => (
-                <View key={"Add_Data_" + addData.id}>
+                <View key={`Add_Data_${addData.id}`}>
                   { (selectedUpdates.includes(addData.id)) ?
-                    <Pressable style={{width: width * 0.7, backgroundColor: "blue"}} onPress={() => {
+                    <Pressable style={{width: width * 0.7, backgroundColor: Colors.lightGray}} onPress={() => {
                       let newSelectedUpdates = selectedUpdates
                       newSelectedUpdates.filter((e) => {return e !== addData.id})
                       setSelectedUpdates([...newSelectedUpdates])
@@ -268,7 +268,7 @@ export default function GovernmentAdmin() {
                 </View>
               ))}
               <Pressable onPress={() => {initializePaulyFromPartThree()}}>
-                <Text>{(initThreeResult === loadingStateEnum.notStarted) ? "Start From Part Three":(initThreeResult === loadingStateEnum.loading) ? "Loading":(initThreeResult === loadingStateEnum.success) ? "Success":"Failed"}</Text>
+                <Text>{(initThreeResult === loadingStateEnum.notStarted) ? 'Start From Part Three':(initThreeResult === loadingStateEnum.loading) ? 'Loading':(initThreeResult === loadingStateEnum.success) ? 'Success':'Failed'}</Text>
               </Pressable>
             </View>:null
           }
@@ -279,28 +279,29 @@ export default function GovernmentAdmin() {
 }
 
 function UserBlock({setSelectedUser, setInitResult}:{setSelectedUser: (item: microsoftUserType) => void, setInitResult: (item: loadingStateEnum) => void}) {
-  const [currentUserId, setCurrentUserId] = useState<string>("")
-  const [loadedUsers, setLoadedUsers] = useState<microsoftUserType[]>([])
-  const [loadUsersResult, setLoadUsersResult] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const {height} = useSelector((state: RootState) => state.dimentions)
+  const [currentUserId, setCurrentUserId] = useState<string>('');
+  const [loadedUsers, setLoadedUsers] = useState<microsoftUserType[]>([]);
+  const [loadUsersResult, setLoadUsersResult] = useState<loadingStateEnum>(loadingStateEnum.loading);
+  const [nextLink, setNextLink] = useState<string | undefined>(undefined);
+  const {height} = useSelector((state: RootState) => state.dimentions);
   
   async function getUserId() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/me")
+    const result = await callMsGraph('https://graph.microsoft.com/v1.0/me');
     if (result.ok) {
       const data = await result.json()
-      setCurrentUserId(data["id"])
+      setCurrentUserId(data['id'])
     }
   }
 
   async function getUsers() {
-    const result = await callMsGraph("https://graph.microsoft.com/v1.0/users?$top=10")
+    const result = await callMsGraph('https://graph.microsoft.com/v1.0/users?$top=10')
     if (result.ok){
       const data = await result.json()
       let newUsers: microsoftUserType[] = []
-      for (let index = 0; index < data["value"].length; index++){
+      for (let index = 0; index < data['value'].length; index += 1){
         newUsers.push({
-          id: data["value"][index]["id"],
-          displayName: data["value"][index]["displayName"]
+          id: data['value'][index]['id'],
+          displayName: data['value'][index]['displayName']
         })
       }
       setLoadedUsers(newUsers)
@@ -314,28 +315,30 @@ function UserBlock({setSelectedUser, setInitResult}:{setSelectedUser: (item: mic
     getUserId()
     getUsers()
   }, [])
+
   return (
     <>
-      <View style={{height: height * 0.1}}>
+      <View style={{height: height * 0.6}}>
         { (loadUsersResult === loadingStateEnum.loading) ?
           <Text>Loading</Text>:
-          <View>
+          <>
             { (loadUsersResult === loadingStateEnum.success) ?
-              <View>
-                {loadedUsers.map((user) => (
-                  <View key={"User_"+user.id}>
-                    { (user.id !== currentUserId) ?
-                      <Pressable onPress={() => {setSelectedUser(user); setInitResult(loadingStateEnum.notStarted)}}>
+              <FlatList
+                data={loadedUsers}
+                renderItem={(user) => (
+                  <View key={`User_${user.item.id}`}>
+                    { (user.item.id !== currentUserId) ?
+                      <Pressable onPress={() => {setSelectedUser(user.item); setInitResult(loadingStateEnum.notStarted)}}>
                         <View>
-                          <Text>{user.displayName}</Text>
+                          <Text>{user.item.displayName}</Text>
                         </View>
                       </Pressable>:null
                     }
                   </View>
-                ))}
-              </View>:<Text>Failed</Text>
+                )}
+              />:<Text>Failed</Text>
             }
-          </View>
+          </>
         }
       </View>
     </>

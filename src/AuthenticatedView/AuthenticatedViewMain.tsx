@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, ScaledSize, Text, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, ScaledSize, Text, Pressable, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
 import { NativeRouter, Route, Routes } from 'react-router-native';
 
@@ -39,70 +39,74 @@ import GovernmentDressCodeCreate from './Profile/Government/GovernmentCalendar/G
 import GovernmentDressCode from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
 import GovernmentDressCodeEdit from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentTimetableEdit from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
-import { RootState } from '../Redux/store';
+import store, { RootState } from '../Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ProfileBlock from './Profile/ProfileBlock';
 import ProgressView from '../UI/ProgressView';
 import Students from './Students';
 import GovernmentStudents from './Profile/Government/GovernmentStudents';
 import { Colors } from '../types';
+import { DiscoveryDocument, revokeAsync, useAutoDiscovery } from 'expo-auth-session';
+import { useMsal } from '@azure/msal-react';
+import { authenticationTokenSlice } from '../Redux/reducers/authenticationTokenReducer';
+import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
+import { tenantId } from '../PaulyConfig';
 
 export default function AuthenticatedView({dimensions, width}:{dimensions: {window: ScaledSize,screen: ScaledSize}, width: number}) {
   const {height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
   const {siteId} = useSelector((state: RootState) => state.paulyList);
-  const authenticationToken = useSelector((state: RootState) => state.authenticationToken);
-  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode);
+  const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
   const isShowingProfileBlock = useSelector((state: RootState) => state.isShowingProfileBlock);
   const insets = useSafeAreaInsets();
   const [overide, setOveride] = useState<boolean>(false);
   return (
     <>
-      { ((siteId !== "" || overide) && authenticationToken !== "") ? 
+      { ((siteId !== '' || overide) && authenticationToken !== '') ? 
         <View style={{width: width, top: -insets.top}}>
           <NativeRouter>
-            <View style={{flexDirection: "row", width: width}}>
+            <View style={{flexDirection: 'row', width: width}}>
               { (currentBreakPoint >= 1) ?
                 <NavBarComponent width={width * 0.1} height={dimensions.window.height} />:null
               }
               <View style={{width: (currentBreakPoint >= 1) ? width * 0.9:width, height: height, backgroundColor: Colors.maroon}}>
                 <Routes>
-                  <Route path="/" element={<HomePage/>}/>
-                  <Route path="/sports" element={<Sports/>}/>
-                  <Route path="/notifications" element={<Notifications/>}/>
-                  <Route path="/calendar" element={<Calendar />}/>
-                  <Route path="/resources" element={<Resources/>}/>
-                  <Route path="/commissions" element={<Commissions/>}/>
-                  <Route path="/profile" element={<Settings/>}/>
-                  <Route path="/students" element={<Students />} />
-                  <Route path="/profile/government" element={<Government />}/>
-                  <Route path="/profile/government/resources" element={<GovernmentResources />} />
-                  <Route path="/profile/government/admin" element={<GovernmentAdmin />} />
-                  <Route path="/profile/government/graph/:mode" element={<MicrosoftGraphOverview/>}/>
-                  <Route path="/profile/government/graph/:mode/edit/:id" element={<MicrosoftGraphEdit />}/>
-                  <Route path="/profile/government/graph/:mode/create" element={<MicrosoftGraphCreateList/>}/>
-                  <Route path="/profile/government/commissions" element={<GovernmentCommissions/>}/>
-                  <Route path="/profile/government/commissions/:id" element={<GovernmentEditCommission/>}/>
-                  <Route path="/profile/government/homepage" element={<GovernmentHomePage />} />
-                  <Route path="/profile/government/students" element={<GovernmentStudents />} />
-                  <Route path="/profile/government/classes" element={<GovernmentClasses />} />
-                  <Route path="/profile/government/classes/edit/:id" element={<GovernmentClassesEdit />} />
-                  <Route path="/profile/government/classes/room" element={<GovernmentRooms />} />
-                  <Route path="/profile/government/classes/room/create" element={<GovernmentRoomsCreate />} />
-                  <Route path="/profile/government/calendar" element={<GovernmentCalendar />} />
-                  <Route path="/profile/government/calendar/schedule" element={<GovernmentSchedual />} />
-                  <Route path="/profile/government/calendar/schedule/:id" element={<GovernmentScheduleEdit />} />
-                  <Route path="/profile/government/calendar/timetable" element={<GovernmentTimetable />} />
-                  <Route path="/profile/government/calendar/timetable/:id" element={<GovernmentTimetableEdit/>} />
-                  <Route path="/profile/government/calendar/dresscode" element={<GovernmentDressCode />} />
-                  <Route path="/profile/government/calendar/dresscode/edit/:id" element={<GovernmentDressCodeEdit />} /> 
-                  <Route path="/profile/government/calendar/dresscode/create" element={<GovernmentDressCodeCreate />} />
-                  <Route path="/profile/government/sports" element={<GovernmentSports/>}/>
-                  <Route path="/profile/government/sports/create" element={<GovernmentCreateNewSport/>}/>
-                  <Route path="/profile/government/sports/team/:sport/:id" element={<GovernmentSportsTeams/>}/>
-                  <Route path="/profile/government/sports/team/:sport/:id/:teamId" element={<GovernmentSportTeamEdit />} />
-                  <Route path="/profile/government/sports/post/create" element={<GovernmentSportsTeamAddPost />} />
-                  <Route path="/profile/government/sports/post/review/:submissionID" element={<GovernmentReviewFileSubmission />} />
-                  <Route path="*" element={<PageNotFound />} />
+                  <Route path='/' element={<HomePage/>}/>
+                  <Route path='/sports' element={<Sports/>}/>
+                  <Route path='/notifications' element={<Notifications/>}/>
+                  <Route path='/calendar' element={<Calendar />}/>
+                  <Route path='/resources' element={<Resources/>}/>
+                  <Route path='/commissions' element={<Commissions/>}/>
+                  <Route path='/profile' element={<Settings/>}/>
+                  <Route path='/students' element={<Students />} />
+                  <Route path='/profile/government' element={<Government />}/>
+                  <Route path='/profile/government/resources' element={<GovernmentResources />} />
+                  <Route path='/profile/government/admin' element={<GovernmentAdmin />} />
+                  <Route path='/profile/government/graph/:mode' element={<MicrosoftGraphOverview/>}/>
+                  <Route path='/profile/government/graph/:mode/edit/:id' element={<MicrosoftGraphEdit />}/>
+                  <Route path='/profile/government/graph/:mode/create' element={<MicrosoftGraphCreateList/>}/>
+                  <Route path='/profile/government/commissions' element={<GovernmentCommissions/>}/>
+                  <Route path='/profile/government/commissions/:id' element={<GovernmentEditCommission/>}/>
+                  <Route path='/profile/government/homepage' element={<GovernmentHomePage />} />
+                  <Route path='/profile/government/students' element={<GovernmentStudents />} />
+                  <Route path='/profile/government/classes' element={<GovernmentClasses />} />
+                  <Route path='/profile/government/classes/edit/:id' element={<GovernmentClassesEdit />} />
+                  <Route path='/profile/government/classes/room' element={<GovernmentRooms />} />
+                  <Route path='/profile/government/classes/room/create' element={<GovernmentRoomsCreate />} />
+                  <Route path='/profile/government/calendar' element={<GovernmentCalendar />} />
+                  <Route path='/profile/government/calendar/schedule' element={<GovernmentSchedual />} />
+                  <Route path='/profile/government/calendar/schedule/:id' element={<GovernmentScheduleEdit />} />
+                  <Route path='/profile/government/calendar/timetable' element={<GovernmentTimetable />} />
+                  <Route path='/profile/government/calendar/timetable/:id' element={<GovernmentTimetableEdit/>} />
+                  <Route path='/profile/government/calendar/dresscode' element={<GovernmentDressCode />} />
+                  <Route path='/profile/government/calendar/dresscode/edit/:id' element={<GovernmentDressCodeEdit />} /> 
+                  <Route path='/profile/government/calendar/dresscode/create' element={<GovernmentDressCodeCreate />} />
+                  <Route path='/profile/government/sports' element={<GovernmentSports/>}/>
+                  <Route path='/profile/government/sports/create' element={<GovernmentCreateNewSport/>}/>
+                  <Route path='/profile/government/sports/team/:sport/:id' element={<GovernmentSportsTeams/>}/>
+                  <Route path='/profile/government/sports/team/:sport/:id/:teamId' element={<GovernmentSportTeamEdit />} />
+                  <Route path='/profile/government/sports/post/create' element={<GovernmentSportsTeamAddPost />} />
+                  <Route path='/profile/government/sports/post/review/:submissionID' element={<GovernmentReviewFileSubmission />} />
+                  <Route path='*' element={<PageNotFound />} />
                 </Routes>
                 { (currentBreakPoint >= 1 && isShowingProfileBlock) ?
                   <ProfileBlock />:null
@@ -110,17 +114,68 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
               </View>
             </View>
           </NativeRouter>
-        </View>:
-        <View style={{width: width, top: -insets.top, height: height, alignContent: "center", alignItems: 'center', justifyContent: "center"}}>
-          <ProgressView width={14} height={14}/>
-          <Text style={{color: Colors.white}}>Loading</Text>
-          { isGovernmentMode ?
-            <Pressable onPress={() => {setOveride(true)}} style={{margin: 5}}>
-              <Text style={{color: Colors.white}}>Overide</Text>
-            </Pressable>:null
-          }
-        </View>
+        </View>:<LoadingView setOveride={setOveride} width={width} />
       }
     </>
   )
+}
+
+function LoadingView({setOveride, width}:{setOveride: (item: boolean) => void, width: number}) {
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode);
+  const {height} = useSelector((state: RootState) => state.dimentions);
+  const insets = useSafeAreaInsets();
+  const [isShowingLogout, setIsShowingLogout] = useState<boolean>(false)
+
+  const discovery = useAutoDiscovery(`https://login.microsoftonline.com/${tenantId}/v2.0`);
+  const { instance } = useMsal();
+  
+  function signOut() {
+    if (Platform.OS === 'web') {
+      const account = instance.getActiveAccount();
+      if (account !== null) {
+        signOutWeb(instance, account);
+      } else {
+        signOutWeb(instance);
+      }
+    } else {
+      if (discovery !== null) {
+        signOutNative(discovery);
+      }
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsShowingLogout(true)
+    }, 10000)
+  }, [])
+  
+  return (
+    <View style={{width: width, top: -insets.top, height: height, alignContent: "center", alignItems: 'center', justifyContent: "center"}}>
+      <ProgressView width={14} height={14}/>
+      <Text style={{color: Colors.white}}>Loading</Text>
+      { isGovernmentMode ?
+        <Pressable onPress={() => {setOveride(true)}} style={{margin: 5}}>
+          <Text style={{color: Colors.white}}>Overide</Text>
+        </Pressable>:null
+      }
+      { isShowingLogout ?
+        <Pressable onPress={() => {signOut()}} style={{margin: 5}}>
+          <Text style={{color: Colors.white}}>Logout</Text>
+        </Pressable>:null
+      }
+    </View>
+  )
+}
+
+function signOutNative(discovery: DiscoveryDocument) {
+  revokeAsync({token: store.getState().authenticationToken}, discovery);
+  store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""));
+}
+
+function signOutWeb(instance: IPublicClientApplication, account?: AccountInfo) {
+  store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""));
+  instance.logoutPopup({
+    account: account
+  });
 }

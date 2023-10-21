@@ -10,16 +10,16 @@ import batchRequest from "../Ultility/batchRequest";
 
 //Defaults to org wide events
 export async function getGraphEvents(url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
-  const result = await callMsGraph((url !== undefined) ? url:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
+  const result = await callMsGraph((url !== undefined) ? url:`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}]);
   if (result.ok){
-    const data = await result.json()
-    let newEvents: eventType[] = []
+    const data = await result.json();
+    let newEvents: eventType[] = [];
     for(let index = 0; index < data["value"].length; index++) {
-      const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId
-      const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId
-      const singleValueExtendedProperties: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"]
-      const eventType: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventTypeExtensionID})?.value:undefined
-      const eventData: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventDataExtensionID})?.value:undefined
+      const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId;
+      const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId;
+      const singleValueExtendedProperties: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"];
+      const eventType: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventTypeExtensionID})?.value:undefined;
+      const eventData: string | undefined = (data["value"][index]["singleValueExtendedProperties"] !== undefined) ? singleValueExtendedProperties.find((e: {id: string, value: string}) => {return  e.id === eventDataExtensionID})?.value:undefined;
       newEvents.push({
         id: data["value"][index]["id"],
         name: data["value"][index]["subject"],
@@ -31,19 +31,19 @@ export async function getGraphEvents(url?: string, referenceUrl?: string): Promi
         paulyEventData: eventData,
         microsoftEvent: true,
         microsoftReference: (referenceUrl !== undefined) ? referenceUrl + data["value"][index]["id"]:"https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"]
-      })
+      });
     }
-    return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]}
+    return {result: loadingStateEnum.success, events: newEvents, nextLink: data["@odata.nextLink"]};
   } else {
-    return {result: loadingStateEnum.failed}
+    return {result: loadingStateEnum.failed};
   }
 }
 
 //Gets an event from paulys team
 export async function getEvent(id: string): Promise<{result: loadingStateEnum, data?: eventType}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}]);
   if (result.ok){
-    const data = await result.json()
+    const data = await result.json();
     let event: eventType = {
       id: data["id"],
       name: data["subject"],
@@ -53,23 +53,23 @@ export async function getEvent(id: string): Promise<{result: loadingStateEnum, d
       eventColor: Colors.white,
       microsoftEvent: true,
       microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["id"]
-    }
+    };
     if (data["singleValueExtendedProperties"] !== undefined){
-      const eventData: {id: string, value: string}[] = data["singleValueExtendedProperties"]
-      const eventType = eventData.find((e) => {return e.id === store.getState().paulyList.eventTypeExtensionId})?.value 
-      event["paulyEventType"] = (eventType === "schoolDay") ? "schoolDay":(eventType === "schoolYear") ? "schoolYear":undefined
-      event["paulyEventData"] = eventData.find((e) => {return e.id === store.getState().paulyList.eventDataExtensionId})?.value
-    }
-    return {result: loadingStateEnum.success, data: event}
+      const eventData: {id: string, value: string}[] = data["singleValueExtendedProperties"];
+      const eventType = eventData.find((e) => {return e.id === store.getState().paulyList.eventTypeExtensionId})?.value;
+      event["paulyEventType"] = (eventType === "schoolDay") ? "schoolDay":(eventType === "schoolYear") ? "schoolYear":undefined;
+      event["paulyEventData"] = eventData.find((e) => {return e.id === store.getState().paulyList.eventDataExtensionId})?.value;
+    };
+    return {result: loadingStateEnum.success, data: event};
   } else {
-    return {result: loadingStateEnum.failed}
+    return {result: loadingStateEnum.failed};
   }
 }
 
 export async function getSchedule(id: string): Promise<{result: loadingStateEnum, schedule?: scheduleType, listItemId?: string}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleData,scheduleId,scheduleColor)&$filter=fields/scheduleId%20eq%20'${id}'&$select=id`)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleData,scheduleId,scheduleColor)&$filter=fields/scheduleId%20eq%20'${id}'&$select=id`);
   if (result.ok) {
-    const data = await result.json()
+    const data = await result.json();
     if (data["value"].length !== undefined) {
       if (data["value"].length === 1) {
         const resultSchedule: scheduleType = {
@@ -78,67 +78,67 @@ export async function getSchedule(id: string): Promise<{result: loadingStateEnum
           periods: JSON.parse(data["value"][0]["fields"]["scheduleData"]) as periodType[],
           id: data["value"][0]["fields"]["scheduleId"],
           color:  data["value"][0]["fields"]["scheduleColor"]
-        }
-        return {result: loadingStateEnum.success, schedule: resultSchedule, listItemId: data["value"][0]["id"]}
+        };
+        return {result: loadingStateEnum.success, schedule: resultSchedule, listItemId: data["value"][0]["id"]};
       } else {
-        return {result: loadingStateEnum.failed, schedule: undefined}
-      }
+        return {result: loadingStateEnum.failed, schedule: undefined};
+      };
     } else {
-      return {result: loadingStateEnum.failed, schedule: undefined}
-    }
+      return {result: loadingStateEnum.failed, schedule: undefined};
+    };
   } else {
-    return {result: loadingStateEnum.failed, schedule: undefined}
+    return {result: loadingStateEnum.failed, schedule: undefined};
   }
 }
 
 export async function getSchedules(): Promise<{result: loadingStateEnum, data?: scheduleType[], nextLink?: string}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields`)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields`);
   if (result.ok){
-    const dataResult = await result.json()
+    const dataResult = await result.json();
     if (dataResult["value"].length !== undefined && dataResult["value"].length !== null){
-      let newLoadedSchedules: scheduleType[] = []
+      let newLoadedSchedules: scheduleType[] = [];
       for (let index = 0; index < dataResult["value"].length; index++) {
         try {
-          const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[]
+          const scheduleData = JSON.parse(dataResult["value"][index]["fields"]["scheduleData"]) as periodType[];
           newLoadedSchedules.push({
             properName: dataResult["value"][index]["fields"]["scheduleProperName"],
             descriptiveName: dataResult["value"][index]["fields"]["scheduleDescriptiveName"],
             id: dataResult["value"][index]["fields"]["scheduleId"],
             periods: scheduleData,
             color: dataResult["value"][index]["fields"]["scheduleColor"]
-          })
+          });
         } catch {
-          return {result: loadingStateEnum.failed}
+          return {result: loadingStateEnum.failed};
           //TO DO unimportant but this shouldn't be able to happen if this doesn't work most likly invalid data has somehow gotten into the schedule data column of the schedule list
-        }
-      }
-      return {result: loadingStateEnum.success, data: newLoadedSchedules, nextLink: dataResult["@odata.nextLink"]}
+        };
+      };
+      return {result: loadingStateEnum.success, data: newLoadedSchedules, nextLink: dataResult["@odata.nextLink"]};
     } else {
-      return {result: loadingStateEnum.failed}
+      return {result: loadingStateEnum.failed};
     }
   } else {
-    return {result: loadingStateEnum.failed}
+    return {result: loadingStateEnum.failed};
   }
 }
 
 export async function getTimetable(timetableId: string): Promise<{result: loadingStateEnum, timetable?: timetableType}> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items?expand=fields&$filter=fields/timetableId%20eq%20'${timetableId}'`)
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items?expand=fields&$filter=fields/timetableId%20eq%20'${timetableId}'`);
   if (result.ok) {
-    const data = await result.json()
+    const data = await result.json();
     if (data["value"].length !== undefined){
       if (data["value"].length === 1) {
         try {
-          const scheduleData: string[] = JSON.parse(data["value"][0]["fields"]["timetableDataSchedules"])
-          let newSchedules: scheduleType[] = []
+          const scheduleData: string[] = JSON.parse(data["value"][0]["fields"]["timetableDataSchedules"]);
+          let newSchedules: scheduleType[] = [];
           for (let index = 0; index < scheduleData.length; index++) {
-            const result = await getSchedule(scheduleData[index])
+            const result = await getSchedule(scheduleData[index]);
             if (result.result === loadingStateEnum.success && result.schedule !== undefined) {
-              newSchedules.push(result.schedule)
+              newSchedules.push(result.schedule);
             } else {
-              return {result: loadingStateEnum.failed}
+              return {result: loadingStateEnum.failed};
             }
           }
-          const dressCodeResult = await getDressCode(data["value"][0]["fields"]["timetableDressCodeId"])
+          const dressCodeResult = await getDressCode(data["value"][0]["fields"]["timetableDressCodeId"]);
           if (dressCodeResult.result === loadingStateEnum.success && dressCodeResult.data !== undefined){
             const resultingTimetable: timetableType = {
               name: data["value"][0]["fields"]["timetableName"],
@@ -146,36 +146,36 @@ export async function getTimetable(timetableId: string): Promise<{result: loadin
               schedules: newSchedules,
               days: JSON.parse(data["value"][0]["fields"]["timetableDataDays"]),
               dressCode: dressCodeResult.data
-            }
-            return {result: loadingStateEnum.success, timetable: resultingTimetable}
+            };
+            return {result: loadingStateEnum.success, timetable: resultingTimetable};
           } else {
-            return {result: loadingStateEnum.failed}
+            return {result: loadingStateEnum.failed};
           }
         } catch (e) {
-          return {result: loadingStateEnum.failed}
+          return {result: loadingStateEnum.failed};
         }
       } else {
-        return {result: loadingStateEnum.failed}
+        return {result: loadingStateEnum.failed};
       }
     } else {
-      return {result: loadingStateEnum.failed}
+      return {result: loadingStateEnum.failed};
     }
   } else {
-    return {result: loadingStateEnum.failed}
+    return {result: loadingStateEnum.failed};
   }
 }
 
 export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadingStateEnum; event?: eventType; }> {
-  const startDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0)).toISOString().slice(0, -1) + "0000"
-  const endDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 0)).toISOString().slice(0, -1) + "0000"
-  const result = await callMsGraph("https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + `/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')%20and%20start/dateTime%20eq%20'${startDate}'%20and%20end/dateTime%20eq%20'${endDate}'`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
+  const startDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 0)).toISOString().slice(0, -1) + "0000";
+  const endDate: string = new Date(Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 1, 0)).toISOString().slice(0, -1) + "0000";
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')%20and%20start/dateTime%20eq%20'${startDate}'%20and%20end/dateTime%20eq%20'${endDate}'`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}]);
   if (result.ok) {
-    const data = await result.json()
+    const data = await result.json();
     for(let index = 0; index < data["value"].length; index++){
-      const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId
-      const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId
+      const eventTypeExtensionID = store.getState().paulyList.eventTypeExtensionId;
+      const eventDataExtensionID = store.getState().paulyList.eventDataExtensionId;
       if (data["value"][index]["singleValueExtendedProperties"] !== undefined) {
-        const eventData: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"]
+        const eventData: {id: string, value: string}[] = data["value"][index]["singleValueExtendedProperties"];
         if (eventData !== undefined) {
           if (eventData.find((e) => {return e.id === eventTypeExtensionID})?.value === "schoolDay") {
             const event: eventType = {
@@ -189,33 +189,33 @@ export async function getSchoolDay(selectedDate: Date): Promise<{ result: loadin
               microsoftReference: "https://graph.microsoft.com/v1.0/groups/" + orgWideGroupID + "/calendar/events/" + data["value"][index]["id"],
               paulyEventType: (eventData.find((e) => {return e.id === eventTypeExtensionID})?.value === "schoolDay") ? "schoolDay":undefined,
               paulyEventData: eventData.find((e) => {return e.id === eventDataExtensionID})?.value
-            }
-            return {result: loadingStateEnum.success, event: event}
-          }
-        }
-        return {result: loadingStateEnum.failed}
-      }
-      return {result: loadingStateEnum.failed}
-    }
-    return {result: loadingStateEnum.failed}
+            };
+            return {result: loadingStateEnum.success, event: event};
+          };
+        };
+        return {result: loadingStateEnum.failed};
+      };
+      return {result: loadingStateEnum.failed};
+    };
+    return {result: loadingStateEnum.failed};
   } else {
-    return {result: loadingStateEnum.failed}
-  }
+    return {result: loadingStateEnum.failed};
+  };
 }
 
 export async function getSchoolDays(date: Date): Promise<{result: loadingStateEnum, data?: eventType[], nextLink?: string}> {
-  let firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-  let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 1).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000"
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}])
+  let firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000";
+  let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 1).toISOString().replace(/.\d+Z$/g, "Z").split(/[T ]/i, 1)[0] + "T00:00:00.0000000";
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolDay')`, "GET", undefined, [{key: 'Prefer', value: 'outlook.timezone="Central America Standard Time"'}]);
   if (result.ok) {
-    const data = await result.json()
-    const scheduleIds = new Map<string, number>()
-    const schoolYearIds = new Map<string, number>()
+    const data = await result.json();
+    const scheduleIds = new Map<string, number>();
+    const schoolYearIds = new Map<string, number>();
     for (let index = 0; index < data["value"].length; index++) {
-      const outputIds: schoolDayDataCompressedType = JSON.parse(data["value"][index]["singleValueExtendedProperties"].find((e: {id: string, value: string}) => {return e.id === store.getState().paulyList.eventDataExtensionId})["value"])
-      scheduleIds.set(outputIds.scheduleId, 0)
-      schoolYearIds.set(outputIds.schoolYearEventId, 0)
-    }
+      const outputIds: schoolDayDataCompressedType = JSON.parse(data["value"][index]["singleValueExtendedProperties"].find((e: {id: string, value: string}) => {return e.id === store.getState().paulyList.eventDataExtensionId})["value"]);
+      scheduleIds.set(outputIds.scheduleId, 0);
+      schoolYearIds.set(outputIds.schoolYearEventId, 0);
+    };
     //Get batch data
 
     const batchRequestResultSchedule = await batchRequest(undefined, {
@@ -225,16 +225,16 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
       keys: {
         map: scheduleIds
       }
-    })
+    });
 
     if (batchRequestResultSchedule.result !== loadingStateEnum.success || batchRequestResultSchedule.data === undefined) {
-      return {result: loadingStateEnum.failed}
-    }
-    const schedules = new Map<string, scheduleType>()
+      return {result: loadingStateEnum.failed};
+    };
+    const schedules = new Map<string, scheduleType>();
     for (let scheudleIndex = 0; scheudleIndex < batchRequestResultSchedule.data.length; scheudleIndex++) {
       if (batchRequestResultSchedule.data[scheudleIndex].status === 200) { //TO DO fix status code
         if (batchRequestResultSchedule.data[scheudleIndex].body["value"].length === 1) {
-          const scheduleResponseData = batchRequestResultSchedule.data[scheudleIndex].body["value"][0]["fields"]
+          const scheduleResponseData = batchRequestResultSchedule.data[scheudleIndex].body["value"][0]["fields"];
           try {
             schedules.set(scheduleResponseData["scheduleId"], {
               properName: scheduleResponseData["scheduleProperName"],
@@ -242,30 +242,30 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
               periods: JSON.parse(scheduleResponseData["scheduleData"]),
               id: scheduleResponseData["scheduleId"],
               color: scheduleResponseData["scheduleColor"]
-            })
+            });
           } catch  {
-            return {result: loadingStateEnum.failed}
-          }
+            return {result: loadingStateEnum.failed};
+          };
         } else {
-          return {result: loadingStateEnum.failed}
-        }
+          return {result: loadingStateEnum.failed};
+        };
       } else {
-        return {result: loadingStateEnum.failed}
-      }
-    }
+        return {result: loadingStateEnum.failed};
+      };
+    };
 
-    const timetableResult = await getTimetablesFromSchoolYears(schoolYearIds, schedules)
+    const timetableResult = await getTimetablesFromSchoolYears(schoolYearIds, schedules);
     if (timetableResult.result !== loadingStateEnum.success || timetableResult.data === undefined) {
-      return {result: loadingStateEnum.failed}
-    }
+      return {result: loadingStateEnum.failed};
+    };
 
-    let schoolDaysResult: eventType[] = []
+    let schoolDaysResult: eventType[] = [];
     for (let index = 0; index < data["value"].length; index++) {
-      const outputIds: schoolDayDataCompressedType = JSON.parse(data["value"][index]["singleValueExtendedProperties"].find((e: {id: string, value: string}) => {return e.id === store.getState().paulyList.eventDataExtensionId})["value"])
-      const schedule = schedules.get(outputIds.scheduleId)
-      const timetable = timetableResult.data.get(outputIds.schoolYearEventId)
-      const dressCode = timetable?.dressCode.dressCodeData.find((e) => {return e.id === outputIds.dressCodeId})
-      const schoolDay = timetable?.days.find((e) => {return e.id === outputIds.schoolDayId})
+      const outputIds: schoolDayDataCompressedType = JSON.parse(data["value"][index]["singleValueExtendedProperties"].find((e: {id: string, value: string}) => {return e.id === store.getState().paulyList.eventDataExtensionId})["value"]);
+      const schedule = schedules.get(outputIds.scheduleId);
+      const timetable = timetableResult.data.get(outputIds.schoolYearEventId);
+      const dressCode = timetable?.dressCode.dressCodeData.find((e) => {return e.id === outputIds.dressCodeId});
+      const schoolDay = timetable?.days.find((e) => {return e.id === outputIds.schoolDayId});
       if (schedule !== undefined && timetable !== undefined && dressCode !== undefined && schoolDay !== undefined) {
         schoolDaysResult.push({
           id: data["value"][index]["id"],
@@ -282,15 +282,15 @@ export async function getSchoolDays(date: Date): Promise<{result: loadingStateEn
             semester: outputIds.semester,
             dressCodeIncentiveId: outputIds.dressCodeIncentiveId
           }
-        })
+        });
       } else {
-        return {result: loadingStateEnum.failed}
+        return {result: loadingStateEnum.failed};
       }
     }
-    return {result: loadingStateEnum.success, data: schoolDaysResult, nextLink: data["@odata.nextLink"]}
+    return {result: loadingStateEnum.success, data: schoolDaysResult, nextLink: data["@odata.nextLink"]};
   } else {
-    return {result: loadingStateEnum.failed}
-  }
+    return {result: loadingStateEnum.failed};
+  };
 }
 
 //This function gets both school years and their timetable data
@@ -303,7 +303,7 @@ async function getTimetablesFromSchoolYears(schoolYearIds: Map<string, number>, 
     keys: {
       map: schoolYearIds
     }
-  })
+  });
 
   if (batchRequestResultSchoolYear.data === undefined || batchRequestResultSchoolYear.result !== loadingStateEnum.success) {return {result: loadingStateEnum.failed}}
 

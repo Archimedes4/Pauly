@@ -15,7 +15,7 @@ enum pickSchoolDayMode {
   dressCode,
   semester,
   dressCodeIncentives
-}
+};
 
 export default function SelectSchoolDayData({width, height}:{width: number, height: number}) {
   const [schoolDayMode, setSchoolDayMode] = useState<pickSchoolDayMode>(pickSchoolDayMode.schoolYear);
@@ -36,11 +36,9 @@ export default function SelectSchoolDayData({width, height}:{width: number, heig
   }
 
   useEffect(() => {
-    if (selectedSchoolYear !== undefined && timetable === undefined){
-      if (selectedSchoolYear.paulyEventData !== undefined) {
-        loadData(selectedSchoolYear.paulyEventData);
-      }
-    }
+    if (selectedSchoolYear !== undefined && timetable === undefined && selectedSchoolYear.paulyEventData !== undefined){
+      loadData(selectedSchoolYear.paulyEventData);  
+    };
   }, [schoolDayMode, selectedSchoolYear])
 
   return (
@@ -121,28 +119,29 @@ function SchoolYearsSelect({onSelect}:{onSelect: () => void}) {
   async function getData() {
     const result = await getGraphEvents(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${store.getState().paulyList.eventTypeExtensionId}'%20and%20ep/value%20eq%20'schoolYear')`)
     if (result.result === loadingStateEnum.success && result.events !== undefined) {
-      let outputEvents: eventType[] = result.events
-      let url: string = (result.nextLink !== undefined) ? result.nextLink:""
-      let notFound: boolean = (result.nextLink !== undefined) ? true:false
+      let outputEvents: eventType[] = result.events;
+      let url: string = (result.nextLink !== undefined) ? result.nextLink:"";
+      let notFound: boolean = (result.nextLink !== undefined) ? true:false;
       while (notFound) {
-        const furtherResult = await getGraphEvents(url)
+        const furtherResult = await getGraphEvents(url);
         if (furtherResult.result === loadingStateEnum.success && furtherResult.events !== undefined) {
-          outputEvents = [...outputEvents, ...furtherResult.events]
-          url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:""
-          notFound = (furtherResult.nextLink !== undefined) ? true:false
+          outputEvents = [...outputEvents, ...furtherResult.events];
+          url = (furtherResult.nextLink !== undefined) ? furtherResult.nextLink:"";
+          notFound = (furtherResult.nextLink !== undefined) ? true:false;
         } else {
-          notFound = false
-        }
-      }
-      setCurrentEventsSchoolYear(outputEvents)
-      setLoadingState(loadingStateEnum.success)
+          notFound = false;
+        };
+      };
+      setCurrentEventsSchoolYear(outputEvents);
+      setLoadingState(loadingStateEnum.success);
     } else {
-      setLoadingState(loadingStateEnum.failed)
-    }
-  }
+      setLoadingState(loadingStateEnum.failed);
+    };
+  };
+
   useEffect(() => {
-    getData()
-  }, [])
+    getData();
+  }, []);
 
   return (
     <View>
@@ -167,10 +166,10 @@ function SchoolYearsSelect({onSelect}:{onSelect: () => void}) {
       </ScrollView>
     </View>
   )
-}
+};
 
 function SchoolDaySelect({width, height, timetable, loadingState, onSelect, onBack}:{width: number, height: number, timetable: timetableType | undefined, loadingState: loadingStateEnum,  onSelect: () => void, onBack: () => void}) {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   return (
     <View>
       <Pressable onPress={() => {onBack()}}>
@@ -210,8 +209,8 @@ function SchoolDaySelect({width, height, timetable, loadingState, onSelect, onBa
       }
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
 function ScheduleSelect({schedules, onSelect}:{schedules: scheduleType[], onSelect: (item: scheduleType) => void, onBack: () => void}) {
   return (
@@ -224,8 +223,8 @@ function ScheduleSelect({schedules, onSelect}:{schedules: scheduleType[], onSele
         </Pressable>
       ))}
     </View>
-  )
-}
+  );
+};
 
 function DressCodeSelect({dressCodeData, onSelect, onBack}:{dressCodeData: dressCodeDataType[], onSelect: (item: dressCodeDataType) => void, onBack: () => void}) {
   return (
@@ -239,8 +238,8 @@ function DressCodeSelect({dressCodeData, onSelect, onBack}:{dressCodeData: dress
         </Pressable>
       ))}
     </View>
-  )
-}
+  );
+};
 
 function DressCodeIncentivesSelect({dressCodeIncentivesData}:{dressCodeIncentivesData: dressCodeIncentiveType[], onSelect: (item: dressCodeIncentiveType) => void, onBack: () => void}) {
   return (
@@ -252,5 +251,5 @@ function DressCodeIncentivesSelect({dressCodeIncentivesData}:{dressCodeIncentive
       ))}
       <Text>None</Text>
     </View>
-  )
-}
+  );
+};

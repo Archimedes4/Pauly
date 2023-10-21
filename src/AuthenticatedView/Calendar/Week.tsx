@@ -16,7 +16,7 @@ export default function Week({width, height}:{width: number, height: number}) {
     let week: Date[] = []
     // Starting Monday not Sunday
     selectedDate.setDate((selectedDate.getDate() - selectedDate.getDay()));
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 7; i += 1) {
       week.push(
         new Date(selectedDate)
       ); 

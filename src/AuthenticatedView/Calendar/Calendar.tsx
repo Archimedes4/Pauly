@@ -116,13 +116,13 @@ function MonthViewMain({width, height}:{width: number, height: number}) {
 }
 
 function MonthView({width, height}:{width: number, height: number}) {
-  const daysInWeek: String[] = ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"]
-  const currentEvents = useSelector((state: RootState) => state.currentEvents)
-  const selectedDate: string =  useSelector((state: RootState) => state.selectedDate)
-  const monthData = useSelector((state: RootState) => state.monthData)
+  const daysInWeek: String[] = ["Sun", "Mon", "Tue", "Wen", "Thu", "Fri", "Sat"];
+  const currentEvents = useSelector((state: RootState) => state.currentEvents);
+  const selectedDate: string =  useSelector((state: RootState) => state.selectedDate);
+  const monthData = useSelector((state: RootState) => state.monthData);
   const {fontScale} = useWindowDimensions();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../../../assets/fonts/BukhariScript.ttf'),
   });
@@ -138,43 +138,43 @@ function MonthView({width, height}:{width: number, height: number}) {
     let lastDay = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0);
     const firstDayWeek = findFirstDayinMonth(selectedDate)
     let monthDataResult: monthDataType[] = []
-    for (let index = 0; index < 42; index++) {
+    for (let index = 0; index < 42; index += 1) {
       if (index >= firstDayWeek && (index - firstDayWeek) < (lastDay.getDate())){
         //In the current month
-        let events: eventType[] = [] //The result events of that day
+        let events: eventType[] = []; //The result events of that day
         
         //Check is the current date
-        const checkStart: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1), 0, 0)
-        const checkEnd: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 2), 0, 0)
-        for (let indexEvent = 0; indexEvent < currentEvents.length; indexEvent++) {
-          const event: eventType = currentEvents[indexEvent] //Event to be checked
+        const checkStart: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 1), 0, 0);
+        const checkEnd: Date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), (index - firstDayWeek + 2), 0, 0);
+        for (let indexEvent = 0; indexEvent < currentEvents.length; indexEvent += 1) {
+          const event: eventType = currentEvents[indexEvent]; //Event to be checked
          
-          const startTimeDate = new Date(event.startTime) //String to date
-          const endTimeDate = new Date(event.endTime)//String to date
+          const startTimeDate = new Date(event.startTime); //String to date
+          const endTimeDate = new Date(event.endTime);     //String to date
 
           //First check if starts before date and ends after or on day
           if (startTimeDate <= checkStart && endTimeDate > checkStart) {
-            events.push(event)
+            events.push(event);
           } else if (startTimeDate > checkStart && startTimeDate < checkEnd) {
             //Second check if starts on day
-            events.push(event)
-          }
-        }
-        monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID(), events: events})
+            events.push(event);
+          };
+        };
+        monthDataResult.push({showing: true, dayData: (index - firstDayWeek + 1), id: create_UUID(), events: events});
       } else {
-        monthDataResult.push({showing: false, dayData: 0, id: create_UUID(), events: []})
-      }
-    }
-    dispatch(monthDataSlice.actions.setMonthData(monthDataResult))
-  }
+        monthDataResult.push({showing: false, dayData: 0, id: create_UUID(), events: []});
+      };
+    };
+    dispatch(monthDataSlice.actions.setMonthData(monthDataResult));
+  };
 
   useEffect(() => {
-    getMonthData(new Date(selectedDate))
-  }, [selectedDate, currentEvents])
+    getMonthData(new Date(selectedDate));
+  }, [selectedDate, currentEvents]);
 
   if (!fontsLoaded) {
     return null;
-  }
+  };
 
   return (
     <>

@@ -53,8 +53,8 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
           scopes: scopes
         })
         dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
-        getPaulyLists(result.accessToken)
-        getUserProfile(result.accessToken)
+        getPaulyLists()
+        getUserProfile()
         if (await getWantGovernment()) {
           checkIfGovernmentMode()
         }
@@ -86,8 +86,8 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
           if (await getWantGovernment()) {
             validateGovernmentMode()
           }
-          getPaulyLists(authResult.accessToken)
-          getUserProfile(authResult.accessToken)
+          getPaulyLists()
+          getUserProfile()
           
         }
       }
@@ -101,8 +101,8 @@ function AuthDeep({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledS
         if (await getWantGovernment()) {
           validateGovernmentMode()
         }
-        getPaulyLists(result.accessToken)
-        getUserProfile(result.accessToken)
+        getPaulyLists()
+        getUserProfile()
       } catch (e) {
 
       }

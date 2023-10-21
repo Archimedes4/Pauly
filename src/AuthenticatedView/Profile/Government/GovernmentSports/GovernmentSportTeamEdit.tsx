@@ -346,15 +346,14 @@ function RosterBlock({microsoftTeamId, width, height, teamId, setIsSelectingFile
       if (result.ok) {
         const data = await result.json()
         let users: microsoftUserType[] = []
-        for (let index = 0; index < data["value"].length; index++) {
+        for (let index = 0; index < data["value"].length; index += 1) {
           users.push({
             id: data["value"][index]["userId"],
             displayName: data["value"][index]["displayName"]
-          })
-        }
-        let rosters: governmentRosterType[] = []
-        console.log(users, teamResultData)
-        for (let teamIndex = 0; teamIndex < teamResultData["value"].length; teamIndex++) {
+          });
+        };
+        let rosters: governmentRosterType[] = [];
+        for (let teamIndex = 0; teamIndex < teamResultData["value"].length; teamIndex += 1) {
           const userData = users.findIndex((e) => {return e.id === teamResultData["value"][teamIndex]["fields"]["playerId"]})
           console.log(userData)
           if (userData !== -1) {
@@ -371,28 +370,28 @@ function RosterBlock({microsoftTeamId, width, height, teamId, setIsSelectingFile
             users[0] = users[userData]
             users[userData] = save
             users.shift()
-          }
-        }
+          };
+        };
+
         for (let index = 0; index < users.length; index++) {
           rosters.push({
             name: users[index].displayName,
             id: users[index].id
           })
         }
-        setMembers(rosters)
-        setMembersState(loadingStateEnum.success)
+        setMembers(rosters);
+        setMembersState(loadingStateEnum.success);
       } else {
-        const data = await result.json()
-        setMembersState(loadingStateEnum.failed)
-      }
+        setMembersState(loadingStateEnum.failed);
+      };
     } else {
-      setMembersState(loadingStateEnum.failed)
-    }
-  }
+      setMembersState(loadingStateEnum.failed);
+    };
+  };
 
   useEffect(() => {
-    getMembers()
-  }, [])
+    getMembers();
+  }, []);
 
   return (
     <>

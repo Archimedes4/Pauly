@@ -88,27 +88,26 @@ export function calculateIfShowing(value: String, Time: Date): boolean { //TO DO
 }
 
 export function findTimeOffset(time: Date, height: number): number {
-  let hourWidth = height * 0.1
-  let minutieWidth = (height * 0.1)/60
-  let hourInt = time.getHours() 
-  let minuiteInt = time.getMinutes()
-  let returnOffset = (hourWidth * hourInt) + (minutieWidth * minuiteInt)
-  // + (hourWidth/2)
-  return returnOffset
-}
+  let hourWidth = height * 0.1;
+  let minutieWidth = (height * 0.1)/60;
+  let hourInt = time.getHours();
+  let minuiteInt = time.getMinutes();
+  let returnOffset = (hourWidth * hourInt) + (minutieWidth * minuiteInt);
+  return returnOffset;
+};
 
 //Ryan was here April 13, 2023
 //Andrew was here April 13, 2023
 
 export function computeEventHeight(fromDate: Date, toDate: Date, height: number): number {
-  let delta = toDate.getTime() - fromDate.getTime()
+  let delta = toDate.getTime() - fromDate.getTime();
   if (delta >= 86400000) {
-    delta = 86400000
-  }
+    delta = 86400000;
+  };
 
-  let deltaHours = delta/3600000
-  let deltaRemaining = delta % 3600000
-  let deltaMinutes = deltaRemaining / 60
+  let deltaHours = delta/3600000;
+  let deltaRemaining = delta % 3600000;
+  let deltaMinutes = deltaRemaining / 60;
   
   const HourHeight = height * 0.1
   const MinuteHeight = (height * 0.1)/60
