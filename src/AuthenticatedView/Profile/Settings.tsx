@@ -81,15 +81,15 @@ export default function Settings() {
         }
         <Text style={{color: Colors.white, fontWeight: "bold", fontSize: 24, marginTop: height * 0.05}}>{displayName}</Text>
       </View>
-      <Pressable onPress={() => {signOut()}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: Colors.white, alignItems: "center", alignContent: "center", justifyContent: "center", marginTop: height * 0.05}}>
+      <Pressable onPress={() => {signOut()}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: Colors.black, shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: Colors.white, alignItems: "center", alignContent: "center", justifyContent: "center", marginTop: height * 0.05}}>
         <Text style={{fontWeight: "bold"}}>SIGN OUT</Text>
       </Pressable>
-      <Pressable onPress={() => {navigate("/students")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: Colors.white, alignItems: "center", marginTop: height * 0.05}}>
-          <StudentSearchIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
-          <Text>Students</Text>
-        </Pressable>
+      <Pressable onPress={() => {navigate("/students")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: Colors.black, shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: Colors.white, alignItems: "center", marginTop: height * 0.05}}>
+        <StudentSearchIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
+        <Text>Students</Text>
+      </Pressable>
       { isGovernmentMode ?
-        <Pressable onPress={() => {navigate("/profile/government")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: "black", shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: Colors.white, alignItems: "center", marginTop: height * 0.05}}>
+        <Pressable onPress={() => {navigate("/profile/government")}} style={{width: width * 0.8, height: height * 0.08, borderRadius: 15, shadowColor: Colors.black, shadowOffset: { width: 2, height: 4 }, shadowOpacity: 0.8, shadowRadius: 10, marginLeft: "auto", marginRight: "auto", flexDirection: "row", backgroundColor: Colors.white, alignItems: "center", marginTop: height * 0.05}}>
           <GovernmentIcon width={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} height={(width * 0.8 < height * 0.08) ? width * 0.2:height*0.06} style={{marginLeft: width * 0.025}}/>
           <Text>Government</Text>
         </Pressable>:null

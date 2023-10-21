@@ -5,6 +5,15 @@
 //types.ts
 //Stores all of paulys types
 
+//From https://getbootstrap.com/docs/5.0/layout/breakpoints/
+export enum breakPointMode {
+  xSmall,	  //<576px  ->0
+  small,    //≥576px  ->1
+  medium,   //≥768px  ->2
+  large,    //≥992px  ->3
+  xLarge    //≥1200px ->4
+}
+
 export enum loadingStateEnum {
   loading,
   success,

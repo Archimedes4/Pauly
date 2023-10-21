@@ -94,11 +94,9 @@ export default function HomePage() {
               <MedalIcon width={width * 0.5} height={height * 0.23} style={{position: "absolute", top: height * 0.01, zIndex: 2}}/>
             </View>
           </Pressable>
-          <Pressable onPress={() => {navigate("/sports")}}>
-            <View style={{borderColor: "black", borderWidth: 2}}>
-              <View style={{backgroundColor: Colors.maroon, width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
-              <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={width * 0.3} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
-            </View>
+          <Pressable onPress={() => {navigate("/sports")}} style={{borderColor: "black", borderWidth: 2}}>    
+            <View style={{backgroundColor: Colors.maroon, width: width * 0.5, height: height * 0.25, borderTopWidth: 1, borderTopColor: "black", zIndex: 1}} />
+            <Image source={require("../../assets/images/Football.png")} resizeMode='contain' width={width * 0.3} height={height * 0.25} style={{zIndex: 2, height: height * 0.25, width: width * 0.5, position: "absolute", aspectRatio: "1/1"}} />
           </Pressable>
         </View>
         <View style={{flexDirection: 'row', width: width * 1.0, height: height * 0.25}}>

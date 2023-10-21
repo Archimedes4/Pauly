@@ -1,7 +1,7 @@
-import { View, Text, Pressable, Image } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { View, Text, Pressable, Image } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './Redux/store';
 import { safeAreaColorsSlice } from './Redux/reducers/safeAreaColorsReducer';
@@ -10,29 +10,28 @@ import { GearIcon } from './UI/Icons/Icons';
 import { Colors } from './types';
 
 export default function Login({onGetAuthToken, onGetGovernmentAuthToken, width}:{onGetAuthToken: () => void, onGetGovernmentAuthToken: () => void, width: number}) {
-  const {height} = useSelector((state: RootState) => state.dimentions)
-  const [isBottonHover, setIsButtonHover] = useState<boolean>(false)
-  const [isGovernmentButtonHover, setIsGovernmentButtonHover] = useState<boolean>(false)
-  const [fontSize, setFontSize] = useState<number>(0)
-  const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] = useState<boolean>(false)
-  const dispatch = useDispatch()
+  const {height} = useSelector((state: RootState) => state.dimentions);
+  const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
+  const [isGovernmentButtonHover, setIsGovernmentButtonHover] = useState<boolean>(false);
+  const [fontSize, setFontSize] = useState<number>(0);
+  const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop(Colors.maroon))
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorBottom(Colors.maroon))
-  }, [])
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop(Colors.maroon));
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColorBottom(Colors.maroon));
+  }, []);
 
   useEffect(() => {
-    const heightIsGreater: boolean = width < height
-    const newWidth = heightIsGreater ? width:height
+    const heightIsGreater: boolean = width < height;
+    const newWidth = heightIsGreater ? width:height;
     if (heightIsGreater) {
-      setFontSize(width/4)
+      setFontSize(width/4);
     } else {
-      setFontSize(height/3)
+      setFontSize(height/3);
     }
-    
-  }, [height, width])
+  }, [height, width]);
   // Font
   const [fontsLoaded] = useFonts({
     'BukhariScript': require('../assets/fonts/BukhariScript.ttf'),
@@ -47,7 +46,7 @@ export default function Login({onGetAuthToken, onGetGovernmentAuthToken, width}:
 
   if (!fontsLoaded) {
     return null;
-  }
+  };
 
   return (
     <Pressable style={{backgroundColor: Colors.maroon, alignContent: "center", alignItems: "center", justifyContent: "center", height: height, width: width, overflow: "hidden", top: -insets.top}} onLongPress={() => {setIsShowingGovernmentLogin(true)}} delayLongPress={5000}>

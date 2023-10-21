@@ -48,13 +48,13 @@ import GovernmentStudents from './Profile/Government/GovernmentStudents';
 import { Colors } from '../types';
 
 export default function AuthenticatedView({dimensions, width}:{dimensions: {window: ScaledSize,screen: ScaledSize}, width: number}) {
-  const {height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const {siteId} = useSelector((state: RootState) => state.paulyList)
-  const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
-  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode)
-  const isShowingProfileBlock = useSelector((state: RootState) => state.isShowingProfileBlock)
+  const {height, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
+  const {siteId} = useSelector((state: RootState) => state.paulyList);
+  const authenticationToken = useSelector((state: RootState) => state.authenticationToken);
+  const isGovernmentMode = useSelector((state: RootState) => state.isGovernmentMode);
+  const isShowingProfileBlock = useSelector((state: RootState) => state.isShowingProfileBlock);
   const insets = useSafeAreaInsets();
-  const [overide, setOveride] = useState<boolean>(false)
+  const [overide, setOveride] = useState<boolean>(false);
   return (
     <>
       { ((siteId !== "" || overide) && authenticationToken !== "") ? 
@@ -105,7 +105,7 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path="*" element={<PageNotFound />} />
                 </Routes>
                 { (currentBreakPoint >= 1 && isShowingProfileBlock) ?
-                  <ProfileBlock width={width * 0.1} />:null
+                  <ProfileBlock />:null
                 }
               </View>
             </View>

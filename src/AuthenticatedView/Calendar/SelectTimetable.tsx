@@ -1,5 +1,5 @@
-import { View, Text, Pressable } from 'react-native';
 import React, {  useEffect, useState } from 'react';
+import { View, Text, Pressable } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '../../Functions/Ultility/microsoftAssets';
@@ -11,6 +11,7 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading);
   const [loadedTimetables, setLoadedTimetables] = useState<timetableStringType[]>([]);
   const navigate = useNavigate();
+
   async function getTimetables() {
     const result = await callMsGraph("https://graph.microsoft.com/v1.0/sites/" + siteId + "/lists/" + timetablesListId + "/items?expand=fields");
     if (result.ok){
@@ -34,9 +35,11 @@ export default function SelectTimetable({governmentMode, onSelect}:{governmentMo
       setLoadingState(loadingStateEnum.failed);
     }
   }
+
   useEffect(() => {
     getTimetables();
-  }, [])
+  }, []);
+
   return (
     <View>
       { (loadingState === loadingStateEnum.loading) ?
