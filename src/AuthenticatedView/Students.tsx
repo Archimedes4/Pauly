@@ -101,40 +101,40 @@ export default function Students() {
 }
 
 function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
-  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
   async function getImage() {
-    let newUser: any = {}
-    Object.assign(newUser, user.item)
+    let newUser: any = {};
+    Object.assign(newUser, user.item);
     if (user.item.imageDownloadUrl !== "noImage" && user.item.imageState !== loadingStateEnum.success && user.item.imageState !== loadingStateEnum.failed && user.item.imageState !== loadingStateEnum.loading) {
-      let updateStateUser: any = {}
-      Object.assign(updateStateUser, user.item)
-      updateStateUser.imageState = loadingStateEnum.loading
-      store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: updateStateUser}))
-      const result = await callMsGraph(user.item.imageDownloadUrl)
+      let updateStateUser: any = {};
+      Object.assign(updateStateUser, user.item);
+      updateStateUser.imageState = loadingStateEnum.loading;
+      store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: updateStateUser}));
+      const result = await callMsGraph(user.item.imageDownloadUrl);
       if (result.ok) {
-        const data = await result.blob()
-        const urlOut = URL.createObjectURL(data)
-        newUser.imageState = loadingStateEnum.success
-        newUser.imageDataUrl = urlOut
-        store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}))
+        const data = await result.blob();
+        const urlOut = URL.createObjectURL(data);
+        newUser.imageState = loadingStateEnum.success;
+        newUser.imageDataUrl = urlOut;
+        store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}));
       } else {
-        newUser.imageState = loadingStateEnum.failed
-        store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}))
+        newUser.imageState = loadingStateEnum.failed;
+        store.dispatch(studentSearchSlice.actions.setStudentUserByIndex({index: user.index, user: newUser}));
       }
     }
   }
 
   useEffect(() => {
-    getImage()
+    getImage();
   }, [])
 
   function calculateMarginEnds(widthIn: number): number {
-    const numberOfBlocks = Math.floor(((widthIn%190) >= 0.75) ? (widthIn/190):((widthIn + 190)/190))
-    const widthRemaining = widthIn - ((numberOfBlocks - 1) * 190) - 150
+    const numberOfBlocks = Math.floor(((widthIn%190) >= 0.75) ? (widthIn/190):((widthIn + 190)/190));
+    const widthRemaining = widthIn - ((numberOfBlocks - 1) * 190) - 150;
     if (widthRemaining/2 >= 120) {
-      return 20
+      return 20;
     } else {
-      return widthRemaining/2
+      return widthRemaining/2;
     }
   }
 
@@ -165,23 +165,23 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
 }
 
 function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {searchText} = useSelector((state: RootState) => state.studentSearch)
-  const [isOverflowing, setIsOverflowing] = useState<boolean>(false)
-  const style: ViewStyle = (Platform.OS === "web") ? {outlineStyle: "none"}:{}
-  const [mounted, setMounted] = useState<boolean>(false)
-  const dispatch = useDispatch()
+  const {width, height} = useSelector((state: RootState) => state.dimentions);
+  const {searchText} = useSelector((state: RootState) => state.studentSearch);
+  const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
+  const style: ViewStyle = (Platform.OS === "web") ? {outlineStyle: "none"}:{};
+  const [mounted, setMounted] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (mounted) {
-      const searchValueSave = searchText
+      const searchValueSave = searchText;
       setTimeout(() => {
         if (store.getState().studentSearch.searchText === searchValueSave) {
-          getUsers(store.getState().studentSearch.searchText)
+          getUsers(store.getState().studentSearch.searchText);
         }
       }, 1500)
     } else {
-      setMounted(true)
+      setMounted(true);
     }
   }, [searchText])
 
@@ -201,9 +201,9 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
             style={{height: 0, alignSelf: 'flex-start', overflow: "hidden"}}
             onLayout={e => {
               if (e.nativeEvent.layout.width > width * 0.8 - 20) {
-                setIsOverflowing(true)
+                setIsOverflowing(true);
               } else {
-                setIsOverflowing(false)
+                setIsOverflowing(false);
               }
             }} key={"Search_View_Text"}>
             <Text style={{color: 'white'}}>{searchText}</Text>

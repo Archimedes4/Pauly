@@ -1,14 +1,14 @@
-import { View, Text, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { View, Text, Pressable } from 'react-native'
 import { useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
-import { RootState } from '../../../../Redux/store'
-import { Colors, loadingStateEnum, submissionTypeEnum } from '../../../../types'
+import { ScrollView } from 'react-native-gesture-handler'
 import getCommissions from '../../../../Functions/commissions/getCommissions'
-import ProgressView from '../../../../UI/ProgressView'
 import getSubmissions from '../../../../Functions/commissions/getSubmissions'
 import create_UUID from '../../../../Functions/Ultility/CreateUUID'
-import { ScrollView } from 'react-native-gesture-handler'
+import { RootState } from '../../../../Redux/store'
+import { Colors, loadingStateEnum, submissionTypeEnum } from '../../../../types'
+import ProgressView from '../../../../UI/ProgressView'
 
 export default function GovernmentCommissions() {
   const {height, width} = useSelector((state: RootState) => state.dimentions)

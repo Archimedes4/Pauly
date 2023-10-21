@@ -1,46 +1,45 @@
-import { useEffect, useCallback } from 'react';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
+import React, { useEffect, useCallback } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import MonthView from './MonthView';
 import { useNavigate } from 'react-router-native';
-import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { BookIcon, MedalIcon, PersonIcon } from '../UI/Icons/Icons';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
 import { Colors, loadingStateEnum } from '../types';
 import ProgressView from '../UI/ProgressView';
-import React from 'react';
+import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function HomePage() {
-  const navigate = useNavigate()
-  const {siteId} = useSelector((state: RootState) => state.paulyList)
-  const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
-  const {message, paulyDataState} = useSelector((state: RootState) => state.paulyData)
-  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions)
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const {siteId} = useSelector((state: RootState) => state.paulyList);
+  const authenticationToken = useSelector((state: RootState) => state.authenticationToken);
+  const {message, paulyDataState} = useSelector((state: RootState) => state.paulyData);
+  const {height, width, currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
+  const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
 
   async function loadData() {
-    await getCurrentPaulyData()
+    await getCurrentPaulyData();
   }
 
   useEffect(() => {
-    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.maroon, bottom: Colors.maroon}))
+    dispatch(safeAreaColorsSlice.actions.setSafeAreaColors({top: Colors.maroon, bottom: Colors.maroon}));
   }, [])
 
   useEffect(() => {
     if (store.getState().authenticationToken !== "" && store.getState().paulyList.siteId !== ""){
-      loadData()
+      loadData();
     }
   }, [authenticationToken, siteId])
 
   useEffect(() => {
     if (currentBreakPoint > 0){
-      navigate("/notifications")
+      navigate("/notifications");
     }
   }, [currentBreakPoint])
 

@@ -2,7 +2,7 @@
 const { getDefaultConfig } = require('expo/metro-config');
 
 /** @type {import('expo/metro-config').MetroConfig} */
-var config = getDefaultConfig(__dirname);
+let config = getDefaultConfig(__dirname);
 
 config.resolver.extraNodeModules = {}
 

@@ -1,12 +1,18 @@
-import { View, Text, Pressable } from "react-native"
-import { useEffect, useState } from "react"
-import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/calendar/calendarFunctions"
-import React from "react"
-import { getSchoolDays } from "../Functions/calendar/calendarFunctionsGraph"
+/*
+  Andrew Mainella
+  20 October 2023
+  Pauly
+  MonthView.tsx
+  This is the componet used on the home page of the app
+*/
+import React, { useEffect, useState } from "react"
+import { View, Text } from "react-native"
 import { useDispatch, useSelector } from "react-redux"
-import store, { RootState } from "../Redux/store"
-import { Colors, loadingStateEnum } from "../types"
+import { findFirstDayinMonth, getDay, getDaysInMonth } from "../Functions/calendar/calendarFunctions"
+import { getSchoolDays } from "../Functions/calendar/calendarFunctionsGraph"
+import { RootState } from "../Redux/store"
 import { monthViewSlice } from "../Redux/reducers/monthViewReducer"
+import { Colors, loadingStateEnum } from "../types"
 
 function MonthBlock({value, width, height, startDate, daySelected}:{value:number, width: number, height: number, startDate: number, daySelected: number}) {
   let textval: number = getDay(value, startDate) ?? 0
@@ -37,25 +43,24 @@ function MonthBlock({value, width, height, startDate, daySelected}:{value:number
 }
 
 export default function MonthView({width, height}:{width: number, height: number}) {
-  // const [selectedDates, setSelectedDates] = useState<dateProperty[]>([])
-  let Count = getDaysInMonth(new Date())
-  let StartDate = findFirstDayinMonth(new Date())
-  const [daySelected, setDaySelected] = useState<number>(((Count + StartDate) - 2) - ((Count/7) * 2))
-  const thirtyValue = [...Array(30).keys()]
-  const monthViewData = useSelector((state: RootState) => state.monthView)
-  const dispatch = useDispatch()
+  let Count = getDaysInMonth(new Date());
+  let StartDate = findFirstDayinMonth(new Date());
+  const [daySelected, setDaySelected] = useState<number>(((Count + StartDate) - 2) - ((Count/7) * 2));
+  const thirtyValue = [...Array(30).keys()];
+  const monthViewData = useSelector((state: RootState) => state.monthView);
+  const dispatch = useDispatch();
 
   async function loadData() {
     if (monthViewData.length <= 0) {
-      const result = await getSchoolDays(new Date())
+      const result = await getSchoolDays(new Date());
       if (result.result === loadingStateEnum.success && result.data !== undefined) {
-        dispatch(monthViewSlice.actions.setMonthViewData(result.data))
+        dispatch(monthViewSlice.actions.setMonthViewData(result.data));
       } 
     }
   }
 
   useEffect(() => {
-    loadData()
+    loadData();
   }, [])
 
   return(

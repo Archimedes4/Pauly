@@ -1,12 +1,11 @@
-import { View, Text, TextInput, Button, Dimensions, Pressable } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
-import { Link, useNavigate } from 'react-router-native';
-import create_UUID from '../../../../Functions/Ultility/CreateUUID';
-import { RootState } from '../../../../Redux/store';
+import React, { useState } from 'react'
+import { View, Text, TextInput, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-native';
+import { RootState } from '../../../../Redux/store';
+import create_UUID from '../../../../Functions/Ultility/CreateUUID';
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '../../../../types';
-import { Image } from 'expo-image';
 import SVGXml from '../../../../UI/SVGXml/SVGXml';
 
 export default function GovernmentCreateNewSport() {
