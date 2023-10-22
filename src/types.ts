@@ -200,6 +200,7 @@ declare global {
   type dressCodeType = {
     name: string,
     id: string,
+    listId: string,
     dressCodeData: dressCodeDataType[],
     dressCodeIncentives: dressCodeIncentiveType[]
   }
@@ -369,9 +370,9 @@ declare global {
     id: string
   }
   type teamsGroupType = {
-    TeamName: string
-    TeamId: string
-    TeamDescription: string
+    teamName: string
+    teamId: string
+    teamDescription: string
   }
   type timetableStringType = {
     name: string,

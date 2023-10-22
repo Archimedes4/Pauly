@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Pressable, View, Text, TextInput, ScrollView } from 'react-native';
+import { Pressable, View, Text, TextInput, ScrollView, FlatList } from 'react-native';
 import Picker from "./Pickers/Picker"
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
-import { DocumentIcon, FolderIcon } from './Icons/Icons';
-import store from '../Redux/store';
-import { idText } from 'typescript';
 import MimeTypeIcon from './Icons/MimeTypeIcon';
 import create_UUID from '../Functions/Ultility/CreateUUID';
+import { getUserMicrosoftFiles, getUserTeams } from '../Functions/microsoftFilePickerFunctions';
+import { Colors, loadingStateEnum } from '../types';
+import ProgressView from './ProgressView';
 
 enum MicrosoftUploadModeType {
   ShareLink,
@@ -15,189 +15,192 @@ enum MicrosoftUploadModeType {
 }
 
 export default function({ onSetIsShowingUpload, onSetIsShowingMicrosoftUpload, onSelectedFile, height, width}:{
-    height: number,
-    width: number,
-    onSetIsShowingUpload?: (item: boolean) => void,
-    onSetIsShowingMicrosoftUpload?: (item: boolean) => void,
-    onSelectedFile: (item: microsoftFileType) => void
+  height: number,
+  width: number,
+  onSetIsShowingUpload?: (item: boolean) => void,
+  onSetIsShowingMicrosoftUpload?: (item: boolean) => void,
+  onSelectedFile: (item: microsoftFileType) => void
 }) {
+  const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([])
+  const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
+  const [shareLinkString, setShareLinkString] = useState<string>("")
 
-    const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([])
-    const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] = useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal)
-    const [shareLinkString, setShareLinkString] = useState<string>("")
-
-    useEffect(() => {
-      getUserTeams()
-    }, [])
-
-    async function getUserTeams() {
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/me/joinedTeams")//TO DO make sure this works on live tenancy
-      if (result.ok){
-        const data = await result.json()
-        if (data["error"] === undefined){
-          const NewData: teamsGroupType[] = []
-          for(let index = 0; index < data["value"].length; index++){
-            if (data["value"][index] !== undefined){
-              NewData.push({TeamName: data["value"][index]["displayName"], TeamId: data["value"][index]["id"], TeamDescription: data["value"][index]["description"]})
-            }
-          }
-          setUsersTeams(NewData)
-        }
-      }
-    }
-    
-    async function getShareFile(ShareLink: string) {
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/shares/" + ShareLink + "/driveItem?$select=content.downloadUrl")
-      if (result.ok){
-        const data = await result.json()
-      }
-    }
-
-    return (
-        <View style={{height: height, width: width}}>
-            <View style={{flexDirection: "row"}}>
-              <Text style={{textAlign: "left"}}>Upload File From Microsoft</Text>
-              { (onSetIsShowingMicrosoftUpload === undefined || onSetIsShowingUpload === undefined) ?
-                null:<Pressable onPress={() => {onSetIsShowingUpload(false); onSetIsShowingMicrosoftUpload(false)}}><View><Text>Back</Text></View></Pressable>
-              }
-            </View>
-            <View>
-            <View style={{width: width}}>
-              <Picker selectedIndex={(selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 0:(selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 1:2} onSetSelectedIndex={(item: number) => {(item === 0) ? setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Personal):(item === 1) ? setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.ShareLink):setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Site)}} width={width} height={30} >
-                <Text style={{margin: 0, padding: 0}}>Personal</Text>
-                <Text style={{margin: 0, padding: 0}}>Link</Text>
-                <Text style={{margin: 0, padding: 0}}>Teams</Text>
-              </Picker>
-            </View>
-            { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 
-              <PersonalBlock height={height} onSelectedFile={onSelectedFile} />:null
-            }
-            { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 
-                <View>
-                  <View>
-                    <Text>Share Link</Text>
-                    <TextInput placeholder='Disabled input' value={shareLinkString} onChangeText={(e) => {setShareLinkString(e)}}/>
-                  </View>
-                  <Pressable onPress={() => {
-                    //TO DO make this work
-                    let base64Value = btoa(shareLinkString)
-                    base64Value.replace("/", "_")
-                    base64Value.replace("+", "-")
-                    base64Value.trimEnd()
-                    base64Value = "u!" + base64Value
-                    getShareFile(base64Value)
-                  }}>
-                    <Text>Submit</Text>
-                  </Pressable>
-                </View>:null
-            }
-            { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Site) ? 
-              <View style={{height: height * 0.8, overflow: "scroll"}}>
-                { usersTeams.map((team) => (
-                  <View>
-                    { (team.TeamName !== "Student Password Policy" && team.TeamName !== "St Paul's High School" && team.TeamName !== "Adobe_Student" && team.TeamName !== "O365 Student A3 License Assignment" && team.TeamName !== "Student") ?
-                      <View>
-                        <Text>{team.TeamName}</Text>
-                      </View>:null
-                    }
-                  </View>
-                ))}
-              </View>:null
-            }
-            </View>
-        </View>
-)}
-
-
-function PersonalBlock({height, onSelectedFile}:{height: number, onSelectedFile: (item: microsoftFileType) => void}) {
-  const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([])
-  const [microsoftPath, setMicrosoftPath] = useState<string>("https://graph.microsoft.com/v1.0/me/drive/root/children")
-  const [fileBackAvaliable, setFilesBackAvaliable] = useState<boolean>(false)
-  async function getUserMicrosoftFiles(path: string) {
-    const result = await callMsGraph(path)
-    if (result.ok){
-      const data = await result.json()
-      console.log(data)
-      if (data["error"] === undefined){
-        let newFiles: microsoftFileType [] = []
-        for(let index = 0; index <= data["value"].length; index++){
-          if (data['value'][index] !== undefined){
-            if (data["value"][index]["folder"] === undefined){
-              newFiles.push(
-              {
-                name: data["value"][index]["name"],
-                id: data["value"][index]["id"],
-                lastModified: data["value"][index]["lastModifiedDateTime"],
-                folder: false,
-                parentDriveId: data["value"][index]["parentReference"]["driveId"],
-                parentPath: data["value"][index]["parentReference"]["path"],
-                itemGraphPath: path,
-                callPath: "https://graph.microsoft.com/v1.0/me/drives/" + data["value"][index]["parentReference"]["driveId"] + "/items/" + data["value"][index]["id"],
-                type: data["value"][index]["file"]["mimeType"]
-              })
-            } else {
-              newFiles.push(
-              {
-                name: data["value"][index]["name"],
-                id: data["value"][index]["id"],
-                lastModified: data["value"][index]["lastModifiedDateTime"],
-                folder: true,
-                parentDriveId: data["value"][index]["parentReference"]["driveId"],
-                parentPath: data["value"][index]["parentReference"]["path"],
-                itemGraphPath: "FOLDER",
-                callPath: "",
-                type: 'Folder'
-              })
-            }
-          }
-        }
-        setUsersFies(newFiles)
-      }
+  async function loadUserTeams() {
+    const result = await getUserTeams()
+    if (result.result === loadingStateEnum.success) {
+      setUsersTeams(result.data)
     } else {
-      //TO DO handle error
+      
     }
   }
 
   useEffect(() => {
-    getUserMicrosoftFiles(microsoftPath)
+    loadUserTeams()
   }, [])
+  
+  async function getShareFile(shareLink: string) {
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/shares/${shareLink}/driveItem?$select=content.downloadUrl`)
+    if (result.ok){
+      const data = await result.json()
+      onSelectedFile({
+        name: '',
+        id: '',
+        lastModified: '',
+        folder: false,
+        parentDriveId: '',
+        parentPath: '',
+        itemGraphPath: '',
+        callPath: '',
+        type: ''
+      })
+    }
+  }
+
+  return (
+      <View style={{height: height, width: width}}>
+          <View style={{flexDirection: "row"}}>
+            <Text style={{textAlign: "left"}}>Upload File From Microsoft</Text>
+            { (onSetIsShowingMicrosoftUpload === undefined || onSetIsShowingUpload === undefined) ?
+              null:<Pressable onPress={() => {onSetIsShowingUpload(false); onSetIsShowingMicrosoftUpload(false)}}><View><Text>Back</Text></View></Pressable>
+            }
+          </View>
+          <View>
+          <View style={{width: width}}>
+            <Picker selectedIndex={(selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 0:(selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 1:2} onSetSelectedIndex={(item: number) => {(item === 0) ? setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Personal):(item === 1) ? setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.ShareLink):setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Site)}} width={width} height={30} >
+              <Text style={{margin: 0, padding: 0}}>Personal</Text>
+              <Text style={{margin: 0, padding: 0}}>Link</Text>
+              <Text style={{margin: 0, padding: 0}}>Teams</Text>
+            </Picker>
+          </View>
+          { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal) ? 
+            <PersonalBlock height={height} width={width} onSelectedFile={onSelectedFile} />:null
+          }
+          { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink) ? 
+              <View>
+                <View>
+                  <Text>Share Link</Text>
+                  <TextInput placeholder='Share Link' value={shareLinkString} onChangeText={(e) => {setShareLinkString(e)}}/>
+                </View>
+                <Pressable onPress={() => {
+                  //TO DO make this work
+                  let base64Value = btoa(shareLinkString)
+                  base64Value.replace("/", "_")
+                  base64Value.replace("+", "-")
+                  base64Value.trimEnd()
+                  base64Value = "u!" + base64Value
+                  getShareFile(base64Value)
+                }}>
+                  <Text>Submit</Text>
+                </Pressable>
+              </View>:null
+          }
+          { (selectedMicrosoftUploadMode === MicrosoftUploadModeType.Site) ? 
+            <TeamsBlock userTeams={usersTeams} height={height}/>:null
+          }
+          </View>
+      </View>
+)}
+
+enum teamFileMode {
+  team,
+  channel,
+  file
+}
+
+function TeamsBlock({userTeams, height}:{userTeams: teamsGroupType[], height: number}) {
+  const [selectedTeamFileMode, setSelectedTeamFileMode] = useState<teamFileMode>(teamFileMode.team);
+  return (
+    <>
+      <FlatList 
+        data={userTeams}
+        renderItem={(team) => (
+          <View>
+            { (team.item.teamName !== "Student Password Policy" && team.item.teamName !== "St Paul's High School" && team.item.teamName !== "Adobe_Student" && team.item.teamName !== "O365 Student A3 License Assignment" && team.item.teamName !== "Student") ?
+              <View>
+                <Text>{team.item.teamName}</Text>
+              </View>:null
+            }
+          </View>
+        )}
+        style={{height: height * 0.8}}
+      />
+    </>
+  )
+}
+
+
+function PersonalBlock({height, width, onSelectedFile}:{height: number, width: number, onSelectedFile: (item: microsoftFileType) => void}) {
+  const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([]);
+  const [microsoftPath, setMicrosoftPath] = useState<string>('https://graph.microsoft.com/v1.0/me/drive/root/children');
+  const [fileBackAvaliable, setFilesBackAvaliable] = useState<boolean>(false);
+  const [getFilesState, setGetFilesState] = useState<loadingStateEnum>(loadingStateEnum.notStarted);
+
+  async function loadGetUserMicrosoftFiles(path:string) {
+    setGetFilesState(loadingStateEnum.loading)
+    const result = await getUserMicrosoftFiles(path);
+    if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      setUsersFies(result.data);
+      setGetFilesState(loadingStateEnum.success);
+    } else {
+      setGetFilesState(loadingStateEnum.failed);
+    };
+  };
+
+  useEffect(() => {
+    loadGetUserMicrosoftFiles(microsoftPath);
+  }, []);
+
   return (
     <ScrollView style={{height: height - 20}}>
       { fileBackAvaliable ? 
       <Pressable onPress={() => {
-        const microsftPathArray = microsoftPath.split("/")
-        microsftPathArray.pop()
-        microsftPathArray.pop()
-        microsftPathArray.pop()
-        let outputString = ""
+        const microsftPathArray = microsoftPath.split('/');
+        microsftPathArray.pop();
+        microsftPathArray.pop();
+        microsftPathArray.pop();
+        let outputString = '';
         for(let index = 0; index < microsftPathArray.length; index++){
-            outputString += microsftPathArray[index] + "/"
-        }
-        outputString += "/items/root/children"
-        setMicrosoftPath(outputString)
-        getUserMicrosoftFiles(outputString)
-        setFilesBackAvaliable(false)
+          outputString += `${microsftPathArray[index]}/`;
+        };
+        outputString += '/items/root/children';
+        setMicrosoftPath(outputString);
+        loadGetUserMicrosoftFiles(outputString);
+        setFilesBackAvaliable(false);
       }}>
         <Text>Back</Text>
       </Pressable>:null
-
       }
-      { usersFiles.map((file) => (
-        <Pressable onPress={() => {
-          if (file.folder) {
-            setMicrosoftPath("https://graph.microsoft.com/v1.0/drives/" + file.parentDriveId + "/items/" + file.id + "/children")
-            getUserMicrosoftFiles("https://graph.microsoft.com/v1.0/drives/" + file.parentDriveId + "/items/" + file.id + "/children")
-            setFilesBackAvaliable(true)
-          } else {
-            onSelectedFile(file)
-          }
-        }} key={`Users_${file.id}_${create_UUID()}`}>
-          <View style={{flexDirection: "row"}}>
-            <MimeTypeIcon width={20} height={20} mimeType={file.type}/>
-            <Text style={{padding: 0, margin: 0}}>{file.name}</Text>
-          </View>
-        </Pressable>    
-      ))}
+      <>
+        { (getFilesState === loadingStateEnum.loading) ?
+          <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+            <ProgressView width={14} height={14} />
+            <Text>Loading</Text>
+          </View>:
+          <>
+            { (getFilesState === loadingStateEnum.success) ?
+              <FlatList
+                data={usersFiles}
+                renderItem={(file) => (
+                  <Pressable onPress={() => {
+                    if (file.item.folder) {
+                      setMicrosoftPath(`https://graph.microsoft.com/v1.0/drives/${file.item.parentDriveId}/items/${file.item.id}/children`);
+                      loadGetUserMicrosoftFiles(`https://graph.microsoft.com/v1.0/drives/${file.item.parentDriveId}/items/${file.item.id}/children`);
+                      setFilesBackAvaliable(true);
+                    } else {
+                      onSelectedFile(file.item);
+                    };
+                  }} key={`Users_${file.item.id}_${create_UUID()}`}>
+                    <View style={{flexDirection: 'row', margin: 5}}>
+                      <MimeTypeIcon width={20} height={20} mimeType={file.item.type}/>
+                      <Text style={{padding: 0, margin: 0}}>{file.item.name}</Text>
+                    </View>
+                  </Pressable>
+                )}
+              />:<Text>Failed to load</Text>
+            }
+          </>
+        }
+      </>
   </ScrollView>
   )
 }

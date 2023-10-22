@@ -35,7 +35,7 @@ import GovernmentRooms from './Profile/Government/GovernmentClasses/GovernmentRo
 import GovernmentRoomsCreate from './Profile/Government/GovernmentClasses/GovermentRoomsCreate'
 import MicrosoftGraphEdit from './Profile/Government/MicrosoftGraphLists/MicrosoftGraphEdit';
 import GovernmentResources from './Profile/Government/GovernmentResources';
-import GovernmentDressCodeCreate from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeCreate';
+import GovernmentDressCodeCreate from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentDressCode from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
 import GovernmentDressCodeEdit from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentTimetableEdit from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
@@ -98,8 +98,7 @@ export default function AuthenticatedView({dimensions, width}:{dimensions: {wind
                   <Route path='/profile/government/calendar/timetable' element={<GovernmentTimetable />} />
                   <Route path='/profile/government/calendar/timetable/:id' element={<GovernmentTimetableEdit/>} />
                   <Route path='/profile/government/calendar/dresscode' element={<GovernmentDressCode />} />
-                  <Route path='/profile/government/calendar/dresscode/edit/:id' element={<GovernmentDressCodeEdit />} /> 
-                  <Route path='/profile/government/calendar/dresscode/create' element={<GovernmentDressCodeCreate />} />
+                  <Route path='/profile/government/calendar/dresscode/:id' element={<GovernmentDressCodeEdit />} /> 
                   <Route path='/profile/government/sports' element={<GovernmentSports/>}/>
                   <Route path='/profile/government/sports/create' element={<GovernmentCreateNewSport/>}/>
                   <Route path='/profile/government/sports/team/:sport/:id' element={<GovernmentSportsTeams/>}/>

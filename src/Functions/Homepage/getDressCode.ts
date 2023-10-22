@@ -13,6 +13,7 @@ export default async function getDressCode(dressCodeId: string): Promise<{result
       return {result: loadingStateEnum.success, data: {
         name: data["value"][0]["fields"]["dressCodeName"],
         id: data["value"][0]["fields"]["dressCodeId"],
+        listId: data['value'][0]['id'],
         dressCodeData: dressCodeData,
         dressCodeIncentives: dressCodeIncentivesData
       }}

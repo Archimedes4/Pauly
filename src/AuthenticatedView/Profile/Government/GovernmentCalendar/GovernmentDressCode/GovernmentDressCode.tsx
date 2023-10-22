@@ -1,6 +1,6 @@
-import { View, Text } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-native'
+import { Link, useNavigate } from 'react-router-native'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../../../Redux/store'
 import { Colors, loadingStateEnum } from '../../../../../types'
@@ -11,6 +11,7 @@ export default function GovernmentDressCode() {
   const {width, height} = useSelector((state: RootState) => state.dimentions)
   const [getDressCodeState, setGetDressCodeState] = useState<loadingStateEnum>(loadingStateEnum.loading)
   const [dressCodes, setDressCodes] = useState<dressCodeType[]>([])
+  const navigate = useNavigate();
 
   async function loadData() {
     const result = await getDressCodeData()
@@ -26,10 +27,10 @@ export default function GovernmentDressCode() {
 
   return (
     <View style={{width: width, height: height, backgroundColor: Colors.white}}>
-        <Link to="/profile/government/calendar">
-          <Text>Back</Text>
-        </Link>
-      <Text>Dress Codes</Text>
+      <Pressable onPress={() => navigate('/profile/government/calendar')}>
+        <Text>Back</Text>
+      </Pressable>
+      <Text style={{marginLeft: 'auto', marginRight: 'auto'}}>Dress Codes</Text>
       <View>
         { (getDressCodeState === loadingStateEnum.loading) ?
           <Text>Loading</Text>:
@@ -37,16 +38,16 @@ export default function GovernmentDressCode() {
             { (getDressCodeState === loadingStateEnum.success) ?
               <View>
                 { dressCodes.map((dressCode) => (
-                  <ListItem to={'/profile/government/calendar/dresscode/edit/' + dressCode.id} title={dressCode.name} width={width} />
+                  <ListItem key={dressCode.id} to={`/profile/government/calendar/dresscode/${dressCode.id}`} title={dressCode.name} width={width} />
                 ))}
               </View>:<Text>Failed</Text>
             }
           </View>
         }
       </View>
-      <Link to="/profile/government/calendar/dresscode/create">
+      <Pressable onPress={() => navigate("/profile/government/calendar/dresscode/create")}>
         <Text>Create Dress Code</Text>
-      </Link>
+      </Pressable>
     </View>
   )
 }

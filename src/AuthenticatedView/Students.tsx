@@ -71,21 +71,20 @@ export default function Students() {
                   getUsers()
                 }
               }}/>
-              <View style={{height: height * 0.75}}>
-                <FlatList 
-                  key={`FlatList_${create_UUID()}`}
-                  data={users}
-                  renderItem={(user) => (
-                    <StudentBlock user={user} />
-                  )}
-                  numColumns={(Math.floor(width/190) !== 0) ? Math.floor(((width%190) >= 0.75) ? (width/190):((width + 190)/190)):1}
-                  onEndReached={() => {
-                    if (nextLink !== undefined) {
-                      getUsers(nextLink)
-                    }
-                  }}
-                />
-              </View>
+              <FlatList 
+                key={`FlatList_${create_UUID()}`}
+                data={users}
+                renderItem={(user) => (
+                  <StudentBlock user={user} />
+                )}
+                numColumns={(Math.floor(width/190) !== 0) ? Math.floor(((width%190) >= 0.75) ? (width/190):((width + 190)/190)):1}
+                onEndReached={() => {
+                  if (nextLink !== undefined) {
+                    getUsers(nextLink)
+                  }
+                }}
+                style={{height: height * 0.825, marginTop: height * 0.025}}
+              />
             </View>:
             <View style={{width: width, height: height, backgroundColor: (currentBreakPoint === 0) ? Colors.maroon:"#FFFFFF"}}>
               <Pressable onPress={() => {navigate("/")}}>
@@ -128,18 +127,29 @@ function StudentBlock({user}:{user: ListRenderItemInfo<schoolUserType>}) {
     getImage();
   }, [])
 
-  function calculateMarginEnds(widthIn: number): number {
-    const numberOfBlocks = Math.floor(((widthIn%190) >= 0.75) ? (widthIn/190):((widthIn + 190)/190));
-    const widthRemaining = widthIn - ((numberOfBlocks - 1) * 190) - 150;
-    if (widthRemaining/2 >= 120) {
-      return 20;
+  function calculateMarginEnds(widthIn: number, side: "L"|"R"): number {
+    const numberOfBlocks = (Math.floor(width/190) !== 0) ? Math.floor(((width%190) >= 0.75) ? (width/190):((width + 190)/190)):1
+    if (user.index%numberOfBlocks === 0) {
+      const widthRemaining = widthIn - ((numberOfBlocks - 1) * 190) - 150;
+      if (widthRemaining/2 >= 120 || side === "R") {
+        return 20;
+      } else {
+        return widthRemaining/2;
+      }
+    } else if ((user.index+1)%numberOfBlocks === 0) {
+      const widthRemaining = widthIn - ((numberOfBlocks - 1) * 190) - 150;
+      if (widthRemaining/2 >= 120 || side === "L") {
+        return 20;
+      } else {
+        return widthRemaining/2;
+      }
     } else {
-      return widthRemaining/2;
+      return 20
     }
   }
 
   return (
-    <View key={`StudentBlock_${user.item.id}`} style={{height: 175, width: 150, marginTop: 25, marginBottom: 25, marginLeft: (user.index%(Math.floor(((width%190) >= 0.75) ? width/190:(width+ 190)/190)) === 0) ? calculateMarginEnds(width):20, marginRight: (user.index%(Math.floor(((width%190) >= 0.75) ? width/190:(width+ 190)/190) - 1) === 0 && user.index !== 0) ? calculateMarginEnds(width):20, backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>        
+    <View key={`StudentBlock_${user.item.id}`} style={{height: 175, width: 150, marginTop: 25, marginBottom: 25, marginLeft: calculateMarginEnds(width, "L"), marginRight:  calculateMarginEnds(width, "R"), backgroundColor: "#FFFFFF", shadowColor: "black", shadowOffset: {width: 1, height: 1}, shadowOpacity: 1, shadowRadius: 5, borderRadius: 15}}>        
       <View style={{height: 150, width: 150, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
         { (user.item.imageState === loadingStateEnum.loading) ?
           <>
@@ -212,4 +222,4 @@ function SearchBox({getUsers}:{getUsers: (item: string) => void}) {
       </View>
     </View>
   )
-}
+} 

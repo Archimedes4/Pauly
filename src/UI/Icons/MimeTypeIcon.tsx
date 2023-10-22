@@ -13,6 +13,7 @@ interface iconProps {
 
 const wordTypes = ["application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
 const excelTypes = ["application/ms-excel", "application/msexcel", "application/vnd.ms-excel"]
+const powerpointTypes = ["application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.slideshow", 'application/vnd.openxmlformats-officedocument.presentationml.template']
 
 export default function MimeTypeIcon({width, height, style, props, mimeType}:iconProps) {
   return (
@@ -31,7 +32,7 @@ export default function MimeTypeIcon({width, height, style, props, mimeType}:ico
           { (mimeType === "application/pdf") ? 
             <PDFIcon width={width} height={height} style={style} props={props}/>:null
           }
-          { (mimeType === "application/vnd.ms-powerpoint") ? 
+          { powerpointTypes.includes(mimeType) ? 
             <PowerpointIcon width={width} height={height} style={style} props={props}/>:null
           }
           { (wordTypes.includes(mimeType) && excelTypes.includes(mimeType) && mimeType !== "application/pdf" && mimeType !== "application/vnd.ms-powerpoint") ?
