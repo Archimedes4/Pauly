@@ -293,23 +293,28 @@ function UserBlock({setSelectedUser, setInitResult}:{setSelectedUser: (item: mic
     }
   }
 
-  async function getUsers() {
-    const result = await callMsGraph('https://graph.microsoft.com/v1.0/users?$top=10')
+  async function getUsers(nextLink?: string) {
+    const result = await callMsGraph(nextLink ? nextLink:'https://graph.microsoft.com/v1.0/users?$top=10&$select,id,displayName');
     if (result.ok){
-      const data = await result.json()
-      let newUsers: microsoftUserType[] = []
+      const data = await result.json();
+      let newUsers: microsoftUserType[] = [];
       for (let index = 0; index < data['value'].length; index += 1){
         newUsers.push({
           id: data['value'][index]['id'],
           displayName: data['value'][index]['displayName']
-        })
+        });
+      };
+      setNextLink(data['@odata.nextLink']);
+      if (nextLink) {
+        setLoadedUsers([...loadedUsers, ...newUsers]);
+      } else {
+        setLoadedUsers(newUsers);
       }
-      setLoadedUsers(newUsers)
-      setLoadUsersResult(loadingStateEnum.success)
+      setLoadUsersResult(loadingStateEnum.success);
     } else {
-      setLoadUsersResult(loadingStateEnum.failed)
-    }
-  }
+      setLoadUsersResult(loadingStateEnum.failed);
+    };
+  };
 
   useEffect(() => {
     getUserId()
@@ -336,6 +341,11 @@ function UserBlock({setSelectedUser, setInitResult}:{setSelectedUser: (item: mic
                     }
                   </View>
                 )}
+                onEndReached={() => {
+                  if (nextLink !== undefined) {
+                    getUsers(nextLink)
+                  }
+                }}
               />:<Text>Failed</Text>
             }
           </>

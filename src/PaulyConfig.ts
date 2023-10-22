@@ -1,7 +1,13 @@
+/*
+  Andrew Mainella
+  21 October 2023
+  Pauly
+  See README.md for more information about the setup process and what to put in each of these values
+*/
 //The org wide group id is the id of a group (teams) that every user is apart of.
 //This allows pauly to access calendar information that is common (an event that is set out by admin) among users.
 
-export const orgWideGroupID: string = "cb666a12-455f-40a4-ba2e-cec2155b1b1c";
+export const orgWideGroupID: string = "d2c0dd90-a426-4539-882c-aa87e5787a92";
 
 export const tenantId: string = "551df04d-543a-4d61-955e-e4294c4cf950";
 export const clientId: string = "08624b03-1aa6-40c4-8fb3-149c39026dff";

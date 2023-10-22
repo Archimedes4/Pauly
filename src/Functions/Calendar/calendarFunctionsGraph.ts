@@ -1,3 +1,4 @@
+import { dressCodeData } from './../initializePauly/initializePaulyData';
 //Andrew Mainella
 //Pauly 
 
@@ -7,6 +8,7 @@ import { Colors, loadingStateEnum, semesters } from "../../types";
 import store from "../../Redux/store";
 import getDressCode from "../homepage/getDressCode";
 import batchRequest from "../Ultility/batchRequest";
+import create_UUID from "../Ultility/CreateUUID";
 
 //Defaults to org wide events
 export async function getGraphEvents(url?: string, referenceUrl?: string): Promise<{ result: loadingStateEnum; events?: eventType[]; nextLink?: string}> {
@@ -438,4 +440,23 @@ async function getTimetablesFromSchoolYears(schoolYearIds: Map<string, number>, 
   })
 
   return {result: loadingStateEnum.success, data: outputTimetables}
+}
+
+export async function createDressCode(dressCodeName: string, dressCodeData: dressCodeDataType[]): Promise<loadingStateEnum> {
+  const dressCodeId = create_UUID()
+  const data = {
+    "fields":{
+      "Title":dressCodeId,
+      "dressCodeId":dressCodeId,
+      "dressCodeName":dressCodeName,
+      "dressCodeData":JSON.stringify(dressCodeData),
+      "dressCodeIncentivesData": "[]"
+    }
+  }
+  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.dressCodeListId}/items`, "POST", JSON.stringify(data))
+  if (result.ok){
+    return loadingStateEnum.success
+  } else {
+    return loadingStateEnum.failed
+  }
 }

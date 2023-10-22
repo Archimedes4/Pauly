@@ -139,20 +139,19 @@ export default async function getUsers(url?: string, search?: string) {
         }
       } else {
         outputUsers.push({
-          name: data["value"][index]["displayName"],
-          id: data["value"][index]["id"],
-          mail: data["value"][index]["mail"],
-          role: data["value"][index]["mail"],
-          grade: checkIfStudent(data["value"][index]["mail"]).grade,
-          student: checkIfStudent(data["value"][index]["mail"]).result,
-          imageDownloadUrl: "noImage",
+          name: data['value'][index]['displayName'],
+          id: data['value'][index]['id'],
+          mail: data['value'][index]['mail'],
+          role: data['value'][index]['mail'],
+          grade: checkIfStudent(data['value'][index]['mail']).grade,
+          student: checkIfStudent(data['value'][index]['mail']).result,
+          imageDownloadUrl: 'noImage',
           imageState: loadingStateEnum.cannotStart
         })
       }
     }
-
     store.dispatch(studentSearchSlice.actions.setStudentUsers(outputUsers))
-    store.dispatch(studentSearchSlice.actions.setNextLink(data["@odata.nextLink"]))
+    store.dispatch(studentSearchSlice.actions.setNextLink(data['@odata.nextLink']))
     store.dispatch(studentSearchSlice.actions.setUsersState(loadingStateEnum.success))
   } else {
     //Getting users failed
@@ -165,12 +164,12 @@ export async function getStudentData(userId: string): Promise<{result: loadingSt
   if (result.ok) {
     const data = await result.json()
     let resultData: studentInformationType[] = []
-    for (let index = 0; index < data["value"].length; index++) {
+    for (let index = 0; index < data['value'].length; index++) {
       resultData.push({
-        listId: data["value"][index]["fields"]["id"],
-        driveId: data["value"][index]["fields"]["itemId"],
-        selected: data["value"][index]["fields"]["selected"],
-        createdTime: data["value"][index]["fields"]["createdTime"]
+        listId: data['value'][index]['fields']['id'],
+        driveId: data['value'][index]['fields']['itemId'],
+        selected: data['value'][index]['fields']['selected'],
+        createdTime: data['value'][index]['fields']['createdTime']
       })
     }
     return {result: loadingStateEnum.success, data: resultData}

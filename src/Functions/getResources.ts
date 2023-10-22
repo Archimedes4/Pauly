@@ -1,18 +1,18 @@
 import { loadingStateEnum, resourceMode, resourceResponce } from './../types';
-import store from "../Redux/store"
-import callMsGraph from "./Ultility/microsoftAssets"
+import store from "../Redux/store";
+import callMsGraph from "./Ultility/microsoftAssets";
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
 
 async function getResourceFollows() {
-  let nextLink = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.resourceListId}/items?expand=fields($select=resourceGroupId,resourceConversationId)&$select=id`
-  while (nextLink !== "") {
-    const result = await callMsGraph(nextLink)
+  let nextLink = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.resourceListId}/items?expand=fields($select=resourceGroupId,resourceConversationId)&$select=id`;
+  while (nextLink !== '') {
+    const result = await callMsGraph(nextLink);
     if (result.ok) {
-      const data = await result.json()
-      if (data["@odata.nextLink"] !== undefined) {
-        nextLink = data["@odata.nextLink"]
+      const data = await result.json();
+      if (data['@odata.nextLink'] !== undefined) {
+        nextLink = data['@odata.nextLink'];
       } else {
-        nextLink = ""
+        nextLink = '';
       }
       let output: resourceFollowType[] = []
       for (let index = 0; index < data["value"].length; index++) {
@@ -148,7 +148,7 @@ export async function getResourcesSearch(search: string) {
       }
   
       const batchData = {
-        "requests":batchDataRequests
+        'requests':batchDataRequests
       }
       const batchResult = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(batchData), [{key: "Accept", value: "application/json"}])
       if (batchResult.ok) {
