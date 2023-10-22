@@ -1,15 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: string = ""
+const initalState: string = '';
 
 export const resourcesLastCalled = createSlice({
-  name: "resourcesLastCalled",
+  name: 'resourcesLastCalled',
   initialState: initalState,
   reducers: {
     setResourcesLastCalled: (_state, action: PayloadAction<string>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default resourcesLastCalled.reducer
+export default resourcesLastCalled.reducer;

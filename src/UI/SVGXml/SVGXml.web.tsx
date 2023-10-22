@@ -1,10 +1,18 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native';
+import React from 'react';
 
-export default function SVGXml({xml, height, width}:{xml: string, width: number, height: number}) {
+export default function SVGXml({
+  xml,
+  height,
+  width,
+}: {
+  xml: string;
+  width: number;
+  height: number;
+}) {
   return (
-    <View style={{height: height, width: width}}>
-      <div dangerouslySetInnerHTML={{__html: xml}}/>
+    <View style={{ height, width }}>
+      <div dangerouslySetInnerHTML={{ __html: xml }} />
     </View>
-  )
+  );
 }

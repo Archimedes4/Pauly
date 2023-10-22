@@ -1,15 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: boolean =false
+const initalState: boolean = false;
 
 export const expandedModeSlice = createSlice({
-  name: "expandedMode",
+  name: 'expandedMode',
   initialState: initalState,
   reducers: {
     setExpandedMode: (_state, action: PayloadAction<boolean>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default expandedModeSlice.reducer
+export default expandedModeSlice.reducer;

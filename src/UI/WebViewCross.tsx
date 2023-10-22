@@ -1,18 +1,26 @@
-import { View, Text, Platform } from 'react-native'
-import React, { useState } from 'react'
-import WebView from 'react-native-webview'
+import { View, Platform } from 'react-native';
+import React, { useState } from 'react';
+import WebView from 'react-native-webview';
 
-export default function WebViewCross({html, width}:{html: string | undefined, width: number}) {
-  const jsCode = "window.ReactNativeWebView.postMessage(document.getElementById('pauly-main').clientHeight)"
-  //document.getElementById('pauly-main').innerHTML
-  const [height, setHeight] = useState<number>(0)
+export default function WebViewCross({
+  html,
+  width,
+}: {
+  html: string | undefined;
+  width: number;
+}) {
+  const jsCode =
+    "window.ReactNativeWebView.postMessage(document.getElementById('pauly-main').clientHeight)";
+  // document.getElementById('pauly-main').innerHTML
+  const [height, setHeight] = useState<number>(0);
   return (
     <>
-      { (html !== undefined) ?
+      {html !== undefined ? (
         <>
-          { (Platform.OS !== "web") ?
-            <WebView source={{html: 
-              `<!DOCTYPE html>
+          {Platform.OS !== 'web' ? (
+            <WebView
+              source={{
+                html: `<!DOCTYPE html>
               <html>
               <head>
                 <style>
@@ -25,19 +33,23 @@ export default function WebViewCross({html, width}:{html: string | undefined, wi
                   ${html}
                 </div>
               </body>
-              </html>`}} 
-              style={{margin: 10, height: height + 10, width: width}}
-              automaticallyAdjustContentInsets={false} 
-              javaScriptEnabled={true}
+              </html>`,
+              }}
+              style={{ margin: 10, height: height + 10, width }}
+              automaticallyAdjustContentInsets={false}
+              javaScriptEnabled
               injectedJavaScript={jsCode}
-              onMessage={event => setHeight(parseFloat(event.nativeEvent.data)/3)}
-            />:
-            <View style={{margin: 10}}>
-              <div dangerouslySetInnerHTML={{__html: html}}/>
+              onMessage={event =>
+                setHeight(parseFloat(event.nativeEvent.data) / 3)
+              }
+            />
+          ) : (
+            <View style={{ margin: 10 }}>
+              <div dangerouslySetInnerHTML={{ __html: html }} />
             </View>
-          }
-        </>:null
-      }
+          )}
+        </>
+      ) : null}
     </>
-  )
+  );
 }

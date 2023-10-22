@@ -1,16 +1,16 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { Colors } from '../../types';
 
-const initalState: string = Colors.maroon
+const initalState: string = Colors.maroon;
 
 export const statusBarColorSlice = createSlice({
-  name: "statusBarColor",
+  name: 'statusBarColor',
   initialState: initalState,
   reducers: {
     setStatusBarColor: (_state, action: PayloadAction<string>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default statusBarColorSlice.reducer
+export default statusBarColorSlice.reducer;

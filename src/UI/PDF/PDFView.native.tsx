@@ -1,119 +1,116 @@
 import { useDispatch, useSelector } from 'react-redux';
-import store, { RootState } from '../../Redux/store';
-import { useEffect, useState } from "react";
-import React from "react";
-import { Platform, Text, Image } from "react-native";
-import WebView from "react-native-webview";
-import { GestureDetector, ScrollView, Gesture } from 'react-native-gesture-handler';
-import { pdfDataSlice } from '../../Redux/reducers/pdfDataReducer';
+import React, { useEffect, useState } from 'react';
+import { Image } from 'react-native';
+import WebView from 'react-native-webview';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
+import { pdfDataSlice } from '../../Redux/reducers/pdfDataReducer';
+import store, { RootState } from '../../Redux/store';
 
-export default function PDFView({width}:{width: number}) {
-  const {powerpointBlob} = useSelector((state: RootState) => state.paulyData)
-  const {inject, images, pageNumber} = useSelector((state: RootState) => state.pdfData)
-  const [imageHeight, setImageHeight] = useState<number>(0)
-  const dispatch = useDispatch()
+export default function PDFView({ width }: { width: number }) {
+  const { powerpointBlob } = useSelector((state: RootState) => state.paulyData);
+  const { inject, images, pageNumber } = useSelector(
+    (state: RootState) => state.pdfData,
+  );
+  const [imageHeight, setImageHeight] = useState<number>(0);
+  const dispatch = useDispatch();
 
   async function loadData() {
-    const dataResult = await fetch(powerpointBlob)
+    const dataResult = await fetch(powerpointBlob);
     if (dataResult.ok) {
-      const blob = await dataResult.blob()
-      let file = new Blob([blob], {type: 'application/pdf'});
-      let fileURL = URL.createObjectURL(file);
-      dispatch(pdfDataSlice.actions.setInject(fileURL))
+      const blob = await dataResult.blob();
+      const file = new Blob([blob], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      dispatch(pdfDataSlice.actions.setInject(fileURL));
     }
   }
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, [loadData]);
 
   function tapChangePage() {
-    if ((pageNumber + 1) < images.length) {
-      store.dispatch(pdfDataSlice.actions.increasePageNumber())
+    if (pageNumber + 1 < images.length) {
+      store.dispatch(pdfDataSlice.actions.increasePageNumber());
     } else {
-      store.dispatch(pdfDataSlice.actions.setPageNumber(0))
+      store.dispatch(pdfDataSlice.actions.setPageNumber(0));
     }
   }
 
   function doubleTapChangePage() {
-    if ((pageNumber - 1) >= 1) {
-      store.dispatch(pdfDataSlice.actions.decreasePageNumber())
+    if (pageNumber - 1 >= 1) {
+      store.dispatch(pdfDataSlice.actions.decreasePageNumber());
     } else if (images.length >= 1) {
-      store.dispatch(pdfDataSlice.actions.setPageNumber(images.length - 1))
+      store.dispatch(pdfDataSlice.actions.setPageNumber(images.length - 1));
     }
   }
 
   function flingChangePage() {
-    console.log("Fling")
-    if ((pageNumber + 1) < images.length) {
-      store.dispatch(pdfDataSlice.actions.increasePageNumber())
+    if (pageNumber + 1 < images.length) {
+      store.dispatch(pdfDataSlice.actions.increasePageNumber());
     } else {
-      store.dispatch(pdfDataSlice.actions.setPageNumber(pageNumber - 1))
+      store.dispatch(pdfDataSlice.actions.setPageNumber(pageNumber - 1));
     }
   }
-  
+
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
-    console.log("Tap")
     if (success) {
-      runOnJS(tapChangePage)
+      runOnJS(tapChangePage);
     }
   });
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd((_event, success) => {
-      console.log("Double Tap")
       if (success) {
-        runOnJS(doubleTapChangePage)
+        runOnJS(doubleTapChangePage);
       }
-  });
+    });
 
   const taps = Gesture.Exclusive(doubleTap, singleTap);
-  
-  const fling = Gesture.Fling().onEnd(() => {
-    runOnJS(flingChangePage)
-  })
 
-  const compound = Gesture.Simultaneous(
-    fling, taps
-  )
+  const fling = Gesture.Fling().onEnd(() => {
+    runOnJS(flingChangePage);
+  });
+
+  const compound = Gesture.Simultaneous(fling, taps);
 
   useEffect(() => {
     if (pageNumber < images.length) {
-      Image.getSize(images[pageNumber], (imageMeasureWidth, imageMeasureHeight) => {
-        const heightPerWidth = imageMeasureHeight/imageMeasureWidth
-        setImageHeight(width * heightPerWidth)
-      })
+      Image.getSize(
+        images[pageNumber],
+        (imageMeasureWidth, imageMeasureHeight) => {
+          const heightPerWidth = imageMeasureHeight / imageMeasureWidth;
+          setImageHeight(width * heightPerWidth);
+        },
+      );
     }
-  }, [pageNumber, images])
+  }, [pageNumber, images, width]);
 
   return (
     <>
-      { (powerpointBlob !== "" && inject !== "") ?
-        <WebViewInject/>:null 
-      }
-      { (pageNumber < images.length) ?
-        <GestureDetector  gesture={compound}>
-          <Image source={{uri: images[pageNumber]}} style={{width: width, height: imageHeight, borderRadius: 15}}/>
-        </GestureDetector>:null
-      }
+      {powerpointBlob !== '' && inject !== '' ? <WebViewInject /> : null}
+      {pageNumber < images.length ? (
+        <GestureDetector gesture={compound}>
+          <Image
+            source={{ uri: images[pageNumber] }}
+            style={{ width, height: imageHeight, borderRadius: 15 }}
+          />
+        </GestureDetector>
+      ) : null}
     </>
-  )
+  );
 }
 
 function WebViewInject() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const {powerpointShare} = useSelector((state: RootState) => state.paulyData)
-  const {inject} = useSelector((state: RootState) => state.pdfData)
-  const dispatch = useDispatch()
+  const { powerpointShare } = useSelector(
+    (state: RootState) => state.paulyData,
+  );
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log("This is inject", inject)
-  }, [inject])
   return (
     <WebView
-      source={{html:
-       `<!DOCTYPE html>
+      source={{
+        html: `<!DOCTYPE html>
         <html>
         <head>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js" integrity="sha512-BbrZ76UNZq5BhH7LL7pn9A4TKQpQeNCHOo65/akfelcIBbcVvYWOFQKPXIrykE3qZxYjmDX573oa4Ywsc7rpTw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -124,7 +121,9 @@ function WebViewInject() {
             async function loadData() {
               const dataResult = await fetch("https://graph.microsoft.com/v1.0/shares/${powerpointShare}/driveItem/content?format=pdf", {
                 headers: {
-                  "Authorization":"Bearer ${store.getState().authenticationToken}"
+                  "Authorization":"Bearer ${
+                    store.getState().authenticationToken
+                  }"
                 }
               })
               if (!dataResult.ok) {window.ReactNativeWebView.postMessage('failed'); return}
@@ -183,12 +182,14 @@ function WebViewInject() {
           </script>
           <canvas id="canvas" style='width: 100; height: 100'></canvas>
         </body>
-        </html>`
+        </html>`,
       }}
-      style={{width: 0, height: 0}}
-      onMessage={(e) => {if (e.nativeEvent.data.length >= 7) {dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data))} else {console.log("else")}}}
+      style={{ width: 0, height: 0 }}
+      onMessage={e => {
+        if (e.nativeEvent.data.length >= 7) {
+          dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data));
+        }
+      }}
     />
-  )
+  );
 }
-
-//`https://graph.microsoft.com/v1.0/shares/${data["powerpointId"]}/driveItem/content?format=pdf`

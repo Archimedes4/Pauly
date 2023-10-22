@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initalState: string = new Date().toISOString()
+const initalState: string = new Date().toISOString();
 
 export const selectedDateSlice = createSlice({
-  name: "selectedDate",
+  name: 'selectedDate',
   initialState: initalState,
   reducers: {
     setCurrentEventsLastCalled: (_state, action) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default selectedDateSlice.reducer
+export default selectedDateSlice.reducer;

@@ -1,33 +1,32 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalStateTaskDeltaLink: string = ""
+const initalStateTaskDeltaLink: string = '';
 
 export const taskDeltaSlice = createSlice({
-  name: "taskDeltaLink",
+  name: 'taskDeltaLink',
   initialState: initalStateTaskDeltaLink,
   reducers: {
     setTaskDeltaLink: (_state, action: PayloadAction<string>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export const tasksDeltaReducer = taskDeltaSlice.reducer
+export const tasksDeltaReducer = taskDeltaSlice.reducer;
 
-const initalTasksState: string[] = []
+const initalTasksState: string[] = [];
 
 export const tasksSlice = createSlice({
-  name: "tasks",
+  name: 'tasks',
   initialState: initalTasksState,
   reducers: {
     setCurrentEvents: (state, action: PayloadAction<string[]>) => {
-      return [...action.payload]
+      return [...action.payload];
     },
     pushEvent: (state, action: PayloadAction<string>) => {
-      return [...state, action.payload]
-    }
-  }
-})
+      return [...state, action.payload];
+    },
+  },
+});
 
-
-export const tasksReducer = tasksSlice.reducer
+export const tasksReducer = tasksSlice.reducer;

@@ -4,56 +4,90 @@
   Pauly
   GovernmentHandleFileSubmissions.tsx
 */
-import React, { useEffect, useState } from 'react'
-import { View, Text, Pressable } from 'react-native'
-import { FlatList } from 'react-native-gesture-handler'
-import { useNavigate } from 'react-router-native'
-import create_UUID from '../../../../Functions/Ultility/CreateUUID'
-import getSubmissions from '../../../../Functions/sports/getSubmissions'
-import { loadingStateEnum } from '../../../../types'
-import ProgressView from '../../../../UI/ProgressView'
+import React, { useEffect, useState } from 'react';
+import { View, Text, Pressable } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { useNavigate } from 'react-router-native';
+import create_UUID from '../../../../Functions/Ultility/createUUID';
+import getSubmissions from '../../../../Functions/sports/getSubmissions';
+import { loadingStateEnum } from '../../../../types';
+import ProgressView from '../../../../UI/ProgressView';
 
-export default function GovernmentHandleFileSubmissions({width, height}:{width: number, height: number}) {
-  const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<mediaSubmissionType[]>([]);
-  const [loadingSubmissionsState, setLoadingSubmissionsState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const navigate = useNavigate()
+export default function GovernmentHandleFileSubmissions({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
+  const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<
+    mediaSubmissionType[]
+  >([]);
+  const [loadingSubmissionsState, setLoadingSubmissionsState] =
+    useState<loadingStateEnum>(loadingStateEnum.loading);
+  const navigate = useNavigate();
 
   async function loadData() {
-    const result = await getSubmissions()
-    if (result.result === loadingStateEnum.success && result.data !== undefined) {
-      setCurrentMediaSubmissions(result.data)
-    } 
-    setLoadingSubmissionsState(result.result)
+    const result = await getSubmissions();
+    if (
+      result.result === loadingStateEnum.success &&
+      result.data !== undefined
+    ) {
+      setCurrentMediaSubmissions(result.data);
+    }
+    setLoadingSubmissionsState(result.result);
   }
 
-  useEffect(() => {loadData()}, [])
+  useEffect(() => {
+    loadData();
+  }, []);
   return (
     <>
-      { (loadingSubmissionsState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, alignContent: "center", justifyContent: "center", alignItems: "center"}}>
+      {loadingSubmissionsState === loadingStateEnum.loading ? (
+        <View
+          style={{
+            width,
+            height,
+            alignContent: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <ProgressView width={0} height={0} />
           <Text>loading</Text>
-        </View>:
+        </View>
+      ) : (
         <>
-          { (loadingSubmissionsState === loadingStateEnum.success) ?
-            <View style={{width: width, height: height, overflow: "hidden"}}>
+          {loadingSubmissionsState === loadingStateEnum.success ? (
+            <View style={{ width, height, overflow: 'hidden' }}>
               <Text>HandleFileSubmissions</Text>
               <FlatList
                 data={currentMediaSubmissions}
-                renderItem={(item) => 
-                  <Pressable key={`Submission_${item.item.submissionId}_${create_UUID()}`} onPress={() => navigate("/profile/government/sports/post/review/" + item.item.submissionId)} style={{borderColor: "black", borderWidth: 2}}>
+                renderItem={item => (
+                  <Pressable
+                    key={`Submission_${
+                      item.item.submissionId
+                    }_${create_UUID()}`}
+                    onPress={() =>
+                      navigate(
+                        `/profile/government/sports/post/review/${item.item.submissionId}`,
+                      )
+                    }
+                    style={{ borderColor: 'black', borderWidth: 2 }}
+                  >
                     <Text>{item.item.Title}</Text>
-                    <Text>Accepted: {(item.item.accepted) ? "Yes":"No"}</Text>
-                    <Text>Reviewed: {(item.item.reviewed) ? "Yes":"No"}</Text>
+                    <Text>Accepted: {item.item.accepted ? 'Yes' : 'No'}</Text>
+                    <Text>Reviewed: {item.item.reviewed ? 'Yes' : 'No'}</Text>
                     <Text>{item.item.user}</Text>
                   </Pressable>
-                } 
+                )}
               />
-            </View>:<Text>Failed</Text>
-
-          }
+            </View>
+          ) : (
+            <Text>Failed</Text>
+          )}
         </>
-      }
+      )}
     </>
-  )
+  );
 }

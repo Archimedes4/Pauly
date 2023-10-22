@@ -1,15 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: monthDataType[] = []
+const initalState: monthDataType[] = [];
 
 export const monthDataSlice = createSlice({
-  name: "monthData",
+  name: 'monthData',
   initialState: initalState,
   reducers: {
     setMonthData: (_state, action: PayloadAction<monthDataType[]>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default monthDataSlice.reducer
+export default monthDataSlice.reducer;

@@ -1,52 +1,69 @@
-import { View, Text, TextInput, Pressable, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import store, { RootState } from '../../../../../Redux/store'
-import create_UUID from '../../../../../Functions/Ultility/CreateUUID'
-import { useNavigate, useParams } from 'react-router-native'
-import { Colors, loadingStateEnum } from '../../../../../types'
-import DressCodeBlock from './DressCodeBlock'
-import { createDressCode } from '../../../../../Functions/calendar/calendarFunctionsGraph'
-import getDressCode from '../../../../../Functions/homepage/getDressCode'
-import ProgressView from '../../../../../UI/ProgressView'
-import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets'
+import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-native';
+import store, { RootState } from '../../../../../Redux/store';
+import create_UUID from '../../../../../Functions/Ultility/createUUID';
+import { Colors, loadingStateEnum } from '../../../../../types';
+import DressCodeBlock from './DressCodeBlock';
+import { createDressCode } from '../../../../../Functions/calendar/calendarFunctionsGraph';
+import getDressCode from '../../../../../Functions/homepage/getDressCode';
+import ProgressView from '../../../../../UI/ProgressView';
+import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets';
 
 export default function GovernmentDressCodeEdit() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
-  const [dressCodeName, setDressCodeName] = useState<string>("")
-  const [dressCodeData, setDressCodeData] = useState<dressCodeDataType[]>([{name: "", description: "", id: create_UUID()}])
-  const [selectedDressCodeId, setSelectedDressCodeId] = useState<string>("")
-  const [dressCodeListId, setDressCodeListId] = useState<string>('')
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const [dressCodeName, setDressCodeName] = useState<string>('');
+  const [dressCodeData, setDressCodeData] = useState<dressCodeDataType[]>([
+    { name: '', description: '', id: create_UUID() },
+  ]);
+  const [selectedDressCodeId, setSelectedDressCodeId] = useState<string>('');
+  const [dressCodeListId, setDressCodeListId] = useState<string>('');
 
-  const [createDressCodeState, setCreateDressCodeState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
-  
-  const navigate = useNavigate()
+  const [createDressCodeState, setCreateDressCodeState] =
+    useState<loadingStateEnum>(loadingStateEnum.notStarted);
+
+  const navigate = useNavigate();
 
   async function loadCreateDressCode() {
     const result = await createDressCode(dressCodeName, dressCodeData);
     setCreateDressCodeState(result);
   }
 
-  const {id} = useParams()
+  const { id } = useParams();
 
-  const [getDressCodeState, setDressCodeState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const [isCreatingDressCode, setIsCreatingDressCode] = useState<boolean>(false)
-  const [deleteDressCodeState, setDeleteDressCodeState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const [getDressCodeState, setDressCodeState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [isCreatingDressCode, setIsCreatingDressCode] =
+    useState<boolean>(false);
+  const [deleteDressCodeState, setDeleteDressCodeState] =
+    useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
   async function deleteDressCode() {
     setDeleteDressCodeState(loadingStateEnum.loading);
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.dressCodeListId}/items/${dressCodeListId}`, 'DELETE');
+    const result = await callMsGraph(
+      `https://graph.microsoft.com/v1.0/sites/${
+        store.getState().paulyList.siteId
+      }/lists/${
+        store.getState().paulyList.dressCodeListId
+      }/items/${dressCodeListId}`,
+      'DELETE',
+    );
     if (result.ok) {
       setDeleteDressCodeState(loadingStateEnum.success);
     } else {
       setDeleteDressCodeState(loadingStateEnum.failed);
-    };
-  };
+    }
+  }
 
   async function loadData() {
     if (id !== undefined && id !== 'create') {
-      const result = await getDressCode(id)
-      if (result.result === loadingStateEnum.success && result.data !== undefined) {
+      const result = await getDressCode(id);
+      if (
+        result.result === loadingStateEnum.success &&
+        result.data !== undefined
+      ) {
         setDressCodeListId(result.data.listId);
         setDressCodeName(result.data.name);
         setDressCodeData(result.data.dressCodeData);
@@ -54,67 +71,122 @@ export default function GovernmentDressCodeEdit() {
         setDressCodeState(loadingStateEnum.success);
       } else {
         setDressCodeState(loadingStateEnum.failed);
-      };
+      }
     } else if (id === 'create') {
       setIsCreatingDressCode(true);
-    };
-  };
+    }
+  }
 
   useEffect(() => {
-    loadData()
-  }, [id])
+    loadData();
+  }, [id]);
 
   return (
     <>
-      { (isCreatingDressCode || getDressCodeState === loadingStateEnum.success) ? 
-        <View style={{width: width, height: height, backgroundColor: Colors.white}}>
-          <Pressable onPress={() => navigate('/profile/government/calendar/dresscode')}>
+      {isCreatingDressCode || getDressCodeState === loadingStateEnum.success ? (
+        <View
+          style={{
+            width,
+            height,
+            backgroundColor: Colors.white,
+          }}
+        >
+          <Pressable
+            onPress={() => navigate('/profile/government/calendar/dresscode')}
+          >
             <Text>Back</Text>
           </Pressable>
           <Text>Create Dress Code</Text>
           <Text>Dress Code Name:</Text>
-          <TextInput 
+          <TextInput
             value={dressCodeName}
             onChangeText={setDressCodeName}
-            placeholder='Dress Code Name'
+            placeholder="Dress Code Name"
           />
-          <ScrollView style={{height: height * 0.7}}>
-            { dressCodeData.map((dressCode, index) => (
-              <DressCodeBlock dressCode={dressCode} dressCodeData={dressCodeData} index={index} setDressCodeData={setDressCodeData} selectedDressCodeId={selectedDressCodeId} setSelectedDressCodeId={setSelectedDressCodeId } />
+          <ScrollView style={{ height: height * 0.7 }}>
+            {dressCodeData.map((dressCode, index) => (
+              <DressCodeBlock
+                dressCode={dressCode}
+                dressCodeData={dressCodeData}
+                index={index}
+                setDressCodeData={setDressCodeData}
+                selectedDressCodeId={selectedDressCodeId}
+                setSelectedDressCodeId={setSelectedDressCodeId}
+              />
             ))}
           </ScrollView>
-          <Pressable onPress={() => {
-            setDressCodeData([...dressCodeData, {name: '', description: '', id: create_UUID()}])
-          }}>
+          <Pressable
+            onPress={() => {
+              setDressCodeData([
+                ...dressCodeData,
+                { name: '', description: '', id: create_UUID() },
+              ]);
+            }}
+          >
             <Text>Add</Text>
           </Pressable>
           <Pressable onPress={() => loadCreateDressCode()}>
-            <Text>{(createDressCodeState === loadingStateEnum.notStarted) ? "Create Dress Code":(createDressCodeState === loadingStateEnum.loading) ? "Loading":(createDressCodeState === loadingStateEnum.success) ? "Created Dress Code":"Failed"}</Text>
+            <Text>
+              {createDressCodeState === loadingStateEnum.notStarted
+                ? 'Create Dress Code'
+                : createDressCodeState === loadingStateEnum.loading
+                ? 'Loading'
+                : createDressCodeState === loadingStateEnum.success
+                ? 'Created Dress Code'
+                : 'Failed'}
+            </Text>
           </Pressable>
-          { (!isCreatingDressCode) ?
-            <Pressable style={{margin: 10}} onPress={() => deleteDressCode()}>
-              <Text>{(deleteDressCodeState === loadingStateEnum.notStarted) ? 'Delete':(deleteDressCodeState === loadingStateEnum.loading) ? 'Loading':(deleteDressCodeState === loadingStateEnum.success) ? 'Success':'Failed'}</Text>
-            </Pressable>:null
-          }
-        </View>:
+          {!isCreatingDressCode ? (
+            <Pressable style={{ margin: 10 }} onPress={() => deleteDressCode()}>
+              <Text>
+                {deleteDressCodeState === loadingStateEnum.notStarted
+                  ? 'Delete'
+                  : deleteDressCodeState === loadingStateEnum.loading
+                  ? 'Loading'
+                  : deleteDressCodeState === loadingStateEnum.success
+                  ? 'Success'
+                  : 'Failed'}
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
+      ) : (
         <>
-          { (getDressCodeState === loadingStateEnum.loading) ?
-            <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
-              <Pressable onPress={() => navigate('/profile/government/calendar/dresscode')}>
+          {getDressCodeState === loadingStateEnum.loading ? (
+            <View
+              style={{
+                width,
+                height,
+                backgroundColor: Colors.white,
+                alignContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Pressable
+                onPress={() =>
+                  navigate('/profile/government/calendar/dresscode')
+                }
+              >
                 <Text>Back</Text>
               </Pressable>
-              <ProgressView width={14} height={14}/>
+              <ProgressView width={14} height={14} />
               <Text>Loading</Text>
-            </View>:
+            </View>
+          ) : (
             <View>
-              <Pressable onPress={() => navigate('/profile/government/calendar/dresscode')}>
+              <Pressable
+                onPress={() =>
+                  navigate('/profile/government/calendar/dresscode')
+                }
+              >
                 <Text>Back</Text>
               </Pressable>
               <Text>Failed</Text>
             </View>
-          }
+          )}
         </>
-      }
+      )}
     </>
-  )
+  );
 }

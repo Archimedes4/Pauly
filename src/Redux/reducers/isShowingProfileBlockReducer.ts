@@ -1,15 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: boolean = false
+const initalState: boolean = false;
 
 export const isShowingProfileBlockSlice = createSlice({
-  name: "isShowingProfileBlock",
+  name: 'isShowingProfileBlock',
   initialState: initalState,
   reducers: {
     setIsShowingProfileBlock: (_state, action: PayloadAction<boolean>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default isShowingProfileBlockSlice.reducer
+export default isShowingProfileBlockSlice.reducer;

@@ -1,17 +1,21 @@
-import { loadingStateEnum, taskImportanceEnum, taskStatusEnum } from './../../types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import {
+  loadingStateEnum,
+  taskImportanceEnum,
+  taskStatusEnum,
+} from '../../types';
 
 type homepageStatesType = {
-  taskState: loadingStateEnum
-  userState: loadingStateEnum
-  trendingState: loadingStateEnum
-  userData: resourceType[]
-  trendingData: resourceType[]
-  userTasks: taskType[]
-  schoolDayData: undefined | schoolDayDataType
-  startTime: string
-  isShowingCompleteTasks: boolean
-}
+  taskState: loadingStateEnum;
+  userState: loadingStateEnum;
+  trendingState: loadingStateEnum;
+  userData: resourceType[];
+  trendingData: resourceType[];
+  userTasks: taskType[];
+  schoolDayData: undefined | schoolDayDataType;
+  startTime: string;
+  isShowingCompleteTasks: boolean;
+};
 
 const initalState: homepageStatesType = {
   taskState: loadingStateEnum.loading,
@@ -19,63 +23,68 @@ const initalState: homepageStatesType = {
   trendingState: loadingStateEnum.loading,
   userData: [],
   trendingData: [],
-  userTasks: [{
-    name: "",
-    importance: taskImportanceEnum.normal,
-    id: "",
-    status: taskStatusEnum.notStarted,
-    excess: true
-  }],
+  userTasks: [
+    {
+      name: '',
+      importance: taskImportanceEnum.normal,
+      id: '',
+      status: taskStatusEnum.notStarted,
+      excess: true,
+    },
+  ],
   schoolDayData: undefined,
-  startTime: "",
-  isShowingCompleteTasks: false
-}
+  startTime: '',
+  isShowingCompleteTasks: false,
+};
 
 export const homepageDataSlice = createSlice({
-  name: "homepage",
+  name: 'homepage',
   initialState: initalState,
   reducers: {
     setTaskState: (state, action: PayloadAction<loadingStateEnum>) => {
-      return {...state, taskState: action.payload}
+      return { ...state, taskState: action.payload };
     },
     setUserState: (state, action: PayloadAction<loadingStateEnum>) => {
-      return {...state, userState: action.payload}
+      return { ...state, userState: action.payload };
     },
     setTrendingState: (state, action: PayloadAction<loadingStateEnum>) => {
-      return {...state, trendingState: action.payload}
+      return { ...state, trendingState: action.payload };
     },
     setUserData: (state, action: PayloadAction<resourceType[]>) => {
-      return {...state, userData: action.payload}
+      return { ...state, userData: action.payload };
     },
     setTrendingData: (state, action: PayloadAction<resourceType[]>) => {
-      return {...state, trendingData: action.payload}
+      return { ...state, trendingData: action.payload };
     },
     setUserTasks: (state, action: PayloadAction<taskType[]>) => {
-      return {...state, userTasks: action.payload}
+      return { ...state, userTasks: action.payload };
     },
-    updateUserTask: (state, action: PayloadAction<{task: taskType, index: number}>) => {
-      if (action.payload.index <  state.userTasks.length) {
-        state.userTasks[action.payload.index] = action.payload.task
+    updateUserTask: (
+      state,
+      action: PayloadAction<{ task: taskType; index: number }>,
+    ) => {
+      if (action.payload.index < state.userTasks.length) {
+        state.userTasks[action.payload.index] = action.payload.task;
       } else {
-        return state
+        return state;
       }
     },
     unshiftUserTask: (state, action: PayloadAction<taskType>) => {
-      state.userTasks.unshift(action.payload)
+      state.userTasks.unshift(action.payload);
     },
     popUserTask: (state, action: PayloadAction<number>) => {
-      state.userTasks.splice(action.payload, 1)
+      state.userTasks.splice(action.payload, 1);
     },
     setSchoolDayData: (state, action: PayloadAction<schoolDayDataType>) => {
-      return {...state, schoolDayData: action.payload}
+      return { ...state, schoolDayData: action.payload };
     },
     setStartTime: (state, action: PayloadAction<string>) => {
-      state.startTime = action.payload
+      return {...state, startTime: action.payload};
     },
     setIsShowingCompletedTasks: (state, action: PayloadAction<boolean>) => {
-      state.isShowingCompleteTasks = action.payload
-    }
-  }
-})
+      return {...state, isShowingCompleteTasks: action.payload};
+    },
+  },
+});
 
-export default homepageDataSlice.reducer
+export default homepageDataSlice.reducer;

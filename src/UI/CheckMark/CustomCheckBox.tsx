@@ -1,22 +1,28 @@
-//Original Code from https://github.com/Rakha112/react-native-custom-checkbox/blob/main/src/components/CustomCheckBox.js
+// Original Code from https://github.com/Rakha112/react-native-custom-checkbox/blob/main/src/components/CustomCheckBox.js
 
-import React, {memo} from 'react';
-import Svg, { Circle, G, Path } from 'react-native-svg';
-import {Easing, useDerivedValue, withTiming} from 'react-native-reanimated';
-import AnimatedCheckMarkPath from './AnimatedCheckMarkPath';
+import React from 'react';
+import Svg, { Circle } from 'react-native-svg';
+import { Easing, useDerivedValue, withTiming } from 'react-native-reanimated';
 import { View } from 'react-native';
+import AnimatedCheckMarkPath from './AnimatedCheckMarkPath';
 
-export default function CustomCheckBox({checked, checkMarkColor, height, width, strokeDasharray}:{
-  checked: boolean,
-  checkMarkColor: string,
-  height: number,
-  width: number,
-  strokeDasharray?: number
+export default function CustomCheckBox({
+  checked,
+  checkMarkColor,
+  height,
+  width,
+  strokeDasharray,
+}: {
+  checked: boolean;
+  checkMarkColor: string;
+  height: number;
+  width: number;
+  strokeDasharray?: number;
 }) {
   const progress = useDerivedValue(() => {
-    return withTiming(checked ? 0:1, {
+    return withTiming(checked ? 0 : 1, {
       duration: 1500,
-      easing: Easing.inOut(Easing.bezierFn(0.5, -0.02, 0.92, 0.37))
+      easing: Easing.inOut(Easing.bezierFn(0.5, -0.02, 0.92, 0.37)),
     });
   });
 
@@ -28,7 +34,15 @@ export default function CustomCheckBox({checked, checkMarkColor, height, width, 
           checkMarkColor={checkMarkColor}
           checked={checked}
         />
-        <Circle cx="26" cy="26" r="20" stroke="black" strokeDasharray={strokeDasharray} strokeWidth="2" fill="none" />
+        <Circle
+          cx="26"
+          cy="26"
+          r="20"
+          stroke="black"
+          strokeDasharray={strokeDasharray}
+          strokeWidth="2"
+          fill="none"
+        />
       </Svg>
     </View>
   );

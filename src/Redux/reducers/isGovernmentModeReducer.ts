@@ -1,15 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: boolean = false
+const initalState: boolean = false;
 
 export const isGovernmentModeSlice = createSlice({
-  name: "isGovernmentMode",
+  name: 'isGovernmentMode',
   initialState: initalState,
   reducers: {
     setIsGovernmentMode: (_state, action: PayloadAction<boolean>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default isGovernmentModeSlice.reducer
+export default isGovernmentModeSlice.reducer;

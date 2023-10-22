@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initalState: number = 0
+const initalState: number = 0;
 
 export const authenticationCallSlice = createSlice({
-  name: "authenticationCall",
+  name: 'authenticationCall',
   initialState: initalState,
   reducers: {
-    setAuthenticationCallIncrement: (state) => {
-      return state + 1
-    }
-  }
-})
+    setAuthenticationCallIncrement: state => {
+      return state + 1;
+    },
+  },
+});
 
-export default authenticationCallSlice.reducer
+export default authenticationCallSlice.reducer;

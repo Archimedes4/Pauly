@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initalState: string[] = []
+const initalState: string[] = [];
 
 export const classesSlice = createSlice({
-  name: "classes",
+  name: 'classes',
   initialState: initalState,
   reducers: {
     setClasses: (state, action) => {
-      state = action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default classesSlice.reducer
+export default classesSlice.reducer;

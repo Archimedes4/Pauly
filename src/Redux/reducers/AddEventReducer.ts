@@ -1,27 +1,32 @@
-import { calendarMode, paulyEventType, recurringType, semesters } from '../../types';
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { loadingStateEnum } from '../../types';
+import {
+  calendarMode,
+  paulyEventType,
+  recurringType,
+  semesters,
+  loadingStateEnum,
+} from '../../types';
 
 type addEventStatesType = {
-  eventName: string
-  createEventState: loadingStateEnum
-  isPickingStartDate: boolean
-  isPickingEndDate: boolean
-  allDay: boolean
-  isGovernmentEvent: boolean
-  selectedTimetable: timetableStringType
-  selectedSchoolDayData: schoolDayDataType | undefined
-  selectedSchoolYear: eventType | undefined
-  selectedEventType: paulyEventType
-  recurringEvent: boolean
-  selectedRecurringType: recurringType
-  startDate: string
-  endDate: string
-  isShowingAddDate: boolean
-  isEditing: boolean
-  selectedCalendarMode: calendarMode
-  selectedEvent: eventType | undefined
-}
+  eventName: string;
+  createEventState: loadingStateEnum;
+  isPickingStartDate: boolean;
+  isPickingEndDate: boolean;
+  allDay: boolean;
+  isGovernmentEvent: boolean;
+  selectedTimetable: timetableStringType;
+  selectedSchoolDayData: schoolDayDataType | undefined;
+  selectedSchoolYear: eventType | undefined;
+  selectedEventType: paulyEventType;
+  recurringEvent: boolean;
+  selectedRecurringType: recurringType;
+  startDate: string;
+  endDate: string;
+  isShowingAddDate: boolean;
+  isEditing: boolean;
+  selectedCalendarMode: calendarMode;
+  selectedEvent: eventType | undefined;
+};
 
 const initalState: addEventStatesType = {
   eventName: '',
@@ -32,7 +37,7 @@ const initalState: addEventStatesType = {
   isGovernmentEvent: false,
   selectedTimetable: {
     name: '',
-    id: ''
+    id: '',
   },
   selectedSchoolDayData: undefined,
   selectedSchoolYear: undefined,
@@ -44,76 +49,80 @@ const initalState: addEventStatesType = {
   isShowingAddDate: false,
   isEditing: false,
   selectedCalendarMode: calendarMode.month,
-  selectedEvent: undefined
-}
+  selectedEvent: undefined,
+};
 
 export const addEventSlice = createSlice({
-  name: "addEvent",
+  name: 'addEvent',
   initialState: initalState,
   reducers: {
     setEventName: (state, action: PayloadAction<string>) => {
-      return {...state, eventName: action.payload}
+      return { ...state, eventName: action.payload };
     },
     setCreateEventState: (state, action: PayloadAction<loadingStateEnum>) => {
-      return {...state, createEventState: action.payload}
+      return { ...state, createEventState: action.payload };
     },
     setIsPickingStartDate: (state, action: PayloadAction<boolean>) => {
-      state.isPickingStartDate = action.payload
+      state.isPickingStartDate = action.payload;
     },
     setIsPickingEndDate: (state, action: PayloadAction<boolean>) => {
-      state.isPickingEndDate = action.payload
+      state.isPickingEndDate = action.payload;
     },
     setAllDay: (state, action: PayloadAction<boolean>) => {
-      return {...state, allDay: action.payload}
+      return { ...state, allDay: action.payload };
     },
     setIsGovernmentEvent: (state, action: PayloadAction<boolean>) => {
-      return {...state, isGovernmentEvent: action.payload}
+      return { ...state, isGovernmentEvent: action.payload };
     },
-    setSelectedTimetable: (state, action: PayloadAction<timetableStringType>) => {
-      return {...state, selectedTimetable: action.payload}
+    setSelectedTimetable: (
+      state,
+      action: PayloadAction<timetableStringType>,
+    ) => {
+      return { ...state, selectedTimetable: action.payload };
     },
-    setSelectedSchoolDayData: (state, action: PayloadAction<schoolDayDataType | undefined>) => {
-      return {...state, selectedSchoolDayData: action.payload}
+    setSelectedSchoolDayData: (
+      state,
+      action: PayloadAction<schoolDayDataType | undefined>,
+    ) => {
+      return { ...state, selectedSchoolDayData: action.payload };
     },
     setSelectedSchoolYear: (state, action: PayloadAction<eventType>) => {
-      return {...state, selectedSchoolYear: action.payload}
+      return { ...state, selectedSchoolYear: action.payload };
     },
     setSelectedEventType: (state, action: PayloadAction<number>) => {
-      return {...state, selectedEventType: action.payload}
+      return { ...state, selectedEventType: action.payload };
     },
     setRecurringEvent: (state, action: PayloadAction<boolean>) => {
-      return {...state, recurringEvent: action.payload}
+      return { ...state, recurringEvent: action.payload };
     },
     setSelectedRecurringType: (state, action: PayloadAction<recurringType>) => {
-      return {...state, selectedRecurringType: action.payload}
+      return { ...state, selectedRecurringType: action.payload };
     },
     setStartDate: (state, action: PayloadAction<string | Date>) => {
-      if (typeof action.payload === "string") {
-        return {...state, startDate: action.payload}
-      } else {
-        return {...state, startDate: action.payload.toISOString()}
+      if (typeof action.payload === 'string') {
+        return { ...state, startDate: action.payload };
       }
+      return { ...state, startDate: action.payload.toISOString() };
     },
     setEndDate: (state, action: PayloadAction<string | Date>) => {
-      if (typeof action.payload === "string") {
-        return {...state, endDate: action.payload}
-      } else {
-        return {...state, endDate: action.payload.toISOString()}
+      if (typeof action.payload === 'string') {
+        return { ...state, endDate: action.payload };
       }
+      return { ...state, endDate: action.payload.toISOString() };
     },
     setIsShowingAddDate: (state, action: PayloadAction<boolean>) => {
-      state.isShowingAddDate = action.payload
+      state.isShowingAddDate = action.payload;
     },
     setIsEditing: (state, action: PayloadAction<boolean>) => {
-      state.isEditing = action.payload
+      state.isEditing = action.payload;
     },
     setSelectedCalendarMode: (state, action: PayloadAction<calendarMode>) => {
-      state.selectedCalendarMode = action.payload
+      state.selectedCalendarMode = action.payload;
     },
     setSelectedEvent: (state, action: PayloadAction<eventType | undefined>) => {
-      state.selectedEvent = action.payload
-    }
-  }
-})
+      state.selectedEvent = action.payload;
+    },
+  },
+});
 
-export default addEventSlice.reducer
+export default addEventSlice.reducer;

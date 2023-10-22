@@ -1,30 +1,50 @@
-import React, { useEffect, useState } from 'react'
-import { GoogleMap, useJsApiLoader, Marker, Circle } from '@react-google-maps/api';
+import React, { useEffect, useState } from 'react';
+import {
+  GoogleMap,
+  useJsApiLoader,
+  Marker,
+  Circle,
+} from '@react-google-maps/api';
 
 const center = {
   lat: 49.85663823299096,
-  lng: -97.22659526509193
+  lng: -97.22659526509193,
 };
 
-type LatLngLiteral = google.maps.LatLngLiteral
+type LatLngLiteral = google.maps.LatLngLiteral;
 
-export default function MapWeb({proximity, selectedPositionIn, onSetSelectedPositionIn, width, height}:{proximity: number, selectedPositionIn: {lat: number, lng: number}, onSetSelectedPositionIn: (item: {lat: number, lng: number}) => void, width: number, height: number}) {
+export default function MapWeb({
+  proximity,
+  selectedPositionIn,
+  onSetSelectedPositionIn,
+  width,
+  height,
+}: {
+  proximity: number;
+  selectedPositionIn: { lat: number; lng: number };
+  onSetSelectedPositionIn: (item: { lat: number; lng: number }) => void;
+  width: number;
+  height: number;
+}) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyAltyD_LL0kbe84kyMRxgRmoH74Spi5rvw" //TO DO put this into a loval env
-  })
-  const [selectedPosition, setSelectedPosition] = useState<LatLngLiteral>()
-  const [containerStyle, setContainerStyle] = useState<{width: string, height: string}>({
+    googleMapsApiKey: 'AIzaSyAltyD_LL0kbe84kyMRxgRmoH74Spi5rvw', // TO DO put this into a loval env
+  });
+  const [selectedPosition, setSelectedPosition] = useState<LatLngLiteral>();
+  const [containerStyle, setContainerStyle] = useState<{
+    width: string;
+    height: string;
+  }>({
     width: '400px',
-    height: '400px'
-  })
+    height: '400px',
+  });
 
   useEffect(() => {
     setContainerStyle({
-      width: width.toString() + "px",
-      height: height.toString() + "px"
-    })
-  }, [width, height])
+      width: `${width.toString()}px`,
+      height: `${height.toString()}px`,
+    });
+  }, [width, height]);
 
   // const [map, setMap] = React.useState(null)
 
@@ -41,19 +61,27 @@ export default function MapWeb({proximity, selectedPositionIn, onSetSelectedPosi
   // }, [])
 
   return isLoaded ? (
-      <div style={{width: width, height: height}}>
-        <GoogleMap
-          mapContainerStyle={containerStyle}
-          center={center}
-          zoom={15}
-          onClick={ev => {
-            onSetSelectedPositionIn({lat: ev.latLng!.lat(), lng: ev.latLng!.lng()})
-            setSelectedPosition({lat: ev.latLng!.lat(), lng: ev.latLng!.lng()})}}
-        >
-          { /* Child components, such as markers, info windows, etc. */ }
-          {selectedPosition && <Marker position={selectedPosition} />}
-          {selectedPosition && <Circle center={selectedPosition} radius={proximity}/>}
-        </GoogleMap>
-      </div>
-  ) : <></>
+    <div style={{ width, height }}>
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={center}
+        zoom={15}
+        onClick={ev => {
+          onSetSelectedPositionIn({
+            lat: ev.latLng!.lat(),
+            lng: ev.latLng!.lng(),
+          });
+          setSelectedPosition({ lat: ev.latLng!.lat(), lng: ev.latLng!.lng() });
+        }}
+      >
+        {/* Child components, such as markers, info windows, etc. */}
+        {selectedPosition && <Marker position={selectedPosition} />}
+        {selectedPosition && (
+          <Circle center={selectedPosition} radius={proximity} />
+        )}
+      </GoogleMap>
+    </div>
+  ) : (
+    <></>
+  );
 }

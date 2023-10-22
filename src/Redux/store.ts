@@ -1,8 +1,10 @@
+import { configureStore } from '@reduxjs/toolkit';
 import monthDataReducer from './reducers/monthDataReducer';
-import resourcesLastCallReducer, { resourcesLastCalled } from './reducers/resourcesLastCallReducer';
+import resourcesLastCallReducer, {
+  resourcesLastCalled,
+} from './reducers/resourcesLastCallReducer';
 import safeAreaColorsReducer from './reducers/safeAreaColorsReducer';
 import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
-import { configureStore } from '@reduxjs/toolkit';
 import currentEventsReducer from './reducers/currentEventReducer';
 import currentEventsLastCalledReducer from './reducers/currentEventLastCalledReducer';
 import selectedDateReducer from './reducers/selectedDateReducer';
@@ -52,12 +54,12 @@ const store = configureStore({
     tasks: tasksReducer,
     tasksDeltaLink: tasksDeltaReducer,
     selectedDate: selectedDateReducer,
-    studentSearch: studentSearchReducer
-  }
+    studentSearch: studentSearchReducer,
+  },
 });
 
-export default store
+export default store;
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch
+export type AppDispatch = typeof store.dispatch;

@@ -1,15 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: eventType[] = []
+const initalState: eventType[] = [];
 
 export const monthViewSlice = createSlice({
-  name: "monthView",
+  name: 'monthView',
   initialState: initalState,
   reducers: {
     setMonthViewData: (_state, action: PayloadAction<eventType[]>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default monthViewSlice.reducer
+export default monthViewSlice.reducer;

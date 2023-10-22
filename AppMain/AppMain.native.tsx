@@ -1,4 +1,11 @@
-import { Prompt, exchangeCodeAsync, makeRedirectUri, refreshAsync, useAuthRequest, useAutoDiscovery } from 'expo-auth-session';
+import {
+  Prompt,
+  exchangeCodeAsync,
+  makeRedirectUri,
+  refreshAsync,
+  useAuthRequest,
+  useAutoDiscovery,
+} from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect } from 'react';
 import { ScaledSize, Platform } from 'react-native';
@@ -13,37 +20,45 @@ import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin';
 import getPaulyLists from '../src/Functions/Ultility/getPaulyLists';
 import getUserProfile from '../src/Functions/Ultility/getUserProfile';
 
-if (Platform.OS === "web") {
+if (Platform.OS === 'web') {
   WebBrowser.maybeCompleteAuthSession();
 }
 
-export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; screen: ScaledSize}}) {
-  const authenticationToken = useSelector((state: RootState) => state.authenticationToken)
-  const dispatch = useDispatch()
-  const authenticationCall = useSelector((state: RootState) => state.authenticationCall);
-  
+export default function AppMain({
+  dimensions,
+}: {
+  dimensions: { window: ScaledSize; screen: ScaledSize };
+}) {
+  const authenticationToken = useSelector(
+    (state: RootState) => state.authenticationToken,
+  );
+  const dispatch = useDispatch();
+  const authenticationCall = useSelector(
+    (state: RootState) => state.authenticationCall,
+  );
+
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
 
   const redirectUri = makeRedirectUri({
-    scheme: "Pauly",
+    scheme: 'Pauly',
     path: 'auth',
   });
 
-  const [authRequest, ,promptAsync] =  useAuthRequest(
+  const [authRequest, , promptAsync] = useAuthRequest(
     {
-      clientId: clientId,
-      redirectUri: redirectUri,
-      scopes: scopes,
-      prompt: Prompt.SelectAccount
+      clientId,
+      redirectUri,
+      scopes,
+      prompt: Prompt.SelectAccount,
     },
-    discovery
-  )
+    discovery,
+  );
 
   async function getAuthToken() {
-    if (discovery !== null){
-      promptAsync().then(async (res) => {
+    if (discovery !== null) {
+      promptAsync().then(async res => {
         if (authRequest && res?.type === 'success' && discovery) {
           exchangeCodeAsync(
             {
@@ -53,24 +68,33 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
                 ? { code_verifier: authRequest.codeVerifier }
                 : undefined,
               redirectUri,
-              scopes: scopes
+              scopes,
             },
             discovery,
-          ).then((res) => {
+          ).then(res => {
             if (res.refreshToken !== undefined) {
-              dispatch(authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(res.refreshToken))
+              dispatch(
+                authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(
+                  res.refreshToken,
+                ),
+              );
             }
-            dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
-            getPaulyLists()
-            getUserProfile()
-          })
-      }})
+            dispatch(
+              authenticationTokenSlice.actions.setAuthenticationToken(
+                res.accessToken,
+              ),
+            );
+            getPaulyLists();
+            getUserProfile();
+          });
+        }
+      });
     }
   }
 
   async function getGovernmentAuthToken() {
-    if (discovery !== null){
-      promptAsync().then(async (res) => {
+    if (discovery !== null) {
+      promptAsync().then(async res => {
         if (authRequest && res?.type === 'success' && discovery) {
           exchangeCodeAsync(
             {
@@ -80,46 +104,70 @@ export default function AppMain({dimensions}:{dimensions: {window: ScaledSize; s
                 ? { code_verifier: authRequest.codeVerifier }
                 : undefined,
               redirectUri,
-              scopes: scopes
+              scopes,
             },
             discovery,
-          ).then((res) => {
-            dispatch(authenticationTokenSlice.actions.setAuthenticationToken(res.accessToken))
-            getPaulyLists()
-            getUserProfile()
-            validateGovernmentMode()
-          })
-      }})
+          ).then(res => {
+            dispatch(
+              authenticationTokenSlice.actions.setAuthenticationToken(
+                res.accessToken,
+              ),
+            );
+            getPaulyLists();
+            getUserProfile();
+            validateGovernmentMode();
+          });
+        }
+      });
     }
   }
 
   async function refreshToken() {
     if (discovery !== null) {
       try {
-        const result = await refreshAsync({
-          refreshToken: store.getState().authenticationRefreshToken,
-          clientId: clientId,
-          scopes: scopes
-        }, discovery)
-        dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result.accessToken))
+        const result = await refreshAsync(
+          {
+            refreshToken: store.getState().authenticationRefreshToken,
+            clientId,
+            scopes,
+          },
+          discovery,
+        );
+        dispatch(
+          authenticationTokenSlice.actions.setAuthenticationToken(
+            result.accessToken,
+          ),
+        );
       } catch {
-        dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""))
+        dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
       }
     } else {
-      dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""))
+      dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
     }
   }
 
   useEffect(() => {
-    refreshToken()
-  }, [authenticationCall])
+    refreshToken();
+  }, [authenticationCall]);
 
   return (
     <>
-      { (authenticationToken !== '') ?  
-        <AuthenticatedView dimensions={dimensions} width={dimensions.window.width}/>:
-        <Login onGetAuthToken={() => {getAuthToken()}} onGetGovernmentAuthToken={() => {getGovernmentAuthToken()}} width={dimensions.window.width}/>
-      }
+      {authenticationToken !== '' ? (
+        <AuthenticatedView
+          dimensions={dimensions}
+          width={dimensions.window.width}
+        />
+      ) : (
+        <Login
+          onGetAuthToken={() => {
+            getAuthToken();
+          }}
+          onGetGovernmentAuthToken={() => {
+            getGovernmentAuthToken();
+          }}
+          width={dimensions.window.width}
+        />
+      )}
     </>
-  )
+  );
 }

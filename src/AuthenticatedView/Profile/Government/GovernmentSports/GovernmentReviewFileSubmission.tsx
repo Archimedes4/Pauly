@@ -1,118 +1,151 @@
-import { View, Text, Image, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets'
+import { View, Text, Image, Pressable } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
-import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
 import { useSelector } from 'react-redux';
-import store, { RootState } from '../../../../Redux/store';
-import { Colors, dataContentTypeOptions, loadingStateEnum } from '../../../../types';
 import { ResizeMode, Video } from 'expo-av';
+import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
+import store, { RootState } from '../../../../Redux/store';
+import {
+  Colors,
+  dataContentTypeOptions,
+  loadingStateEnum,
+} from '../../../../types';
 // import Video from 'react-native-video';
 
 export default function GovernmentReviewFileSubmission() {
-  const {width, height} = useSelector((state: RootState) => state.dimentions)
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
 
-  const { submissionID } = useParams()
-  const [dataURL, setDataURL] = useState<string>("")
-  const [dataContentType, setDataContentType] = useState<dataContentTypeOptions>(dataContentTypeOptions.unknown)
-  const [currentSubmissionInfomration, setCurrentSubmissionInformation] = useState<mediaSubmissionType | undefined>(undefined)
-  const navigate = useNavigate()
+  const { submissionID } = useParams();
+  const [dataURL, setDataURL] = useState<string>('');
+  const [dataContentType, setDataContentType] =
+    useState<dataContentTypeOptions>(dataContentTypeOptions.unknown);
+  const [currentSubmissionInfomration, setCurrentSubmissionInformation] =
+    useState<mediaSubmissionType | undefined>(undefined);
+  const navigate = useNavigate();
 
-  //Loading States
-  const [loadingState, setLoadingState] = useState<loadingStateEnum>(loadingStateEnum.loading)
-  const [approveSubmissionState, setApproveSubmissionState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
-  const [denySubmissionState, setDenySubmissionState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
-  const [deleteSubmissionState, setDeleteSubmissionState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  // Loading States
+  const [loadingState, setLoadingState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [approveSubmissionState, setApproveSubmissionState] =
+    useState<loadingStateEnum>(loadingStateEnum.notStarted);
+  const [denySubmissionState, setDenySubmissionState] =
+    useState<loadingStateEnum>(loadingStateEnum.notStarted);
+  const [deleteSubmissionState, setDeleteSubmissionState] =
+    useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
   async function deleteSubmission(itemID: string) {
-    setDeleteSubmissionState(loadingStateEnum.loading)
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items/` + itemID, "DELETE")//TO DO fix list ids
-    if (result.ok){
-      //TO DO Check if submission has been approved before   
-      //Remove from approved submissions
-      setDeleteSubmissionState(loadingStateEnum.success)
+    setDeleteSubmissionState(loadingStateEnum.loading);
+    const result = await callMsGraph(
+      `https://graph.microsoft.com/v1.0/sites/${
+        store.getState().paulyList.siteId
+      }/lists/${
+        store.getState().paulyList.sportsSubmissionsListId
+      }/items/${itemID}`,
+      'DELETE',
+    ); // TO DO fix list ids
+    if (result.ok) {
+      // TO DO Check if submission has been approved before
+      // Remove from approved submissions
+      setDeleteSubmissionState(loadingStateEnum.success);
     } else {
-      setDeleteSubmissionState(loadingStateEnum.failed)
+      setDeleteSubmissionState(loadingStateEnum.failed);
     }
   }
 
   async function getSubmissionInformation() {
     if (submissionID !== undefined) {
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items?expand=fields&filter=fields/submissionId%20eq%20'${submissionID}'`)
+      const result = await callMsGraph(
+        `https://graph.microsoft.com/v1.0/sites/${
+          store.getState().paulyList.siteId
+        }/lists/${
+          store.getState().paulyList.sportsSubmissionsListId
+        }/items?expand=fields&filter=fields/submissionId%20eq%20'${submissionID}'`,
+      );
       if (result.ok) {
-        const data = await result.json()
-        if (data["value"] !== undefined){
-          if (data["value"].length === 1){
-            //All things are working
+        const data = await result.json();
+        if (data.value !== undefined) {
+          if (data.value.length === 1) {
+            // All things are working
             setCurrentSubmissionInformation({
-              Title: data["value"][0]["fields"]["Title"],
-              user: data["value"][0]["fields"]["user"],
-              submissionId: data["value"][0]["fields"]["submissionID"],
-              accepted: data["value"][0]["fields"]["accepted"],
-              fileId: data["value"][0]["fields"]["fileId"],
-              itemID:  data["value"][0]["id"],
-              selectedSportId: data["value"][0]["fields"]["selectedSportId"],
-              selectedTeamId: data["value"][0]["fields"]["selectedTeamId"],
-              reviewed: data["value"][0]["fields"]["reviewed"]
-            })
-            setLoadingState(loadingStateEnum.success)
+              Title: data.value[0].fields.Title,
+              user: data.value[0].fields.user,
+              submissionId: data.value[0].fields.submissionID,
+              accepted: data.value[0].fields.accepted,
+              fileId: data.value[0].fields.fileId,
+              itemID: data.value[0].id,
+              selectedSportId: data.value[0].fields.selectedSportId,
+              selectedTeamId: data.value[0].fields.selectedTeamId,
+              reviewed: data.value[0].fields.reviewed,
+            });
+            setLoadingState(loadingStateEnum.success);
           } else {
-            setLoadingState(loadingStateEnum.failed)
+            setLoadingState(loadingStateEnum.failed);
           }
         } else {
-          setLoadingState(loadingStateEnum.failed)
+          setLoadingState(loadingStateEnum.failed);
         }
       } else {
-        setLoadingState(loadingStateEnum.failed)
+        setLoadingState(loadingStateEnum.failed);
       }
     }
   }
 
   async function approveSubmission() {
     if (currentSubmissionInfomration) {
-      setApproveSubmissionState(loadingStateEnum.loading)
+      setApproveSubmissionState(loadingStateEnum.loading);
       const data = {
-        "requests": [
+        requests: [
           {
-            "id":"1",
-            "method": "POST",
-            "url": `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsApprovedSubmissionsListId}/items`,
-            "body": {
-              "fields": {
-                "Title": currentSubmissionInfomration.Title,
-                "fileId": currentSubmissionInfomration.fileId,
-                "caption": currentSubmissionInfomration.Title,
-                "submissionId": currentSubmissionInfomration.submissionId,
-                "selectedSportId": currentSubmissionInfomration.selectedSportId,
-                "selectedTeamId": currentSubmissionInfomration.selectedTeamId
-              }
+            id: '1',
+            method: 'POST',
+            url: `/sites/${store.getState().paulyList.siteId}/lists/${
+              store.getState().paulyList.sportsApprovedSubmissionsListId
+            }/items`,
+            body: {
+              fields: {
+                Title: currentSubmissionInfomration.Title,
+                fileId: currentSubmissionInfomration.fileId,
+                caption: currentSubmissionInfomration.Title,
+                submissionId: currentSubmissionInfomration.submissionId,
+                selectedSportId: currentSubmissionInfomration.selectedSportId,
+                selectedTeamId: currentSubmissionInfomration.selectedTeamId,
+              },
             },
-            "headers": {
-              "Content-Type": "application/json"
-            }
+            headers: {
+              'Content-Type': 'application/json',
+            },
           },
           {
-            "id":"2",
-            "method":"PATCH",
-            "url": `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items/${currentSubmissionInfomration.itemID}`,
-            "body": {
-              "fields":{"accepted":true, "reviewed":true}
+            id: '2',
+            method: 'PATCH',
+            url: `/sites/${store.getState().paulyList.siteId}/lists/${
+              store.getState().paulyList.sportsSubmissionsListId
+            }/items/${currentSubmissionInfomration.itemID}`,
+            body: {
+              fields: { accepted: true, reviewed: true },
             },
-            "headers": {
-              "Content-Type": "application/json"
-            }
-          }
-        ]
-      }
-      const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", JSON.stringify(data), [{key: "Accept", value: "application/json"}])
-      if (result.ok){
-        let newInformation = currentSubmissionInfomration
-        newInformation.accepted = true
-        newInformation.reviewed = true
-        setCurrentSubmissionInformation(currentSubmissionInfomration)
-        setApproveSubmissionState(loadingStateEnum.success)
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        ],
+      };
+      const result = await callMsGraph(
+        'https://graph.microsoft.com/v1.0/$batch',
+        'POST',
+        JSON.stringify(data),
+        [{ key: 'Accept', value: 'application/json' }],
+      );
+      if (result.ok) {
+        const newInformation = currentSubmissionInfomration;
+        newInformation.accepted = true;
+        newInformation.reviewed = true;
+        setCurrentSubmissionInformation(currentSubmissionInfomration);
+        setApproveSubmissionState(loadingStateEnum.success);
       } else {
-        setApproveSubmissionState(loadingStateEnum.failed)
+        setApproveSubmissionState(loadingStateEnum.failed);
       }
     }
   }
@@ -120,86 +153,161 @@ export default function GovernmentReviewFileSubmission() {
   async function denySubmission() {
     if (currentSubmissionInfomration) {
       const data = {
-        "fields": {
-          "accepted":false, "reviewed":true
-        }
-      }
-      setDenySubmissionState(loadingStateEnum.loading)
-      const result = await callMsGraph(`/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.sportsSubmissionsListId}/items/${currentSubmissionInfomration.itemID}`, "PATCH", JSON.stringify(data))
+        fields: {
+          accepted: false,
+          reviewed: true,
+        },
+      };
+      setDenySubmissionState(loadingStateEnum.loading);
+      const result = await callMsGraph(
+        `/sites/${store.getState().paulyList.siteId}/lists/${
+          store.getState().paulyList.sportsSubmissionsListId
+        }/items/${currentSubmissionInfomration.itemID}`,
+        'PATCH',
+        JSON.stringify(data),
+      );
       if (result.ok) {
-        setDenySubmissionState(loadingStateEnum.success)
+        setDenySubmissionState(loadingStateEnum.success);
       } else {
-        setDenySubmissionState(loadingStateEnum.failed)
+        setDenySubmissionState(loadingStateEnum.failed);
       }
     }
   }
 
   async function loadFile() {
-    if (currentSubmissionInfomration !== undefined){
-      const result = await getFileWithShareID(currentSubmissionInfomration.fileId)
-      if (result.result === loadingStateEnum.success && result.url !== undefined && result.contentType !== undefined) {
-        setDataURL(result.url)
-        setDataContentType(result.contentType)
+    if (currentSubmissionInfomration !== undefined) {
+      const result = await getFileWithShareID(
+        currentSubmissionInfomration.fileId,
+      );
+      if (
+        result.result === loadingStateEnum.success &&
+        result.url !== undefined &&
+        result.contentType !== undefined
+      ) {
+        setDataURL(result.url);
+        setDataContentType(result.contentType);
       }
     }
   }
 
   useEffect(() => {
-    if (submissionID !== undefined){
-      getSubmissionInformation()
+    if (submissionID !== undefined) {
+      getSubmissionInformation();
     }
-  }, [submissionID])
+  }, [submissionID]);
 
   useEffect(() => {
-    loadFile()
-  }, [currentSubmissionInfomration])
+    loadFile();
+  }, [currentSubmissionInfomration]);
 
   return (
     <>
-      { (loadingState === loadingStateEnum.loading) ?
-        <View style={{width: width, height: height, backgroundColor: Colors.white, alignContent: "center", alignItems: "center", justifyContent: "center"}}>
+      {loadingState === loadingStateEnum.loading ? (
+        <View
+          style={{
+            width,
+            height,
+            backgroundColor: Colors.white,
+            alignContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Text>Loading</Text>
-        </View>:
+        </View>
+      ) : (
         <>
-          { (loadingState === loadingStateEnum.success && currentSubmissionInfomration !== undefined) ?
-          <View style={{width: width, height: height, backgroundColor: Colors.white}}>
-            <Pressable onPress={() => navigate("/profile/government/sports")}>
-              <Text>Back</Text>
-            </Pressable>
-            <Text>GovernmentReviewFileSubmission</Text>
-            { (dataURL !== "") &&
-            <View>
-              { (dataContentType === dataContentTypeOptions.image) ?
-                <Image height={100} style={{height: 100}} source={{uri: dataURL}}/>:null
-              }
-              { (dataContentType === dataContentTypeOptions.video) ?
-                <Video useNativeControls source={{uri: dataURL}} resizeMode={ResizeMode.COVER} style={{width: width * 0.9, height: height * 0.4, alignSelf: 'stretch', marginLeft: width * 0.05, marginRight: width * 0.05}} videoStyle={{width: width * 0.9, height: height * 0.4}}/>:null
-              }
-            </View>
-            }
-            <Pressable onPress={() => {
-              if (currentSubmissionInfomration){
-                deleteSubmission(currentSubmissionInfomration.itemID)
-              }
-            }}>
+          {loadingState === loadingStateEnum.success &&
+          currentSubmissionInfomration !== undefined ? (
+            <View
+              style={{
+                width,
+                height,
+                backgroundColor: Colors.white,
+              }}
+            >
+              <Pressable onPress={() => navigate('/profile/government/sports')}>
+                <Text>Back</Text>
+              </Pressable>
+              <Text>GovernmentReviewFileSubmission</Text>
+              {dataURL !== '' && (
+                <View>
+                  {dataContentType === dataContentTypeOptions.image ? (
+                    <Image
+                      height={100}
+                      style={{ height: 100 }}
+                      source={{ uri: dataURL }}
+                    />
+                  ) : null}
+                  {dataContentType === dataContentTypeOptions.video ? (
+                    <Video
+                      useNativeControls
+                      source={{ uri: dataURL }}
+                      resizeMode={ResizeMode.COVER}
+                      style={{
+                        width: width * 0.9,
+                        height: height * 0.4,
+                        alignSelf: 'stretch',
+                        marginLeft: width * 0.05,
+                        marginRight: width * 0.05,
+                      }}
+                      videoStyle={{ width: width * 0.9, height: height * 0.4 }}
+                    />
+                  ) : null}
+                </View>
+              )}
+              <Pressable
+                onPress={() => {
+                  if (currentSubmissionInfomration) {
+                    deleteSubmission(currentSubmissionInfomration.itemID);
+                  }
+                }}
+              >
                 <Text>Remove File Submission</Text>
-            </Pressable>
-            <Pressable onPress={() => {approveSubmission()}}>
-              <Text>{(approveSubmissionState === loadingStateEnum.loading) ? "Loading":(approveSubmissionState === loadingStateEnum.success || approveSubmissionState === loadingStateEnum.notStarted) ? ((currentSubmissionInfomration.reviewed) ? ((currentSubmissionInfomration.accepted) ? "Submission Approved":"Approve"):"Approve"):"Failed"}</Text>
-            </Pressable>
-            <Pressable onPress={() => denySubmission()}>
-              <Text>{(denySubmissionState === loadingStateEnum.loading) ? "Loading":(deleteSubmissionState === loadingStateEnum.success || deleteSubmissionState === loadingStateEnum.notStarted) ? ((currentSubmissionInfomration.reviewed) ? ((!currentSubmissionInfomration.accepted) ? "Submission Denied":"Deny"):"Deny"):"Failed"}</Text>
-            </Pressable>
-          </View>:
-          <View style={{width: width, height: height}}>
-            <Pressable onPress={() => navigate("/profile/government/sports")}>
-              <Text>Back</Text>
-            </Pressable>
-            <Text>Failed</Text>
-          </View>
-          }
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  approveSubmission();
+                }}
+              >
+                <Text>
+                  {approveSubmissionState === loadingStateEnum.loading
+                    ? 'Loading'
+                    : approveSubmissionState === loadingStateEnum.success ||
+                      approveSubmissionState === loadingStateEnum.notStarted
+                    ? currentSubmissionInfomration.reviewed
+                      ? currentSubmissionInfomration.accepted
+                        ? 'Submission Approved'
+                        : 'Approve'
+                      : 'Approve'
+                    : 'Failed'}
+                </Text>
+              </Pressable>
+              <Pressable onPress={() => denySubmission()}>
+                <Text>
+                  {denySubmissionState === loadingStateEnum.loading
+                    ? 'Loading'
+                    : deleteSubmissionState === loadingStateEnum.success ||
+                      deleteSubmissionState === loadingStateEnum.notStarted
+                    ? currentSubmissionInfomration.reviewed
+                      ? !currentSubmissionInfomration.accepted
+                        ? 'Submission Denied'
+                        : 'Deny'
+                      : 'Deny'
+                    : 'Failed'}
+                </Text>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={{ width, height }}>
+              <Pressable onPress={() => navigate('/profile/government/sports')}>
+                <Text>Back</Text>
+              </Pressable>
+              <Text>Failed</Text>
+            </View>
+          )}
         </>
-      }
+      )}
     </>
-  )
+  );
 }

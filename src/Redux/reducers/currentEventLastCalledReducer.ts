@@ -1,15 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: string = ""
+const initalState: string = '';
 
 export const currentEventsLastCalled = createSlice({
-  name: "currentEventsLastCalled",
+  name: 'currentEventsLastCalled',
   initialState: initalState,
   reducers: {
     setCurrentEventsLastCalled: (_state, action: PayloadAction<string>) => {
-      return action.payload
-    }
-  }
-})
+      return action.payload;
+    },
+  },
+});
 
-export default currentEventsLastCalled.reducer
+export default currentEventsLastCalled.reducer;

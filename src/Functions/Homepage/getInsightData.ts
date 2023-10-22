@@ -6,51 +6,56 @@
 
   used to get insight files that are used on the notification page.
 */
-import { loadingStateEnum } from "../../types";
-import callMsGraph from "../Ultility/microsoftAssets";
+import { loadingStateEnum } from '../../types';
+import callMsGraph from '../Ultility/microsoftAssets';
 
 export default async function getInsightData(): Promise<insightResult> {
-  //Get used https://learn.microsoft.com/en-us/graph/api/insights-list-used?view=graph-rest-1.0&tabs=http
-  const usedResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/insights/used?$select=resourceReference,resourceVisualization")
-  let userOutData: resourceType[] = []
-  let userState: loadingStateEnum = loadingStateEnum.loading //State of getting users data
-  if (usedResult.ok) { //Check if result success
-    const userData = await usedResult.json()
-    for (let index = 0; index < userData["value"].length; index++){
+  // Get used https://learn.microsoft.com/en-us/graph/api/insights-list-used?view=graph-rest-1.0&tabs=http
+  const usedResult = await callMsGraph(
+    'https://graph.microsoft.com/v1.0/me/insights/used?$select=resourceReference,resourceVisualization',
+  );
+  const userOutData: resourceType[] = [];
+  let userState: loadingStateEnum = loadingStateEnum.loading; // State of getting users data
+  if (usedResult.ok) {
+    // Check if result success
+    const userData = await usedResult.json();
+    for (let index = 0; index < userData.value.length; index += 1) {
       userOutData.push({
-        webUrl: userData["value"][index]["resourceReference"]["webUrl"],
-        id: userData["value"][index]["resourceReference"]["id"],
-        title: userData["value"][index]["resourceVisualization"]["title"],
-        type: userData["value"][index]["resourceVisualization"]["type"]
-      })
+        webUrl: userData.value[index].resourceReference.webUrl,
+        id: userData.value[index].resourceReference.id,
+        title: userData.value[index].resourceVisualization.title,
+        type: userData.value[index].resourceVisualization.type,
+      });
     }
-    userState = loadingStateEnum.success
+    userState = loadingStateEnum.success;
   } else {
-    userState = loadingStateEnum.failed
+    userState = loadingStateEnum.failed;
   }
 
-  //Get trending https://learn.microsoft.com/en-us/graph/api/insights-list-trending?view=graph-rest-1.0&tabs=http
-  const trendingResult = await callMsGraph("https://graph.microsoft.com/v1.0/me/insights/trending?$select=resourceReference,resourceVisualization")
-  const trendingOutData: resourceType[] = []
-  let trendingState = loadingStateEnum.loading //state of getting trendings data
+  // Get trending https://learn.microsoft.com/en-us/graph/api/insights-list-trending?view=graph-rest-1.0&tabs=http
+  const trendingResult = await callMsGraph(
+    'https://graph.microsoft.com/v1.0/me/insights/trending?$select=resourceReference,resourceVisualization',
+  );
+  const trendingOutData: resourceType[] = [];
+  let trendingState = loadingStateEnum.loading; // state of getting trendings data
   if (trendingResult.ok) {
-    const trendingData = await trendingResult.json()
-    for (let index = 0; index < trendingData["value"].length; index++){
+    const trendingData = await trendingResult.json();
+    for (let index = 0; index < trendingData.value.length; index += 1) {
       trendingOutData.push({
-        webUrl: trendingData["value"][index]["resourceReference"]["webUrl"],
-        id: trendingData["value"][index]["resourceReference"]["id"],
-        title: trendingData["value"][index]["resourceVisualization"]["title"],
-        type: trendingData["value"][index]["resourceVisualization"]["type"]
-      })
+        webUrl: trendingData.value[index].resourceReference.webUrl,
+        id: trendingData.value[index].resourceReference.id,
+        title: trendingData.value[index].resourceVisualization.title,
+        type: trendingData.value[index].resourceVisualization.type,
+      });
     }
-    trendingState = loadingStateEnum.success
+    trendingState = loadingStateEnum.success;
   } else {
-    trendingState = loadingStateEnum.failed
+    trendingState = loadingStateEnum.failed;
   }
   return {
-    userState: userState,
-    trendingState: trendingState,
+    userState,
+    trendingState,
     userData: userOutData,
-    trendingData: trendingOutData
-  }
+    trendingData: trendingOutData,
+  };
 }

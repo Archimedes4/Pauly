@@ -1,15 +1,15 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalCalendarState: string[] = []
+const initalCalendarState: string[] = [];
 
 export const currentEventsSchoolYearSlice = createSlice({
-  name: "currentEventsSchoolYear",
+  name: 'currentEventsSchoolYear',
   initialState: initalCalendarState,
   reducers: {
     setCurrentEventsSchoolYear: (_state, action: PayloadAction<string[]>) => {
-      return [...action.payload]
-    }
-  }
-})
+      return [...action.payload];
+    },
+  },
+});
 
-export default currentEventsSchoolYearSlice.reducer
+export default currentEventsSchoolYearSlice.reducer;
