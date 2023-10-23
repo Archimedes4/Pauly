@@ -1,18 +1,9 @@
 import { loadingStateEnum } from '../../types';
-import create_UUID from '../Ultility/createUUID';
+import createUUID from '../Ultility/createUUID';
 import callMsGraph from '../Ultility/microsoftAssets';
 import {
   paulyListData,
-  commissionsData,
-  paulyClassExtensionData,
   paulyDataData,
-  scheduleData,
-  sportsApprovedSubmissionsData,
-  sportsData,
-  sportsSubmissionsData,
-  timetablesData,
-  resourceData,
-  dressCodeData,
   addDataArray,
 } from './initializePaulyData';
 
@@ -76,8 +67,6 @@ export async function initializePaulyPartTwo(
   if (createTeamResult.ok) {
     return loadingStateEnum.success;
   }
-  const createTeamResultData = await createTeamResult.json();
-  console.log('This Failed', createTeamResultData);
   return loadingStateEnum.failed;
 }
 
@@ -157,10 +146,10 @@ export async function initializePaulyPartThree(
       paulyListNewData.fields.eventTypeExtensionId =
         getPaulyListResultData.fields.eventTypeExtensionId;
     } else {
-      paulyListNewData.fields.eventTypeExtensionId = `String {${create_UUID()}} Name eventType`;
+      paulyListNewData.fields.eventTypeExtensionId = `String {${createUUID()}} Name eventType`;
     }
   } else {
-    paulyListNewData.fields.eventTypeExtensionId = `String {${create_UUID()}} Name eventType`;
+    paulyListNewData.fields.eventTypeExtensionId = `String {${createUUID()}} Name eventType`;
   }
 
   if (getPaulyListResultData.fields !== undefined) {
@@ -168,17 +157,17 @@ export async function initializePaulyPartThree(
       paulyListNewData.fields.eventDataExtensionId =
         getPaulyListResultData.fields.eventDataExtensionId;
     } else {
-      paulyListNewData.fields.eventDataExtensionId = `String {${create_UUID()}} Name eventData`;
+      paulyListNewData.fields.eventDataExtensionId = `String {${createUUID()}} Name eventData`;
     }
     if (getPaulyListResultData.fields.resourceExtensionId !== undefined) {
       paulyListNewData.fields.resourceExtensionId =
         getPaulyListResultData.fields.resourceExtensionId;
     } else {
-      paulyListNewData.fields.resourceExtensionId = `String {${create_UUID()}} Name resourceData`;
+      paulyListNewData.fields.resourceExtensionId = `String {${createUUID()}} Name resourceData`;
     }
   } else {
-    paulyListNewData.fields.eventDataExtensionId = `String {${create_UUID()}} Name eventData`;
-    paulyListNewData.fields.resourceExtensionId = `String {${create_UUID()}} Name resourceData`;
+    paulyListNewData.fields.eventDataExtensionId = `String {${createUUID()}} Name eventData`;
+    paulyListNewData.fields.resourceExtensionId = `String {${createUUID()}} Name resourceData`;
   }
 
   if (paulyListNewData.fields.paulyDataListId === undefined) {

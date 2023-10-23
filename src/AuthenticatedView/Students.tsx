@@ -20,10 +20,10 @@ import ProgressView from '../UI/ProgressView';
 import { PersonIcon, SearchIcon } from '../UI/Icons/Icons';
 import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer';
 import BackButton from '../UI/BackButton';
-import create_UUID from '../Functions/Ultility/createUUID';
-import getUsers from '../Functions/studentFunctions';
+import { getNumberOfBlocks, getUsers } from '../Functions/studentFunctions';
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
+import createUUID from '../Functions/Ultility/createUUID';
 
 export default function Students() {
   const { height, width, currentBreakPoint } = useSelector(
@@ -123,22 +123,19 @@ export default function Students() {
                 }}
               />
               <FlatList
-                key={`FlatList_${create_UUID()}`}
+                key={`Students_${createUUID()}`}
                 data={users}
                 renderItem={user => <StudentBlock user={user} />}
+                keyExtractor={(item) => item.id}
                 numColumns={
-                  Math.floor(width / 190) !== 0
-                    ? Math.floor(
-                        width % 190 >= 0.75 ? width / 190 : (width + 190) / 190,
-                      )
-                    : 1
+                  getNumberOfBlocks(width)
                 }
                 onEndReached={() => {
                   if (nextLink !== undefined) {
                     getUsers(nextLink);
                   }
                 }}
-                style={{ height: height * 0.825, marginTop: height * 0.025 }}
+                style={{ height: height * 0.825 }}
               />
             </View>
           ) : (
@@ -167,7 +164,7 @@ export default function Students() {
 }
 
 function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
-  const { height, width, currentBreakPoint } = useSelector(
+  const { width, height } = useSelector(
     (state: RootState) => state.dimentions,
   );
   async function getImage() {
@@ -217,10 +214,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
   }, []);
 
   function calculateMarginEnds(widthIn: number, side: 'L' | 'R'): number {
-    const numberOfBlocks =
-      Math.floor(width / 190) !== 0
-        ? Math.floor(width % 190 >= 0.75 ? width / 190 : (width + 190) / 190)
-        : 1;
+    const numberOfBlocks = getNumberOfBlocks(width);
     if (user.index % numberOfBlocks === 0) {
       const widthRemaining = widthIn - (numberOfBlocks - 1) * 190 - 150;
       if (widthRemaining / 2 >= 120 || side === 'R') {
@@ -244,12 +238,12 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
       style={{
         height: 175,
         width: 150,
-        marginTop: 25,
+        marginTop: (user.index <= getNumberOfBlocks(width)) ? height * 0.04:25,
         marginBottom: 25,
         marginLeft: calculateMarginEnds(width, 'L'),
         marginRight: calculateMarginEnds(width, 'R'),
-        backgroundColor: '#FFFFFF',
-        shadowColor: 'black',
+        backgroundColor: Colors.white,
+        shadowColor: Colors.black,
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 1,
         shadowRadius: 5,
@@ -331,7 +325,7 @@ function SearchBox({ getUsers }: { getUsers: (item: string) => void }) {
         key="Search_View_Mid"
         style={{
           width: width * 0.8,
-          shadowColor: 'black',
+          shadowColor: Colors.black,
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.8,
           shadowRadius: 10,

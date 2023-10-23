@@ -11,7 +11,7 @@ function checkIfStudent(role: string): {
   if (role.length >= 20) {
     const reversed = role.split('').reverse().join('');
     const slice = reversed.slice(0, 15);
-    if (slice == 'ac.sredasurcog@') {
+    if (slice === 'ac.sredasurcog@') {
       const getMonth = new Date().getMonth();
       let schoolYear = new Date().getFullYear();
       if (schoolYear.toString().length >= 4) {
@@ -353,4 +353,8 @@ export async function removeStudentSelection(
     return { result: loadingStateEnum.success, fileData: [...newFileData] };
   }
   return { result: loadingStateEnum.failed };
+}
+
+export function getNumberOfBlocks(width: number) {
+  return Math.floor(width / 190) !== 0? Math.floor(width % 190 >= 0.75 ? width / 190 : (width + 190) / 190):1
 }

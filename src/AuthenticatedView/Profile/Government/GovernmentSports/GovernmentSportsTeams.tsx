@@ -2,7 +2,7 @@ import { View, Text, Pressable, Modal, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
 import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
@@ -10,6 +10,115 @@ import { getSportsTeams } from '../../../../Functions/sports/sportsFunctions';
 import { WarningIcon } from '../../../../UI/Icons/Icons';
 import SVGXml from '../../../../UI/SVGXml/SVGXml';
 import getSport from '../../../../Functions/sports/getSport';
+import { getTextState } from '../../../../Functions/Ultility/createUUID';
+
+function SportsUpdateModel({
+  isPickingSvg,
+  setIsPickingSvg,
+  id,
+}: {
+  isPickingSvg: boolean;
+  setIsPickingSvg: (item: boolean) => void;
+  id: string;
+}) {
+  const [svgData, setSvgData] = useState<string>('');
+  const [listId, setListId] = useState<string>('');
+  const [getSportState, setGetSportState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [updateSportState, setUpdateSportState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
+  async function updateSport() {
+    setUpdateSportState(loadingStateEnum.loading);
+    const updateData = {
+      fields: {
+        sportSvg: svgData,
+      },
+    };
+    const result = await callMsGraph(
+      `https://graph.microsoft.com/v1.0/sites/${
+        store.getState().paulyList.siteId
+      }/lists/${store.getState().paulyList.sportsListId}/items/${listId}`,
+      'PATCH',
+      JSON.stringify(updateData),
+    );
+    if (result.ok) {
+      setUpdateSportState(loadingStateEnum.success);
+    } else {
+      const data = await result.json();
+      setUpdateSportState(loadingStateEnum.failed);
+    }
+  }
+
+  async function loadSport() {
+    const result = await getSport(id);
+    if (
+      result.result === loadingStateEnum.success &&
+      result.data !== undefined &&
+      result.listId !== undefined
+    ) {
+      setListId(result.listId);
+      setSvgData(result.data.svgData);
+      setGetSportState(loadingStateEnum.success);
+    } else {
+      setGetSportState(loadingStateEnum.failed);
+    }
+  }
+
+  useEffect(() => {
+    loadSport();
+  }, []);
+
+  return (
+    <Modal
+      visible={isPickingSvg}
+      animationType="slide"
+      style={{ backgroundColor: Colors.white }}
+    >
+      {getSportState === loadingStateEnum.loading ? (
+        <View>
+          <Text>Loading</Text>
+          <Pressable onPress={() => setIsPickingSvg(false)}>
+            <Text>Dismiss</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <>
+          {getSportState === loadingStateEnum.success ? (
+            <View>
+              <Text>Svg</Text>
+              <SVGXml xml={svgData} width={100} height={100} />
+              <TextInput
+                value={svgData}
+                onChangeText={e => {
+                  setSvgData(e);
+                }}
+                multiline
+                numberOfLines={25}
+              />
+              <Pressable onPress={() => updateSport()}>
+                <Text>
+                  {getTextState(updateSportState, { notStarted: 'Confirm' })}
+                </Text>
+              </Pressable>
+              <Pressable onPress={() => setIsPickingSvg(false)}>
+                <Text>Dismiss</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <View>
+              <Text>Failed</Text>
+              <Pressable onPress={() => setIsPickingSvg(false)}>
+                <Text>Dismiss</Text>
+              </Pressable>
+            </View>
+          )}
+        </>
+      )}
+    </Modal>
+  );
+}
 
 export default function GovernmentSportsTeams() {
   const { sport, id } = useParams();
@@ -167,111 +276,5 @@ export default function GovernmentSportsTeams() {
         <Text>Create New Team</Text>
       </Pressable>
     </View>
-  );
-}
-
-function SportsUpdateModel({
-  isPickingSvg,
-  setIsPickingSvg,
-  id,
-}: {
-  isPickingSvg: boolean;
-  setIsPickingSvg: (item: boolean) => void;
-  id: string;
-}) {
-  const [svgData, setSvgData] = useState<string>('');
-  const [listId, setListId] = useState<string>('');
-  const [getSportState, setGetSportState] = useState<loadingStateEnum>(
-    loadingStateEnum.loading,
-  );
-  const [updateSportState, setUpdateSportState] = useState<loadingStateEnum>(
-    loadingStateEnum.notStarted,
-  );
-  async function updateSport() {
-    setUpdateSportState(loadingStateEnum.loading);
-    const data = {
-      fields: {
-        sportSvg: svgData,
-      },
-    };
-    const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/sites/${
-        store.getState().paulyList.siteId
-      }/lists/${store.getState().paulyList.sportsListId}/items/${listId}`,
-      'PATCH',
-      JSON.stringify(data),
-    );
-    if (result.ok) {
-      setUpdateSportState(loadingStateEnum.success);
-    } else {
-      const data = await result.json();
-      setUpdateSportState(loadingStateEnum.failed);
-    }
-  }
-
-  async function loadSport() {
-    const result = await getSport(id);
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined &&
-      result.listId !== undefined
-    ) {
-      setListId(result.listId);
-      setSvgData(result.data.svgData);
-      setGetSportState(loadingStateEnum.success);
-    } else {
-      setGetSportState(loadingStateEnum.failed);
-    }
-  }
-
-  useEffect(() => {
-    loadSport();
-  }, []);
-
-  return (
-    <Modal
-      visible={isPickingSvg}
-      animationType="slide"
-      style={{ backgroundColor: Colors.white }}
-    >
-      {getSportState === loadingStateEnum.loading ? (
-        <View>
-          <Text>Loading</Text>
-          <Pressable onPress={() => setIsPickingSvg(false)}>
-            <Text>Dismiss</Text>
-          </Pressable>
-        </View>
-      ) : (
-        <>
-          {getSportState === loadingStateEnum.success ? (
-            <View>
-              <Text>Svg</Text>
-              <SVGXml xml={svgData} width={100} height={100} />
-              <TextInput
-                value={svgData}
-                onChangeText={e => {
-                  setSvgData(e);
-                }}
-                multiline
-                numberOfLines={25}
-              />
-              <Pressable onPress={() => updateSport()}>
-                <Text>Confirm</Text>
-              </Pressable>
-              <Pressable onPress={() => setIsPickingSvg(false)}>
-                <Text>Dismiss</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <View>
-              <Text>Failed</Text>
-              <Pressable onPress={() => setIsPickingSvg(false)}>
-                <Text>Dismiss</Text>
-              </Pressable>
-            </View>
-          )}
-        </>
-      )}
-    </Modal>
   );
 }

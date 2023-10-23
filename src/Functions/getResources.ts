@@ -3,6 +3,25 @@ import store from '../Redux/store';
 import callMsGraph from './Ultility/microsoftAssets';
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
 
+export function convertResourceModeString(convert?: resourceMode): string {
+  if (convert === resourceMode.sports) {
+    return 'sports';
+  }
+  if (convert === resourceMode.advancement) {
+    return 'advancement';
+  }
+  if (convert === resourceMode.schoolEvents) {
+    return 'schoolEvents';
+  }
+  if (convert === resourceMode.annoucments) {
+    return 'annoucments';
+  }
+  if (convert === resourceMode.fitness) {
+    return 'fitness';
+  }
+  return 'files';
+}
+
 async function getResourceFollows() {
   let nextLink = `https://graph.microsoft.com/v1.0/sites/${
     store.getState().paulyList.siteId
@@ -40,23 +59,14 @@ async function getResourceFollows() {
 
 export async function getResources(category?: resourceMode) {
   await getResourceFollows();
-  const categoryString =
-    category === resourceMode.sports
-      ? 'sports'
-      : category === resourceMode.advancement
-      ? 'advancement'
-      : category === resourceMode.schoolEvents
-      ? 'schoolEvents'
-      : category === resourceMode.annoucments
-      ? 'annoucments'
-      : category === resourceMode.fitness
-      ? 'fitness'
-      : 'files';
-  const categoryFilter = `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
-    store.getState().paulyList.resourceExtensionId
-  }')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${
-    store.getState().paulyList.resourceExtensionId
-  }'%20and%20ep/value%20eq%20'${categoryString}')`;
+  const categoryString = convertResourceModeString(category);
+  const categoryFilter = category
+    ? `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+        store.getState().paulyList.resourceExtensionId
+      }')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${
+        store.getState().paulyList.resourceExtensionId
+      }'%20and%20ep/value%20eq%20'${categoryString}')`
+    : '';
   const output: resourceDataType[] = [];
   const batchDataRequests: { id: string; method: string; url: string }[][] = [
     [],

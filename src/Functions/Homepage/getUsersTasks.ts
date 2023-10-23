@@ -7,6 +7,32 @@ import {
 } from '../../types';
 import callMsGraph from '../Ultility/microsoftAssets';
 
+function convertStringToTaskStatus(status: string): taskStatusEnum {
+  if (status === 'notStarted') {
+    return taskStatusEnum.notStarted;
+  }
+  if (status === 'inProgress') {
+    return taskStatusEnum.inProgress;
+  }
+  if (status === 'completed') {
+    return taskStatusEnum.completed;
+  }
+  if (status === 'waitingOnOthers') {
+    return taskStatusEnum.waitingOnOthers;
+  }
+  return taskStatusEnum.deferred;
+}
+
+function convertStringToImportance(importance: string): taskImportanceEnum {
+  if (importance === 'high') {
+    return taskImportanceEnum.high;
+  }
+  if (importance === 'low') {
+    return taskImportanceEnum.low;
+  }
+  return taskImportanceEnum.normal;
+}
+
 // deltaRunAgain is send if the delta link has failed or the responce 410 meaning syncronization is needed.
 export default async function getUsersTasks(
   deltaRunAgain?: boolean,
@@ -31,22 +57,8 @@ export default async function getUsersTasks(
       resultTasks.push({
         name: taskData.value[index].title,
         id: taskData.value[index].id,
-        importance:
-          taskData.value[index].importance === 'high'
-            ? taskImportanceEnum.high
-            : taskData.value[index].importance === 'low'
-            ? taskImportanceEnum.low
-            : taskImportanceEnum.normal,
-        status:
-          taskData.value[index].status === 'notStarted'
-            ? taskStatusEnum.notStarted
-            : taskData.value[index].status === 'inProgress'
-            ? taskStatusEnum.inProgress
-            : taskData.value[index].status === 'completed'
-            ? taskStatusEnum.completed
-            : taskData.value[index].status === 'waitingOnOthers'
-            ? taskStatusEnum.waitingOnOthers
-            : taskStatusEnum.deferred,
+        importance: convertStringToImportance(taskData.value[index].importance),
+        status: convertStringToTaskStatus(taskData.value[index].status),
         excess: false,
       });
     }

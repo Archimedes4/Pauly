@@ -50,11 +50,9 @@ export default async function getPaulyLists() {
         }),
       );
     } else {
-      const paulyListResultData = await paulyListResult.json();
       // TO DO THIS IS A BIG PROBLEM SHUT DOWN APP BC most of it don't work lost connection to server
     }
   } else {
-    const getRootSiteIdResultData = await getRootSiteIdResult.json();
     // TO DO THIS IS A BIG PROBLEM SHUT DOWN APP BC most of it don't work lost connection to server
   }
 }

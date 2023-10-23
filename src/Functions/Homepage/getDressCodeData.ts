@@ -25,7 +25,9 @@ export default async function getDressCodeData(): Promise<{
           dressCodeData: JSON.parse(data.value[index].fields.dressCodeData),
           dressCodeIncentives: [],
         });
-      } catch {}
+      } catch {
+        continue;
+      }
     }
     return { result: loadingStateEnum.success, data: newDressCodes };
   }

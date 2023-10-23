@@ -18,16 +18,16 @@ export const studentSearchSlice = createSlice({
   initialState: initalState,
   reducers: {
     setStudentSearch: (state, action: PayloadAction<string>) => {
-      state.searchText = action.payload;
+      return { ...state, searchText: action.payload };
     },
     setStudentUsers: (state, action: PayloadAction<schoolUserType[]>) => {
-      state.users = action.payload;
+      return { ...state, users: action.payload };
     },
     setUsersState: (state, action: PayloadAction<loadingStateEnum>) => {
-      state.usersState = action.payload;
+      return { ...state, usersState: action.payload };
     },
     setNextLink: (state, action: PayloadAction<string | undefined>) => {
-      state.nextLink = action.payload;
+      return { ...state, nextLink: action.payload };
     },
     setStudentUserByIndex: (
       state,

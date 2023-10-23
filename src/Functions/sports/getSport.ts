@@ -27,6 +27,5 @@ export default async function getSport(
     }
     return { result: loadingStateEnum.failed };
   }
-  const data = await result.json();
   return { result: loadingStateEnum.failed };
 }

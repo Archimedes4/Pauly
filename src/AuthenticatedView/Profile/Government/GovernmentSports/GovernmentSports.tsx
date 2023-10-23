@@ -62,14 +62,14 @@ export default function GovernmentSports() {
           <>
             {dataResult === loadingStateEnum.success ? (
               <View>
-                {currentSports.map((item, id) => (
+                {currentSports.map(item => (
                   <Pressable
                     onPress={() => {
                       navigate(
                         `/profile/government/sports/team/${item.name}/${item.id}`,
                       );
                     }}
-                    key={id}
+                    key={item.id}
                   >
                     <View>
                       <Text>{item.name}</Text>

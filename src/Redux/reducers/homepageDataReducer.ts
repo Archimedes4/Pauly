@@ -79,10 +79,10 @@ export const homepageDataSlice = createSlice({
       return { ...state, schoolDayData: action.payload };
     },
     setStartTime: (state, action: PayloadAction<string>) => {
-      return {...state, startTime: action.payload};
+      return { ...state, startTime: action.payload };
     },
     setIsShowingCompletedTasks: (state, action: PayloadAction<boolean>) => {
-      return {...state, isShowingCompleteTasks: action.payload};
+      return { ...state, isShowingCompleteTasks: action.payload };
     },
   },
 });

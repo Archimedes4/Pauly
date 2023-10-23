@@ -1,6 +1,5 @@
 import store from '../../Redux/store';
 import { commissionTypeEnum, loadingStateEnum } from '../../types';
-import create_UUID from '../Ultility/createUUID';
 import callMsGraph from '../Ultility/microsoftAssets';
 
 export default async function updateCommission(

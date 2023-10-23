@@ -1,4 +1,3 @@
-import { Buffer } from 'buffer';
 import store from '../../Redux/store';
 import callMsGraph from '../Ultility/microsoftAssets';
 import { loadingStateEnum } from '../../types';

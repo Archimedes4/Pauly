@@ -5,7 +5,7 @@ import store from '../Redux/store';
 import { Colors, loadingStateEnum, paulyEventType } from '../types';
 import callMsGraph from './Ultility/microsoftAssets';
 
-export default async function createEvent() {
+export default async function createEvent(): Promise<undefined> {
   if (store.getState().addEvent.selectedEventType === paulyEventType.personal) {
     const data: any = {
       subject: store.getState().addEvent.eventName,
@@ -77,8 +77,12 @@ export default async function createEvent() {
       store.getState().addEvent.selectedEventType === paulyEventType.schoolDay
     ) {
       if (schoolDay !== undefined) {
-        if (store.getState().addEvent.selectedSchoolDayData === undefined)
-          return loadingStateEnum.failed;
+        if (store.getState().addEvent.selectedSchoolDayData === undefined) {
+          store.dispatch(
+            addEventSlice.actions.setCreateEventState(loadingStateEnum.failed),
+          );
+          return;
+        }
         data.start.dateTime = `${
           store
             .getState()

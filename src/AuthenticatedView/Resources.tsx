@@ -16,16 +16,19 @@ import {
   TextInput,
   Platform,
   Pressable,
-  ViewStyle,
   Linking,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
-import createUUID from '../Functions/Ultility/createUUID';
+import createUUID, { getTextState } from '../Functions/Ultility/createUUID';
 import callMsGraph from '../Functions/Ultility/microsoftAssets';
-import { getResources, getResourcesSearch } from '../Functions/getResources';
+import {
+  convertResourceModeString,
+  getResources,
+  getResourcesSearch,
+} from '../Functions/getResources';
 import { CloseIcon, SearchIcon } from '../UI/Icons/Icons';
 import WebViewCross from '../UI/WebViewCross';
 import BackButton from '../UI/BackButton';
@@ -39,6 +42,77 @@ import { Colors, loadingStateEnum, resourceMode } from '../types';
 // -> Schedule Annoucments
 // -> School Events
 // -> Annoucments
+
+function PickerPiece({
+  text,
+  item,
+  isHoverPicker,
+  setIsHoverPicker,
+}: {
+  text: string;
+  item: resourceMode;
+  isHoverPicker: boolean;
+  setIsHoverPicker: (item: boolean) => void;
+}) {
+  const { height, width, currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
+  const { selectedResourceMode } = useSelector(
+    (state: RootState) => state.resources,
+  );
+  const [isSelected, setIsSelected] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  return (
+    <Pressable
+      onPress={() => {
+        dispatch(resourcesSlice.actions.setSelectedResourceMode(item));
+      }}
+      onHoverIn={() => {
+        setIsHoverPicker(true);
+        setIsSelected(true);
+      }}
+      onHoverOut={() => setIsSelected(false)}
+      style={{
+        height: isHoverPicker ? height * 0.1 : height * 0.05,
+        width: isSelected
+          ? currentBreakPoint >= 2
+            ? width * 0.3
+            : width * 0.6
+          : currentBreakPoint >= 2
+          ? width * 0.2
+          : width * 0.4,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFFFFF',
+      }}
+    >
+      <View
+        style={{
+          height: isHoverPicker ? height * 0.06 : height * 0.03,
+          width: isSelected
+            ? currentBreakPoint >= 2
+              ? width * 0.28
+              : width * 0.46
+            : currentBreakPoint >= 2
+            ? width * 0.18
+            : width * 0.36,
+          marginLeft: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
+          marginRight: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
+          backgroundColor: Colors.darkGray,
+          borderWidth: item !== selectedResourceMode ? 0 : 2,
+          borderColor: 'black',
+          borderRadius: 15,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Text style={{ color: Colors.white }}>{text}</Text>
+      </View>
+    </Pressable>
+  );
+}
 
 function checkIfResourceDataJustAttachment(body: string): boolean {
   if (body.length === 67) {
@@ -81,7 +155,7 @@ export default function Resources() {
         bottom: Colors.white,
       }),
     );
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     loadData();
@@ -92,7 +166,7 @@ export default function Resources() {
     BukhariScript: require('../../assets/fonts/BukhariScript.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
@@ -399,18 +473,7 @@ function GovernmentCategoryView({
       singleValueExtendedProperties: [
         {
           id: store.getState().paulyList.resourceExtensionId,
-          value:
-            selectedCategory === resourceMode.sports
-              ? 'sports'
-              : selectedCategory === resourceMode.advancement
-              ? 'advancement'
-              : selectedCategory === resourceMode.schoolEvents
-              ? 'schoolEvents'
-              : selectedCategory === resourceMode.annoucments
-              ? 'annoucments'
-              : selectedCategory === resourceMode.fitness
-              ? 'fitness'
-              : 'files',
+          value: convertResourceModeString(selectedCategory),
         },
       ],
     };
@@ -600,88 +663,9 @@ function GovernmentCategoryView({
           borderRadius: 15,
         }}
       >
-        <Text>
-          {categoryState === loadingStateEnum.notStarted
-            ? 'Confirm'
-            : categoryState === loadingStateEnum.loading
-            ? 'Loading'
-            : categoryState === loadingStateEnum.success
-            ? 'Success'
-            : 'Failed'}
-        </Text>
+        <Text>{getTextState(categoryState, { notStarted: 'Confirm' })}</Text>
       </Pressable>
     </View>
-  );
-}
-
-function PickerPiece({
-  text,
-  item,
-  isHoverPicker,
-  setIsHoverPicker,
-}: {
-  text: string;
-  item: resourceMode;
-  isHoverPicker: boolean;
-  setIsHoverPicker: (item: boolean) => void;
-}) {
-  const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
-  const { selectedResourceMode } = useSelector(
-    (state: RootState) => state.resources,
-  );
-  const [isSelected, setIsSelected] = useState<boolean>(false);
-  const dispatch = useDispatch();
-  return (
-    <Pressable
-      onPress={() => {
-        dispatch(resourcesSlice.actions.setSelectedResourceMode(item));
-      }}
-      onHoverIn={() => {
-        setIsHoverPicker(true);
-        setIsSelected(true);
-      }}
-      onHoverOut={() => setIsSelected(false)}
-      style={{
-        height: isHoverPicker ? height * 0.1 : height * 0.05,
-        width: isSelected
-          ? currentBreakPoint >= 2
-            ? width * 0.3
-            : width * 0.6
-          : currentBreakPoint >= 2
-          ? width * 0.2
-          : width * 0.4,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#FFFFFF',
-      }}
-    >
-      <View
-        style={{
-          height: isHoverPicker ? height * 0.06 : height * 0.03,
-          width: isSelected
-            ? currentBreakPoint >= 2
-              ? width * 0.28
-              : width * 0.46
-            : currentBreakPoint >= 2
-            ? width * 0.18
-            : width * 0.36,
-          marginLeft: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
-          marginRight: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
-          backgroundColor: Colors.darkGray,
-          borderWidth: item !== selectedResourceMode ? 0 : 2,
-          borderColor: 'black',
-          borderRadius: 15,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Text style={{ color: Colors.white }}>{text}</Text>
-      </View>
-    </Pressable>
   );
 }
 

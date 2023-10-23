@@ -77,7 +77,7 @@ export default function Settings() {
         bottom: Colors.maroon,
       }),
     );
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (currentBreakPoint >= 1) {

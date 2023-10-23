@@ -13,21 +13,22 @@ export const pdfDataSlice = createSlice({
   reducers: {
     setInject: (state, action: PayloadAction<string>) => {
       state.inject = action.payload;
+      return { ...state, commissionsState: action.payload };
     },
     addImage: (state, action: PayloadAction<string>) => {
       state.images.push(action.payload);
     },
     setImages: (state, action: PayloadAction<string[]>) => {
-      state.images = action.payload;
+      return { ...state, images: action.payload };
     },
     setPageNumber: (state, action: PayloadAction<number>) => {
-      state.pageNumber = action.payload;
+      return { ...state, pageNumber: action.payload };
     },
     increasePageNumber: state => {
       state.pageNumber += 1;
     },
     decreasePageNumber: state => {
-      state.pageNumber--;
+      state.pageNumber -= 1;
     },
   },
 });

@@ -1,11 +1,11 @@
 import { View, Text, Pressable, TextInput } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-native';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import MicrosoftFilePicker from '../../../../UI/MicrosoftFilePicker';
 import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/Ultility/createUUID';
+import createUUID from '../../../../Functions/Ultility/createUUID';
 import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
 import {
@@ -28,7 +28,6 @@ export default function GovernmentSportsTeamAddPost() {
   async function getShareLink(item: microsoftFileType) {
     const itemPathArray = item.itemGraphPath.split('/');
     if (itemPathArray[itemPathArray.length - 1] === 'children') {
-      const newItemPath = item.itemGraphPath.slice(0, -8);
       const data = {
         type: 'view',
         scope: 'organization',
@@ -53,7 +52,7 @@ export default function GovernmentSportsTeamAddPost() {
       );
       if (userIdResult.ok) {
         const userData = await userIdResult.json();
-        const submissionID = create_UUID();
+        const submissionID = createUUID();
         const data = {
           fields: {
             Title: postName,

@@ -1,5 +1,5 @@
 import store from '../../Redux/store';
-import { loadingStateEnum } from '../../types';
+import { dataContentTypeOptions, loadingStateEnum } from '../../types';
 import getFileWithShareID from '../Ultility/getFileWithShareID';
 import callMsGraph from '../Ultility/microsoftAssets';
 
@@ -18,19 +18,33 @@ export default async function getSportsContent(
     const dataResult = await result.json();
     if (dataResult.value.length !== undefined) {
       const newSportsPosts: sportPost[] = [];
+      const shareResultsPromise: Promise<{
+        result: loadingStateEnum;
+        url?: string | undefined;
+        contentType?: dataContentTypeOptions | undefined;
+      }>[] = [];
       for (let index = 0; index < dataResult.value.length; index += 1) {
-        const shareResult = await getFileWithShareID(
-          dataResult.value[index].fields.fileId,
+        shareResultsPromise.push(
+          getFileWithShareID(dataResult.value[index].fields.fileId),
         );
+      }
+      const shareResults: {
+        result: loadingStateEnum;
+        url?: string | undefined;
+        contentType?: dataContentTypeOptions | undefined;
+      }[] = await Promise.all(shareResultsPromise);
+      for (let index = 0; index < shareResults.length; index += 1) {
+        const { url } = shareResults[index];
+        const fileType = shareResults[index].contentType;
         if (
-          shareResult.result === loadingStateEnum.success &&
-          shareResult.contentType !== undefined &&
-          shareResult.url !== undefined
+          shareResults[index].result === loadingStateEnum.success &&
+          fileType !== undefined &&
+          url !== undefined
         ) {
           newSportsPosts.push({
             caption: dataResult.value[index].fields.caption,
-            fileID: shareResult.url,
-            fileType: shareResult.contentType,
+            fileID: url,
+            fileType,
           });
         } else {
           return { result: loadingStateEnum.failed };

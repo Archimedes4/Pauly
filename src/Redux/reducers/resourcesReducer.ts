@@ -22,7 +22,7 @@ export const resourcesSlice = createSlice({
   initialState: initalResourcesState,
   reducers: {
     setResourceData: (state, action: PayloadAction<resourceDataType[]>) => {
-      state.resources = action.payload;
+      return { ...state, resources: action.payload };
     },
     pushResource: (state, action: PayloadAction<resourceDataType>) => {
       state.resources.push(action.payload);
@@ -34,20 +34,23 @@ export const resourcesSlice = createSlice({
         loadingState: loadingStateEnum;
       }>,
     ) => {
-      state.resources = action.payload.resources;
-      state.loadingState = action.payload.loadingState;
+      return {
+        ...state,
+        loadingState: action.payload.loadingState,
+        resources: action.payload.resources,
+      };
     },
     setResourcesState: (state, action: PayloadAction<loadingStateEnum>) => {
-      state.loadingState === action.payload;
+      return { ...state, loadingState: action.payload };
     },
     setSearchValue: (state, action: PayloadAction<string>) => {
-      state.searchValue = action.payload;
+      return { ...state, searchValue: action.payload };
     },
     setResourceFollow: (state, action: PayloadAction<resourceFollowType[]>) => {
-      state.resourceFollow = action.payload;
+      return { ...state, resourceFollow: action.payload };
     },
     setSelectedResourceMode: (state, action: PayloadAction<resourceMode>) => {
-      state.selectedResourceMode = action.payload;
+      return { ...state, selectedResourceMode: action.payload };
     },
   },
 });

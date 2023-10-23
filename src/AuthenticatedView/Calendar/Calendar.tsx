@@ -501,8 +501,8 @@ function CalendarCardView({
                     new Date(selectedDate).getFullYear() ===
                       new Date().getFullYear() &&
                     new Date(selectedDate).getDate() !== value.dayData
-                      ? Colors.black
-                      : Colors.white,
+                      ? Colors.white
+                      : Colors.black,
                 }}
               >
                 {value.dayData}

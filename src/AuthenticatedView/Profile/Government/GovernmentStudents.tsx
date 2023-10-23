@@ -27,6 +27,121 @@ import ProgressView from '../../../UI/ProgressView';
 import addImage from '../../../Functions/addImage';
 import { getTextState } from '../../../Functions/Ultility/createUUID';
 
+function SelectMainFile({
+  userId,
+  setFilePickingMode,
+}: {
+  userId: string;
+  setFilePickingMode: (item: filePickingModeEnum) => void;
+}) {
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const [fileData, setFileData] = useState<studentInformationType[]>([]);
+  const [fileState, setFileState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [selectedFileListId, setSelectedFileListId] = useState<string>('');
+
+  async function loadData() {
+    const result = await getStudentData(userId);
+    if (
+      result.result === loadingStateEnum.success &&
+      result.data !== undefined
+    ) {
+      setFileState(loadingStateEnum.success);
+      setFileData(result.data);
+      const selectedFileList = result.data.find(e => {
+        return e.selected;
+      });
+      if (selectedFileList !== undefined) {
+        setSelectedFileListId(selectedFileList.listId);
+      }
+    } else {
+      setFileState(loadingStateEnum.failed);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  return (
+    <View
+      style={{
+        height,
+        width,
+        position: 'absolute',
+        zIndex: 200,
+        top: 0,
+        right: 0,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.lightGray,
+      }}
+    >
+      <Pressable
+        onPress={() => {
+          setFilePickingMode(filePickingModeEnum.notStarted);
+        }}
+        style={{
+          position: 'absolute',
+          top: height * 0.05,
+          left: height * 0.05,
+        }}
+      >
+        <CloseIcon width={20} height={20} />
+      </Pressable>
+      <View
+        style={{
+          height: height * 0.8,
+          width: width * 0.8,
+          shadowColor: 'black',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          backgroundColor: Colors.white,
+          borderRadius: 15,
+        }}
+      >
+        <View style={{ margin: 10 }}>
+          {fileState === loadingStateEnum.loading ? (
+            <View>
+              <Text>Loading</Text>
+            </View>
+          ) : (
+            <>
+              {fileState === loadingStateEnum.success ? (
+                <FlatList
+                  data={fileData}
+                  renderItem={file => (
+                    <StudentSelectFileBlock
+                      key={`${file.item.listId}_${file.item.createdTime}`}
+                      file={file}
+                      setFileData={setFileData}
+                      fileData={fileData}
+                      selectedFileListId={selectedFileListId}
+                      setSelectedFileListId={setSelectedFileListId}
+                    />
+                  )}
+                />
+              ) : (
+                <View>
+                  <Text>Failed</Text>
+                </View>
+              )}
+            </>
+          )}
+          <Pressable
+            onPress={() => setFilePickingMode(filePickingModeEnum.create)}
+          >
+            <Text>Create</Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 function StudentSelectFileBlock({
   file,
   selectedFileListId,
@@ -452,121 +567,6 @@ function StudentsSelectFile({
           </View>
         )}
       </>
-    </View>
-  );
-}
-
-function SelectMainFile({
-  userId,
-  setFilePickingMode,
-}: {
-  userId: string;
-  setFilePickingMode: (item: filePickingModeEnum) => void;
-}) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const [fileData, setFileData] = useState<studentInformationType[]>([]);
-  const [fileState, setFileState] = useState<loadingStateEnum>(
-    loadingStateEnum.loading,
-  );
-  const [selectedFileListId, setSelectedFileListId] = useState<string>('');
-
-  async function loadData() {
-    const result = await getStudentData(userId);
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
-    ) {
-      setFileState(loadingStateEnum.success);
-      setFileData(result.data);
-      const selectedFileList = result.data.find(e => {
-        return e.selected;
-      });
-      if (selectedFileList !== undefined) {
-        setSelectedFileListId(selectedFileList.listId);
-      }
-    } else {
-      setFileState(loadingStateEnum.failed);
-    }
-  }
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  return (
-    <View
-      style={{
-        height,
-        width,
-        position: 'absolute',
-        zIndex: 200,
-        top: 0,
-        right: 0,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.lightGray,
-      }}
-    >
-      <Pressable
-        onPress={() => {
-          setFilePickingMode(filePickingModeEnum.notStarted);
-        }}
-        style={{
-          position: 'absolute',
-          top: height * 0.05,
-          left: height * 0.05,
-        }}
-      >
-        <CloseIcon width={20} height={20} />
-      </Pressable>
-      <View
-        style={{
-          height: height * 0.8,
-          width: width * 0.8,
-          shadowColor: 'black',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.8,
-          shadowRadius: 10,
-          backgroundColor: Colors.white,
-          borderRadius: 15,
-        }}
-      >
-        <View style={{ margin: 10 }}>
-          {fileState === loadingStateEnum.loading ? (
-            <View>
-              <Text>Loading</Text>
-            </View>
-          ) : (
-            <>
-              {fileState === loadingStateEnum.success ? (
-                <FlatList
-                  data={fileData}
-                  renderItem={file => (
-                    <StudentSelectFileBlock
-                      key={`${file.item.listId}_${file.item.createdTime}`}
-                      file={file}
-                      setFileData={setFileData}
-                      fileData={fileData}
-                      selectedFileListId={selectedFileListId}
-                      setSelectedFileListId={setSelectedFileListId}
-                    />
-                  )}
-                />
-              ) : (
-                <View>
-                  <Text>Failed</Text>
-                </View>
-              )}
-            </>
-          )}
-          <Pressable
-            onPress={() => setFilePickingMode(filePickingModeEnum.create)}
-          >
-            <Text>Create</Text>
-          </Pressable>
-        </View>
-      </View>
     </View>
   );
 }

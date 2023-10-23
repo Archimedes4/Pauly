@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-native';
 import { RootState } from '../Redux/store';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import getSportsContent from '../Functions/sports/getSportsContent';
-import create_UUID from '../Functions/Ultility/createUUID';
+import createUUID from '../Functions/Ultility/createUUID';
 import { getSports, getSportsTeams } from '../Functions/sports/sportsFunctions';
 import getRoster from '../Functions/sports/getRoster';
 import getFileWithShareID from '../Functions/Ultility/getFileWithShareID';
@@ -201,7 +201,7 @@ export default function Sports() {
                       </Pressable>
                       {sports.map(sport => (
                         <Pressable
-                          key={`SportButton_${sport.id}_${create_UUID()}`}
+                          key={`SportButton_${sport.id}`}
                           onLayout={e => {
                             setSportsSelectHeight(e.nativeEvent.layout.height);
                           }}
@@ -306,7 +306,7 @@ export default function Sports() {
                       <>
                         {sportsTeams.map(team => (
                           <Pressable
-                            key={`SportTeam_${team.teamId}_${create_UUID()}`}
+                            key={`SportTeam_${team.teamId}`}
                             onPress={() => {
                               setSelectedTeam(team);
                               setIsShowingTeams(false);
@@ -387,7 +387,7 @@ export default function Sports() {
                 <>
                   {sportsPosts.map(item => (
                     <View
-                      key={`Sport_${item.fileID}_${create_UUID()}`}
+                      key={`Sport_${item.fileID}`}
                       style={{ marginTop: height * 0.05 }}
                     >
                       {item.fileType === dataContentTypeOptions.image ? (
