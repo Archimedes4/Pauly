@@ -32,7 +32,7 @@ const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: 'https://polite-plant-0871d590f.4.azurestaticapps.net/auth', // TODO change prod
+    redirectUri: 'https://polite-plant-0871d590f.4.azurestaticapps.net/', // TODO change prod
   },
 });
 
