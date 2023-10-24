@@ -96,17 +96,17 @@ https://learn.microsoft.com/en-us/azure/static-web-apps/get-started-cli?tabs=van
 The resource group that you use will be tied to the web app. Some other resource group can be used but this method is preferable.
 ```
   az group create \
-  --name my-swa-group \
+  --name Pauly-SWA \
   --location "eastus2"
 ```
 
 ```
   az staticwebapp create \
-    --name my-first-static-web-app \
-    --resource-group my-swa-group \
-    --source https://github.com/$GITHUB_USER_NAME/my-first-static-web-app \
+    --name Pauly-Static-Web-App \
+    --resource-group Pauly-SWA \
+    --source https://github.com/AMCanada16/Pauly.git \
     --location "eastus2" \
-    --branch main \
+    --branch Static-Web-Live \
     --app-location "/"  \
     --output-location "build"  \
     --login-with-github

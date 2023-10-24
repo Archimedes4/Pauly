@@ -355,6 +355,7 @@ export async function removeStudentSelection(
   return { result: loadingStateEnum.failed };
 }
 
+//This is the number of blocks in a row in the student page.
 export function getNumberOfBlocks(width: number) {
   return Math.floor(width / 190) !== 0? Math.floor(width % 190 >= 0.75 ? width / 190 : (width + 190) / 190):1
 }
