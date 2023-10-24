@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   EventType,
-  LogLevel,
   PublicClientApplication,
 } from '@azure/msal-browser';
 import {
@@ -32,7 +31,7 @@ const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: 'http://localhost:19006/auth', // TO DO change prod
+    redirectUri: 'polite-plant-0871d590f.4.azurestaticapps.net/auth', // TODO change prod
   },
 });
 
