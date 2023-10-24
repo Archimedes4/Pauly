@@ -27,6 +27,7 @@ import {
 } from '../src/Functions/handleGovernmentLogin';
 import { RootState } from '../src/Redux/store';
 
+//This is for the microsoft authentication.
 const pca = new PublicClientApplication({
   auth: {
     clientId,
