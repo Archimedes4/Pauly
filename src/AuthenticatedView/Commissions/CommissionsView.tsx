@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import CommissionClaim from './CommissionClaim';
 import getCommission from '../../Functions/commissions/getCommission';
-import callMsGraph from '../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../Functions/ultility/microsoftAssets';
 import ProgressView from '../../UI/ProgressView';
 import { CloseIcon } from '../../UI/Icons/Icons';
 import WebViewCross from '../../UI/WebViewCross';

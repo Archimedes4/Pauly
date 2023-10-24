@@ -1,7 +1,7 @@
 import { commissionsSlice } from '../../Redux/reducers/commissionsReducer';
 import store from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
-import callMsGraph from '../Ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssets';
 
 function getFilter(
   startDate?: { date: Date; filter: 'ge' | 'le' },

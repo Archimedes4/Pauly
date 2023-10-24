@@ -7,7 +7,7 @@
   used to get insight files that are used on the notification page.
 */
 import { loadingStateEnum } from '../../types';
-import callMsGraph from '../Ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssets';
 
 export default async function getInsightData(): Promise<insightResult> {
   // Get used https://learn.microsoft.com/en-us/graph/api/insights-list-used?view=graph-rest-1.0&tabs=http

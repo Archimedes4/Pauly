@@ -2,7 +2,7 @@ import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-native';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum, semesters } from '../../../../types';
 import getSchoolYears from '../../../../Functions/calendar/getSchoolYears';

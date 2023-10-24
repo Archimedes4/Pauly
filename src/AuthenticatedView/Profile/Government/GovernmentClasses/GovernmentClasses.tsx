@@ -3,8 +3,8 @@ import { View, Text, Pressable, ScrollView, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-native';
 import { RootState } from '../../../../Redux/store';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/Ultility/createUUID';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
+import create_UUID from '../../../../Functions/ultility/createUUID';
 import { Colors, loadingStateEnum, semesters } from '../../../../types';
 import ProgressView from '../../../../UI/ProgressView';
 

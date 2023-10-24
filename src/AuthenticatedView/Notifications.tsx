@@ -29,7 +29,7 @@ import {
   taskImportanceEnum,
   taskStatusEnum,
 } from '../types';
-import callMsGraph from '../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../Functions/ultility/microsoftAssets';
 import getUsersTasks from '../Functions/homepage/getUsersTasks';
 import ProgressView from '../UI/ProgressView';
 import getInsightData from '../Functions/homepage/getInsightData';

@@ -1,14 +1,13 @@
-import { dressCodeData } from '../initializePauly/initializePaulyData';
 // Andrew Mainella
 // Pauly
 
 import { orgWideGroupID } from '../../PaulyConfig';
-import callMsGraph from '../Ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssets';
 import { Colors, loadingStateEnum, semesters } from '../../types';
 import store from '../../Redux/store';
+import batchRequest from '../ultility/batchRequest';
+import createUUID from '../ultility/createUUID';
 import getDressCode from '../homepage/getDressCode';
-import batchRequest from '../Ultility/batchRequest';
-import create_UUID from '../Ultility/createUUID';
 
 // Defaults to org wide events
 export async function getGraphEvents(
@@ -446,13 +445,14 @@ export async function getSchoolDays(date: Date): Promise<{
       scheudleIndex < batchRequestResultSchedule.data.length;
       scheudleIndex += 1
     ) {
-      if (batchRequestResultSchedule.data[scheudleIndex].status === 200) {
+      const resultScheduleData = batchRequestResultSchedule.data[scheudleIndex].body
+      if (batchRequestResultSchedule.data[scheudleIndex].status === 200 && resultScheduleData !== undefined) {
         // TO DO fix status code
         if (
-          batchRequestResultSchedule.data[scheudleIndex].body.value.length === 1
+          resultScheduleData.value.length === 1
         ) {
           const scheduleResponseData =
-            batchRequestResultSchedule.data[scheudleIndex].body.value[0].fields;
+            resultScheduleData.value[0].fields;
           try {
             schedules.set(scheduleResponseData.scheduleId, {
               properName: scheduleResponseData.scheduleProperName,
@@ -716,12 +716,12 @@ async function getTimetablesFromSchoolYears(
     timetableIndex < batchRequestResultTimetable.data.length;
     timetableIndex += 1
   ) {
-    if (batchRequestResultTimetable.data[timetableIndex].status === 200) {
+    const resultTimetableData = batchRequestResultTimetable.data[timetableIndex].body
+    if (batchRequestResultTimetable.data[timetableIndex].status === 200 && resultTimetableData !== undefined) {
       if (
-        batchRequestResultTimetable.data[timetableIndex].body.value.length === 1
+        resultTimetableData.value.length === 1
       ) {
-        const timetableData =
-          batchRequestResultTimetable.data[timetableIndex].body.value[0].fields;
+        const timetableData = resultTimetableData.value[0].fields;
         const dressCode = dressCodes.get(timetableData.timetableDressCodeId);
         const timetableSchedules: scheduleType[] = [];
         const scheduleIds: string[] = JSON.parse(
@@ -770,7 +770,7 @@ export async function createDressCode(
   dressCodeName: string,
   dressCodeData: dressCodeDataType[],
 ): Promise<loadingStateEnum> {
-  const dressCodeId = create_UUID();
+  const dressCodeId = createUUID();
   const data = {
     fields: {
       Title: dressCodeId,

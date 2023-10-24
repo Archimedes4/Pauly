@@ -15,7 +15,7 @@ import {
   isDateToday,
 } from '../../Functions/calendar/calendarFunctions';
 import { RootState } from '../../Redux/store';
-import create_UUID from '../../Functions/Ultility/createUUID';
+import create_UUID from '../../Functions/ultility/createUUID';
 import { Colors, loadingStateEnum } from '../../types';
 import { getClassEventsFromDay } from '../../Functions/classesFunctions';
 

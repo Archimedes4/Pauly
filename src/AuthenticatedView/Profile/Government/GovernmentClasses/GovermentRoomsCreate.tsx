@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
 import { WarningIcon } from '../../../../UI/Icons/Icons';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/Ultility/createUUID';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
+import create_UUID from '../../../../Functions/ultility/createUUID';
 
 export default function GovermentRoomsCreate() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

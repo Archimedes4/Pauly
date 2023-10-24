@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../Functions/ultility/microsoftAssets';
 import { RootState } from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
 

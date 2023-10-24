@@ -8,9 +8,9 @@ import {
   FlatList,
 } from 'react-native';
 import Picker from './Pickers/Picker';
-import callMsGraph from '../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../Functions/ultility/microsoftAssets';
 import MimeTypeIcon from './Icons/MimeTypeIcon';
-import create_UUID from '../Functions/Ultility/createUUID';
+import create_UUID from '../Functions/ultility/createUUID';
 import {
   getUserMicrosoftFiles,
   getUserTeams,

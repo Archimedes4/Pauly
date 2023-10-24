@@ -1,5 +1,5 @@
 import { loadingStateEnum } from '../types';
-import callMsGraph from './Ultility/microsoftAssets';
+import callMsGraph from './ultility/microsoftAssets';
 
 export async function getUserMicrosoftFiles(
   path: string,

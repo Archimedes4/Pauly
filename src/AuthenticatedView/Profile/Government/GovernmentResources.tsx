@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-native';
 import store, { RootState } from '../../../Redux/store';
-import callMsGraph from '../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum, resourceResponce } from '../../../types';
 import ProgressView from '../../../UI/ProgressView';
 import getResource from '../../../Functions/getResources';

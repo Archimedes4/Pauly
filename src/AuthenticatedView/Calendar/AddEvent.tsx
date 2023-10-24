@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
 import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';
 import { addEventSlice } from '../../Redux/reducers/addEventReducer';
-import callMsGraph from '../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../Functions/ultility/microsoftAssets';
 import SelectTimetable from './SelectTimetable';
 import SelectSchoolDayData from './SelectSchoolDayData';
 import { Colors, loadingStateEnum, paulyEventType } from '../../types';

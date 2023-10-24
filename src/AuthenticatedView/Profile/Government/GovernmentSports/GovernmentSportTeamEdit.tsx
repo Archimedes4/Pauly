@@ -11,8 +11,8 @@ import { useNavigate, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { convertYearToSchoolYear } from '../../../../Functions/calendar/calendarFunctions';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/Ultility/createUUID';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
+import create_UUID from '../../../../Functions/ultility/createUUID';
 import {
   Colors,
   dataContentTypeOptions,
@@ -23,7 +23,7 @@ import { getTeams } from '../../../../Functions/groupsData';
 import ProgressView from '../../../../UI/ProgressView';
 import MicrosoftFilePicker from '../../../../UI/MicrosoftFilePicker';
 import { CloseIcon } from '../../../../UI/Icons/Icons';
-import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
+import getFileWithShareID from '../../../../Functions/ultility/getFileWithShareID';
 
 export default function GovernmentCreateNewTeam() {
   const { sport, id, teamId } = useParams();

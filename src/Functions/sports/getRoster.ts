@@ -1,7 +1,7 @@
 import store from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
-import batchRequest from '../Ultility/batchRequest';
-import callMsGraph from '../Ultility/microsoftAssets';
+import batchRequest from '../ultility/batchRequest';
+import callMsGraph from '../ultility/microsoftAssets';
 
 export default async function getRoster(
   teamId: string,

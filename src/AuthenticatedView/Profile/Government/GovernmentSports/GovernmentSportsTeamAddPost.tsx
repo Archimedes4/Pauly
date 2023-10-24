@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import MicrosoftFilePicker from '../../../../UI/MicrosoftFilePicker';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
-import createUUID from '../../../../Functions/Ultility/createUUID';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
+import createUUID from '../../../../Functions/ultility/createUUID';
 import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
 import {

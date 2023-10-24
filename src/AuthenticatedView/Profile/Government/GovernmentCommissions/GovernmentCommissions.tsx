@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import getCommissions from '../../../../Functions/commissions/getCommissions';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
-import create_UUID from '../../../../Functions/Ultility/createUUID';
+import create_UUID from '../../../../Functions/ultility/createUUID';
 import { RootState } from '../../../../Redux/store';
 import {
   Colors,

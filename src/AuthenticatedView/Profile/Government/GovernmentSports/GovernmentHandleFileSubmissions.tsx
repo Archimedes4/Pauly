@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useNavigate } from 'react-router-native';
-import create_UUID from '../../../../Functions/Ultility/createUUID';
+import create_UUID from '../../../../Functions/ultility/createUUID';
 import getSubmissions from '../../../../Functions/sports/getSubmissions';
 import { loadingStateEnum } from '../../../../types';
 import ProgressView from '../../../../UI/ProgressView';

@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import { he } from 'react-native-paper-dates';
-import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 import { RootState } from '../../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import ProgressView from '../../../../../UI/ProgressView';

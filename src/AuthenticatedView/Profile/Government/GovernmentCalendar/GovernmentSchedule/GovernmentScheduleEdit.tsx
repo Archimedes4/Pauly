@@ -17,8 +17,8 @@ import ColorPicker, {
   RenderThumbProps,
   InputWidget,
 } from 'reanimated-color-picker';
-import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets';
-import create_UUID from '../../../../../Functions/Ultility/createUUID';
+import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
+import create_UUID from '../../../../../Functions/ultility/createUUID';
 import store, { RootState } from '../../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import { CloseIcon, WarningIcon } from '../../../../../UI/Icons/Icons';

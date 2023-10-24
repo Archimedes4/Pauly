@@ -1,8 +1,8 @@
 import { loadingStateEnum } from '../types';
 import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer';
 import store from '../Redux/store';
-import largeBatch from './Ultility/batchRequest';
-import callMsGraph from './Ultility/microsoftAssets';
+import largeBatch from './ultility/batchRequest';
+import callMsGraph from './ultility/microsoftAssets';
 import { domainName } from '../PaulyConfig';
 
 function checkIfStudent(role: string): {

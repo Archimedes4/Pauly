@@ -25,7 +25,7 @@ import { studentSearchSlice } from '../../../Redux/reducers/studentSearchReducer
 import { Colors, loadingStateEnum } from '../../../types';
 import ProgressView from '../../../UI/ProgressView';
 import addImage from '../../../Functions/addImage';
-import { getTextState } from '../../../Functions/Ultility/createUUID';
+import { getTextState } from '../../../Functions/ultility/createUUID';
 
 function SelectMainFile({
   userId,

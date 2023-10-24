@@ -21,9 +21,9 @@ import { PersonIcon, SearchIcon } from '../UI/Icons/Icons';
 import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer';
 import BackButton from '../UI/BackButton';
 import { getNumberOfBlocks, getUsers } from '../Functions/studentFunctions';
-import callMsGraph from '../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../Functions/ultility/microsoftAssets';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
-import createUUID from '../Functions/Ultility/createUUID';
+import createUUID from '../Functions/ultility/createUUID';
 
 export default function Students() {
   const { height, width, currentBreakPoint } = useSelector(

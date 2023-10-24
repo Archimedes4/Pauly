@@ -107,8 +107,9 @@ The resource group that you use will be tied to the web app. Some other resource
     --source https://github.com/AMCanada16/Pauly.git \
     --location "eastus2" \
     --branch Static-Web-Live \
-    --app-location "/"  \
-    --output-location "build"  \
+    --app-location "/web-build" \
+    --api-location "/api" \
+    --output-location "build" \
     --login-with-github
 ```
 

@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
 import { getSportsTeams } from '../../../../Functions/sports/sportsFunctions';
 import { WarningIcon } from '../../../../UI/Icons/Icons';
 import SVGXml from '../../../../UI/SVGXml/SVGXml';
 import getSport from '../../../../Functions/sports/getSport';
-import { getTextState } from '../../../../Functions/Ultility/createUUID';
+import { getTextState } from '../../../../Functions/ultility/createUUID';
 
 function SportsUpdateModel({
   isPickingSvg,

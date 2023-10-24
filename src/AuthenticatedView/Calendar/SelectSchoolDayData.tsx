@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import create_UUID from '../../Functions/Ultility/createUUID';
+import create_UUID from '../../Functions/ultility/createUUID';
 import {
   getGraphEvents,
   getTimetable,

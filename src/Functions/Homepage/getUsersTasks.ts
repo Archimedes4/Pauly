@@ -5,7 +5,7 @@ import {
   taskImportanceEnum,
   taskStatusEnum,
 } from '../../types';
-import callMsGraph from '../Ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssets';
 
 function convertStringToTaskStatus(status: string): taskStatusEnum {
   if (status === 'notStarted') {

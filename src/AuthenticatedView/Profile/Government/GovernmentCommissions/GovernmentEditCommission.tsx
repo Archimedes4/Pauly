@@ -9,7 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { useParams } from 'react-router-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 import store, { RootState } from '../../../../Redux/store';
@@ -33,15 +33,17 @@ import {
 } from '../../../../Functions/groupsData';
 import getCommission from '../../../../Functions/commissions/getCommission';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/Ultility/createUUID';
-import getFileWithShareID from '../../../../Functions/Ultility/getFileWithShareID';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
+import create_UUID, { getTextState } from '../../../../Functions/ultility/createUUID';
+import getFileWithShareID from '../../../../Functions/ultility/getFileWithShareID';
 import updateCommission from '../../../../Functions/commissions/updateCommission';
 
 enum datePickingMode {
   none,
-  start,
-  end,
+  startTime,
+  endTime,
+  startDate,
+  endDate
 }
 
 export default function GovernmentEditCommission() {
@@ -85,14 +87,6 @@ export default function GovernmentEditCommission() {
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [selectedChannelId, setSelectedChannelId] = useState<string>('');
   const [selectedPostId, setSelectedPostId] = useState<string>('');
-  const [endTimePickerVisable, setEndTimePickerVisable] =
-    useState<boolean>(false);
-  const [startTimePickerVisable, setStartTimePickerVisable] =
-    useState<boolean>(false);
-  const [endDatePickerVisable, setEndDatePickerVisable] =
-    useState<boolean>(false);
-  const [startDatePickerVisable, setStartDatePickerVisable] =
-    useState<boolean>(false);
 
   const [isCreating, setIsCreating] = useState<boolean>(false);
 
@@ -306,7 +300,7 @@ export default function GovernmentEditCommission() {
               <Pressable
                 style={{ margin: 5 }}
                 onPress={() => {
-                  setStartDatePickerVisable(true);
+                  setCurrentDatePickingMode(datePickingMode.startDate);
                 }}
               >
                 <Text>Pick Start Time</Text>
@@ -314,30 +308,30 @@ export default function GovernmentEditCommission() {
               <TimePickerModal
                 hours={new Date(startDate).getHours()}
                 minutes={new Date(startDate).getMinutes()}
-                visible={startTimePickerVisable}
-                onDismiss={() => setStartTimePickerVisable(false)}
+                visible={(currentDatePickingMode === datePickingMode.startDate)}
+                onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
                 onConfirm={e => {
                   const newDate = new Date(startDate);
                   newDate.setHours(e.hours);
                   newDate.setMinutes(e.minutes);
                   setStartDate(newDate);
-                  setStartDatePickerVisable(false);
+                  setCurrentDatePickingMode(datePickingMode.none);
                 }}
               />
               <Pressable
                 style={{ margin: 5 }}
                 onPress={() => {
-                  setCurrentDatePickingMode(datePickingMode.start);
+                  setCurrentDatePickingMode(datePickingMode.startDate);
                 }}
               >
                 <Text>Pick Start Date</Text>
               </Pressable>
               <DatePickerModal
-                locale=""
+                locale="en"
                 mode="single"
                 label="Select Date"
-                visible={startDatePickerVisable}
-                onDismiss={() => setStartDatePickerVisable(false)}
+                visible={(currentDatePickingMode === datePickingMode.startDate)}
+                onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
                 date={new Date(endDate)}
                 onConfirm={e => {
                   if (e.date !== undefined) {
@@ -351,7 +345,7 @@ export default function GovernmentEditCommission() {
                     );
                     setStartDate(newDate);
                   }
-                  setStartDatePickerVisable(false);
+                  setCurrentDatePickingMode(datePickingMode.none);
                 }}
               />
             </View>
@@ -367,7 +361,7 @@ export default function GovernmentEditCommission() {
               <Pressable
                 style={{ margin: 5 }}
                 onPress={() => {
-                  setStartTimePickerVisable(true);
+                  setCurrentDatePickingMode(datePickingMode.endDate);
                 }}
               >
                 <Text>Pick End Time</Text>
@@ -375,30 +369,30 @@ export default function GovernmentEditCommission() {
               <TimePickerModal
                 hours={new Date(endDate).getHours()}
                 minutes={new Date(endDate).getMinutes()}
-                visible={endTimePickerVisable}
-                onDismiss={() => setEndTimePickerVisable(false)}
+                visible={(currentDatePickingMode === datePickingMode.endTime)}
+                onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
                 onConfirm={e => {
                   const newDate = new Date(startDate);
                   newDate.setHours(e.hours);
                   newDate.setMinutes(e.minutes);
                   setEndDate(newDate);
-                  setEndTimePickerVisable(false);
+                  setCurrentDatePickingMode(datePickingMode.none);
                 }}
               />
               <Pressable
                 style={{ margin: 5 }}
                 onPress={() => {
-                  setCurrentDatePickingMode(datePickingMode.end);
+                  setCurrentDatePickingMode(datePickingMode.endDate);
                 }}
               >
                 <Text>Pick End Date</Text>
               </Pressable>
               <DatePickerModal
-                locale=""
+                locale="en"
                 mode="single"
                 label="Select Date"
-                visible={endDatePickerVisable}
-                onDismiss={() => setEndDatePickerVisable(false)}
+                visible={(currentDatePickingMode === datePickingMode.endDate)}
+                onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
                 date={new Date(endDate)}
                 onConfirm={e => {
                   console.log(e.date);
@@ -413,7 +407,7 @@ export default function GovernmentEditCommission() {
                     );
                     setEndDate(newDate);
                   }
-                  setEndDatePickerVisable(false);
+                  setCurrentDatePickingMode(datePickingMode.none);
                 }}
               />
             </View>
@@ -477,6 +471,7 @@ export default function GovernmentEditCommission() {
           width={width}
           height={height * 0.4}
           selectedTeamId={selectedTeamId}
+          selectedPostId={selectedPostId}
           setSelectedTeamId={setSelectedTeamId}
           selectedChannelId={selectedChannelId}
           setSelectedChannelId={setSelectedChannelId}
@@ -517,13 +512,7 @@ export default function GovernmentEditCommission() {
             }}
           >
             <Text>
-              {deleteCommissionResult === loadingStateEnum.notStarted
-                ? 'Delete Commission'
-                : deleteCommissionResult === loadingStateEnum.loading
-                ? 'Loading'
-                : deleteCommissionResult === loadingStateEnum.success
-                ? 'Deleted Commission'
-                : 'Failed to Delete Commission'}
+              {getTextState(deleteCommissionResult, {notStarted: 'Delete Commission', success: 'Deleted Commission', failed: 'Failed To Delete Commission'})}
             </Text>
           </Pressable>
         ) : null}
@@ -553,6 +542,7 @@ function PostSelectionContainer({
   height,
   selectedChannelId,
   selectedTeamId,
+  selectedPostId,
   setSelectedChannelId,
   setSelectedPostId,
   setSelectedTeamId,
@@ -560,6 +550,7 @@ function PostSelectionContainer({
   width: number;
   height: number;
   selectedTeamId: string;
+  selectedPostId: string;
   setSelectedTeamId: (item: string) => void;
   selectedChannelId: string;
   setSelectedChannelId: (item: string) => void;
@@ -601,6 +592,7 @@ function PostSelectionContainer({
           height={height}
           teamId={selectedTeamId}
           channelId={selectedChannelId}
+          selectedPostId={selectedPostId}
           onSelect={setSelectedPostId}
           onBack={() => {
             setSelectedPostId('');
@@ -768,6 +760,7 @@ function PostSelection({
   height,
   teamId,
   channelId,
+  selectedPostId,
   onSelect,
   onBack,
 }: {
@@ -775,6 +768,7 @@ function PostSelection({
   height: number;
   teamId: string;
   channelId: string;
+  selectedPostId: string;
   onSelect: (item: string) => void;
   onBack: () => void;
 }) {
@@ -821,20 +815,24 @@ function PostSelection({
               <Pressable onPress={() => onBack()}>
                 <Text>Back</Text>
               </Pressable>
-              {posts.map(post => (
-                <>
-                  {post.body !== '<systemEventMessage/>' ? (
-                    <Pressable
-                      key={`Post_${post.id}_${create_UUID()}`}
-                      onPress={() => {
-                        onSelect(post.id);
-                      }}
-                    >
-                      <WebViewCross html={post.body} width={width * 0.9} />
-                    </Pressable>
-                  ) : null}
-                </>
-              ))}
+              <FlatList 
+                data={posts}
+                renderItem={(post) => (
+                  <>
+                    {post.item.body !== '<systemEventMessage/>' ? (
+                      <Pressable
+                        key={`Post_${post.item.id}`}
+                        onPress={() => {
+                          onSelect(post.item.id);
+                        }}
+                        style={{padding: 5, margin: 5, backgroundColor: (selectedPostId === post.item.id) ? Colors.lightGray:Colors.white}}
+                      >
+                        <WebViewCross html={post.item.body} width={width * 0.9} />
+                      </Pressable>
+                    ) : null}
+                  </>
+                )}
+              />
             </ScrollView>
           ) : (
             <View style={{ width, height }}>

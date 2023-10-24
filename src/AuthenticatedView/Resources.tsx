@@ -22,8 +22,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
-import createUUID, { getTextState } from '../Functions/Ultility/createUUID';
-import callMsGraph from '../Functions/Ultility/microsoftAssets';
+import createUUID, { getTextState } from '../Functions/ultility/createUUID';
+import callMsGraph from '../Functions/ultility/microsoftAssets';
 import {
   convertResourceModeString,
   getResources,

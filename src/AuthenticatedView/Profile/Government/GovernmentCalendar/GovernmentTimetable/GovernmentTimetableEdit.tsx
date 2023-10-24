@@ -9,8 +9,8 @@ import {
 import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets';
-import create_UUID from '../../../../../Functions/Ultility/createUUID';
+import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
+import create_UUID from '../../../../../Functions/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import { RootState } from '../../../../../Redux/store';

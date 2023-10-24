@@ -1,7 +1,7 @@
 import store from '../../Redux/store';
 import { dataContentTypeOptions, loadingStateEnum } from '../../types';
-import getFileWithShareID from '../Ultility/getFileWithShareID';
-import callMsGraph from '../Ultility/microsoftAssets';
+import getFileWithShareID from '../ultility/getFileWithShareID';
+import callMsGraph from '../ultility/microsoftAssets';
 
 export default async function getSportsContent(
   team?: string,

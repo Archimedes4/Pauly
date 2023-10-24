@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-native';
 import store, { RootState } from '../../../../../Redux/store';
-import create_UUID from '../../../../../Functions/Ultility/createUUID';
+import create_UUID from '../../../../../Functions/ultility/createUUID';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import DressCodeBlock from './DressCodeBlock';
 import { createDressCode } from '../../../../../Functions/calendar/calendarFunctionsGraph';
 import getDressCode from '../../../../../Functions/homepage/getDressCode';
 import ProgressView from '../../../../../UI/ProgressView';
-import callMsGraph from '../../../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 
 export default function GovernmentDressCodeEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

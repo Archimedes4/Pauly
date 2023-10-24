@@ -14,8 +14,8 @@ import {
 import Login from '../src/login';
 import AuthenticatedViewMain from '../src/AuthenticatedView/AuthenticatedViewMain';
 import { clientId, scopes, tenantId } from '../src/PaulyConfig';
-import getPaulyLists from '../src/Functions/Ultility/getPaulyLists';
-import getUserProfile from '../src/Functions/Ultility/getUserProfile';
+import getPaulyLists from '../src/Functions/ultility/getPaulyLists';
+import getUserProfile from '../src/Functions/ultility/getUserProfile';
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer';
 import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer';
 import { authenticationApiTokenSlice } from '../src/Redux/reducers/authenticationApiToken';
@@ -32,7 +32,7 @@ const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: 'https://polite-plant-0871d590f.4.azurestaticapps.net/', // TODO change prod
+    redirectUri: window.location.href, // TODO change prod
   },
 });
 

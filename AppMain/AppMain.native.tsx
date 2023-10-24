@@ -17,8 +17,8 @@ import { authenticationRefreshTokenSlice } from '../src/Redux/reducers/authentic
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer';
 import store, { RootState } from '../src/Redux/store';
 import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin';
-import getPaulyLists from '../src/Functions/Ultility/getPaulyLists';
-import getUserProfile from '../src/Functions/Ultility/getUserProfile';
+import getPaulyLists from '../src/Functions/ultility/getPaulyLists';
+import getUserProfile from '../src/Functions/ultility/getUserProfile';
 
 if (Platform.OS === 'web') {
   WebBrowser.maybeCompleteAuthSession();

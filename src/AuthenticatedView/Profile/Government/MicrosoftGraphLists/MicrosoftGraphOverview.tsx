@@ -2,7 +2,7 @@ import { View, Text, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import PickerWrapper from '../../../../UI/Pickers/Picker';
 import { Colors, loadingStateEnum } from '../../../../types';
 import { RootState } from '../../../../Redux/store';

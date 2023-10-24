@@ -1,7 +1,7 @@
 import { orgWideGroupID, paulyDomain } from '../../PaulyConfig';
 import { loadingStateEnum } from '../../types';
-import create_UUID from '../Ultility/createUUID';
-import callMsGraph from '../Ultility/microsoftAssets';
+import create_UUID from '../ultility/createUUID';
+import callMsGraph from '../ultility/microsoftAssets';
 
 async function b64toBlob(
   b64Data: string,

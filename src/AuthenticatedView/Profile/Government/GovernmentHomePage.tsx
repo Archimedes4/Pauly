@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-native';
 import { useMsal } from '@azure/msal-react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../Functions/ultility/microsoftAssets';
 import MicrosoftFilePicker from '../../../UI/MicrosoftFilePicker';
 import store, { RootState } from '../../../Redux/store';
 import getCurrentPaulyData from '../../../Functions/homepage/getCurrentPaulyData';

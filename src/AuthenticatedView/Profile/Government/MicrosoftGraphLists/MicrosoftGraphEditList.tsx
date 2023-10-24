@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import { CopyIcon } from '../../../../UI/Icons/Icons';
 import { RootState } from '../../../../Redux/store';
 import { Colors } from '../../../../types';

@@ -1,5 +1,5 @@
 import store from '../Redux/store';
-import callMsGraph from './Ultility/microsoftAssets';
+import callMsGraph from './ultility/microsoftAssets';
 import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
 import {
   getEvent,

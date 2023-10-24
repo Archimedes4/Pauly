@@ -9,7 +9,7 @@ import {
 } from '../../../../Functions/initializePauly/initializePauly';
 import { RootState } from '../../../../Redux/store';
 import { addDataArray } from '../../../../Functions/initializePauly/initializePaulyData';
-import callMsGraph from '../../../../Functions/Ultility/microsoftAssets';
+import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '../../../../types';
 
 enum initStage {

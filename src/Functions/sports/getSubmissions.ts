@@ -4,7 +4,7 @@
 
 import store from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
-import callMsGraph from '../Ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssets';
 
 export default async function getSubmissions(): Promise<{
   result: loadingStateEnum;
