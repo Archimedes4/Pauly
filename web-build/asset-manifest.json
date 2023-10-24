@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.js": "/static/js/main.3eef3a08.js",
+    "static/js/960.74fba37c.js": "/static/js/960.74fba37c.js",
+    "static/media/MaterialCommunityIcons.ttf": "/static/media/MaterialCommunityIcons.5d42b4e60858731e7b65.ttf",
+    "static/media/BukhariScript.ttf": "/static/media/BukhariScript.7b5651144c5259518a6b.ttf",
+    "static/media/Hue.png": "/static/media/Hue.265caf0ede14cec3b88b.png",
+    "static/media/circularHue.png": "/static/media/circularHue.13db96e28dbf7598a5e7.png",
+    "static/media/Comfortaa-Regular.ttf": "/static/media/Comfortaa-Regular.6718cbec512d80eb9cbb.ttf",
+    "static/media/blackGradient.png": "/static/media/blackGradient.d2e7cb93fd7f9eb9e15d.png",
+    "static/media/blackRadial.png": "/static/media/blackRadial.f978faf41adc9b71540f.png",
+    "static/media/GochiHand-Regular.ttf": "/static/media/GochiHand-Regular.770a6639d2f06ea16078.ttf",
+    "static/media/PaulyLogo.png": "/static/media/PaulyLogo.8d99a7802a76d9dd22cf.png",
+    "favicon.ico": "/favicon.ico",
+    "static/media/Football.png": "/static/media/Football.43a673d10d9c3f986362.png",
+    "index.html": "/index.html",
+    "static/media/grid.png": "/static/media/grid.d62b1cf719990fe8ed21.png",
+    "favicon-32.png": "/favicon-32.png",
+    "manifest.json": "/manifest.json",
+    "favicon-16.png": "/favicon-16.png",
+    "serve.json": "/serve.json",
+    "main.3eef3a08.js.map": "/static/js/main.3eef3a08.js.map",
+    "960.74fba37c.js.map": "/static/js/960.74fba37c.js.map"
+  },
+  "entrypoints": [
+    "static/js/960.74fba37c.js",
+    "static/js/main.3eef3a08.js"
+  ]
+}
