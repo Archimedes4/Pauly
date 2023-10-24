@@ -25,13 +25,13 @@ import {
   setWantGovernment,
   validateGovernmentMode,
 } from '../src/Functions/handleGovernmentLogin';
-import store, { RootState } from '../src/Redux/store';
+import { RootState } from '../src/Redux/store';
 
 const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: 'polite-plant-0871d590f.4.azurestaticapps.net/auth', // TODO change prod
+    redirectUri: 'https://polite-plant-0871d590f.4.azurestaticapps.net/auth', // TODO change prod
   },
 });
 
