@@ -1,4 +1,4 @@
-import { orgWideGroupID } from '../../PaulyConfig';
+import { orgWideGroupID, paulyDomain } from '../../PaulyConfig';
 import { loadingStateEnum } from '../../types';
 import create_UUID from '../Ultility/createUUID';
 import callMsGraph from '../Ultility/microsoftAssets';
@@ -144,7 +144,7 @@ export async function claimCommissionPost(
   const bearer = `Bearer ${auth}`;
   try {
     const result = await fetch(
-      `http://localhost:7071/api/SubmitCommission?orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`,
+      `${paulyDomain}/api/SubmitCommission?orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`,
       {
         headers: {
           Authorization: bearer,

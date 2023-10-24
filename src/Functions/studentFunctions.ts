@@ -3,6 +3,7 @@ import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer';
 import store from '../Redux/store';
 import largeBatch from './Ultility/batchRequest';
 import callMsGraph from './Ultility/microsoftAssets';
+import { domainName } from '../PaulyConfig';
 
 function checkIfStudent(role: string): {
   result: boolean;
@@ -10,8 +11,8 @@ function checkIfStudent(role: string): {
 } {
   if (role.length >= 20) {
     const reversed = role.split('').reverse().join('');
-    const slice = reversed.slice(0, 15);
-    if (slice === 'ac.sredasurcog@') {
+    const slice = reversed.slice(0, domainName.length);
+    if (slice === domainName.split("").reverse().join("")) {
       const getMonth = new Date().getMonth();
       let schoolYear = new Date().getFullYear();
       if (schoolYear.toString().length >= 4) {
