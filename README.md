@@ -1,4 +1,4 @@
-# Pauly
+# [] Pauly
 Pauly is a hub for all things school-related.
 # Backend
 Pauly uses Microsoft graph and SharePoint lists as a database
@@ -18,11 +18,22 @@ Commissions are organized into documents that are named with their commission id
     3. Image
     4. Image and Location
     5. QR Code
+
 ### Notifications
+The notifcations page has a board, a message, insigts (used and trending) and tasks. The tasks are from microsoft graph using the todo api. The insights are from microsoft graph the.
+
+Refrences \
+TODO: https://learn.microsoft.com/en-us/graph/api/resources/todo-overview?view=graph-rest-1.0 \
+Insights (used, trending): https://learn.microsoft.com/en-us/graph/api/resources/officegraphinsights?view=graph-rest-1.0 \
+Board: https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format?view=graph-rest-1.0&tabs=http
+
+
 
 ### Resources
+The resource page takes teams posts and displays them. It has access to files and sections.
 
 ### Sports
+This is the sports page that shows sport highlights and has team rosters.
 
 ## Format
 ### Colors
