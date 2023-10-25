@@ -99,7 +99,7 @@ export default function Commissions() {
         bottom: Colors.white,
       }),
     );
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (siteId !== '') {
@@ -111,7 +111,7 @@ export default function Commissions() {
     BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }

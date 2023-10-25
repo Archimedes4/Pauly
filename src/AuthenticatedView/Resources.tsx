@@ -205,7 +205,7 @@ export default function Resources() {
         <ScrollView
           style={{
             height: isHoverPicker ? height * 0.75 : height * 0.8,
-            backgroundColor: '#ededed',
+            backgroundColor: Colors.lightGray,
           }}
         >
           <>

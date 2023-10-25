@@ -24,7 +24,7 @@ import BackButton from '../../UI/BackButton';
 import { addEventSlice } from '../../Redux/reducers/addEventReducer';
 import { monthDataSlice } from '../../Redux/reducers/monthDataReducer';
 import { getClasses } from '../../Functions/classesFunctions';
-import getEvents from '../../Functions/Calendar/getEvents';
+import getEvents from '../../Functions/calendar/getEvents';
 
 const monthNames = [
   'January',
@@ -72,7 +72,7 @@ export default function Calendar() {
     BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }

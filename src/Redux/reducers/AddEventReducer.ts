@@ -3,7 +3,6 @@ import {
   calendarMode,
   paulyEventType,
   recurringType,
-  semesters,
   loadingStateEnum,
 } from '../../types';
 

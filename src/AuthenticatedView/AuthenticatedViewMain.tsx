@@ -55,6 +55,7 @@ import GovernmentStudents from './Profile/Government/GovernmentStudents';
 import { Colors } from '../types';
 import { authenticationTokenSlice } from '../Redux/reducers/authenticationTokenReducer';
 import { tenantId } from '../PaulyConfig';
+import LoadingScreen from './LoadingScreen';
 
 export default function AuthenticatedView({
   dimensions,
@@ -218,95 +219,8 @@ export default function AuthenticatedView({
           </NativeRouter>
         </View>
       ) : (
-        <LoadingView setOveride={setOveride} width={width} />
+        <LoadingScreen setOveride={setOveride} width={width} />
       )}
     </>
   );
-}
-
-function LoadingView({
-  setOveride,
-  width,
-}: {
-  setOveride: (item: boolean) => void;
-  width: number;
-}) {
-  const isGovernmentMode = useSelector(
-    (state: RootState) => state.isGovernmentMode,
-  );
-  const { height } = useSelector((state: RootState) => state.dimentions);
-  const insets = useSafeAreaInsets();
-  const [isShowingLogout, setIsShowingLogout] = useState<boolean>(false);
-
-  const discovery = useAutoDiscovery(
-    `https://login.microsoftonline.com/${tenantId}/v2.0`,
-  );
-  const { instance } = useMsal();
-
-  function signOut() {
-    if (Platform.OS === 'web') {
-      const account = instance.getActiveAccount();
-      if (account !== null) {
-        signOutWeb(instance, account);
-      } else {
-        signOutWeb(instance);
-      }
-    } else if (discovery !== null) {
-      signOutNative(discovery);
-    }
-  }
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsShowingLogout(true);
-    }, 10000);
-  }, []);
-
-  return (
-    <View
-      style={{
-        width,
-        top: -insets.top,
-        height,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <ProgressView width={14} height={14} />
-      <Text style={{ color: Colors.white }}>Loading</Text>
-      {isGovernmentMode ? (
-        <Pressable
-          onPress={() => {
-            setOveride(true);
-          }}
-          style={{ margin: 5 }}
-        >
-          <Text style={{ color: Colors.white }}>Overide</Text>
-        </Pressable>
-      ) : null}
-      {isShowingLogout ? (
-        <Pressable
-          onPress={() => {
-            signOut();
-          }}
-          style={{ margin: 5 }}
-        >
-          <Text style={{ color: Colors.white }}>Logout</Text>
-        </Pressable>
-      ) : null}
-    </View>
-  );
-}
-
-function signOutNative(discovery: DiscoveryDocument) {
-  revokeAsync({ token: store.getState().authenticationToken }, discovery);
-  store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
-}
-
-function signOutWeb(instance: IPublicClientApplication, account?: AccountInfo) {
-  store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
-  instance.logoutPopup({
-    account,
-  });
 }
