@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-native';
 import { RootState } from '../../../../Redux/store';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../Functions/ultility/createUUID';
 import { Colors, loadingStateEnum, semesters } from '../../../../types';
 import ProgressView from '../../../../UI/ProgressView';
 
@@ -73,7 +73,7 @@ export default function GovernmentClasses() {
                   data={classes}
                   renderItem={classMap => (
                     <Pressable
-                      key={`Class_${classMap.item.id}_${create_UUID()}`}
+                      key={`Class_${classMap.item.id}_${createUUID()}`}
                       onPress={() => {
                         navigate(
                           `/profile/government/classes/edit/${classMap.item.id}`,

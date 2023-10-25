@@ -6,7 +6,7 @@ import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
 import { WarningIcon } from '../../../../UI/Icons/Icons';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../Functions/ultility/createUUID';
 
 export default function GovermentRoomsCreate() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -24,7 +24,7 @@ export default function GovermentRoomsCreate() {
         createRoomState === loadingStateEnum.success)
     ) {
       setCreateRoomState(loadingStateEnum.loading);
-      const id = create_UUID();
+      const id = createUUID();
       const items = {
         fields: {
           Title: id,

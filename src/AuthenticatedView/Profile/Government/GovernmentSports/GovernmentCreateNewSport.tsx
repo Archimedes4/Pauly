@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-native';
 import { RootState } from '../../../../Redux/store';
-import create_UUID from '../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../Functions/ultility/createUUID';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '../../../../types';
 import SVGXml from '../../../../UI/SVGXml/SVGXml';
@@ -22,7 +22,7 @@ export default function GovernmentCreateNewSport() {
 
   async function createSport() {
     setCreateSportLoadingState(loadingStateEnum.loading);
-    const newSportID: string = create_UUID();
+    const newSportID: string = createUUID();
     const data = {
       fields: {
         Title: '',

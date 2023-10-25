@@ -18,7 +18,7 @@ import ColorPicker, {
   InputWidget,
 } from 'reanimated-color-picker';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
-import create_UUID from '../../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../../Functions/ultility/createUUID';
 import store, { RootState } from '../../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import { CloseIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
@@ -68,7 +68,7 @@ export default function GovernmentSchedule() {
       const data = {
         fields: {
           Title: scheduleProperName,
-          scheduleId: create_UUID(),
+          scheduleId: createUUID(),
           scheduleProperName,
           scheduleDescriptiveName,
           scheduleColor: color,
@@ -245,7 +245,7 @@ export default function GovernmentSchedule() {
                     startMinute: new Date().getMinutes(),
                     endHour: new Date().getHours(),
                     endMinute: new Date().getMinutes(),
-                    id: create_UUID(),
+                    id: createUUID(),
                   },
                 ]);
               }}
@@ -524,7 +524,7 @@ function PeriodBlock({
   }
   return (
     <View
-      key={`Period_${period.id}_${create_UUID()}`}
+      key={`Period_${period.id}_${createUUID()}`}
       style={{
         margin: 10,
         backgroundColor: Colors.white,

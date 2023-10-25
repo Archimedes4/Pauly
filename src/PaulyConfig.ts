@@ -13,7 +13,8 @@ export const tenantId: string = '551df04d-543a-4d61-955e-e4294c4cf950';
 export const clientId: string = '08624b03-1aa6-40c4-8fb3-149c39026dff';
 
 export const domainName: string = '@8td1tk.onmicrosoft.com';
-export const paulyDomain: string = 'https://polite-plant-0871d590f.4.azurestaticapps.net'
+export const paulyDomain: string =
+  'https://polite-plant-0871d590f.4.azurestaticapps.net';
 
 // DO NOT CHANGE SCOPES
 // See README.md for more imformation about the scopes.

@@ -126,10 +126,8 @@ export default function Students() {
                 key={`Students_${createUUID()}`}
                 data={users}
                 renderItem={user => <StudentBlock user={user} />}
-                keyExtractor={(item) => item.id}
-                numColumns={
-                  getNumberOfBlocks(width)
-                }
+                keyExtractor={item => item.id}
+                numColumns={getNumberOfBlocks(width)}
                 onEndReached={() => {
                   if (nextLink !== undefined) {
                     getUsers(nextLink);
@@ -164,9 +162,7 @@ export default function Students() {
 }
 
 function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
-  const { width, height } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
   async function getImage() {
     const newUser: any = {};
     Object.assign(newUser, user.item);
@@ -238,7 +234,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
       style={{
         height: 175,
         width: 150,
-        marginTop: (user.index <= getNumberOfBlocks(width)) ? height * 0.04:25,
+        marginTop: user.index <= getNumberOfBlocks(width) ? height * 0.04 : 25,
         marginBottom: 25,
         marginLeft: calculateMarginEnds(width, 'L'),
         marginRight: calculateMarginEnds(width, 'R'),

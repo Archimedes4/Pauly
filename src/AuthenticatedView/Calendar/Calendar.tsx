@@ -186,14 +186,14 @@ function MonthViewMain({ width, height }: { width: number; height: number }) {
 }
 
 function MonthView({ width, height }: { width: number; height: number }) {
-  const daysInWeek: {DOW: string, id: string}[] = [
-    {DOW: 'Sun', id: createUUID()},
-    {DOW: 'Mon', id: createUUID()},
-    {DOW: 'Tue', id: createUUID()},
-    {DOW: 'Wen', id: createUUID()},
-    {DOW: 'Thu', id: createUUID()},
-    {DOW: 'Fri', id: createUUID()},
-    {DOW: 'Sat', id: createUUID()},
+  const daysInWeek: { DOW: string; id: string }[] = [
+    { DOW: 'Sun', id: createUUID() },
+    { DOW: 'Mon', id: createUUID() },
+    { DOW: 'Tue', id: createUUID() },
+    { DOW: 'Wen', id: createUUID() },
+    { DOW: 'Thu', id: createUUID() },
+    { DOW: 'Fri', id: createUUID() },
+    { DOW: 'Sat', id: createUUID() },
   ];
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
   const selectedDate: string = useSelector(
@@ -295,7 +295,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
           justifyContent: 'center',
           alignContent: 'center',
         }}
-        key='Calendar_Header'
+        key="Calendar_Header"
       >
         <View style={{ flexDirection: 'row' }}>
           <View
@@ -387,7 +387,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
           </Pressable>
         </View>
       </View>
-      <View style={{ width }} key='Calendar_Body'>
+      <View style={{ width }} key="Calendar_Body">
         <View style={{ flexDirection: 'row' }}>
           {daysInWeek.map(DOW => (
             <View
@@ -404,51 +404,53 @@ function MonthView({ width, height }: { width: number; height: number }) {
             </View>
           ))}
         </View>
-        {['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven'].map((valueRow, index) => (
-          <View key={`Row_${valueRow}`} style={{ flexDirection: 'row' }}>
-            {monthData.map((value, id) => (
-              <View key={value.id}>
-                {id >= index * 7 && id <= index * 7 + 6 ? (
-                  <>
-                    {value.showing ? (
-                      <Pressable
-                        onPress={() => {
-                          const d = new Date();
-                          d.setFullYear(
-                            new Date(selectedDate).getFullYear(),
-                            new Date(selectedDate).getMonth(),
-                            value.dayData,
-                          );
-                          dispatch(
-                            selectedDateSlice.actions.setCurrentEventsLastCalled(
-                              d.toISOString(),
-                            ),
-                          );
-                        }}
-                        key={`CalendarButton_${value.id}`}
-                      >
+        {['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven'].map(
+          (valueRow, index) => (
+            <View key={`Row_${valueRow}`} style={{ flexDirection: 'row' }}>
+              {monthData.map((value, id) => (
+                <View key={value.id}>
+                  {id >= index * 7 && id <= index * 7 + 6 ? (
+                    <>
+                      {value.showing ? (
+                        <Pressable
+                          onPress={() => {
+                            const d = new Date();
+                            d.setFullYear(
+                              new Date(selectedDate).getFullYear(),
+                              new Date(selectedDate).getMonth(),
+                              value.dayData,
+                            );
+                            dispatch(
+                              selectedDateSlice.actions.setCurrentEventsLastCalled(
+                                d.toISOString(),
+                              ),
+                            );
+                          }}
+                          key={`CalendarButton_${value.id}`}
+                        >
+                          <CalendarCardView
+                            width={width / 7}
+                            height={height / 8}
+                            value={value}
+                            calendarWidth={width}
+                          />
+                        </Pressable>
+                      ) : (
                         <CalendarCardView
                           width={width / 7}
                           height={height / 8}
                           value={value}
                           calendarWidth={width}
+                          key={`CalendarButton_${value.id}`}
                         />
-                      </Pressable>
-                    ) : (
-                      <CalendarCardView
-                        width={width / 7}
-                        height={height / 8}
-                        value={value}
-                        calendarWidth={width}
-                        key={`CalendarButton_${value.id}`}
-                      />
-                    )}
-                  </>
-                ) : null}
-              </View>
-            ))}
-          </View>
-        ))}
+                      )}
+                    </>
+                  ) : null}
+                </View>
+              ))}
+            </View>
+          ),
+        )}
       </View>
     </>
   );
@@ -457,25 +459,27 @@ function MonthView({ width, height }: { width: number; height: number }) {
 function getBackgroundColor(selectedDate: string, dayData: number): string {
   if (dayData === new Date(selectedDate).getDate()) {
     return Colors.lightGray;
-  } else if (dayData === new Date().getDate() && 
+  }
+  if (
+    dayData === new Date().getDate() &&
     new Date(selectedDate).getMonth() === new Date().getMonth() &&
-    new Date(selectedDate).getFullYear() ===new Date().getFullYear()
+    new Date(selectedDate).getFullYear() === new Date().getFullYear()
   ) {
     return Colors.darkGray;
-  } else {
-    return Colors.white;
-  };
-};
+  }
+  return Colors.white;
+}
 
 function getTextBackgroundColor(selectedDate: string, dayData: number): string {
-  if (dayData === new Date().getDate() &&
+  if (
+    dayData === new Date().getDate() &&
     new Date(selectedDate).getMonth() === new Date().getMonth() &&
     new Date(selectedDate).getFullYear() === new Date().getFullYear() &&
-    new Date(selectedDate).getDate() !== dayData) {
-    return Colors.white
-  } else {
-    return Colors.black
+    new Date(selectedDate).getDate() !== dayData
+  ) {
+    return Colors.white;
   }
+  return Colors.black;
 }
 
 function CalendarCardView({
@@ -504,7 +508,10 @@ function CalendarCardView({
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderRadius: height / 2,
-                backgroundColor: getBackgroundColor(selectedDate, value.dayData),
+                backgroundColor: getBackgroundColor(
+                  selectedDate,
+                  value.dayData,
+                ),
               }}
             >
               <Text

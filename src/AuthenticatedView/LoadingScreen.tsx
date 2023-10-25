@@ -1,13 +1,17 @@
-import { View, Text, Platform, Pressable } from 'react-native'
+import { View, Text, Platform, Pressable } from 'react-native';
 import * as Network from 'expo-network';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import store, { RootState } from '../Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { DiscoveryDocument, revokeAsync, useAutoDiscovery } from 'expo-auth-session';
+import {
+  DiscoveryDocument,
+  revokeAsync,
+  useAutoDiscovery,
+} from 'expo-auth-session';
 import { useMsal } from '@azure/msal-react';
-import { authenticationTokenSlice } from '../Redux/reducers/authenticationTokenReducer';
 import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
+import { authenticationTokenSlice } from '../Redux/reducers/authenticationTokenReducer';
+import store, { RootState } from '../Redux/store';
 import ProgressView from '../UI/ProgressView';
 import { Colors } from '../types';
 import { tenantId } from '../PaulyConfig';
@@ -39,7 +43,7 @@ export default function LoadingView({
   const insets = useSafeAreaInsets();
   const [isShowingLogout, setIsShowingLogout] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(true);
-  
+
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
@@ -61,20 +65,21 @@ export default function LoadingView({
   async function checkIfConnected() {
     const result = await Network.getNetworkStateAsync();
     if (result.isInternetReachable) {
-      //Internet reachable
-      setIsConnected(true)
+      // Internet reachable
+      setIsConnected(true);
     } else {
-      setIsConnected(false)
+      setIsConnected(false);
     }
   }
 
   useEffect(() => {
-    const intervalId = setInterval(() => {  //assign interval to a variable to clear it.
-      checkIfConnected()
-    }, 5000)//5s
-  
-    return () => clearInterval(intervalId); 
-  }, [])
+    const intervalId = setInterval(() => {
+      // assign interval to a variable to clear it.
+      checkIfConnected();
+    }, 5000); // 5s
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -93,7 +98,7 @@ export default function LoadingView({
         justifyContent: 'center',
       }}
     >
-      { isConnected ? 
+      {isConnected ? (
         <>
           <ProgressView width={14} height={14} />
           <Text style={{ color: Colors.white }}>Loading</Text>
@@ -117,8 +122,10 @@ export default function LoadingView({
               <Text style={{ color: Colors.white }}>Logout</Text>
             </Pressable>
           ) : null}
-        </>:<OfflineIcon width={50} height={50}/>
-      }
+        </>
+      ) : (
+        <OfflineIcon width={50} height={50} />
+      )}
     </View>
   );
 }

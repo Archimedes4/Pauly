@@ -34,7 +34,9 @@ import {
 import getCommission from '../../../../Functions/commissions/getCommission';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
-import create_UUID, { getTextState } from '../../../../Functions/ultility/createUUID';
+import createUUID, {
+  getTextState,
+} from '../../../../Functions/ultility/createUUID';
 import getFileWithShareID from '../../../../Functions/ultility/getFileWithShareID';
 import updateCommission from '../../../../Functions/commissions/updateCommission';
 
@@ -43,7 +45,7 @@ enum datePickingMode {
   startTime,
   endTime,
   startDate,
-  endDate
+  endDate,
 }
 
 export default function GovernmentEditCommission() {
@@ -167,7 +169,7 @@ export default function GovernmentEditCommission() {
         selectedChannelId,
         startDate,
         endDate,
-        id !== 'create' ? id : create_UUID(),
+        id !== 'create' ? id : createUUID(),
         proximity,
         selectedPositionIn,
         commissionItemId,
@@ -308,8 +310,10 @@ export default function GovernmentEditCommission() {
               <TimePickerModal
                 hours={new Date(startDate).getHours()}
                 minutes={new Date(startDate).getMinutes()}
-                visible={(currentDatePickingMode === datePickingMode.startDate)}
-                onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
+                visible={currentDatePickingMode === datePickingMode.startDate}
+                onDismiss={() =>
+                  setCurrentDatePickingMode(datePickingMode.none)
+                }
                 onConfirm={e => {
                   const newDate = new Date(startDate);
                   newDate.setHours(e.hours);
@@ -330,8 +334,10 @@ export default function GovernmentEditCommission() {
                 locale="en"
                 mode="single"
                 label="Select Date"
-                visible={(currentDatePickingMode === datePickingMode.startDate)}
-                onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
+                visible={currentDatePickingMode === datePickingMode.startDate}
+                onDismiss={() =>
+                  setCurrentDatePickingMode(datePickingMode.none)
+                }
                 date={new Date(endDate)}
                 onConfirm={e => {
                   if (e.date !== undefined) {
@@ -369,8 +375,10 @@ export default function GovernmentEditCommission() {
               <TimePickerModal
                 hours={new Date(endDate).getHours()}
                 minutes={new Date(endDate).getMinutes()}
-                visible={(currentDatePickingMode === datePickingMode.endTime)}
-                onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
+                visible={currentDatePickingMode === datePickingMode.endTime}
+                onDismiss={() =>
+                  setCurrentDatePickingMode(datePickingMode.none)
+                }
                 onConfirm={e => {
                   const newDate = new Date(startDate);
                   newDate.setHours(e.hours);
@@ -391,8 +399,10 @@ export default function GovernmentEditCommission() {
                 locale="en"
                 mode="single"
                 label="Select Date"
-                visible={(currentDatePickingMode === datePickingMode.endDate)}
-                onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
+                visible={currentDatePickingMode === datePickingMode.endDate}
+                onDismiss={() =>
+                  setCurrentDatePickingMode(datePickingMode.none)
+                }
                 date={new Date(endDate)}
                 onConfirm={e => {
                   console.log(e.date);
@@ -512,7 +522,11 @@ export default function GovernmentEditCommission() {
             }}
           >
             <Text>
-              {getTextState(deleteCommissionResult, {notStarted: 'Delete Commission', success: 'Deleted Commission', failed: 'Failed To Delete Commission'})}
+              {getTextState(deleteCommissionResult, {
+                notStarted: 'Delete Commission',
+                success: 'Deleted Commission',
+                failed: 'Failed To Delete Commission',
+              })}
             </Text>
           </Pressable>
         ) : null}
@@ -815,9 +829,9 @@ function PostSelection({
               <Pressable onPress={() => onBack()}>
                 <Text>Back</Text>
               </Pressable>
-              <FlatList 
+              <FlatList
                 data={posts}
-                renderItem={(post) => (
+                renderItem={post => (
                   <>
                     {post.item.body !== '<systemEventMessage/>' ? (
                       <Pressable
@@ -825,9 +839,19 @@ function PostSelection({
                         onPress={() => {
                           onSelect(post.item.id);
                         }}
-                        style={{padding: 5, margin: 5, backgroundColor: (selectedPostId === post.item.id) ? Colors.lightGray:Colors.white}}
+                        style={{
+                          padding: 5,
+                          margin: 5,
+                          backgroundColor:
+                            selectedPostId === post.item.id
+                              ? Colors.lightGray
+                              : Colors.white,
+                        }}
                       >
-                        <WebViewCross html={post.item.body} width={width * 0.9} />
+                        <WebViewCross
+                          html={post.item.body}
+                          width={width * 0.9}
+                        />
                       </Pressable>
                     ) : null}
                   </>

@@ -10,7 +10,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
-import create_UUID from '../../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../../Functions/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import { RootState } from '../../../../../Redux/store';
@@ -74,7 +74,7 @@ export default function GovernmentTimetableEdit() {
         fields: {
           Title: timetableName,
           timetableName,
-          timetableId: create_UUID(),
+          timetableId: createUUID(),
           timetableDataSchedules: JSON.stringify(scheduals),
           timetableDataDays: JSON.stringify(schoolDays),
           timetableDefaultScheduleId: selectedDefaultSchedule.id,
@@ -238,7 +238,7 @@ function SchoolDays({
             {
               name: '',
               shorthand: '',
-              id: create_UUID(),
+              id: createUUID(),
               order:
                 schoolDays.length === 0
                   ? 0
@@ -428,7 +428,7 @@ function ScheduleBlock({
               <>
                 {selectedSchedules.length <= 0 ? (
                   <Pressable
-                    key={`Timetable_${item.id}_${create_UUID()}`}
+                    key={`Timetable_${item.id}_${createUUID()}`}
                     onPress={() => {
                       setSelectedSchedules([...selectedSchedules, item]);
                       const newLoadedSchedules = loadedSchedules.filter(e => {
@@ -447,7 +447,7 @@ function ScheduleBlock({
                     {selectedSchedules[0].periods.length ===
                     item.periods.length ? (
                       <Pressable
-                        key={`Timetable_${item.id}_${create_UUID()}`}
+                        key={`Timetable_${item.id}_${createUUID()}`}
                         onPress={() => {
                           setSelectedSchedules([...selectedSchedules, item]);
                           const newLoadedSchedules = loadedSchedules.filter(

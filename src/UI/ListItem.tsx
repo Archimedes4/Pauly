@@ -1,7 +1,7 @@
 import { View, Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
 import { useNavigate } from 'react-router-native';
-import create_UUID from '../Functions/ultility/createUUID';
+import createUUID from '../Functions/ultility/createUUID';
 import { Colors } from '../types';
 
 export default function ListItem({
@@ -30,7 +30,7 @@ export default function ListItem({
           onPress();
         }
       }}
-      key={create_UUID()}
+      key={createUUID()}
       style={[
         {
           shadowColor: Colors.black,

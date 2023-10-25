@@ -445,14 +445,15 @@ export async function getSchoolDays(date: Date): Promise<{
       scheudleIndex < batchRequestResultSchedule.data.length;
       scheudleIndex += 1
     ) {
-      const resultScheduleData = batchRequestResultSchedule.data[scheudleIndex].body
-      if (batchRequestResultSchedule.data[scheudleIndex].status === 200 && resultScheduleData !== undefined) {
+      const resultScheduleData =
+        batchRequestResultSchedule.data[scheudleIndex].body;
+      if (
+        batchRequestResultSchedule.data[scheudleIndex].status === 200 &&
+        resultScheduleData !== undefined
+      ) {
         // TO DO fix status code
-        if (
-          resultScheduleData.value.length === 1
-        ) {
-          const scheduleResponseData =
-            resultScheduleData.value[0].fields;
+        if (resultScheduleData.value.length === 1) {
+          const scheduleResponseData = resultScheduleData.value[0].fields;
           try {
             schedules.set(scheduleResponseData.scheduleId, {
               properName: scheduleResponseData.scheduleProperName,
@@ -716,11 +717,13 @@ async function getTimetablesFromSchoolYears(
     timetableIndex < batchRequestResultTimetable.data.length;
     timetableIndex += 1
   ) {
-    const resultTimetableData = batchRequestResultTimetable.data[timetableIndex].body
-    if (batchRequestResultTimetable.data[timetableIndex].status === 200 && resultTimetableData !== undefined) {
-      if (
-        resultTimetableData.value.length === 1
-      ) {
+    const resultTimetableData =
+      batchRequestResultTimetable.data[timetableIndex].body;
+    if (
+      batchRequestResultTimetable.data[timetableIndex].status === 200 &&
+      resultTimetableData !== undefined
+    ) {
+      if (resultTimetableData.value.length === 1) {
         const timetableData = resultTimetableData.value[0].fields;
         const dressCode = dressCodes.get(timetableData.timetableDressCodeId);
         const timetableSchedules: scheduleType[] = [];

@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { convertYearToSchoolYear } from '../../../../Functions/calendar/calendarFunctions';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
-import create_UUID from '../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../Functions/ultility/createUUID';
 import {
   Colors,
   dataContentTypeOptions,
@@ -100,7 +100,7 @@ export default function GovernmentCreateNewTeam() {
         setCreateTeamLoadingState(loadingStateEnum.failed);
       }
     } else {
-      const newTeamId = create_UUID();
+      const newTeamId = createUUID();
       let data: object = {
         fields: {
           Title: '',
@@ -371,7 +371,7 @@ export default function GovernmentCreateNewTeam() {
                   <>
                     {team.item.id !== selectedMicrosoftTeam?.id ? (
                       <Pressable
-                        key={`Team_${team.item.id}_${create_UUID()}`}
+                        key={`Team_${team.item.id}_${createUUID()}`}
                         onPress={() => {
                           setSelectedMicrosoftTeam(team.item);
                         }}
@@ -753,7 +753,7 @@ function RosterBlockItem({
 
   return (
     <View
-      key={`Member_${member.item.id}_${create_UUID()}`}
+      key={`Member_${member.item.id}_${createUUID()}`}
       style={{ margin: 5 }}
     >
       <View>

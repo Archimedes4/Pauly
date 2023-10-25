@@ -12,7 +12,7 @@ function checkIfStudent(role: string): {
   if (role.length >= 20) {
     const reversed = role.split('').reverse().join('');
     const slice = reversed.slice(0, domainName.length);
-    if (slice === domainName.split("").reverse().join("")) {
+    if (slice === domainName.split('').reverse().join('')) {
       const getMonth = new Date().getMonth();
       let schoolYear = new Date().getFullYear();
       if (schoolYear.toString().length >= 4) {
@@ -356,7 +356,9 @@ export async function removeStudentSelection(
   return { result: loadingStateEnum.failed };
 }
 
-//This is the number of blocks in a row in the student page.
+// This is the number of blocks in a row in the student page.
 export function getNumberOfBlocks(width: number) {
-  return Math.floor(width / 190) !== 0? Math.floor(width % 190 >= 0.75 ? width / 190 : (width + 190) / 190):1
+  return Math.floor(width / 190) !== 0
+    ? Math.floor(width % 190 >= 0.75 ? width / 190 : (width + 190) / 190)
+    : 1;
 }

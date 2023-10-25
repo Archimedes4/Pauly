@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import create_UUID from '../../Functions/ultility/createUUID';
+import createUUID from '../../Functions/ultility/createUUID';
 import {
   getGraphEvents,
   getTimetable,
@@ -257,7 +257,7 @@ function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
               <View>
                 {currentEventsSchoolYear.map(event => (
                   <Pressable
-                    key={`School_Year_${create_UUID()}`}
+                    key={`School_Year_${createUUID()}`}
                     onPress={() => {
                       dispatch(
                         addEventSlice.actions.setSelectedSchoolYear(event),

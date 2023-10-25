@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import getCommissions from '../../../../Functions/commissions/getCommissions';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
-import create_UUID from '../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../Functions/ultility/createUUID';
 import { RootState } from '../../../../Redux/store';
 import {
   Colors,
@@ -67,7 +67,7 @@ export default function GovernmentCommissions() {
                   <CommissionBlock
                     key={`Commission_${
                       commission.commissionId
-                    }_${create_UUID()}`}
+                    }_${createUUID()}`}
                     commission={commission}
                   />
                 ))}
@@ -125,7 +125,7 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
       onPress={() =>
         navigate(`/profile/government/commissions/${commission.commissionId}`)
       }
-      key={`Commission_${commission.commissionId}_${create_UUID()}`}
+      key={`Commission_${commission.commissionId}_${createUUID()}`}
       style={{
         margin: 10,
         borderRadius: 15,
@@ -140,7 +140,7 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
       </View>
       {unclaimedCount !== '0' ? (
         <View
-          key={create_UUID()}
+          key={createUUID()}
           style={{
             width: 20,
             height: 20,
@@ -159,7 +159,7 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
       ) : null}
       {unclaimedState === loadingStateEnum.loading ? (
         <View
-          key={create_UUID()}
+          key={createUUID()}
           style={{
             width: 20,
             height: 20,
@@ -178,7 +178,7 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
       ) : null}
       {unclaimedState === loadingStateEnum.failed ? (
         <View
-          key={create_UUID()}
+          key={createUUID()}
           style={{
             width: 20,
             height: 20,

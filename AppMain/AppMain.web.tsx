@@ -1,10 +1,7 @@
 import { SafeAreaView, ScaledSize } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  EventType,
-  PublicClientApplication,
-} from '@azure/msal-browser';
+import { EventType, PublicClientApplication } from '@azure/msal-browser';
 import {
   AuthenticatedTemplate,
   MsalProvider,
@@ -27,7 +24,7 @@ import {
 } from '../src/Functions/handleGovernmentLogin';
 import { RootState } from '../src/Redux/store';
 
-//This is for the microsoft authentication.
+// This is for the microsoft authentication.
 const pca = new PublicClientApplication({
   auth: {
     clientId,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import DayView from './DayView';
-import create_UUID from '../../Functions/ultility/createUUID';
+import createUUID from '../../Functions/ultility/createUUID';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
 import { Colors } from '../../types';
@@ -74,7 +74,7 @@ export default function Week({
                       ),
                     );
                   }}
-                  key={`${day.getDay()}_${create_UUID()}`}
+                  key={`${day.getDay()}_${createUUID()}`}
                   style={{
                     width: width * 0.08888888888888889,
                     height: width * 0.08888888888888889,

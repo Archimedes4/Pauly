@@ -1,6 +1,6 @@
 import { orgWideGroupID, paulyDomain } from '../../PaulyConfig';
 import { loadingStateEnum } from '../../types';
-import create_UUID from '../ultility/createUUID';
+import createUUID from '../ultility/createUUID';
 import callMsGraph from '../ultility/microsoftAssets';
 
 async function b64toBlob(
@@ -33,7 +33,7 @@ export async function addImage(
       );
       if (rootIdResult.ok) {
         const rootIdData = await rootIdResult.json();
-        const imageUUID = create_UUID();
+        const imageUUID = createUUID();
         const resumableSessionData = {
           item: {
             '@microsoft.graph.conflictBehavior': 'rename',

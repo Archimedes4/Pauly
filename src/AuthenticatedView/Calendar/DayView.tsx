@@ -15,7 +15,7 @@ import {
   isDateToday,
 } from '../../Functions/calendar/calendarFunctions';
 import { RootState } from '../../Redux/store';
-import create_UUID from '../../Functions/ultility/createUUID';
+import createUUID from '../../Functions/ultility/createUUID';
 import { Colors, loadingStateEnum } from '../../types';
 import { getClassEventsFromDay } from '../../Functions/classesFunctions';
 
@@ -147,7 +147,7 @@ export default function DayView({
           <>
             {hoursText.map(value => (
               <View
-                key={`${value}_${create_UUID()}`}
+                key={`${value}_${createUUID()}`}
                 style={{ flexDirection: 'row', height: hourLength }}
               >
                 {calculateIfShowing(value, new Date(selectedDate)) ? (
@@ -329,7 +329,7 @@ function EventBlock({
 
   return (
     <View
-      key={`Event_${create_UUID()}`}
+      key={`Event_${createUUID()}`}
       style={{
         width: width * 0.9,
         height: EventHeight,

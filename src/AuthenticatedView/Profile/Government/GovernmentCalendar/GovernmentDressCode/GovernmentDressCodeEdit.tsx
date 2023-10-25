@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-native';
 import store, { RootState } from '../../../../../Redux/store';
-import create_UUID from '../../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../../Functions/ultility/createUUID';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import DressCodeBlock from './DressCodeBlock';
 import { createDressCode } from '../../../../../Functions/calendar/calendarFunctionsGraph';
@@ -15,7 +15,7 @@ export default function GovernmentDressCodeEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [dressCodeName, setDressCodeName] = useState<string>('');
   const [dressCodeData, setDressCodeData] = useState<dressCodeDataType[]>([
-    { name: '', description: '', id: create_UUID() },
+    { name: '', description: '', id: createUUID() },
   ]);
   const [selectedDressCodeId, setSelectedDressCodeId] = useState<string>('');
   const [dressCodeListId, setDressCodeListId] = useState<string>('');
@@ -119,7 +119,7 @@ export default function GovernmentDressCodeEdit() {
             onPress={() => {
               setDressCodeData([
                 ...dressCodeData,
-                { name: '', description: '', id: create_UUID() },
+                { name: '', description: '', id: createUUID() },
               ]);
             }}
           >

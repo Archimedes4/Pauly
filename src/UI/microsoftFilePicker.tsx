@@ -10,7 +10,7 @@ import {
 import Picker from './Pickers/Picker';
 import callMsGraph from '../Functions/ultility/microsoftAssets';
 import MimeTypeIcon from './Icons/MimeTypeIcon';
-import create_UUID from '../Functions/ultility/createUUID';
+import createUUID from '../Functions/ultility/createUUID';
 import {
   getUserMicrosoftFiles,
   getUserTeams,
@@ -293,7 +293,7 @@ function PersonalBlock({
                         onSelectedFile(file.item);
                       }
                     }}
-                    key={`Users_${file.item.id}_${create_UUID()}`}
+                    key={`Users_${file.item.id}_${createUUID()}`}
                   >
                     <View style={{ flexDirection: 'row', margin: 5 }}>
                       <MimeTypeIcon

@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useNavigate } from 'react-router-native';
-import create_UUID from '../../../../Functions/ultility/createUUID';
+import createUUID from '../../../../Functions/ultility/createUUID';
 import getSubmissions from '../../../../Functions/sports/getSubmissions';
 import { loadingStateEnum } from '../../../../types';
 import ProgressView from '../../../../UI/ProgressView';
@@ -67,7 +67,7 @@ export default function GovernmentHandleFileSubmissions({
                   <Pressable
                     key={`Submission_${
                       item.item.submissionId
-                    }_${create_UUID()}`}
+                    }_${createUUID()}`}
                     onPress={() =>
                       navigate(
                         `/profile/government/sports/post/review/${item.item.submissionId}`,
