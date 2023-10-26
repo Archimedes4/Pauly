@@ -313,14 +313,15 @@ function StudentItem({ e }: { e: ListRenderItemInfo<schoolUserType> }) {
     filePickingModeEnum.notStarted,
   );
   return (
-    <View style={{ flexDirection: 'row' }}>
+    <View style={{ flexDirection: 'row', margin: 5 }}>
       <Text>{e.item.name}</Text>
       <Pressable
         onPress={() => {
           setFilePickingMode(filePickingModeEnum.select);
         }}
+        style={{marginLeft: 2}}
       >
-        <Text>Choose File</Text>
+        <Text style={{margin: 2}}>Choose File</Text>
       </Pressable>
       <Modal
         visible={filePickingMode !== filePickingModeEnum.notStarted}
