@@ -1,6 +1,6 @@
 import { View, Text, Pressable, TextInput, Button, Switch } from 'react-native';
-import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-native';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '../../../Functions/ultility/microsoftAssets';
 import MicrosoftFilePicker from '../../../UI/MicrosoftFilePicker';
@@ -13,6 +13,7 @@ export default function GovernmentHomePage() {
     (state: RootState) => state.paulyList,
   );
   const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const navigate = useNavigate()
 
   // Loading States
   const [loadContentLoadingState, setLoadContentLoadingState] =
@@ -33,8 +34,8 @@ export default function GovernmentHomePage() {
   >(undefined);
   const [isAutoUpdatingText, setIsAutoUpdatingText] = useState<boolean>(false);
 
-  async function loadCurrentPaultData() {
-    const result = await getCurrentPaulyData();
+  async function loadCurrentPaulyData() {
+    await getCurrentPaulyData();
     setLoadContentLoadingState(loadingStateEnum.success);
   }
   async function createShareId(
@@ -62,7 +63,7 @@ export default function GovernmentHomePage() {
       `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${paulyDataListId}/items/1/fields`,
       'PATCH',
       JSON.stringify(dataOut),
-    ); // TO DO fix list ids
+    );
     if (result.ok) {
       setNewMessageState(loadingStateEnum.success);
     } else {
@@ -80,15 +81,15 @@ export default function GovernmentHomePage() {
   }, [newMessageText]);
 
   useEffect(() => {
-    loadCurrentPaultData();
+    loadCurrentPaulyData();
   }, []);
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link to="/profile/government/">
+      <Pressable onPress={() => navigate("/profile/government")}>
         <Text>Back</Text>
-      </Link>
-      <Text>Home Page</Text>
+      </Pressable>
+      <Text style={{marginLeft: 'auto', marginRight: 'auto'}}>Home Page</Text>
       <View>
         <View style={{ flexDirection: 'row' }}>
           <TextInput
@@ -98,7 +99,7 @@ export default function GovernmentHomePage() {
             }}
           />
         </View>
-        {isAutoUpdatingText ? null : (
+        {isAutoUpdatingText ? <View style={{height: 14}}/>: (
           <Pressable
             onPress={() => {
               updatePaulyData('message', newMessageText);

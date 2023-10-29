@@ -205,6 +205,7 @@ export default function Login({
           </Pressable>
         ) : null}
       </View>
+      <Text style={{position: 'absolute', bottom: 4, fontSize: height * 0.02, fontFamily: 'Roboto', color: Colors.white}}>A.M.D.G</Text>
     </Pressable>
   );
 }

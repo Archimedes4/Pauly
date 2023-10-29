@@ -43,7 +43,7 @@ export default function AppMain({
 
   const redirectUri = makeRedirectUri({
     scheme: 'Pauly',
-    path: 'auth',
+    path: 'auth'
   });
 
   const [authRequest, , promptAsync] = useAuthRequest(
@@ -58,7 +58,9 @@ export default function AppMain({
 
   async function getAuthToken() {
     if (discovery !== null) {
+      console.log("This")
       promptAsync().then(async res => {
+        console.log(res)
         if (authRequest && res?.type === 'success' && discovery) {
           exchangeCodeAsync(
             {
@@ -160,6 +162,7 @@ export default function AppMain({
       ) : (
         <Login
           onGetAuthToken={() => {
+
             getAuthToken();
           }}
           onGetGovernmentAuthToken={() => {

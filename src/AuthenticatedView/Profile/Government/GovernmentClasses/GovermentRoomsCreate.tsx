@@ -6,7 +6,7 @@ import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
 import { WarningIcon } from '../../../../UI/Icons/Icons';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
-import createUUID from '../../../../Functions/ultility/createUUID';
+import createUUID, { getTextState } from '../../../../Functions/ultility/createUUID';
 
 export default function GovermentRoomsCreate() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -83,13 +83,7 @@ export default function GovermentRoomsCreate() {
         }}
       >
         <Text>
-          {createRoomState === loadingStateEnum.notStarted
-            ? 'Create Room'
-            : createRoomState === loadingStateEnum.loading
-            ? 'Loading'
-            : createRoomState === loadingStateEnum.success
-            ? 'Room Created'
-            : 'Failed to Create Room'}
+          {getTextState(createRoomState, {notStarted: 'Create Room', success: "Room Created"})}
         </Text>
       </Pressable>
     </View>

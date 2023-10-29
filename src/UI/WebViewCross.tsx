@@ -4,48 +4,59 @@ import WebView from 'react-native-webview';
 
 export default function WebViewCross({
   html,
+  height,
+  rawHtml,
   width,
-}: {
+}:({
   html: string | undefined;
   width: number;
-}) {
+  rawHtml?: undefined;
+  height?: undefined;
+}| {rawHtml: string | undefined, width: number, height: number, html?: undefined})) {
   const jsCode =
     "window.ReactNativeWebView.postMessage(document.getElementById('pauly-main').clientHeight)";
   // document.getElementById('pauly-main').innerHTML
-  const [height, setHeight] = useState<number>(0);
+  const [adaptHeight, setAdaptHeight] = useState<number>(0);
   return (
     <>
-      {html !== undefined ? (
+      {(html !== undefined || rawHtml !== undefined) ? (
         <>
           {Platform.OS !== 'web' ? (
             <WebView
               source={{
-                html: `<!DOCTYPE html>
-              <html>
-              <head>
-                <style>
-                  body {font-weight: normal; font-family: Arial; font-size: 55px}
-                  div {font-weight: normal; font-family: Arial}
-                </style>
-              </head>
-              <body>
-                <div id="pauly-main">
-                  ${html}
-                </div>
-              </body>
-              </html>`,
+                html: rawHtml ? rawHtml:`<!DOCTYPE html>
+                <html>
+                <head>
+                  <style>
+                    body {font-weight: normal; font-family: Arial; font-size: 55px}
+                    div {font-weight: normal; font-family: Arial}
+                  </style>
+                </head>
+                <body>
+                  <div id="pauly-main">
+                    ${html}
+                  </div>
+                </body>
+                </html>`,
               }}
-              style={{ margin: 10, height: height + 10, width }}
+              style={{ margin: 10, height: height ? height:adaptHeight + 10, width }}
               automaticallyAdjustContentInsets={false}
               javaScriptEnabled
               injectedJavaScript={jsCode}
               onMessage={event =>
-                setHeight(parseFloat(event.nativeEvent.data) / 3)
+                setAdaptHeight(parseFloat(event.nativeEvent.data) / 3)
               }
             />
           ) : (
             <View style={{ margin: 10 }}>
-              <div dangerouslySetInnerHTML={{ __html: html }} />
+              { (html !== undefined) ?
+                <div dangerouslySetInnerHTML={{ __html: html }} />:
+                <>
+                  { (rawHtml !== undefined) ?
+                    <div style={{height: height}} dangerouslySetInnerHTML={{ __html: rawHtml }} />:null
+                  }
+                </>
+              }
             </View>
           )}
         </>

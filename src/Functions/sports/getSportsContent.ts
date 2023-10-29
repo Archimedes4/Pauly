@@ -1,5 +1,5 @@
 import store from '../../Redux/store';
-import { dataContentTypeOptions, loadingStateEnum } from '../../types';
+import { dataContentTypeOptions, loadingStateEnum, postType } from '../../types';
 import getFileWithShareID from '../ultility/getFileWithShareID';
 import callMsGraph from '../ultility/microsoftAssets';
 
@@ -19,35 +19,57 @@ export default async function getSportsContent(
     if (dataResult.value.length !== undefined) {
       const newSportsPosts: sportPost[] = [];
       const shareResultsPromise: Promise<{
-        result: loadingStateEnum;
+        result: loadingStateEnum.success;
+        index: number;
         url?: string | undefined;
         contentType?: dataContentTypeOptions | undefined;
-      }>[] = [];
+      } | {result: loadingStateEnum.failed}>[] = [];
       for (let index = 0; index < dataResult.value.length; index += 1) {
-        shareResultsPromise.push(
-          getFileWithShareID(dataResult.value[index].fields.fileId),
-        );
+        if (dataResult.value[index].fields.fileType === postType.microsoftFile) {
+          shareResultsPromise.push(
+            getFileWithShareID(dataResult.value[index].fields.fileId, index),
+          );
+        }
       }
-      const shareResults: {
-        result: loadingStateEnum;
+      const shareResults: ({
+        result: loadingStateEnum.success;
+        index: number;
         url?: string | undefined;
         contentType?: dataContentTypeOptions | undefined;
-      }[] = await Promise.all(shareResultsPromise);
-      for (let index = 0; index < shareResults.length; index += 1) {
-        const { url } = shareResults[index];
-        const fileType = shareResults[index].contentType;
-        if (
-          shareResults[index].result === loadingStateEnum.success &&
-          fileType !== undefined &&
-          url !== undefined
-        ) {
+      }|{result: loadingStateEnum.failed})[] = await Promise.all(shareResultsPromise);
+
+      for (let index = 0; index < dataResult.value.length; index += 1) {
+        const item = shareResults.find((e) => {if (e.result === loadingStateEnum.success) {
+          return e.index === index
+        } else {return false}});
+        if (item !== undefined) {
+          if (item.result === loadingStateEnum.success) {
+            const fileType = item.contentType;
+            if (
+              shareResults[index].result === loadingStateEnum.success &&
+              fileType !== undefined &&
+              item.url !== undefined
+            ) {
+              newSportsPosts.push({
+                caption: dataResult.value[index].fields.caption,
+                data: {
+                  fileId: item.url,
+                  fileType: fileType,
+                  postType: postType.microsoftFile
+                }
+              });
+            } else {
+              return { result: loadingStateEnum.failed };
+            }
+          }
+        } else if (dataResult.value[index].fields.fileType ===  postType.youtubeVideo) {
           newSportsPosts.push({
             caption: dataResult.value[index].fields.caption,
-            fileID: url,
-            fileType,
+            data: {
+              fileId: dataResult.value[index].fields.fileId,
+              postType: postType.youtubeVideo
+            }
           });
-        } else {
-          return { result: loadingStateEnum.failed };
         }
       }
       return { result: loadingStateEnum.success, sports: newSportsPosts };

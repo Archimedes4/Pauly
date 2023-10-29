@@ -1030,7 +1030,7 @@ function SubmissionView({
     loadingStateEnum.notStarted,
   );
   const [imageUri, setImageUri] = useState<string>('');
-  const [imageHeight, setImageHeight] = useState<number>(0);
+  const [imgHeight, setImgHeight] = useState<number>(0);
 
   async function changeSubmissionApproved() {
     setChangeState(loadingStateEnum.loading);
@@ -1061,6 +1061,7 @@ function SubmissionView({
       setImageState(loadingStateEnum.loading);
       const shareResult = await getFileWithShareID(
         submissionData.submissionImage,
+        0,
       );
       if (
         shareResult.result === loadingStateEnum.success &&
@@ -1072,7 +1073,7 @@ function SubmissionView({
           shareResult.url,
           (imageMeasureWidth, imageMeasureHeight) => {
             const heightPerWidth = imageMeasureHeight / imageMeasureWidth;
-            setImageHeight(width * 0.7 * heightPerWidth);
+            setImgHeight(width * 0.7 * heightPerWidth);
           },
         );
       }
@@ -1159,7 +1160,7 @@ function SubmissionView({
                     resizeMode="center"
                     style={{
                       width: width * 0.7,
-                      height: imageHeight,
+                      height: imgHeight,
                       marginLeft: 'auto',
                       marginRight: 'auto',
                       alignContent: 'center',

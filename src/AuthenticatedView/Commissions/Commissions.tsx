@@ -223,7 +223,7 @@ export default function Commissions() {
                                   elevation: 2,
                                   marginRight: width * 0.025,
                                   marginTop: height * 0.02,
-                                  backgroundColor: '#FFFFFF',
+                                  backgroundColor: Colors.white,
                                   shadowColor: 'black',
                                   shadowOffset: { width: 1, height: 1 },
                                   shadowOpacity: 1,

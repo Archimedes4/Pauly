@@ -21,13 +21,13 @@ export async function initializePaulyPartOne(
       displayName: 'Pauly',
       groupTypes: [
         'Unified',
-        // , "DynamicMembership"
+        "DynamicMembership",
       ],
       mailEnabled: true,
       mailNickname: 'pauly',
       visibility: 'HiddenMembership',
-      // "membershipRule": "(user.accountEnabled -eq true)",
-      // "membershipRuleProcessingState": "on",
+      "membershipRule": "(user.accountEnabled -eq true)",
+      "membershipRuleProcessingState": "on",
       'owners@odata.bind': [
         `https://graph.microsoft.com/v1.0/users/${currentUsersIdResultData.id}`,
         `https://graph.microsoft.com/v1.0/users/${secondUserId}`,

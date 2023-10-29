@@ -10,7 +10,9 @@ import {
   Colors,
   dataContentTypeOptions,
   loadingStateEnum,
+  postType,
 } from '../../../../types';
+import SportsYoutube from '../../../../UI/SportsYoutube';
 // import Video from 'react-native-video';
 
 export default function GovernmentReviewFileSubmission() {
@@ -74,6 +76,7 @@ export default function GovernmentReviewFileSubmission() {
               submissionId: data.value[0].fields.submissionID,
               accepted: data.value[0].fields.accepted,
               fileId: data.value[0].fields.fileId,
+              fileType: data.value[0].fields.fileType,
               itemID: data.value[0].id,
               selectedSportId: data.value[0].fields.selectedSportId,
               selectedTeamId: data.value[0].fields.selectedTeamId,
@@ -107,6 +110,7 @@ export default function GovernmentReviewFileSubmission() {
               fields: {
                 Title: currentSubmissionInfomration.Title,
                 fileId: currentSubmissionInfomration.fileId,
+                fileType: currentSubmissionInfomration.fileType,
                 caption: currentSubmissionInfomration.Title,
                 submissionId: currentSubmissionInfomration.submissionId,
                 selectedSportId: currentSubmissionInfomration.selectedSportId,
@@ -176,16 +180,19 @@ export default function GovernmentReviewFileSubmission() {
 
   async function loadFile() {
     if (currentSubmissionInfomration !== undefined) {
-      const result = await getFileWithShareID(
-        currentSubmissionInfomration.fileId,
-      );
-      if (
-        result.result === loadingStateEnum.success &&
-        result.url !== undefined &&
-        result.contentType !== undefined
-      ) {
-        setDataURL(result.url);
-        setDataContentType(result.contentType);
+      if (currentSubmissionInfomration.fileType === postType.microsoftFile) {
+        const result = await getFileWithShareID(
+          currentSubmissionInfomration.fileId,
+          0,
+        );
+        if (
+          result.result === loadingStateEnum.success &&
+          result.url !== undefined &&
+          result.contentType !== undefined
+        ) {
+          setDataURL(result.url);
+          setDataContentType(result.contentType);
+        }
       }
     }
   }
@@ -256,6 +263,11 @@ export default function GovernmentReviewFileSubmission() {
                   ) : null}
                 </View>
               )}
+              { (currentSubmissionInfomration.fileType === postType.youtubeVideo) ?
+                <View style={{height: height * 0.1}}>
+                  <SportsYoutube videoId={currentSubmissionInfomration.fileId} width={width*0.9}/>
+                </View>:null
+              }
               <Pressable
                 onPress={() => {
                   if (currentSubmissionInfomration) {

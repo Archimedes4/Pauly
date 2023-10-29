@@ -33,3 +33,7 @@ export const scopes = [
   'Application.ReadWrite.All',
   'TeamMember.Read.All',
 ];
+
+export const youtubeDataKey = 'AIzaSyCO1po5qtWDKRQ7koQd07Xo6u13Yp-hPEE';
+
+export const youtubeUploadsId = 'UU8HbRWjbR0xjOeE6OlQ1sLA';

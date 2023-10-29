@@ -1,4 +1,5 @@
-# [] Pauly
+# <img src="./assets/images/PaulyLogo.png" height="28px" alt="logo"/> Pauly
+Last updated October 28 2023 \
 Pauly is a hub for all things school-related.
 # Backend
 Pauly uses Microsoft graph and SharePoint lists as a database

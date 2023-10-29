@@ -1,10 +1,8 @@
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-native';
+import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
-import { he } from 'react-native-paper-dates';
-import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 import { RootState } from '../../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import ProgressView from '../../../../../UI/ProgressView';
@@ -70,7 +68,7 @@ export default function GovernmentSchedule() {
               renderItem={schedule => (
                 <Pressable
                   style={{
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: Colors.white,
                     shadowColor: 'black',
                     shadowOffset: { width: 1, height: 1 },
                     shadowOpacity: 1,
@@ -99,7 +97,7 @@ export default function GovernmentSchedule() {
       <Pressable
         onPress={() => navigate('/profile/government/calendar/schedule/create')}
         style={{
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Colors.white,
           shadowColor: 'black',
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,

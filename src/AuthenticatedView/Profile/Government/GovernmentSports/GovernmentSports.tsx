@@ -7,6 +7,7 @@ import { Colors, loadingStateEnum } from '../../../../types';
 import { RootState } from '../../../../Redux/store';
 import { getSports } from '../../../../Functions/sports/sportsFunctions';
 import ProgressView from '../../../../UI/ProgressView';
+import { Button } from 'react-native-paper';
 
 export default function GovernmentSports() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -36,10 +37,10 @@ export default function GovernmentSports() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Link to="/profile/government/">
+        <Pressable onPress={() => {navigate("/profile/government/")}}>
           <Text>Back</Text>
-        </Link>
-        <Text>Government Sports</Text>
+        </Pressable>
+        <Text style={{marginLeft: 'auto', marginRight: 'auto'}}>Government Sports</Text>
       </View>
       <View style={{ height: height * 0.4 }}>
         {dataResult === loadingStateEnum.loading ? (
@@ -86,16 +87,12 @@ export default function GovernmentSports() {
         )}
       </View>
       <View style={{ height: height * 0.1, overflow: 'hidden' }}>
-        <Pressable
-          onPress={() => navigate('/profile/government/sports/create')}
-        >
-          <Text>Create Sport</Text>
-        </Pressable>
-        <Pressable
-          onPress={() => navigate('/profile/government/sports/post/create')}
-        >
-          <Text>Create Post</Text>
-        </Pressable>
+        <Button onPress={() => navigate('/profile/government/sports/create')}>
+          Create Sport
+        </Button>
+        <Button onPress={() => navigate('/profile/government/sports/post/create')}>
+          Create Post
+        </Button>
       </View>
       <GovernmentHandleFileSubmissions width={width} height={height * 0.4} />
     </View>

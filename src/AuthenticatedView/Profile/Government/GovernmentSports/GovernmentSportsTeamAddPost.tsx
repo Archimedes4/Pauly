@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { View, Text, Pressable, TextInput, FlatList, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
@@ -7,23 +7,77 @@ import MicrosoftFilePicker from '../../../../UI/MicrosoftFilePicker';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import createUUID from '../../../../Functions/ultility/createUUID';
 import store, { RootState } from '../../../../Redux/store';
-import { Colors, loadingStateEnum } from '../../../../types';
+import { Colors, loadingStateEnum, postType } from '../../../../types';
 import {
   getSports,
   getSportsTeams,
 } from '../../../../Functions/sports/sportsFunctions';
 import ProgressView from '../../../../UI/ProgressView';
+import { SegmentedButtons } from 'react-native-paper';
+import { getYoutubeVideos } from '../../../../Functions/youtubeFunctions';
+
+function YoutubeVideosSelector({onSelect}:{onSelect: (item: string) => void}) {
+  const { width } = useSelector((state: RootState) => state.dimentions);
+  const [ytVideos, setytVideos] = useState<youtubeVideoType[]>([]);
+  const [ytState, setytState] = useState<loadingStateEnum>(loadingStateEnum.loading);
+  const [nextPage, setNextPage] = useState<string | undefined>(undefined);
+
+  async function loadData() {
+    const result = await getYoutubeVideos(nextPage);
+    if (result.result == loadingStateEnum.success) {
+      setytVideos([...ytVideos, ...result.data]);
+      setNextPage(result.nextPageToken)
+      setytState(loadingStateEnum.success);
+    } else {
+      setytState(loadingStateEnum.failed);
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, []);
+
+  return (
+    <>
+      { (ytState === loadingStateEnum.loading) ?
+        <View>
+          <ProgressView width={14} height={14}/>
+          <Text>Loading</Text>
+        </View>:
+        <>
+          { (ytState === loadingStateEnum.success) ?
+            <FlatList
+              data={ytVideos}
+              renderItem={(video) => (
+                <Pressable onPress={() => {onSelect(video.item.videoId)}}>
+                  <Image source={{uri: video.item.thumbnail}} style={{width: width, height: (width/16)*9}}/>
+                  <Text>{video.item.title}</Text>
+                </Pressable>
+              )}
+              style={{width: width, height: 500}}
+              onEndReached={() => loadData()}
+            />:
+            <View style={{width: width, height: 500}}>
+              <Text>Something Went Wrong</Text>
+            </View>
+          }
+        </>
+      }
+    </>
+  )
+}
 
 export default function GovernmentSportsTeamAddPost() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
-  const [selectedShareID, setSelectedShareID] = useState<string>('');
+  const [fileId, setFileId] = useState<string>('');
   const [postName, setPostName] = useState<string>('');
   const [postSubmissionState, setPostSubmissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
   const navigate = useNavigate();
   const [selectedSportId, setSelectedSportId] = useState<string>('');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
+  const [postMode, setPostMode] = useState(postType.microsoftFile);
 
   async function getShareLink(item: microsoftFileType) {
     const itemPathArray = item.itemGraphPath.split('/');
@@ -39,13 +93,13 @@ export default function GovernmentSportsTeamAddPost() {
       );
       if (result.ok) {
         const dataOut = await result.json();
-        setSelectedShareID(dataOut.shareId);
+        setFileId(dataOut.shareId);
       } else {
       }
     }
   }
-  async function createFileSubmission(fileID: string) {
-    if (selectedShareID !== '' && selectedTeamId !== '') {
+  async function createFileSubmission() {
+    if (fileId !== '' && selectedTeamId !== '') {
       setPostSubmissionState(loadingStateEnum.loading);
       const userIdResult = await callMsGraph(
         'https://graph.microsoft.com/v1.0/me',
@@ -56,7 +110,8 @@ export default function GovernmentSportsTeamAddPost() {
         const data = {
           fields: {
             Title: postName,
-            fileId: fileID,
+            fileId: fileId,
+            fileType: postMode,//This is the post mode Type
             accepted: false,
             user: userData.id,
             timeCreated: new Date().toISOString(),
@@ -72,7 +127,7 @@ export default function GovernmentSportsTeamAddPost() {
           }/items`,
           'POST',
           JSON.stringify(data),
-        ); // TO DO fix id
+        );
         if (result.ok) {
           setPostSubmissionState(loadingStateEnum.success);
         } else {
@@ -111,27 +166,46 @@ export default function GovernmentSportsTeamAddPost() {
           setSelectedTeamId('');
         }}
       />
-      <MicrosoftFilePicker
-        onSelectedFile={(item: microsoftFileType) => {
-          getShareLink(item);
-        }}
-        height={500}
-        width={width}
+      <SegmentedButtons
+        value={postMode.toString()}
+        onValueChange={(e) => setPostMode(parseInt(e))}
+        buttons={[
+          {
+            value: postType.microsoftFile.toString(),
+            label: 'Microsoft File',
+          },
+          {
+            value: postType.youtubeVideo.toString(),
+            label: 'Youtube Video',
+          },
+        ]}
       />
-      {selectedShareID !== '' ? (
+      {(postMode == postType.microsoftFile) ?
+        <MicrosoftFilePicker
+          onSelectedFile={(item: microsoftFileType) => {
+            getShareLink(item);
+          }}
+          height={500}
+          width={width}
+        />:null
+      }
+      {(postMode == postType.youtubeVideo) ?
+        <YoutubeVideosSelector onSelect={setFileId} />:null
+      }
+      {fileId !== '' ? (
         <Pressable
           onPress={() => {
             if (
               postSubmissionState === loadingStateEnum.notStarted &&
-              selectedShareID !== '' &&
+              fileId !== '' &&
               selectedTeamId !== ''
             ) {
-              createFileSubmission(selectedShareID);
+              createFileSubmission();
             }
           }}
         >
           <Text>
-            {selectedShareID !== '' && selectedTeamId !== ''
+            {fileId !== '' && selectedTeamId !== ''
               ? 'Submit'
               : 'Select Team'}
           </Text>

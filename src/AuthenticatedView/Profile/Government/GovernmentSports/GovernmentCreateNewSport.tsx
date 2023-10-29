@@ -15,7 +15,7 @@ export default function GovernmentCreateNewSport() {
   const { siteId, sportsListId } = useSelector(
     (state: RootState) => state.paulyList,
   );
-  const [svgData, setSvgData] = useState<string>(``);
+  const [svgData, setSvgData] = useState<string>('');
   const [createSportLoadingState, setCreateSportLoadingState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
   const navigate = useNavigate();

@@ -23,6 +23,11 @@ export enum loadingStateEnum {
   offline,
 }
 
+export enum postType {
+  microsoftFile,
+  youtubeVideo
+}
+
 export enum dataContentTypeOptions {
   video,
   image,
@@ -419,8 +424,14 @@ declare global {
   };
   type sportPost = {
     caption: string;
-    fileID: string;
-    fileType: dataContentTypeOptions;
+    data: {
+      fileId: string;
+      postType: postType.microsoftFile;
+      fileType: dataContentTypeOptions
+    } | {
+      fileId: string;
+      postType: postType.youtubeVideo
+    }
   };
   type resourceType = {
     webUrl: string;
@@ -455,8 +466,14 @@ declare global {
     selectedSportId: string;
     selectedTeamId: string;
     fileId: string;
+    fileType: postType;
     itemID: string;
   };
+  type youtubeVideoType = {
+    thumbnail: string;
+    title: string;
+    videoId: string;
+  }
 }
 
 export class Colors {

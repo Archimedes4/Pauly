@@ -9,6 +9,7 @@ import {
   ScrollView,
   Pressable,
   FlatList,
+  ListRenderItemInfo,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-native';
@@ -23,7 +24,8 @@ import SegmentedPicker from '../UI/Pickers/SegmentedPicker';
 import SVGXml from '../UI/SVGXml/SVGXml';
 import BackButton from '../UI/BackButton';
 import ProgressView from '../UI/ProgressView';
-import { Colors, dataContentTypeOptions, loadingStateEnum } from '../types';
+import { Colors, dataContentTypeOptions, loadingStateEnum, postType } from '../types';
+import SportsYoutube from '../UI/SportsYoutube';
 
 export default function Sports() {
   const { width, height, currentBreakPoint } = useSelector(
@@ -385,92 +387,10 @@ export default function Sports() {
                 />
               ) : (
                 <>
-                  {sportsPosts.map(item => (
-                    <View
-                      key={`Sport_${item.fileID}`}
-                      style={{ marginTop: height * 0.05 }}
-                    >
-                      {item.fileType === dataContentTypeOptions.image ? (
-                        <View
-                          style={{
-                            width: width * 0.9,
-                            height: height * 0.4,
-                            backgroundColor: '#FFFFFF',
-                            shadowColor: 'black',
-                            shadowOffset: { width: 1, height: 1 },
-                            shadowOpacity: 1,
-                            shadowRadius: 5,
-                            marginLeft: width * 0.05,
-                            marginRight: width * 0.05,
-                            borderRadius: 15,
-                          }}
-                        >
-                          <Text
-                            style={{
-                              position: 'absolute',
-                              left: 5,
-                              bottom: 5,
-                              zIndex: 100,
-                            }}
-                          >
-                            {item.caption}
-                          </Text>
-                          <Image
-                            style={{
-                              width: width * 0.9,
-                              height: height * 0.4,
-                              marginLeft: width * 0.05,
-                              marginRight: width * 0.05,
-                              borderRadius: 15,
-                            }}
-                            source={{ uri: item.fileID }}
-                          />
-                        </View>
-                      ) : null}
-                      {item.fileType === dataContentTypeOptions.video ? (
-                        <View
-                          style={{
-                            width: width * 0.9,
-                            height: height * 0.4,
-                            backgroundColor: '#FFFFFF',
-                            shadowColor: 'black',
-                            shadowOffset: { width: 1, height: 1 },
-                            shadowOpacity: 1,
-                            shadowRadius: 5,
-                            marginLeft: width * 0.05,
-                            marginRight: width * 0.05,
-                            borderRadius: 15,
-                          }}
-                        >
-                          <Text
-                            style={{
-                              position: 'absolute',
-                              left: 5,
-                              bottom: 5,
-                              zIndex: 100,
-                            }}
-                          >
-                            {item.caption}
-                          </Text>
-                          <Video
-                            useNativeControls
-                            source={{ uri: item.fileID }}
-                            resizeMode={ResizeMode.COVER}
-                            style={{
-                              width: width * 0.9,
-                              height: height * 0.4,
-                              alignSelf: 'stretch',
-                              borderRadius: 15,
-                            }}
-                            videoStyle={{
-                              width: width * 0.9,
-                              height: height * 0.4,
-                            }}
-                          />
-                        </View>
-                      ) : null}
-                    </View>
-                  ))}
+                  <FlatList 
+                    data={sportsPosts}
+                    renderItem={(post) => <SportsPostBlock post={post} /> }
+                  />
                 </>
               )}
             </ScrollView>
@@ -483,6 +403,105 @@ export default function Sports() {
       )}
     </View>
   );
+}
+
+function SportsPostBlock({post}:{post: ListRenderItemInfo<sportPost>}) {
+  const { width, height} = useSelector(
+    (state: RootState) => state.dimentions,
+  );
+  return (
+    <View
+      key={`Sport_${post.item.data.fileId}`}
+      style={{ marginTop: height * 0.05 }}
+    >
+      {post.item.data.postType === postType.microsoftFile ?
+        <>
+          {post.item.data.fileType === dataContentTypeOptions.image ? (
+            <View
+              style={{
+                width: width * 0.9,
+                height: height * 0.4,
+                backgroundColor: Colors.white,
+                shadowColor: 'black',
+                shadowOffset: { width: 1, height: 1 },
+                shadowOpacity: 1,
+                shadowRadius: 5,
+                marginLeft: width * 0.05,
+                marginRight: width * 0.05,
+                borderRadius: 15,
+              }}
+            >
+              <Text
+                style={{
+                  position: 'absolute',
+                  left: 5,
+                  bottom: 5,
+                  zIndex: 100,
+                }}
+              >
+                {post.item.caption}
+              </Text>
+              <Image
+                style={{
+                  width: width * 0.9,
+                  height: height * 0.4,
+                  marginLeft: width * 0.05,
+                  marginRight: width * 0.05,
+                  borderRadius: 15,
+                }}
+                source={{ uri: post.item.data.fileId }}
+              />
+            </View>
+          ) : null}
+          {post.item.data.fileType === dataContentTypeOptions.video ? (
+            <View
+              style={{
+                width: width * 0.9,
+                height: height * 0.4,
+                backgroundColor: '#FFFFFF',
+                shadowColor: 'black',
+                shadowOffset: { width: 1, height: 1 },
+                shadowOpacity: 1,
+                shadowRadius: 5,
+                marginLeft: width * 0.05,
+                marginRight: width * 0.05,
+                borderRadius: 15,
+              }}
+            >
+              <Text
+                style={{
+                  position: 'absolute',
+                  left: 5,
+                  bottom: 5,
+                  zIndex: 100,
+                }}
+              >
+                {post.item.caption}
+              </Text>
+              <Video
+                useNativeControls
+                source={{ uri: post.item.data.fileId }}
+                resizeMode={ResizeMode.COVER}
+                style={{
+                  width: width * 0.9,
+                  height: height * 0.4,
+                  alignSelf: 'stretch',
+                  borderRadius: 15,
+                }}
+                videoStyle={{
+                  width: width * 0.9,
+                  height: height * 0.4,
+                }}
+              />
+            </View>
+          ) : null}
+        </>:null
+      }
+      {post.item.data.postType === postType.youtubeVideo ?
+        <SportsYoutube width={200} height={200} videoId={post.item.data.fileId} />:null
+      }
+    </View>
+  )
 }
 
 function RosterView({
@@ -601,7 +620,7 @@ function RosterImage({ id }: { id?: string }) {
   );
   async function loadData(imageId: string) {
     setImageState(loadingStateEnum.loading);
-    const result = await getFileWithShareID(imageId);
+    const result = await getFileWithShareID(imageId, 0);
     if (
       result.result === loadingStateEnum.success &&
       result.url !== undefined

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Pauly",
     "slug": "Pauly",
-    "scheme": "com.archimedes4.pauly",
+    "scheme": "Pauly",
     "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,14 +22,14 @@
         "keychain-access-groups":["com.microsoft.identity.universalstorage", "com.microsoft.adalcache"],
         "LSApplicationQueriesSchemes": ["msauthv2", "msauthv3"]
       },
-      "buildNumber":"54"
+      "buildNumber":"56"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#793033"
       },
-      "package": "com.archimedes4.Pauly"
+      "package": "Archimedes4.Pauly"
     },
     "web": {
       "favicon": "./assets/icon.png"
