@@ -53,7 +53,6 @@ export default function Sports() {
   const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([]);
   const [sportsSelectHeight, setSportsSelectHeight] = useState<number>(34);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   async function loadSports() {
     const result = await getSports();
@@ -106,7 +105,7 @@ export default function Sports() {
     BukhariScript: require('../../assets/fonts/BukhariScript.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
@@ -409,6 +408,9 @@ function SportsPostBlock({post}:{post: ListRenderItemInfo<sportPost>}) {
   const { width, height} = useSelector(
     (state: RootState) => state.dimentions,
   );
+  useEffect(() => {
+    console.log(post.item)
+  }, [])
   return (
     <View
       key={`Sport_${post.item.data.fileId}`}
@@ -458,8 +460,8 @@ function SportsPostBlock({post}:{post: ListRenderItemInfo<sportPost>}) {
               style={{
                 width: width * 0.9,
                 height: height * 0.4,
-                backgroundColor: '#FFFFFF',
-                shadowColor: 'black',
+                backgroundColor: Colors.white,
+                shadowColor: Colors.black,
                 shadowOffset: { width: 1, height: 1 },
                 shadowOpacity: 1,
                 shadowRadius: 5,
@@ -498,7 +500,19 @@ function SportsPostBlock({post}:{post: ListRenderItemInfo<sportPost>}) {
         </>:null
       }
       {post.item.data.postType === postType.youtubeVideo ?
-        <SportsYoutube width={200} height={200} videoId={post.item.data.fileId} />:null
+        <View style={{
+          width: width * 0.9,
+          marginLeft: width * 0.05,
+          marginBottom: 5,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 1, height: 1 },
+          shadowOpacity: 1,
+          shadowRadius: 5,
+          borderRadius: 15,
+          overflow: 'hidden'
+        }}>
+          <SportsYoutube width={width * 0.9} videoId={post.item.data.fileId} />
+        </View>:null
       }
     </View>
   )

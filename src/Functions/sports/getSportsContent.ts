@@ -12,10 +12,11 @@ export default async function getSportsContent(
       store.getState().paulyList.siteId
     }/lists/${
       store.getState().paulyList.sportsApprovedSubmissionsListId
-    }/items?expand=fields($select=fileId,caption,selectedSportId,selectedTeamId)${filter}&$select=id`,
+    }/items?expand=fields($select=fileId,caption,selectedSportId,selectedTeamId,fileType)${filter}&$select=id`,
   );
   if (result.ok) {
     const dataResult = await result.json();
+    console.log(dataResult)
     if (dataResult.value.length !== undefined) {
       const newSportsPosts: sportPost[] = [];
       const shareResultsPromise: Promise<{
@@ -70,8 +71,11 @@ export default async function getSportsContent(
               postType: postType.youtubeVideo
             }
           });
+        } else {
+          console.log("not working", dataResult.value[index].fields)
         }
       }
+      console.log("return", newSportsPosts)
       return { result: loadingStateEnum.success, sports: newSportsPosts };
     }
     return { result: loadingStateEnum.failed };

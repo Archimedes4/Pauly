@@ -53,7 +53,7 @@ export default function WebViewCross({
                 <div dangerouslySetInnerHTML={{ __html: html }} />:
                 <>
                   { (rawHtml !== undefined) ?
-                    <div style={{height: height}} dangerouslySetInnerHTML={{ __html: rawHtml }} />:null
+                    {rawHtml}:null
                   }
                 </>
               }

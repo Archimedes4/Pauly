@@ -13,7 +13,15 @@ import {
   postType,
 } from '../../../../types';
 import SportsYoutube from '../../../../UI/SportsYoutube';
-// import Video from 'react-native-video';
+import { getTextState } from '../../../../Functions/ultility/createUUID';
+
+function getDenyText(reviewed: boolean, accepted: boolean) {
+  if (!reviewed && !accepted) {
+    'SubmissionDenied'
+  } else {
+    return 'Deny'
+  }
+}
 
 export default function GovernmentReviewFileSubmission() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -34,11 +42,11 @@ export default function GovernmentReviewFileSubmission() {
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
   const [denySubmissionState, setDenySubmissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
-  const [deleteSubmissionState, setDeleteSubmissionState] =
+  const [deleteState, setDeleteState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
   async function deleteSubmission(itemID: string) {
-    setDeleteSubmissionState(loadingStateEnum.loading);
+    setDeleteState(loadingStateEnum.loading);
     const result = await callMsGraph(
       `https://graph.microsoft.com/v1.0/sites/${
         store.getState().paulyList.siteId
@@ -50,9 +58,9 @@ export default function GovernmentReviewFileSubmission() {
     if (result.ok) {
       // TO DO Check if submission has been approved before
       // Remove from approved submissions
-      setDeleteSubmissionState(loadingStateEnum.success);
+      setDeleteState(loadingStateEnum.success);
     } else {
-      setDeleteSubmissionState(loadingStateEnum.failed);
+      setDeleteState(loadingStateEnum.failed);
     }
   }
 
@@ -73,7 +81,7 @@ export default function GovernmentReviewFileSubmission() {
             setCurrentSubmissionInformation({
               Title: data.value[0].fields.Title,
               user: data.value[0].fields.user,
-              submissionId: data.value[0].fields.submissionID,
+              submissionId: data.value[0].fields.submissionId,
               accepted: data.value[0].fields.accepted,
               fileId: data.value[0].fields.fileId,
               fileType: data.value[0].fields.fileType,
@@ -264,7 +272,7 @@ export default function GovernmentReviewFileSubmission() {
                 </View>
               )}
               { (currentSubmissionInfomration.fileType === postType.youtubeVideo) ?
-                <View style={{height: height * 0.1}}>
+                <View style={{height: (width * 0.9/16) *9}}>
                   <SportsYoutube videoId={currentSubmissionInfomration.fileId} width={width*0.9}/>
                 </View>:null
               }
@@ -297,16 +305,12 @@ export default function GovernmentReviewFileSubmission() {
               </Pressable>
               <Pressable onPress={() => denySubmission()}>
                 <Text>
-                  {denySubmissionState === loadingStateEnum.loading
-                    ? 'Loading'
-                    : deleteSubmissionState === loadingStateEnum.success ||
-                      deleteSubmissionState === loadingStateEnum.notStarted
-                    ? currentSubmissionInfomration.reviewed
-                      ? !currentSubmissionInfomration.accepted
-                        ? 'Submission Denied'
-                        : 'Deny'
-                      : 'Deny'
-                    : 'Failed'}
+                  {
+                    getTextState(denySubmissionState, {
+                      success: getDenyText(currentSubmissionInfomration.reviewed, currentSubmissionInfomration.accepted),
+                      notStarted: getDenyText(currentSubmissionInfomration.reviewed, currentSubmissionInfomration.accepted)
+                    })
+                  }
                 </Text>
               </Pressable>
             </View>
