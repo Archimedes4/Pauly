@@ -1,7 +1,7 @@
 import { View, Platform } from 'react-native'
 import React from 'react'
 import WebViewCross from './WebViewCross'
-import YoutubeWeb from '../Functions/youtubeIframeFunction'
+import YoutubeWeb from './youtubeIframeFunction'
 
 
 export default function SportsYoutube({videoId, width, height}:{videoId: string, width: number, height?: number}) {

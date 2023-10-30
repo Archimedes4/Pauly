@@ -1,4 +1,4 @@
-import { View, Text, Pressable, Switch, ScrollView } from 'react-native';
+import { View, Text, Pressable, Switch, ScrollView, FlatList, ListRenderItemInfo } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-native';
@@ -7,43 +7,36 @@ import callMsGraph from '../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum, resourceResponce } from '../../../types';
 import ProgressView from '../../../UI/ProgressView';
 import getResource from '../../../Functions/getResources';
+import { getChannels } from '../../../Functions/getTeamsChannels';
 
 type resourceGroupType = {
   name: string;
   id: string;
-  error: boolean;
-  channels: channelType[];
 };
 
 function ChannelBlock({
-  group,
-  groups,
-  groupIndex,
-  setGroups,
-  selectedGroup,
   channel,
-  channelIndex,
+  groupId,
+  onUpdate,
+  selectedGroup
 }: {
-  group: resourceGroupType;
-  groups: resourceGroupType[];
-  groupIndex: number;
-  setGroups: (item: resourceGroupType[]) => void;
-  selectedGroup: string;
-  channel: channelType;
-  channelIndex: number;
+  channel: ListRenderItemInfo<channelType>
+  groupId: string,
+  onUpdate: (item: channelType) => void,
+  selectedGroup: string
 }) {
   const [isSelected, setIsSelected] = useState<boolean>(
-    group.channels[channelIndex].selected,
+    channel.item.selected,
   );
   const [isLoading, setIsLoading] = useState<boolean>(
-    group.channels[channelIndex].loading,
+    channel.item.loading,
   );
 
   async function addChannel() {
     const data = {
       fields: {
-        resourceGroupId: group.id,
-        resourceConversationId: channel.id,
+        resourceGroupId: groupId,
+        resourceConversationId: channel.item.id,
       },
     };
     const result = await callMsGraph(
@@ -54,22 +47,21 @@ function ChannelBlock({
       JSON.stringify(data),
     );
     if (result.ok) {
-      const outGroups: resourceGroupType[] = groups;
-      outGroups[groupIndex].channels[channelIndex].selected = true;
-      outGroups[groupIndex].channels[channelIndex].loading = false;
-      setGroups(outGroups);
+      onUpdate({
+        ...channel.item, selected: true, loading: false
+      })
       setIsSelected(true);
       setIsLoading(false);
     } else {
-      const outGroups: resourceGroupType[] = groups;
-      outGroups[groupIndex].channels[channelIndex].loading = false;
-      setGroups(outGroups);
+      onUpdate({
+        ...channel.item, loading: false
+      })
       setIsLoading(false);
     }
   }
 
   async function removeChannel() {
-    const itemResult = await getResource(group.id, channel.id);
+    const itemResult = await getResource(groupId, channel.item.id);
     if (
       itemResult.result === resourceResponce.found &&
       itemResult.itemId !== undefined
@@ -83,44 +75,43 @@ function ChannelBlock({
         'DELETE',
       );
       if (result.ok) {
-        const outGroups: resourceGroupType[] = groups;
-        outGroups[groupIndex].channels[channelIndex].selected = false;
-        outGroups[groupIndex].channels[channelIndex].loading = false;
-        setGroups(outGroups);
+        onUpdate({
+          ...channel.item, selected: false, loading: false
+        })
         setIsSelected(false);
         setIsLoading(false);
       } else {
-        const outGroups: resourceGroupType[] = groups;
-        outGroups[groupIndex].channels[channelIndex].loading = false;
-        setGroups(outGroups);
+        onUpdate({
+          ...channel.item, loading: false
+        })
         setIsLoading(false);
       }
     } else {
-      const outGroups: resourceGroupType[] = groups;
-      outGroups[groupIndex].channels[channelIndex].loading = false;
-      setGroups(outGroups);
+      onUpdate({
+        ...channel.item, loading: false
+      })
       setIsLoading(false);
     }
   }
 
   return (
     <View
-      key={`Team_${group.id}Channel_${channel.id}`}
+      key={`Team_Channel_${channel.item.id}`}
       style={{ flexDirection: 'row' }}
     >
       {isLoading ? (
         <ProgressView width={12} height={12} />
       ) : (
         <View>
-          {selectedGroup === group.id ? (
+          {selectedGroup === groupId ? (
             <Switch
               trackColor={{ false: '#767577', true: '#81b0ff' }}
               thumbColor={isSelected ? '#f5dd4b' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={e => {
-                const outGroups: resourceGroupType[] = groups;
-                outGroups[groupIndex].channels[channelIndex].loading = true;
-                setGroups(outGroups);
+                onUpdate({
+                  ...channel.item, loading: true
+                })
                 setIsLoading(true);
                 if (e === true) {
                   addChannel();
@@ -136,33 +127,47 @@ function ChannelBlock({
                 height: 12,
                 width: 12,
                 borderRadius: 50,
-                backgroundColor: channel.selected ? 'green' : 'blue',
+                backgroundColor: channel.item.selected ? 'green' : 'blue',
               }}
             />
           )}
         </View>
       )}
-      <Text>{channel.displayName}</Text>
+      <Text>{channel.item.displayName}</Text>
     </View>
   );
 }
 
 function GroupBlock({
   group,
-  groups,
   groupIndex,
   setGroups,
   selectedGroup,
   setSelectedGroup,
 }: {
   group: resourceGroupType;
-  groups: resourceGroupType[];
   groupIndex: number;
   setGroups: (item: resourceGroupType[]) => void;
   selectedGroup: string;
   setSelectedGroup: (item: string) => void;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const [channels, setChannels] = useState<channelType[]>([]);
+  const [channelState, setChannelState] = useState<loadingStateEnum>(loadingStateEnum.loading);
+
+  async function loadChannels() {
+    const result = await getChannels(group.id);
+    if (result.result === loadingStateEnum.success) {
+      setChannels(result.data);
+      setChannelState(loadingStateEnum.success);
+    } else {
+      setChannelState(loadingStateEnum.failed);
+    }
+  }
+
+  useEffect(() => {
+    loadChannels()
+  }, [])
   return (
     <Pressable
       key={`Team_${group.id}`}
@@ -186,23 +191,16 @@ function GroupBlock({
         <View style={{ margin: 10 }}>
           <Text>{group.name}</Text>
           <Text>Channels</Text>
-          {group.channels !== undefined ? (
-            <View>
-              {group.channels.map((channel, channelIndex) => (
-                <ChannelBlock
-                  group={group}
-                  groups={groups}
-                  groupIndex={groupIndex}
-                  setGroups={setGroups}
-                  selectedGroup={selectedGroup}
-                  channel={channel}
-                  channelIndex={channelIndex}
-                />
-              ))}
-            </View>
-          ) : (
-            <Text>An Error Occurred: Could not get channels</Text>
-          )}
+          <FlatList 
+            data={channels}
+            renderItem={(channel) => (
+              <ChannelBlock channel={channel} groupId={group.id} onUpdate={(item) => {
+                let newChannels = [...channels];
+                newChannels[channel.index] = item
+                setChannels([...newChannels])
+              }} selectedGroup={selectedGroup}/>
+            )}
+          />
         </View>
       </View>
     </Pressable>
@@ -228,38 +226,9 @@ export default function GovernmentResources() {
     const data = await result.json();
     const resultGroups: resourceGroupType[] = [];
     for (let index = 0; index < data.value.length; index += 1) {
-      const getResult = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/teams/${data.value[index].id}/allChannels`,
-      );
-      const channelResult: channelType[] = [];
-      if (getResult.ok) {
-        const getResultData = await getResult.json();
-        for (
-          let indexResult = 0;
-          indexResult < getResultData.value.length;
-          indexResult += 1
-        ) {
-          const channelGetResult = await getResource(
-            data.value[index].id,
-            getResultData.value[indexResult].id,
-          );
-          channelResult.push({
-            id: getResultData.value[indexResult].id,
-            selected: channelGetResult.result === resourceResponce.found,
-            loading: false,
-            displayName: getResultData.value[indexResult].displayName,
-            error: channelGetResult.result === resourceResponce.failed,
-          });
-        }
-      } else {
-        setGetTeamsState(loadingStateEnum.failed);
-        return;
-      }
       resultGroups.push({
         name: data.value[index].displayName,
         id: data.value[index].id,
-        error: !!getResult.ok,
-        channels: channelResult,
       });
     }
     setGetTeamsState(loadingStateEnum.success);
@@ -288,7 +257,6 @@ export default function GovernmentResources() {
                   <GroupBlock
                     group={group}
                     groupIndex={groupIndex}
-                    groups={groups}
                     selectedGroup={selectedGroup}
                     setGroups={setGroups}
                     setSelectedGroup={setSelectedGroup}

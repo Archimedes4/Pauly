@@ -8,7 +8,7 @@ import {
 } from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import React, { useEffect } from 'react';
-import { ScaledSize, Platform } from 'react-native';
+import { ScaledSize } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Login from '../src/login';
 import AuthenticatedView from '../src/AuthenticatedView/AuthenticatedViewMain';
@@ -20,9 +20,9 @@ import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin';
 import getPaulyLists from '../src/Functions/ultility/getPaulyLists';
 import getUserProfile from '../src/Functions/ultility/getUserProfile';
 
-if (Platform.OS === 'web') {
-  WebBrowser.maybeCompleteAuthSession();
-}
+
+WebBrowser.maybeCompleteAuthSession();
+
 
 export default function AppMain({
   dimensions,
@@ -42,7 +42,7 @@ export default function AppMain({
   );
 
   const redirectUri = makeRedirectUri({
-    scheme: 'Pauly',
+    scheme: "Pauly",
     path: 'auth'
   });
 
@@ -58,19 +58,19 @@ export default function AppMain({
 
   async function getAuthToken() {
     if (discovery !== null) {
-      console.log("This")
+      console.log("This", redirectUri)
       promptAsync().then(async res => {
         console.log(res)
         if (authRequest && res?.type === 'success' && discovery) {
           exchangeCodeAsync(
             {
-              clientId,
+              clientId: clientId,
               code: res.params.code,
               extraParams: authRequest.codeVerifier
                 ? { code_verifier: authRequest.codeVerifier }
                 : undefined,
-              redirectUri,
-              scopes,
+              redirectUri: redirectUri,
+              scopes: scopes,
             },
             discovery,
           ).then(res => {

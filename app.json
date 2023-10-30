@@ -19,17 +19,23 @@
       "supportsTablet": true,
       "bundleIdentifier": "Archimedes4.Pauly",
       "infoPlist": {
-        "keychain-access-groups":["com.microsoft.identity.universalstorage", "com.microsoft.adalcache"],
-        "LSApplicationQueriesSchemes": ["msauthv2", "msauthv3"]
+        "keychain-access-groups": [
+          "com.microsoft.identity.universalstorage",
+          "com.microsoft.adalcache"
+        ],
+        "LSApplicationQueriesSchemes": [
+          "msauthv2",
+          "msauthv3"
+        ]
       },
-      "buildNumber":"56"
+      "buildNumber": "56"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#793033"
       },
-      "package": "Archimedes4.Pauly"
+      "package": "com.Archimedes4.Pauly"
     },
     "web": {
       "favicon": "./assets/icon.png"

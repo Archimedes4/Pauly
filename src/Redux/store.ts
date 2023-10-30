@@ -56,6 +56,10 @@ const store = configureStore({
     selectedDate: selectedDateReducer,
     studentSearch: studentSearchReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      immutableCheck: false,
+    }),
 });
 
 export default store;
