@@ -14,6 +14,7 @@ import {
   Text,
   ScrollView,
   TextInput,
+  StyleSheet,
   Platform,
   Pressable,
   Linking,
@@ -35,6 +36,7 @@ import BackButton from '../UI/BackButton';
 import ProgressView from '../UI/ProgressView';
 import MimeTypeIcon from '../UI/Icons/MimeTypeIcon';
 import { Colors, loadingStateEnum, resourceMode } from '../types';
+import ResourcesNews from './ResourcesNews';
 
 // Resources
 // -> Sports
@@ -42,6 +44,7 @@ import { Colors, loadingStateEnum, resourceMode } from '../types';
 // -> Schedule Annoucments
 // -> School Events
 // -> Annoucments
+// -> News (special from crusader news weebly)
 
 function PickerPiece({
   text,
@@ -84,7 +87,7 @@ function PickerPiece({
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: Colors.white,
       }}
     >
       <View
@@ -202,169 +205,172 @@ export default function Resources() {
             backgroundColor: Colors.lightGray,
           }}
         />
-        <ScrollView
-          style={{
-            height: isHoverPicker ? height * 0.75 : height * 0.8,
-            backgroundColor: Colors.lightGray,
-          }}
-        >
-          <>
-            {loadingState === loadingStateEnum.loading ? (
-              <View
-                style={{
-                  width,
-                  height: isHoverPicker ? height * 0.75 : height * 0.8,
-                  alignContent: 'center',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <ProgressView
-                  width={width < height ? width * 0.05 : height * 0.05}
-                  height={width < height ? width * 0.05 : height * 0.05}
-                />
-                <Text>Loading</Text>
-              </View>
-            ) : (
-              <>
-                {loadingState === loadingStateEnum.success ? (
-                  <>
-                    {resources.map(resource => (
-                      <>
-                        {isGovernmentMode ? (
-                          <Pressable
-                            key={`Resource_${resource.id}`}
-                            onPress={() => {
-                              setIsShowingCategoryView(true);
-                              setSelectedPost({
-                                teamId: resource.teamId,
-                                conversationId: resource.conversationId,
-                                messageId: resource.id,
-                              });
-                            }}
-                            style={{
-                              width: width * 0.8,
-                              marginLeft: 'auto',
-                              marginRight: 'auto',
-                              backgroundColor: Colors.white,
-                              borderRadius: 15,
-                              marginBottom: height * 0.01,
-                            }}
-                          >
-                            {resource.body !== '' &&
-                            checkIfResourceDataJustAttachment(resource.body) ? (
-                              <WebViewCross
-                                width={width * 0.8 - 20}
-                                html={
-                                  resource.html
-                                    ? resource.body
-                                    : `<div><div>${resource.body}</div></div>`
-                                }
-                              />
-                            ) : null}
-                            {resource.attachments !== undefined ? (
-                              <View
-                                style={{
-                                  marginLeft: 10,
-                                  marginBottom: 10,
-                                  marginRight: 10,
-                                  marginTop:
-                                    resource.body === '' ||
-                                    !checkIfResourceDataJustAttachment(
-                                      resource.body,
-                                    )
-                                      ? 10
-                                      : 0,
-                                  overflow: 'scroll',
-                                }}
-                              >
-                                {resource.attachments.map(attachment => (
-                                  <Pressable
-                                    style={{ flexDirection: 'row' }}
-                                    onPress={() => {
-                                      Linking.openURL(attachment.webUrl);
-                                    }}
-                                  >
-                                    <MimeTypeIcon
-                                      width={14}
-                                      height={14}
-                                      mimeType={attachment.type}
-                                    />
-                                    <Text>{attachment.title}</Text>
-                                  </Pressable>
-                                ))}
-                              </View>
-                            ) : null}
-                          </Pressable>
-                        ) : (
-                          <View
-                            key={`Resource_${resource.id}`}
-                            style={{
-                              width: width * 0.8,
-                              marginLeft: 'auto',
-                              marginRight: 'auto',
-                              backgroundColor: Colors.white,
-                              borderRadius: 15,
-                              marginBottom: height * 0.01,
-                            }}
-                          >
-                            {resource.body !== '' &&
-                            checkIfResourceDataJustAttachment(resource.body) ? (
-                              <WebViewCross
-                                width={width * 0.8 - 20}
-                                html={
-                                  resource.html
-                                    ? resource.body
-                                    : `<div><div>${resource.body}</div></div>`
-                                }
-                              />
-                            ) : null}
-                            {resource.attachments !== undefined ? (
-                              <View
-                                style={{
-                                  marginLeft: 10,
-                                  marginBottom: 10,
-                                  marginRight: 10,
-                                  marginTop:
-                                    resource.body === '' ||
-                                    !checkIfResourceDataJustAttachment(
-                                      resource.body,
-                                    )
-                                      ? 10
-                                      : 0,
-                                  overflow: 'scroll',
-                                }}
-                              >
-                                {resource.attachments.map(attachment => (
-                                  <Pressable
-                                    key={attachment.id}
-                                    style={{ flexDirection: 'row' }}
-                                    onPress={() => {
-                                      Linking.openURL(attachment.webUrl);
-                                    }}
-                                  >
-                                    <MimeTypeIcon
-                                      width={14}
-                                      height={14}
-                                      mimeType={attachment.type}
-                                    />
-                                    <Text>{attachment.title}</Text>
-                                  </Pressable>
-                                ))}
-                              </View>
-                            ) : null}
-                          </View>
-                        )}
-                      </>
-                    ))}
-                  </>
-                ) : (
-                  <Text>Failed</Text>
-                )}
-              </>
-            )}
-          </>
-        </ScrollView>
+        <>
+         { (selectedResourceMode === resourceMode.news) ?
+          <ResourcesNews />:
+          <ScrollView
+            style={{
+              height: isHoverPicker ? height * 0.75 : height * 0.8,
+              backgroundColor: Colors.lightGray,
+            }}
+          >
+            <>
+              {loadingState === loadingStateEnum.loading ? (
+                <View
+                  style={{
+                    width,
+                    height: isHoverPicker ? height * 0.75 : height * 0.8,
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <ProgressView
+                    width={width < height ? width * 0.05 : height * 0.05}
+                    height={width < height ? width * 0.05 : height * 0.05}
+                  />
+                  <Text>Loading</Text>
+                </View>
+              ) : (
+                <>
+                  {loadingState === loadingStateEnum.success ? (
+                    <>
+                      {resources.map(resource => (
+                        <View key={`Resource_${resource.id}`}>
+                          {isGovernmentMode ? (
+                            <Pressable
+                              onPress={() => {
+                                setIsShowingCategoryView(true);
+                                setSelectedPost({
+                                  teamId: resource.teamId,
+                                  conversationId: resource.conversationId,
+                                  messageId: resource.id,
+                                });
+                              }}
+                              style={{
+                                width: width * 0.8,
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                backgroundColor: Colors.white,
+                                borderRadius: 15,
+                                marginBottom: height * 0.01,
+                              }}
+                            >
+                              {resource.body !== '' &&
+                              checkIfResourceDataJustAttachment(resource.body) ? (
+                                <WebViewCross
+                                  width={width * 0.8 - 20}
+                                  html={
+                                    resource.html
+                                      ? resource.body
+                                      : `<div><div>${resource.body}</div></div>`
+                                  }
+                                />
+                              ) : null}
+                              {resource.attachments !== undefined ? (
+                                <View
+                                  style={{
+                                    marginLeft: 10,
+                                    marginBottom: 10,
+                                    marginRight: 10,
+                                    marginTop:
+                                      resource.body === '' ||
+                                      !checkIfResourceDataJustAttachment(
+                                        resource.body,
+                                      )
+                                        ? 10
+                                        : 0,
+                                    overflow: 'scroll',
+                                  }}
+                                >
+                                  {resource.attachments.map(attachment => (
+                                    <Pressable
+                                      style={{ flexDirection: 'row' }}
+                                      onPress={() => {
+                                        Linking.openURL(attachment.webUrl);
+                                      }}
+                                    >
+                                      <MimeTypeIcon
+                                        width={14}
+                                        height={14}
+                                        mimeType={attachment.type}
+                                      />
+                                      <Text>{attachment.title}</Text>
+                                    </Pressable>
+                                  ))}
+                                </View>
+                              ) : null}
+                            </Pressable>
+                          ) : (
+                            <View
+                              style={{
+                                width: width * 0.8,
+                                marginLeft: 'auto',
+                                marginRight: 'auto',
+                                backgroundColor: Colors.white,
+                                borderRadius: 15,
+                                marginBottom: height * 0.01,
+                              }}
+                            >
+                              {resource.body !== '' &&
+                              checkIfResourceDataJustAttachment(resource.body) ? (
+                                <WebViewCross
+                                  width={width * 0.8 - 20}
+                                  html={
+                                    resource.html
+                                      ? resource.body
+                                      : `<div><div>${resource.body}</div></div>`
+                                  }
+                                />
+                              ) : null}
+                              {resource.attachments !== undefined ? (
+                                <View
+                                  style={{
+                                    marginLeft: 10,
+                                    marginBottom: 10,
+                                    marginRight: 10,
+                                    marginTop:
+                                      resource.body === '' ||
+                                      !checkIfResourceDataJustAttachment(
+                                        resource.body,
+                                      )
+                                        ? 10
+                                        : 0,
+                                    overflow: 'scroll',
+                                  }}
+                                >
+                                  {resource.attachments.map(attachment => (
+                                    <Pressable
+                                      key={attachment.id}
+                                      style={{ flexDirection: 'row' }}
+                                      onPress={() => {
+                                        Linking.openURL(attachment.webUrl);
+                                      }}
+                                    >
+                                      <MimeTypeIcon
+                                        width={14}
+                                        height={14}
+                                        mimeType={attachment.type}
+                                      />
+                                      <Text>{attachment.title}</Text>
+                                    </Pressable>
+                                  ))}
+                                </View>
+                              ) : null}
+                            </View>
+                          )}
+                        </View>
+                      ))}
+                    </>
+                  ) : (
+                    <Text>Failed</Text>
+                  )}
+                </>
+              )}
+            </>
+          </ScrollView>
+         }
+        </>
         <Pressable
           style={{ height: isHoverPicker ? height * 0.1 : height * 0.05 }}
           onHoverIn={() => {
@@ -432,6 +438,13 @@ export default function Resources() {
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
             />
+            <PickerPiece
+              key={`Button_${createUUID()}`}
+              text="Crusader News"
+              item={resourceMode.news}
+              isHoverPicker={isHoverPicker}
+              setIsHoverPicker={setIsHoverPicker}
+            />
           </ScrollView>
         </Pressable>
       </View>
@@ -496,7 +509,7 @@ function GovernmentCategoryView({
         position: 'absolute',
         top: height * 0.05,
         left: width * 0.1,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: Colors.white,
         shadowColor: 'black',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 1,
@@ -513,7 +526,7 @@ function GovernmentCategoryView({
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Colors.white,
         }}
       >
         <Text>Categories</Text>
@@ -528,12 +541,8 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.sports ? 'blue' : '#FFFFFF',
-          shadowColor: 'black',
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          borderRadius: 15,
+            selectedCategory === resourceMode.sports ? Colors.lightGray : Colors.white,
+ 
         }}
       >
         <Text>Sports</Text>
@@ -549,7 +558,7 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.advancement ? 'blue' : '#FFFFFF',
+            selectedCategory === resourceMode.advancement ? Colors.lightGray : Colors.white,
           shadowColor: 'black',
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -570,7 +579,7 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.schoolEvents ? 'blue' : '#FFFFFF',
+            selectedCategory === resourceMode.schoolEvents ? Colors.lightGray : Colors.white,
           shadowColor: 'black',
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -591,7 +600,7 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.annoucments ? 'blue' : '#FFFFFF',
+            selectedCategory === resourceMode.annoucments ? Colors.lightGray : Colors.white,
           shadowColor: 'black',
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -612,7 +621,7 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.fitness ? 'blue' : '#FFFFFF',
+            selectedCategory === resourceMode.fitness ? Colors.lightGray : Colors.white,
           shadowColor: 'black',
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -633,7 +642,7 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.files ? 'blue' : '#FFFFFF',
+            selectedCategory === resourceMode.files ? Colors.lightGray : Colors.white,
           shadowColor: 'black',
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -655,7 +664,7 @@ function GovernmentCategoryView({
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Colors.white,
           shadowColor: 'black',
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,

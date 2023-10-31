@@ -234,7 +234,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
       style={{
         height: 175,
         width: 150,
-        marginTop: user.index <= getNumberOfBlocks(width) ? height * 0.04 : 25,
+        marginTop: user.index < getNumberOfBlocks(width) ? height * 0.07 : 25,
         marginBottom: 25,
         marginLeft: calculateMarginEnds(width, 'L'),
         marginRight: calculateMarginEnds(width, 'R'),

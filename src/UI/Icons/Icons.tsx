@@ -5,9 +5,11 @@ import Svg, {
   ClipPath,
   Defs,
   G,
+  Line,
   LinearGradient,
   Path,
   Polygon,
+  Polyline,
   Rect,
   Shape,
   Stop,
@@ -1142,6 +1144,100 @@ export function OfflineIcon({ width, height, style, props }: iconProps) {
     </Svg>
   );
 }
+
+//Text Icons https://www.svgrepo.com/collection/ui-and-text-editing-icons/
+export function BoldIcon({ width, height, style, props }: iconProps){
+  return (
+    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+      <G id="SVGRepo_iconCarrier">
+        <Path fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} d="M16.5,14H11V9h5.5c1.4,0,2.5,1.1,2.5,2.5v0C19,12.9,17.9,14,16.5,14z"/>
+        <Path fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} d="M18.5,23H11v-5h7.5c1.4,0,2.5,1.1,2.5,2.5v0C21,21.9,19.9,23,18.5,23z"/>
+        <Path fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} d="M22,15c0.7-1,1-2.2,1-3.5C23,7.9,20.1,5,16.5,5h-1h-1H7v22h7.5h1h3c3.6,0,6.5-2.9,6.5-6.5 C25,18.2,23.8,16.2,22,15z"/>
+      </G>
+    </Svg>
+  )
+}
+
+export function ItalicIcon({ width, height, style, props }: iconProps) {
+  return (
+    <Svg id="Italic_Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+      <G id="SVGRepo_iconCarrier">
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="10" y1="27" x2="18" y2="27"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="14" y1="5" x2="22" y2="5"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="14" y1="27" x2="18" y2="5"/>
+      </G>
+    </Svg>
+  )
+}
+
+export function StrikeThroughIcon({ width, height, style, props }: iconProps) {
+  return (
+    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+      <G id="SVGRepo_iconCarrier">
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="7" y1="16" x2="26" y2="16"/>
+        <Path fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} d="M11,21.5c0,3,2.5,5.5,5.5,5.5s5.5-2.5,5.5-5.5S19.5,16,16.5,16S11,13.5,11,10.5S13.5,5,16.5,5S22,7.5,22,10.5"/>
+      </G>
+    </Svg>
+  )
+}
+
+export function UnderlineIcon({ width, height, style, props }: iconProps) {
+  return (
+    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+      <G id="SVGRepo_iconCarrier">
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="3" y1="28" x2="29" y2="28"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="5" y1="23" x2="9" y2="23"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="23" y1="23" x2="27" y2="23"/>
+        <Polyline fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} points="7,23 16,4 25,23 "/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="10" y1="17" x2="22" y2="17"/>
+      </G>
+    </Svg>
+  )
+}
+
+export function RightAlignmentIcon({ width, height, style, props }: iconProps) {
+  return (
+    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+      <G id="SVGRepo_iconCarrier">
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="4" x2="13" y2="4"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="10" x2="3" y2="10"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="16" x2="13" y2="16"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="22" x2="3" y2="22"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="28" x2="13" y2="28"/>
+      </G>
+    </Svg>
+  )
+}
+
+export function LeftAlignmentIcon({ width, height, style, props }: iconProps) {
+  return (
+    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+      <G id="SVGRepo_iconCarrier">
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="3" y1="4" x2="19" y2="4"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10}  x1="3" y1="10" x2="29" y2="10"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10}  x1="3" y1="16" x2="19" y2="16"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10}  x1="3" y1="22" x2="29" y2="22"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10}  x1="3" y1="28" x2="19" y2="28"/>
+      </G>
+    </Svg>
+  )
+}
+
+export function CenterAlignmentIcon({ width, height, style, props }: iconProps) {
+  return (
+    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+      <G id="SVGRepo_iconCarrier">
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="8" y1="4" x2="24" y2="4"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="3" y1="10" x2="29" y2="10"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="8" y1="16" x2="24" y2="16"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="3" y1="22" x2="29" y2="22"/>
+        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="8" y1="28" x2="24" y2="28"/>
+      </G>
+    </Svg>
+  )
+}
+
+
 
 // function MessagingIcon() {
 //     return (

@@ -1,13 +1,14 @@
-import { View, Text, Pressable, Switch, ScrollView, FlatList, ListRenderItemInfo } from 'react-native';
+import { View, Text, Pressable, Switch, ScrollView, FlatList, ListRenderItemInfo, Modal } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-native';
+import { Link, useNavigate } from 'react-router-native';
 import store, { RootState } from '../../../Redux/store';
 import callMsGraph from '../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum, resourceResponce } from '../../../types';
 import ProgressView from '../../../UI/ProgressView';
 import getResource from '../../../Functions/getResources';
 import { getChannels } from '../../../Functions/getTeamsChannels';
+import GovernmentResourcesPost from './GovernmentResourcesPost/GovernmentResourcesPost';
 
 type resourceGroupType = {
   name: string;
@@ -140,14 +141,10 @@ function ChannelBlock({
 
 function GroupBlock({
   group,
-  groupIndex,
-  setGroups,
   selectedGroup,
   setSelectedGroup,
 }: {
   group: resourceGroupType;
-  groupIndex: number;
-  setGroups: (item: resourceGroupType[]) => void;
   selectedGroup: string;
   setSelectedGroup: (item: string) => void;
 }) {
@@ -191,16 +188,29 @@ function GroupBlock({
         <View style={{ margin: 10 }}>
           <Text>{group.name}</Text>
           <Text>Channels</Text>
-          <FlatList 
-            data={channels}
-            renderItem={(channel) => (
-              <ChannelBlock channel={channel} groupId={group.id} onUpdate={(item) => {
-                let newChannels = [...channels];
-                newChannels[channel.index] = item
-                setChannels([...newChannels])
-              }} selectedGroup={selectedGroup}/>
-            )}
-          />
+          {channelState === loadingStateEnum.loading ?
+            <View style={{width: width * 0.9, height: height * 0.2, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+              <ProgressView width={14} height={14}/>
+              <Text>Loading</Text>
+            </View>:
+            <>
+              {channelState === loadingStateEnum.success ?
+                <FlatList 
+                  data={channels}
+                  renderItem={(channel) => (
+                    <ChannelBlock key={channel.item.id} channel={channel} groupId={group.id} onUpdate={(item) => {
+                      let newChannels = [...channels];
+                      newChannels[channel.index] = item
+                      setChannels([...newChannels])
+                    }} selectedGroup={selectedGroup}/>
+                  )}
+                />:
+                <View>
+                  <Text>Failed</Text>
+                </View>
+              }
+            </>
+          }
         </View>
       </View>
     </Pressable>
@@ -214,6 +224,8 @@ export default function GovernmentResources() {
   const [getTeamsState, setGetTeamsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
+  const [isShowingEditor, setIsShowingEditor] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   async function getTeams() {
     const result = await callMsGraph(
@@ -234,17 +246,23 @@ export default function GovernmentResources() {
     setGetTeamsState(loadingStateEnum.success);
     setGroups(resultGroups);
   }
-  async function updateResources() {}
+
   useEffect(() => {
     getTeams();
   }, []);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Link to="/profile/government">
+        <Pressable onPress={() => navigate("/profile/government")}>
           <Text>Back</Text>
-        </Link>
-        <Text>GovernmentResources</Text>
+        </Pressable>
+        <Text>Government Resources</Text>
+        <Pressable onPress={() => setIsShowingEditor(true)}>
+          <Text>Show</Text>
+        </Pressable>
+        <Modal animationType="slide" visible={isShowingEditor} onRequestClose={() => setIsShowingEditor(false)}>
+          <GovernmentResourcesPost />
+        </Modal>
       </View>
       <ScrollView style={{ height: height * 0.9 }}>
         {getTeamsState === loadingStateEnum.loading ? (
@@ -253,12 +271,11 @@ export default function GovernmentResources() {
           <View>
             {getTeamsState === loadingStateEnum.success ? (
               <View>
-                {groups.map((group, groupIndex) => (
+                {groups.map((group) => (
                   <GroupBlock
+                    key={group.id}
                     group={group}
-                    groupIndex={groupIndex}
                     selectedGroup={selectedGroup}
-                    setGroups={setGroups}
                     setSelectedGroup={setSelectedGroup}
                   />
                 ))}

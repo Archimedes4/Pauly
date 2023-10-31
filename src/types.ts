@@ -109,6 +109,7 @@ export enum resourceMode {
   annoucments,
   fitness,
   files,
+  news,
 }
 
 declare global {
@@ -350,6 +351,12 @@ declare global {
       dressCodeIncentiveId?: string;
     };
   };
+  type newsPost = {
+    title: string;
+    excerpt: string;
+    content: string;
+    id: number;
+  }
   type noClassType = {
     day: number;
     Month: number;
