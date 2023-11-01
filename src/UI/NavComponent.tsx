@@ -12,6 +12,7 @@ import {
   HomeIcon,
   MedalIcon,
   PersonIcon,
+  SportsIcon,
   StudentSearchIcon,
 } from './Icons/Icons';
 import { expandedModeSlice } from '../Redux/reducers/expandedModeReducer';
@@ -150,7 +151,7 @@ export default function NavBarComponent({
     'Gochi Hand': require('../../assets/fonts/GochiHand-Regular.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }

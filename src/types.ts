@@ -110,6 +110,7 @@ export enum resourceMode {
   fitness,
   files,
   news,
+  scholarships,
 }
 
 declare global {
@@ -267,6 +268,12 @@ declare global {
     playerNumber?: string;
     posts?: string[];
   };
+  type scholarship = {
+    title: string;
+    note: string;
+    link: string;
+    cover: string;
+  }
   type schoolDayDataCompressedType = {
     schoolDayId: string;
     scheduleId: string;

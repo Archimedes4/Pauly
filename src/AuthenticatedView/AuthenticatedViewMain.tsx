@@ -1,16 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, ScaledSize, Text, Pressable, Platform } from 'react-native';
+import React, { useState } from 'react';
+import { View, ScaledSize } from 'react-native';
 import { useSelector } from 'react-redux';
 import { NativeRouter, Route, Routes } from 'react-router-native';
-
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  DiscoveryDocument,
-  revokeAsync,
-  useAutoDiscovery,
-} from 'expo-auth-session';
-import { useMsal } from '@azure/msal-react';
-import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import HomePage from './HomePage';
 import Commissions from './Commissions/Commissions';
 import Notifications from './Notifications';
@@ -43,18 +35,14 @@ import GovernmentRooms from './Profile/Government/GovernmentClasses/GovernmentRo
 import GovernmentRoomsCreate from './Profile/Government/GovernmentClasses/GovermentRoomsCreate';
 import MicrosoftGraphEdit from './Profile/Government/MicrosoftGraphLists/MicrosoftGraphEdit';
 import GovernmentResources from './Profile/Government/GovernmentResources';
-import GovernmentDressCodeCreate from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentDressCode from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCode';
 import GovernmentDressCodeEdit from './Profile/Government/GovernmentCalendar/GovernmentDressCode/GovernmentDressCodeEdit';
 import GovernmentTimetableEdit from './Profile/Government/GovernmentCalendar/GovernmentTimetable/GovernmentTimetableEdit';
-import store, { RootState } from '../Redux/store';
+import { RootState } from '../Redux/store';
 import ProfileBlock from './Profile/ProfileBlock';
-import ProgressView from '../UI/ProgressView';
 import Students from './Students';
 import GovernmentStudents from './Profile/Government/GovernmentStudents';
 import { Colors } from '../types';
-import { authenticationTokenSlice } from '../Redux/reducers/authenticationTokenReducer';
-import { tenantId } from '../PaulyConfig';
 import LoadingScreen from './LoadingScreen';
 
 export default function AuthenticatedView({
