@@ -19,7 +19,7 @@ import {
   loadingStateEnum,
 } from '../../../../types';
 import store, { RootState } from '../../../../Redux/store';
-import { getTeams } from '../../../../Functions/groupsData';
+import { getTeams } from '../../../../Functions/microsoftGroupsFunctions';
 import ProgressView from '../../../../UI/ProgressView';
 import MicrosoftFilePicker from '../../../../UI/MicrosoftFilePicker';
 import { CloseIcon } from '../../../../UI/Icons/Icons';

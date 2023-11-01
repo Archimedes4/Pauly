@@ -11,7 +11,6 @@ export default async function addImage(
   selectedFile: microsoftFileType,
 ): Promise<loadingStateEnum> {
   // Get Site Root Dirve
-  // b!SovCQ5jf4Ui7t--wIofkuw46Zg0l6rlIr721G-0tZtCdr1HAMwtmTJEU9ay20bf2
   const siteResult = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -19,6 +18,7 @@ export default async function addImage(
   );
   if (siteResult.ok) {
     const siteData = await siteResult.json();
+    //Copy current file to drive
     const copyPayload = {
       parentReference: {
         driveId: siteData.parentReference.driveId,
@@ -32,7 +32,6 @@ export default async function addImage(
     );
     if (copyResult.ok) {
       const copyData = await copyResult.headers.get('Location');
-
       let notComplete = true;
       let resourceId = '';
 
@@ -79,62 +78,13 @@ export default async function addImage(
         );
         if (studentListResult.ok) {
           return loadingStateEnum.success;
+        } else {
+          return loadingStateEnum.failed;
         }
-        const data = await studentListResult.json();
-        return loadingStateEnum.failed;
       }
       return loadingStateEnum.failed;
     }
     return loadingStateEnum.failed;
   }
   return loadingStateEnum.failed;
-
-  // let userExtensionData: any = {}
-  // userExtensionData[store.getState().paulyList.userExtensionId] = {
-  //   "imageId":""
-  // }
-  // const data = {
-  //   "requests": [
-  //     {
-  //       "id":"1",
-  //       "method":"POST",
-  //       "url":`/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.studentFilesListId}/items`,
-  //       "body":JSON.stringify({
-  //         "fields": {
-  //           "createdTime":new Date().toISOString(),
-  //           "":""
-  //         }
-  //       }),
-  //       "headers":{
-  //         "Content-Type": "application/json"
-  //       }
-  //     },
-  //     {
-  //       "id":"2",
-  //       "method":"POST",
-  //       "url":`/sites/${store.getState().paulyList.siteId}/drive/root`,
-  //       "dependsOn":["1"],
-  //       "body":"",
-  //       "headers":{
-  //         "Content-Type": "application/json"
-  //       }
-  //     }
-  //   ]
-  // }
-  // const result = await callMsGraph("https://graph.microsoft.com/v1.0/$batch", "POST", undefined, JSON.stringify(data))
-  // if (result.ok) {
-  //   const data = await result.json()
-  // } else {
-
-  // }
-  // {
-  //   "id":"3",
-  //   "method":"PATCH",
-  //   "url":`/users/${userId}`,
-  //   "headers":{
-  //     "Content-Type": "application/json"
-  //   },
-  //   "dependsOn":["1","2"],
-  //   "body":JSON.stringify({}),
-  // }
 }

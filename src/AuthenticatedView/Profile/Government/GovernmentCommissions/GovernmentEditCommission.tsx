@@ -30,7 +30,7 @@ import {
   getChannels,
   getPosts,
   getTeams,
-} from '../../../../Functions/groupsData';
+} from '../../../../Functions/microsoftGroupsFunctions';
 import getCommission from '../../../../Functions/commissions/getCommission';
 import getSubmissions from '../../../../Functions/commissions/getSubmissions';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';

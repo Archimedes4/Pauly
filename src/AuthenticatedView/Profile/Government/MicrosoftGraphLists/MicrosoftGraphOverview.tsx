@@ -7,7 +7,7 @@ import PickerWrapper from '../../../../UI/Pickers/Picker';
 import { Colors, loadingStateEnum } from '../../../../types';
 import { RootState } from '../../../../Redux/store';
 import { clientId } from '../../../../PaulyConfig';
-import { getTeams } from '../../../../Functions/groupsData';
+import { getTeams } from '../../../../Functions/microsoftGroupsFunctions';
 
 type listType = {
   displayName: string;

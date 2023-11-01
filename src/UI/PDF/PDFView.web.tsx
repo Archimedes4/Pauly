@@ -86,7 +86,6 @@ export default function PDFView({ width }: { width: number }) {
         images[pageNumber],
         (imageMeasureWidth, imageMeasureHeight) => {
           const heightPerWidth = imageMeasureHeight / imageMeasureWidth;
-          console.log(width * heightPerWidth);
           setImageHeight(width * heightPerWidth);
         },
       );

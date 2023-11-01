@@ -136,7 +136,7 @@ declare global {
     id: string;
     status: number;
     headers: object | undefined;
-    body: object | undefined;
+    body: any | undefined;
   };
   type calendarCourseType = {
     name: string;
