@@ -22,7 +22,7 @@ export async function getRooms(
         store.getState().paulyList.siteId
       }/lists/${
         store.getState().paulyList.roomListId
-      }/items?expand=fields${search}`,
+      }/items?expand=fields${searchFilter}`,
   );
   if (result.ok) {
     const data = await result.json();

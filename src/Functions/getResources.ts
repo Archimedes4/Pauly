@@ -53,9 +53,6 @@ async function getResourceFollows() {
       return;
     }
   }
-  store.dispatch(
-    resourcesSlice.actions.setResourcesState(loadingStateEnum.failed),
-  );
 }
 
 async function getAttachments(teamId: string, channelId: string, attachments: any[]): Promise<resourceType[]> {
@@ -92,6 +89,9 @@ async function getAttachments(teamId: string, channelId: string, attachments: an
 }
 
 export async function getResources(category?: resourceMode) {
+  store.dispatch(
+    resourcesSlice.actions.setResourcesState(loadingStateEnum.loading),
+  );
   await getResourceFollows();
   const categoryString = convertResourceModeString(category);
   const categoryFilter = category
@@ -384,8 +384,8 @@ export async function getScholarships(): Promise<{result: loadingStateEnum.faile
   }
 }
 
-export async function getNewsPosts(): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: newsPost[], nextLink?: string|undefined}> {
-  const result = await fetch('https://public-api.wordpress.com/rest/v1.1/sites/thecrusadernews.ca/posts/');
+export async function getNewsPosts(nextLink?: string|undefined): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: newsPost[], nextLink?: string|undefined}> {
+  const result = await fetch(`https://public-api.wordpress.com/rest/v1.1/sites/thecrusadernews.ca/posts${(nextLink !== undefined) ? `?${nextLink}`:''}`);
   if (result.ok) {
     const data = await result.json();
     var outputPosts: newsPost[] = [];

@@ -9,9 +9,9 @@ import { View, Text, Pressable } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useNavigate } from 'react-router-native';
 import createUUID from '../../../../Functions/ultility/createUUID';
-import getSubmissions from '../../../../Functions/sports/getSubmissions';
 import { loadingStateEnum } from '../../../../types';
 import ProgressView from '../../../../UI/ProgressView';
+import getSubmissions from '../../../../Functions/sports/sportsFunctions';
 
 export default function GovernmentHandleFileSubmissions({
   width,
@@ -28,6 +28,7 @@ export default function GovernmentHandleFileSubmissions({
   const navigate = useNavigate();
 
   async function loadData() {
+    //sports functions
     const result = await getSubmissions();
     if (
       result.result === loadingStateEnum.success &&

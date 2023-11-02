@@ -1,4 +1,4 @@
-import { View, Platform } from 'react-native';
+import { View, Platform, ViewStyle } from 'react-native';
 import React, { useState } from 'react';
 import WebView from 'react-native-webview';
 
@@ -6,13 +6,15 @@ export default function WebViewCross({
   html,
   height,
   rawHtml,
+  style,
   width,
 }:({
   html: string | undefined;
   width: number;
   rawHtml?: undefined;
   height?: undefined;
-}| {rawHtml: string | undefined, width: number, height: number, html?: undefined})) {
+  style?: ViewStyle | undefined;
+}| {rawHtml: string | undefined, width: number, height: number, html?: undefined, style?: ViewStyle | undefined;})) {
   const jsCode =
     "window.ReactNativeWebView.postMessage(document.getElementById('pauly-main').clientHeight)";
   // document.getElementById('pauly-main').innerHTML
@@ -39,7 +41,7 @@ export default function WebViewCross({
                 </body>
                 </html>`,
               }}
-              style={{ margin: 10, height: height ? height:adaptHeight + 10, width }}
+              style={[{ margin: 10, height: height ? height:adaptHeight + 10, width }, style]}
               automaticallyAdjustContentInsets={false}
               javaScriptEnabled
               injectedJavaScript={jsCode}
@@ -48,7 +50,7 @@ export default function WebViewCross({
               }
             />
           ) : (
-            <View style={{ margin: 10 }}>
+            <View style={[{ margin: 10 }, style]}>
               { (html !== undefined) ?
                 <div dangerouslySetInnerHTML={{ __html: html }} />:
                 <>

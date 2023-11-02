@@ -419,7 +419,7 @@ export default function Resources() {
         />
         <>
          { (selectedResourceMode === resourceMode.news) ?
-          <ResourcesNews />:
+          <ResourcesNews isHoverPicker={isHoverPicker}/>:
           <>
             { (selectedResourceMode === resourceMode.scholarships) ?
               <ResourceScholarships isHoverPicker={isHoverPicker} />:

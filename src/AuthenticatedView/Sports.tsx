@@ -12,13 +12,9 @@ import {
   ListRenderItemInfo,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-native';
 import { RootState } from '../Redux/store';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
-import getSportsContent from '../Functions/sports/getSportsContent';
-import createUUID from '../Functions/ultility/createUUID';
-import { getSports, getSportsTeams } from '../Functions/sports/sportsFunctions';
-import getRoster from '../Functions/sports/getRoster';
+import { getRoster, getSports, getSportsContent, getSportsTeams } from '../Functions/sports/sportsFunctions';
 import getFileWithShareID from '../Functions/ultility/getFileWithShareID';
 import SegmentedPicker from '../UI/Pickers/SegmentedPicker';
 import SVGXml from '../UI/SVGXml/SVGXml';

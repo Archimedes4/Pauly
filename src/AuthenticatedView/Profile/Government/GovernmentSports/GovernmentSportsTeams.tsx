@@ -6,10 +6,9 @@ import { FlatList } from 'react-native-gesture-handler';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
-import { getSportsTeams } from '../../../../Functions/sports/sportsFunctions';
+import { getSport, getSportsTeams } from '../../../../Functions/sports/sportsFunctions';
 import { WarningIcon } from '../../../../UI/Icons/Icons';
 import SVGXml from '../../../../UI/SVGXml/SVGXml';
-import getSport from '../../../../Functions/sports/getSport';
 import { getTextState } from '../../../../Functions/ultility/createUUID';
 
 function SportsUpdateModel({

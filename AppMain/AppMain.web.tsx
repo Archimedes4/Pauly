@@ -14,8 +14,6 @@ import { clientId, scopes, tenantId } from '../src/PaulyConfig';
 import getPaulyLists from '../src/Functions/ultility/getPaulyLists';
 import getUserProfile from '../src/Functions/ultility/getUserProfile';
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer';
-import { isGovernmentModeSlice } from '../src/Redux/reducers/isGovernmentModeReducer';
-import { authenticationApiTokenSlice } from '../src/Redux/reducers/authenticationApiToken';
 import {
   checkIfGovernmentMode,
   getWantGovernment,
@@ -29,7 +27,7 @@ const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: window.location.href, // TODO change prod
+    redirectUri: window.location.href,
   },
 });
 

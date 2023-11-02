@@ -105,7 +105,9 @@ export default function Students() {
                   backgroundColor: Colors.darkGray,
                 }}
               >
-                <BackButton to="/profile" />
+                { (currentBreakPoint === 0) ?
+                  <BackButton to="/profile" />:null
+                }
                 <Text
                   style={{ fontFamily: 'BukhariScript', color: Colors.white }}
                 >
@@ -142,7 +144,7 @@ export default function Students() {
                 width,
                 height,
                 backgroundColor:
-                  currentBreakPoint === 0 ? Colors.maroon : '#FFFFFF',
+                  currentBreakPoint === 0 ? Colors.maroon : Colors.white,
               }}
             >
               <Pressable
@@ -244,6 +246,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
         shadowOpacity: 1,
         shadowRadius: 5,
         borderRadius: 15,
+        overflow: 'hidden'
       }}
     >
       <View
@@ -266,7 +269,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
             user.item.imageDataUrl !== undefined ? (
               <Image
                 source={{ uri: user.item.imageDataUrl }}
-                style={{ width: 150, height: 150, borderRadius: 5 }}
+                style={{ width: 150, height: 150 }}
               />
             ) : (
               <PersonIcon width={150} height={150} />
@@ -377,7 +380,7 @@ function SearchBox({ getUsers }: { getUsers: (item: string) => void }) {
             }}
             key="Search_View_Text"
           >
-            <Text style={{ color: 'white' }}>{searchText}</Text>
+            <Text style={{ color: Colors.white }}>{searchText}</Text>
           </View>
         </View>
       </View>

@@ -1,14 +1,14 @@
 import { View, Text, Pressable, Switch, ScrollView, FlatList, ListRenderItemInfo, Modal } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-native';
+import { useNavigate } from 'react-router-native';
 import store, { RootState } from '../../../Redux/store';
 import callMsGraph from '../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum, resourceResponce } from '../../../types';
 import ProgressView from '../../../UI/ProgressView';
 import getResource from '../../../Functions/getResources';
-import { getChannels } from '../../../Functions/getTeamsChannels';
 import GovernmentResourcesPost from './GovernmentResourcesPost/GovernmentResourcesPost';
+import { getChannels } from '../../../Functions/microsoftGroupsFunctions';
 
 type resourceGroupType = {
   name: string;

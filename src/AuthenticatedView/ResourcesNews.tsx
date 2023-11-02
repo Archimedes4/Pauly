@@ -1,27 +1,28 @@
 import { View, Text, FlatList, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Colors, loadingStateEnum } from '../types'
-import { getNewsPosts } from '../Functions/getNewsPosts';
 import ProgressView from '../UI/ProgressView';
 import WebViewCross from '../UI/WebViewCross';
 import { useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { CloseIcon } from '../UI/Icons/Icons';
 import { ScrollView } from 'react-native-gesture-handler';
+import { getNewsPosts } from '../Functions/getResources';
 
-export default function ResourcesNews() {
+export default function ResourcesNews({isHoverPicker}:{isHoverPicker: boolean}) {
   const [posts, setPosts] = useState<newsPost[]>([]);
   const [postState, setPostState] = useState<loadingStateEnum>(loadingStateEnum.loading);
   const [selectedPost, setSelectedPost] = useState<newsPost|undefined>(undefined);
   const { width, height } = useSelector(
     (state: RootState) => state.dimentions,
   );
+  const [nextLink, setNextLink] = useState<undefined | string>(undefined)
 
   async function loadArticles() {
-    const result = await getNewsPosts();
+    const result = await getNewsPosts(nextLink);
     if (result.result === loadingStateEnum.success) {
-      setPosts(result.data)
-      console.log(result.data)
+      setPosts([...posts, ...result.data])
+      setNextLink(result.nextLink)
       setPostState(loadingStateEnum.success);
     } else {
       setPostState(loadingStateEnum.failed);
@@ -35,7 +36,7 @@ export default function ResourcesNews() {
   return (
     <>
       { (selectedPost !== undefined) ?
-        <ScrollView style={{width: width, height: height * 0.75, backgroundColor: Colors.lightGray}}>
+        <ScrollView style={{width: width, height: isHoverPicker ? height * 0.75 : height * 0.8, backgroundColor: Colors.lightGray}}>
           <Pressable onPress={() => {setSelectedPost(undefined)}}>
             <CloseIcon width={14} height={14}/>
           </Pressable>
@@ -44,7 +45,7 @@ export default function ResourcesNews() {
         </ScrollView>:
         <>
           { (postState === loadingStateEnum.loading) ?
-            <View style={{width: width, height: height * 0.75, alignItems: 'center', alignContent: 'center', justifyContent: 'center', backgroundColor: Colors.lightGray}}>
+            <View style={{width: width, height: isHoverPicker ? height * 0.75 : height * 0.8, alignItems: 'center', alignContent: 'center', justifyContent: 'center', backgroundColor: Colors.lightGray}}>
               <ProgressView width={14} height={14}/>
               <Text>Loading</Text>
             </View>:
@@ -53,14 +54,19 @@ export default function ResourcesNews() {
                 <FlatList 
                   data={posts}
                   renderItem={(post) => (
-                    <Pressable onPress={() => {setSelectedPost(post.item)}}>
-                      <Text>{post.item.title}</Text>
-                      <WebViewCross width={width * 0.6} html={post.item.excerpt}/>
+                    <Pressable onPress={() => {setSelectedPost(post.item)}} style={{backgroundColor: Colors.white, borderRadius: 15, marginLeft: 10, marginRight: 10, margin: 5}}>
+                      <Text style={{marginLeft: 10, marginTop: 5}}>{post.item.title}</Text>
+                      <WebViewCross style={{marginTop: 2}} width={width * 0.6} html={post.item.excerpt}/>
                     </Pressable>
                   )}
-                  style={{width: width, height: height * 0.75, backgroundColor: Colors.lightGray}}
+                  onEndReached={() => {
+                    if (nextLink !== undefined) {
+                      loadArticles()
+                    }
+                  }}
+                  style={{width: width, height: isHoverPicker ? height * 0.75 : height * 0.8, backgroundColor: Colors.lightGray}}
                 />:
-                <View style={{width: width, height: height * 0.75, backgroundColor: Colors.lightGray}}>
+                <View style={{width: width, height: isHoverPicker ? height * 0.75 : height * 0.8, backgroundColor: Colors.lightGray}}>
                   <Text>Failed to load</Text>
                 </View>
               }
