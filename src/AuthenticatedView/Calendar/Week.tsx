@@ -54,7 +54,7 @@ export default function Week({
                   const d = new Date(selectedDateRedux);
                   d.setDate(d.getDate() - 7);
                   dispatch(
-                    selectedDateSlice.actions.setCurrentEventsLastCalled(
+                    selectedDateSlice.actions.setSelectedDate(
                       d.toISOString(),
                     ),
                   );
@@ -69,7 +69,7 @@ export default function Week({
                 <Pressable
                   onPress={() => {
                     dispatch(
-                      selectedDateSlice.actions.setCurrentEventsLastCalled(
+                      selectedDateSlice.actions.setSelectedDate(
                         day.toISOString(),
                       ),
                     );
@@ -104,7 +104,7 @@ export default function Week({
                   const d = new Date(selectedDateRedux);
                   d.setDate(d.getDate() + 7);
                   dispatch(
-                    selectedDateSlice.actions.setCurrentEventsLastCalled(
+                    selectedDateSlice.actions.setSelectedDate(
                       d.toISOString(),
                     ),
                   );

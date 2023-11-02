@@ -55,8 +55,8 @@ async function getResourceFollows() {
   }
 }
 
-async function getAttachments(teamId: string, channelId: string, attachments: any[]): Promise<resourceType[]> {
-  const attachmentsOut: resourceType[] = [];
+async function getAttachments(teamId: string, channelId: string, attachments: any[]): Promise<attachment[]> {
+  const attachmentsOut: attachment[] = [];
   for (
     let attachmentIndex = 0;
     attachmentIndex <

@@ -606,7 +606,7 @@ function GovernmentCategoryView({
     }
   }
   async function getCategory() {
-
+    
   }
   return (
     <View

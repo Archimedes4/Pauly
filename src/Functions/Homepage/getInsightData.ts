@@ -14,7 +14,7 @@ export default async function getInsightData(): Promise<insightResult> {
   const usedResult = await callMsGraph(
     'https://graph.microsoft.com/v1.0/me/insights/used?$select=resourceReference,resourceVisualization',
   );
-  const userOutData: resourceType[] = [];
+  const userOutData: attachment[] = [];
   let userState: loadingStateEnum = loadingStateEnum.loading; // State of getting users data
   if (usedResult.ok) {
     // Check if result success
@@ -36,7 +36,7 @@ export default async function getInsightData(): Promise<insightResult> {
   const trendingResult = await callMsGraph(
     'https://graph.microsoft.com/v1.0/me/insights/trending?$select=resourceReference,resourceVisualization',
   );
-  const trendingOutData: resourceType[] = [];
+  const trendingOutData: attachment[] = [];
   let trendingState = loadingStateEnum.loading; // state of getting trendings data
   if (trendingResult.ok) {
     const trendingData = await trendingResult.json();

@@ -250,7 +250,7 @@ declare global {
     id: string; // message id
     body: string;
     html: boolean; // if false is text
-    attachments?: resourceType[];
+    attachments?: attachment[];
   };
   type resourceFollowType = {
     teamId: string;
@@ -447,7 +447,7 @@ declare global {
       postType: postType.youtubeVideo
     }
   };
-  type resourceType = {
+  type attachment = {
     webUrl: string;
     id: string;
     title: string;
@@ -456,8 +456,8 @@ declare global {
   type insightResult = {
     userState: loadingStateEnum;
     trendingState: loadingStateEnum;
-    userData: resourceType[];
-    trendingData: resourceType[];
+    userData: attachment[];
+    trendingData: attachment[];
   };
   type listColumnType = {
     columnGroup: string;

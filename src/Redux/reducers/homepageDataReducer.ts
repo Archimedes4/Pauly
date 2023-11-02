@@ -9,8 +9,8 @@ type homepageStatesType = {
   taskState: loadingStateEnum;
   userState: loadingStateEnum;
   trendingState: loadingStateEnum;
-  userData: resourceType[];
-  trendingData: resourceType[];
+  userData: attachment[];
+  trendingData: attachment[];
   userTasks: taskType[];
   schoolDayData: undefined | schoolDayDataType;
   startTime: string;
@@ -50,10 +50,10 @@ export const homepageDataSlice = createSlice({
     setTrendingState: (state, action: PayloadAction<loadingStateEnum>) => {
       return { ...state, trendingState: action.payload };
     },
-    setUserData: (state, action: PayloadAction<resourceType[]>) => {
+    setUserData: (state, action: PayloadAction<attachment[]>) => {
       return { ...state, userData: action.payload };
     },
-    setTrendingData: (state, action: PayloadAction<resourceType[]>) => {
+    setTrendingData: (state, action: PayloadAction<attachment[]>) => {
       return { ...state, trendingData: action.payload };
     },
     setUserTasks: (state, action: PayloadAction<taskType[]>) => {
