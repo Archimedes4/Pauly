@@ -7,7 +7,7 @@ import {
   useAutoDiscovery,
 } from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScaledSize } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Login from '../src/login';
@@ -29,6 +29,7 @@ export default function AppMain({
 }: {
   dimensions: { window: ScaledSize; screen: ScaledSize };
 }) {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const authenticationToken = useSelector(
     (state: RootState) => state.authenticationToken,
   );
@@ -58,39 +59,39 @@ export default function AppMain({
 
   async function getAuthToken() {
     if (discovery !== null) {
-      console.log("This", redirectUri)
-      promptAsync().then(async res => {
-        console.log(res)
-        if (authRequest && res?.type === 'success' && discovery) {
-          exchangeCodeAsync(
-            {
-              clientId: clientId,
-              code: res.params.code,
-              extraParams: authRequest.codeVerifier
-                ? { code_verifier: authRequest.codeVerifier }
-                : undefined,
-              redirectUri: redirectUri,
-              scopes: scopes,
-            },
-            discovery,
-          ).then(res => {
-            if (res.refreshToken !== undefined) {
-              dispatch(
-                authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(
-                  res.refreshToken,
-                ),
-              );
-            }
-            dispatch(
-              authenticationTokenSlice.actions.setAuthenticationToken(
-                res.accessToken,
-              ),
-            );
-            getPaulyLists();
-            getUserProfile();
-          });
+      setIsLoading(true)
+      const res = await promptAsync()
+      if (authRequest && res?.type === 'success' && discovery) {
+        const exchangeRes = await exchangeCodeAsync(
+          {
+            clientId: clientId,
+            code: res.params.code,
+            extraParams: authRequest.codeVerifier
+              ? { code_verifier: authRequest.codeVerifier }
+              : undefined,
+            redirectUri: redirectUri,
+            scopes: scopes,
+          },
+          discovery,
+        )
+        if (exchangeRes.refreshToken !== undefined) {
+          dispatch(
+            authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(
+              exchangeRes.refreshToken,
+            ),
+          );
         }
-      });
+        dispatch(
+          authenticationTokenSlice.actions.setAuthenticationToken(
+            exchangeRes.accessToken,
+          ),
+        );
+        getPaulyLists();
+        getUserProfile();
+        setIsLoading(false)
+      } else {
+        setIsLoading(false)
+      }
     }
   }
 
@@ -162,13 +163,13 @@ export default function AppMain({
       ) : (
         <Login
           onGetAuthToken={() => {
-
             getAuthToken();
           }}
           onGetGovernmentAuthToken={() => {
             getGovernmentAuthToken();
           }}
           width={dimensions.window.width}
+          isLoading={isLoading}
         />
       )}
     </>

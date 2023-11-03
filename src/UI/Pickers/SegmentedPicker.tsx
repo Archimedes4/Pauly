@@ -33,10 +33,6 @@ export default function SegmentedPicker({
   }, []);
 
   useEffect(() => {
-    console.log(selectedIndex);
-  }, [selectedIndex]);
-
-  useEffect(() => {
     setComponentWidth(width / options.length);
     pan.setValue(selectedIndex * compoentWidth + compoentWidth * 0.005);
   }, [width]);

@@ -284,7 +284,6 @@ function DateAndTimeSection({
         }
         date={new Date(startDate)}
         onConfirm={e => {
-          console.log(e.date);
           if (e.date !== undefined) {
             const oldDate = new Date(startDate);
             dispatch(
@@ -312,7 +311,6 @@ function DateAndTimeSection({
         }
         date={new Date(endDate)}
         onConfirm={e => {
-          console.log(e.date);
           if (e.date !== undefined) {
             const oldDate = new Date(endDate);
             const newDate = new Date(
@@ -322,7 +320,6 @@ function DateAndTimeSection({
               oldDate.getHours(),
               oldDate.getMinutes(),
             ).toISOString();
-            console.log(newDate);
             dispatch(addEventSlice.actions.setEndDate(newDate));
           }
           dispatch(addEventSlice.actions.setIsPickingEndDate(false));
@@ -423,11 +420,9 @@ function DateAndTimeSection({
               visible={startDatePickerVisable}
               onDismiss={() => setStartDatePickerVisable(false)}
               onConfirm={e => {
-                console.log(e);
                 const newDate = new Date(startDate);
                 newDate.setHours(e.hours);
                 newDate.setMinutes(e.minutes);
-                console.log(newDate);
                 dispatch(
                   addEventSlice.actions.setStartDate(newDate.toISOString()),
                 );

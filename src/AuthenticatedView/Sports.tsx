@@ -47,7 +47,6 @@ export default function Sports() {
   const [sports, setSports] = useState<sportType[]>([]);
   const [isShowingRoster, setIsShowingRoster] = useState<boolean>(false);
   const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([]);
-  const [sportsSelectHeight, setSportsSelectHeight] = useState<number>(34);
   const dispatch = useDispatch();
 
   async function loadSports() {
@@ -143,34 +142,165 @@ export default function Sports() {
       </View>
       <ScrollView
         style={{
-          height: isShowingTeams ? height * 0.1 : sportsSelectHeight,
+          height: isShowingTeams ? height * 0.1 : 24,
           width,
         }}
         horizontal
       >
-        <View>
-          <View style={{ flexDirection: 'row' }}>
+        <View>   
+          {sportsState === loadingStateEnum.loading ? (
+            <View
+              style={{
+                width: width,
+                height: isShowingTeams ? height * 0.05 : height * 0.1,
+                alignContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ProgressView width={15} height={15} />
+            </View>
+          ) : (
             <>
-              {sportsState === loadingStateEnum.loading ? (
-                <View
-                  style={{
-                    width: isShowingTeams ? height * 0.05 : height * 0.1,
-                    alignContent: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <ProgressView width={15} height={15} />
+              {sportsState === loadingStateEnum.success ? (
+                <View style={{ flexDirection: 'row', height: isShowingTeams ? height * 0.05 : 32}}>
+                  <Pressable
+                    style={{
+                      backgroundColor: Colors.darkGray,
+                      borderWidth: selectedSport === undefined ? 3 : 0,
+                      borderColor: 'black',
+                      borderRadius: 15,
+                      alignContent: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginLeft: 3,
+                      marginTop: 3,
+                      padding: isShowingTeams ? 5 : 10,
+                      height: isShowingTeams ? 32:42
+                    }}
+                    onPress={() => {
+                      setSelectedTeam(undefined);
+                      setSportsTeams([]);
+                      setSelectedSport(undefined);
+                      setIsShowingRoster(false);
+                      setIsShowingTeams(false);
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: Colors.white,
+                      }}
+                    >
+                      Highlights
+                    </Text>
+                  </Pressable>
+                  {sports.map(sport => (
+                    <Pressable
+                      key={`SportButton_${sport.id}`}
+                      onPress={() => {
+                        setSelectedSport(sport);
+                        loadTeams(sport);
+                        setIsShowingTeams(true);
+                        setIsShowingRoster(false);
+                      }}
+                      style={{
+                        backgroundColor: Colors.darkGray,
+                        borderWidth: selectedSport?.id === sport.id ? 3 : 0,
+                        borderColor: 'black',
+                        borderRadius: 15,
+                        alignContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft: 3,
+                        marginTop: 3,
+                        height: isShowingTeams ? 32:42
+                      }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignContent: 'center',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          marginLeft: 10,
+                        }}
+                      >
+                        <SVGXml
+                          xml={sport.svgData}
+                          width={20}
+                          height={20}
+                        />
+                        <Text
+                          style={{
+                            margin: isShowingTeams ? 5 : 10,
+                            color: Colors.white,
+                            marginBottom:
+                              sport.id === selectedSport?.id &&
+                              selectedTeam !== undefined &&
+                              !isShowingTeams
+                                ? 0
+                                : isShowingTeams
+                                ? 5
+                                : 10,
+                          }}
+                        >
+                          {sport.name}
+                        </Text>
+                        {sport.id === selectedSport?.id &&
+                        selectedTeam !== undefined &&
+                        !isShowingTeams ? (
+                          <View>
+                            <Text
+                              style={{
+                                color: Colors.white,
+                                marginBottom: 5,
+                                marginLeft: 2,
+                                marginRight: 10,
+                              }}
+                            >
+                              {selectedTeam?.teamName}
+                            </Text>
+                          </View>
+                        ) : null}
+                      </View>
+                    </Pressable>
+                  ))}
                 </View>
               ) : (
-                <>
-                  {sportsState === loadingStateEnum.success ? (
-                    <>
+                <View>
+                  <Text>Failed</Text>
+                </View>
+              )}
+            </>
+          )}
+        {isShowingTeams ? (
+          <View style={{ flexDirection: 'row' }}>
+            {sportsState === loadingStateEnum.loading ? (
+              <View
+                style={{
+                  width,
+                  height: height * 0.05,
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ProgressView width={15} height={15} />
+              </View>
+            ) : (
+              <>
+                {sportsState === loadingStateEnum.success ? (
+                  <>
+                    {sportsTeams.map(team => (
                       <Pressable
+                        key={`SportTeam_${team.teamId}`}
+                        onPress={() => {
+                          setSelectedTeam(team);
+                          setIsShowingTeams(false);
+                          setIsShowingRoster(false);
+                        }}
                         style={{
                           backgroundColor: Colors.darkGray,
-                          borderWidth: selectedSport === undefined ? 3 : 0,
-                          borderColor: 'black',
                           borderRadius: 15,
                           alignContent: 'center',
                           alignItems: 'center',
@@ -178,161 +308,20 @@ export default function Sports() {
                           marginLeft: 3,
                           marginTop: 3,
                         }}
-                        onPress={() => {
-                          setSelectedTeam(undefined);
-                          setSportsTeams([]);
-                          setSelectedSport(undefined);
-                          setIsShowingRoster(false);
-                          setIsShowingTeams(false);
-                        }}
                       >
-                        <Text
-                          style={{
-                            margin: isShowingTeams ? 5 : 10,
-                            color: Colors.white,
-                            marginBottom: isShowingTeams ? 5 : 10,
-                          }}
-                        >
-                          Highlights
+                        <Text style={{ margin: 5, color: Colors.white }}>
+                          {team.teamName}
                         </Text>
                       </Pressable>
-                      {sports.map(sport => (
-                        <Pressable
-                          key={`SportButton_${sport.id}`}
-                          onLayout={e => {
-                            setSportsSelectHeight(e.nativeEvent.layout.height);
-                          }}
-                          onPress={() => {
-                            setSelectedSport(sport);
-                            loadTeams(sport);
-                            setIsShowingTeams(true);
-                            setIsShowingRoster(false);
-                          }}
-                          style={{
-                            backgroundColor: Colors.darkGray,
-                            borderWidth: selectedSport?.id === sport.id ? 3 : 0,
-                            borderColor: 'black',
-                            borderRadius: 15,
-                            alignContent: 'center',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginLeft: 3,
-                            marginTop: 3,
-                          }}
-                        >
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignContent: 'center',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              marginLeft: 10,
-                            }}
-                          >
-                            <SVGXml
-                              xml={sport.svgData}
-                              width={20}
-                              height={20}
-                            />
-                            <View style={{ marginLeft: 4 }}>
-                              <Text
-                                style={{
-                                  margin: isShowingTeams ? 5 : 10,
-                                  marginLeft: 2,
-                                  color: Colors.white,
-                                  marginBottom:
-                                    sport.id === selectedSport?.id &&
-                                    selectedTeam !== undefined &&
-                                    !isShowingTeams
-                                      ? 0
-                                      : isShowingTeams
-                                      ? 5
-                                      : 10,
-                                }}
-                              >
-                                {sport.name}
-                              </Text>
-                              {sport.id === selectedSport?.id &&
-                              selectedTeam !== undefined &&
-                              !isShowingTeams ? (
-                                <View>
-                                  <Text
-                                    style={{
-                                      color: Colors.white,
-                                      marginBottom: 5,
-                                      marginLeft: 2,
-                                      marginRight: 10,
-                                    }}
-                                  >
-                                    {selectedTeam?.teamName}
-                                  </Text>
-                                </View>
-                              ) : null}
-                            </View>
-                          </View>
-                        </Pressable>
-                      ))}
-                    </>
-                  ) : (
-                    <View>
-                      <Text>Failed</Text>
-                    </View>
-                  )}
-                </>
-              )}
-            </>
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            {isShowingTeams ? (
-              <>
-                {sportsState === loadingStateEnum.loading ? (
-                  <View
-                    style={{
-                      width,
-                      height: height * 0.05,
-                      alignContent: 'center',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <ProgressView width={15} height={15} />
-                  </View>
-                ) : (
-                  <>
-                    {sportsState === loadingStateEnum.success ? (
-                      <>
-                        {sportsTeams.map(team => (
-                          <Pressable
-                            key={`SportTeam_${team.teamId}`}
-                            onPress={() => {
-                              setSelectedTeam(team);
-                              setIsShowingTeams(false);
-                              setIsShowingRoster(false);
-                            }}
-                            style={{
-                              backgroundColor: Colors.darkGray,
-                              borderRadius: 15,
-                              alignContent: 'center',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              marginLeft: 3,
-                              marginTop: 3,
-                            }}
-                          >
-                            <Text style={{ margin: 5, color: Colors.white }}>
-                              {team.teamName}
-                            </Text>
-                          </Pressable>
-                        ))}
-                      </>
-                    ) : (
-                      <Text>Failed to load Sports</Text>
-                    )}
+                    ))}
                   </>
+                ) : (
+                  <Text>Failed to load Sports</Text>
                 )}
               </>
-            ) : null}
+            )}
           </View>
+        ) : null}
         </View>
       </ScrollView>
       {loadingResult === loadingStateEnum.loading ? (
@@ -341,7 +330,7 @@ export default function Sports() {
             width,
             height:
               height * 0.8 +
-              (isShowingTeams ? 0 : height * 0.1 - sportsSelectHeight),
+              (isShowingTeams ? 0 : height * 0.1 - 34),
             alignContent: 'center',
             alignItems: 'center',
             justifyContent: 'center',
@@ -356,7 +345,7 @@ export default function Sports() {
       ) : (
         <>
           {loadingResult === loadingStateEnum.success ? (
-            <ScrollView style={{ height: height * 0.8 }}>
+            <View style={{ height: height * 0.8 }}>
               {selectedTeam !== undefined ? (
                 <View style={{ marginLeft: 5, marginRight: 10, marginTop: 10 }}>
                   <SegmentedPicker
@@ -388,7 +377,7 @@ export default function Sports() {
                   />
                 </>
               )}
-            </ScrollView>
+            </View>
           ) : (
             <View>
               <Text>Something went wrong</Text>
@@ -404,112 +393,92 @@ function SportsPostBlock({post}:{post: ListRenderItemInfo<sportPost>}) {
   const { width, height} = useSelector(
     (state: RootState) => state.dimentions,
   );
-  useEffect(() => {
-    console.log(post.item)
-  }, [])
   return (
     <View
       key={`Sport_${post.item.data.fileId}`}
-      style={{ marginTop: height * 0.05 }}
+      style={{
+        width: width * 0.9,
+        height: (post.item.data.postType === postType.youtubeVideo) ? (((width * 0.9)/16) * 9):height * 0.4,
+        backgroundColor: Colors.white,
+        elevation: 2,
+        shadowColor: 'black',
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 1,
+        shadowRadius: 10,
+        marginLeft: width * 0.05,
+        marginRight: width * 0.05,
+        marginTop: height * 0.05,
+        borderRadius: 15,
+      }}
     >
-      {post.item.data.postType === postType.microsoftFile ?
-        <>
-          {post.item.data.fileType === dataContentTypeOptions.image ? (
-            <View
-              style={{
-                width: width * 0.9,
-                height: height * 0.4,
-                backgroundColor: Colors.white,
-                shadowColor: 'black',
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 1,
-                shadowRadius: 5,
-                marginLeft: width * 0.05,
-                marginRight: width * 0.05,
-                borderRadius: 15,
-              }}
-            >
-              <Text
-                style={{
-                  position: 'absolute',
-                  left: 5,
-                  bottom: 5,
-                  zIndex: 100,
-                }}
-              >
-                {post.item.caption}
-              </Text>
-              <Image
-                style={{
-                  width: width * 0.9,
-                  height: height * 0.4,
-                  marginLeft: width * 0.05,
-                  marginRight: width * 0.05,
-                  borderRadius: 15,
-                }}
-                source={{ uri: post.item.data.fileId }}
-              />
-            </View>
-          ) : null}
-          {post.item.data.fileType === dataContentTypeOptions.video ? (
-            <View
-              style={{
-                width: width * 0.9,
-                height: height * 0.4,
-                backgroundColor: Colors.white,
-                shadowColor: Colors.black,
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 1,
-                shadowRadius: 5,
-                marginLeft: width * 0.05,
-                marginRight: width * 0.05,
-                borderRadius: 15,
-              }}
-            >
-              <Text
-                style={{
-                  position: 'absolute',
-                  left: 5,
-                  bottom: 5,
-                  zIndex: 100,
-                }}
-              >
-                {post.item.caption}
-              </Text>
-              <Video
-                useNativeControls
-                source={{ uri: post.item.data.fileId }}
-                resizeMode={ResizeMode.COVER}
-                style={{
-                  width: width * 0.9,
-                  height: height * 0.4,
-                  alignSelf: 'stretch',
-                  borderRadius: 15,
-                }}
-                videoStyle={{
-                  width: width * 0.9,
-                  height: height * 0.4,
-                }}
-              />
-            </View>
-          ) : null}
-        </>:null
-      }
-      {post.item.data.postType === postType.youtubeVideo ?
-        <View style={{
-          width: width * 0.9,
-          marginLeft: width * 0.05,
-          marginBottom: 5,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          borderRadius: 15,
-          overflow: 'hidden'
-        }}>
-          <SportsYoutube width={width * 0.9} videoId={post.item.data.fileId} />
-        </View>:null
-      }
+      <View style={{
+        overflow: 'hidden',
+        width: width * 0.9,
+        height: (post.item.data.postType === postType.youtubeVideo) ? (((width * 0.9)/16) * 9):height * 0.4,
+        borderRadius: 15,
+      }}>
+        {post.item.data.postType === postType.microsoftFile ?
+          <>
+            {post.item.data.fileType === dataContentTypeOptions.image ? (
+              <View>
+                <Text
+                  style={{
+                    position: 'absolute',
+                    left: 5,
+                    bottom: 5,
+                    zIndex: 100,
+                  }}
+                >
+                  {post.item.caption}
+                </Text>
+                <Image
+                  style={{
+                    width: width * 0.9,
+                    height: height * 0.4,
+                    marginLeft: width * 0.05,
+                    marginRight: width * 0.05,
+                    borderRadius: 15,
+                  }}
+                  source={{ uri: post.item.data.fileId }}
+                />
+              </View>
+            ) : null}
+            {post.item.data.fileType === dataContentTypeOptions.video ? (
+              <View>
+                <Text
+                  style={{
+                    position: 'absolute',
+                    left: 5,
+                    bottom: 5,
+                    zIndex: 100,
+                  }}
+                >
+                  {post.item.caption}
+                </Text>
+                <Video
+                  useNativeControls
+                  source={{ uri: post.item.data.fileId }}
+                  resizeMode={ResizeMode.COVER}
+                  style={{
+                    width: width * 0.9,
+                    height: height * 0.4,
+                    alignSelf: 'stretch',
+                    borderRadius: 15,
+                  }}
+                  videoStyle={{
+                    width: width * 0.9,
+                    height: height * 0.4,
+                    borderRadius: 15
+                  }}
+                />
+              </View>
+            ) : null}
+          </>:null
+        }
+        {post.item.data.postType === postType.youtubeVideo ?
+          <SportsYoutube width={width * 0.9} videoId={post.item.data.fileId} />:null
+        }
+      </View>
     </View>
   )
 }
@@ -529,7 +498,6 @@ function RosterView({
 
   async function loadRoster() {
     const result = await getRoster(teamId);
-    console.log(result);
     if (
       result.result === loadingStateEnum.success &&
       result.data !== undefined
@@ -547,7 +515,7 @@ function RosterView({
     BukhariScript: require('../../assets/fonts/BukhariScript.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }

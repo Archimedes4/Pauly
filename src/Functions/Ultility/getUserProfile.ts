@@ -7,7 +7,6 @@ export default async function getUserProfile() {
     'https://graph.microsoft.com/v1.0/me/photo/$value',
     'GET',
   );
-  // TO DO return error
   if (result.ok) {
     const dataBlob = await result.blob();
     const urlOut = URL.createObjectURL(dataBlob);

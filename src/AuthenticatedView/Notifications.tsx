@@ -118,7 +118,7 @@ export default function Notifications() {
     'Comfortaa-Regular': require('../../assets/fonts/Comfortaa-Regular.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
@@ -315,7 +315,7 @@ function TaskBlock() {
           shadowColor: 'black',
           width: width * 0.9,
           marginLeft: width * 0.05,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Colors.white,
           marginRight: width * 0.05,
           height: height * 0.5,
           shadowOffset: { width: 0, height: 1 },
@@ -446,7 +446,6 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
       const newItem: any = {};
       Object.assign(newItem, task.item);
       newItem.status = status;
-      console.log('This is new Item', newItem);
       dispatch(
         homepageDataSlice.actions.updateUserTask({
           index: task.index,
@@ -662,7 +661,7 @@ function BoardBlock() {
             alignContent: 'center',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#FFFFFF',
+            backgroundColor: Colors.white,
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.8,
             shadowRadius: 10,
@@ -684,7 +683,7 @@ function BoardBlock() {
                     marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
                     marginRight:
                       currentBreakPoint === 0 ? width * 0.05 : width * 0.03,
-                    backgroundColor: '#FFFFFF',
+                    backgroundColor: Colors.white,
                     shadowOffset: { width: 0, height: 1 },
                     shadowOpacity: 0.8,
                     shadowRadius: 10,
@@ -765,15 +764,14 @@ function InsightsBlock() {
               marginRight: width * 0.05,
               width: width * 0.9,
               height: height * 0.3,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: Colors.white,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.8,
               shadowRadius: 10,
               borderRadius: 15,
-              overflow: 'scroll',
             }}
           >
-            <TrendingFiles />
+            <TrendingFiles width={width * 0.9} />
           </View>
           <Text
             style={{
@@ -791,16 +789,15 @@ function InsightsBlock() {
               marginRight: width * 0.05,
               width: width * 0.9,
               height: height * 0.3,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: Colors.white,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.8,
               shadowRadius: 10,
               borderRadius: 15,
               marginBottom: height * 0.05,
-              overflow: 'scroll',
             }}
           >
-            <PopularFiles />
+            <PopularFiles width={width * 0.9} />
           </View>
         </>
       ) : (
@@ -823,7 +820,7 @@ function InsightsBlock() {
               marginRight: 'auto',
               marginTop: height * 0.025,
               marginBottom: height * 0.025,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: Colors.white,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.8,
               shadowRadius: 10,
@@ -831,10 +828,10 @@ function InsightsBlock() {
             }}
           >
             <View style={{ width: width * 0.45, overflow: 'scroll' }}>
-              <TrendingFiles />
+              <TrendingFiles width={width * 0.45} />
             </View>
             <View style={{ width: width * 0.45, overflow: 'visible' }}>
-              <PopularFiles />
+              <PopularFiles width={width * 0.45} />
             </View>
           </View>
         </>
@@ -843,8 +840,8 @@ function InsightsBlock() {
   );
 }
 
-function PopularFiles() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+function PopularFiles({width}:{width: number}) {
+  const { height } = useSelector((state: RootState) => state.dimentions);
   const { trendingData, trendingState } = useSelector(
     (state: RootState) => state.homepageData,
   );
@@ -855,7 +852,7 @@ function PopularFiles() {
           <Text>Loading</Text>
         </View>
       ) : (
-        <ScrollView style={{ height: height * 0.3 }}>
+        <ScrollView style={{ height: height * 0.3, width: width}}>
           {trendingState === loadingStateEnum.success ? (
             <>
               {trendingData.map(data => (
@@ -882,45 +879,43 @@ function PopularFiles() {
   );
 }
 
-function TrendingFiles() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+function TrendingFiles({width}:{width: number}) {
+  const { height } = useSelector((state: RootState) => state.dimentions);
   const { userState, userData } = useSelector(
     (state: RootState) => state.homepageData,
   );
   return (
-    <View style={{ height: height * 0.3, width: width * 0.5 }}>
-      <ScrollView style={{ height: height * 0.3 }}>
-        {userState === loadingStateEnum.loading ? (
-          <Text>Loading</Text>
-        ) : (
-          <View>
-            {userState === loadingStateEnum.success ? (
-              <View>
-                {userData.map(data => (
-                  <Pressable
-                    key={`User_Insight_${data.id}`}
-                    style={{ flexDirection: 'row' }}
-                    onPress={() => {
-                      Linking.openURL(data.webUrl);
-                    }}
-                  >
-                    <View style={{ margin: 10, flexDirection: 'row' }}>
-                      <MimeTypeIcon
-                        width={14}
-                        height={14}
-                        mimeType={data.type}
-                      />
-                      <Text>{data.title}</Text>
-                    </View>
-                  </Pressable>
-                ))}
-              </View>
-            ) : (
-              <Text>Failed</Text>
-            )}
-          </View>
-        )}
-      </ScrollView>
-    </View>
+    <ScrollView style={{ height: height * 0.3, width: width }}>
+      {userState === loadingStateEnum.loading ? (
+        <Text>Loading</Text>
+      ) : (
+        <View>
+          {userState === loadingStateEnum.success ? (
+            <View>
+              {userData.map(data => (
+                <Pressable
+                  key={`User_Insight_${data.id}`}
+                  style={{ flexDirection: 'row' }}
+                  onPress={() => {
+                    Linking.openURL(data.webUrl);
+                  }}
+                >
+                  <View style={{ margin: 10, flexDirection: 'row' }}>
+                    <MimeTypeIcon
+                      width={14}
+                      height={14}
+                      mimeType={data.type}
+                    />
+                    <Text>{data.title}</Text>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          ) : (
+            <Text>Failed</Text>
+          )}
+        </View>
+      )}
+    </ScrollView>
   );
 }

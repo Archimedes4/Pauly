@@ -45,13 +45,23 @@ export default function Students() {
   }, []);
 
   useEffect(() => {
-    dispatch(
-      safeAreaColorsSlice.actions.setSafeAreaColors({
-        top: Colors.darkGray,
-        bottom: currentBreakPoint === 0 ? Colors.maroon : Colors.white,
-      }),
-    );
-  }, []);
+    if (usersState === loadingStateEnum.loading) {
+      dispatch(
+        safeAreaColorsSlice.actions.setSafeAreaColors({
+          top: Colors.maroon,
+          bottom: Colors.maroon,
+        }),
+      );
+    } else {
+      dispatch(
+        safeAreaColorsSlice.actions.setSafeAreaColors({
+          top: Colors.darkGray,
+          bottom: currentBreakPoint === 0 ? Colors.maroon : Colors.white,
+        }),
+      );
+    }
+    
+  }, [usersState]);
 
   const [fontsLoaded] = useFonts({
     BukhariScript: require('../../assets/fonts/BukhariScript.ttf'),
@@ -82,7 +92,7 @@ export default function Students() {
           }}
         >
           <ProgressView width={14} height={14} />
-          <Text>Loading</Text>
+          <Text style={{color: Colors.white}}>Loading</Text>
         </View>
       ) : (
         <>
@@ -277,8 +287,8 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
           </>
         )}
       </View>
-      <View style={{ flexDirection: 'row', height: 14 }}>
-        <Text style={{ marginLeft: 5, marginTop: 2 }}>{user.item.name}</Text>
+      <View style={{ flexDirection: 'row', marginLeft: 5, marginTop: 2 }}>
+        <Text>{user.item.name}</Text>
         {user.item.student ? <Text>{user.item.grade}</Text> : null}
       </View>
     </View>

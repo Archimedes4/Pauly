@@ -28,21 +28,6 @@ import { monthDataSlice } from '../../Redux/reducers/monthDataReducer';
 import { getClasses } from '../../Functions/classesFunctions';
 import getEvents from '../../Functions/calendar/getEvents';
 
-const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
 export default function Calendar() {
   const { width, height, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
@@ -197,6 +182,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
     { DOW: 'Fri', id: createUUID() },
     { DOW: 'Sat', id: createUUID() },
   ];
+  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
   const selectedDate: string = useSelector(
     (state: RootState) => state.selectedDate,
@@ -417,14 +403,16 @@ function MonthView({ width, height }: { width: number; height: number }) {
                         d.toISOString(),
                       )
                     );
-                    dispatch(addEventSlice.actions.setIsShowingAddDate(true))
-                    const startDate = new Date(selectedDate);
-                    startDate.setDate(value.item.dayData);
-                    const endDate = new Date(selectedDate);
-                    endDate.setDate(value.item.dayData);
-                    endDate.setHours(endDate.getHours() + 1);
-                    dispatch(addEventSlice.actions.setStartDate(startDate));
-                    dispatch(addEventSlice.actions.setEndDate(endDate))
+                    if (currentBreakPoint !== 0) {
+                      dispatch(addEventSlice.actions.setIsShowingAddDate(true))
+                      const startDate = new Date(selectedDate);
+                      startDate.setDate(value.item.dayData);
+                      const endDate = new Date(selectedDate);
+                      endDate.setDate(value.item.dayData);
+                      endDate.setHours(endDate.getHours() + 1);
+                      dispatch(addEventSlice.actions.setStartDate(startDate));
+                      dispatch(addEventSlice.actions.setEndDate(endDate));
+                    }
                   }}
                   key={`CalendarButton_${value.item.id}`}
                 >
@@ -447,6 +435,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
             </>
           )}
           numColumns={7}
+          scrollEnabled={false}
         />
       </View>
     </>

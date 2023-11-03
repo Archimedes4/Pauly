@@ -19,6 +19,5 @@ export default async function callMsGraph(
     const response = await fetch(url, options);
     return response;
   } catch (e) {
-    console.log(e);
   }
 }

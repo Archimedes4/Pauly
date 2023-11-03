@@ -98,7 +98,6 @@ export async function initializePaulyPartThree(
     `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyList/items/1?expand=fields`,
   );
   if (!getPaulyListResult.ok && getPaulyListResult.status !== 404) {
-    console.log('second run failed');
     return loadingStateEnum.failed;
   }
   const getPaulyListResultData = await getPaulyListResult.json();

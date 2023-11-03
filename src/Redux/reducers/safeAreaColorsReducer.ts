@@ -11,10 +11,14 @@ export const safeAreaColorsSlice = createSlice({
   initialState: initalState,
   reducers: {
     setSafeAreaColors: (
-      _state,
+      state,
       action: PayloadAction<{ top: string; bottom: string }>,
     ) => {
-      return action.payload;
+      if (state !== action.payload) {
+        return action.payload;
+      } else {
+        return state
+      }
     },
     setSafeAreaColorTop: (state, action: PayloadAction<string>) => {
       return { ...state, top: action.payload };

@@ -140,7 +140,6 @@ export default function Settings() {
             source={{ uri }}
             onError={e => {
               setImageLoadState(loadingStateEnum.failed);
-              console.log(e.nativeEvent.error);
             }}
             style={{
               width: width * 0.3,

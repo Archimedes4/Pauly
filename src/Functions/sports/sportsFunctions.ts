@@ -139,7 +139,6 @@ export async function getSportsContent(
   );
   if (result.ok) {
     const dataResult = await result.json();
-    console.log(dataResult)
     if (dataResult.value.length !== undefined) {
       const newSportsPosts: sportPost[] = [];
       const shareResultsPromise: Promise<{
@@ -194,11 +193,8 @@ export async function getSportsContent(
               postType: postType.youtubeVideo
             }
           });
-        } else {
-          console.log("not working", dataResult.value[index].fields)
         }
       }
-      console.log("return", newSportsPosts)
       return { result: loadingStateEnum.success, sports: newSportsPosts };
     }
     return { result: loadingStateEnum.failed };

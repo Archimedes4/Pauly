@@ -26,15 +26,6 @@ class YouTubeVideo extends React.PureComponent {
       this.loadVideo();
     }
   };
-  componentDidUpdate(oldProps) {
-    if (this.props.width !== oldProps.width || this.props.height !== oldProps.height) {
-      // var iframe = document.getElementsByName(`youtube-player-${this.props.id}`)[0];
-      // iframe.style.width = `${this.props.width}`;
-      console.log("update")
-    } else {
-      console.log("update")
-    }
-  }
 
   loadVideo = () => {
     const { id } = this.props;

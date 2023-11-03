@@ -605,9 +605,6 @@ function GovernmentCategoryView({
       setCategoryState(loadingStateEnum.failed);
     }
   }
-  async function getCategory() {
-    
-  }
   return (
     <View
       style={{
@@ -624,7 +621,7 @@ function GovernmentCategoryView({
         borderRadius: 15,
       }}
     >
-      <Pressable onPress={() => onClose()}>
+      <Pressable onPress={() => onClose()} style={{position: "absolute", left: 20, top: 20}}>
         <CloseIcon width={12} height={12} />
       </Pressable>
       <View
@@ -633,7 +630,7 @@ function GovernmentCategoryView({
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: Colors.white,
+          marginTop: height * 0.05
         }}
       >
         <Text>Categories</Text>

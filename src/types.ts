@@ -491,7 +491,7 @@ declare global {
 }
 
 export class Colors {
-  static white = '#FFFFFF';
+  static white = '#ffffff';
 
   static maroon = '#793033';
 

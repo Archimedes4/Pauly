@@ -405,7 +405,6 @@ export default function GovernmentEditCommission() {
                 }
                 date={new Date(endDate)}
                 onConfirm={e => {
-                  console.log(e.date);
                   if (e.date !== undefined) {
                     const oldDate = new Date(endDate);
                     const newDate = new Date(

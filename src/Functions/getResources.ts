@@ -290,7 +290,6 @@ export async function getResourcesSearch(search: string) {
         ) {
           if (batchResultData.responses[batchIndex].status === 200) {
             // TO DO fix ok code
-            console.log(batchResultData.responses[batchIndex].body);
             outputData.push({
               teamId:
                 batchResultData.responses[batchIndex].body.channelIdentity

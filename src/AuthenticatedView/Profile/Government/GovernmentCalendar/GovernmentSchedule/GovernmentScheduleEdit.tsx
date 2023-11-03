@@ -561,10 +561,8 @@ function PeriodBlock({
               newPeriods[update].startMinute = e.minutes;
               onSetNewPeriods([...newPeriods]);
               setIsSelectingStartTime(false);
-              console.log('all good');
             } else {
               // TO DO failed
-              console.log('failed');
               setIsSelectingStartTime(false);
             }
           }}

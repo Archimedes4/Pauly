@@ -73,6 +73,7 @@ export default function LoadingView({
   }
 
   useEffect(() => {
+    checkIfConnected();
     const intervalId = setInterval(() => {
       // assign interval to a variable to clear it.
       checkIfConnected();
@@ -124,7 +125,7 @@ export default function LoadingView({
           ) : null}
         </>
       ) : (
-        <OfflineIcon width={50} height={50} />
+        <OfflineIcon width={50} height={50} color={Colors.white} />
       )}
     </View>
   );

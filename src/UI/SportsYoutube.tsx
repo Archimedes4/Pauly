@@ -1,7 +1,7 @@
 import { View, Platform } from 'react-native'
-import React from 'react'
-import WebViewCross from './WebViewCross'
+import React, { useEffect } from 'react'
 import YoutubeWeb from './youtubeIframeFunction'
+import WebView from 'react-native-webview'
 
 
 export default function SportsYoutube({videoId, width, height}:{videoId: string, width: number, height?: number}) {
@@ -11,14 +11,22 @@ export default function SportsYoutube({videoId, width, height}:{videoId: string,
         <View style={{width: width, height: height ? height:(width/16) * 9}}>
           <YoutubeWeb id={videoId} width={width} height={height ? height:(width/16) * 9} />
         </View>:
-        <WebViewCross rawHtml={
+        <WebView source={{html:
           `
             <!DOCTYPE html>
             <html>
-              <head></head>
+              <head>
+                <meta name="viewport" content="width=device-width">
+                <style>
+                  body {
+                    margin: 0px;
+                    height: ${height ? height:(width/16) * 9}px;
+                  }
+                </style>
+              </head>
               <body>
                 <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-                <div id="player"></div>
+                <div id="player" className="player"></div>
             
                 <script>
                   // 2. This code loads the IFrame Player API code asynchronously.
@@ -33,11 +41,14 @@ export default function SportsYoutube({videoId, width, height}:{videoId: string,
                   var player;
                   function onYouTubeIframeAPIReady() {
                     player = new YT.Player('player', {
-                      height: '${(width/16) * 9}',
+                      height: '${height ? height:(width/16) * 9}',
                       width: '${width}',
                       videoId: '${videoId}',
                       playerVars: {
-                        'playsinline': 1
+                        'playsinline': 1,
+                        'loop': 1,
+                        'rel':0,
+                        'playsinline':1
                       },
                       events: {
                         'onReady': onPlayerReady,
@@ -67,7 +78,13 @@ export default function SportsYoutube({videoId, width, height}:{videoId: string,
                 </script>
               </body>
             </html>
-          `} width={width} height={height ? height:(width/16) * 9}/>
+          `}}
+          style={{width: width, height: height ? height:(width/16) * 9, position: 'absolute'}}
+          automaticallyAdjustContentInsets={false}
+          scrollEnabled={false}
+          scalesPageToFit={false}
+          allowsInlineMediaPlayback={true}
+        />
       }
     </>
   )

@@ -540,7 +540,6 @@ function RosterBlock({
           const userData = users.findIndex(e => {
             return e.id === teamResultData.value[teamIndex].fields.playerId;
           });
-          console.log(userData);
           if (userData !== -1) {
             rosters.push({
               name: users[userData].displayName,
@@ -731,8 +730,7 @@ function RosterBlockItem({
 
   async function loadImage() {
     if (member.item.imageShareId !== undefined) {
-      const result = await getFileWithShareID(member.item.imageShareId);
-      console.log(result);
+      const result = await getFileWithShareID(member.item.imageShareId, 0);
       if (
         result.result === loadingStateEnum.success &&
         result.url &&

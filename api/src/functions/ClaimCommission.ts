@@ -197,7 +197,6 @@ export async function ClaimCommission(
         submissionData: JSON.stringify(resultSubmissionData),
       },
     };
-    console.log(submissionData);
     const submitResult = await callMsGraph(
       accessTokens.clientCredentialsAccessToken,
       `https://graph.microsoft.com/v1.0/sites/${paulyListResult.siteId}/lists/${paulyListResult.commissionSubmissionsListId}/items`,
@@ -209,13 +208,10 @@ export async function ClaimCommission(
         status: 500,
         body: 'Internal Error: Unable to create submission',
       };
-      return;
     }
-    console.log('submission Sent');
 
     return { status: 200, body: 'Ok' };
   } catch (e) {
-    console.log('This is the error', e);
     return { status: 500, body: 'Something has gone wrong' };
   }
 }
