@@ -76,12 +76,3 @@ export default function ProgressView({
     </Svg>
   );
 }
-
-const styles = StyleSheet.create({
-  box: {
-    height: 120,
-    width: 120,
-    backgroundColor: '#b58df1',
-    borderRadius: 20,
-  },
-});

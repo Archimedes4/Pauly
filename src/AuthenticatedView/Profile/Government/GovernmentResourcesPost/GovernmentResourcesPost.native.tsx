@@ -1,14 +1,14 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import WebView from 'react-native-webview'
+import { View, Text } from 'react-native';
+import React from 'react';
+import WebView from 'react-native-webview';
 
 export default function GovernmentResourcesPost() {
   return (
     <View>
       <Text>GovernmentResourcesPost</Text>
-      <WebView 
+      <WebView
         source={{
-          html:  `
+          html: `
             <html lang="en">
               <head>
                 <meta charset="UTF-8">
@@ -51,10 +51,10 @@ export default function GovernmentResourcesPost() {
                 </script>
               </body>
             </html>
-          `
+          `,
         }}
         javaScriptEnabled
       />
     </View>
-  )
+  );
 }

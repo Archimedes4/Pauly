@@ -1,8 +1,16 @@
-import { View, Text, Pressable, TextInput, FlatList, Image } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  TextInput,
+  FlatList,
+  Image,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
+import { SegmentedButtons } from 'react-native-paper';
 import MicrosoftFilePicker from '../../../../UI/MicrosoftFilePicker';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import createUUID from '../../../../Functions/ultility/createUUID';
@@ -13,20 +21,25 @@ import {
   getSportsTeams,
 } from '../../../../Functions/sports/sportsFunctions';
 import ProgressView from '../../../../UI/ProgressView';
-import { SegmentedButtons } from 'react-native-paper';
 import { getYoutubeVideos } from '../../../../Functions/youtubeFunctions';
 
-function YoutubeVideosSelector({onSelect}:{onSelect: (item: string) => void}) {
+function YoutubeVideosSelector({
+  onSelect,
+}: {
+  onSelect: (item: string) => void;
+}) {
   const { width } = useSelector((state: RootState) => state.dimentions);
   const [ytVideos, setytVideos] = useState<youtubeVideoType[]>([]);
-  const [ytState, setytState] = useState<loadingStateEnum>(loadingStateEnum.loading);
+  const [ytState, setytState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
   const [nextPage, setNextPage] = useState<string | undefined>(undefined);
 
   async function loadData() {
     const result = await getYoutubeVideos(nextPage);
     if (result.result == loadingStateEnum.success) {
       setytVideos([...ytVideos, ...result.data]);
-      setNextPage(result.nextPageToken)
+      setNextPage(result.nextPageToken);
       setytState(loadingStateEnum.success);
     } else {
       setytState(loadingStateEnum.failed);
@@ -34,37 +47,46 @@ function YoutubeVideosSelector({onSelect}:{onSelect: (item: string) => void}) {
   }
 
   useEffect(() => {
-    loadData()
+    loadData();
   }, []);
 
   return (
     <>
-      { (ytState === loadingStateEnum.loading) ?
+      {ytState === loadingStateEnum.loading ? (
         <View>
-          <ProgressView width={14} height={14}/>
+          <ProgressView width={14} height={14} />
           <Text>Loading</Text>
-        </View>:
+        </View>
+      ) : (
         <>
-          { (ytState === loadingStateEnum.success) ?
+          {ytState === loadingStateEnum.success ? (
             <FlatList
               data={ytVideos}
-              renderItem={(video) => (
-                <Pressable onPress={() => {onSelect(video.item.videoId)}}>
-                  <Image source={{uri: video.item.thumbnail}} style={{width: width, height: (width/16)*9}}/>
+              renderItem={video => (
+                <Pressable
+                  onPress={() => {
+                    onSelect(video.item.videoId);
+                  }}
+                >
+                  <Image
+                    source={{ uri: video.item.thumbnail }}
+                    style={{ width, height: (width / 16) * 9 }}
+                  />
                   <Text>{video.item.title}</Text>
                 </Pressable>
               )}
-              style={{width: width, height: 500}}
+              style={{ width, height: 500 }}
               onEndReached={() => loadData()}
-            />:
-            <View style={{width: width, height: 500}}>
+            />
+          ) : (
+            <View style={{ width, height: 500 }}>
               <Text>Something Went Wrong</Text>
             </View>
-          }
+          )}
         </>
-      }
+      )}
     </>
-  )
+  );
 }
 
 export default function GovernmentSportsTeamAddPost() {
@@ -110,8 +132,8 @@ export default function GovernmentSportsTeamAddPost() {
         const data = {
           fields: {
             Title: postName,
-            fileId: fileId,
-            fileType: postMode,//This is the post mode Type
+            fileId,
+            fileType: postMode, // This is the post mode Type
             accepted: false,
             user: userData.id,
             timeCreated: new Date().toISOString(),
@@ -168,7 +190,7 @@ export default function GovernmentSportsTeamAddPost() {
       />
       <SegmentedButtons
         value={postMode.toString()}
-        onValueChange={(e) => setPostMode(parseInt(e))}
+        onValueChange={e => setPostMode(parseInt(e))}
         buttons={[
           {
             value: postType.microsoftFile.toString(),
@@ -180,18 +202,18 @@ export default function GovernmentSportsTeamAddPost() {
           },
         ]}
       />
-      {(postMode == postType.microsoftFile) ?
+      {postMode == postType.microsoftFile ? (
         <MicrosoftFilePicker
           onSelectedFile={(item: microsoftFileType) => {
             getShareLink(item);
           }}
           height={500}
           width={width}
-        />:null
-      }
-      {(postMode == postType.youtubeVideo) ?
-        <YoutubeVideosSelector onSelect={setFileId} />:null
-      }
+        />
+      ) : null}
+      {postMode == postType.youtubeVideo ? (
+        <YoutubeVideosSelector onSelect={setFileId} />
+      ) : null}
       {fileId !== '' ? (
         <Pressable
           onPress={() => {
@@ -205,9 +227,7 @@ export default function GovernmentSportsTeamAddPost() {
           }}
         >
           <Text>
-            {fileId !== '' && selectedTeamId !== ''
-              ? 'Submit'
-              : 'Select Team'}
+            {fileId !== '' && selectedTeamId !== '' ? 'Submit' : 'Select Team'}
           </Text>
         </Pressable>
       ) : null}

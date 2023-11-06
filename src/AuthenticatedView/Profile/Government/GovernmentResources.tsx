@@ -1,4 +1,13 @@
-import { View, Text, Pressable, Switch, ScrollView, FlatList, ListRenderItemInfo, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  Switch,
+  ScrollView,
+  FlatList,
+  ListRenderItemInfo,
+  Modal,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-native';
@@ -19,19 +28,15 @@ function ChannelBlock({
   channel,
   groupId,
   onUpdate,
-  selectedGroup
+  selectedGroup,
 }: {
-  channel: ListRenderItemInfo<channelType>
-  groupId: string,
-  onUpdate: (item: channelType) => void,
-  selectedGroup: string
+  channel: ListRenderItemInfo<channelType>;
+  groupId: string;
+  onUpdate: (item: channelType) => void;
+  selectedGroup: string;
 }) {
-  const [isSelected, setIsSelected] = useState<boolean>(
-    channel.item.selected,
-  );
-  const [isLoading, setIsLoading] = useState<boolean>(
-    channel.item.loading,
-  );
+  const [isSelected, setIsSelected] = useState<boolean>(channel.item.selected);
+  const [isLoading, setIsLoading] = useState<boolean>(channel.item.loading);
 
   async function addChannel() {
     const data = {
@@ -49,14 +54,17 @@ function ChannelBlock({
     );
     if (result.ok) {
       onUpdate({
-        ...channel.item, selected: true, loading: false
-      })
+        ...channel.item,
+        selected: true,
+        loading: false,
+      });
       setIsSelected(true);
       setIsLoading(false);
     } else {
       onUpdate({
-        ...channel.item, loading: false
-      })
+        ...channel.item,
+        loading: false,
+      });
       setIsLoading(false);
     }
   }
@@ -77,20 +85,24 @@ function ChannelBlock({
       );
       if (result.ok) {
         onUpdate({
-          ...channel.item, selected: false, loading: false
-        })
+          ...channel.item,
+          selected: false,
+          loading: false,
+        });
         setIsSelected(false);
         setIsLoading(false);
       } else {
         onUpdate({
-          ...channel.item, loading: false
-        })
+          ...channel.item,
+          loading: false,
+        });
         setIsLoading(false);
       }
     } else {
       onUpdate({
-        ...channel.item, loading: false
-      })
+        ...channel.item,
+        loading: false,
+      });
       setIsLoading(false);
     }
   }
@@ -111,8 +123,9 @@ function ChannelBlock({
               ios_backgroundColor="#3e3e3e"
               onValueChange={e => {
                 onUpdate({
-                  ...channel.item, loading: true
-                })
+                  ...channel.item,
+                  loading: true,
+                });
                 setIsLoading(true);
                 if (e === true) {
                   addChannel();
@@ -150,7 +163,9 @@ function GroupBlock({
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [channels, setChannels] = useState<channelType[]>([]);
-  const [channelState, setChannelState] = useState<loadingStateEnum>(loadingStateEnum.loading);
+  const [channelState, setChannelState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
 
   async function loadChannels() {
     const result = await getChannels(group.id);
@@ -163,8 +178,8 @@ function GroupBlock({
   }
 
   useEffect(() => {
-    loadChannels()
-  }, [])
+    loadChannels();
+  }, []);
   return (
     <Pressable
       key={`Team_${group.id}`}
@@ -188,29 +203,45 @@ function GroupBlock({
         <View style={{ margin: 10 }}>
           <Text>{group.name}</Text>
           <Text>Channels</Text>
-          {channelState === loadingStateEnum.loading ?
-            <View style={{width: width * 0.9, height: height * 0.2, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
-              <ProgressView width={14} height={14}/>
+          {channelState === loadingStateEnum.loading ? (
+            <View
+              style={{
+                width: width * 0.9,
+                height: height * 0.2,
+                alignContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <ProgressView width={14} height={14} />
               <Text>Loading</Text>
-            </View>:
+            </View>
+          ) : (
             <>
-              {channelState === loadingStateEnum.success ?
-                <FlatList 
+              {channelState === loadingStateEnum.success ? (
+                <FlatList
                   data={channels}
-                  renderItem={(channel) => (
-                    <ChannelBlock key={channel.item.id} channel={channel} groupId={group.id} onUpdate={(item) => {
-                      let newChannels = [...channels];
-                      newChannels[channel.index] = item
-                      setChannels([...newChannels])
-                    }} selectedGroup={selectedGroup}/>
+                  renderItem={channel => (
+                    <ChannelBlock
+                      key={channel.item.id}
+                      channel={channel}
+                      groupId={group.id}
+                      onUpdate={item => {
+                        const newChannels = [...channels];
+                        newChannels[channel.index] = item;
+                        setChannels([...newChannels]);
+                      }}
+                      selectedGroup={selectedGroup}
+                    />
                   )}
-                />:
+                />
+              ) : (
                 <View>
                   <Text>Failed</Text>
                 </View>
-              }
+              )}
             </>
-          }
+          )}
         </View>
       </View>
     </Pressable>
@@ -253,14 +284,18 @@ export default function GovernmentResources() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Pressable onPress={() => navigate("/profile/government")}>
+        <Pressable onPress={() => navigate('/profile/government')}>
           <Text>Back</Text>
         </Pressable>
         <Text>Government Resources</Text>
         <Pressable onPress={() => setIsShowingEditor(true)}>
           <Text>Show</Text>
         </Pressable>
-        <Modal animationType="slide" visible={isShowingEditor} onRequestClose={() => setIsShowingEditor(false)}>
+        <Modal
+          animationType="slide"
+          visible={isShowingEditor}
+          onRequestClose={() => setIsShowingEditor(false)}
+        >
           <GovernmentResourcesPost />
         </Modal>
       </View>
@@ -271,7 +306,7 @@ export default function GovernmentResources() {
           <View>
             {getTeamsState === loadingStateEnum.success ? (
               <View>
-                {groups.map((group) => (
+                {groups.map(group => (
                   <GroupBlock
                     key={group.id}
                     group={group}

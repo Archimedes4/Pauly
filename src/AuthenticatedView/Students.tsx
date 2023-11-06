@@ -60,7 +60,6 @@ export default function Students() {
         }),
       );
     }
-    
   }, [usersState]);
 
   const [fontsLoaded] = useFonts({
@@ -92,7 +91,7 @@ export default function Students() {
           }}
         >
           <ProgressView width={14} height={14} />
-          <Text style={{color: Colors.white}}>Loading</Text>
+          <Text style={{ color: Colors.white }}>Loading</Text>
         </View>
       ) : (
         <>
@@ -115,9 +114,7 @@ export default function Students() {
                   backgroundColor: Colors.darkGray,
                 }}
               >
-                { (currentBreakPoint === 0) ?
-                  <BackButton to="/profile" />:null
-                }
+                {currentBreakPoint === 0 ? <BackButton to="/profile" /> : null}
                 <Text
                   style={{ fontFamily: 'BukhariScript', color: Colors.white }}
                 >
@@ -256,7 +253,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
         shadowOpacity: 1,
         shadowRadius: 5,
         borderRadius: 15,
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       <View

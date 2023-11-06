@@ -18,7 +18,7 @@ export default async function addImage(
   );
   if (siteResult.ok) {
     const siteData = await siteResult.json();
-    //Copy current file to drive
+    // Copy current file to drive
     const copyPayload = {
       parentReference: {
         driveId: siteData.parentReference.driveId,
@@ -78,9 +78,8 @@ export default async function addImage(
         );
         if (studentListResult.ok) {
           return loadingStateEnum.success;
-        } else {
-          return loadingStateEnum.failed;
         }
+        return loadingStateEnum.failed;
       }
       return loadingStateEnum.failed;
     }

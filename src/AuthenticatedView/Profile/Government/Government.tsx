@@ -5,12 +5,7 @@ import {
   ImageSourcePropType,
   Pressable,
 } from 'react-native';
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -41,9 +36,9 @@ function Block({
   text: string;
   imageSource?: ImageSourcePropType;
   children?: ReactNode;
-  onPress: () => void
+  onPress: () => void;
 }) {
-  const [isSelected, setIsSelected] = useState<boolean>(false)
+  const [isSelected, setIsSelected] = useState<boolean>(false);
   return (
     <Pressable
       style={{
@@ -52,15 +47,19 @@ function Block({
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: isSelected ? Colors.lightGray:Colors.darkGray,
+        backgroundColor: isSelected ? Colors.lightGray : Colors.darkGray,
         borderRadius: 5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.8,
         shadowRadius: 5,
       }}
-      onHoverIn={() => {setIsSelected(true)}}
-      onHoverOut={() => {setIsSelected(false)}}
+      onHoverIn={() => {
+        setIsSelected(true);
+      }}
+      onHoverOut={() => {
+        setIsSelected(false);
+      }}
       onPress={() => onPress()}
     >
       {imageSource !== undefined && (
@@ -75,7 +74,9 @@ function Block({
           <>{children}</>
         </View>
       )}
-      <Text style={{ color: isSelected ? Colors.black:Colors.white }}>{text}</Text>
+      <Text style={{ color: isSelected ? Colors.black : Colors.white }}>
+        {text}
+      </Text>
     </Pressable>
   );
 }
@@ -164,10 +165,20 @@ export default function Government() {
             columnGap: width * 0.05,
           }}
         >
-          <Block onPress={() => navigate('/profile/government/graph/list')} width={100} height={100} text="Graph">
+          <Block
+            onPress={() => navigate('/profile/government/graph/list')}
+            width={100}
+            height={100}
+            text="Graph"
+          >
             <GraphAPILogo width={50} height={50} />
           </Block>
-          <Block onPress={() => navigate('/profile/government/commissions')} width={100} height={100} text="Commissions">
+          <Block
+            onPress={() => navigate('/profile/government/commissions')}
+            width={100}
+            height={100}
+            text="Commissions"
+          >
             <MedalIcon width={50} height={50} />
           </Block>
           <Block
@@ -177,22 +188,52 @@ export default function Government() {
             imageSource={require('../../../../assets/images/Football.png')}
             onPress={() => navigate('/profile/government/sports')}
           />
-          <Block onPress={() => navigate('/profile/government/homepage')} width={100} height={100} text="Homepage">
+          <Block
+            onPress={() => navigate('/profile/government/homepage')}
+            width={100}
+            height={100}
+            text="Homepage"
+          >
             <HomeIcon width={50} height={50} />
           </Block>
-          <Block onPress={() => navigate('/profile/government/calendar')} width={100} height={100} text="Calendar">
+          <Block
+            onPress={() => navigate('/profile/government/calendar')}
+            width={100}
+            height={100}
+            text="Calendar"
+          >
             <CalendarIcon width={50} height={50} />
           </Block>
-          <Block onPress={() => navigate('/profile/government/classes')} width={100} height={100} text="Classes">
+          <Block
+            onPress={() => navigate('/profile/government/classes')}
+            width={100}
+            height={100}
+            text="Classes"
+          >
             <GraduationHatIcon width={50} height={50} />
           </Block>
-          <Block onPress={() => navigate('/profile/government/admin')} width={100} height={100} text="Admin">
+          <Block
+            onPress={() => navigate('/profile/government/admin')}
+            width={100}
+            height={100}
+            text="Admin"
+          >
             <GearIcon width={50} height={50} />
           </Block>
-          <Block onPress={() => navigate('/profile/government/resources')} width={100} height={100} text="Resources">
+          <Block
+            onPress={() => navigate('/profile/government/resources')}
+            width={100}
+            height={100}
+            text="Resources"
+          >
             <BookIcon width={50} height={50} />
           </Block>
-          <Block onPress={() => navigate('/profile/government/students')} width={100} height={100} text="Students">
+          <Block
+            onPress={() => navigate('/profile/government/students')}
+            width={100}
+            height={100}
+            text="Students"
+          >
             <StudentSearchIcon width={50} height={50} />
           </Block>
         </View>

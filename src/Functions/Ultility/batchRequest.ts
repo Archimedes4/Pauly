@@ -6,7 +6,7 @@ export default async function largeBatch(
   createData?: {
     firstUrl: string;
     secondUrl: string;
-    keys: { array?: string[]; map?: Map<string, any> };
+    keys: { array?: string[]; map?: Map<string, unknown> };
     method: 'GET' | 'POST';
   },
 ): Promise<{ result: loadingStateEnum; data?: batchResponseType[] }> {
@@ -49,6 +49,7 @@ export default async function largeBatch(
         }
       });
     } else {
+      return { result: loadingStateEnum.failed };
     }
   } else {
     return { result: loadingStateEnum.failed };

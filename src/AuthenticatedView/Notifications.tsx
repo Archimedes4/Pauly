@@ -840,7 +840,7 @@ function InsightsBlock() {
   );
 }
 
-function PopularFiles({width}:{width: number}) {
+function PopularFiles({ width }: { width: number }) {
   const { height } = useSelector((state: RootState) => state.dimentions);
   const { trendingData, trendingState } = useSelector(
     (state: RootState) => state.homepageData,
@@ -852,7 +852,7 @@ function PopularFiles({width}:{width: number}) {
           <Text>Loading</Text>
         </View>
       ) : (
-        <ScrollView style={{ height: height * 0.3, width: width}}>
+        <ScrollView style={{ height: height * 0.3, width }}>
           {trendingState === loadingStateEnum.success ? (
             <>
               {trendingData.map(data => (
@@ -879,13 +879,13 @@ function PopularFiles({width}:{width: number}) {
   );
 }
 
-function TrendingFiles({width}:{width: number}) {
+function TrendingFiles({ width }: { width: number }) {
   const { height } = useSelector((state: RootState) => state.dimentions);
   const { userState, userData } = useSelector(
     (state: RootState) => state.homepageData,
   );
   return (
-    <ScrollView style={{ height: height * 0.3, width: width }}>
+    <ScrollView style={{ height: height * 0.3, width }}>
       {userState === loadingStateEnum.loading ? (
         <Text>Loading</Text>
       ) : (
@@ -901,11 +901,7 @@ function TrendingFiles({width}:{width: number}) {
                   }}
                 >
                   <View style={{ margin: 10, flexDirection: 'row' }}>
-                    <MimeTypeIcon
-                      width={14}
-                      height={14}
-                      mimeType={data.type}
-                    />
+                    <MimeTypeIcon width={14} height={14} mimeType={data.type} />
                     <Text>{data.title}</Text>
                   </View>
                 </Pressable>

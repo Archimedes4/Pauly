@@ -347,13 +347,13 @@ export const sportsApprovedSubmissionsData = {
       name: 'fileId',
       text: {},
       required: true,
-      indexed: true
+      indexed: true,
     },
     {
       name: 'fileType',
       number: {},
       required: true,
-      indexed: true
+      indexed: true,
     },
     {
       name: 'submissionId',
@@ -422,7 +422,7 @@ export const sportsSubmissionsData = {
     {
       name: 'fileType',
       number: {},
-      required: true
+      required: true,
     },
     {
       name: 'selectedSportId',

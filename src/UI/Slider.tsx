@@ -28,13 +28,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const Box: React.FC<BoxProps> = ({
+function Box({
   width,
   height,
   value,
   onValueChange,
   containerWidth,
-}) => {
+}: BoxProps): React.JSX.Element {
   const pan = useRef(new Animated.Value(value)).current;
   const valueRef = useRef({ currentValue: value });
   const containerWidthRef = useRef({ currentValue: value });
@@ -50,7 +50,7 @@ const Box: React.FC<BoxProps> = ({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: (
-        evt: any,
+        evt: unknown,
         gestureState: PanResponderGestureState,
       ) => {
         const { dx } = gestureState;

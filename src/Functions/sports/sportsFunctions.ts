@@ -1,5 +1,9 @@
 import store from '../../Redux/store';
-import { dataContentTypeOptions, loadingStateEnum, postType } from '../../types';
+import {
+  dataContentTypeOptions,
+  loadingStateEnum,
+  postType,
+} from '../../types';
 import batchRequest from '../ultility/batchRequest';
 import getFileWithShareID from '../ultility/getFileWithShareID';
 import callMsGraph from '../ultility/microsoftAssets';
@@ -116,7 +120,7 @@ export default async function getSubmissions(): Promise<{
           selectedSportId: data.value[index].fields.selectedSportId,
           selectedTeamId: data.value[index].fields.selectedTeamId,
           reviewed: data.value[index].fields.reviewed,
-          fileType: data.value[index].fields.fileType
+          fileType: data.value[index].fields.fileType,
         });
       }
       return { result: loadingStateEnum.success, data: newMediaSubmissions };
@@ -141,30 +145,41 @@ export async function getSportsContent(
     const dataResult = await result.json();
     if (dataResult.value.length !== undefined) {
       const newSportsPosts: sportPost[] = [];
-      const shareResultsPromise: Promise<{
-        result: loadingStateEnum.success;
-        index: number;
-        url?: string | undefined;
-        contentType?: dataContentTypeOptions | undefined;
-      } | {result: loadingStateEnum.failed}>[] = [];
+      const shareResultsPromise: Promise<
+        | {
+            result: loadingStateEnum.success;
+            index: number;
+            url?: string | undefined;
+            contentType?: dataContentTypeOptions | undefined;
+          }
+        | { result: loadingStateEnum.failed }
+      >[] = [];
       for (let index = 0; index < dataResult.value.length; index += 1) {
-        if (dataResult.value[index].fields.fileType === postType.microsoftFile) {
+        if (
+          dataResult.value[index].fields.fileType === postType.microsoftFile
+        ) {
           shareResultsPromise.push(
             getFileWithShareID(dataResult.value[index].fields.fileId, index),
           );
         }
       }
-      const shareResults: ({
-        result: loadingStateEnum.success;
-        index: number;
-        url?: string | undefined;
-        contentType?: dataContentTypeOptions | undefined;
-      }|{result: loadingStateEnum.failed})[] = await Promise.all(shareResultsPromise);
+      const shareResults: (
+        | {
+            result: loadingStateEnum.success;
+            index: number;
+            url?: string | undefined;
+            contentType?: dataContentTypeOptions | undefined;
+          }
+        | { result: loadingStateEnum.failed }
+      )[] = await Promise.all(shareResultsPromise);
 
       for (let index = 0; index < dataResult.value.length; index += 1) {
-        const item = shareResults.find((e) => {if (e.result === loadingStateEnum.success) {
-          return e.index === index
-        } else {return false}});
+        const item = shareResults.find(e => {
+          if (e.result === loadingStateEnum.success) {
+            return e.index === index;
+          }
+          return false;
+        });
         if (item !== undefined) {
           if (item.result === loadingStateEnum.success) {
             const fileType = item.contentType;
@@ -177,21 +192,23 @@ export async function getSportsContent(
                 caption: dataResult.value[index].fields.caption,
                 data: {
                   fileId: item.url,
-                  fileType: fileType,
-                  postType: postType.microsoftFile
-                }
+                  fileType,
+                  postType: postType.microsoftFile,
+                },
               });
             } else {
               return { result: loadingStateEnum.failed };
             }
           }
-        } else if (dataResult.value[index].fields.fileType ===  postType.youtubeVideo) {
+        } else if (
+          dataResult.value[index].fields.fileType === postType.youtubeVideo
+        ) {
           newSportsPosts.push({
             caption: dataResult.value[index].fields.caption,
             data: {
               fileId: dataResult.value[index].fields.fileId,
-              postType: postType.youtubeVideo
-            }
+              postType: postType.youtubeVideo,
+            },
           });
         }
       }
@@ -271,4 +288,3 @@ export async function getRoster(
   }
   return { result: loadingStateEnum.failed };
 }
-

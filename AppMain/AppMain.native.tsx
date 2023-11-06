@@ -20,9 +20,7 @@ import { validateGovernmentMode } from '../src/Functions/handleGovernmentLogin';
 import getPaulyLists from '../src/Functions/ultility/getPaulyLists';
 import getUserProfile from '../src/Functions/ultility/getUserProfile';
 
-
 WebBrowser.maybeCompleteAuthSession();
-
 
 export default function AppMain({
   dimensions,
@@ -43,8 +41,8 @@ export default function AppMain({
   );
 
   const redirectUri = makeRedirectUri({
-    scheme: "Pauly",
-    path: 'auth'
+    scheme: 'Pauly',
+    path: 'auth',
   });
 
   const [authRequest, , promptAsync] = useAuthRequest(
@@ -59,21 +57,21 @@ export default function AppMain({
 
   async function getAuthToken() {
     if (discovery !== null) {
-      setIsLoading(true)
-      const res = await promptAsync()
+      setIsLoading(true);
+      const res = await promptAsync();
       if (authRequest && res?.type === 'success' && discovery) {
         const exchangeRes = await exchangeCodeAsync(
           {
-            clientId: clientId,
+            clientId,
             code: res.params.code,
             extraParams: authRequest.codeVerifier
               ? { code_verifier: authRequest.codeVerifier }
               : undefined,
-            redirectUri: redirectUri,
-            scopes: scopes,
+            redirectUri,
+            scopes,
           },
           discovery,
-        )
+        );
         if (exchangeRes.refreshToken !== undefined) {
           dispatch(
             authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(
@@ -88,9 +86,9 @@ export default function AppMain({
         );
         getPaulyLists();
         getUserProfile();
-        setIsLoading(false)
+        setIsLoading(false);
       } else {
-        setIsLoading(false)
+        setIsLoading(false);
       }
     }
   }

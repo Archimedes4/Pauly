@@ -6,7 +6,10 @@ import { FlatList } from 'react-native-gesture-handler';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import store, { RootState } from '../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../types';
-import { getSport, getSportsTeams } from '../../../../Functions/sports/sportsFunctions';
+import {
+  getSport,
+  getSportsTeams,
+} from '../../../../Functions/sports/sportsFunctions';
 import { WarningIcon } from '../../../../UI/Icons/Icons';
 import SVGXml from '../../../../UI/SVGXml/SVGXml';
 import { getTextState } from '../../../../Functions/ultility/createUUID';
@@ -87,7 +90,7 @@ function SportsUpdateModel({
           {getSportState === loadingStateEnum.success ? (
             <View>
               <Text>Svg</Text>
-              <View style={{width: 100, height: 100, overflow: "hidden"}}>
+              <View style={{ width: 100, height: 100, overflow: 'hidden' }}>
                 <SVGXml xml={svgData} width={100} height={100} />
               </View>
               <TextInput

@@ -36,7 +36,7 @@ export async function ClaimCommission(
     const requestBody = await req.json();
 
     const commissionId =
-      req.query.get('commissionId') || requestBody["commissionId"];
+      req.query.get('commissionId') || requestBody.commissionId;
     if (commissionId === undefined || commissionId === '') {
       return {
         status: 400,
@@ -88,7 +88,7 @@ export async function ClaimCommission(
     if (value === 2 || value === 4) {
       const latCoordinate =
         req.query.get('latCoordinate') ||
-        (req.body && requestBody["latCoordinate"]);
+        (req.body && requestBody.latCoordinate);
       if (latCoordinate === undefined || latCoordinate === '') {
         return {
           status: 400,
@@ -97,7 +97,7 @@ export async function ClaimCommission(
       }
       const lngCoordinate =
         req.query.get('lngCoordinate') ||
-        (req.body && requestBody["lngCoordinate"]);
+        (req.body && requestBody.lngCoordinate);
       if (lngCoordinate === undefined || lngCoordinate === '') {
         return {
           status: 400,
@@ -109,7 +109,7 @@ export async function ClaimCommission(
     }
     if (value === 3 || value === 4) {
       const imageShare: string =
-        req.query.get('imageShare') || (req.body && requestBody["imageShare"]);
+        req.query.get('imageShare') || (req.body && requestBody.imageShare);
       if (imageShare === undefined || imageShare === '') {
         return {
           status: 400,

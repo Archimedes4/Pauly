@@ -95,27 +95,31 @@ export async function getPosts(
   return { result: loadingStateEnum.failed };
 }
 
-//Id group id
-export async function getResourceChannels(id: string): Promise<{result: loadingStateEnum.success, data: channelType[]}|{result: loadingStateEnum.failed}> {
+// Id group id
+export async function getResourceChannels(
+  id: string,
+): Promise<
+  | { result: loadingStateEnum.success; data: channelType[] }
+  | { result: loadingStateEnum.failed }
+> {
   const getResult = await callMsGraph(
     `https://graph.microsoft.com/v1.0/teams/${id}/allChannels`,
   );
   const channelResult: channelType[] = [];
   if (getResult.ok) {
     const getResultData = await getResult.json();
-    let channelGetResultsAwait: Promise<{
+    const channelGetResultsAwait: Promise<{
       result: resourceResponce;
       itemId?: string | undefined;
-    }>[] = []
+    }>[] = [];
     for (
       let indexResult = 0;
       indexResult < getResultData.value.length;
       indexResult += 1
     ) {
-      channelGetResultsAwait.push(getResource(
-        id,
-        getResultData.value[indexResult].id,
-      ));
+      channelGetResultsAwait.push(
+        getResource(id, getResultData.value[indexResult].id),
+      );
     }
     const channelGetResults: {
       result: resourceResponce;
@@ -130,8 +134,7 @@ export async function getResourceChannels(id: string): Promise<{result: loadingS
         error: channelGetResults[index].result === resourceResponce.failed,
       });
     }
-    return {result: loadingStateEnum.success, data: channelResult};
-  } else {
-    return {result: loadingStateEnum.failed};
+    return { result: loadingStateEnum.success, data: channelResult };
   }
+  return { result: loadingStateEnum.failed };
 }

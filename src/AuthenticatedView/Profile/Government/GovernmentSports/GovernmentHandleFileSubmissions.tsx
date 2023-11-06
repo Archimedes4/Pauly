@@ -28,7 +28,7 @@ export default function GovernmentHandleFileSubmissions({
   const navigate = useNavigate();
 
   async function loadData() {
-    //sports functions
+    // sports functions
     const result = await getSubmissions();
     if (
       result.result === loadingStateEnum.success &&
@@ -66,9 +66,7 @@ export default function GovernmentHandleFileSubmissions({
                 data={currentMediaSubmissions}
                 renderItem={item => (
                   <Pressable
-                    key={`Submission_${
-                      item.item.submissionId
-                    }_${createUUID()}`}
+                    key={`Submission_${item.item.submissionId}_${createUUID()}`}
                     onPress={() =>
                       navigate(
                         `/profile/government/sports/post/review/${item.item.submissionId}`,

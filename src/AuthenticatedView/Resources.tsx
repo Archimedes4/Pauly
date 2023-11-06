@@ -19,7 +19,7 @@ import {
   Linking,
   FlatList,
   ListRenderItemInfo,
-  Image
+  Image,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '../Redux/store';
@@ -132,10 +132,20 @@ function checkIfResourceDataJustAttachment(body: string): boolean {
   return true;
 }
 
-function ResourceBlock({resource, setIsShowingCategoryView, setSelectedPost}:{resource:  ListRenderItemInfo<resourceDataType>, setIsShowingCategoryView: (item: boolean) => void, setSelectedPost: (item: { teamId: string; conversationId: string; messageId: string }) => void}) {
-  const { height, width } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
+function ResourceBlock({
+  resource,
+  setIsShowingCategoryView,
+  setSelectedPost,
+}: {
+  resource: ListRenderItemInfo<resourceDataType>;
+  setIsShowingCategoryView: (item: boolean) => void;
+  setSelectedPost: (item: {
+    teamId: string;
+    conversationId: string;
+    messageId: string;
+  }) => void;
+}) {
+  const { height, width } = useSelector((state: RootState) => state.dimentions);
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
@@ -179,9 +189,7 @@ function ResourceBlock({resource, setIsShowingCategoryView, setSelectedPost}:{re
                 marginRight: 10,
                 marginTop:
                   resource.item.body === '' ||
-                  !checkIfResourceDataJustAttachment(
-                    resource.item.body,
-                  )
+                  !checkIfResourceDataJustAttachment(resource.item.body)
                     ? 10
                     : 0,
                 overflow: 'scroll',
@@ -235,9 +243,7 @@ function ResourceBlock({resource, setIsShowingCategoryView, setSelectedPost}:{re
                 marginRight: 10,
                 marginTop:
                   resource.item.body === '' ||
-                  !checkIfResourceDataJustAttachment(
-                    resource.item.body,
-                  )
+                  !checkIfResourceDataJustAttachment(resource.item.body)
                     ? 10
                     : 0,
                 overflow: 'scroll',
@@ -264,85 +270,103 @@ function ResourceBlock({resource, setIsShowingCategoryView, setSelectedPost}:{re
         </View>
       )}
     </View>
-  )
+  );
 }
 
-function ScholarshipBlock({item}:{item: ListRenderItemInfo<scholarship>}) {
-  const { width } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
+function ScholarshipBlock({ item }: { item: ListRenderItemInfo<scholarship> }) {
+  const { width } = useSelector((state: RootState) => state.dimentions);
   const [height, setHeight] = useState<number>(0);
   useEffect(() => {
-    Image.getSize(item.item.cover, (imgWidth, imgHeight) => {const aspect = imgWidth / imgHeight; setHeight((width-10)/aspect)})
-  }, [])
+    Image.getSize(item.item.cover, (imgWidth, imgHeight) => {
+      const aspect = imgWidth / imgHeight;
+      setHeight((width - 10) / aspect);
+    });
+  }, []);
   return (
-    <Pressable onPress={() => {Linking.openURL(item.item.link)}} style={{margin: 5, borderRadius: 15, overflow: 'hidden', backgroundColor: Colors.white}}>
-      <Image source={{uri: item.item.cover}} style={{width: (width - 10), height: height}}/>
-      <Text style={{fontSize: 16, margin: 5, marginLeft: 10}}>{item.item.title}</Text>
-      <Text style={{marginBottom: 10, margin: 10}}>{item.item.note}</Text>
+    <Pressable
+      onPress={() => {
+        Linking.openURL(item.item.link);
+      }}
+      style={{
+        margin: 5,
+        borderRadius: 15,
+        overflow: 'hidden',
+        backgroundColor: Colors.white,
+      }}
+    >
+      <Image
+        source={{ uri: item.item.cover }}
+        style={{ width: width - 10, height }}
+      />
+      <Text style={{ fontSize: 16, margin: 5, marginLeft: 10 }}>
+        {item.item.title}
+      </Text>
+      <Text style={{ marginBottom: 10, margin: 10 }}>{item.item.note}</Text>
     </Pressable>
-  )
+  );
 }
 
-function ResourceScholarships({isHoverPicker}:{isHoverPicker: boolean}) {
-  const { height, width } = useSelector(
-    (state: RootState) => state.dimentions,
+function ResourceScholarships({ isHoverPicker }: { isHoverPicker: boolean }) {
+  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const [scholarState, setScholarState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
   );
-  const [scholarState, setScholarState] = useState<loadingStateEnum>(loadingStateEnum.loading);
-  const [scholarships, setScholarships] = useState<scholarship[]>([])
-  
+  const [scholarships, setScholarships] = useState<scholarship[]>([]);
 
   async function loadData() {
-    const result = await getScholarships()
+    const result = await getScholarships();
     if (result.result === loadingStateEnum.success) {
       setScholarships(result.data);
       setScholarState(loadingStateEnum.success);
     } else {
-      setScholarState(loadingStateEnum.failed)
+      setScholarState(loadingStateEnum.failed);
     }
   }
 
   useEffect(() => {
-    loadData()
-  }, [])
+    loadData();
+  }, []);
 
   return (
     <>
-      { (scholarState === loadingStateEnum.loading) ?
-        <View style={{
-          height: isHoverPicker ? height * 0.75 : height * 0.8,
-          width: width,
-          backgroundColor: Colors.lightGray
-        }}>
-          <ProgressView width={14} height={14}/>
+      {scholarState === loadingStateEnum.loading ? (
+        <View
+          style={{
+            height: isHoverPicker ? height * 0.75 : height * 0.8,
+            width,
+            backgroundColor: Colors.lightGray,
+          }}
+        >
+          <ProgressView width={14} height={14} />
           <Text>Loading</Text>
-        </View>:
+        </View>
+      ) : (
         <>
-          { (scholarState === loadingStateEnum.success) ?
+          {scholarState === loadingStateEnum.success ? (
             <FlatList
               data={scholarships}
-              renderItem={(item) => (
-                <ScholarshipBlock item={item} />
-              )}
+              renderItem={item => <ScholarshipBlock item={item} />}
               style={{
                 height: isHoverPicker ? height * 0.75 : height * 0.8,
-                width: width,
-                backgroundColor: Colors.lightGray
+                width,
+                backgroundColor: Colors.lightGray,
               }}
-            />:
-            <View style={{
-              height: isHoverPicker ? height * 0.75 : height * 0.8,
-              width: width,
-              backgroundColor: Colors.lightGray
-            }}>
+            />
+          ) : (
+            <View
+              style={{
+                height: isHoverPicker ? height * 0.75 : height * 0.8,
+                width,
+                backgroundColor: Colors.lightGray,
+              }}
+            >
               <Text>Failed</Text>
             </View>
-
-          }
+          )}
         </>
-      }
+      )}
     </>
-  )
+  );
 }
 
 export default function Resources() {
@@ -418,55 +442,63 @@ export default function Resources() {
           }}
         />
         <>
-         { (selectedResourceMode === resourceMode.news) ?
-          <ResourcesNews isHoverPicker={isHoverPicker}/>:
-          <>
-            { (selectedResourceMode === resourceMode.scholarships) ?
-              <ResourceScholarships isHoverPicker={isHoverPicker} />:
-              <View
-                style={{
-                  height: isHoverPicker ? height * 0.75 : height * 0.8,
-                  width: width,
-                  backgroundColor: Colors.lightGray,
-                }}
-              >
-                <>
-                  {loadingState === loadingStateEnum.loading ? (
-                    <View
-                      style={{
-                        width,
-                        height: isHoverPicker ? height * 0.75 : height * 0.8,
-                        alignContent: 'center',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <ProgressView
-                        width={width < height ? width * 0.05 : height * 0.05}
-                        height={width < height ? width * 0.05 : height * 0.05}
-                      />
-                      <Text>Loading</Text>
-                    </View>
-                  ) : (
-                    <>
-                      {loadingState === loadingStateEnum.success ? (
-                        <>
-                          <FlatList 
+          {selectedResourceMode === resourceMode.news ? (
+            <ResourcesNews isHoverPicker={isHoverPicker} />
+          ) : (
+            <>
+              {selectedResourceMode === resourceMode.scholarships ? (
+                <ResourceScholarships isHoverPicker={isHoverPicker} />
+              ) : (
+                <View
+                  style={{
+                    height: isHoverPicker ? height * 0.75 : height * 0.8,
+                    width,
+                    backgroundColor: Colors.lightGray,
+                  }}
+                >
+                  <>
+                    {loadingState === loadingStateEnum.loading ? (
+                      <View
+                        style={{
+                          width,
+                          height: isHoverPicker ? height * 0.75 : height * 0.8,
+                          alignContent: 'center',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <ProgressView
+                          width={width < height ? width * 0.05 : height * 0.05}
+                          height={width < height ? width * 0.05 : height * 0.05}
+                        />
+                        <Text>Loading</Text>
+                      </View>
+                    ) : (
+                      <>
+                        {loadingState === loadingStateEnum.success ? (
+                          <FlatList
                             data={resources}
-                            renderItem={(resource) => <ResourceBlock resource={resource} key={resource.item.id} setIsShowingCategoryView={setIsShowingCategoryView} setSelectedPost={setSelectedPost}/>}
+                            renderItem={resource => (
+                              <ResourceBlock
+                                resource={resource}
+                                key={resource.item.id}
+                                setIsShowingCategoryView={
+                                  setIsShowingCategoryView
+                                }
+                                setSelectedPost={setSelectedPost}
+                              />
+                            )}
                           />
-                        </>
-                      ) : (
-                        <Text>Failed</Text>
-                      )}
-                    </>
-                  )}
-                </>
-              </View>
-            }
-          </>
-          
-         }
+                        ) : (
+                          <Text>Failed</Text>
+                        )}
+                      </>
+                    )}
+                  </>
+                </View>
+              )}
+            </>
+          )}
         </>
         <Pressable
           style={{ height: isHoverPicker ? height * 0.1 : height * 0.05 }}
@@ -621,7 +653,10 @@ function GovernmentCategoryView({
         borderRadius: 15,
       }}
     >
-      <Pressable onPress={() => onClose()} style={{position: "absolute", left: 20, top: 20}}>
+      <Pressable
+        onPress={() => onClose()}
+        style={{ position: 'absolute', left: 20, top: 20 }}
+      >
         <CloseIcon width={12} height={12} />
       </Pressable>
       <View
@@ -630,7 +665,7 @@ function GovernmentCategoryView({
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
-          marginTop: height * 0.05
+          marginTop: height * 0.05,
         }}
       >
         <Text>Categories</Text>
@@ -645,8 +680,9 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.sports ? Colors.lightGray : Colors.white,
- 
+            selectedCategory === resourceMode.sports
+              ? Colors.lightGray
+              : Colors.white,
         }}
       >
         <Text>Sports</Text>
@@ -662,7 +698,9 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.advancement ? Colors.lightGray : Colors.white,
+            selectedCategory === resourceMode.advancement
+              ? Colors.lightGray
+              : Colors.white,
           shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -683,7 +721,9 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.schoolEvents ? Colors.lightGray : Colors.white,
+            selectedCategory === resourceMode.schoolEvents
+              ? Colors.lightGray
+              : Colors.white,
           shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -704,7 +744,9 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.annoucments ? Colors.lightGray : Colors.white,
+            selectedCategory === resourceMode.annoucments
+              ? Colors.lightGray
+              : Colors.white,
           shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -725,7 +767,9 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.fitness ? Colors.lightGray : Colors.white,
+            selectedCategory === resourceMode.fitness
+              ? Colors.lightGray
+              : Colors.white,
           shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
@@ -746,7 +790,9 @@ function GovernmentCategoryView({
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor:
-            selectedCategory === resourceMode.files ? Colors.lightGray : Colors.white,
+            selectedCategory === resourceMode.files
+              ? Colors.lightGray
+              : Colors.white,
           shadowColor: 'black',
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,

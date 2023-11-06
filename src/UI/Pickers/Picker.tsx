@@ -2,7 +2,7 @@
 // June 19 2023
 // Picker with animated black line
 
-import React, { useState, ReactNode, useRef, useEffect, Children } from 'react';
+import React, { ReactNode, useRef, useEffect, Children } from 'react';
 import { View, Pressable, Animated } from 'react-native';
 // import styles from './Picker.module.css'
 
@@ -52,7 +52,7 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
               fadeIn(index);
             }}
           >
-            <>{child}</>
+            {child}
           </Pressable>
         </View>
       ))}
@@ -77,41 +77,3 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
 };
 
 export default PickerWrapper;
-
-// transform: 'translate3d(' + selectedIndex * 100 + '%, ' + "0" + ',0)',
-
-// (selectedValue === index) ?
-// :styles.UnSelectedButtonStyle
-
-// .SelectedButtonStyle{
-//     background: rgba(68, 68, 68, 0.7);
-//     /* nice.. */
-//     border-radius: 30px;
-//     overflow: hidden;
-//     color: black;
-//     z-index: 2;
-//     padding: 0;
-//     margin: 0;
-//     transition: transform .5s ease-in-out;
-//   }
-
-//   .UnSelectedButtonStyle{
-//     overflow: hidden;
-//     text-align: center;
-//     font-size: 18px;
-//     letter-spacing: 1px;
-//     color: black;
-//     position: relative;
-//     border: none;
-//     background: transparent;
-//     grid-row: 1;
-//     z-index: 5;
-//   }
-
-//   .SwitchButtonContainer{
-//     background: rgba(155, 144, 140, 0.128);
-//     padding: 0;
-//     margin: 0;
-//     grid-column: 1;
-//     grid-row: 1;
-//   }

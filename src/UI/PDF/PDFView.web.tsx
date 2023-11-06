@@ -17,7 +17,7 @@ export default function PDFView({ width }: { width: number }) {
   const [imageHeight, setImageHeight] = useState<number>(0);
 
   async function convertPdfToImages(url: string) {
-    const images: string[] = [];
+    const imagesArray: string[] = [];
     const dataResult = await fetch(url);
     if (dataResult.ok) {
       const blob = await dataResult.blob();
@@ -35,11 +35,11 @@ export default function PDFView({ width }: { width: number }) {
         canvas.width = viewport.width; // Fail
         if (context !== null) {
           await page.render({ canvasContext: context, viewport }).promise;
-          images.push(canvas.toDataURL());
+          imagesArray.push(canvas.toDataURL());
         }
       }
       canvas.remove();
-      store.dispatch(pdfDataSlice.actions.setImages(images));
+      store.dispatch(pdfDataSlice.actions.setImages(imagesArray));
     }
   }
 

@@ -21,166 +21,7 @@ import { Colors, loadingStateEnum, paulyEventType } from '../../types';
 import PickerWrapper from '../../UI/Pickers/Picker';
 import { CalendarIcon, CloseIcon, TimeIcon } from '../../UI/Icons/Icons';
 import updateEvent from '../../Functions/updateEvent';
-
-export default function AddEvent({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) {
-  const currentEvents = useSelector((state: RootState) => state.currentEvents);
-  const isGovernmentMode = useSelector(
-    (state: RootState) => state.isGovernmentMode,
-  );
-  const { selectedEventType, isEditing, selectedEvent, createEventState } =
-    useSelector((state: RootState) => state.addEvent);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (
-      selectedEventType === paulyEventType.schoolDay ||
-      selectedEventType === paulyEventType.schoolYear
-    ) {
-      dispatch(addEventSlice.actions.setAllDay(true));
-    }
-  }, [selectedEventType]);
-
-  async function deleteEvent() {
-    if (
-      selectedEvent !== undefined &&
-      selectedEvent.microsoftEvent &&
-      selectedEvent.microsoftReference !== undefined
-    ) {
-      const deleteEvent = await callMsGraph(
-        selectedEvent.microsoftReference,
-        'DELETE',
-      );
-      if (deleteEvent.ok) {
-        const index = currentEvents.findIndex(e => {
-          return e.id === selectedEvent.id;
-        });
-        dispatch(currentEventsSlice.actions.removeCurrentEvent(index));
-        dispatch(addEventSlice.actions.setIsShowingAddDate(false));
-      } else {
-        // TO DO throw error
-      }
-    }
-  }
-
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  return (
-    <View
-      style={{
-        backgroundColor: Colors.white,
-        width: width + 30,
-        height,
-        borderRadius: 5,
-        borderWidth: 5,
-      }}
-    >
-      <View style={{ margin: 10, width }}>
-        <Pressable
-          onPress={() => {
-            dispatch(addEventSlice.actions.setIsShowingAddDate(false));
-            dispatch(
-              addEventSlice.actions.setCreateEventState(
-                loadingStateEnum.notStarted,
-              ),
-            );
-          }}
-        >
-          <CloseIcon width={10} height={10} />
-        </Pressable>
-        <Text style={{ fontFamily: 'BukhariScript' }}>Add Event</Text>
-        <DateAndTimeSection width={width} height={height} />
-        {isGovernmentMode ? (
-          <GovernmentCalendarOptions width={width} height={height} />
-        ) : null}
-        <View
-          style={{
-            width,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Pressable
-            onPress={() => {
-              dispatch(
-                addEventSlice.actions.setCreateEventState(
-                  loadingStateEnum.loading,
-                ),
-              );
-              updateEvent();
-            }}
-            style={{
-              width: 100,
-              height: 50,
-              backgroundColor: '#00a4db',
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 15,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 2,
-            }}
-          >
-            <Text style={{ zIndex: -1 }}>
-              {isEditing
-                ? 'Save'
-                : createEventState === loadingStateEnum.notStarted
-                ? 'CREATE'
-                : createEventState === loadingStateEnum.loading
-                ? 'Loading'
-                : createEventState === loadingStateEnum.success
-                ? 'Success'
-                : 'Failed'}
-            </Text>
-          </Pressable>
-        </View>
-        {isEditing ? (
-          <Pressable
-            onPress={() => {
-              dispatch(addEventSlice.actions.setIsShowingAddDate(false));
-              deleteEvent();
-            }}
-            style={{
-              width: 100,
-              height: 50,
-              backgroundColor: '#00a4db',
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 15,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 2,
-            }}
-          >
-            <Text style={{ zIndex: -1 }}>Delete</Text>
-          </Pressable>
-        ) : null}
-      </View>
-    </View>
-  );
-}
+import { getTextState } from '../../Functions/ultility/createUUID';
 
 function GovernmentCalendarOptions({
   width,
@@ -189,12 +30,8 @@ function GovernmentCalendarOptions({
   width: number;
   height: number;
 }) {
-  const {
-    selectedEventType,
-    selectedTimetable,
-    selectedSchoolDayData,
-    selectedSchoolYear,
-  } = useSelector((state: RootState) => state.addEvent);
+  const { selectedEventType, selectedTimetable, selectedSchoolYear } =
+    useSelector((state: RootState) => state.addEvent);
   const dispatch = useDispatch();
   return (
     <>
@@ -510,37 +347,156 @@ function DateAndTimeSection({
   );
 }
 
-{
-  /* <Text>Reocurring Event</Text>
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={recurringEvent ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={(e) => {
-              dispatch(addEventSlice.actions.setRecurringEvent(e))
+export default function AddEvent({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
+  const currentEvents = useSelector((state: RootState) => state.currentEvents);
+  const isGovernmentMode = useSelector(
+    (state: RootState) => state.isGovernmentMode,
+  );
+  const { selectedEventType, isEditing, selectedEvent, createEventState } =
+    useSelector((state: RootState) => state.addEvent);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (
+      selectedEventType === paulyEventType.schoolDay ||
+      selectedEventType === paulyEventType.schoolYear
+    ) {
+      dispatch(addEventSlice.actions.setAllDay(true));
+    }
+  }, [dispatch, selectedEventType]);
+
+  async function deleteEvent() {
+    if (
+      selectedEvent !== undefined &&
+      selectedEvent.microsoftEvent &&
+      selectedEvent.microsoftReference !== undefined
+    ) {
+      const deleteEventResult = await callMsGraph(
+        selectedEvent.microsoftReference,
+        'DELETE',
+      );
+      if (deleteEventResult.ok) {
+        const index = currentEvents.findIndex(e => {
+          return e.id === selectedEvent.id;
+        });
+        dispatch(currentEventsSlice.actions.removeCurrentEvent(index));
+        dispatch(addEventSlice.actions.setIsShowingAddDate(false));
+      } else {
+        // TO DO throw error
+      }
+    }
+  }
+
+  const [fontsLoaded] = useFonts({
+    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
+  });
+
+  useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <View
+      style={{
+        backgroundColor: Colors.white,
+        width: width + 30,
+        height,
+        borderRadius: 5,
+        borderWidth: 5,
+      }}
+    >
+      <View style={{ margin: 10, width }}>
+        <Pressable
+          onPress={() => {
+            dispatch(addEventSlice.actions.setIsShowingAddDate(false));
+            dispatch(
+              addEventSlice.actions.setCreateEventState(
+                loadingStateEnum.notStarted,
+              ),
+            );
+          }}
+        >
+          <CloseIcon width={10} height={10} />
+        </Pressable>
+        <Text style={{ fontFamily: 'BukhariScript' }}>Add Event</Text>
+        <DateAndTimeSection width={width} height={height} />
+        {isGovernmentMode ? (
+          <GovernmentCalendarOptions width={width} height={height} />
+        ) : null}
+        <View
+          style={{
+            width,
+            alignContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Pressable
+            onPress={() => {
+              dispatch(
+                addEventSlice.actions.setCreateEventState(
+                  loadingStateEnum.loading,
+                ),
+              );
+              updateEvent();
             }}
-            value={recurringEvent}
-          />
-          { recurringEvent ?
-            <View style={{zIndex: 100}}>
-              <Dropdown onSetSelectedIndex={(item) => {
-                if (item >= 0 && item <= 3){
-                  dispatch(addEventSlice.actions.setSelectedRecurringType(item))
-                } 
-              }} selectedIndex={selectedRecurringType} style={{height: height * 0.04}} expandedStyle={{height: height * 0.12, backgroundColor: Colors.white}}>
-                <View>
-                  <Text>Daily</Text>
-                </View>
-                <View>
-                  <Text>Weekly</Text>
-                </View>
-                <View>
-                  <Text>Monthly</Text>
-                </View>
-                <View>
-                  <Text>Yearly</Text>
-                </View>
-              </Dropdown>
-            </View>:null
-          } */
+            style={{
+              width: 100,
+              height: 50,
+              backgroundColor: '#00a4db',
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 15,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.8,
+              shadowRadius: 2,
+            }}
+          >
+            <Text style={{ zIndex: -1 }}>
+              {getTextState(createEventState, {
+                notStarted: isEditing ? 'Save' : 'Create',
+              })}
+            </Text>
+          </Pressable>
+        </View>
+        {isEditing ? (
+          <Pressable
+            onPress={() => {
+              dispatch(addEventSlice.actions.setIsShowingAddDate(false));
+              deleteEvent();
+            }}
+            style={{
+              width: 100,
+              height: 50,
+              backgroundColor: '#00a4db',
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 15,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.8,
+              shadowRadius: 2,
+            }}
+          >
+            <Text style={{ zIndex: -1 }}>Delete</Text>
+          </Pressable>
+        ) : null}
+      </View>
+    </View>
+  );
 }

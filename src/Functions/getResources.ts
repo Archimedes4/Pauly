@@ -55,12 +55,15 @@ async function getResourceFollows() {
   }
 }
 
-async function getAttachments(teamId: string, channelId: string, attachments: any[]): Promise<attachment[]> {
+async function getAttachments(
+  teamId: string,
+  channelId: string,
+  attachments: any[],
+): Promise<attachment[]> {
   const attachmentsOut: attachment[] = [];
   for (
     let attachmentIndex = 0;
-    attachmentIndex <
-    attachments.length;
+    attachmentIndex < attachments.length;
     attachmentIndex += 1
   ) {
     if (attachments[attachmentIndex].contentType === 'reference') {
@@ -73,8 +76,7 @@ async function getAttachments(teamId: string, channelId: string, attachments: an
           `https://graph.microsoft.com/v1.0/drives/${attachmentData.parentReference.driveId}/items/${attachments[attachmentIndex].id}`,
         );
         if (attachmentGetResult.ok) {
-          const attachmentGetResultData =
-            await attachmentGetResult.json();
+          const attachmentGetResultData = await attachmentGetResult.json();
           attachments.push({
             webUrl: attachmentGetResultData.webUrl,
             id: attachmentGetResultData.id,
@@ -145,11 +147,11 @@ export async function getResources(category?: resourceMode) {
           responceIndex += 1
         ) {
           if (resourceResponceData.responses[responceIndex].status === 200) {
-            const resourceResponceDataBody = resourceResponceData.responses[responceIndex].body;
+            const resourceResponceDataBody =
+              resourceResponceData.responses[responceIndex].body;
             for (
               let dataIndex = 0;
-              dataIndex <
-              resourceResponceDataBody.value.length;
+              dataIndex < resourceResponceDataBody.value.length;
               dataIndex += 1
             ) {
               if (
@@ -157,7 +159,13 @@ export async function getResources(category?: resourceMode) {
                   dataIndex
                 ].body.content !== '<systemEventMessage/>'
               ) {
-                const attachments = await getAttachments(resourceResponceDataBody.value[dataIndex].channelIdentity.teamId, resourceResponceDataBody.value[dataIndex].channelIdentity.channelId, resourceResponceDataBody.value[dataIndex].attachments)
+                const attachments = await getAttachments(
+                  resourceResponceDataBody.value[dataIndex].channelIdentity
+                    .teamId,
+                  resourceResponceDataBody.value[dataIndex].channelIdentity
+                    .channelId,
+                  resourceResponceDataBody.value[dataIndex].attachments,
+                );
                 const outputData: resourceDataType = {
                   teamId:
                     store.getState().resources.resourceFollow[
@@ -180,7 +188,8 @@ export async function getResources(category?: resourceMode) {
                     resourceResponceData.responses[responceIndex].body.value[
                       dataIndex
                     ].body.contentType === 'html',
-                  attachments: attachments.length >= 1 ? attachments : undefined,
+                  attachments:
+                    attachments.length >= 1 ? attachments : undefined,
                 };
                 output.push(outputData);
               }
@@ -357,47 +366,65 @@ export default async function getResource(
   return { result: resourceResponce.failed };
 }
 
-
-export async function getScholarships(): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: scholarship[]}> {
-  //https://developer.raindrop.io/v1/authentication/token
-  //https://developer.raindrop.io/v1/raindrops/multiple
-  const result = await fetch('https://api.raindrop.io/rest/v1/raindrops/37695900', {
-    headers: {
-      "Authorization":`Bearer ${raindropToken}`
-    }
-  })
-  if (result.ok) {
-    const data = await result.json()
-    let scholarships: scholarship[] = []
-    for (let index = 0; index < data['items'].length; index += 1) {
-      scholarships.push({
-        title: data['items'][index]['title'],
-        note: data['items'][index]['note'],
-        link: data['items'][index]['link'],
-        cover: data['items'][index]['cover']
-      })
-    }
-    return {result: loadingStateEnum.success, data: scholarships}
-  } else {
-    return {result: loadingStateEnum.failed}
-  }
-}
-
-export async function getNewsPosts(nextLink?: string|undefined): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: newsPost[], nextLink?: string|undefined}> {
-  const result = await fetch(`https://public-api.wordpress.com/rest/v1.1/sites/thecrusadernews.ca/posts${(nextLink !== undefined) ? `?${nextLink}`:''}`);
+export async function getScholarships(): Promise<
+  | { result: loadingStateEnum.failed }
+  | { result: loadingStateEnum.success; data: scholarship[] }
+> {
+  // https://developer.raindrop.io/v1/authentication/token
+  // https://developer.raindrop.io/v1/raindrops/multiple
+  const result = await fetch(
+    'https://api.raindrop.io/rest/v1/raindrops/37695900',
+    {
+      headers: {
+        Authorization: `Bearer ${raindropToken}`,
+      },
+    },
+  );
   if (result.ok) {
     const data = await result.json();
-    var outputPosts: newsPost[] = [];
-    for (var index = 0; index < data['posts'].length; index += 1) {
-      outputPosts.push({
-        title: data['posts'][index]['title'],
-        excerpt: data['posts'][index]['excerpt'],
-        content: data['posts'][index]['content'],
-        id: data['posts'][index]['id']
-      })
+    const scholarships: scholarship[] = [];
+    for (let index = 0; index < data.items.length; index += 1) {
+      scholarships.push({
+        title: data.items[index].title,
+        note: data.items[index].note,
+        link: data.items[index].link,
+        cover: data.items[index].cover,
+      });
     }
-    return {result: loadingStateEnum.success, data: outputPosts, nextLink: data['meta']['next_page']}
-  } else {
-    return {result: loadingStateEnum.failed}
+    return { result: loadingStateEnum.success, data: scholarships };
   }
+  return { result: loadingStateEnum.failed };
+}
+
+export async function getNewsPosts(nextLink?: string | undefined): Promise<
+  | { result: loadingStateEnum.failed }
+  | {
+      result: loadingStateEnum.success;
+      data: newsPost[];
+      nextLink?: string | undefined;
+    }
+> {
+  const result = await fetch(
+    `https://public-api.wordpress.com/rest/v1.1/sites/thecrusadernews.ca/posts${
+      nextLink !== undefined ? `?${nextLink}` : ''
+    }`,
+  );
+  if (result.ok) {
+    const data = await result.json();
+    const outputPosts: newsPost[] = [];
+    for (let index = 0; index < data.posts.length; index += 1) {
+      outputPosts.push({
+        title: data.posts[index].title,
+        excerpt: data.posts[index].excerpt,
+        content: data.posts[index].content,
+        id: data.posts[index].id,
+      });
+    }
+    return {
+      result: loadingStateEnum.success,
+      data: outputPosts,
+      nextLink: data.meta.next_page,
+    };
+  }
+  return { result: loadingStateEnum.failed };
 }

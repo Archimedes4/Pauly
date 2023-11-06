@@ -16,11 +16,11 @@ export default function ScrollingTextAnimation({
 }) {
   const pan = useRef(new Animated.Value(0)).current;
   const [childWidth, setChildWidth] = useState<number>(0);
-  function mainLoop(childWidth: number) {
+  const mainLoop = (childWidthLoop: number) => {
     Animated.loop(
       Animated.sequence([
         Animated.timing(pan, {
-          toValue: -childWidth,
+          toValue: -childWidthLoop,
           duration: 5000,
           delay: 0,
           easing: Easing.linear,
@@ -34,20 +34,20 @@ export default function ScrollingTextAnimation({
         }),
       ]),
     ).start();
-  }
+  };
 
   useEffect(() => {
     if (childWidth !== 0) {
       mainLoop(childWidth);
     }
-  }, [childWidth]);
+  }, [childWidth, mainLoop]);
 
   // Font
   const [fontsLoaded] = useFonts({
     GochiHand: require('../../assets/fonts/GochiHand-Regular.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }

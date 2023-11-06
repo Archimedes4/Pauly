@@ -13,7 +13,7 @@ export default function GovernmentHomePage() {
     (state: RootState) => state.paulyList,
   );
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // Loading States
   const [loadContentLoadingState, setLoadContentLoadingState] =
@@ -86,10 +86,10 @@ export default function GovernmentHomePage() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Pressable onPress={() => navigate("/profile/government")}>
+      <Pressable onPress={() => navigate('/profile/government')}>
         <Text>Back</Text>
       </Pressable>
-      <Text style={{marginLeft: 'auto', marginRight: 'auto'}}>Home Page</Text>
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>Home Page</Text>
       <View>
         <View style={{ flexDirection: 'row' }}>
           <TextInput
@@ -99,7 +99,9 @@ export default function GovernmentHomePage() {
             }}
           />
         </View>
-        {isAutoUpdatingText ? <View style={{height: 14}}/>: (
+        {isAutoUpdatingText ? (
+          <View style={{ height: 14 }} />
+        ) : (
           <Pressable
             onPress={() => {
               updatePaulyData('message', newMessageText);

@@ -16,9 +16,8 @@ export const safeAreaColorsSlice = createSlice({
     ) => {
       if (state !== action.payload) {
         return action.payload;
-      } else {
-        return state
       }
+      return state;
     },
     setSafeAreaColorTop: (state, action: PayloadAction<string>) => {
       return { ...state, top: action.payload };

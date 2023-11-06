@@ -15,13 +15,11 @@ type LatLngLiteral = google.maps.LatLngLiteral;
 
 export default function MapWeb({
   proximity,
-  selectedPositionIn,
   onSetSelectedPositionIn,
   width,
   height,
 }: {
   proximity: number;
-  selectedPositionIn: { lat: number; lng: number };
   onSetSelectedPositionIn: (item: { lat: number; lng: number }) => void;
   width: number;
   height: number;

@@ -1,14 +1,20 @@
 import { loadingStateEnum, dataContentTypeOptions } from '../../types';
 import callMsGraph from './microsoftAssets';
 
-export default async function getFileWithShareID(shareID: string, index: number): Promise<{
-  result: loadingStateEnum.failed;
-}|{
-  result: loadingStateEnum.success;
-  index: number;
-  url?: string;
-  contentType?: dataContentTypeOptions;
-}> {
+export default async function getFileWithShareID(
+  shareID: string,
+  index: number,
+): Promise<
+  | {
+      result: loadingStateEnum.failed;
+    }
+  | {
+      result: loadingStateEnum.success;
+      index: number;
+      url?: string;
+      contentType?: dataContentTypeOptions;
+    }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/shares/${shareID}/driveItem`,
     'GET',
@@ -26,7 +32,7 @@ export default async function getFileWithShareID(shareID: string, index: number)
           result: loadingStateEnum.success,
           url: data['@microsoft.graph.downloadUrl'],
           contentType: dataContentTypeOptions.image,
-          index
+          index,
         };
       }
       if (data.file.mimeType === 'video/mp4') {
@@ -34,7 +40,7 @@ export default async function getFileWithShareID(shareID: string, index: number)
           result: loadingStateEnum.success,
           url: data['@microsoft.graph.downloadUrl'],
           contentType: dataContentTypeOptions.video,
-          index: index
+          index,
         };
       }
       if (
@@ -45,7 +51,7 @@ export default async function getFileWithShareID(shareID: string, index: number)
           result: loadingStateEnum.success,
           url: data['@microsoft.graph.downloadUrl'],
           contentType: dataContentTypeOptions.pdf,
-          index: index
+          index,
         };
       }
       return { result: loadingStateEnum.failed };

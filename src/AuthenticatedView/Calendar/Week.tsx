@@ -54,9 +54,7 @@ export default function Week({
                   const d = new Date(selectedDateRedux);
                   d.setDate(d.getDate() - 7);
                   dispatch(
-                    selectedDateSlice.actions.setSelectedDate(
-                      d.toISOString(),
-                    ),
+                    selectedDateSlice.actions.setSelectedDate(d.toISOString()),
                   );
                 }}
               >
@@ -104,9 +102,7 @@ export default function Week({
                   const d = new Date(selectedDateRedux);
                   d.setDate(d.getDate() + 7);
                   dispatch(
-                    selectedDateSlice.actions.setSelectedDate(
-                      d.toISOString(),
-                    ),
+                    selectedDateSlice.actions.setSelectedDate(d.toISOString()),
                   );
                 }}
               >

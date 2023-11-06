@@ -1,5 +1,5 @@
 import { SafeAreaView, ScaledSize } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { EventType, PublicClientApplication } from '@azure/msal-browser';
 import {
@@ -27,32 +27,12 @@ const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: (window.location.href !== 'http://localhost:19006') ? 'https://paulysphs.ca':'http://localhost:19006',
+    redirectUri:
+      window.location.href !== 'http://localhost:19006'
+        ? 'https://paulysphs.ca'
+        : 'http://localhost:19006',
   },
 });
-
-export default function AppMain({
-  dimensions,
-}: {
-  dimensions: { window: ScaledSize; screen: ScaledSize };
-}) {
-  return (
-    <MsalProvider instance={pca}>
-      <SafeAreaView
-        style={{
-          width: dimensions.window.width,
-          height: dimensions.window.height,
-          zIndex: 2,
-          position: 'absolute',
-          left: 0,
-          top: 0,
-        }}
-      >
-        <AuthDeep dimensions={dimensions} />
-      </SafeAreaView>
-    </MsalProvider>
-  );
-}
 
 function AuthDeep({
   dimensions,
@@ -155,7 +135,7 @@ function AuthDeep({
     getAuthToken(false);
   }, []);
 
-  async function refreshToken() {
+  const refreshToken = async () => {
     const result = await instance.acquireTokenSilent({
       scopes,
     });
@@ -164,11 +144,11 @@ function AuthDeep({
         result.accessToken,
       ),
     );
-  }
+  };
 
   useEffect(() => {
     refreshToken();
-  }, [authenticationCall]);
+  }, [authenticationCall, refreshToken]);
 
   return (
     <SafeAreaView
@@ -196,8 +176,32 @@ function AuthDeep({
             getAuthToken(true, true);
           }}
           width={dimensions.window.width}
+          isLoading={false}
         />
       </UnauthenticatedTemplate>
     </SafeAreaView>
+  );
+}
+
+export default function AppMain({
+  dimensions,
+}: {
+  dimensions: { window: ScaledSize; screen: ScaledSize };
+}) {
+  return (
+    <MsalProvider instance={pca}>
+      <SafeAreaView
+        style={{
+          width: dimensions.window.width,
+          height: dimensions.window.height,
+          zIndex: 2,
+          position: 'absolute',
+          left: 0,
+          top: 0,
+        }}
+      >
+        <AuthDeep dimensions={dimensions} />
+      </SafeAreaView>
+    </MsalProvider>
   );
 }

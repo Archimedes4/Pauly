@@ -33,8 +33,8 @@ export default function ({
 }: {
   height: number;
   width: number;
-  onSetIsShowingUpload?: (item: boolean) => void;
-  onSetIsShowingMicrosoftUpload?: (item: boolean) => void;
+  onSetIsShowingUpload?: (item: boolean) => void | undefined;
+  onSetIsShowingMicrosoftUpload?: (item: boolean) => void | undefined;
   onSelectedFile: (item: microsoftFileType) => void;
 }) {
   const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([]);
@@ -46,7 +46,6 @@ export default function ({
     const result = await getUserTeams();
     if (result.result === loadingStateEnum.success) {
       setUsersTeams(result.data);
-    } else {
     }
   }
 

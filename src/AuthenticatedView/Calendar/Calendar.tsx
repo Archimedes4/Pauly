@@ -28,147 +28,188 @@ import { monthDataSlice } from '../../Redux/reducers/monthDataReducer';
 import { getClasses } from '../../Functions/classesFunctions';
 import getEvents from '../../Functions/calendar/getEvents';
 
-export default function Calendar() {
-  const { width, height, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
-  const { selectedCalendarMode, isShowingAddDate } = useSelector(
-    (state: RootState) => state.addEvent,
-  );
-  const selectedDate = useSelector((state: RootState) => state.selectedDate);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(
-      safeAreaColorsSlice.actions.setSafeAreaColors({
-        top: Colors.darkGray,
-        bottom: Colors.white,
-      }),
-    );
-  }, []);
-
-  // This is the main (only) process that updates the events
-  // In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
-  useEffect(() => {
-    getEvents();
-    getClasses();
-  }, [selectedDate]);
-
-  // Fonts
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
+function getBackgroundColor(selectedDate: string, dayData: number): string {
+  if (dayData === new Date(selectedDate).getDate()) {
+    return Colors.lightGray;
   }
-
-  return (
-    <View>
-      <View style={{ height: height * 0.1, backgroundColor: Colors.darkGray }}>
-        {currentBreakPoint >= 1 ? null : (
-          <BackButton to="/" style={{ zIndex: 100 }} />
-        )}
-        <TopView width={width} height={height * 0.1} />
-      </View>
-      <View style={{ height: height * 0.9 }}>
-        {selectedCalendarMode === calendarMode.month ? (
-          <View
-            style={{
-              width,
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: Colors.white,
-            }}
-          >
-            <MonthViewMain width={width} height={height * 0.9} />
-          </View>
-        ) : null}
-        {selectedCalendarMode === calendarMode.week ? (
-          <Week width={width * 1.0} height={height * 0.9} />
-        ) : null}
-        {selectedCalendarMode === calendarMode.day ? (
-          <View
-            style={{
-              width,
-              height: height * 0.9,
-              alignItems: 'center',
-              alignContent: 'center',
-              justifyContent: 'center',
-              backgroundColor: Colors.white,
-            }}
-          >
-            <DayView width={width * 0.9} height={height * 0.9} />
-          </View>
-        ) : null}
-      </View>
-      {isShowingAddDate ? (
-        <View
-          style={{
-            zIndex: 2,
-            position: 'absolute',
-            left: width * 0.05 + (width >= 576 ? width * 0.3 : 0) / 2,
-            top: height * 0.1,
-          }}
-        >
-          <AddEvent
-            width={width * 0.9 - (width >= 576 ? width * 0.3 : 0)}
-            height={height * 0.8}
-          />
-        </View>
-      ) : null}
-    </View>
-  );
+  if (
+    dayData === new Date().getDate() &&
+    new Date(selectedDate).getMonth() === new Date().getMonth() &&
+    new Date(selectedDate).getFullYear() === new Date().getFullYear()
+  ) {
+    return Colors.darkGray;
+  }
+  return Colors.white;
 }
 
-function MonthViewMain({ width, height }: { width: number; height: number }) {
-  const monthData = useSelector((state: RootState) => state.monthData);
-  const selectedDate: string = useSelector(
-    (state: RootState) => state.selectedDate,
-  );
-  return (
-    <>
-      {/* Chosing between large mode with each day having expanded calendars and reduced mode with list of events on each day. */}
-      {width <= 519 ? (
-        <ScrollView
+function getTextBackgroundColor(selectedDate: string, dayData: number): string {
+  if (
+    dayData === new Date().getDate() &&
+    new Date(selectedDate).getMonth() === new Date().getMonth() &&
+    new Date(selectedDate).getFullYear() === new Date().getFullYear() &&
+    new Date(selectedDate).getDate() !== dayData
+  ) {
+    return Colors.white;
+  }
+  return Colors.black;
+}
+
+function isCalendarTextColor(selectedDate: string, day: number): boolean {
+  const date = new Date(selectedDate);
+  date.setDate(day);
+  if (new Date().toDateString() === date.toDateString()) {
+    return true;
+  }
+  return false;
+}
+
+function CalendarCardView({
+  value,
+  width,
+  height,
+  calendarWidth,
+}: {
+  value: ListRenderItemInfo<monthDataType>;
+  width: number;
+  height: number;
+  calendarWidth: number;
+}) {
+  const selectedDate = useSelector((state: RootState) => state.selectedDate);
+  const dispatch = useDispatch();
+  function pressCalendar() {
+    const d = new Date();
+    d.setFullYear(
+      new Date(selectedDate).getFullYear(),
+      new Date(selectedDate).getMonth(),
+      value.item.dayData,
+    );
+    dispatch(selectedDateSlice.actions.setSelectedDate(d.toISOString()));
+  }
+  if (calendarWidth <= 519 && value.item.showing) {
+    return (
+      <Pressable
+        style={{
+          width,
+          height,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: height / 2,
+          backgroundColor: getBackgroundColor(selectedDate, value.item.dayData),
+        }}
+        onPress={() => pressCalendar()}
+      >
+        <Text
           style={{
-            backgroundColor: Colors.white,
-            height,
-            width,
+            color: getTextBackgroundColor(selectedDate, value.item.dayData),
           }}
         >
-          <MonthView width={width} height={height * 0.8} />
-          {new Date(selectedDate).getDate() <= monthData.length ? (
-            <>
-              {monthData[new Date(selectedDate).getDate() - 1].events.map(
-                event => (
-                  <View key={event.id}>
-                    <Text>{event.name}</Text>
-                  </View>
-                ),
-              )}
-            </>
-          ) : null}
-        </ScrollView>
-      ) : (
+          {value.item.dayData}
+        </Text>
+        {value.item.events.length >= 1 ? (
+          <View
+            style={{
+              backgroundColor: 'black',
+              borderRadius: 50,
+              width: width < height ? width * 0.25 : height * 0.25,
+              height: width < height ? width * 0.25 : height * 0.25,
+            }}
+          />
+        ) : (
+          <View
+            style={{
+              backgroundColor: 'transparent',
+              borderRadius: 50,
+              width: width < height ? width * 0.25 : height * 0.25,
+              height: width < height ? width * 0.25 : height * 0.25,
+            }}
+          />
+        )}
+      </Pressable>
+    );
+  }
+  if (calendarWidth <= 519) {
+    return <View style={{ width, height }} />;
+  }
+  if (value.item.showing) {
+    return (
+      <Pressable
+        style={{
+          width,
+          height,
+          borderWidth: 1,
+          borderTopWidth: value.index < 7 ? 2 : 1,
+          borderColor: Colors.lightGray,
+          padding: 2,
+        }}
+        onPress={() => {
+          pressCalendar();
+          dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+          const startDate = new Date(selectedDate);
+          startDate.setDate(value.item.dayData);
+          const endDate = new Date(selectedDate);
+          endDate.setDate(value.item.dayData);
+          endDate.setHours(endDate.getHours() + 1);
+          dispatch(addEventSlice.actions.setStartDate(startDate));
+          dispatch(addEventSlice.actions.setEndDate(endDate));
+        }}
+      >
         <View
           style={{
-            backgroundColor: Colors.white,
-            height,
-            width,
+            borderRadius: 50,
+            width: 16,
+            height: 16,
+            backgroundColor: isCalendarTextColor(
+              selectedDate,
+              value.item.dayData,
+            )
+              ? 'red'
+              : 'transparent',
+            alignContent: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <MonthView width={width} height={height} />
+          <Text
+            style={{
+              color: isCalendarTextColor(selectedDate, value.item.dayData)
+                ? Colors.white
+                : Colors.black,
+              fontWeight: isCalendarTextColor(selectedDate, value.item.dayData)
+                ? 'bold'
+                : 'normal',
+            }}
+          >
+            {value.item.dayData}
+          </Text>
         </View>
-      )}
-    </>
+        <ScrollView style={{ width, height: height * 0.8 }}>
+          {value.item.events.map((event: eventType) => (
+            <Pressable
+              key={`Calendar_Event_${event.id}`}
+              onPress={() => {
+                dispatch(addEventSlice.actions.setIsEditing(true));
+                dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+                dispatch(addEventSlice.actions.setSelectedEvent(event));
+              }}
+            >
+              <Text style={{ fontSize: 10 }}>{event.name}</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </Pressable>
+    );
+  }
+  return (
+    <View
+      style={{
+        width,
+        height,
+        borderWidth: 1,
+        borderTopWidth: value.index < 7 ? 2 : 1,
+        borderColor: Colors.lightGray,
+      }}
+    />
   );
 }
 
@@ -182,7 +223,6 @@ function MonthView({ width, height }: { width: number; height: number }) {
     { DOW: 'Fri', id: createUUID() },
     { DOW: 'Sat', id: createUUID() },
   ];
-  const {currentBreakPoint} = useSelector((state: RootState) => state.dimentions);
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
   const selectedDate: string = useSelector(
     (state: RootState) => state.selectedDate,
@@ -285,10 +325,17 @@ function MonthView({ width, height }: { width: number; height: number }) {
         }}
         key="Calendar_Header"
       >
-        <View style={{ flexDirection: 'row', marginLeft: "auto", marginRight: "auto", width: width * 0.9 }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            width: width * 0.9,
+          }}
+        >
           <View
             style={{
-              width: (width * 0.9) * 0.6,
+              width: width * 0.9 * 0.6,
               flexDirection: 'row',
               marginRight: 'auto',
             }}
@@ -304,21 +351,29 @@ function MonthView({ width, height }: { width: number; height: number }) {
               {new Date(selectedDate).getFullYear()}
             </Text>
           </View>
-          {new Date(selectedDate).toDateString() !== new Date().toDateString() ? (
-            <Pressable style={{ width: (width * 0.9) * 0.2, alignContent: 'center', justifyContent: 'center', alignItems: 'center'}}
+          {new Date(selectedDate).toDateString() !==
+          new Date().toDateString() ? (
+            <Pressable
+              style={{
+                width: width * 0.9 * 0.2,
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
               onPress={() => {
                 dispatch(
                   selectedDateSlice.actions.setSelectedDate(
                     new Date().toISOString(),
                   ),
                 );
-              }}>
-                <Text style={{ color: 'black', fontSize: 12 / fontScale }}>
-                  Today
-                </Text>
+              }}
+            >
+              <Text style={{ color: 'black', fontSize: 12 / fontScale }}>
+                Today
+              </Text>
             </Pressable>
           ) : (
-            <View style={{ width: (width * 0.9) * 0.2 }} />
+            <View style={{ width: width * 0.9 * 0.2 }} />
           )}
           {/* This is left chevron */}
           <Pressable
@@ -334,9 +389,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
                 new Date(selectedDate).getDay(),
               );
               dispatch(
-                selectedDateSlice.actions.setSelectedDate(
-                  d.toISOString(),
-                ),
+                selectedDateSlice.actions.setSelectedDate(d.toISOString()),
               );
             }}
             style={{ marginTop: 'auto', marginBottom: 'auto' }}
@@ -357,9 +410,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
                 new Date(selectedDate).getDay(),
               );
               dispatch(
-                selectedDateSlice.actions.setSelectedDate(
-                  d.toISOString(),
-                ),
+                selectedDateSlice.actions.setSelectedDate(d.toISOString()),
               );
             }}
             style={{ marginTop: 'auto', marginBottom: 'auto' }}
@@ -381,207 +432,27 @@ function MonthView({ width, height }: { width: number; height: number }) {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ color: 'black' }} selectable={false}>{DOW.DOW}</Text>
+              <Text style={{ color: 'black' }} selectable={false}>
+                {DOW.DOW}
+              </Text>
             </View>
           ))}
         </View>
-        <FlatList 
+        <FlatList
           data={monthData}
-          renderItem={(value) => (
-            <>
-              {value.item.showing ? (
-                <Pressable
-                  onPress={() => {
-                    const d = new Date();
-                    d.setFullYear(
-                      new Date(selectedDate).getFullYear(),
-                      new Date(selectedDate).getMonth(),
-                      value.item.dayData,
-                    );
-                    dispatch(
-                      selectedDateSlice.actions.setSelectedDate(
-                        d.toISOString(),
-                      )
-                    );
-                    if (currentBreakPoint !== 0) {
-                      dispatch(addEventSlice.actions.setIsShowingAddDate(true))
-                      const startDate = new Date(selectedDate);
-                      startDate.setDate(value.item.dayData);
-                      const endDate = new Date(selectedDate);
-                      endDate.setDate(value.item.dayData);
-                      endDate.setHours(endDate.getHours() + 1);
-                      dispatch(addEventSlice.actions.setStartDate(startDate));
-                      dispatch(addEventSlice.actions.setEndDate(endDate));
-                    }
-                  }}
-                  key={`CalendarButton_${value.item.id}`}
-                >
-                  <CalendarCardView
-                    width={width / 7}
-                    height={(height - 20) / 7}
-                    value={value}
-                    calendarWidth={width}
-                  />
-                </Pressable>
-              ) : (
-                <CalendarCardView
-                  width={width / 7}
-                  height={(height - 20) / 7}
-                  value={value}
-                  calendarWidth={width}
-                  key={`CalendarButton_${value.item.id}`}
-                />
-              )}
-            </>
+          renderItem={value => (
+            <CalendarCardView
+              width={width / 7}
+              height={(height - 20) / 7}
+              value={value}
+              calendarWidth={width}
+              key={`CalendarButton_${value.item.id}`}
+            />
           )}
           numColumns={7}
           scrollEnabled={false}
         />
       </View>
-    </>
-  );
-}
-
-function getBackgroundColor(selectedDate: string, dayData: number): string {
-  if (dayData === new Date(selectedDate).getDate()) {
-    return Colors.lightGray;
-  }
-  if (
-    dayData === new Date().getDate() &&
-    new Date(selectedDate).getMonth() === new Date().getMonth() &&
-    new Date(selectedDate).getFullYear() === new Date().getFullYear()
-  ) {
-    return Colors.darkGray;
-  }
-  return Colors.white;
-}
-
-function getTextBackgroundColor(selectedDate: string, dayData: number): string {
-  if (
-    dayData === new Date().getDate() &&
-    new Date(selectedDate).getMonth() === new Date().getMonth() &&
-    new Date(selectedDate).getFullYear() === new Date().getFullYear() &&
-    new Date(selectedDate).getDate() !== dayData
-  ) {
-    return Colors.white;
-  } else {
-    return Colors.black;
-  }
-}
-
-function isCalendarTextColor(selectedDate: string, day: number): boolean {
-  const date = new Date(selectedDate);
-  date.setDate(day);
-  if (new Date().toDateString() === date.toDateString()) {
-    return true
-  } else {
-    return false
-  }
-}
-
-function CalendarCardView({
-  value,
-  width,
-  height,
-  calendarWidth,
-}: {
-  value: ListRenderItemInfo<monthDataType>;
-  width: number;
-  height: number;
-  calendarWidth: number;
-}) {
-  const selectedDate = useSelector((state: RootState) => state.selectedDate);
-  const dispatch = useDispatch();
-  return (
-    <>
-      {calendarWidth <= 519 ? (
-        <>
-          {value.item.showing ? (
-            <View
-              style={{
-                width,
-                height,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: height / 2,
-                backgroundColor: getBackgroundColor(
-                  selectedDate,
-                  value.item.dayData,
-                ),
-              }}
-            >
-              <Text
-                style={{
-                  color: getTextBackgroundColor(selectedDate, value.item.dayData),
-                }}
-              >
-                {value.item.dayData}
-              </Text>
-              {value.item.events.length >= 1 ? (
-                <View
-                  style={{
-                    backgroundColor: 'black',
-                    borderRadius: 50,
-                    width: width < height ? width * 0.25 : height * 0.25,
-                    height: width < height ? width * 0.25 : height * 0.25,
-                  }}
-                />
-              ) : (
-                <View
-                  style={{
-                    backgroundColor: 'transparent',
-                    borderRadius: 50,
-                    width: width < height ? width * 0.25 : height * 0.25,
-                    height: width < height ? width * 0.25 : height * 0.25,
-                  }}
-                />
-              )}
-            </View>
-          ) : (
-            <View style={{ width, height }} />
-          )}
-        </>
-      ) : (
-        <>
-          {value.item.showing ? (
-            <View style={{ width, height, borderWidth: 1, borderTopWidth: (value.index < 7) ? 2:1, borderColor: Colors.lightGray, padding: 2 }}>
-              <View
-                style={{
-                  borderRadius: 50,
-                  width: 16,
-                  height: 16,
-                  backgroundColor:
-                    isCalendarTextColor(selectedDate, value.item.dayData)
-                      ? 'red'
-                      : 'transparent',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={{ color: isCalendarTextColor(selectedDate, value.item.dayData) ? Colors.white:Colors.black, fontWeight: isCalendarTextColor(selectedDate, value.item.dayData) ? "bold":"normal" }}>{value.item.dayData}</Text>
-              </View>
-              <ScrollView style={{ width, height: height * 0.8 }}>
-                {value.item.events.map((event: eventType) => (
-                  <Pressable
-                    key={`Calendar_Event_${event.id}`}
-                    onPress={() => {
-                      dispatch(addEventSlice.actions.setIsEditing(true));
-                      dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-                      dispatch(addEventSlice.actions.setSelectedEvent(event));
-                    }}
-                  >
-                    <Text style={{ fontSize: 10 }}>{event.name}</Text>
-                  </Pressable>
-                ))}
-              </ScrollView>
-            </View>
-          ) : (
-            <View style={{ width, height, borderWidth: 1, borderTopWidth: (value.index < 7) ? 2:1, borderColor: Colors.lightGray }} />
-          )}
-        </>
-      )}
     </>
   );
 }
@@ -669,6 +540,150 @@ function TopView({ width, height }: { width: number; height: number }) {
           />
         </Pressable>
       </View>
+    </View>
+  );
+}
+
+function MonthViewMain({ width, height }: { width: number; height: number }) {
+  const monthData = useSelector((state: RootState) => state.monthData);
+  const selectedDate: string = useSelector(
+    (state: RootState) => state.selectedDate,
+  );
+  return (
+    <>
+      {/* Chosing between large mode with each day having expanded calendars and reduced mode with list of events on each day. */}
+      {width <= 519 ? (
+        <ScrollView
+          style={{
+            backgroundColor: Colors.white,
+            height,
+            width,
+          }}
+        >
+          <MonthView width={width} height={height * 0.8} />
+          {new Date(selectedDate).getDate() <= monthData.length ? (
+            <>
+              {monthData[new Date(selectedDate).getDate() - 1].events.map(
+                event => (
+                  <View key={event.id}>
+                    <Text>{event.name}</Text>
+                  </View>
+                ),
+              )}
+            </>
+          ) : null}
+        </ScrollView>
+      ) : (
+        <View
+          style={{
+            backgroundColor: Colors.white,
+            height,
+            width,
+          }}
+        >
+          <MonthView width={width} height={height} />
+        </View>
+      )}
+    </>
+  );
+}
+
+export default function Calendar() {
+  const { width, height, currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
+  const { selectedCalendarMode, isShowingAddDate } = useSelector(
+    (state: RootState) => state.addEvent,
+  );
+  const selectedDate = useSelector((state: RootState) => state.selectedDate);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(
+      safeAreaColorsSlice.actions.setSafeAreaColors({
+        top: Colors.darkGray,
+        bottom: Colors.white,
+      }),
+    );
+  }, [dispatch]);
+
+  // This is the main (only) process that updates the events
+  // In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
+  useEffect(() => {
+    getEvents();
+    getClasses();
+  }, [selectedDate]);
+
+  // Fonts
+  const [fontsLoaded] = useFonts({
+    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
+  });
+
+  useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <View>
+      <View style={{ height: height * 0.1, backgroundColor: Colors.darkGray }}>
+        {currentBreakPoint >= 1 ? null : (
+          <BackButton to="/" style={{ zIndex: 100 }} />
+        )}
+        <TopView width={width} height={height * 0.1} />
+      </View>
+      <View style={{ height: height * 0.9 }}>
+        {selectedCalendarMode === calendarMode.month ? (
+          <View
+            style={{
+              width,
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: Colors.white,
+            }}
+          >
+            <MonthViewMain width={width} height={height * 0.9} />
+          </View>
+        ) : null}
+        {selectedCalendarMode === calendarMode.week ? (
+          <Week width={width * 1.0} height={height * 0.9} />
+        ) : null}
+        {selectedCalendarMode === calendarMode.day ? (
+          <View
+            style={{
+              width,
+              height: height * 0.9,
+              alignItems: 'center',
+              alignContent: 'center',
+              justifyContent: 'center',
+              backgroundColor: Colors.white,
+            }}
+          >
+            <DayView width={width * 0.9} height={height * 0.9} />
+          </View>
+        ) : null}
+      </View>
+      {isShowingAddDate ? (
+        <View
+          style={{
+            zIndex: 2,
+            position: 'absolute',
+            left: width * 0.05 + (width >= 576 ? width * 0.3 : 0) / 2,
+            top: height * 0.1,
+          }}
+        >
+          <AddEvent
+            width={width * 0.9 - (width >= 576 ? width * 0.3 : 0)}
+            height={height * 0.8}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }

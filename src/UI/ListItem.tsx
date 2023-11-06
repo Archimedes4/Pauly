@@ -14,10 +14,10 @@ export default function ListItem({
 }: {
   title: string;
   width: number;
-  caption?: string;
-  to?: string;
-  onPress?: () => void;
-  style?: ViewStyle;
+  caption?: string | undefined;
+  to?: string | undefined;
+  onPress?: () => void | undefined;
+  style?: ViewStyle | undefined;
 }) {
   const navigate = useNavigate();
   return (

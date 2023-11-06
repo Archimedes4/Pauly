@@ -252,9 +252,7 @@ export default function Commissions() {
                       )}
                     </>
                   )}
-                  keyExtractor={item =>
-                    `${item?.commissionId}_${createUUID()}`
-                  }
+                  keyExtractor={item => `${item?.commissionId}_${createUUID()}`}
                   onEndReachedThreshold={1}
                   onEndReached={() => {
                     if (commissionNextLink !== undefined) {

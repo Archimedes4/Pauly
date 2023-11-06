@@ -22,10 +22,10 @@ type iconProps = {
   height: number;
   style?: StyleProp<ViewStyle> | undefined;
   props?: Shape<SvgProps> | undefined;
-}
+};
 
 interface colorIconProps extends iconProps {
-  color?: string | undefined
+  color?: string | undefined;
 }
 
 // Icons
@@ -231,13 +231,12 @@ export function AddIcon({ width, height, style }: iconProps) {
   );
 }
 
-export function CloseIcon({ width, height, style, props }: iconProps) {
+export function CloseIcon({ width, height, style }: iconProps) {
   return (
     <Svg
       width={width}
       height={height}
       style={style}
-      {...props}
       viewBox="0 0 24 24"
       fill="none"
     >
@@ -333,12 +332,24 @@ export function DocumentIcon({ width, height, style }: iconProps) {
 
 export function SportsIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg width={width} height={height} style={style} {...props} viewBox="0 0 64 64" aria-hidden={true} preserveAspectRatio="xMidYMid meet" fill="#000000">
+    <Svg
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+      viewBox="0 0 64 64"
+      aria-hidden
+      preserveAspectRatio="xMidYMid meet"
+      fill="#000000"
+    >
       <G id="SVGRepo_iconCarrier">
-        <Path d="M59.284 4.714C58.27 3.701 55.587 2 49.022 2c-2.741 0-5.859.307-9.27.912a57.369 57.369 0 0 0-9.213 2.413c-6.229 2.221-11.512 5.47-15.698 9.658c-4.19 4.192-7.438 9.474-9.654 15.701c-1.031 2.889-1.843 5.988-2.413 9.211c-2.141 12.084.643 16.993 2.494 18.843C6.486 59.956 9.527 62 16.204 62h.001c2.369 0 5.029-.26 7.904-.769c3.236-.574 6.335-1.387 9.208-2.413c6.231-2.22 11.514-5.469 15.702-9.657c4.188-4.191 7.437-9.475 9.655-15.703c1.025-2.879 1.836-5.979 2.411-9.21c2.478-13.974-.753-18.483-1.801-19.534M33.041 24.832c-.987-.988.544-2.52 1.532-1.532l2.299 2.299c1.133-1.131 2.172-2.17 3.064-3.064l-2.3-2.299c-.988-.988.545-2.52 1.534-1.533l2.298 2.3l1.377-1.377c.986-.989 2.518.543 1.532 1.531l-1.378 1.378l2.296 2.298c.989.987-.543 2.519-1.529 1.532l-2.299-2.298l-3.063 3.064l2.298 2.298c.988.988-.546 2.52-1.531 1.533l-2.299-2.298l-3.064 3.065l2.297 2.297c.987.989-.543 2.519-1.531 1.532l-2.297-2.298l-3.064 3.064c.766.766 1.532 1.531 2.297 2.298c.988.987-.545 2.519-1.532 1.533l-2.297-2.299l-3.064 3.064l2.297 2.299c.988.987-.543 2.519-1.531 1.53l-2.297-2.297c-.655.652-1.136 1.135-1.379 1.377c-.987.987-2.518-.544-1.532-1.533l1.378-1.377c-.767-.767-1.533-1.532-2.297-2.298c-.988-.988.543-2.521 1.529-1.533l2.299 2.3l3.063-3.064l-2.299-2.299c-.986-.988.546-2.521 1.533-1.533l2.299 2.298l3.063-3.064l-2.297-2.297c-.989-.989.544-2.52 1.529-1.533l2.299 2.3l3.066-3.065l-2.299-2.299m-9.276 34.462c-.414.074-.813.131-1.217.193c-3.615-2.093-7.055-4.731-10.176-7.855c-3.122-3.12-5.761-6.563-7.853-10.176c.063-.403.118-.795.193-1.218a55.744 55.744 0 0 1 1.933-7.7c1.94 5.356 5.28 10.557 9.773 15.05c4.49 4.492 9.689 7.833 15.046 9.774a56.191 56.191 0 0 1-7.699 1.932m33.454-27.691c-1.942-5.356-5.282-10.554-9.775-15.046c-4.49-4.493-9.69-7.833-15.048-9.775a56.153 56.153 0 0 1 7.701-1.933c.414-.074.81-.129 1.215-.194c3.614 2.094 7.056 4.732 10.18 7.854c3.122 3.126 5.762 6.57 7.855 10.187c-.063.399-.123.794-.197 1.208a56.411 56.411 0 0 1-1.931 7.699" fill="#000000"/>
+        <Path
+          d="M59.284 4.714C58.27 3.701 55.587 2 49.022 2c-2.741 0-5.859.307-9.27.912a57.369 57.369 0 0 0-9.213 2.413c-6.229 2.221-11.512 5.47-15.698 9.658c-4.19 4.192-7.438 9.474-9.654 15.701c-1.031 2.889-1.843 5.988-2.413 9.211c-2.141 12.084.643 16.993 2.494 18.843C6.486 59.956 9.527 62 16.204 62h.001c2.369 0 5.029-.26 7.904-.769c3.236-.574 6.335-1.387 9.208-2.413c6.231-2.22 11.514-5.469 15.702-9.657c4.188-4.191 7.437-9.475 9.655-15.703c1.025-2.879 1.836-5.979 2.411-9.21c2.478-13.974-.753-18.483-1.801-19.534M33.041 24.832c-.987-.988.544-2.52 1.532-1.532l2.299 2.299c1.133-1.131 2.172-2.17 3.064-3.064l-2.3-2.299c-.988-.988.545-2.52 1.534-1.533l2.298 2.3l1.377-1.377c.986-.989 2.518.543 1.532 1.531l-1.378 1.378l2.296 2.298c.989.987-.543 2.519-1.529 1.532l-2.299-2.298l-3.063 3.064l2.298 2.298c.988.988-.546 2.52-1.531 1.533l-2.299-2.298l-3.064 3.065l2.297 2.297c.987.989-.543 2.519-1.531 1.532l-2.297-2.298l-3.064 3.064c.766.766 1.532 1.531 2.297 2.298c.988.987-.545 2.519-1.532 1.533l-2.297-2.299l-3.064 3.064l2.297 2.299c.988.987-.543 2.519-1.531 1.53l-2.297-2.297c-.655.652-1.136 1.135-1.379 1.377c-.987.987-2.518-.544-1.532-1.533l1.378-1.377c-.767-.767-1.533-1.532-2.297-2.298c-.988-.988.543-2.521 1.529-1.533l2.299 2.3l3.063-3.064l-2.299-2.299c-.986-.988.546-2.521 1.533-1.533l2.299 2.298l3.063-3.064l-2.297-2.297c-.989-.989.544-2.52 1.529-1.533l2.299 2.3l3.066-3.065l-2.299-2.299m-9.276 34.462c-.414.074-.813.131-1.217.193c-3.615-2.093-7.055-4.731-10.176-7.855c-3.122-3.12-5.761-6.563-7.853-10.176c.063-.403.118-.795.193-1.218a55.744 55.744 0 0 1 1.933-7.7c1.94 5.356 5.28 10.557 9.773 15.05c4.49 4.492 9.689 7.833 15.046 9.774a56.191 56.191 0 0 1-7.699 1.932m33.454-27.691c-1.942-5.356-5.282-10.554-9.775-15.046c-4.49-4.493-9.69-7.833-15.048-9.775a56.153 56.153 0 0 1 7.701-1.933c.414-.074.81-.129 1.215-.194c3.614 2.094 7.056 4.732 10.18 7.854c3.122 3.126 5.762 6.57 7.855 10.187c-.063.399-.123.794-.197 1.208a56.411 56.411 0 0 1-1.931 7.699"
+          fill="#000000"
+        />
       </G>
     </Svg>
-  )
+  );
 }
 
 export function CopyIcon({ width, height, style }: iconProps) {
@@ -1078,7 +1089,6 @@ export function TimeIcon({ width, height, style }: iconProps) {
   );
 }
 
-
 export function TrashIcon({
   width,
   height,
@@ -1136,7 +1146,13 @@ export function TrashIcon({
   );
 }
 
-export function OfflineIcon({ width, height, style, props, color }: colorIconProps) {
+export function OfflineIcon({
+  width,
+  height,
+  style,
+  props,
+  color,
+}: colorIconProps) {
   return (
     <Svg
       width={width}
@@ -1149,106 +1165,458 @@ export function OfflineIcon({ width, height, style, props, color }: colorIconPro
       <G>
         <Path
           d="M1.33309 8.07433C0.92156 8.44266 0.886539 9.07485 1.25487 9.48638C1.62319 9.89791 2.25539 9.93293 2.66691 9.5646L1.33309 8.07433ZM21.3331 9.5646C21.7446 9.93293 22.3768 9.89791 22.7451 9.48638C23.1135 9.07485 23.0784 8.44266 22.6669 8.07433L21.3331 9.5646ZM12 19C11.4477 19 11 19.4477 11 20C11 20.5523 11.4477 21 12 21V19ZM12.01 21C12.5623 21 13.01 20.5523 13.01 20C13.01 19.4477 12.5623 19 12.01 19V21ZM14.6905 17.04C15.099 17.4116 15.7315 17.3817 16.1031 16.9732C16.4748 16.5646 16.4448 15.9322 16.0363 15.5605L14.6905 17.04ZM18.0539 13.3403C18.4624 13.7119 19.0949 13.682 19.4665 13.2734C19.8381 12.8649 19.8082 12.2324 19.3997 11.8608L18.0539 13.3403ZM7.96372 15.5605C7.55517 15.9322 7.52524 16.5646 7.89687 16.9732C8.2685 17.3817 8.90095 17.4116 9.3095 17.04L7.96372 15.5605ZM4.60034 11.8608C4.19179 12.2324 4.16185 12.8649 4.53348 13.2734C4.90511 13.682 5.53756 13.7119 5.94611 13.3403L4.60034 11.8608ZM10.5705 4.06305C10.0204 4.1118 9.61391 4.59729 9.66266 5.14741C9.71141 5.69754 10.1969 6.10399 10.747 6.05525L10.5705 4.06305ZM17.3393 10.3798C16.8567 10.1114 16.2478 10.285 15.9794 10.7677C15.711 11.2504 15.8847 11.8593 16.3673 12.1277L17.3393 10.3798ZM3.70711 2.29289C3.31658 1.90237 2.68342 1.90237 2.29289 2.29289C1.90237 2.68342 1.90237 3.31658 2.29289 3.70711L3.70711 2.29289ZM20.2929 21.7071C20.6834 22.0976 21.3166 22.0976 21.7071 21.7071C22.0976 21.3166 22.0976 20.6834 21.7071 20.2929L20.2929 21.7071ZM12 6C15.5863 6 18.8556 7.34716 21.3331 9.5646L22.6669 8.07433C19.8369 5.54138 16.0972 4 12 4V6ZM12 21H12.01V19H12V21ZM12 16C13.0367 16 13.9793 16.3931 14.6905 17.04L16.0363 15.5605C14.9713 14.5918 13.5536 14 12 14V16ZM9.3095 17.04C10.0207 16.3931 10.9633 16 12 16V14C10.4464 14 9.02872 14.5918 7.96372 15.5605L9.3095 17.04ZM10.747 6.05525C11.1596 6.01869 11.5775 6 12 6V4C11.5185 4 11.0417 4.0213 10.5705 4.06305L10.747 6.05525ZM16.3673 12.1277C16.9757 12.466 17.5412 12.874 18.0539 13.3403L19.3997 11.8608C18.7751 11.2927 18.0844 10.7941 17.3393 10.3798L16.3673 12.1277ZM2.29289 3.70711L5.46648 6.8807L6.8807 5.46648L3.70711 2.29289L2.29289 3.70711ZM2.66691 9.5646C3.81213 8.53961 5.12648 7.70074 6.56232 7.09494L5.78486 5.25224C4.14251 5.94517 2.64069 6.904 1.33309 8.07433L2.66691 9.5646ZM5.46648 6.8807L9.46042 10.8746L10.8746 9.46042L6.8807 5.46648L5.46648 6.8807ZM9.46042 10.8746L20.2929 21.7071L21.7071 20.2929L10.8746 9.46042L9.46042 10.8746ZM5.94611 13.3403C7.15939 12.2367 8.67355 11.4612 10.3496 11.1508L9.98543 9.18424C7.93271 9.5644 6.08108 10.5139 4.60034 11.8608L5.94611 13.3403Z"
-          fill={color ? color:Colors.black}
+          fill={color || Colors.black}
         />
       </G>
     </Svg>
   );
 }
 
-//Text Icons https://www.svgrepo.com/collection/ui-and-text-editing-icons/
-export function BoldIcon({ width, height, style, props }: iconProps){
+// Text Icons https://www.svgrepo.com/collection/ui-and-text-editing-icons/
+export function BoldIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+    <Svg
+      id="Icons"
+      viewBox="0 0 32 32"
+      fill="#000000"
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+    >
       <G id="SVGRepo_iconCarrier">
-        <Path fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} d="M16.5,14H11V9h5.5c1.4,0,2.5,1.1,2.5,2.5v0C19,12.9,17.9,14,16.5,14z"/>
-        <Path fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} d="M18.5,23H11v-5h7.5c1.4,0,2.5,1.1,2.5,2.5v0C21,21.9,19.9,23,18.5,23z"/>
-        <Path fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} d="M22,15c0.7-1,1-2.2,1-3.5C23,7.9,20.1,5,16.5,5h-1h-1H7v22h7.5h1h3c3.6,0,6.5-2.9,6.5-6.5 C25,18.2,23.8,16.2,22,15z"/>
+        <Path
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          d="M16.5,14H11V9h5.5c1.4,0,2.5,1.1,2.5,2.5v0C19,12.9,17.9,14,16.5,14z"
+        />
+        <Path
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          d="M18.5,23H11v-5h7.5c1.4,0,2.5,1.1,2.5,2.5v0C21,21.9,19.9,23,18.5,23z"
+        />
+        <Path
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          d="M22,15c0.7-1,1-2.2,1-3.5C23,7.9,20.1,5,16.5,5h-1h-1H7v22h7.5h1h3c3.6,0,6.5-2.9,6.5-6.5 C25,18.2,23.8,16.2,22,15z"
+        />
       </G>
     </Svg>
-  )
+  );
 }
 
 export function ItalicIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg id="Italic_Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+    <Svg
+      id="Italic_Icons"
+      viewBox="0 0 32 32"
+      fill="#000000"
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+    >
       <G id="SVGRepo_iconCarrier">
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="10" y1="27" x2="18" y2="27"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="14" y1="5" x2="22" y2="5"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="14" y1="27" x2="18" y2="5"/>
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="10"
+          y1="27"
+          x2="18"
+          y2="27"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="14"
+          y1="5"
+          x2="22"
+          y2="5"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="14"
+          y1="27"
+          x2="18"
+          y2="5"
+        />
       </G>
     </Svg>
-  )
+  );
 }
 
 export function StrikeThroughIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+    <Svg
+      id="Icons"
+      viewBox="0 0 32 32"
+      fill="#000000"
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+    >
       <G id="SVGRepo_iconCarrier">
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="7" y1="16" x2="26" y2="16"/>
-        <Path fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} d="M11,21.5c0,3,2.5,5.5,5.5,5.5s5.5-2.5,5.5-5.5S19.5,16,16.5,16S11,13.5,11,10.5S13.5,5,16.5,5S22,7.5,22,10.5"/>
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="7"
+          y1="16"
+          x2="26"
+          y2="16"
+        />
+        <Path
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          d="M11,21.5c0,3,2.5,5.5,5.5,5.5s5.5-2.5,5.5-5.5S19.5,16,16.5,16S11,13.5,11,10.5S13.5,5,16.5,5S22,7.5,22,10.5"
+        />
       </G>
     </Svg>
-  )
+  );
 }
 
 export function UnderlineIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+    <Svg
+      id="Icons"
+      viewBox="0 0 32 32"
+      fill="#000000"
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+    >
       <G id="SVGRepo_iconCarrier">
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="3" y1="28" x2="29" y2="28"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="5" y1="23" x2="9" y2="23"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="23" y1="23" x2="27" y2="23"/>
-        <Polyline fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} points="7,23 16,4 25,23 "/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="10" y1="17" x2="22" y2="17"/>
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="3"
+          y1="28"
+          x2="29"
+          y2="28"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="5"
+          y1="23"
+          x2="9"
+          y2="23"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="23"
+          y1="23"
+          x2="27"
+          y2="23"
+        />
+        <Polyline
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          points="7,23 16,4 25,23 "
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="10"
+          y1="17"
+          x2="22"
+          y2="17"
+        />
       </G>
     </Svg>
-  )
+  );
 }
 
 export function RightAlignmentIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+    <Svg
+      id="Icons"
+      viewBox="0 0 32 32"
+      fill="#000000"
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+    >
       <G id="SVGRepo_iconCarrier">
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="4" x2="13" y2="4"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="10" x2="3" y2="10"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="16" x2="13" y2="16"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="22" x2="3" y2="22"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="29" y1="28" x2="13" y2="28"/>
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="29"
+          y1="4"
+          x2="13"
+          y2="4"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="29"
+          y1="10"
+          x2="3"
+          y2="10"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="29"
+          y1="16"
+          x2="13"
+          y2="16"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="29"
+          y1="22"
+          x2="3"
+          y2="22"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="29"
+          y1="28"
+          x2="13"
+          y2="28"
+        />
       </G>
     </Svg>
-  )
+  );
 }
 
 export function LeftAlignmentIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+    <Svg
+      id="Icons"
+      viewBox="0 0 32 32"
+      fill="#000000"
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+    >
       <G id="SVGRepo_iconCarrier">
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="3" y1="4" x2="19" y2="4"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10}  x1="3" y1="10" x2="29" y2="10"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10}  x1="3" y1="16" x2="19" y2="16"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10}  x1="3" y1="22" x2="29" y2="22"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10}  x1="3" y1="28" x2="19" y2="28"/>
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="3"
+          y1="4"
+          x2="19"
+          y2="4"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="3"
+          y1="10"
+          x2="29"
+          y2="10"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="3"
+          y1="16"
+          x2="19"
+          y2="16"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="3"
+          y1="22"
+          x2="29"
+          y2="22"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="3"
+          y1="28"
+          x2="19"
+          y2="28"
+        />
       </G>
     </Svg>
-  )
+  );
 }
 
-export function CenterAlignmentIcon({ width, height, style, props }: iconProps) {
+export function CenterAlignmentIcon({
+  width,
+  height,
+  style,
+  props,
+}: iconProps) {
   return (
-    <Svg id="Icons" viewBox="0 0 32 32" fill="#000000" width={width} height={height} style={style} {...props}>
+    <Svg
+      id="Icons"
+      viewBox="0 0 32 32"
+      fill="#000000"
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+    >
       <G id="SVGRepo_iconCarrier">
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="8" y1="4" x2="24" y2="4"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="3" y1="10" x2="29" y2="10"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="8" y1="16" x2="24" y2="16"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="3" y1="22" x2="29" y2="22"/>
-        <Line fill='none' stroke='#000000' strokeWidth={2} strokeLinecap='round' strokeLinejoin='round' strokeMiterlimit={10} x1="8" y1="28" x2="24" y2="28"/>
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="8"
+          y1="4"
+          x2="24"
+          y2="4"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="3"
+          y1="10"
+          x2="29"
+          y2="10"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="8"
+          y1="16"
+          x2="24"
+          y2="16"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="3"
+          y1="22"
+          x2="29"
+          y2="22"
+        />
+        <Line
+          fill="none"
+          stroke="#000000"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeMiterlimit={10}
+          x1="8"
+          y1="28"
+          x2="24"
+          y2="28"
+        />
       </G>
     </Svg>
-  )
+  );
 }
-
-
 
 // function MessagingIcon() {
 //     return (

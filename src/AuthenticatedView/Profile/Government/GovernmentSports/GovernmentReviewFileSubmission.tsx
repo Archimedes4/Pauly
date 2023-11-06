@@ -17,9 +17,9 @@ import { getTextState } from '../../../../Functions/ultility/createUUID';
 
 function getDenyText(reviewed: boolean, accepted: boolean) {
   if (!reviewed && !accepted) {
-    'SubmissionDenied'
+    ('SubmissionDenied');
   } else {
-    return 'Deny'
+    return 'Deny';
   }
 }
 
@@ -42,8 +42,9 @@ export default function GovernmentReviewFileSubmission() {
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
   const [denySubmissionState, setDenySubmissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
-  const [deleteState, setDeleteState] =
-    useState<loadingStateEnum>(loadingStateEnum.notStarted);
+  const [deleteState, setDeleteState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
 
   async function deleteSubmission(itemID: string) {
     setDeleteState(loadingStateEnum.loading);
@@ -271,11 +272,15 @@ export default function GovernmentReviewFileSubmission() {
                   ) : null}
                 </View>
               )}
-              { (currentSubmissionInfomration.fileType === postType.youtubeVideo) ?
-                <View style={{height: (width * 0.9/16) *9}}>
-                  <SportsYoutube videoId={currentSubmissionInfomration.fileId} width={width*0.9}/>
-                </View>:null
-              }
+              {currentSubmissionInfomration.fileType ===
+              postType.youtubeVideo ? (
+                <View style={{ height: ((width * 0.9) / 16) * 9 }}>
+                  <SportsYoutube
+                    videoId={currentSubmissionInfomration.fileId}
+                    width={width * 0.9}
+                  />
+                </View>
+              ) : null}
               <Pressable
                 onPress={() => {
                   if (currentSubmissionInfomration) {
@@ -305,12 +310,16 @@ export default function GovernmentReviewFileSubmission() {
               </Pressable>
               <Pressable onPress={() => denySubmission()}>
                 <Text>
-                  {
-                    getTextState(denySubmissionState, {
-                      success: getDenyText(currentSubmissionInfomration.reviewed, currentSubmissionInfomration.accepted),
-                      notStarted: getDenyText(currentSubmissionInfomration.reviewed, currentSubmissionInfomration.accepted)
-                    })
-                  }
+                  {getTextState(denySubmissionState, {
+                    success: getDenyText(
+                      currentSubmissionInfomration.reviewed,
+                      currentSubmissionInfomration.accepted,
+                    ),
+                    notStarted: getDenyText(
+                      currentSubmissionInfomration.reviewed,
+                      currentSubmissionInfomration.accepted,
+                    ),
+                  })}
                 </Text>
               </Pressable>
             </View>

@@ -25,7 +25,7 @@ export enum loadingStateEnum {
 
 export enum postType {
   microsoftFile,
-  youtubeVideo
+  youtubeVideo,
 }
 
 export enum dataContentTypeOptions {
@@ -273,7 +273,7 @@ declare global {
     note: string;
     link: string;
     cover: string;
-  }
+  };
   type schoolDayDataCompressedType = {
     schoolDayId: string;
     scheduleId: string;
@@ -363,7 +363,7 @@ declare global {
     excerpt: string;
     content: string;
     id: number;
-  }
+  };
   type noClassType = {
     day: number;
     Month: number;
@@ -438,14 +438,16 @@ declare global {
   };
   type sportPost = {
     caption: string;
-    data: {
-      fileId: string;
-      postType: postType.microsoftFile;
-      fileType: dataContentTypeOptions
-    } | {
-      fileId: string;
-      postType: postType.youtubeVideo
-    }
+    data:
+      | {
+          fileId: string;
+          postType: postType.microsoftFile;
+          fileType: dataContentTypeOptions;
+        }
+      | {
+          fileId: string;
+          postType: postType.youtubeVideo;
+        };
   };
   type attachment = {
     webUrl: string;
@@ -487,7 +489,7 @@ declare global {
     thumbnail: string;
     title: string;
     videoId: string;
-  }
+  };
 }
 
 export class Colors {

@@ -319,9 +319,9 @@ function StudentItem({ e }: { e: ListRenderItemInfo<schoolUserType> }) {
         onPress={() => {
           setFilePickingMode(filePickingModeEnum.select);
         }}
-        style={{marginLeft: 2}}
+        style={{ marginLeft: 2 }}
       >
-        <Text style={{margin: 2}}>Choose File</Text>
+        <Text style={{ margin: 2 }}>Choose File</Text>
       </Pressable>
       <Modal
         visible={filePickingMode !== filePickingModeEnum.notStarted}

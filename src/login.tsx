@@ -1,7 +1,12 @@
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { View, Text, Pressable, Image } from 'react-native';
-import React, { useCallback, useEffect, useImperativeHandle, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from './Redux/store';
@@ -21,7 +26,6 @@ export default function Login({
   width: number;
   isLoading: boolean;
 }) {
-  
   const { height } = useSelector((state: RootState) => state.dimentions);
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
@@ -157,8 +161,9 @@ export default function Login({
             marginTop: width < height ? width * 0.05 : height * 0.05,
           }}
         >
-          { isLoading ? 
-            <ProgressView width={14} height={14}/>:
+          {isLoading ? (
+            <ProgressView width={14} height={14} />
+          ) : (
             <Text
               style={{
                 textAlign: 'center',
@@ -168,7 +173,7 @@ export default function Login({
             >
               LOGIN
             </Text>
-          }
+          )}
         </Pressable>
         {isShowingGovernmentLogin ? (
           <Pressable
@@ -212,7 +217,17 @@ export default function Login({
           </Pressable>
         ) : null}
       </View>
-      <Text style={{position: 'absolute', bottom: 4, fontSize: height * 0.02, fontFamily: 'Roboto', color: Colors.white}}>A.M.D.G</Text>
+      <Text
+        style={{
+          position: 'absolute',
+          bottom: 4,
+          fontSize: height * 0.02,
+          fontFamily: 'Roboto',
+          color: Colors.white,
+        }}
+      >
+        A.M.D.G
+      </Text>
     </Pressable>
   );
 }
