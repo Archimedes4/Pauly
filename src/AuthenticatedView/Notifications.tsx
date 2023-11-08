@@ -40,7 +40,7 @@ import PDFView from '../UI/PDF/PDFView';
 import BackButton from '../UI/BackButton';
 import MimeTypeIcon from '../UI/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '../Functions/classesFunctions';
-import { TrashIcon } from '../UI/Icons/Icons';
+import { TrashIcon, WarningIcon } from '../UI/Icons/Icons';
 
 // Get Messages
 // Last Chat Message Channels Included
@@ -341,48 +341,46 @@ function TaskBlock() {
             style={{ marginLeft: 5 }}
           />
         </View>
-        <ScrollView style={{ margin: 10, height: height * 0.5 - 20 }}>
-          {taskState === loadingStateEnum.loading ? (
-            <View
-              style={{
-                width: width * 0.9,
-                height: height * 0.5 - 20,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <ProgressView
-                width={
-                  width * 0.9 < height * 0.5 - 20
-                    ? width * 0.45
-                    : height * 0.25 - 20
-                }
-                height={
-                  width * 0.9 < height * 0.5 - 20
-                    ? width * 0.45
-                    : height * 0.25 - 20
-                }
+        {taskState === loadingStateEnum.loading ? (
+          <View
+            style={{
+              width: width * 0.9,
+              height: height * 0.5 - 20,
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <ProgressView
+              width={
+                width * 0.9 < height * 0.5 - 20
+                  ? width * 0.45
+                  : height * 0.25 - 20
+              }
+              height={
+                width * 0.9 < height * 0.5 - 20
+                  ? width * 0.45
+                  : height * 0.25 - 20
+              }
+            />
+            <Text>Loading</Text>
+          </View>
+        ) : (
+          <>
+            {taskState === loadingStateEnum.success ? (
+              <FlatList
+                data={userTasks}
+                renderItem={task => (
+                  <TaskItem task={task} key={`User_Task_${task.item.id}`} />
+                )}
               />
-              <Text>Loading</Text>
-            </View>
-          ) : (
-            <>
-              {taskState === loadingStateEnum.success ? (
-                <FlatList
-                  data={userTasks}
-                  renderItem={task => (
-                    <TaskItem task={task} key={`User_Task_${task.item.id}`} />
-                  )}
-                />
-              ) : (
-                <View>
-                  <Text>Failed</Text>
-                </View>
-              )}
-            </>
-          )}
-        </ScrollView>
+            ) : (
+              <View>
+                <Text>Failed</Text>
+              </View>
+            )}
+          </>
+        )}
       </View>
     </View>
   );
@@ -403,7 +401,7 @@ function DeleteTask({
         backgroundColor: Colors.danger,
       }}
     >
-      <TrashIcon width={14} height={14} />
+      <TrashIcon width={14} height={14} style={{ margin: 'auto' }} />
     </Pressable>
   );
 }
@@ -459,6 +457,7 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
   }
 
   async function updateText() {
+    setUpdateTaskState(loadingStateEnum.loading);
     const data = {
       title: userTasks[task.index].name,
     };
@@ -480,20 +479,20 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
         JSON.stringify(data),
       );
       if (result.ok) {
-        const data = await result.json();
+        const newTaskData = await result.json();
         dispatch(
           homepageDataSlice.actions.updateUserTask({
             task: {
               name: task.item.name,
-              id: data.id,
+              id: newTaskData.id,
               importance:
-                data.importance === 'high'
+                newTaskData.importance === 'high'
                   ? taskImportanceEnum.high
                   : data.importance === 'low'
                   ? taskImportanceEnum.low
                   : taskImportanceEnum.normal,
               status:
-                data.status === 'notStarted'
+                newTaskData.status === 'notStarted'
                   ? taskStatusEnum.notStarted
                   : data.status === 'inProgress'
                   ? taskStatusEnum.inProgress
@@ -536,7 +535,6 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
         if (index !== -1) {
           dispatch(homepageDataSlice.actions.popUserTask(index));
         }
-      } else {
       }
     }
   }
@@ -563,37 +561,38 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
     }
   }, [currentText]);
 
-  return (
-    <>
-      {isShowingCompleteTasks ||
-      task.item.status !== taskStatusEnum.completed ? (
-        <Swipeable
-          renderRightActions={e => (
-            <>
-              {task.item.excess ? null : (
-                <DeleteTask e={e} onDelete={() => deleteTask()} />
-              )}
-            </>
-          )}
+
+  if (isShowingCompleteTasks || task.item.status !== taskStatusEnum.completed) {
+    <Swipeable
+      renderRightActions={e => {
+        if (task.item.excess) {
+          return null;
+        }
+        return <DeleteTask e={e} onDelete={() => deleteTask()} />;
+      }}
+    >
+      <View
+        style={{
+          flexDirection: 'row',
+          width: width * 0.9,
+          paddingTop: 5,
+          paddingBottom: 5,
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            setChecked(!checked);
+            if (!checked) {
+              updateTaskStatus(taskStatusEnum.completed);
+            } else {
+              updateTaskStatus(taskStatusEnum.notStarted);
+            }
+          }}
         >
-          <View
-            style={{
-              flexDirection: 'row',
-              width: width * 0.9,
-              paddingTop: 5,
-              paddingBottom: 5,
-            }}
-          >
-            <Pressable
-              onPress={() => {
-                setChecked(!checked);
-                if (!checked) {
-                  updateTaskStatus(taskStatusEnum.completed);
-                } else {
-                  updateTaskStatus(taskStatusEnum.notStarted);
-                }
-              }}
-            >
+          <View style={{ margin: 'auto' }}>
+            {
+              updateTaskState === loadingStateEnum.notStarted ||
+            updateTaskState === loadingStateEnum.success ? (
               <CustomCheckBox
                 checked={checked}
                 checkMarkColor="blue"
@@ -601,43 +600,50 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
                 height={20}
                 width={20}
               />
-            </Pressable>
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignContent: 'center',
-              }}
-            >
-              <TextInput
-                value={task.item.name}
-                onChangeText={e => {
-                  const newTask: taskType = {
-                    name: task.item.name,
-                    id: task.item.id,
-                    importance: task.item.importance,
-                    status: task.item.status,
-                    excess: task.item.excess,
-                  };
-                  newTask.name = e;
-                  dispatch(
-                    homepageDataSlice.actions.updateUserTask({
-                      task: newTask,
-                      index: task.index,
-                    }),
-                  );
-                  setCurrentText(e);
-                }}
-                multiline
-                numberOfLines={1}
-                style={{ width: width * 0.9 - 40 }}
-              />
-            </View>
+            ) : (
+              updateTaskState === loadingStateEnum.loading ? (
+                <ProgressView width={14} height={14} />
+              ) : (
+                <WarningIcon width={14} height={14} outlineColor={Colors.danger} />
+              )
+            )}
           </View>
-        </Swipeable>
-      ) : null}
-    </>
-  );
+        </Pressable>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+          }}
+        >
+          <TextInput
+            value={task.item.name}
+            onChangeText={e => {
+              const newTask: taskType = {
+                name: task.item.name,
+                id: task.item.id,
+                importance: task.item.importance,
+                status: task.item.status,
+                excess: task.item.excess,
+              };
+              newTask.name = e;
+              dispatch(
+                homepageDataSlice.actions.updateUserTask({
+                  task: newTask,
+                  index: task.index,
+                }),
+              );
+              setCurrentText(e);
+            }}
+            multiline
+            numberOfLines={1}
+            style={{ width: width * 0.9 - 40 }}
+          />
+        </View>
+      </View>
+    </Swipeable>;
+  }
+  return null;
 }
 
 function BoardBlock() {
@@ -647,96 +653,65 @@ function BoardBlock() {
   const { powerpointBlob, paulyDataState } = useSelector(
     (state: RootState) => state.paulyData,
   );
+  if (paulyDataState === loadingStateEnum.loading || powerpointBlob === '') {
+    <View
+      style={{
+        width: currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
+        height: height * 0.3,
+        borderRadius: 15,
+        marginTop: height * 0.03,
+        marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
+        marginRight: width * 0.05,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.white,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 10,
+      }}
+    >
+      <ProgressView width={100} height={100} />
+      <Text>Loading</Text>
+    </View>
+  }
+
+  if (paulyDataState === loadingStateEnum.success) {
+    return (
+      <View
+        style={{
+          width: currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
+          borderRadius: 15,
+          marginTop: height * 0.03,
+          marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
+          marginRight: currentBreakPoint === 0 ? width * 0.05 : width * 0.03,
+          backgroundColor: Colors.white,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+        }}
+      >
+        <PDFView width={currentBreakPoint === 0 ? width * 0.9 : width * 0.7} />
+      </View>
+    );
+  }
+
   return (
-    <>
-      {paulyDataState === loadingStateEnum.loading ? (
-        <View
-          style={{
-            width: currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
-            height: height * 0.3,
-            borderRadius: 15,
-            marginTop: height * 0.03,
-            marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
-            marginRight: width * 0.05,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: Colors.white,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.8,
-            shadowRadius: 10,
-          }}
-        >
-          <ProgressView width={100} height={100} />
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <>
-          {paulyDataState === loadingStateEnum.success ? (
-            <>
-              {powerpointBlob !== '' ? (
-                <View
-                  style={{
-                    width: currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
-                    borderRadius: 15,
-                    marginTop: height * 0.03,
-                    marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
-                    marginRight:
-                      currentBreakPoint === 0 ? width * 0.05 : width * 0.03,
-                    backgroundColor: Colors.white,
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.8,
-                    shadowRadius: 10,
-                  }}
-                >
-                  <PDFView
-                    width={currentBreakPoint === 0 ? width * 0.9 : width * 0.7}
-                  />
-                </View>
-              ) : (
-                <View
-                  style={{
-                    width: currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
-                    height: height * 0.3,
-                    marginTop: height * 0.03,
-                    marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
-                    marginRight:
-                      currentBreakPoint === 0 ? width * 0.05 : width * 0.03,
-                    alignContent: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: '#FFFFFF',
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.8,
-                    shadowRadius: 10,
-                    borderRadius: 15,
-                  }}
-                >
-                  <ProgressView width={100} height={100} />
-                  <Text>Loading</Text>
-                </View>
-              )}
-            </>
-          ) : (
-            <View
-              style={{
-                width: width * 0.9,
-                height: height * 0.3,
-                marginTop: height * 0.03,
-                marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
-                backgroundColor: '#FFFFFF',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.8,
-                shadowRadius: 10,
-                borderRadius: 15,
-              }}
-            >
-              <Text>Failed</Text>
-            </View>
-          )}
-        </>
-      )}
-    </>
+    <View
+      style={{
+        width: width * 0.9,
+        height: height * 0.3,
+        marginTop: height * 0.03,
+        marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
+        backgroundColor: '#FFFFFF',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 10,
+        borderRadius: 15,
+      }}
+    >
+      <Text>Failed</Text>
+    </View>
   );
 }
 
@@ -744,98 +719,97 @@ function InsightsBlock() {
   const { width, height, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
   );
+
+  if (currentBreakPoint <= 0) {
+    <>
+      <Text
+        style={{
+          fontSize: 24,
+          marginLeft: width * 0.05,
+          marginTop: height * 0.03,
+          marginBottom: height * 0.02,
+        }}
+      >
+        Recent Files
+      </Text>
+      <View
+        style={{
+          marginLeft: width * 0.05,
+          marginRight: width * 0.05,
+          width: width * 0.9,
+          height: height * 0.3,
+          backgroundColor: Colors.white,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          borderRadius: 15,
+        }}
+      >
+        <TrendingFiles width={width * 0.9} />
+      </View>
+      <Text
+        style={{
+          fontSize: 24,
+          marginLeft: width * 0.05,
+          marginTop: height * 0.03,
+          marginBottom: height * 0.02,
+        }}
+      >
+        Popular Files
+      </Text>
+      <View
+        style={{
+          marginLeft: width * 0.05,
+          marginRight: width * 0.05,
+          width: width * 0.9,
+          height: height * 0.3,
+          backgroundColor: Colors.white,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          borderRadius: 15,
+          marginBottom: height * 0.05,
+        }}
+      >
+        <PopularFiles width={width * 0.9} />
+      </View>
+    </>;
+  }
+
   return (
     <>
-      {currentBreakPoint <= 0 ? (
-        <>
-          <Text
-            style={{
-              fontSize: 24,
-              marginLeft: width * 0.05,
-              marginTop: height * 0.03,
-              marginBottom: height * 0.02,
-            }}
-          >
-            Recent Files
-          </Text>
-          <View
-            style={{
-              marginLeft: width * 0.05,
-              marginRight: width * 0.05,
-              width: width * 0.9,
-              height: height * 0.3,
-              backgroundColor: Colors.white,
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 10,
-              borderRadius: 15,
-            }}
-          >
-            <TrendingFiles width={width * 0.9} />
-          </View>
-          <Text
-            style={{
-              fontSize: 24,
-              marginLeft: width * 0.05,
-              marginTop: height * 0.03,
-              marginBottom: height * 0.02,
-            }}
-          >
-            Popular Files
-          </Text>
-          <View
-            style={{
-              marginLeft: width * 0.05,
-              marginRight: width * 0.05,
-              width: width * 0.9,
-              height: height * 0.3,
-              backgroundColor: Colors.white,
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 10,
-              borderRadius: 15,
-              marginBottom: height * 0.05,
-            }}
-          >
-            <PopularFiles width={width * 0.9} />
-          </View>
-        </>
-      ) : (
-        <>
-          <Text
-            style={{
-              fontSize: 24,
-              marginLeft: width * 0.05,
-              marginTop: height * 0.03,
-              marginBottom: height * 0.02,
-            }}
-          >
-            Files
-          </Text>
-          <View
-            style={{
-              width: width * 0.9,
-              flexDirection: 'row',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: height * 0.025,
-              marginBottom: height * 0.025,
-              backgroundColor: Colors.white,
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 10,
-              borderRadius: 15,
-            }}
-          >
-            <View style={{ width: width * 0.45, overflow: 'scroll' }}>
-              <TrendingFiles width={width * 0.45} />
-            </View>
-            <View style={{ width: width * 0.45, overflow: 'visible' }}>
-              <PopularFiles width={width * 0.45} />
-            </View>
-          </View>
-        </>
-      )}
+      <Text
+        style={{
+          fontSize: 24,
+          marginLeft: width * 0.05,
+          marginTop: height * 0.03,
+          marginBottom: height * 0.02,
+        }}
+      >
+        Files
+      </Text>
+      <View
+        style={{
+          width: width * 0.9,
+          flexDirection: 'row',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: height * 0.025,
+          marginBottom: height * 0.025,
+          backgroundColor: Colors.white,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          borderRadius: 15,
+        }}
+      >
+        <View style={{ width: width * 0.45, overflow: 'scroll' }}>
+          <TrendingFiles width={width * 0.45} />
+        </View>
+        <View style={{ width: width * 0.45, overflow: 'visible' }}>
+          <PopularFiles width={width * 0.45} />
+        </View>
+      </View>
     </>
   );
 }
@@ -845,38 +819,46 @@ function PopularFiles({ width }: { width: number }) {
   const { trendingData, trendingState } = useSelector(
     (state: RootState) => state.homepageData,
   );
-  return (
-    <>
-      {trendingState === loadingStateEnum.loading ? (
-        <View>
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <ScrollView style={{ height: height * 0.3, width }}>
-          {trendingState === loadingStateEnum.success ? (
-            <>
-              {trendingData.map(data => (
-                <Pressable
-                  key={`User_Insight_${data.id}`}
-                  style={{ flexDirection: 'row' }}
-                  onPress={() => {
-                    Linking.openURL(data.webUrl);
-                  }}
-                >
-                  <View style={{ margin: 10, flexDirection: 'row' }}>
-                    <MimeTypeIcon width={14} height={14} mimeType={data.type} />
-                    <Text>{data.title}</Text>
-                  </View>
-                </Pressable>
-              ))}
-            </>
-          ) : (
-            <Text>Failed To Load</Text>
-          )}
-        </ScrollView>
-      )}
-    </>
-  );
+  if (trendingState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          overflow: 'hidden',
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (trendingState === loadingStateEnum.success) {
+    return (
+      <>
+        {trendingData.map(data => (
+          <Pressable
+            key={`User_Insight_${data.id}`}
+            style={{ flexDirection: 'row' }}
+            onPress={() => {
+              Linking.openURL(data.webUrl);
+            }}
+          >
+            <View style={{ margin: 10, flexDirection: 'row' }}>
+              <MimeTypeIcon width={14} height={14} mimeType={data.type} />
+              <Text>{data.title}</Text>
+            </View>
+          </Pressable>
+        ))}
+      </>
+    );
+  }
+
+  return <Text>Failed To Load</Text>;
 }
 
 function TrendingFiles({ width }: { width: number }) {

@@ -281,7 +281,7 @@ function ScholarshipBlock({ item }: { item: ListRenderItemInfo<scholarship> }) {
       const aspect = imgWidth / imgHeight;
       setHeight((width - 10) / aspect);
     });
-  }, []);
+  }, [item.item.cover, width]);
   return (
     <Pressable
       onPress={() => {
@@ -327,45 +327,45 @@ function ResourceScholarships({ isHoverPicker }: { isHoverPicker: boolean }) {
     loadData();
   }, []);
 
+  if (scholarState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          height: isHoverPicker ? height * 0.75 : height * 0.8,
+          width,
+          backgroundColor: Colors.lightGray,
+        }}
+      >
+        <ProgressView width={14} height={14} />
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (scholarState === loadingStateEnum.success) {
+    return (
+      <FlatList
+        data={scholarships}
+        renderItem={item => <ScholarshipBlock item={item} />}
+        style={{
+          height: isHoverPicker ? height * 0.75 : height * 0.8,
+          width,
+          backgroundColor: Colors.lightGray,
+        }}
+      />
+    );
+  }
+
   return (
-    <>
-      {scholarState === loadingStateEnum.loading ? (
-        <View
-          style={{
-            height: isHoverPicker ? height * 0.75 : height * 0.8,
-            width,
-            backgroundColor: Colors.lightGray,
-          }}
-        >
-          <ProgressView width={14} height={14} />
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <>
-          {scholarState === loadingStateEnum.success ? (
-            <FlatList
-              data={scholarships}
-              renderItem={item => <ScholarshipBlock item={item} />}
-              style={{
-                height: isHoverPicker ? height * 0.75 : height * 0.8,
-                width,
-                backgroundColor: Colors.lightGray,
-              }}
-            />
-          ) : (
-            <View
-              style={{
-                height: isHoverPicker ? height * 0.75 : height * 0.8,
-                width,
-                backgroundColor: Colors.lightGray,
-              }}
-            >
-              <Text>Failed</Text>
-            </View>
-          )}
-        </>
-      )}
-    </>
+    <View
+      style={{
+        height: isHoverPicker ? height * 0.75 : height * 0.8,
+        width,
+        backgroundColor: Colors.lightGray,
+      }}
+    >
+      <Text>Failed</Text>
+    </View>
   );
 }
 

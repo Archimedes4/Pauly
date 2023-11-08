@@ -8,26 +8,25 @@ import { pdfDataSlice } from '../../Redux/reducers/pdfDataReducer';
 import store, { RootState } from '../../Redux/store';
 
 export default function PDFView({ width }: { width: number }) {
-  const { powerpointBlob } = useSelector((state: RootState) => state.paulyData);
-  const { inject, images, pageNumber } = useSelector(
+  const { images, pageNumber } = useSelector(
     (state: RootState) => state.pdfData,
   );
   const [imageHeight, setImageHeight] = useState<number>(0);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  async function loadData() {
-    const dataResult = await fetch(powerpointBlob);
-    if (dataResult.ok) {
-      const blob = await dataResult.blob();
-      const file = new Blob([blob], { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      dispatch(pdfDataSlice.actions.setInject(fileURL));
-    }
-  }
+  // async function loadData() {
+  //   const dataResult = await fetch(powerpointBlob);
+  //   if (dataResult.ok) {
+  //     const blob = await dataResult.blob();
+  //     const file = new Blob([blob], { type: 'application/pdf' });
+  //     const fileURL = URL.createObjectURL(file);
+  //     dispatch(pdfDataSlice.actions.setInject(fileURL));
+  //   }
+  // }
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  // useEffect(() => {
+  //   loadData();
+  // }, []);
 
   function tapChangePage() {
     if (pageNumber + 1 < images.length) {
@@ -85,10 +84,9 @@ export default function PDFView({ width }: { width: number }) {
       );
     }
   }, [pageNumber, images, width]);
-
   return (
     <>
-      {powerpointBlob !== '' && inject !== '' ? <WebViewInject /> : null}
+      <WebViewInject />
       {pageNumber < images.length ? (
         <GestureDetector gesture={compound}>
           <Image
@@ -113,33 +111,30 @@ function WebViewInject() {
         html: `<!DOCTYPE html>
         <html>
         <head>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js" integrity="sha512-BbrZ76UNZq5BhH7LL7pn9A4TKQpQeNCHOo65/akfelcIBbcVvYWOFQKPXIrykE3qZxYjmDX573oa4Ywsc7rpTw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-          <script src="https://npmcdn.com/pdfjs-dist/build/pdf.js"></script>
+          
         </head>
         <body>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js" integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
           <script>
             async function loadData() {
               const dataResult = await fetch("https://graph.microsoft.com/v1.0/shares/${powerpointShare}/driveItem/content?format=pdf", {
                 headers: {
-                  "Authorization":"Bearer ${
-                    store.getState().authenticationToken
-                  }"
+                  "Authorization":"Bearer ${store.getState().authenticationToken}"
                 }
               })
-              if (!dataResult.ok) {window.ReactNativeWebView.postMessage('failed'); return}
-              const data = await dataResult.blob()
+              if (!dataResult.ok) {window.ReactNativeWebView.postMessage('failed'); return};
+              const data = await dataResult.blob();
 
               let fileURL = URL.createObjectURL(data);
               let docInitParams = {url: fileURL}
-              let url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf';
-              let PDFJS = window['pdfjs-dist/build/pdf'];
+
               try {
-                PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
               } catch (e) {
-                window.ReactNativeWebView.postMessage('failed')
+                window.ReactNativeWebView.postMessage('farc')
               } 
               
-              let loadingTask = PDFJS.getDocument(docInitParams);
+              let loadingTask = pdfjsLib.getDocument(docInitParams);
               loadingTask.promise.then(function(pdf) {
           
                 let canvasdiv = document.getElementById('canvas');
@@ -175,7 +170,7 @@ function WebViewInject() {
           
               }, function(reason) {
                 // PDF loading error
-                window.ReactNativeWebView.postMessage('failed')
+                window.ReactNativeWebView.postMessage('failr')
               });
             }
             loadData()
@@ -186,8 +181,12 @@ function WebViewInject() {
       }}
       style={{ width: 0, height: 0 }}
       onMessage={e => {
+        console.log('Data message');
         if (e.nativeEvent.data.length >= 7) {
+          console.log('Data working', e.nativeEvent.data);
           dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data));
+        } else {
+          console.log('Error', e.nativeEvent.data);
         }
       }}
     />

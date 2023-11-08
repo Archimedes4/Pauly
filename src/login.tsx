@@ -35,7 +35,7 @@ export default function Login({
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
 
-  useCallback(
+  const safeArea = useCallback(
     async function setSafeAreaColors() {
       dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop(Colors.maroon));
       dispatch(
@@ -44,6 +44,10 @@ export default function Login({
     },
     [dispatch],
   );
+
+  useEffect(() => {
+    safeArea();
+  }, [safeArea]);
 
   useEffect(() => {
     const heightIsGreater: boolean = width < height;

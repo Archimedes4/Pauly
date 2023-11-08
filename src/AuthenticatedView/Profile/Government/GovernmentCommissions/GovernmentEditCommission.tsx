@@ -23,7 +23,7 @@ import SegmentedPicker from '../../../../UI/Pickers/SegmentedPicker';
 import ProgressView from '../../../../UI/ProgressView';
 import WebViewCross from '../../../../UI/WebViewCross';
 import { CloseIcon } from '../../../../UI/Icons/Icons';
-import MapWeb from '../../../../UI/Map/Map.web';
+import MapWeb from '../../../../UI/Map/Map';
 import Slider from '../../../../UI/Slider';
 import BackButton from '../../../../UI/BackButton';
 import {
@@ -644,48 +644,49 @@ function GroupSelection({
   useEffect(() => {
     loadData();
   }, []);
+
+  if (groupsState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView
+          width={width < height ? width * 0.3 : height * 0.3}
+          height={width < height ? width * 0.3 : height * 0.3}
+        />
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (groupsState === loadingStateEnum.success) {
+    return (
+      <ScrollView style={{ width, height }}>
+        {groups.map(group => (
+          <Pressable
+            key={`Group_${group.id}`}
+            onPress={() => {
+              onSelect(group.id);
+            }}
+          >
+            <Text>{group.name}</Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+    );
+  }
+
   return (
-    <>
-      {groupsState === loadingStateEnum.loading ? (
-        <View
-          style={{
-            width,
-            height,
-            backgroundColor: Colors.white,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <ProgressView
-            width={width < height ? width * 0.3 : height * 0.3}
-            height={width < height ? width * 0.3 : height * 0.3}
-          />
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <>
-          {groupsState === loadingStateEnum.success ? (
-            <ScrollView style={{ width, height }}>
-              {groups.map(group => (
-                <Pressable
-                  key={`Group_${group.id}`}
-                  onPress={() => {
-                    onSelect(group.id);
-                  }}
-                >
-                  <Text>{group.name}</Text>
-                </Pressable>
-              ))}
-            </ScrollView>
-          ) : (
-            <View style={{ width, height }}>
-              <Text>Failed To Get Groups</Text>
-            </View>
-          )}
-        </>
-      )}
-    </>
+    <View style={{ width, height }}>
+      <Text>Failed To Get Groups</Text>
+    </View>
   );
 }
 
@@ -802,69 +803,70 @@ function PostSelection({
   useEffect(() => {
     loadData();
   }, []);
-  return (
-    <>
-      {postsState === loadingStateEnum.loading ? (
-        <View
-          style={{
-            width,
-            height,
-            backgroundColor: Colors.white,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <ProgressView
-            width={width < height ? width * 0.3 : height * 0.3}
-            height={width < height ? width * 0.3 : height * 0.3}
-          />
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <>
-          {postsState === loadingStateEnum.success ? (
-            <ScrollView style={{ width, height }}>
-              <Pressable onPress={() => onBack()}>
-                <Text>Back</Text>
-              </Pressable>
-              <FlatList
-                data={posts}
-                renderItem={post => (
-                  <>
-                    {post.item.body !== '<systemEventMessage/>' ? (
-                      <Pressable
-                        key={`Post_${post.item.id}`}
-                        onPress={() => {
-                          onSelect(post.item.id);
-                        }}
-                        style={{
-                          padding: 5,
-                          margin: 5,
-                          backgroundColor:
-                            selectedPostId === post.item.id
-                              ? Colors.lightGray
-                              : Colors.white,
-                        }}
-                      >
-                        <WebViewCross
-                          html={post.item.body}
-                          width={width * 0.9}
-                        />
-                      </Pressable>
-                    ) : null}
-                  </>
-                )}
-              />
-            </ScrollView>
-          ) : (
-            <View style={{ width, height }}>
-              <Text>Failed To Get Posts</Text>
-            </View>
+
+  if (postsState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView
+          width={width < height ? width * 0.3 : height * 0.3}
+          height={width < height ? width * 0.3 : height * 0.3}
+        />
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (postsState === loadingStateEnum.success) {
+    return (
+      <ScrollView style={{ width, height }}>
+        <Pressable onPress={() => onBack()}>
+          <Text>Back</Text>
+        </Pressable>
+        <FlatList
+          data={posts}
+          renderItem={post => (
+            <>
+              {post.item.body !== '<systemEventMessage/>' ? (
+                <Pressable
+                  key={`Post_${post.item.id}`}
+                  onPress={() => {
+                    onSelect(post.item.id);
+                  }}
+                  style={{
+                    padding: 5,
+                    margin: 5,
+                    backgroundColor:
+                      selectedPostId === post.item.id
+                        ? Colors.lightGray
+                        : Colors.white,
+                  }}
+                >
+                  <WebViewCross
+                    html={post.item.body}
+                    width={width * 0.9}
+                  />
+                </Pressable>
+              ) : null}
+            </>
           )}
-        </>
-      )}
-    </>
+        />
+      </ScrollView>
+    )
+  }
+
+  return (
+    <View style={{ width, height }}>
+      <Text>Failed To Get Posts</Text>
+    </View>
   );
 }
 
@@ -1000,7 +1002,6 @@ function CommissionSubmissions({
         <SubmissionView
           width={width}
           height={height}
-          setSubmissionData={() => {}}
           submissionData={selectedSubmission}
           onClose={() => setSelectedSubmisson(undefined)}
         />
@@ -1014,13 +1015,11 @@ function SubmissionView({
   height,
   submissionData,
   onClose,
-  setSubmissionData,
 }: {
   width: number;
   height: number;
   submissionData: submissionType;
   onClose: () => void;
-  setSubmissionData: (item: submissionType) => void;
 }) {
   const [changeState, setChangeState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,

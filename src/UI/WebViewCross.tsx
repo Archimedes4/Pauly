@@ -23,58 +23,69 @@ export default function WebViewCross({
       html?: undefined;
       style?: ViewStyle | undefined;
     }) {
-  const jsCode =
-    "window.ReactNativeWebView.postMessage(document.getElementById('pauly-main').clientHeight)";
+  const jsCode = `
+      window.ReactNativeWebView.postMessage("" + document.getElementById('pauly-main').offsetHeight);
+    `;
   // document.getElementById('pauly-main').innerHTML
   const [adaptHeight, setAdaptHeight] = useState<number>(0);
   if (html === undefined && rawHtml === undefined) {
-    return null
+    return null;
   }
 
   if (Platform.OS !== 'web') {
-    return <WebView
-      source={{
-        html:
-          rawHtml ||
-          `<!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body {font-weight: normal; font-family: Arial; font-size: 55px}
-            div {font-weight: normal; font-family: Arial}
-          </style>
-        </head>
-        <body>
-          <div id="pauly-main">
-            ${html}
-          </div>
-        </body>
-        </html>`,
-      }}
-      style={[
-        {
-          margin: 10,
-          height: height || adaptHeight + 10,
-          width,
-        },
-        style,
-      ]}
-      automaticallyAdjustContentInsets={false}
-      javaScriptEnabled
-      injectedJavaScript={jsCode}
-      onMessage={event =>
-        setAdaptHeight(parseFloat(event.nativeEvent.data) / 3)
-      }
-    />
-  } else {
+    return (
+      <WebView
+        source={{
+          html:
+            rawHtml ||
+            `<!DOCTYPE html>
+            <html>
+            <head>
+              <meta name="viewport" content="width=${width - 20}px"/>
+              <style>
+                body {font-weight: normal; font-family: Arial; width: 100%}
+                div {font-weight: normal; font-family: Arial; width: 100%; padding: 0; margin: 0; font-size: 15px}
+                .main {
+                  padding: 0;
+                  margin: 0;
+                  position: absolute;
+                }
+              </style>
+            </head>
+            <body>
+              <div id="pauly-main" class="main">
+                ${html}
+              </div>
+            </body>
+            </html>`,
+        }}
+        style={[
+          {
+            margin: 10,
+            height: height || adaptHeight + 10,
+            width,
+          },
+          style,
+        ]}
+        javaScriptEnabled
+        injectedJavaScript={jsCode}
+        onMessage={event => {
+          setAdaptHeight(parseFloat(event.nativeEvent.data));
+        }}
+        scalesPageToFit={false}
+      />
+    );
+  }
+  if (html !== undefined) {
     return (
       <View style={[{ margin: 10 }, style]}>
-        {html !== undefined ? (
-          <div dangerouslySetInnerHTML={{ __html: html }} />
-        ) : (
-          <>{rawHtml !== undefined ? { rawHtml } : null}</>
-        )}
+        <div dangerouslySetInnerHTML={{ __html: html }} />
       </View>
-    )
+    );
   }
+  return (
+    <View style={[{ margin: 10 }, style]}>
+      {rawHtml !== undefined ? { rawHtml } : null}
+    </View>
+  );
 }

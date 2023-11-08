@@ -5,6 +5,7 @@ import {
   Marker,
   Circle,
 } from '@react-google-maps/api';
+import { Text } from 'react-native';
 
 const center = {
   lat: 49.85663823299096,
@@ -80,6 +81,6 @@ export default function MapWeb({
       </GoogleMap>
     </div>
   ) : (
-    <></>
+    <Text>Loading</Text>
   );
 }

@@ -155,7 +155,7 @@ export default function CommissionsView({
     BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
@@ -194,11 +194,9 @@ export default function CommissionsView({
           />
           <Text>Loading</Text>
         </View>
-      ) : (
-        <>
-          {commissionState === loadingStateEnum.success &&
-          commissionData !== undefined ? (
-            <View>
+      ) : (commissionState === loadingStateEnum.success && commissionData !== undefined) ?
+      (
+        <View>
               <View style={{ height: height * 0.1, overflow: 'hidden' }}>
                 <Pressable
                   onPress={() => onClose()}
@@ -399,14 +397,13 @@ export default function CommissionsView({
                   />
                 </View>
               ) : null}
-            </View>
-          ) : (
-            <View>
-              <Text>Something Went Wrong</Text>
-            </View>
-          )}
-        </>
-      )}
+        </View> 
+      ):(
+        <View>
+          <Text>Something Went Wrong</Text>
+        </View>
+      )
+      }
     </View>
   );
 }

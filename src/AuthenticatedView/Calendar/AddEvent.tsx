@@ -23,6 +23,8 @@ import { CalendarIcon, CloseIcon, TimeIcon } from '../../UI/Icons/Icons';
 import updateEvent from '../../Functions/updateEvent';
 import { getTextState } from '../../Functions/ultility/createUUID';
 
+const BukhariScript = require('../../../assets/fonts/BukhariScript.ttf');
+
 function GovernmentCalendarOptions({
   width,
   height,
@@ -394,7 +396,7 @@ export default function AddEvent({
   }
 
   const [fontsLoaded] = useFonts({
-    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
+    BukhariScript,
   });
 
   useCallback(async () => {
