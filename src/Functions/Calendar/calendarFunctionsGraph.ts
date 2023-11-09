@@ -7,7 +7,9 @@ import { Colors, loadingStateEnum, semesters } from '../../types';
 import store from '../../Redux/store';
 import batchRequest from '../ultility/batchRequest';
 import createUUID from '../ultility/createUUID';
-import getDressCode from '../homepage/getDressCode';
+import getDressCode from '../notifications/getDressCode';
+import { findFirstDayinMonth } from './calendarFunctions';
+import { monthDataSlice } from '../../Redux/reducers/monthDataReducer';
 
 // Defaults to org wide events
 export async function getGraphEvents(
@@ -794,4 +796,69 @@ export async function createDressCode(
     return loadingStateEnum.success;
   }
   return loadingStateEnum.failed;
+}
+
+export function getMonthData(selectedDate: Date) {
+  // Check if this month
+  const lastDay = new Date(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth() + 1,
+    0,
+  );
+  const firstDayWeek = findFirstDayinMonth(selectedDate);
+  const monthDataResult: monthDataType[] = [];
+  for (let index = 0; index < 42; index += 1) {
+    if (index >= firstDayWeek && index - firstDayWeek < lastDay.getDate()) {
+      // In the current month
+      const events: eventType[] = []; // The result events of that day
+
+      // Check is the current date
+      const checkStart: Date = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        index - firstDayWeek + 1,
+        0,
+        0,
+      );
+      const checkEnd: Date = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        index - firstDayWeek + 2,
+        0,
+        0,
+      );
+      for (
+        let indexEvent = 0;
+        indexEvent < store.getState().currentEvents.length;
+        indexEvent += 1
+      ) {
+        const event: eventType = store.getState().currentEvents[indexEvent]; // Event to be checked
+
+        const startTimeDate = new Date(event.startTime); // String to date
+        const endTimeDate = new Date(event.endTime); // String to date
+
+        // First check if starts before date and ends after or on day
+        if (startTimeDate <= checkStart && endTimeDate > checkStart) {
+          events.push(event);
+        } else if (startTimeDate > checkStart && startTimeDate < checkEnd) {
+          // Second check if starts on day
+          events.push(event);
+        }
+      }
+      monthDataResult.push({
+        showing: true,
+        dayData: index - firstDayWeek + 1,
+        id: createUUID(),
+        events,
+      });
+    } else {
+      monthDataResult.push({
+        showing: false,
+        dayData: 0,
+        id: createUUID(),
+        events: [],
+      });
+    }
+  }
+  store.dispatch(monthDataSlice.actions.setMonthData(monthDataResult));
 }

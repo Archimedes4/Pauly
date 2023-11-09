@@ -7,7 +7,7 @@ import createUUID from '../../../../../Functions/ultility/createUUID';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import DressCodeBlock from './DressCodeBlock';
 import { createDressCode } from '../../../../../Functions/calendar/calendarFunctionsGraph';
-import getDressCode from '../../../../../Functions/homepage/getDressCode';
+import getDressCode from '../../../../../Functions/notifications/getDressCode';
 import ProgressView from '../../../../../UI/ProgressView';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 

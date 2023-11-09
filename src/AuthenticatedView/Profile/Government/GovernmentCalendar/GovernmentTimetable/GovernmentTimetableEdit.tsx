@@ -14,7 +14,7 @@ import createUUID from '../../../../../Functions/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import { RootState } from '../../../../../Redux/store';
-import getDressCodeData from '../../../../../Functions/homepage/getDressCodeData';
+import getDressCodeData from '../../../../../Functions/notifications/getDressCodeData';
 import ListItem from '../../../../../UI/ListItem';
 import { getSchedules } from '../../../../../Functions/calendar/calendarFunctionsGraph';
 

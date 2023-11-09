@@ -21,6 +21,70 @@ import ProgressView from '../../UI/ProgressView';
 import BackButton from '../../UI/BackButton';
 import { Colors, loadingStateEnum } from '../../types';
 
+function PickerPiece({
+  text,
+  isHoverPicker,
+  setIsHoverPicker,
+  onPress,
+}: {
+  text: string;
+  onPress: () => void;
+  isHoverPicker: boolean;
+  setIsHoverPicker: (item: boolean) => void;
+}) {
+  const { height, width, currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
+  const [isSelected, setIsSelected] = useState<boolean>(false);
+  return (
+    <Pressable
+      onPress={() => {
+        onPress();
+      }}
+      onHoverIn={() => {
+        setIsHoverPicker(true);
+        setIsSelected(true);
+      }}
+      onHoverOut={() => setIsSelected(false)}
+      style={{
+        height: isHoverPicker ? height * 0.1 : height * 0.05,
+        width: isSelected
+          ? currentBreakPoint >= 2
+            ? width * 0.3
+            : width * 0.6
+          : currentBreakPoint >= 2
+          ? width * 0.2
+          : width * 0.4,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <View
+        style={{
+          height: isHoverPicker ? height * 0.06 : height * 0.03,
+          width: isSelected
+            ? currentBreakPoint >= 2
+              ? width * 0.28
+              : width * 0.46
+            : currentBreakPoint >= 2
+            ? width * 0.18
+            : width * 0.36,
+          marginLeft: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
+          marginRight: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
+          backgroundColor: Colors.darkGray,
+          borderRadius: 15,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Text style={{ color: Colors.white }}>{text}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
 export default function Commissions() {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
@@ -362,69 +426,5 @@ export default function Commissions() {
         ) : null}
       </View>
     </>
-  );
-}
-
-function PickerPiece({
-  text,
-  isHoverPicker,
-  setIsHoverPicker,
-  onPress,
-}: {
-  text: string;
-  onPress: () => void;
-  isHoverPicker: boolean;
-  setIsHoverPicker: (item: boolean) => void;
-}) {
-  const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
-  const [isSelected, setIsSelected] = useState<boolean>(false);
-  return (
-    <Pressable
-      onPress={() => {
-        onPress();
-      }}
-      onHoverIn={() => {
-        setIsHoverPicker(true);
-        setIsSelected(true);
-      }}
-      onHoverOut={() => setIsSelected(false)}
-      style={{
-        height: isHoverPicker ? height * 0.1 : height * 0.05,
-        width: isSelected
-          ? currentBreakPoint >= 2
-            ? width * 0.3
-            : width * 0.6
-          : currentBreakPoint >= 2
-          ? width * 0.2
-          : width * 0.4,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <View
-        style={{
-          height: isHoverPicker ? height * 0.06 : height * 0.03,
-          width: isSelected
-            ? currentBreakPoint >= 2
-              ? width * 0.28
-              : width * 0.46
-            : currentBreakPoint >= 2
-            ? width * 0.18
-            : width * 0.36,
-          marginLeft: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
-          marginRight: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
-          backgroundColor: Colors.darkGray,
-          borderRadius: 15,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Text style={{ color: Colors.white }}>{text}</Text>
-      </View>
-    </Pressable>
   );
 }

@@ -22,7 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { FlatList } from 'react-native-gesture-handler';
 import store, { RootState } from '../Redux/store';
-import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
+import getCurrentPaulyData from '../Functions/notifications/getCurrentPaulyData';
 import {
   Colors,
   loadingStateEnum,
@@ -30,9 +30,9 @@ import {
   taskStatusEnum,
 } from '../types';
 import callMsGraph from '../Functions/ultility/microsoftAssets';
-import getUsersTasks from '../Functions/homepage/getUsersTasks';
+import getUsersTasks from '../Functions/notifications/getUsersTasks';
 import ProgressView from '../UI/ProgressView';
-import getInsightData from '../Functions/homepage/getInsightData';
+import getInsightData from '../Functions/notifications/getInsightData';
 import CustomCheckBox from '../UI/CheckMark/CustomCheckBox';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';

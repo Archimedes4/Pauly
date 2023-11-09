@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import MonthView from './MonthView';
 import store, { RootState } from '../Redux/store';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
-import getCurrentPaulyData from '../Functions/homepage/getCurrentPaulyData';
+import getCurrentPaulyData from '../Functions/notifications/getCurrentPaulyData';
 import ProgressView from '../UI/ProgressView';
 import { BookIcon, MedalIcon, PersonIcon } from '../UI/Icons/Icons';
 import ScrollingTextAnimation from '../UI/ScrollingTextAnimation';

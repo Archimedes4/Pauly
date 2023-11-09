@@ -27,6 +27,8 @@ import { addEventSlice } from '../../Redux/reducers/addEventReducer';
 import { monthDataSlice } from '../../Redux/reducers/monthDataReducer';
 import { getClasses } from '../../Functions/classesFunctions';
 import getEvents from '../../Functions/calendar/getEvents';
+import { getMonthData } from '../../Functions/calendar/calendarFunctionsGraph';
+import EventView from './EventView';
 
 function getBackgroundColor(selectedDate: string, dayData: number): string {
   if (dayData === new Date(selectedDate).getDate()) {
@@ -240,71 +242,6 @@ function MonthView({ width, height }: { width: number; height: number }) {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
-
-  function getMonthData(selectedDate: Date) {
-    // Check if this month
-    const lastDay = new Date(
-      selectedDate.getFullYear(),
-      selectedDate.getMonth() + 1,
-      0,
-    );
-    const firstDayWeek = findFirstDayinMonth(selectedDate);
-    const monthDataResult: monthDataType[] = [];
-    for (let index = 0; index < 42; index += 1) {
-      if (index >= firstDayWeek && index - firstDayWeek < lastDay.getDate()) {
-        // In the current month
-        const events: eventType[] = []; // The result events of that day
-
-        // Check is the current date
-        const checkStart: Date = new Date(
-          selectedDate.getFullYear(),
-          selectedDate.getMonth(),
-          index - firstDayWeek + 1,
-          0,
-          0,
-        );
-        const checkEnd: Date = new Date(
-          selectedDate.getFullYear(),
-          selectedDate.getMonth(),
-          index - firstDayWeek + 2,
-          0,
-          0,
-        );
-        for (
-          let indexEvent = 0;
-          indexEvent < currentEvents.length;
-          indexEvent += 1
-        ) {
-          const event: eventType = currentEvents[indexEvent]; // Event to be checked
-
-          const startTimeDate = new Date(event.startTime); // String to date
-          const endTimeDate = new Date(event.endTime); // String to date
-
-          // First check if starts before date and ends after or on day
-          if (startTimeDate <= checkStart && endTimeDate > checkStart) {
-            events.push(event);
-          } else if (startTimeDate > checkStart && startTimeDate < checkEnd) {
-            // Second check if starts on day
-            events.push(event);
-          }
-        }
-        monthDataResult.push({
-          showing: true,
-          dayData: index - firstDayWeek + 1,
-          id: createUUID(),
-          events,
-        });
-      } else {
-        monthDataResult.push({
-          showing: false,
-          dayData: 0,
-          id: createUUID(),
-          events: [],
-        });
-      }
-    }
-    dispatch(monthDataSlice.actions.setMonthData(monthDataResult));
-  }
 
   useEffect(() => {
     getMonthData(new Date(selectedDate));
@@ -665,7 +602,7 @@ export default function Calendar() {
               backgroundColor: Colors.white,
             }}
           >
-            <DayView width={width * 0.9} height={height * 0.9} />
+            <EventView />
           </View>
         ) : null}
       </View>

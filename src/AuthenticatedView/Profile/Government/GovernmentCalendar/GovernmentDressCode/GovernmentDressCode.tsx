@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import ListItem from '../../../../../UI/ListItem';
-import getDressCodeData from '../../../../../Functions/homepage/getDressCodeData';
+import getDressCodeData from '../../../../../Functions/notifications/getDressCodeData';
 
 export default function GovernmentDressCode() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

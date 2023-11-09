@@ -65,13 +65,13 @@ export default function DayView({
   const [schoolEvents, setSchoolEvents] = useState<eventType[]>();
 
   function setCurrentTimeFunction(hour: number, minuite: number) {
-    if (minuite.toString().length == 1) {
-      if (hour == 12) {
+    if (minuite.toString().length === 1) {
+      if (hour === 12) {
         setCurrentTime(`12:0${minuite.toString()}`);
       } else {
         setCurrentTime(`${(hour % 12).toString()}:0${minuite.toString()}`);
       }
-    } else if (hour == 12) {
+    } else if (hour === 12) {
       setCurrentTime(`12:${minuite}`);
     } else {
       setCurrentTime(`${(hour % 12).toString()}:${minuite.toString()}`);
@@ -95,11 +95,11 @@ export default function DayView({
 
   function updateOnTimeChange() {
     const minuiteInt = new Date().getMinutes();
-    if (currentMinuteInt != minuiteInt!) {
+    if (currentMinuteInt !== minuiteInt!) {
       setCurrentMinuteInt(minuiteInt);
 
       const hourInt = new Date().getHours();
-      if (minuiteInt.toString().length == 1) {
+      if (minuiteInt.toString().length === 1) {
         setCurrentTimeFunction(hourInt, minuiteInt);
       } else {
         setCurrentTimeFunction(hourInt, minuiteInt);

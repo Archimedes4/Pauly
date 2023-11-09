@@ -184,7 +184,7 @@ export async function getSportsContent(
           if (item.result === loadingStateEnum.success) {
             const fileType = item.contentType;
             if (
-              shareResults[index].result === loadingStateEnum.success &&
+              item.result === loadingStateEnum.success &&
               fileType !== undefined &&
               item.url !== undefined
             ) {

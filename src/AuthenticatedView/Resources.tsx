@@ -441,65 +441,63 @@ export default function Resources() {
             backgroundColor: Colors.lightGray,
           }}
         />
-        <>
-          {selectedResourceMode === resourceMode.news ? (
-            <ResourcesNews isHoverPicker={isHoverPicker} />
-          ) : (
-            <>
-              {selectedResourceMode === resourceMode.scholarships ? (
-                <ResourceScholarships isHoverPicker={isHoverPicker} />
-              ) : (
-                <View
-                  style={{
-                    height: isHoverPicker ? height * 0.75 : height * 0.8,
-                    width,
-                    backgroundColor: Colors.lightGray,
-                  }}
-                >
-                  <>
-                    {loadingState === loadingStateEnum.loading ? (
-                      <View
-                        style={{
-                          width,
-                          height: isHoverPicker ? height * 0.75 : height * 0.8,
-                          alignContent: 'center',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <ProgressView
-                          width={width < height ? width * 0.05 : height * 0.05}
-                          height={width < height ? width * 0.05 : height * 0.05}
+        {selectedResourceMode === resourceMode.news ? (
+          <ResourcesNews isHoverPicker={isHoverPicker} />
+        ) : (
+          <>
+            {selectedResourceMode === resourceMode.scholarships ? (
+              <ResourceScholarships isHoverPicker={isHoverPicker} />
+            ) : (
+              <View
+                style={{
+                  height: isHoverPicker ? height * 0.75 : height * 0.8,
+                  width,
+                  backgroundColor: Colors.lightGray,
+                }}
+              >
+                <>
+                  {loadingState === loadingStateEnum.loading ? (
+                    <View
+                      style={{
+                        width,
+                        height: isHoverPicker ? height * 0.75 : height * 0.8,
+                        alignContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <ProgressView
+                        width={width < height ? width * 0.05 : height * 0.05}
+                        height={width < height ? width * 0.05 : height * 0.05}
+                      />
+                      <Text>Loading</Text>
+                    </View>
+                  ) : (
+                    <>
+                      {loadingState === loadingStateEnum.success ? (
+                        <FlatList
+                          data={resources}
+                          renderItem={resource => (
+                            <ResourceBlock
+                              resource={resource}
+                              key={resource.item.id}
+                              setIsShowingCategoryView={
+                                setIsShowingCategoryView
+                              }
+                              setSelectedPost={setSelectedPost}
+                            />
+                          )}
                         />
-                        <Text>Loading</Text>
-                      </View>
-                    ) : (
-                      <>
-                        {loadingState === loadingStateEnum.success ? (
-                          <FlatList
-                            data={resources}
-                            renderItem={resource => (
-                              <ResourceBlock
-                                resource={resource}
-                                key={resource.item.id}
-                                setIsShowingCategoryView={
-                                  setIsShowingCategoryView
-                                }
-                                setSelectedPost={setSelectedPost}
-                              />
-                            )}
-                          />
-                        ) : (
-                          <Text>Failed</Text>
-                        )}
-                      </>
-                    )}
-                  </>
-                </View>
-              )}
-            </>
-          )}
-        </>
+                      ) : (
+                        <Text>Failed</Text>
+                      )}
+                    </>
+                  )}
+                </>
+              </View>
+            )}
+          </>
+        )}
         <Pressable
           style={{ height: isHoverPicker ? height * 0.1 : height * 0.05 }}
           onHoverIn={() => {

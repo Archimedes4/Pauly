@@ -50,42 +50,42 @@ function YoutubeVideosSelector({
     loadData();
   }, []);
 
-  return (
-    <>
-      {ytState === loadingStateEnum.loading ? (
-        <View>
-          <ProgressView width={14} height={14} />
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <>
-          {ytState === loadingStateEnum.success ? (
-            <FlatList
-              data={ytVideos}
-              renderItem={video => (
-                <Pressable
-                  onPress={() => {
-                    onSelect(video.item.videoId);
-                  }}
-                >
-                  <Image
-                    source={{ uri: video.item.thumbnail }}
-                    style={{ width, height: (width / 16) * 9 }}
-                  />
-                  <Text>{video.item.title}</Text>
-                </Pressable>
-              )}
-              style={{ width, height: 500 }}
-              onEndReached={() => loadData()}
+  if (ytState === loadingStateEnum.loading) {
+    return (
+      <View>
+        <ProgressView width={14} height={14} />
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (ytState === loadingStateEnum.success) {
+    return (
+      <FlatList
+        data={ytVideos}
+        renderItem={video => (
+          <Pressable
+            onPress={() => {
+              onSelect(video.item.videoId);
+            }}
+          >
+            <Image
+              source={{ uri: video.item.thumbnail }}
+              style={{ width, height: (width / 16) * 9 }}
             />
-          ) : (
-            <View style={{ width, height: 500 }}>
-              <Text>Something Went Wrong</Text>
-            </View>
-          )}
-        </>
-      )}
-    </>
+            <Text>{video.item.title}</Text>
+          </Pressable>
+        )}
+        style={{ width, height: 500 }}
+        onEndReached={() => loadData()}
+      />
+    );
+  }
+
+  return (
+    <View style={{ width, height: 500 }}>
+      <Text>Something Went Wrong</Text>
+    </View>
   );
 }
 
@@ -153,6 +153,7 @@ export default function GovernmentSportsTeamAddPost() {
         if (result.ok) {
           setPostSubmissionState(loadingStateEnum.success);
         } else {
+          const data = await result.json();
           setPostSubmissionState(loadingStateEnum.failed);
         }
       } else {
@@ -202,7 +203,7 @@ export default function GovernmentSportsTeamAddPost() {
           },
         ]}
       />
-      {postMode == postType.microsoftFile ? (
+      {postMode === postType.microsoftFile ? (
         <MicrosoftFilePicker
           onSelectedFile={(item: microsoftFileType) => {
             getShareLink(item);
@@ -211,7 +212,7 @@ export default function GovernmentSportsTeamAddPost() {
           width={width}
         />
       ) : null}
-      {postMode == postType.youtubeVideo ? (
+      {postMode === postType.youtubeVideo ? (
         <YoutubeVideosSelector onSelect={setFileId} />
       ) : null}
       {fileId !== '' ? (

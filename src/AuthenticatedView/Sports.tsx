@@ -416,6 +416,7 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
         marginLeft: width * 0.05,
         marginRight: width * 0.05,
         marginTop: height * 0.05,
+        marginBottom: height * 0.05,
         borderRadius: 15,
       }}
     >
@@ -538,69 +539,65 @@ function RosterView({
     return null;
   }
 
-  return (
-    <>
-      {rosterLoadingState === loadingStateEnum.loading ? (
-        <View
-          style={{
-            width,
-            height,
-            alignContent: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <ProgressView width={width * 0.1} height={height * 0.1} />
-          <Text>Loading</Text>
+  if (rosterLoadingState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          alignContent: 'center',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <ProgressView width={width * 0.1} height={height * 0.1} />
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (rosterLoadingState === loadingStateEnum.success) {
+    return (
+      <View>
+        <View style={{ flexDirection: 'row', marginTop: 10, marginBottom: 5 }}>
+          <Text style={{ marginLeft: 35, width: width * 0.4 }}>Player</Text>
+          <Text style={{ width: width * 0.3 }}>Player Number</Text>
+          <Text>Position</Text>
         </View>
-      ) : (
-        <>
-          {rosterLoadingState === loadingStateEnum.success ? (
-            <View>
-              <View
-                style={{ flexDirection: 'row', marginTop: 10, marginBottom: 5 }}
-              >
-                <Text style={{ marginLeft: 35, width: width * 0.4 }}>
-                  Player
+        <FlatList
+          data={roster}
+          renderItem={item => (
+            <View
+              style={{
+                backgroundColor:
+                  item.index % 2 === 0 ? Colors.white : Colors.lightGray,
+              }}
+            >
+              <View style={{ flexDirection: 'row', margin: 10 }}>
+                <RosterImage id={item.item.imageShareId} />
+                <Text style={{ marginLeft: 5, width: width * 0.4 }}>
+                  {item.item.name}
                 </Text>
-                <Text style={{ width: width * 0.3 }}>Player Number</Text>
-                <Text>Position</Text>
+                {item.item.playerNumber !== undefined ? (
+                  <Text style={{ width: width * 0.3 }}>
+                    {item.item.playerNumber}
+                  </Text>
+                ) : null}
+                {item.item.position !== undefined ? (
+                  <Text>{item.item.position}</Text>
+                ) : null}
               </View>
-              <FlatList
-                data={roster}
-                renderItem={item => (
-                  <View
-                    style={{
-                      backgroundColor:
-                        item.index % 2 === 0 ? Colors.white : Colors.lightGray,
-                    }}
-                  >
-                    <View style={{ flexDirection: 'row', margin: 10 }}>
-                      <RosterImage id={item.item.imageShareId} />
-                      <Text style={{ marginLeft: 5, width: width * 0.4 }}>
-                        {item.item.name}
-                      </Text>
-                      {item.item.playerNumber !== undefined ? (
-                        <Text style={{ width: width * 0.3 }}>
-                          {item.item.playerNumber}
-                        </Text>
-                      ) : null}
-                      {item.item.position !== undefined ? (
-                        <Text>{item.item.position}</Text>
-                      ) : null}
-                    </View>
-                  </View>
-                )}
-              />
-            </View>
-          ) : (
-            <View>
-              <Text>Something went wrong loading the roster</Text>
             </View>
           )}
-        </>
-      )}
-    </>
+        />
+      </View>
+    )
+  }
+
+  return (
+    <View>
+      <Text>Something went wrong loading the roster</Text>
+    </View>
   );
 }
 
@@ -628,42 +625,40 @@ function RosterImage({ id }: { id?: string }) {
     }
   }, [id]);
 
+  if (imageState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width: 20,
+          height: 20,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
+      </View>
+    );
+  }
+
+  if (imageState === loadingStateEnum.success) {
+    return (
+      <View>
+        <Image
+          source={{ uri: imageUrl }}
+          style={{ width: 20, height: 20, borderRadius: 10 }}
+        />
+      </View>
+    );
+  }
+
+  if (imageState === loadingStateEnum.notStarted) {
+    return <View style={{ width: 20, height: 20 }} />;
+  }
+
   return (
-    <>
-      {imageState === loadingStateEnum.loading ? (
-        <View
-          style={{
-            width: 20,
-            height: 20,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <ProgressView width={14} height={14} />
-        </View>
-      ) : (
-        <>
-          {imageState === loadingStateEnum.success ? (
-            <View>
-              <Image
-                source={{ uri: imageUrl }}
-                style={{ width: 20, height: 20, borderRadius: 10 }}
-              />
-            </View>
-          ) : (
-            <>
-              {imageState === loadingStateEnum.notStarted ? (
-                <View style={{ width: 20, height: 20 }} />
-              ) : (
-                <View>
-                  <Text>Failed</Text>
-                </View>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </>
+    <View>
+      <Text>Failed</Text>
+    </View>
   );
 }

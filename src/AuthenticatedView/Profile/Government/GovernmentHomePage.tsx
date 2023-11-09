@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import callMsGraph from '../../../Functions/ultility/microsoftAssets';
 import MicrosoftFilePicker from '../../../UI/MicrosoftFilePicker';
 import store, { RootState } from '../../../Redux/store';
-import getCurrentPaulyData from '../../../Functions/homepage/getCurrentPaulyData';
+import getCurrentPaulyData from '../../../Functions/notifications/getCurrentPaulyData';
 import { Colors, loadingStateEnum } from '../../../types';
 
 export default function GovernmentHomePage() {
