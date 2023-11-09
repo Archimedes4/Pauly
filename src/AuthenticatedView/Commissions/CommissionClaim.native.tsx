@@ -39,7 +39,7 @@ export default function CommissionClaim({
           {
             refreshToken: store.getState().authenticationRefreshToken,
             clientId,
-            scopes: [`api://${clientId}/api/Test`],
+            scopes: [`api://${clientId}/api/commissions`],
           },
           discovery,
         );

@@ -6,9 +6,9 @@ import {
   initializePaulyPartOne,
   initializePaulyPartThree,
   initializePaulyPartTwo,
-} from '../../../../Functions/initializePauly/initializePauly';
+} from '../../../../Functions/ﻩgovernment/initializePauly/initializePauly';
 import { RootState } from '../../../../Redux/store';
-import { addDataArray } from '../../../../Functions/initializePauly/initializePaulyData';
+import { addDataArray } from '../../../../Functions/ﻩgovernment/initializePauly/initializePaulyData';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '../../../../types';
 

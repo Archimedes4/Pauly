@@ -120,9 +120,28 @@ The resource group that you use will be tied to the web app. Some other resource
     --location "eastus2" \
     --branch Static-Web-Live \
     --app-location "/web-build" \
-    --api-location "/api" \
     --output-location "build" \
     --login-with-github
+```
+
+### Create Azure Functions App and deploy functions
+#### Create Function app and storage account
+https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-create
+```
+  az storage account create --name paulystorage --resource-group Pauly-SWA
+```
+
+#### Create function app
+https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create
+```
+  az functionapp create --name Pauly-Functions --resource-group Pauly-SWA --storage-account paulystorage  --consumption-plan-location eastus2 --runtime node --functions-version 4
+```
+
+#### Attach to github workflow
+https://learn.microsoft.com/en-us/cli/azure/functionapp/deployment/github-actions?view=azure-cli-latest
+
+```
+  az functionapp deployment github-actions add --resource-group Pauly-SWA --repo "https://github.com/AMCanada16/Pauly" --name Pauly-Functions --login-with-github --build-path "/api"
 ```
 
 ### Step #2
