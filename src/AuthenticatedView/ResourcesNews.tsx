@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  ResourcesNews.tsx
+  Resource News Post
+*/
 import { View, Text, FlatList, Pressable } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
