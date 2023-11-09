@@ -13,15 +13,15 @@ function getFilter(
     let filter = '&$filter=';
     if (startDate) {
       filter += `fields/startDate%20${startDate.filter}%20${startDateString}`;
+      if (endDate) {
+        filter += `&fields/endDate%20le%20${endDateString}`;
+      }
+    } else if (endDate) {
+      filter += `fields/endDate%20${endDate.filter}%20${endDateString}`;
     }
-    if (endDate) {
-      filter += startDate
-        ? `&fields/endDate%20le%20${endDateString}`
-        : `fields/endDate%20${endDate.filter}%20${endDateString}`;
-    }
-  } else {
-    return '';
+    return filter;
   }
+  return '';
 }
 
 async function getSubmissions(commissionIds: string[]): Promise<{
@@ -300,7 +300,7 @@ async function getCommissionsBatch(
             endDate:
               data.responses[requestIndex].body.value[index].fields.endDate,
             submissionsCount:
-              commissions[parseInt(data.responses[requestIndex].id) - 1]
+              commissions[parseInt(data.responses[requestIndex].id, 10) - 1]
                 .submissions,
             claimCount: 0,
             reviewedCount: 0, // TO DO fix
@@ -331,6 +331,7 @@ async function getCommissionsBatch(
   }
   return { result: loadingStateEnum.failed };
 }
+
 
 export async function getUnclaimedCommissions(): Promise<{
   result: loadingStateEnum;

@@ -36,6 +36,18 @@ function PickerPiece({
     (state: RootState) => state.dimentions,
   );
   const [isSelected, setIsSelected] = useState<boolean>(false);
+  function getPickerWidth(isInner: boolean): number {
+    if (isSelected && currentBreakPoint >= 2) {
+      return isInner ? width * 0.28 : width * 0.3;
+    }
+    if (isSelected) {
+      return isInner ? width * 0.46 : width * 0.6;
+    }
+    if (currentBreakPoint >= 2) {
+      return isInner ? width * 0.18 : width * 0.2;
+    }
+    return isInner ? width * 0.36 : width * 0.4;
+  }
   return (
     <Pressable
       onPress={() => {
@@ -48,13 +60,7 @@ function PickerPiece({
       onHoverOut={() => setIsSelected(false)}
       style={{
         height: isHoverPicker ? height * 0.1 : height * 0.05,
-        width: isSelected
-          ? currentBreakPoint >= 2
-            ? width * 0.3
-            : width * 0.6
-          : currentBreakPoint >= 2
-          ? width * 0.2
-          : width * 0.4,
+        width: getPickerWidth(false),
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
@@ -63,13 +69,7 @@ function PickerPiece({
       <View
         style={{
           height: isHoverPicker ? height * 0.06 : height * 0.03,
-          width: isSelected
-            ? currentBreakPoint >= 2
-              ? width * 0.28
-              : width * 0.46
-            : currentBreakPoint >= 2
-            ? width * 0.18
-            : width * 0.36,
+          width: getPickerWidth(true),
           marginLeft: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
           marginRight: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
           backgroundColor: Colors.darkGray,
@@ -85,11 +85,46 @@ function PickerPiece({
   );
 }
 
+function CommissionPoints() {
+  const { points } = useSelector((state: RootState) => state.commissions);
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        margin: 10,
+        backgroundColor: Colors.maroon,
+        borderRadius: 15,
+        shadowOffset: { width: 2, height: 3 },
+      }}
+    >
+      <View style={{ margin: 10, flexDirection: 'row' }}>
+        <Image
+          source={require('../../../assets/images/PaulyLogo.png')}
+          resizeMode="contain"
+          style={{ width: 50, height: 50 }}
+        />
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          style={{
+            fontSize: 45,
+            color: Colors.white,
+            fontFamily: 'BukhariScript',
+            width: 100,
+            paddingLeft: 10,
+          }}
+        >
+          {points}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
 export default function Commissions() {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
   );
-  const { siteId } = useSelector((state: RootState) => state.paulyList);
   const { commissionNextLink } = useSelector(
     (state: RootState) => state.commissions,
   );
@@ -102,7 +137,7 @@ export default function Commissions() {
 
   // Loading States
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     const pointResult = await getPoints();
     if (
       pointResult.result === loadingStateEnum.success &&
@@ -134,7 +169,7 @@ export default function Commissions() {
       );
     }
     // TO DO pagination
-  }
+  }, [dispatch]);
 
   async function loadCommissionData(
     startDate?: { date: Date; filter: 'ge' | 'le' },
@@ -166,12 +201,11 @@ export default function Commissions() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (siteId !== '') {
-      loadData();
-    }
-  }, [siteId]);
+    loadData();
+  }, [loadData]);
 
   const [fontsLoaded] = useFonts({
+    // eslint-disable-next-line global-require
     BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
@@ -231,90 +265,48 @@ export default function Commissions() {
               {commissionsState === loadingStateEnum.success ? (
                 <FlatList
                   style={{ height: height * 0.9 }}
-                  data={[undefined, ...currentCommissions]}
-                  renderItem={({ item, index }) => (
-                    <>
-                      {index === 0 ? (
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            margin: 10,
-                            backgroundColor: Colors.maroon,
-                            borderRadius: 15,
-                            shadowOffset: { width: 2, height: 3 },
-                          }}
-                        >
-                          <View style={{ margin: 10, flexDirection: 'row' }}>
-                            <Image
-                              source={require('../../../assets/images/PaulyLogo.png')}
-                              resizeMode="contain"
-                              style={{ width: 50, height: 50 }}
-                            />
-                            <Text
-                              numberOfLines={1}
-                              adjustsFontSizeToFit
-                              style={{
-                                fontSize: 45,
-                                color: Colors.white,
-                                fontFamily: 'BukhariScript',
-                                width: 100,
-                                paddingLeft: 10,
-                              }}
-                            >
-                              {points}
+                  data={currentCommissions}
+                  renderItem={({ item }) => (
+                    <Pressable
+                      onPress={() => {
+                        dispatch(
+                          commissionsSlice.actions.setSelectedCommission(
+                            item.commissionId,
+                          ),
+                        );
+                      }}
+                      key={`Link_${item.commissionId}`}
+                      style={{ backgroundColor: 'transparent' }}
+                    >
+                      <View
+                        key={item.commissionId}
+                        style={{
+                          borderRadius: 15,
+                          marginLeft: width * 0.025,
+                          elevation: 2,
+                          marginRight: width * 0.025,
+                          marginTop: height * 0.02,
+                          backgroundColor: Colors.white,
+                          shadowColor: 'black',
+                          shadowOffset: { width: 1, height: 1 },
+                          shadowOpacity: 1,
+                          shadowRadius: 5,
+                        }}
+                      >
+                        <View style={{ margin: 10 }}>
+                          <Text>{item.title}</Text>
+                          {item.timed && item.startDate !== undefined ? (
+                            <Text>
+                              {new Date('en-US').toLocaleDateString('en-US', {
+                                month: 'long',
+                                day: 'numeric',
+                                minute: 'numeric',
+                              })}
                             </Text>
-                          </View>
-                        </View>
-                      ) : (
-                        <>
-                          {item !== undefined ? (
-                            <Pressable
-                              onPress={() => {
-                                dispatch(
-                                  commissionsSlice.actions.setSelectedCommission(
-                                    item.commissionId,
-                                  ),
-                                );
-                              }}
-                              key={`Link_${item.commissionId}`}
-                              style={{ backgroundColor: 'transparent' }}
-                            >
-                              <View
-                                key={item.commissionId}
-                                style={{
-                                  borderRadius: 15,
-                                  marginLeft: width * 0.025,
-                                  elevation: 2,
-                                  marginRight: width * 0.025,
-                                  marginTop: height * 0.02,
-                                  backgroundColor: Colors.white,
-                                  shadowColor: 'black',
-                                  shadowOffset: { width: 1, height: 1 },
-                                  shadowOpacity: 1,
-                                  shadowRadius: 5,
-                                }}
-                              >
-                                <View style={{ margin: 10 }}>
-                                  <Text>{item.title}</Text>
-                                  {item.timed &&
-                                  item.startDate !== undefined ? (
-                                    <Text>
-                                      {new Date(
-                                        item.startDate,
-                                      ).toLocaleDateString('en-US', {
-                                        month: 'long',
-                                        day: 'numeric',
-                                        minute: 'numeric',
-                                      })}
-                                    </Text>
-                                  ) : null}
-                                </View>
-                              </View>
-                            </Pressable>
                           ) : null}
-                        </>
-                      )}
-                    </>
+                        </View>
+                      </View>
+                    </Pressable>
                   )}
                   keyExtractor={item => `${item?.commissionId}_${createUUID()}`}
                   onEndReachedThreshold={1}
@@ -329,6 +321,7 @@ export default function Commissions() {
                     }
                   }}
                   initialNumToRender={currentCommissions.length}
+                  ListHeaderComponent={() => <CommissionPoints />}
                 />
               ) : (
                 <View>

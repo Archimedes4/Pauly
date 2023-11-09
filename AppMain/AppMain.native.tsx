@@ -11,7 +11,7 @@ import React, { useEffect, useState } from 'react';
 import { ScaledSize } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Login from '../src/login';
-import AuthenticatedView from '../src/AuthenticatedView/AuthenticatedViewMain';
+import AuthenticatedView from '../src/Components/AuthenticatedViewMain';
 import { clientId, scopes, tenantId } from '../src/PaulyConfig';
 import { authenticationRefreshTokenSlice } from '../src/Redux/reducers/authenticationRefreshTokenReducer';
 import { authenticationTokenSlice } from '../src/Redux/reducers/authenticationTokenReducer';

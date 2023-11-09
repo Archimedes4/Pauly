@@ -121,5 +121,3 @@ export function computeEventHeight(
   const ReturnOffset = HourHeight * deltaHours + MinuteHeight * deltaMinutes;
   return ReturnOffset;
 }
-
-function getHorizontalOffset() {}

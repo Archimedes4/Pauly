@@ -1,12 +1,9 @@
+/* eslint-disable global-require */
+/* This is for the requires which is not possible to not use require and docs for relevant resources use requrire. */
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { View, Text, Pressable, Image } from 'react-native';
-import React, {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from './Redux/store';
@@ -138,7 +135,7 @@ export default function Login({
         <Text
           style={{ color: 'white', marginTop: 25, fontFamily: 'BukhariScript' }}
         >
-          23/24 Saint Paul's High School Student Council
+          23/24 Saint Paul&#39;s High School Student Council
         </Text>
         <Pressable
           onPress={async () => {
