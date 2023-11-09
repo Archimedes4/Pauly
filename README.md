@@ -1,6 +1,8 @@
 # <img src="./assets/images/PaulyLogo.png" height="28px" alt="logo"/> Pauly
 Last updated October 28 2023 \
-Pauly is a hub for all things school-related.
+Pauly is a hub for all things school-related. \
+Build by Andrew Mainella \
+Saint Paul's High School Student Council 2023-2024 \
 # Backend
 Pauly uses Microsoft graph and SharePoint lists as a database
 ## Structure 
@@ -34,7 +36,7 @@ Board: https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format?
 The resource page takes teams posts and displays them. It has access to files and sections.
 
 ### Sports
-This is the sports page that shows sport highlights and has team rosters.
+This is the sports page that shows sport highlights and has team rosters. The sports page has embeded youtube videos from the Saint Paul's High School youtube page. It also as videos and images uploaded through government.
 
 ## Format
 ### Colors
