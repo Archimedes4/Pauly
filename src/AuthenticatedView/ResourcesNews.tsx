@@ -1,5 +1,5 @@
 import { View, Text, FlatList, Pressable } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors, loadingStateEnum } from '../types';
@@ -24,7 +24,7 @@ export default function ResourcesNews({
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [nextLink, setNextLink] = useState<undefined | string>(undefined);
 
-  async function loadArticles() {
+  const loadArticles = useCallback(async () => {
     const result = await getNewsPosts(nextLink);
     if (result.result === loadingStateEnum.success) {
       setPosts([...posts, ...result.data]);
@@ -33,11 +33,11 @@ export default function ResourcesNews({
     } else {
       setPostState(loadingStateEnum.failed);
     }
-  }
+  }, [nextLink, posts]);
 
   useEffect(() => {
     loadArticles();
-  }, []);
+  }, [loadArticles]);
 
   if (selectedPost !== undefined) {
     return (
