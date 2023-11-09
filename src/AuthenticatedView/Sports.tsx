@@ -1,3 +1,9 @@
+/*
+  Andrew Mainella
+  November 9 2023
+  Sports.tsx
+  Sports page renders the scroll view an content.
+*/
 import { ResizeMode, Video } from 'expo-av';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';

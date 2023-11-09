@@ -1,3 +1,10 @@
+/*
+  Andrew Mainella
+  November 9 2023
+  AppMain.web.tsx
+  Holds authentication for web, using the native azure msal library
+  
+*/
 import { SafeAreaView, ScaledSize } from 'react-native';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -22,7 +29,7 @@ import {
 } from '../src/Functions/handleGovernmentLogin';
 import { RootState } from '../src/Redux/store';
 
-// This is for the microsoft authentication.
+// This is for the microsoft authentication on web.
 const pca = new PublicClientApplication({
   auth: {
     clientId,
