@@ -93,30 +93,26 @@ export default function DayView({
     });
   }
 
-  function updateOnTimeChange() {
-    const minuiteInt = new Date().getMinutes();
-    if (currentMinuteInt !== minuiteInt!) {
-      setCurrentMinuteInt(minuiteInt);
-
-      const hourInt = new Date().getHours();
-      if (minuiteInt.toString().length === 1) {
-        setCurrentTimeFunction(hourInt, minuiteInt);
-      } else {
-        setCurrentTimeFunction(hourInt, minuiteInt);
-      }
-      setHeightOffsetTop(findTimeOffset(new Date(), height));
-    }
-  }
-
   // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
   // Upadtes every second
   useEffect(() => {
     const interval = setInterval(() => {
-      updateOnTimeChange();
+      const minuiteInt = new Date().getMinutes();
+      if (currentMinuteInt !== minuiteInt!) {
+        setCurrentMinuteInt(minuiteInt);
+
+        const hourInt = new Date().getHours();
+        if (minuiteInt.toString().length === 1) {
+          setCurrentTimeFunction(hourInt, minuiteInt);
+        } else {
+          setCurrentTimeFunction(hourInt, minuiteInt);
+        }
+        setHeightOffsetTop(findTimeOffset(new Date(), height));
+      }
     }, 1000);
 
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, []);
+  }, [currentMinuteInt, height]); 
 
   useEffect(() => {
     setHourLength(height * 0.1);

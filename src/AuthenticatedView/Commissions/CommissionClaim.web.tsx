@@ -30,8 +30,9 @@ export default function CommissionClaim({
 
   async function claimCommission() {
     setClaimCommissionState(loadingStateEnum.loading);
+    console.log("This is claim right here", `api://${clientId}/api/commissions`)
     const apiResult = await instance.acquireTokenSilent({
-      scopes: [`api://${clientId}/api/Test`],
+      scopes: [`api://${clientId}/api/commissions`],
     });
     let outImageUrl: string = '';
     if (

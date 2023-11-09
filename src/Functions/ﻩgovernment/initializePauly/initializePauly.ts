@@ -1,6 +1,6 @@
-import { loadingStateEnum } from '../../types';
-import createUUID from '../ultility/createUUID';
-import callMsGraph from '../ultility/microsoftAssets';
+import { loadingStateEnum } from '../../../types';
+import createUUID from '../../ultility/createUUID';
+import callMsGraph from '../../ultility/microsoftAssets';
 import {
   paulyListData,
   paulyDataData,

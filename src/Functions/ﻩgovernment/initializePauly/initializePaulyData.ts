@@ -1,4 +1,4 @@
-import { clientId } from '../../PaulyConfig';
+import { clientId } from '../../../PaulyConfig';
 
 export const paulyListData = {
   displayName: 'PaulyList',

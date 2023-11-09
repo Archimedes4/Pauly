@@ -21,7 +21,7 @@ import {
   getSportsTeams,
 } from '../../../../Functions/sports/sportsFunctions';
 import ProgressView from '../../../../UI/ProgressView';
-import { getYoutubeVideos } from '../../../../Functions/youtubeFunctions';
+import getYoutubeVideos from '../../../../Functions/youtubeFunctions';
 
 function YoutubeVideosSelector({
   onSelect,
@@ -116,7 +116,6 @@ export default function GovernmentSportsTeamAddPost() {
       if (result.ok) {
         const dataOut = await result.json();
         setFileId(dataOut.shareId);
-      } else {
       }
     }
   }
@@ -153,7 +152,6 @@ export default function GovernmentSportsTeamAddPost() {
         if (result.ok) {
           setPostSubmissionState(loadingStateEnum.success);
         } else {
-          const data = await result.json();
           setPostSubmissionState(loadingStateEnum.failed);
         }
       } else {
