@@ -15,7 +15,13 @@ import {
   claimCommissionPost,
 } from '../../Functions/commissions/claimCommissionsFunctions';
 import ProgressView from '../../UI/ProgressView';
+import { getTextState } from '../../Functions/ultility/createUUID';
 
+/**
+ *
+ * @param param0
+ * @returns
+ */
 export default function CommissionClaim({
   commission,
   imageData,
@@ -118,11 +124,11 @@ export default function CommissionClaim({
         </View>
       ) : (
         <Text style={{ margin: 10, fontWeight: 'bold' }}>
-          {claimCommissionState === loadingStateEnum.notStarted
-            ? 'CLAIM COMMISSION'
-            : claimCommissionState === loadingStateEnum.success
-            ? 'SUBMISSION SENT'
-            : 'FAILED TO SEND SUBMISSION'}
+          {getTextState(claimCommissionState, {
+            notStarted: 'CLAIM COMMISSION',
+            success: 'SUBMISSION SENT',
+            failed: 'FAILED TO SEND SUBMISSION',
+          })}
         </Text>
       )}
     </Pressable>

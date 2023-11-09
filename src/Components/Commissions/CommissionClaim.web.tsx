@@ -15,6 +15,7 @@ import {
   locationStateEnum,
 } from '../../types';
 import ProgressView from '../../UI/ProgressView';
+import { getTextState } from '../../Functions/ultility/createUUID';
 
 export default function CommissionClaim({
   commission,
@@ -30,7 +31,6 @@ export default function CommissionClaim({
 
   async function claimCommission() {
     setClaimCommissionState(loadingStateEnum.loading);
-    console.log("This is claim right here", `api://${clientId}/api/commissions`)
     const apiResult = await instance.acquireTokenSilent({
       scopes: [`api://${clientId}/api/commissions`],
     });
@@ -103,11 +103,11 @@ export default function CommissionClaim({
         </View>
       ) : (
         <Text style={{ margin: 10, fontWeight: 'bold' }}>
-          {claimCommissionState === loadingStateEnum.notStarted
-            ? 'CLAIM COMMISSION'
-            : claimCommissionState === loadingStateEnum.success
-            ? 'SUBMISSION SENT'
-            : 'FAILED TO SEND SUBMISSION'}
+          {getTextState(claimCommissionState, {
+            notStarted: 'CLAIM COMMISSION',
+            success: 'SUBMISSION SENT',
+            failed: 'FAILED TO SEND SUBMISSION',
+          })}
         </Text>
       )}
     </Pressable>
