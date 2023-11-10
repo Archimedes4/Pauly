@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  ProfileBlock.tsx
+  Logout for when current breakpoint is not 0 (greater than 576)
+*/
 import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import {

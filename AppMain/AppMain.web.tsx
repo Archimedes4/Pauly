@@ -34,7 +34,7 @@ const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: window.location.href,
+    redirectUri: 'https://paulysphs.ca',
   },
 });
 
