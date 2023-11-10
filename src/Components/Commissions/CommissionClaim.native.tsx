@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+*/
 import { refreshAsync, useAutoDiscovery } from 'expo-auth-session';
 import React, { useState } from 'react';
 import { Pressable, View, Text } from 'react-native';
