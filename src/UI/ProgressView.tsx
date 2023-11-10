@@ -1,5 +1,12 @@
-import { StyleSheet, ViewStyle } from 'react-native';
-import React, { useEffect } from 'react';
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  ProgressView.tsx
+  Progess View inspired by ios animated view. Uses react native svg and react native reanimated
+*/
+import { ViewStyle } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
 import Svg, { G, Path } from 'react-native-svg';
 import Animated, {
   interpolateColor,
@@ -9,18 +16,22 @@ import Animated, {
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
+import createUUID from '../Functions/ultility/createUUID';
 
 // "M7.706 0.290 C 7.484 0.362,7.356 0.490,7.294 0.699 C 7.259 0.816,7.253 1.088,7.253 2.508 C 7.253 4.389,7.251 4.365,7.443 4.557 C 7.700 4.813,8.300 4.813,8.557 4.557 C 8.749 4.365,8.747 4.389,8.747 2.508 C 8.747 0.688,8.744 0.656,8.596 0.480 C 8.472 0.333,8.339 0.284,8.040 0.276 C 7.893 0.272,7.743 0.278,7.706 0.290"
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 function ChipView({ d, index }: { d: string; index: number }) {
   const progress = useSharedValue(0);
-  useEffect(() => {
+  const startAnimation = useCallback(() => {
     progress.value = withDelay(
       ((index + 1) / 8) * 1000,
       withRepeat(withTiming(1, { duration: 500 }), 0, true),
     );
-  }, []);
+  }, [index, progress]);
+  useEffect(() => {
+    startAnimation();
+  }, [startAnimation]);
   const animatedProp = useAnimatedProps(() => {
     return {
       fill: interpolateColor(progress.value, [0, 1], ['white', '#69717d']),
@@ -47,6 +58,7 @@ export default function ProgressView({
 }: {
   width: number;
   height: number;
+  // eslint-disable-next-line react/require-default-props
   style?: ViewStyle;
 }) {
   const paths = [
@@ -70,7 +82,11 @@ export default function ProgressView({
     >
       <G id="SVGRepo_iconCarrier">
         {paths.map((path, index) => (
-          <ChipView key={`Chip_Key_Holder_${index}`} d={path} index={index} />
+          <ChipView
+            key={`Chip_Key_Holder_${createUUID()}`}
+            d={path}
+            index={index}
+          />
         ))}
       </G>
     </Svg>

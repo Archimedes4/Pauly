@@ -65,6 +65,7 @@ export default function AppMain({
   async function getAuthToken() {
     if (discovery !== null) {
       setIsLoading(true);
+      console.log(redirectUri);
       const res = await promptAsync();
       if (authRequest && res?.type === 'success' && discovery) {
         const exchangeRes = await exchangeCodeAsync(

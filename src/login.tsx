@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  login.tsx
+  Login page, 
+*/
 /* eslint-disable global-require */
 /* This is for the requires which is not possible to not use require and docs for relevant resources use requrire. */
 import { useFonts } from 'expo-font';

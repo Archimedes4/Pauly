@@ -17,7 +17,6 @@ import {
   ScrollView,
   ListRenderItemInfo,
   Switch,
-  Animated,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -171,6 +170,251 @@ function WidgetView({ width, height }: { width: number; height: number }) {
   );
 }
 
+function DeleteTask({ onDelete }: { onDelete: () => void }) {
+  return (
+    <Pressable
+      onPress={() => onDelete()}
+      style={{
+        paddingLeft: 10,
+        paddingRight: 10,
+        backgroundColor: Colors.danger,
+      }}
+    >
+      <TrashIcon width={14} height={14} style={{ margin: 'auto' }} />
+    </Pressable>
+  );
+}
+
+function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
+  const [checked, setChecked] = useState<boolean>(
+    task.item.status === taskStatusEnum.completed,
+  );
+  const [updateTaskState, setUpdateTaskState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
+  const { width } = useSelector((state: RootState) => state.dimentions);
+  const { userTasks, isShowingCompleteTasks } = useSelector(
+    (state: RootState) => state.homepageData,
+  );
+  const [currentText, setCurrentText] = useState(task.item.name);
+  const [mounted, setMounted] = useState(false);
+  const dispatch = useDispatch();
+
+  async function updateTaskStatus(status: taskStatusEnum) {
+    setUpdateTaskState(loadingStateEnum.loading);
+    const data = {
+      status: taskStatusEnum[status],
+    };
+    const result = await callMsGraph(
+      `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`,
+      'PATCH',
+      JSON.stringify(data),
+    );
+    if (result.ok) {
+      const newItem: any = {};
+      Object.assign(newItem, task.item);
+      newItem.status = status;
+      dispatch(
+        homepageDataSlice.actions.updateUserTask({
+          index: task.index,
+          task: newItem,
+        }),
+      );
+      setUpdateTaskState(loadingStateEnum.success);
+    } else {
+      setUpdateTaskState(loadingStateEnum.failed);
+    }
+  }
+
+  const updateText = useCallback(async () => {
+    setUpdateTaskState(loadingStateEnum.loading);
+    const data = {
+      title: userTasks[task.index].name,
+    };
+    if (task.item.excess === false) {
+      const result = await callMsGraph(
+        `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`,
+        'PATCH',
+        JSON.stringify(data),
+      );
+      if (result.ok) {
+        setUpdateTaskState(loadingStateEnum.success);
+      } else {
+        setUpdateTaskState(loadingStateEnum.failed);
+      }
+    } else {
+      const result = await callMsGraph(
+        `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks`,
+        'POST',
+        JSON.stringify(data),
+      );
+      if (result.ok) {
+        const newTaskData = await result.json();
+        dispatch(
+          homepageDataSlice.actions.updateUserTask({
+            task: {
+              name: task.item.name,
+              id: newTaskData.id,
+              importance:
+                taskImportanceEnum[
+                  newTaskData.importance as keyof typeof taskImportanceEnum
+                ],
+              status:
+                taskStatusEnum[
+                  newTaskData.status as keyof typeof taskStatusEnum
+                ],
+              excess: false,
+            },
+            index: task.index,
+          }),
+        );
+        dispatch(
+          homepageDataSlice.actions.unshiftUserTask({
+            name: '',
+            importance: taskImportanceEnum.normal,
+            id: '',
+            status: taskStatusEnum.notStarted,
+            excess: true,
+          }),
+        );
+        setUpdateTaskState(loadingStateEnum.success);
+      } else {
+        setUpdateTaskState(loadingStateEnum.failed);
+      }
+    }
+  }, [
+    dispatch,
+    task.index,
+    task.item.excess,
+    task.item.id,
+    task.item.name,
+    userTasks,
+  ]);
+
+  async function deleteTask() {
+    if (task !== undefined) {
+      const result = await callMsGraph(
+        `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`,
+        'DELETE',
+      );
+      if (result.ok) {
+        const index = store
+          .getState()
+          .homepageData.userTasks.findIndex(e => e.id === task.item.id);
+        if (index !== -1) {
+          dispatch(homepageDataSlice.actions.popUserTask(index));
+        }
+      }
+    }
+  }
+
+  const checkUpdateText = useCallback(async () => {
+    if (mounted) {
+      setUpdateTaskState(loadingStateEnum.loading);
+      const taskNameSave =
+        store.getState().homepageData.userTasks[task.index].name;
+      setTimeout(() => {
+        if (
+          store.getState().homepageData.userTasks[task.index].name ===
+          taskNameSave
+        ) {
+          updateText();
+        }
+      }, 1500);
+    } else {
+      setMounted(true);
+    }
+  }, [mounted, task.index, updateText]);
+
+  useEffect(() => {
+    checkUpdateText();
+  }, [currentText, checkUpdateText]);
+
+  if (isShowingCompleteTasks || task.item.status !== taskStatusEnum.completed) {
+    return (
+      <Swipeable
+        renderRightActions={() => {
+          if (task.item.excess) {
+            return null;
+          }
+          return <DeleteTask onDelete={() => deleteTask()} />;
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            width: width * 0.9,
+            paddingTop: 5,
+            paddingBottom: 5,
+          }}
+        >
+          <Pressable
+            onPress={() => {
+              setChecked(!checked);
+              if (!checked) {
+                updateTaskStatus(taskStatusEnum.completed);
+              } else {
+                updateTaskStatus(taskStatusEnum.notStarted);
+              }
+            }}
+          >
+            <View style={{ margin: 'auto' }}>
+              {updateTaskState === loadingStateEnum.notStarted ||
+              updateTaskState === loadingStateEnum.success || task.item.excess ? (
+                <CustomCheckBox
+                  checked={checked}
+                  checkMarkColor="blue"
+                  strokeDasharray={task.item.excess ? 5 : undefined}
+                  height={20}
+                  width={20}
+                />
+              ) : (
+                updateTaskState === loadingStateEnum.loading ? (
+                  <ProgressView width={14} height={14} />
+                ) : (
+                  <WarningIcon width={14} height={14} outlineColor={Colors.danger} />
+                )
+              )}
+            </View>
+          </Pressable>
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignContent: 'center',
+            }}
+          >
+            <TextInput
+              value={task.item.name}
+              onChangeText={e => {
+                const newTask: taskType = {
+                  name: task.item.name,
+                  id: task.item.id,
+                  importance: task.item.importance,
+                  status: task.item.status,
+                  excess: task.item.excess,
+                };
+                newTask.name = e;
+                dispatch(
+                  homepageDataSlice.actions.updateUserTask({
+                    task: newTask,
+                    index: task.index,
+                  }),
+                );
+                setCurrentText(e);
+              }}
+              multiline
+              numberOfLines={1}
+              style={{ width: width * 0.9 - 40 }}
+            />
+          </View>
+        </View>
+      </Swipeable>
+    );
+  }
+  return null;
+}
+
 function TaskBlock() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const { taskState, userTasks, isShowingCompleteTasks } = useSelector(
@@ -243,285 +487,25 @@ function TaskBlock() {
             />
             <Text>Loading</Text>
           </View>
-        ) : (
-          <>
-            {taskState === loadingStateEnum.success ? (
-              <FlatList
-                data={userTasks}
-                renderItem={task => (
-                  <TaskItem task={task} key={`User_Task_${task.item.id}`} />
-                )}
-              />
-            ) : (
-              <View>
-                <Text>Failed</Text>
-              </View>
+        ) : null}
+        {taskState === loadingStateEnum.success && (
+          <FlatList
+            data={userTasks}
+            id="Task Container"
+            renderItem={task => (
+              <TaskItem task={task} key={`User_Task_${task.item.id}`} />
             )}
-          </>
+          />
         )}
+        {taskState !== loadingStateEnum.success &&
+          taskState !== loadingStateEnum.failed && (
+            <View>
+              <Text>Failed</Text>
+            </View>
+          )}
       </View>
     </View>
   );
-}
-
-function DeleteTask({
-  onDelete,
-}: {
-  onDelete: () => void;
-  e: Animated.AnimatedInterpolation<string | number>;
-}) {
-  return (
-    <Pressable
-      onPress={() => onDelete()}
-      style={{
-        paddingLeft: 10,
-        paddingRight: 10,
-        backgroundColor: Colors.danger,
-      }}
-    >
-      <TrashIcon width={14} height={14} style={{ margin: 'auto' }} />
-    </Pressable>
-  );
-}
-
-function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
-  const [checked, setChecked] = useState<boolean>(
-    task.item.status === taskStatusEnum.completed,
-  );
-  const [updateTaskState, setUpdateTaskState] = useState<loadingStateEnum>(
-    loadingStateEnum.notStarted,
-  );
-  const { width } = useSelector((state: RootState) => state.dimentions);
-  const { userTasks, isShowingCompleteTasks } = useSelector(
-    (state: RootState) => state.homepageData,
-  );
-  const [currentText, setCurrentText] = useState(task.item.name);
-  const [mounted, setMounted] = useState(false);
-  const dispatch = useDispatch();
-
-  async function updateTaskStatus(status: taskStatusEnum) {
-    setUpdateTaskState(loadingStateEnum.loading);
-    const data = {
-      status:
-        status === taskStatusEnum.notStarted
-          ? 'notStarted'
-          : status === taskStatusEnum.inProgress
-          ? 'inProgress'
-          : status === taskStatusEnum.completed
-          ? 'completed'
-          : status === taskStatusEnum.waitingOnOthers
-          ? 'waitingOnOthers'
-          : 'deferred',
-    };
-    const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`,
-      'PATCH',
-      JSON.stringify(data),
-    );
-    if (result.ok) {
-      const newItem: any = {};
-      Object.assign(newItem, task.item);
-      newItem.status = status;
-      dispatch(
-        homepageDataSlice.actions.updateUserTask({
-          index: task.index,
-          task: newItem,
-        }),
-      );
-      setUpdateTaskState(loadingStateEnum.success);
-    } else {
-      setUpdateTaskState(loadingStateEnum.failed);
-    }
-  }
-
-  async function updateText() {
-    setUpdateTaskState(loadingStateEnum.loading);
-    const data = {
-      title: userTasks[task.index].name,
-    };
-    if (task.item.excess === false) {
-      const result = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`,
-        'PATCH',
-        JSON.stringify(data),
-      );
-      if (result.ok) {
-        setUpdateTaskState(loadingStateEnum.success);
-      } else {
-        setUpdateTaskState(loadingStateEnum.failed);
-      }
-    } else {
-      const result = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks`,
-        'POST',
-        JSON.stringify(data),
-      );
-      if (result.ok) {
-        const newTaskData = await result.json();
-        dispatch(
-          homepageDataSlice.actions.updateUserTask({
-            task: {
-              name: task.item.name,
-              id: newTaskData.id,
-              importance:
-                newTaskData.importance === 'high'
-                  ? taskImportanceEnum.high
-                  : data.importance === 'low'
-                  ? taskImportanceEnum.low
-                  : taskImportanceEnum.normal,
-              status:
-                newTaskData.status === 'notStarted'
-                  ? taskStatusEnum.notStarted
-                  : data.status === 'inProgress'
-                  ? taskStatusEnum.inProgress
-                  : data.status === 'completed'
-                  ? taskStatusEnum.completed
-                  : data.status === 'waitingOnOthers'
-                  ? taskStatusEnum.waitingOnOthers
-                  : taskStatusEnum.deferred,
-              excess: false,
-            },
-            index: task.index,
-          }),
-        );
-        dispatch(
-          homepageDataSlice.actions.unshiftUserTask({
-            name: '',
-            importance: taskImportanceEnum.normal,
-            id: '',
-            status: taskStatusEnum.notStarted,
-            excess: true,
-          }),
-        );
-        setUpdateTaskState(loadingStateEnum.success);
-      } else {
-        setUpdateTaskState(loadingStateEnum.failed);
-      }
-    }
-  }
-
-  async function deleteTask() {
-    if (task !== undefined) {
-      const result = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`,
-        'DELETE',
-      );
-      if (result.ok) {
-        const index = store
-          .getState()
-          .homepageData.userTasks.findIndex(e => e.id === task.item.id);
-        if (index !== -1) {
-          dispatch(homepageDataSlice.actions.popUserTask(index));
-        }
-      }
-    }
-  }
-
-  async function checkUpdateText() {
-    setUpdateTaskState(loadingStateEnum.loading);
-    const taskNameSave =
-      store.getState().homepageData.userTasks[task.index].name;
-    setTimeout(() => {
-      if (
-        store.getState().homepageData.userTasks[task.index].name ===
-        taskNameSave
-      ) {
-        updateText();
-      }
-    }, 1500);
-  }
-
-  useEffect(() => {
-    if (mounted) {
-      checkUpdateText();
-    } else {
-      setMounted(true);
-    }
-  }, [currentText]);
-
-
-  if (isShowingCompleteTasks || task.item.status !== taskStatusEnum.completed) {
-    <Swipeable
-      renderRightActions={e => {
-        if (task.item.excess) {
-          return null;
-        }
-        return <DeleteTask e={e} onDelete={() => deleteTask()} />;
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          width: width * 0.9,
-          paddingTop: 5,
-          paddingBottom: 5,
-        }}
-      >
-        <Pressable
-          onPress={() => {
-            setChecked(!checked);
-            if (!checked) {
-              updateTaskStatus(taskStatusEnum.completed);
-            } else {
-              updateTaskStatus(taskStatusEnum.notStarted);
-            }
-          }}
-        >
-          <View style={{ margin: 'auto' }}>
-            {
-              updateTaskState === loadingStateEnum.notStarted ||
-            updateTaskState === loadingStateEnum.success ? (
-              <CustomCheckBox
-                checked={checked}
-                checkMarkColor="blue"
-                strokeDasharray={task.item.excess ? 5 : undefined}
-                height={20}
-                width={20}
-              />
-            ) : (
-              updateTaskState === loadingStateEnum.loading ? (
-                <ProgressView width={14} height={14} />
-              ) : (
-                <WarningIcon width={14} height={14} outlineColor={Colors.danger} />
-              )
-            )}
-          </View>
-        </Pressable>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-          }}
-        >
-          <TextInput
-            value={task.item.name}
-            onChangeText={e => {
-              const newTask: taskType = {
-                name: task.item.name,
-                id: task.item.id,
-                importance: task.item.importance,
-                status: task.item.status,
-                excess: task.item.excess,
-              };
-              newTask.name = e;
-              dispatch(
-                homepageDataSlice.actions.updateUserTask({
-                  task: newTask,
-                  index: task.index,
-                }),
-              );
-              setCurrentText(e);
-            }}
-            multiline
-            numberOfLines={1}
-            style={{ width: width * 0.9 - 40 }}
-          />
-        </View>
-      </View>
-    </Swipeable>;
-  }
-  return null;
 }
 
 function BoardBlock() {
@@ -532,26 +516,28 @@ function BoardBlock() {
     (state: RootState) => state.paulyData,
   );
   if (paulyDataState === loadingStateEnum.loading || powerpointBlob === '') {
-    <View
-      style={{
-        width: currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
-        height: height * 0.3,
-        borderRadius: 15,
-        marginTop: height * 0.03,
-        marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
-        marginRight: width * 0.05,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.white,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.8,
-        shadowRadius: 10,
-      }}
-    >
-      <ProgressView width={100} height={100} />
-      <Text>Loading</Text>
-    </View>
+    return (
+      <View
+        style={{
+          width: currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
+          height: height * 0.3,
+          borderRadius: 15,
+          marginTop: height * 0.03,
+          marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
+          marginRight: width * 0.05,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: Colors.white,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+        }}
+      >
+        <ProgressView width={100} height={100} />
+        <Text>Loading</Text>
+      </View>
+    );
   }
 
   if (paulyDataState === loadingStateEnum.success) {
@@ -610,7 +596,7 @@ function PopularFiles({ width }: { width: number }) {
           justifyContent: 'center',
         }}
       >
-        <ProgressView width={14} height={14}/>
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
     );

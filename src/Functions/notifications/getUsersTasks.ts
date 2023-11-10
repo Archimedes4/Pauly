@@ -7,32 +7,6 @@ import {
 } from '../../types';
 import callMsGraph from '../ultility/microsoftAssets';
 
-function convertStringToTaskStatus(status: string): taskStatusEnum {
-  if (status === 'notStarted') {
-    return taskStatusEnum.notStarted;
-  }
-  if (status === 'inProgress') {
-    return taskStatusEnum.inProgress;
-  }
-  if (status === 'completed') {
-    return taskStatusEnum.completed;
-  }
-  if (status === 'waitingOnOthers') {
-    return taskStatusEnum.waitingOnOthers;
-  }
-  return taskStatusEnum.deferred;
-}
-
-function convertStringToImportance(importance: string): taskImportanceEnum {
-  if (importance === 'high') {
-    return taskImportanceEnum.high;
-  }
-  if (importance === 'low') {
-    return taskImportanceEnum.low;
-  }
-  return taskImportanceEnum.normal;
-}
-
 // deltaRunAgain is send if the delta link has failed or the responce 410 meaning syncronization is needed.
 export default async function getUsersTasks(
   deltaRunAgain?: boolean,
@@ -57,8 +31,14 @@ export default async function getUsersTasks(
       resultTasks.push({
         name: taskData.value[index].title,
         id: taskData.value[index].id,
-        importance: convertStringToImportance(taskData.value[index].importance),
-        status: convertStringToTaskStatus(taskData.value[index].status),
+        importance:
+          taskImportanceEnum[
+            taskData.value[index].importance as keyof typeof taskImportanceEnum
+          ],
+        status:
+          taskStatusEnum[
+            taskData.value[index].status as keyof typeof taskStatusEnum
+          ],
         excess: false,
       });
     }

@@ -101,7 +101,7 @@ https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#a
 https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update \
 update azure ad app
 ```
-  az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['http://localhost:19006/auth', 'https://paulysphs.ca']},publicClientApplication: {redirectUris: ['com.Archimedes4.Pauly://auth']}, signInAudience: "AzureADMyOrg"}"
+  az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['http://localhost:19006/auth', 'https://paulysphs.ca', 'https://www.paulysphs.ca']},publicClientApplication: {redirectUris: ['com.Archimedes4.Pauly://auth']}, signInAudience: "AzureADMyOrg"}"
 ```
 
 #### Create Static Web App

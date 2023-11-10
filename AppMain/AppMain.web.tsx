@@ -49,78 +49,18 @@ function AuthDeep({
   );
   const [mounted, setMounted] = useState<boolean>(false);
 
-  async function getAuthToken(userInitated: boolean, government?: boolean) {
-    console.log('Whu No console log');
-    // Account selection logic is app dependent. Adjust as needed for different use cases.
-    // Set active acccount on page load
-    if (government !== undefined) {
-      setWantGovernment(government);
-    }
-
-    const accounts = instance.getAllAccounts();
-    if (accounts.length > 0) {
-      instance.setActiveAccount(accounts[0]);
-      const accountResult = await instance.getActiveAccount();
-      if (accountResult !== null) {
-        const result = await instance.acquireTokenSilent({
-          scopes,
-        });
-        dispatch(
-          authenticationTokenSlice.actions.setAuthenticationToken(
-            result.accessToken,
-          ),
-        );
-        getPaulyLists();
-        getUserProfile();
-        if (await getWantGovernment()) {
-          checkIfGovernmentMode();
-        }
-        return;
+  const getAuthToken = useCallback(async (userInitated: boolean, government?: boolean) => {
+      // Account selection logic is app dependent. Adjust as needed for different use cases.
+      // Set active acccount on page load
+      if (government !== undefined) {
+        setWantGovernment(government);
       }
-    }
 
-    instance.addEventCallback((event: any) => {
-      // set active account after redirect
-      if (
-        event.eventType === EventType.LOGIN_SUCCESS &&
-        event.payload.account
-      ) {
-        const { account } = event.payload;
-        instance.setActiveAccount(account);
-      } else {
-        console.log('failed On line 89');
-      }
-    });
-
-    // handle auth redired/do all initial setup for msal
-    instance
-      .handleRedirectPromise()
-      .then(async authResult => {
-        // Check if user signed in
-        const account = instance.getActiveAccount();
-        if (!account && userInitated) {
-          // redirect anonymous user to login page
-          instance.loginRedirect({
-            scopes,
-          });
-        } else if (account) {
-          if (authResult !== undefined && authResult !== null) {
-            dispatch(
-              authenticationTokenSlice.actions.setAuthenticationToken(
-                authResult.accessToken,
-              ),
-            );
-            if (await getWantGovernment()) {
-              validateGovernmentMode();
-            }
-            getPaulyLists();
-            getUserProfile();
-          }
-        }
-      })
-      .catch(async err => {
-        // TODO: Handle errors
-        try {
+      const accounts = instance.getAllAccounts();
+      if (accounts.length > 0) {
+        instance.setActiveAccount(accounts[0]);
+        const accountResult = await instance.getActiveAccount();
+        if (accountResult !== null) {
           const result = await instance.acquireTokenSilent({
             scopes,
           });
@@ -129,22 +69,79 @@ function AuthDeep({
               result.accessToken,
             ),
           );
-          if (await getWantGovernment()) {
-            validateGovernmentMode();
-          }
           getPaulyLists();
           getUserProfile();
-        } catch (e) {}
+          if (await getWantGovernment()) {
+            checkIfGovernmentMode();
+          }
+          return;
+        }
+      }
+
+      instance.addEventCallback((event: any) => {
+        // set active account after redirect
+        if (
+          event.eventType === EventType.LOGIN_SUCCESS &&
+          event.payload.account
+        ) {
+          const { account } = event.payload;
+          instance.setActiveAccount(account);
+        } else {
+          console.log('failed On line 89');
+        }
       });
-  }
+
+      // handle auth redired/do all initial setup for msal
+      instance
+        .handleRedirectPromise()
+        .then(async authResult => {
+          // Check if user signed in
+          const account = instance.getActiveAccount();
+          if (!account && userInitated) {
+            // redirect anonymous user to login page
+            instance.loginRedirect({
+              scopes,
+            });
+          } else if (account) {
+            if (authResult !== undefined && authResult !== null) {
+              dispatch(
+                authenticationTokenSlice.actions.setAuthenticationToken(
+                  authResult.accessToken,
+                ),
+              );
+              if (await getWantGovernment()) {
+                validateGovernmentMode();
+              }
+              getPaulyLists();
+              getUserProfile();
+            }
+          }
+        })
+        .catch(async err => {
+          // TODO: Handle errors
+          try {
+            const result = await instance.acquireTokenSilent({
+              scopes,
+            });
+            dispatch(
+              authenticationTokenSlice.actions.setAuthenticationToken(
+                result.accessToken,
+              ),
+            );
+            if (await getWantGovernment()) {
+              validateGovernmentMode();
+            }
+            getPaulyLists();
+            getUserProfile();
+          } catch (e) {}
+        });
+    },
+    [dispatch, instance],
+  );
 
   useEffect(() => {
     getAuthToken(false);
-    console.log(window.location.href.split('#')[0].split('?')[0]);
-    setInterval(() => {
-      console.log('Console');
-    }, 100);
-  }, []);
+  }, [getAuthToken]);
 
   const refreshToken = useCallback(async () => {
     if (mounted) {
