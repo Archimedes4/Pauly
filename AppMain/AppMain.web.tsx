@@ -57,27 +57,27 @@ function AuthDeep({
       setWantGovernment(government);
     }
 
-    const accounts = instance.getAllAccounts();
-    if (accounts.length > 0) {
-      instance.setActiveAccount(accounts[0]);
-      const accountResult = await instance.getActiveAccount();
-      if (accountResult !== null) {
-        const result = await instance.acquireTokenSilent({
-          scopes,
-        });
-        dispatch(
-          authenticationTokenSlice.actions.setAuthenticationToken(
-            result.accessToken,
-          ),
-        );
-        getPaulyLists();
-        getUserProfile();
-        if (await getWantGovernment()) {
-          checkIfGovernmentMode();
-        }
-        return;
-      }
-    }
+    // const accounts = instance.getAllAccounts();
+    // if (accounts.length > 0) {
+    //   instance.setActiveAccount(accounts[0]);
+    //   const accountResult = await instance.getActiveAccount();
+    //   if (accountResult !== null) {
+    //     const result = await instance.acquireTokenSilent({
+    //       scopes,
+    //     });
+    //     dispatch(
+    //       authenticationTokenSlice.actions.setAuthenticationToken(
+    //         result.accessToken,
+    //       ),
+    //     );
+    //     getPaulyLists();
+    //     getUserProfile();
+    //     if (await getWantGovernment()) {
+    //       checkIfGovernmentMode();
+    //     }
+    //     return;
+    //   }
+    // }
 
     // instance.addEventCallback((event: any) => {
     //   // set active account after redirect
@@ -142,7 +142,7 @@ function AuthDeep({
     getAuthToken(false);
     console.log(window.location.href.split('#')[0].split('?')[0]);
     setInterval(() => {
-      console.log('Console')
+      console.log('Console');
     }, 100);
   }, []);
 
