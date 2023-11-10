@@ -6,7 +6,7 @@
   Holds authentication for web, using the native azure msal library
 */
 import { SafeAreaView, ScaledSize } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { EventType, PublicClientApplication } from '@azure/msal-browser';
 import {
@@ -47,6 +47,7 @@ function AuthDeep({
   const authenticationCall = useSelector(
     (state: RootState) => state.authenticationCall,
   );
+  const [mounted, setMounted] = useState<boolean>(false);
 
   async function getAuthToken(userInitated: boolean, government?: boolean) {
     console.log('Whu No console log');
@@ -143,15 +144,19 @@ function AuthDeep({
   }, []);
 
   const refreshToken = useCallback(async () => {
-    const result = await instance.acquireTokenSilent({
-      scopes,
-    });
-    dispatch(
-      authenticationTokenSlice.actions.setAuthenticationToken(
-        result.accessToken,
-      ),
-    );
-  }, [dispatch, instance]);
+    if (mounted) {
+      const result = await instance.acquireTokenSilent({
+        scopes,
+      });
+      dispatch(
+        authenticationTokenSlice.actions.setAuthenticationToken(
+          result.accessToken,
+        ),
+      );
+    } else {
+      setMounted(false);
+    }
+  }, [dispatch, instance, mounted]);
 
   useEffect(() => {
     refreshToken();
