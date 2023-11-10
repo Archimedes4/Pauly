@@ -49,6 +49,7 @@ function AuthDeep({
   );
 
   async function getAuthToken(userInitated: boolean, government?: boolean) {
+    console.log('Whu No console log');
     // Account selection logic is app dependent. Adjust as needed for different use cases.
     // Set active acccount on page load
     if (government !== undefined) {
