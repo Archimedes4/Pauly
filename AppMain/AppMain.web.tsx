@@ -29,13 +29,13 @@ import {
 } from '../src/Functions/handleGovernmentLogin';
 import { RootState } from '../src/Redux/store';
 
-console.log(window.location.href);
+console.log(window.location.href.split('#')[0].split('?')[0]);
 // This is for the microsoft authentication on web.
 const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: window.location.href.split('?')[0],
+    redirectUri: window.location.href.split('#')[0].split('?')[0],
   },
 });
 
