@@ -1,5 +1,8 @@
 /*
-
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  SelectTimetable.tsx
 */
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';

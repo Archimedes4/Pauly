@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  Week.tsx
+*/
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';

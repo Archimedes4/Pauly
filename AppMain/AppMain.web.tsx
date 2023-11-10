@@ -29,6 +29,7 @@ import {
 } from '../src/Functions/handleGovernmentLogin';
 import { RootState } from '../src/Redux/store';
 
+console.log(window.location.href.split('?')[0]);
 // This is for the microsoft authentication on web.
 const pca = new PublicClientApplication({
   auth: {

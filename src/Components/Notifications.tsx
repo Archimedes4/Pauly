@@ -2,6 +2,7 @@
   Pauly
   Andrew Mainella
   October 18 2023
+  Notifications.tsx
 */
 
 import { useFonts } from 'expo-font';
