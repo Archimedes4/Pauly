@@ -141,6 +141,9 @@ function AuthDeep({
   useEffect(() => {
     getAuthToken(false);
     console.log(window.location.href.split('#')[0].split('?')[0]);
+    setInterval(() => {
+      console.log('Console')
+    }, 100);
   }, []);
 
   const refreshToken = useCallback(async () => {
