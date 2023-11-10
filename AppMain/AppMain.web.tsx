@@ -42,7 +42,7 @@ function AuthDeep({
 }: {
   dimensions: { window: ScaledSize; screen: ScaledSize };
 }) {
-  const { instance } = useMsal();
+  //const { instance } = useMsal();
   const dispatch = useDispatch();
   const authenticationCall = useSelector(
     (state: RootState) => state.authenticationCall,
@@ -146,20 +146,20 @@ function AuthDeep({
     }, 100);
   }, []);
 
-  const refreshToken = useCallback(async () => {
-    if (mounted) {
-      const result = await instance.acquireTokenSilent({
-        scopes,
-      });
-      dispatch(
-        authenticationTokenSlice.actions.setAuthenticationToken(
-          result.accessToken,
-        ),
-      );
-    } else {
-      setMounted(false);
-    }
-  }, [dispatch, instance, mounted]);
+  // const refreshToken = useCallback(async () => {
+  //   if (mounted) {
+  //     const result = await instance.acquireTokenSilent({
+  //       scopes,
+  //     });
+  //     dispatch(
+  //       authenticationTokenSlice.actions.setAuthenticationToken(
+  //         result.accessToken,
+  //       ),
+  //     );
+  //   } else {
+  //     setMounted(false);
+  //   }
+  // }, [dispatch, instance, mounted]);
 
   // useEffect(() => {
   //   refreshToken();
