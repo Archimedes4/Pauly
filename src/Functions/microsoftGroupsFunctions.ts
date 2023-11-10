@@ -33,14 +33,14 @@ export async function getTeams(nextLink?: string): Promise<{
 
 export async function getChannels(
   teamId: string,
-  nextLink?: string,
+  nextLink: string | undefined = undefined,
 ): Promise<{
   result: loadingStateEnum;
   data?: channelType[];
   nextLink?: string;
 }> {
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/teams/${teamId}/allChannels`,
+    nextLink || `https://graph.microsoft.com/v1.0/teams/${teamId}/allChannels`,
   );
   if (result.ok) {
     const data = await result.json();

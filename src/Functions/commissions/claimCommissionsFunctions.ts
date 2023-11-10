@@ -1,16 +1,12 @@
-import { orgWideGroupID, paulyDomain } from '../../PaulyConfig';
+import { orgWideGroupID } from '../../PaulyConfig';
 import { loadingStateEnum } from '../../types';
 import createUUID from '../ultility/createUUID';
 import callMsGraph from '../ultility/microsoftAssets';
 
-async function b64toBlob(
-  b64Data: string,
-  contentType = '',
-  sliceSize = 512,
-): Promise<Blob | undefined> {
+async function b64toBlob(b64Data: string): Promise<Blob | undefined> {
   const result = await fetch(b64Data);
   if (result.ok) {
-    return await result.blob();
+    return result.blob();
   }
   return undefined;
 }
@@ -60,6 +56,7 @@ export async function addImage(
             let remaining: number = fileBlob.size;
             let uploaded: number = 0;
             if (nextExpectedRange === `${uploaded}-`) {
+              const uploadResponces: Promise<Response>[] = [];
               while (remaining > 0) {
                 // TO DO Check that this works
                 const uploadBlob = fileBlob.slice(
@@ -68,24 +65,33 @@ export async function addImage(
                 );
                 uploaded += remaining >= 5242880 ? 5242880 : remaining;
 
-                const uploadResult = await fetch(uploadUrl, {
-                  headers: {
-                    'Content-Length': uploadBlob.size.toString(),
-                    'Content-Range': `bytes ${
-                      uploaded - (remaining >= 5242880 ? 5242880 : remaining)
-                    }-${remaining >= 5242880 ? uploaded : uploaded - 1}/${
-                      fileBlob.size
-                    }`,
-                  },
-                  method: 'PUT',
-                  body: uploadBlob,
-                });
+                uploadResponces.push(
+                  fetch(uploadUrl, {
+                    headers: {
+                      'Content-Length': uploadBlob.size.toString(),
+                      'Content-Range': `bytes ${
+                        uploaded - (remaining >= 5242880 ? 5242880 : remaining)
+                      }-${remaining >= 5242880 ? uploaded : uploaded - 1}/${
+                        fileBlob.size
+                      }`,
+                    },
+                    method: 'PUT',
+                    body: uploadBlob,
+                  }),
+                );
                 remaining -= remaining >= 5242880 ? 5242880 : remaining;
-                if (uploadResult.ok) {
-                } else {
+              }
+              const uploadReponsesDone = await Promise.all(uploadResponces);
+              for (
+                let index = 0;
+                index < uploadReponsesDone.length;
+                index += 1
+              ) {
+                if (!uploadReponsesDone[index].ok) {
                   return { result: loadingStateEnum.failed };
                 }
               }
+
               const uploadCompleteResult = await fetch(uploadUrl, {
                 headers: {
                   'Content-Length': '0',
@@ -144,7 +150,7 @@ export async function claimCommissionPost(
   const bearer = `Bearer ${auth}`;
   try {
     const result = await fetch(
-      `${paulyDomain}/api/SubmitCommission?orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`,
+      `https://pauly-functions.azurewebsites.net/api/SubmitCommission?orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`,
       {
         headers: {
           Authorization: bearer,

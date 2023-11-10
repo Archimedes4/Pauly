@@ -16,7 +16,7 @@ import {
   useMsal,
 } from '@azure/msal-react';
 import Login from '../src/login';
-import AuthenticatedViewMain from '../src/AuthenticatedView/AuthenticatedViewMain';
+import AuthenticatedViewMain from '../src/Components/AuthenticatedViewMain';
 import { clientId, scopes, tenantId } from '../src/PaulyConfig';
 import getPaulyLists from '../src/Functions/ultility/getPaulyLists';
 import getUserProfile from '../src/Functions/ultility/getUserProfile';

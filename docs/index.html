@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1><img src="./assets/images/PaulyLogo.png" height="28px" alt="logo"/> Pauly</h1>
+<p>Last updated October 28 2023 <br>
+Pauly is a hub for all things school-related. <br>
+Build by Andrew Mainella <br>
+Saint Paul's High School Student Council 2023-2024 \</p>
+<h1>Backend</h1>
+<p>Pauly uses Microsoft graph and SharePoint lists as a database</p>
+<h2>Structure</h2>
+<h3>Calendar</h3>
+<p>The calendar is organized into documents of years containing collections of months. These months are formatted as a number based on January being 1. Inside each collection documents of days are inside. Each day contains the day, month, and year. As well as the school day and schedule id. If the schedule does not have a value it is schedule one (default schedule).</p>
+<h3>Commissions</h3>
+<p>Commissions are organized into documents that are named with their commission id. In each document, there is a</p>
+<ol>
+<li>Start date</li>
+<li>End date</li>
+<li>Hidden</li>
+<li>Points (what the commission is worth)</li>
+<li>Selected Page (which page is shown)</li>
+<li>Value (the type of commission it is)
+<ol>
+<li>Approved by issuer</li>
+<li>Location</li>
+<li>Image</li>
+<li>Image and Location</li>
+<li>QR Code</li>
+</ol>
+</li>
+</ol>
+<h3>Notifications</h3>
+<p>The notifcations page has a board, a message, insigts (used and trending) and tasks. The tasks are from microsoft graph using the todo api. The insights are from microsoft graph the.</p>
+<p>Refrences <br>
+TODO: https://learn.microsoft.com/en-us/graph/api/resources/todo-overview?view=graph-rest-1.0 <br>
+Insights (used, trending): https://learn.microsoft.com/en-us/graph/api/resources/officegraphinsights?view=graph-rest-1.0 <br>
+Board: https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format?view=graph-rest-1.0&amp;tabs=http</p>
+<h3>Resources</h3>
+<p>The resource page takes teams posts and displays them. It has access to files and sections.</p>
+<h3>Sports</h3>
+<p>This is the sports page that shows sport highlights and has team rosters. The sports page has embeded youtube videos from the Saint Paul's High School youtube page. It also as videos and images uploaded through government.</p>
+<h2>Format</h2>
+<h3>Colors</h3>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>white</td>
+<td>&quot;white&quot;</td>
+</tr>
+<tr>
+<td>light gray</td>
+<td>&quot;#ededed&quot;</td>
+</tr>
+<tr>
+<td>dark gray</td>
+<td>&quot;#444444&quot;</td>
+</tr>
+<tr>
+<td>maroon</td>
+<td>&quot;#793033&quot;</td>
+</tr>
+<tr>
+<td>warning orange</td>
+<td>&quot;#FF6700&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3>Extensions</h3>
+<blockquote>
+<p><strong>NOTE</strong>
+Extensions are automatically setup in the initialization process</p>
+</blockquote>
+<pre class="prettyprint source"><code>{
+    &quot;id&quot;: &quot;paulyEvents&quot;,
+    &quot;description&quot;: &quot;Pauly Event Data&quot;,
+    &quot;targetTypes&quot;: [
+        &quot;Event&quot;
+    ],
+    &quot;owner&quot;: {application id},
+    &quot;properties&quot;: [
+        {
+            &quot;name&quot;: &quot;eventType&quot;,
+            &quot;type&quot;: &quot;String&quot;
+        },
+        {
+            &quot;name&quot;: &quot;eventData&quot;,
+            &quot;type&quot;: &quot;String&quot;
+        }
+    ]
+}
+</code></pre>
+<h2>Setup</h2>
+<p>How to setup Pauly</p>
+<h3>Step #1</h3>
+<p>Commands to setup Azure services</p>
+<pre class="prettyprint source"><code>  az login
+</code></pre>
+<p>https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-create
+Save appId for use later</p>
+<pre class="prettyprint source"><code>  az ad app create --display-name Pauly   
+</code></pre>
+<p>https://learn.microsoft.com/en-us/cli/azure/ad/signed-in-user?view=azure-cli-latest
+Save userId for use later</p>
+<pre class="prettyprint source"><code>  az ad signed-in-user show
+</code></pre>
+<p>https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#az-ad-app-owner-add</p>
+<pre class="prettyprint source"><code>  az ad app owner add --id {appId} --owner-object-id {userId}
+</code></pre>
+<p>https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update
+update azure ad app</p>
+<pre class="prettyprint source"><code>  az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body &quot;{spa:{redirectUris:['http://localhost:19006/auth']},publicClientApplication: {redirectUris: ['Pauly://auth']}, signInAudience: &quot;AzureADMyOrg&quot;}&quot;
+</code></pre>
+<h4>Create Static Web App</h4>
+<p>https://learn.microsoft.com/en-us/azure/static-web-apps/get-started-cli?tabs=vanilla-javascript
+The resource group that you use will be tied to the web app. Some other resource group can be used but this method is preferable.</p>
+<pre class="prettyprint source"><code>  az group create \
+  --name Pauly-SWA \
+  --location &quot;eastus2&quot;
+</code></pre>
+<pre class="prettyprint source"><code>  az staticwebapp create \
+    --name Pauly-Static-Web-App \
+    --resource-group Pauly-SWA \
+    --source https://github.com/AMCanada16/Pauly.git \
+    --location &quot;eastus2&quot; \
+    --branch Static-Web-Live \
+    --app-location &quot;/web-build&quot; \
+    --output-location &quot;build&quot; \
+    --login-with-github
+</code></pre>
+<h3>Create Azure Functions App and deploy functions</h3>
+<h4>Create Function app and storage account</h4>
+<p>https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-create</p>
+<pre class="prettyprint source"><code>  az storage account create --name paulystorage --resource-group Pauly-SWA
+</code></pre>
+<h4>Create function app</h4>
+<p>https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create</p>
+<pre class="prettyprint source"><code>  az functionapp create --name Pauly-Functions --resource-group Pauly-SWA --storage-account paulystorage  --consumption-plan-location eastus2 --runtime node --functions-version 4
+</code></pre>
+<h4>Attach to github workflow</h4>
+<p>https://learn.microsoft.com/en-us/cli/azure/functionapp/deployment/github-actions?view=azure-cli-latest</p>
+<pre class="prettyprint source"><code>  az functionapp deployment github-actions add --resource-group Pauly-SWA --repo &quot;https://github.com/AMCanada16/Pauly&quot; --name Pauly-Functions --login-with-github --build-path &quot;/api&quot;
+</code></pre>
+<h3>Step #2</h3>
+<p>Pauly has a config file named PaulyConfig which contains three values these values need to be apart of the main config file inorder for Pauly to work.</p>
+<ol>
+<li>tenant id</li>
+<li>Client ID (the ID of Paulys application)</li>
+<li>org id (the id of Pauly's group)</li>
+</ol>
+<h3>Setp #3 Initilize Pauly</h3>
+<p><img src="./ReamMeImages/GraphPermissions.png" alt="Graph Permissions"></p>
+<h2>Graph Permissions</h2>
+<blockquote>
+<p><strong>Reference</strong>
+https://learn.microsoft.com/en-us/graph/permissions-reference</p>
+</blockquote>
+<blockquote>
+<p><strong>Why Consent Is Needed</strong>
+https://learn.microsoft.com/en-us/graph/api/resources/consentrequests-overview?view=graph-rest-1.0</p>
+</blockquote>
+<p>All permissions are Delegated permissions</p>
+<h3>Users</h3>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Admin Consent Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User.Read</td>
+<td>NO</td>
+<td>Allows users to sign-in to the app, and allows the app to read the profile of signed-in users. It also allows the app to read basic company information of signed-in users.</td>
+</tr>
+<tr>
+<td>User.ReadBasic.All</td>
+<td>NO</td>
+<td>Allows the app to read a basic set of profile properties of other users in your organization on behalf of the signed-in user. This includes display name, first and last name, email address, open extensions and photo. Also allows the app to read the full profile of the signed-in user.</td>
+</tr>
+<tr>
+<td>People.Read.All</td>
+<td>YES</td>
+<td>Allows the app to read a scored list of people relevant to the signed-in user or other users in the signed-in user's organization. The list can include local contacts, contacts from social networking or your organization's directory, and people from recent communications (such as email and Skype). Also allows the app to search the entire directory of the signed-in user's organization.</td>
+</tr>
+<tr>
+<td>ChannelMessage.Read.All</td>
+<td>YES</td>
+<td>Allows an app to read a channel's messages in Microsoft Teams, on behalf of the signed-in user.</td>
+</tr>
+<tr>
+<td>Channel.ReadBasic.All</td>
+<td>NO</td>
+<td>Read channel names and channel descriptions, on behalf of the signed-in user.</td>
+</tr>
+<tr>
+<td>Calendars.ReadWrite</td>
+<td>YES</td>
+<td>Allows the app to create, read, update, and delete events in user calendars.</td>
+</tr>
+<tr>
+<td>Team.ReadBasic.All</td>
+<td>NO</td>
+<td>Read the names and descriptions of teams, on behalf of the signed-in user.</td>
+</tr>
+<tr>
+<td>Tasks.ReadWrite</td>
+<td>NO</td>
+<td>Allows the app to create, read, update, and delete the signed-in user's tasks and task lists, including any shared with the user.</td>
+</tr>
+<tr>
+<td>Sites.Read.All</td>
+<td>NO</td>
+<td>Allows the app to read documents and list items in all site collections on behalf of the signed-in user.</td>
+</tr>
+<tr>
+<td>Group.ReadWrite.All</td>
+<td>YES</td>
+<td>Allows the app to create groups and read all group properties and memberships on behalf of the signed-in user. Also allows the app to read and write calendar, conversations, files, and other group content for all groups the signed-in user can access. Additionally allows group owners to manage their groups and allows group members to update group content.</td>
+</tr>
+</tbody>
+</table>
+<h3>Government</h3>
+<table>
+<thead>
+<tr>
+<th>Permission</th>
+<th>Admin Consent Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application.ReadWrite.All</td>
+<td>YES</td>
+<td>Allows the app to create, read, update and delete applications and service principals on behalf of the signed-in user.</td>
+</tr>
+<tr>
+<td>Sites.Manage.All</td>
+<td>YES</td>
+<td>Allows the app to manage and create lists, documents, and list items in all site collections on behalf of the signed-in user.</td>
+</tr>
+<tr>
+<td>TeamMember.Read.All</td>
+<td>YES</td>
+<td>Read the members of teams, on behalf of the signed-in user.</td>
+</tr>
+</tbody>
+</table></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Thu Nov 09 2023 16:05:36 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
