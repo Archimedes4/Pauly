@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  getSchoolYears.ts
+*/
 import { orgWideGroupID } from '../../PaulyConfig';
 import store from '../../Redux/store';
 import { Colors, loadingStateEnum } from '../../types';

@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  claimCommissionsFunctions.ts
+  Claim Commission function, this is mainly the part of formating call to commission api.
+*/
 import { orgWideGroupID } from '../../PaulyConfig';
 import { loadingStateEnum } from '../../types';
 import createUUID from '../ultility/createUUID';

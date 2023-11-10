@@ -30,12 +30,12 @@ import {
 import { RootState } from '../src/Redux/store';
 
 // This is for the microsoft authentication on web.
-const pca = new PublicClientApplication({
-  auth: {
-    clientId,
-    authority: `https://login.microsoftonline.com/${tenantId}/`,
-  },
-});
+// const pca = new PublicClientApplication({
+//   auth: {
+//     clientId,
+//     authority: `https://login.microsoftonline.com/${tenantId}/`,
+//   },
+// });
 
 function AuthDeep({
   dimensions,
@@ -204,7 +204,7 @@ export default function AppMain({
   dimensions: { window: ScaledSize; screen: ScaledSize };
 }) {
   return (
-    <MsalProvider instance={pca}>
+    // <MsalProvider instance={pca}>
       <SafeAreaView
         style={{
           width: dimensions.window.width,
@@ -217,6 +217,6 @@ export default function AppMain({
       >
         <AuthDeep dimensions={dimensions} />
       </SafeAreaView>
-    </MsalProvider>
+    // </MsalProvider>
   );
 }

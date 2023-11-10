@@ -1,6 +1,9 @@
-// Andrew Mainella
-// Pauly
-// October 2 2023
+/*
+  Pauly
+  Andrew Mainella
+  October 2 2023
+  getEvents.ts
+*/
 
 import { orgWideGroupID } from '../../PaulyConfig';
 import { currentEventsSlice } from '../../Redux/reducers/currentEventReducer';

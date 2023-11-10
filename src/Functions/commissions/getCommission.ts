@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  getCommission.ts
+*/
 import store from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
 import callMsGraph from '../ultility/microsoftAssets';
