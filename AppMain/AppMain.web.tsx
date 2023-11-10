@@ -73,6 +73,7 @@ function AuthDeep({
         if (await getWantGovernment()) {
           checkIfGovernmentMode();
         }
+        return;
       }
     }
 
@@ -84,6 +85,8 @@ function AuthDeep({
       ) {
         const { account } = event.payload;
         instance.setActiveAccount(account);
+      } else {
+        console.log('failed On line 89');
       }
     });
 
