@@ -6,7 +6,7 @@
   Holds authentication for web, using the native azure msal library
 */
 import { SafeAreaView, ScaledSize } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { EventType, PublicClientApplication } from '@azure/msal-browser';
 import {
@@ -34,7 +34,7 @@ const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: 'https://paulysphs.ca',
+    redirectUri: window.location.href.split('?')[0],
   },
 });
 
@@ -138,7 +138,7 @@ function AuthDeep({
     getAuthToken(false);
   }, []);
 
-  const refreshToken = async () => {
+  const refreshToken = useCallback(async () => {
     const result = await instance.acquireTokenSilent({
       scopes,
     });
@@ -147,7 +147,7 @@ function AuthDeep({
         result.accessToken,
       ),
     );
-  };
+  }, [dispatch, instance]);
 
   useEffect(() => {
     refreshToken();
