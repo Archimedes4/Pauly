@@ -30,19 +30,19 @@ import {
 import { RootState } from '../src/Redux/store';
 
 // This is for the microsoft authentication on web.
-// const pca = new PublicClientApplication({
-//   auth: {
-//     clientId,
-//     authority: `https://login.microsoftonline.com/${tenantId}/`,
-//   },
-// });
+const pca = new PublicClientApplication({
+  auth: {
+    clientId,
+    authority: `https://login.microsoftonline.com/${tenantId}/`,
+  },
+});
 
 function AuthDeep({
   dimensions,
 }: {
   dimensions: { window: ScaledSize; screen: ScaledSize };
 }) {
-  //const { instance } = useMsal();
+  const { instance } = useMsal();
   const dispatch = useDispatch();
   const authenticationCall = useSelector(
     (state: RootState) => state.authenticationCall,
@@ -57,85 +57,85 @@ function AuthDeep({
       setWantGovernment(government);
     }
 
-    // const accounts = instance.getAllAccounts();
-    // if (accounts.length > 0) {
-    //   instance.setActiveAccount(accounts[0]);
-    //   const accountResult = await instance.getActiveAccount();
-    //   if (accountResult !== null) {
-    //     const result = await instance.acquireTokenSilent({
-    //       scopes,
-    //     });
-    //     dispatch(
-    //       authenticationTokenSlice.actions.setAuthenticationToken(
-    //         result.accessToken,
-    //       ),
-    //     );
-    //     getPaulyLists();
-    //     getUserProfile();
-    //     if (await getWantGovernment()) {
-    //       checkIfGovernmentMode();
-    //     }
-    //     return;
-    //   }
-    // }
+    const accounts = instance.getAllAccounts();
+    if (accounts.length > 0) {
+      instance.setActiveAccount(accounts[0]);
+      const accountResult = await instance.getActiveAccount();
+      if (accountResult !== null) {
+        const result = await instance.acquireTokenSilent({
+          scopes,
+        });
+        dispatch(
+          authenticationTokenSlice.actions.setAuthenticationToken(
+            result.accessToken,
+          ),
+        );
+        getPaulyLists();
+        getUserProfile();
+        if (await getWantGovernment()) {
+          checkIfGovernmentMode();
+        }
+        return;
+      }
+    }
 
-    // instance.addEventCallback((event: any) => {
-    //   // set active account after redirect
-    //   if (
-    //     event.eventType === EventType.LOGIN_SUCCESS &&
-    //     event.payload.account
-    //   ) {
-    //     const { account } = event.payload;
-    //     instance.setActiveAccount(account);
-    //   } else {
-    //     console.log('failed On line 89');
-    //   }
-    // });
+    instance.addEventCallback((event: any) => {
+      // set active account after redirect
+      if (
+        event.eventType === EventType.LOGIN_SUCCESS &&
+        event.payload.account
+      ) {
+        const { account } = event.payload;
+        instance.setActiveAccount(account);
+      } else {
+        console.log('failed On line 89');
+      }
+    });
 
-    // // handle auth redired/do all initial setup for msal
-    // instance
-    //   .handleRedirectPromise()
-    //   .then(async authResult => {
-    //     // Check if user signed in
-    //     const account = instance.getActiveAccount();
-    //     if (!account && userInitated) {
-    //       // redirect anonymous user to login page
-    //       instance.loginRedirect({
-    //         scopes,
-    //       });
-    //     } else if (account) {
-    //       if (authResult !== undefined && authResult !== null) {
-    //         dispatch(
-    //           authenticationTokenSlice.actions.setAuthenticationToken(
-    //             authResult.accessToken,
-    //           ),
-    //         );
-    //         if (await getWantGovernment()) {
-    //           validateGovernmentMode();
-    //         }
-    //         getPaulyLists();
-    //         getUserProfile();
-    //       }
-    //     }
-    //   })
-    //   .catch(async err => {
-    //     // TODO: Handle errors
-    //     try {
-    //       const result = await instance.acquireTokenSilent({
-    //         scopes,
-    //       });
-    //       dispatch(
-    //         authenticationTokenSlice.actions.setAuthenticationToken(
-    //           result.accessToken,
-    //         ),
-    //       );
-    //       if (await getWantGovernment()) {
-    //         validateGovernmentMode();
-    //       }
-    //       getPaulyLists();
-    //       getUserProfile();
-    //     } catch (e) {}
-    //   });
+    // handle auth redired/do all initial setup for msal
+    instance
+      .handleRedirectPromise()
+      .then(async authResult => {
+        // Check if user signed in
+        const account = instance.getActiveAccount();
+        if (!account && userInitated) {
+          // redirect anonymous user to login page
+          instance.loginRedirect({
+            scopes,
+          });
+        } else if (account) {
+          if (authResult !== undefined && authResult !== null) {
+            dispatch(
+              authenticationTokenSlice.actions.setAuthenticationToken(
+                authResult.accessToken,
+              ),
+            );
+            if (await getWantGovernment()) {
+              validateGovernmentMode();
+            }
+            getPaulyLists();
+            getUserProfile();
+          }
+        }
+      })
+      .catch(async err => {
+        // TODO: Handle errors
+        try {
+          const result = await instance.acquireTokenSilent({
+            scopes,
+          });
+          dispatch(
+            authenticationTokenSlice.actions.setAuthenticationToken(
+              result.accessToken,
+            ),
+          );
+          if (await getWantGovernment()) {
+            validateGovernmentMode();
+          }
+          getPaulyLists();
+          getUserProfile();
+        } catch (e) {}
+      });
   }
 
   useEffect(() => {
@@ -146,24 +146,24 @@ function AuthDeep({
     }, 100);
   }, []);
 
-  // const refreshToken = useCallback(async () => {
-  //   if (mounted) {
-  //     const result = await instance.acquireTokenSilent({
-  //       scopes,
-  //     });
-  //     dispatch(
-  //       authenticationTokenSlice.actions.setAuthenticationToken(
-  //         result.accessToken,
-  //       ),
-  //     );
-  //   } else {
-  //     setMounted(false);
-  //   }
-  // }, [dispatch, instance, mounted]);
+  const refreshToken = useCallback(async () => {
+    if (mounted) {
+      const result = await instance.acquireTokenSilent({
+        scopes,
+      });
+      dispatch(
+        authenticationTokenSlice.actions.setAuthenticationToken(
+          result.accessToken,
+        ),
+      );
+    } else {
+      setMounted(false);
+    }
+  }, [dispatch, instance, mounted]);
 
-  // useEffect(() => {
-  //   refreshToken();
-  // }, [authenticationCall, refreshToken]);
+  useEffect(() => {
+    refreshToken();
+  }, [authenticationCall, refreshToken]);
 
   return (
     <SafeAreaView
@@ -204,7 +204,7 @@ export default function AppMain({
   dimensions: { window: ScaledSize; screen: ScaledSize };
 }) {
   return (
-    // <MsalProvider instance={pca}>
+    <MsalProvider instance={pca}>
       <SafeAreaView
         style={{
           width: dimensions.window.width,
@@ -217,6 +217,6 @@ export default function AppMain({
       >
         <AuthDeep dimensions={dimensions} />
       </SafeAreaView>
-    // </MsalProvider>
+    </MsalProvider>
   );
 }
