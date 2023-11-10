@@ -1,6 +1,10 @@
-// Andrew Mainella
-// Pauly
-
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  calendarFunctionsGraph.ts
+  calender function that use microsoft grap
+*/
 import { orgWideGroupID } from '../../PaulyConfig';
 import callMsGraph from '../ultility/microsoftAssets';
 import { Colors, loadingStateEnum, semesters } from '../../types';

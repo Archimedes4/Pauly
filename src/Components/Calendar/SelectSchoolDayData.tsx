@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  SelectSchoolDayData.tsx
+  This is for selecting school day data 
+*/
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -131,51 +138,45 @@ function SchoolDaySelect({
       >
         <Text>Back</Text>
       </Pressable>
-      <ScrollView style={{ width, height }}>
-        {loadingState === loadingStateEnum.loading ? (
-          <Text>Loading</Text>
-        ) : (
-          <>
-            {loadingState === loadingStateEnum.success &&
-            timetable !== undefined ? (
-              <>
-                {timetable.days.map(day => (
-                  <Pressable
-                    key={`Day_${day.id}`}
-                    onPress={() => {
-                      onSelect();
-                      dispatch(
-                        addEventSlice.actions.setSelectedSchoolDayData({
-                          schoolDay: day,
-                          schedule: {
-                            properName: '',
-                            descriptiveName: '',
-                            periods: [],
-                            id: '',
-                            color: '',
-                          },
-                          dressCode: {
-                            name: '',
-                            description: '',
-                            id: '',
-                          },
-                          semester: semesters.semesterOne,
-                        }),
-                      );
-                    }}
-                  >
-                    <View>
-                      <Text>{day.name}</Text>
-                    </View>
-                  </Pressable>
-                ))}
-              </>
-            ) : (
-              <Text>Failed</Text>
-            )}
-          </>
-        )}
-      </ScrollView>
+      {loadingState === loadingStateEnum.loading ? <Text>Loading</Text> : null}
+      {loadingState !== loadingStateEnum.loading &&
+      (loadingState !== loadingStateEnum.success || timetable === undefined) ? (
+        <Text>Failed</Text>
+      ) : null}
+      {loadingState === loadingStateEnum.success && timetable !== undefined ? 
+        <ScrollView style={{ width, height }}>
+          {timetable.days.map(day => (
+            <Pressable
+              key={`Day_${day.id}`}
+              onPress={() => {
+                onSelect();
+                dispatch(
+                  addEventSlice.actions.setSelectedSchoolDayData({
+                    schoolDay: day,
+                    schedule: {
+                      properName: '',
+                      descriptiveName: '',
+                      periods: [],
+                      id: '',
+                      color: '',
+                    },
+                    dressCode: {
+                      name: '',
+                      description: '',
+                      id: '',
+                    },
+                    semester: semesters.semesterOne,
+                  }),
+                );
+              }}
+            >
+              <View>
+                <Text>{day.name}</Text>
+              </View>
+            </Pressable>
+          ))}
+        </ScrollView>
+        : null}
     </View>
   );
 }

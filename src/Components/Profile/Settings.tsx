@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+  Settings.tsx
+  Settings for when current breake point is 0 (less than 576), allows the user to logout, go to the student search page and access goverment if in government mode.
+*/
 import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import {
@@ -24,6 +31,7 @@ import {
 import BackButton from '../../UI/BackButton';
 import { Colors, loadingStateEnum } from '../../types';
 
+// Logout functions
 function signOutNative(discovery: DiscoveryDocument) {
   revokeAsync({ token: store.getState().authenticationToken }, discovery);
   store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));

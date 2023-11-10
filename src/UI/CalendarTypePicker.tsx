@@ -1,5 +1,5 @@
 import { View, Text, Animated, Pressable } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEventSlice } from '../Redux/reducers/addEventReducer';
 import { RootState } from '../Redux/store';
@@ -36,14 +36,18 @@ export default function CalendarTypePicker({
     }).start();
   }
 
-  useEffect(() => {
+  const setPanValue = useCallback(() => {
     pan.setValue(selectedCalendarMode * compoentWidth + compoentWidth * 0.005);
-  }, []);
+  }, [compoentWidth, pan, selectedCalendarMode]);
+
+  useEffect(() => {
+    setPanValue();
+  }, [setPanValue]);
 
   useEffect(() => {
     setComponentWidth(width / 3);
-    pan.setValue(selectedCalendarMode * compoentWidth + compoentWidth * 0.005);
-  }, [width]);
+    setPanValue();
+  }, [width, setPanValue]);
 
   return (
     <View

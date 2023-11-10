@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ViewStyle } from 'react-native';
+import { Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
 import { useNavigate } from 'react-router-native';
 import { ChevronLeft } from './Icons/Icons';
@@ -8,7 +8,8 @@ export default function BackButton({
   style,
 }: {
   to: string;
-  style?: ViewStyle;
+  // eslint-disable-next-line react/require-default-props
+  style?: ViewStyle | undefined;
 }) {
   const navigate = useNavigate();
   return (

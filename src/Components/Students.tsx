@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  Students.tsx
+  Holds the student section of Pauly. See README.md for more information.
+*/
 import {
   View,
   Text,
@@ -127,6 +134,134 @@ function SearchBox({ onGetUsers }: { onGetUsers: (item: string) => void }) {
             <Text style={{ color: Colors.white }}>{searchText}</Text>
           </View>
         </View>
+      </View>
+    </View>
+  );
+}
+
+function StudentImage({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
+  if (user.item.imageState === loadingStateEnum.loading) {
+    return (
+      <>
+        <ProgressView width={14} height={14} />
+        <Text>Loading</Text>
+      </>
+    );
+  }
+  if (
+    user.item.imageState === loadingStateEnum.success &&
+    user.item.imageDataUrl !== undefined
+  ) {
+    return (
+      <Image
+        source={{ uri: user.item.imageDataUrl }}
+        style={{ width: 150, height: 150 }}
+      />
+    );
+  }
+  return <PersonIcon width={150} height={150} />;
+}
+
+function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const getImage = useCallback(async () => {
+    const newUser: any = {};
+    Object.assign(newUser, user.item);
+    if (
+      user.item.imageDownloadUrl !== 'noImage' &&
+      user.item.imageState !== loadingStateEnum.success &&
+      user.item.imageState !== loadingStateEnum.failed &&
+      user.item.imageState !== loadingStateEnum.loading
+    ) {
+      const updateStateUser: any = {};
+      Object.assign(updateStateUser, user.item);
+      updateStateUser.imageState = loadingStateEnum.loading;
+      store.dispatch(
+        studentSearchSlice.actions.setStudentUserByIndex({
+          index: user.index,
+          user: updateStateUser,
+        }),
+      );
+      const result = await callMsGraph(user.item.imageDownloadUrl);
+      if (result.ok) {
+        const data = await result.blob();
+        const urlOut = URL.createObjectURL(data);
+        newUser.imageState = loadingStateEnum.success;
+        newUser.imageDataUrl = urlOut;
+        store.dispatch(
+          studentSearchSlice.actions.setStudentUserByIndex({
+            index: user.index,
+            user: newUser,
+          }),
+        );
+      } else {
+        newUser.imageState = loadingStateEnum.failed;
+        store.dispatch(
+          studentSearchSlice.actions.setStudentUserByIndex({
+            index: user.index,
+            user: newUser,
+          }),
+        );
+      }
+    }
+  }, [user.index, user.item]);
+
+  useEffect(() => {
+    getImage();
+  }, [getImage]);
+
+  function calculateMarginEnds(widthIn: number, side: 'L' | 'R'): number {
+    const numberOfBlocks = getNumberOfBlocks(width);
+    if (user.index % numberOfBlocks === 0) {
+      const widthRemaining = widthIn - (numberOfBlocks - 1) * 190 - 150;
+      if (widthRemaining / 2 >= 120 || side === 'R') {
+        return 20;
+      }
+      return widthRemaining / 2;
+    }
+    if ((user.index + 1) % numberOfBlocks === 0) {
+      const widthRemaining = widthIn - (numberOfBlocks - 1) * 190 - 150;
+      if (widthRemaining / 2 >= 120 || side === 'L') {
+        return 20;
+      }
+      return widthRemaining / 2;
+    }
+    return 20;
+  }
+
+  return (
+    <View
+      key={`StudentBlock_${user.item.id}`}
+      style={{
+        height: 175,
+        width: 150,
+        marginTop: user.index < getNumberOfBlocks(width) ? height * 0.07 : 25,
+        marginBottom: 25,
+        marginLeft: calculateMarginEnds(width, 'L'),
+        marginRight: calculateMarginEnds(width, 'R'),
+        backgroundColor: Colors.white,
+        shadowColor: Colors.black,
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+        borderRadius: 15,
+        overflow: 'hidden',
+      }}
+    >
+      <View
+        style={{
+          height: 150,
+          width: 150,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <StudentImage user={user} />
+      </View>
+      <View style={{ flexDirection: 'row', marginLeft: 5, marginTop: 2 }}>
+        <Text>{user.item.name}</Text>
+        {user.item.student ? <Text>{user.item.grade}</Text> : null}
       </View>
     </View>
   );
@@ -275,128 +410,6 @@ export default function Students() {
         <Text>Back</Text>
       </Pressable>
       <Text>Something went wrong</Text>
-    </View>
-  );
-}
-
-function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const getImage = useCallback(async () => {
-    const newUser: any = {};
-    Object.assign(newUser, user.item);
-    if (
-      user.item.imageDownloadUrl !== 'noImage' &&
-      user.item.imageState !== loadingStateEnum.success &&
-      user.item.imageState !== loadingStateEnum.failed &&
-      user.item.imageState !== loadingStateEnum.loading
-    ) {
-      const updateStateUser: any = {};
-      Object.assign(updateStateUser, user.item);
-      updateStateUser.imageState = loadingStateEnum.loading;
-      store.dispatch(
-        studentSearchSlice.actions.setStudentUserByIndex({
-          index: user.index,
-          user: updateStateUser,
-        }),
-      );
-      const result = await callMsGraph(user.item.imageDownloadUrl);
-      if (result.ok) {
-        const data = await result.blob();
-        const urlOut = URL.createObjectURL(data);
-        newUser.imageState = loadingStateEnum.success;
-        newUser.imageDataUrl = urlOut;
-        store.dispatch(
-          studentSearchSlice.actions.setStudentUserByIndex({
-            index: user.index,
-            user: newUser,
-          }),
-        );
-      } else {
-        newUser.imageState = loadingStateEnum.failed;
-        store.dispatch(
-          studentSearchSlice.actions.setStudentUserByIndex({
-            index: user.index,
-            user: newUser,
-          }),
-        );
-      }
-    }
-  }, [user.index, user.item]);
-
-  useEffect(() => {
-    getImage();
-  }, [getImage]);
-
-  function calculateMarginEnds(widthIn: number, side: 'L' | 'R'): number {
-    const numberOfBlocks = getNumberOfBlocks(width);
-    if (user.index % numberOfBlocks === 0) {
-      const widthRemaining = widthIn - (numberOfBlocks - 1) * 190 - 150;
-      if (widthRemaining / 2 >= 120 || side === 'R') {
-        return 20;
-      }
-      return widthRemaining / 2;
-    }
-    if ((user.index + 1) % numberOfBlocks === 0) {
-      const widthRemaining = widthIn - (numberOfBlocks - 1) * 190 - 150;
-      if (widthRemaining / 2 >= 120 || side === 'L') {
-        return 20;
-      }
-      return widthRemaining / 2;
-    }
-    return 20;
-  }
-
-  return (
-    <View
-      key={`StudentBlock_${user.item.id}`}
-      style={{
-        height: 175,
-        width: 150,
-        marginTop: user.index < getNumberOfBlocks(width) ? height * 0.07 : 25,
-        marginBottom: 25,
-        marginLeft: calculateMarginEnds(width, 'L'),
-        marginRight: calculateMarginEnds(width, 'R'),
-        backgroundColor: Colors.white,
-        shadowColor: Colors.black,
-        shadowOffset: { width: 1, height: 1 },
-        shadowOpacity: 1,
-        shadowRadius: 5,
-        borderRadius: 15,
-        overflow: 'hidden',
-      }}
-    >
-      <View
-        style={{
-          height: 150,
-          width: 150,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {user.item.imageState === loadingStateEnum.loading ? (
-          <>
-            <ProgressView width={14} height={14} />
-            <Text>Loading</Text>
-          </>
-        ) : (
-          <>
-            {user.item.imageState === loadingStateEnum.success &&
-            user.item.imageDataUrl !== undefined ? (
-              <Image
-                source={{ uri: user.item.imageDataUrl }}
-                style={{ width: 150, height: 150 }}
-              />
-            ) : (
-              <PersonIcon width={150} height={150} />
-            )}
-          </>
-        )}
-      </View>
-      <View style={{ flexDirection: 'row', marginLeft: 5, marginTop: 2 }}>
-        <Text>{user.item.name}</Text>
-        {user.item.student ? <Text>{user.item.grade}</Text> : null}
-      </View>
     </View>
   );
 }

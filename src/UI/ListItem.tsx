@@ -5,19 +5,19 @@ import createUUID from '../Functions/ultility/createUUID';
 import { Colors } from '../types';
 
 export default function ListItem({
-  to,
+  to = undefined,
   title,
   width,
-  caption,
-  onPress,
-  style,
+  caption = undefined,
+  onPress = undefined,
+  style = undefined,
 }: {
   title: string;
   width: number;
-  caption?: string | undefined;
-  to?: string | undefined;
-  onPress?: () => void | undefined;
-  style?: ViewStyle | undefined;
+  caption: string | undefined;
+  to: string | undefined;
+  onPress: (() => void) | undefined;
+  style: ViewStyle | undefined;
 }) {
   const navigate = useNavigate();
   return (

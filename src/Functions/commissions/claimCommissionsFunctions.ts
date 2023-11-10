@@ -150,13 +150,15 @@ export async function claimCommissionPost(
   const bearer = `Bearer ${auth}`;
   try {
     const result = await fetch(
-      `https://pauly-functions.azurewebsites.net/api/SubmitCommission?orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`,
+      `https://pauly-functions.azurewebsites.net/api/SubmitCommission?code=_13CqMDHvNzeigyTWa96C9gc0uW3Hze9swyGgL6yUB2fAzFuZx5dmQ==&orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`,
       {
         headers: {
           Authorization: bearer,
         },
       },
     );
+    const data = await result.json();
+    console.log(data);
     if (result.ok) {
       return loadingStateEnum.success;
     }

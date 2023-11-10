@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Pressable,
   View,
@@ -24,17 +24,17 @@ enum MicrosoftUploadModeType {
   Site,
 }
 
-export default function ({
-  onSetIsShowingUpload,
-  onSetIsShowingMicrosoftUpload,
+export default function MicrosoftFilePicker({
+  onSetIsShowingUpload = undefined,
+  onSetIsShowingMicrosoftUpload = undefined,
   onSelectedFile,
   height,
   width,
 }: {
   height: number;
   width: number;
-  onSetIsShowingUpload?: (item: boolean) => void | undefined;
-  onSetIsShowingMicrosoftUpload?: (item: boolean) => void | undefined;
+  onSetIsShowingUpload: ((item: boolean) => void) | undefined;
+  onSetIsShowingMicrosoftUpload: ((item: boolean) => void) | undefined;
   onSelectedFile: (item: microsoftFileType) => void;
 }) {
   const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([]);
@@ -217,7 +217,7 @@ function PersonalBlock({
     loadingStateEnum.notStarted,
   );
 
-  async function loadGetUserMicrosoftFiles(path: string) {
+  const loadGetUserMicrosoftFiles = useCallback(async (path: string) => {
     setGetFilesState(loadingStateEnum.loading);
     const result = await getUserMicrosoftFiles(path);
     if (
@@ -229,11 +229,11 @@ function PersonalBlock({
     } else {
       setGetFilesState(loadingStateEnum.failed);
     }
-  }
+  }, []);
 
   useEffect(() => {
     loadGetUserMicrosoftFiles(microsoftPath);
-  }, []);
+  }, [loadGetUserMicrosoftFiles]);
 
   return (
     <ScrollView style={{ height: height - 20 }}>

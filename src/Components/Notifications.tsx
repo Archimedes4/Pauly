@@ -1,7 +1,7 @@
 /*
-  Andrew Mainella
-  18 October 2023
   Pauly
+  Andrew Mainella
+  October 18 2023
 */
 
 import { useFonts } from 'expo-font';
@@ -61,129 +61,6 @@ import { TrashIcon, WarningIcon } from '../UI/Icons/Icons';
 
 // Wants
 // Assignments (problem is hard to test)
-
-export default function Notifications() {
-  const { width, height, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
-  const { siteId } = useSelector((state: RootState) => state.paulyList);
-  const { message } = useSelector((state: RootState) => state.paulyData);
-  const dispatch = useDispatch();
-
-  async function loadData() {
-    if (siteId !== '') {
-      // Calendar Data
-      getClassEventsFromDay();
-
-      // Insights
-      const insightResult = await getInsightData();
-      dispatch(
-        homepageDataSlice.actions.setTrendingData(insightResult.trendingData),
-      );
-      dispatch(
-        homepageDataSlice.actions.setTrendingState(insightResult.trendingState),
-      );
-      dispatch(homepageDataSlice.actions.setUserData(insightResult.userData));
-      dispatch(homepageDataSlice.actions.setUserState(insightResult.userState));
-
-      // Pauly Data
-      await getCurrentPaulyData();
-
-      // List Data
-      const taskResult = await getUsersTasks();
-      if (
-        taskResult.result === loadingStateEnum.success &&
-        taskResult.data !== undefined
-      ) {
-        dispatch(homepageDataSlice.actions.setUserTasks(taskResult.data));
-      }
-      dispatch(homepageDataSlice.actions.setTaskState(taskResult.result));
-    }
-  }
-
-  useEffect(() => {
-    loadData();
-  }, [siteId]);
-
-  useEffect(() => {
-    dispatch(
-      safeAreaColorsSlice.actions.setSafeAreaColors({
-        top: Colors.white,
-        bottom: Colors.white,
-      }),
-    );
-  }, []);
-
-  const [fontsLoaded] = useFonts({
-    'Comfortaa-Regular': require('../../assets/fonts/Comfortaa-Regular.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  return (
-    <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
-      {currentBreakPoint === 0 ? <BackButton to="/" /> : null}
-      <View
-        style={{
-          width,
-          height: height * 0.1,
-          marginTop: currentBreakPoint === 0 ? 10 : 0,
-        }}
-      >
-        <View
-          style={{
-            width: width * 0.9,
-            height: height * 0.07,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 15,
-            backgroundColor: Colors.darkGray,
-            marginLeft: width * 0.05,
-            marginRight: width * 0.05,
-            marginTop: height * 0.015,
-            marginBottom: height * 0.015,
-          }}
-        >
-          <Text
-            style={{ color: Colors.white, fontFamily: 'Comfortaa-Regular' }}
-          >
-            {message}
-          </Text>
-        </View>
-      </View>
-      {currentBreakPoint === 0 ? (
-        <>
-          <WidgetView width={width * 0.9} height={height * 0.3} />
-          <BoardBlock />
-        </>
-      ) : (
-        <View
-          style={{
-            flexDirection: 'row',
-            width: width * 0.9,
-            marginLeft: width * 0.05,
-          }}
-        >
-          <BoardBlock />
-          <View style={{ marginTop: height * 0.03 }}>
-            <WidgetView width={width * 0.2} height={height * 0.2} />
-          </View>
-        </View>
-      )}
-      <TaskBlock />
-      <InsightsBlock />
-    </ScrollView>
-  );
-}
 
 function WidgetView({ width, height }: { width: number; height: number }) {
   const { currentBreakPoint } = useSelector(
@@ -715,6 +592,89 @@ function BoardBlock() {
   );
 }
 
+function PopularFiles({ width }: { width: number }) {
+  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { trendingData, trendingState } = useSelector(
+    (state: RootState) => state.homepageData,
+  );
+  if (trendingState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          overflow: 'hidden',
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (trendingState === loadingStateEnum.success) {
+    return (
+      <>
+        {trendingData.map(data => (
+          <Pressable
+            key={`User_Insight_${data.id}`}
+            style={{ flexDirection: 'row' }}
+            onPress={() => {
+              Linking.openURL(data.webUrl);
+            }}
+          >
+            <View style={{ margin: 10, flexDirection: 'row' }}>
+              <MimeTypeIcon width={14} height={14} mimeType={data.type} />
+              <Text>{data.title}</Text>
+            </View>
+          </Pressable>
+        ))}
+      </>
+    );
+  }
+  return <Text>Failed To Load</Text>;
+}
+
+function TrendingFiles({ width }: { width: number }) {
+  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { userState, userData } = useSelector(
+    (state: RootState) => state.homepageData,
+  );
+  return (
+    <ScrollView style={{ height: height * 0.3, width }}>
+      {userState === loadingStateEnum.loading ? (
+        <Text>Loading</Text>
+      ) : (
+        <View>
+          {userState === loadingStateEnum.success ? (
+            <View>
+              {userData.map(data => (
+                <Pressable
+                  key={`User_Insight_${data.id}`}
+                  style={{ flexDirection: 'row' }}
+                  onPress={() => {
+                    Linking.openURL(data.webUrl);
+                  }}
+                >
+                  <View style={{ margin: 10, flexDirection: 'row' }}>
+                    <MimeTypeIcon width={14} height={14} mimeType={data.type} />
+                    <Text>{data.title}</Text>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          ) : (
+            <Text>Failed</Text>
+          )}
+        </View>
+      )}
+    </ScrollView>
+  );
+}
+
 function InsightsBlock() {
   const { width, height, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
@@ -814,86 +774,123 @@ function InsightsBlock() {
   );
 }
 
-function PopularFiles({ width }: { width: number }) {
-  const { height } = useSelector((state: RootState) => state.dimentions);
-  const { trendingData, trendingState } = useSelector(
-    (state: RootState) => state.homepageData,
+export default function Notifications() {
+  const { width, height, currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimentions,
   );
-  if (trendingState === loadingStateEnum.loading) {
-    return (
+  const { message } = useSelector((state: RootState) => state.paulyData);
+  const dispatch = useDispatch();
+
+  const loadData = useCallback(async () => {
+    // Calendar Data
+    getClassEventsFromDay();
+
+    // Insights
+    const insightResult = await getInsightData();
+    dispatch(
+      homepageDataSlice.actions.setTrendingData(insightResult.trendingData),
+    );
+    dispatch(
+      homepageDataSlice.actions.setTrendingState(insightResult.trendingState),
+    );
+    dispatch(homepageDataSlice.actions.setUserData(insightResult.userData));
+    dispatch(homepageDataSlice.actions.setUserState(insightResult.userState));
+
+    // Pauly Data
+    await getCurrentPaulyData();
+
+    // List Data
+    const taskResult = await getUsersTasks();
+    if (
+      taskResult.result === loadingStateEnum.success &&
+      taskResult.data !== undefined
+    ) {
+      dispatch(homepageDataSlice.actions.setUserTasks(taskResult.data));
+    }
+    dispatch(homepageDataSlice.actions.setTaskState(taskResult.result));
+  }, [dispatch]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    dispatch(
+      safeAreaColorsSlice.actions.setSafeAreaColors({
+        top: Colors.white,
+        bottom: Colors.white,
+      }),
+    );
+  }, [dispatch]);
+
+  const [fontsLoaded] = useFonts({
+    // eslint-disable-next-line global-require
+    'Comfortaa-Regular': require('../../assets/fonts/Comfortaa-Regular.ttf'),
+  });
+
+  useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
+      {currentBreakPoint === 0 ? <BackButton to="/" /> : null}
       <View
         style={{
           width,
-          height,
-          overflow: 'hidden',
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
+          height: height * 0.1,
+          marginTop: currentBreakPoint === 0 ? 10 : 0,
         }}
       >
-        <ProgressView width={14} height={14}/>
-        <Text>Loading</Text>
-      </View>
-    );
-  }
-
-  if (trendingState === loadingStateEnum.success) {
-    return (
-      <>
-        {trendingData.map(data => (
-          <Pressable
-            key={`User_Insight_${data.id}`}
-            style={{ flexDirection: 'row' }}
-            onPress={() => {
-              Linking.openURL(data.webUrl);
-            }}
+        <View
+          style={{
+            width: width * 0.9,
+            height: height * 0.07,
+            alignContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 15,
+            backgroundColor: Colors.darkGray,
+            marginLeft: width * 0.05,
+            marginRight: width * 0.05,
+            marginTop: height * 0.015,
+            marginBottom: height * 0.015,
+          }}
+        >
+          <Text
+            style={{ color: Colors.white, fontFamily: 'Comfortaa-Regular' }}
           >
-            <View style={{ margin: 10, flexDirection: 'row' }}>
-              <MimeTypeIcon width={14} height={14} mimeType={data.type} />
-              <Text>{data.title}</Text>
-            </View>
-          </Pressable>
-        ))}
-      </>
-    );
-  }
-
-  return <Text>Failed To Load</Text>;
-}
-
-function TrendingFiles({ width }: { width: number }) {
-  const { height } = useSelector((state: RootState) => state.dimentions);
-  const { userState, userData } = useSelector(
-    (state: RootState) => state.homepageData,
-  );
-  return (
-    <ScrollView style={{ height: height * 0.3, width }}>
-      {userState === loadingStateEnum.loading ? (
-        <Text>Loading</Text>
+            {message}
+          </Text>
+        </View>
+      </View>
+      {currentBreakPoint === 0 ? (
+        <>
+          <WidgetView width={width * 0.9} height={height * 0.3} />
+          <BoardBlock />
+        </>
       ) : (
-        <View>
-          {userState === loadingStateEnum.success ? (
-            <View>
-              {userData.map(data => (
-                <Pressable
-                  key={`User_Insight_${data.id}`}
-                  style={{ flexDirection: 'row' }}
-                  onPress={() => {
-                    Linking.openURL(data.webUrl);
-                  }}
-                >
-                  <View style={{ margin: 10, flexDirection: 'row' }}>
-                    <MimeTypeIcon width={14} height={14} mimeType={data.type} />
-                    <Text>{data.title}</Text>
-                  </View>
-                </Pressable>
-              ))}
-            </View>
-          ) : (
-            <Text>Failed</Text>
-          )}
+        <View
+          style={{
+            flexDirection: 'row',
+            width: width * 0.9,
+            marginLeft: width * 0.05,
+          }}
+        >
+          <BoardBlock />
+          <View style={{ marginTop: height * 0.03 }}>
+            <WidgetView width={width * 0.2} height={height * 0.2} />
+          </View>
         </View>
       )}
+      <TaskBlock />
+      <InsightsBlock />
     </ScrollView>
   );
 }
