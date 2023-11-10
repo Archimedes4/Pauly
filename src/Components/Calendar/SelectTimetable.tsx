@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
@@ -24,7 +24,7 @@ export default function SelectTimetable({
   >([]);
   const navigate = useNavigate();
 
-  async function getTimetables() {
+  const getTimetables = useCallback(async () => {
     const result = await callMsGraph(
       `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${timetablesListId}/items?expand=fields`,
     );
@@ -51,11 +51,11 @@ export default function SelectTimetable({
     } else {
       setLoadingState(loadingStateEnum.failed);
     }
-  }
+  }, [siteId, timetablesListId]);
 
   useEffect(() => {
     getTimetables();
-  }, []);
+  }, [getTimetables]);
 
   return (
     <View>

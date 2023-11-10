@@ -79,17 +79,22 @@ export default function Settings() {
     );
   }, [dispatch]);
 
+  const returnHome = useCallback(() => {
+    navigate('/');
+  }, [navigate]);
+
   useEffect(() => {
     if (currentBreakPoint >= 1) {
-      navigate('/');
+      returnHome();
     }
-  }, [currentBreakPoint]);
+  }, [currentBreakPoint, returnHome]);
 
   const [fontsLoaded] = useFonts({
+    // eslint-disable-next-line global-require
     BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
@@ -138,7 +143,7 @@ export default function Settings() {
         {uri !== '' && imageLoadState !== loadingStateEnum.failed ? (
           <Image
             source={{ uri }}
-            onError={e => {
+            onError={() => {
               setImageLoadState(loadingStateEnum.failed);
             }}
             style={{

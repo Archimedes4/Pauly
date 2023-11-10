@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  AppMain.web.tsx
+  Holds authentication for ios, using expo-auth-session
+*/
 import {
   Prompt,
   exchangeCodeAsync,
@@ -7,7 +14,7 @@ import {
   useAutoDiscovery,
 } from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ScaledSize } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Login from '../src/login';
@@ -123,7 +130,7 @@ export default function AppMain({
     }
   }
 
-  async function refreshToken() {
+  const refreshToken = useCallback(async () => {
     if (discovery !== null) {
       try {
         const result = await refreshAsync(
@@ -145,31 +152,31 @@ export default function AppMain({
     } else {
       dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
     }
-  }
+  }, [discovery, dispatch]);
 
   useEffect(() => {
     refreshToken();
-  }, [authenticationCall]);
+  }, [authenticationCall, refreshToken]);
+
+  if (authenticationToken !== '') {
+    return (
+      <AuthenticatedView
+        dimensions={dimensions}
+        width={dimensions.window.width}
+      />
+    );
+  }
 
   return (
-    <>
-      {authenticationToken !== '' ? (
-        <AuthenticatedView
-          dimensions={dimensions}
-          width={dimensions.window.width}
-        />
-      ) : (
-        <Login
-          onGetAuthToken={() => {
-            getAuthToken();
-          }}
-          onGetGovernmentAuthToken={() => {
-            getGovernmentAuthToken();
-          }}
-          width={dimensions.window.width}
-          isLoading={isLoading}
-        />
-      )}
-    </>
+    <Login
+      onGetAuthToken={() => {
+        getAuthToken();
+      }}
+      onGetGovernmentAuthToken={() => {
+        getGovernmentAuthToken();
+      }}
+      width={dimensions.window.width}
+      isLoading={isLoading}
+    />
   );
 }

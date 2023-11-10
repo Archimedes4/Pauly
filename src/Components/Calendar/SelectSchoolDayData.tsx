@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import createUUID from '../../Functions/ultility/createUUID';
@@ -18,181 +18,6 @@ enum pickSchoolDayMode {
   dressCode,
   semester,
   dressCodeIncentives,
-}
-
-export default function SelectSchoolDayData({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) {
-  const [schoolDayMode, setSchoolDayMode] = useState<pickSchoolDayMode>(
-    pickSchoolDayMode.schoolYear,
-  );
-  const [timetableState, setTimetableState] = useState<loadingStateEnum>(
-    loadingStateEnum.notStarted,
-  );
-  const [timetable, setTimetable] = useState<timetableType | undefined>(
-    undefined,
-  );
-  const { selectedSchoolDayData, selectedSchoolYear } = useSelector(
-    (state: RootState) => state.addEvent,
-  );
-  const dispatch = useDispatch();
-
-  async function loadData(id: string) {
-    setTimetableState(loadingStateEnum.loading);
-    const result = await getTimetable(id);
-    if (
-      result.result === loadingStateEnum.success &&
-      result.timetable !== undefined
-    ) {
-      setTimetable(result.timetable);
-      setTimetableState(loadingStateEnum.success);
-    } else {
-      setTimetableState(loadingStateEnum.failed);
-    }
-  }
-
-  useEffect(() => {
-    if (
-      selectedSchoolYear !== undefined &&
-      timetable === undefined &&
-      selectedSchoolYear.paulyEventData !== undefined
-    ) {
-      loadData(selectedSchoolYear.paulyEventData);
-    }
-  }, [schoolDayMode, selectedSchoolYear]);
-
-  return (
-    <View style={{ width, height }}>
-      {schoolDayMode === pickSchoolDayMode.schoolYear ? (
-        <SchoolYearsSelect
-          onSelect={() => setSchoolDayMode(pickSchoolDayMode.schoolDay)}
-        />
-      ) : null}
-      {schoolDayMode === pickSchoolDayMode.schoolDay ? (
-        <SchoolDaySelect
-          width={width}
-          height={height}
-          timetable={timetable}
-          loadingState={timetableState}
-          onSelect={() => {
-            setSchoolDayMode(pickSchoolDayMode.schedule);
-          }}
-          onBack={() => {
-            setSchoolDayMode(pickSchoolDayMode.schoolYear);
-          }}
-        />
-      ) : null}
-      {schoolDayMode === pickSchoolDayMode.schedule &&
-      timetable !== undefined &&
-      selectedSchoolDayData !== undefined ? (
-        <ScheduleSelect
-          schedules={timetable.schedules}
-          onSelect={e => {
-            dispatch(
-              addEventSlice.actions.setSelectedSchoolDayData({
-                schoolDay: selectedSchoolDayData.schoolDay,
-                schedule: e,
-                dressCode: selectedSchoolDayData.dressCode,
-                semester: selectedSchoolDayData.semester,
-              }),
-            );
-            setSchoolDayMode(pickSchoolDayMode.dressCode);
-          }}
-          onBack={() => {
-            setSchoolDayMode(pickSchoolDayMode.schoolDay);
-          }}
-        />
-      ) : null}
-      {schoolDayMode === pickSchoolDayMode.dressCode &&
-      timetable !== undefined &&
-      selectedSchoolDayData !== undefined ? (
-        <DressCodeSelect
-          dressCodeData={timetable.dressCode.dressCodeData}
-          onSelect={e => {
-            dispatch(
-              addEventSlice.actions.setSelectedSchoolDayData({
-                schoolDay: selectedSchoolDayData.schoolDay,
-                schedule: selectedSchoolDayData.schedule,
-                dressCode: e,
-                semester: selectedSchoolDayData.semester,
-              }),
-            );
-            setSchoolDayMode(pickSchoolDayMode.semester);
-          }}
-          onBack={() => {
-            setSchoolDayMode(pickSchoolDayMode.schedule);
-          }}
-        />
-      ) : null}
-      {schoolDayMode === pickSchoolDayMode.semester &&
-      selectedSchoolDayData !== undefined ? (
-        <View>
-          <Pressable
-            onPress={() => {
-              setSchoolDayMode(pickSchoolDayMode.dressCode);
-            }}
-          >
-            <Text>Back</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              dispatch(
-                addEventSlice.actions.setSelectedSchoolDayData({
-                  schoolDay: selectedSchoolDayData.schoolDay,
-                  schedule: selectedSchoolDayData.schedule,
-                  dressCode: selectedSchoolDayData.dressCode,
-                  semester: semesters.semesterOne,
-                }),
-              );
-              setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives);
-            }}
-          >
-            <Text>Semester One</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              dispatch(
-                addEventSlice.actions.setSelectedSchoolDayData({
-                  schoolDay: selectedSchoolDayData.schoolDay,
-                  schedule: selectedSchoolDayData.schedule,
-                  dressCode: selectedSchoolDayData.dressCode,
-                  semester: semesters.semesterTwo,
-                }),
-              );
-              setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives);
-            }}
-          >
-            <Text>Semester Two</Text>
-          </Pressable>
-        </View>
-      ) : null}
-      {schoolDayMode === pickSchoolDayMode.dressCodeIncentives &&
-      timetable !== undefined &&
-      selectedSchoolDayData !== undefined ? (
-        <DressCodeIncentivesSelect
-          dressCodeIncentivesData={timetable.dressCode.dressCodeIncentives}
-          onSelect={e => {
-            dispatch(
-              addEventSlice.actions.setSelectedSchoolDayData({
-                schoolDay: selectedSchoolDayData.schoolDay,
-                schedule: selectedSchoolDayData.schedule,
-                dressCode: selectedSchoolDayData.dressCode,
-                semester: selectedSchoolDayData.semester,
-                dressCodeIncentive: e,
-              }),
-            );
-          }}
-          onBack={() => {
-            setSchoolDayMode(pickSchoolDayMode.semester);
-          }}
-        />
-      ) : null}
-    </View>
-  );
 }
 
 function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
@@ -414,6 +239,7 @@ function DressCodeSelect({
 
 function DressCodeIncentivesSelect({
   dressCodeIncentivesData,
+  onBack,
 }: {
   dressCodeIncentivesData: dressCodeIncentiveType[];
   onSelect: (item: dressCodeIncentiveType) => void;
@@ -421,12 +247,189 @@ function DressCodeIncentivesSelect({
 }) {
   return (
     <View>
+      <Pressable onPress={() => onBack()}>
+        <Text>Back</Text>
+      </Pressable>
       {dressCodeIncentivesData.map(incentive => (
         <View>
           <Text>{incentive.name}</Text>
         </View>
       ))}
       <Text>None</Text>
+    </View>
+  );
+}
+
+export default function SelectSchoolDayData({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
+  const [schoolDayMode, setSchoolDayMode] = useState<pickSchoolDayMode>(
+    pickSchoolDayMode.schoolYear,
+  );
+  const [timetableState, setTimetableState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
+  const [timetable, setTimetable] = useState<timetableType | undefined>(
+    undefined,
+  );
+  const { selectedSchoolDayData, selectedSchoolYear } = useSelector(
+    (state: RootState) => state.addEvent,
+  );
+  const dispatch = useDispatch();
+
+  const loadData = useCallback(async (id: string) => {
+    setTimetableState(loadingStateEnum.loading);
+    const result = await getTimetable(id);
+    if (
+      result.result === loadingStateEnum.success &&
+      result.timetable !== undefined
+    ) {
+      setTimetable(result.timetable);
+      setTimetableState(loadingStateEnum.success);
+    } else {
+      setTimetableState(loadingStateEnum.failed);
+    }
+  }, []);
+  useEffect(() => {
+    if (
+      selectedSchoolYear !== undefined &&
+      timetable === undefined &&
+      selectedSchoolYear.paulyEventData !== undefined
+    ) {
+      loadData(selectedSchoolYear.paulyEventData);
+    }
+  }, [loadData, schoolDayMode, selectedSchoolYear, timetable]);
+
+  return (
+    <View style={{ width, height }}>
+      {schoolDayMode === pickSchoolDayMode.schoolYear ? (
+        <SchoolYearsSelect
+          onSelect={() => setSchoolDayMode(pickSchoolDayMode.schoolDay)}
+        />
+      ) : null}
+      {schoolDayMode === pickSchoolDayMode.schoolDay ? (
+        <SchoolDaySelect
+          width={width}
+          height={height}
+          timetable={timetable}
+          loadingState={timetableState}
+          onSelect={() => {
+            setSchoolDayMode(pickSchoolDayMode.schedule);
+          }}
+          onBack={() => {
+            setSchoolDayMode(pickSchoolDayMode.schoolYear);
+          }}
+        />
+      ) : null}
+      {schoolDayMode === pickSchoolDayMode.schedule &&
+      timetable !== undefined &&
+      selectedSchoolDayData !== undefined ? (
+        <ScheduleSelect
+          schedules={timetable.schedules}
+          onSelect={e => {
+            dispatch(
+              addEventSlice.actions.setSelectedSchoolDayData({
+                schoolDay: selectedSchoolDayData.schoolDay,
+                schedule: e,
+                dressCode: selectedSchoolDayData.dressCode,
+                semester: selectedSchoolDayData.semester,
+              }),
+            );
+            setSchoolDayMode(pickSchoolDayMode.dressCode);
+          }}
+          onBack={() => {
+            setSchoolDayMode(pickSchoolDayMode.schoolDay);
+          }}
+        />
+      ) : null}
+      {schoolDayMode === pickSchoolDayMode.dressCode &&
+      timetable !== undefined &&
+      selectedSchoolDayData !== undefined ? (
+        <DressCodeSelect
+          dressCodeData={timetable.dressCode.dressCodeData}
+          onSelect={e => {
+            dispatch(
+              addEventSlice.actions.setSelectedSchoolDayData({
+                schoolDay: selectedSchoolDayData.schoolDay,
+                schedule: selectedSchoolDayData.schedule,
+                dressCode: e,
+                semester: selectedSchoolDayData.semester,
+              }),
+            );
+            setSchoolDayMode(pickSchoolDayMode.semester);
+          }}
+          onBack={() => {
+            setSchoolDayMode(pickSchoolDayMode.schedule);
+          }}
+        />
+      ) : null}
+      {schoolDayMode === pickSchoolDayMode.semester &&
+      selectedSchoolDayData !== undefined ? (
+        <View>
+          <Pressable
+            onPress={() => {
+              setSchoolDayMode(pickSchoolDayMode.dressCode);
+            }}
+          >
+            <Text>Back</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              dispatch(
+                addEventSlice.actions.setSelectedSchoolDayData({
+                  schoolDay: selectedSchoolDayData.schoolDay,
+                  schedule: selectedSchoolDayData.schedule,
+                  dressCode: selectedSchoolDayData.dressCode,
+                  semester: semesters.semesterOne,
+                }),
+              );
+              setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives);
+            }}
+          >
+            <Text>Semester One</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              dispatch(
+                addEventSlice.actions.setSelectedSchoolDayData({
+                  schoolDay: selectedSchoolDayData.schoolDay,
+                  schedule: selectedSchoolDayData.schedule,
+                  dressCode: selectedSchoolDayData.dressCode,
+                  semester: semesters.semesterTwo,
+                }),
+              );
+              setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives);
+            }}
+          >
+            <Text>Semester Two</Text>
+          </Pressable>
+        </View>
+      ) : null}
+      {schoolDayMode === pickSchoolDayMode.dressCodeIncentives &&
+      timetable !== undefined &&
+      selectedSchoolDayData !== undefined ? (
+        <DressCodeIncentivesSelect
+          dressCodeIncentivesData={timetable.dressCode.dressCodeIncentives}
+          onSelect={e => {
+            dispatch(
+              addEventSlice.actions.setSelectedSchoolDayData({
+                schoolDay: selectedSchoolDayData.schoolDay,
+                schedule: selectedSchoolDayData.schedule,
+                dressCode: selectedSchoolDayData.dressCode,
+                semester: selectedSchoolDayData.semester,
+                dressCodeIncentive: e,
+              }),
+            );
+          }}
+          onBack={() => {
+            setSchoolDayMode(pickSchoolDayMode.semester);
+          }}
+        />
+      ) : null}
     </View>
   );
 }

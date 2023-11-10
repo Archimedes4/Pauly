@@ -1,4 +1,4 @@
-import { View, Text, Pressable, TextInput, Button, Switch } from 'react-native';
+import { View, Text, Pressable, TextInput, Switch } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';

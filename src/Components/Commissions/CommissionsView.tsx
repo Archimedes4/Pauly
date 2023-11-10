@@ -66,7 +66,7 @@ export default function CommissionsView({
     }
   }
 
-  async function getCommissionInformation() {
+  const getCommissionInformation = useCallback(async () => {
     const result = await getCommission(id);
     if (
       result.result === loadingStateEnum.success &&
@@ -82,7 +82,7 @@ export default function CommissionsView({
       }
     }
     setCommissionState(result.result);
-  }
+  }, [id]);
 
   async function pickImage() {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -149,9 +149,10 @@ export default function CommissionsView({
 
   useEffect(() => {
     getCommissionInformation();
-  }, [id]);
+  }, [getCommissionInformation]);
 
   const [fontsLoaded] = useFonts({
+    // eslint-disable-next-line global-require
     BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 

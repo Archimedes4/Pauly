@@ -2,7 +2,7 @@
 Last updated October 28 2023 \
 Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
-Saint Paul's High School Student Council 2023-2024 \
+Saint Paul's High School Student Council 2023-2024
 # Backend
 Pauly uses Microsoft graph and SharePoint lists as a database
 ## Structure 

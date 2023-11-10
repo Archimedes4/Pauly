@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  404Page.tsx
+  Page not found
+*/
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';

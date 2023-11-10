@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  HomePage.tsx
+  This is the homepage for when the width is less than 576
+*/
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect, useCallback } from 'react';
@@ -33,14 +40,18 @@ export default function HomePage() {
     await getCurrentPaulyData();
   }
 
-  useEffect(() => {
+  const updateOutColors = useCallback(() => {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.maroon,
         bottom: Colors.maroon,
       }),
     );
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    updateOutColors();
+  }, [updateOutColors]);
 
   useEffect(() => {
     if (
@@ -51,19 +62,25 @@ export default function HomePage() {
     }
   }, [authenticationToken, siteId]);
 
+  const backToHome = useCallback(() => {
+    navigate('/notifications');
+  }, [navigate]);
+
   useEffect(() => {
     if (currentBreakPoint > 0) {
-      navigate('/notifications');
+      backToHome();
     }
-  }, [currentBreakPoint]);
+  }, [backToHome, currentBreakPoint]);
 
   // Font
   const [fontsLoaded] = useFonts({
+    // eslint-disable-next-line global-require
     BukhariScript: require('../../assets/fonts/BukhariScript.ttf'),
+    // eslint-disable-next-line global-require
     GochiHand: require('../../assets/fonts/GochiHand-Regular.ttf'),
   });
 
-  const onLayoutRootView = useCallback(async () => {
+  useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
@@ -189,6 +206,7 @@ export default function HomePage() {
               }}
             />
             <Image
+              // eslint-disable-next-line global-require
               source={require('../../assets/images/Football.png')}
               resizeMode="contain"
               width={width * 0.3}

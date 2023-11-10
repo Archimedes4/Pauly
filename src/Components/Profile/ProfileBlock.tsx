@@ -12,6 +12,18 @@ import { authenticationTokenSlice } from '../../Redux/reducers/authenticationTok
 import { tenantId } from '../../PaulyConfig';
 import { Colors } from '../../types';
 
+function signOutNative(discovery: DiscoveryDocument) {
+  revokeAsync({ token: store.getState().authenticationToken }, discovery);
+  store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
+}
+
+function signOutWeb(instance: IPublicClientApplication, account?: AccountInfo) {
+  store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
+  instance.logoutPopup({
+    account,
+  });
+}
+
 export default function ProfileBlock() {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
@@ -52,16 +64,4 @@ export default function ProfileBlock() {
       </Text>
     </Pressable>
   );
-}
-
-function signOutNative(discovery: DiscoveryDocument) {
-  revokeAsync({ token: store.getState().authenticationToken }, discovery);
-  store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
-}
-
-function signOutWeb(instance: IPublicClientApplication, account?: AccountInfo) {
-  store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
-  instance.logoutPopup({
-    account,
-  });
 }

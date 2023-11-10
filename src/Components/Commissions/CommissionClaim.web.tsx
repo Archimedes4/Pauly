@@ -19,10 +19,10 @@ import { getTextState } from '../../Functions/ultility/createUUID';
 
 export default function CommissionClaim({
   commission,
-  imageData,
+  imageData = undefined,
 }: {
   commission: commissionType;
-  imageData?: string;
+  imageData: string | undefined;
 }) {
   const [claimCommissionState, setClaimCommissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);

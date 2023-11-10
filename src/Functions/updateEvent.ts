@@ -162,8 +162,7 @@ export default async function createEvent(): Promise<undefined> {
         },
       ];
     }
-    if (store.getState().addEvent.recurringEvent) {
-    }
+    // TODO Reocurring
     const result = await callMsGraph(
       `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events`,
       'POST',

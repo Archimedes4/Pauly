@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023s
+*/
 import {
   View,
   Text,

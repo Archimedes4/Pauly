@@ -1,6 +1,10 @@
-// July 21 2023
-// Andrew Mainella
-// Calendar functions
+/*
+  Pauly
+  Andrew Mainella
+  July 21 2023
+  calendarFunctions.ts
+  Basic calendar functions non api not async
+*/
 
 export function getDaysInMonth(input: Date): number {
   const d = new Date();

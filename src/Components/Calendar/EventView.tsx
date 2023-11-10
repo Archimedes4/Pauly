@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  EventView.tsx
+*/
 import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';

@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  Calendar.tsx
+  Main Calendar for Pauly see README.md for more info.
+*/
 import {
   View,
   Text,
@@ -11,9 +18,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch, useSelector } from 'react-redux';
-import { findFirstDayinMonth } from '../../Functions/calendar/calendarFunctions';
 import createUUID from '../../Functions/ultility/createUUID';
-import DayView from './DayView';
 import Week from './Week';
 import AddEvent from './AddEvent';
 import CalendarTypePicker from '../../UI/CalendarTypePicker';
@@ -24,7 +29,6 @@ import { Colors, calendarMode } from '../../types';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 import BackButton from '../../UI/BackButton';
 import { addEventSlice } from '../../Redux/reducers/addEventReducer';
-import { monthDataSlice } from '../../Redux/reducers/monthDataReducer';
 import { getClasses } from '../../Functions/classesFunctions';
 import getEvents from '../../Functions/calendar/getEvents';
 import { getMonthData } from '../../Functions/calendar/calendarFunctionsGraph';
@@ -234,6 +238,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
 
   const dispatch = useDispatch();
   const [fontsLoaded] = useFonts({
+    // eslint-disable-next-line global-require
     BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
@@ -553,6 +558,7 @@ export default function Calendar() {
 
   // Fonts
   const [fontsLoaded] = useFonts({
+    // eslint-disable-next-line global-require
     BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 

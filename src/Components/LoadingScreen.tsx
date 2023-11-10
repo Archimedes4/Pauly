@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  LoadingScreen.tsx
+  Used to wait for pauly to get its data. Causes problems when siteid and information is not loaded.
+*/
 import { View, Text, Platform, Pressable } from 'react-native';
 import * as Network from 'expo-network';
 import React, { useEffect, useState } from 'react';

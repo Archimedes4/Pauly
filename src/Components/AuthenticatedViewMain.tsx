@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  AuthenticatedViewMain.tsx
+  This holds the main router to Pauly once authenticated.
+*/
 import React, { useState } from 'react';
 import { View, ScaledSize } from 'react-native';
 import { useSelector } from 'react-redux';

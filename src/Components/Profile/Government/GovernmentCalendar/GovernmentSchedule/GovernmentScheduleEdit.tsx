@@ -1,19 +1,14 @@
-import { View, Text, TextInput, Button, Pressable, Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import { TimePickerModal, he } from 'react-native-paper-dates';
+import { TimePickerModal } from 'react-native-paper-dates';
 import { ScrollView } from 'react-native-gesture-handler';
-import Animated, {
-  interpolateColor,
-  useAnimatedStyle,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import ColorPicker, {
   Preview,
   Panel1,
   HueSlider,
-  OpacitySlider,
-  Swatches,
   RenderThumbProps,
   InputWidget,
 } from 'reanimated-color-picker';
@@ -137,7 +132,7 @@ export default function GovernmentSchedule() {
     }
   }
 
-  async function loadFunction() {
+  const loadFunction = useCallback(async () => {
     if (id !== undefined) {
       const result = await getSchedule(id);
       if (
@@ -154,7 +149,7 @@ export default function GovernmentSchedule() {
     } else {
       setLoadScheduleState(loadingStateEnum.failed);
     }
-  }
+  }, [id]);
 
   useEffect(() => {
     if (id === 'create') {
@@ -162,333 +157,331 @@ export default function GovernmentSchedule() {
     } else {
       loadFunction();
     }
-  }, []);
+  }, [id, loadFunction]);
 
-  return (
-    <>
-      {(isCreatingSchedule || loadScheduleState === loadingStateEnum.success) &&
-      deleteState !== loadingStateEnum.success ? (
-        <ScrollView
-          style={{
-            width,
-            height,
-            backgroundColor: Colors.white,
+  if (deleteState === loadingStateEnum.success) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            navigate('/profile/government/calendar/schedule');
           }}
         >
+          <Text>Back</Text>
+        </Pressable>
+        <Text>Schedule Deleted</Text>
+      </View>
+    )
+  }
+
+  if (isCreatingSchedule || loadScheduleState === loadingStateEnum.success) {
+    return (
+      <ScrollView
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            navigate('/profile/government/calendar/schedule');
+          }}
+        >
+          <Text>Back</Text>
+        </Pressable>
+        <View
+          style={{
+            width,
+            alignContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Text>{isCreatingSchedule ? 'Create' : 'Edit'} Schedule</Text>
+        </View>
+        <View style={{ height: height * 0.2 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text>Proper Name:</Text>
+            <TextInput
+              style={{ width }}
+              value={scheduleProperName}
+              onChangeText={setScheduleProperName}
+              placeholder="Proper Name ex. Schedule One"
+            />
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            <Text>Descriptive Name:</Text>
+            <TextInput
+              style={{ width }}
+              value={scheduleDescriptiveName}
+              onChangeText={setScheduleDescriptiveName}
+              placeholder="Descriptive Name ex. Regular Schedule"
+            />
+          </View>
+          <View
+            style={{ margin: 5, borderRadius: 5, backgroundColor: '#FF6700' }}
+          >
+            <View style={{ margin: 10, flexDirection: 'row' }}>
+              <WarningIcon width={14} height={14} />
+              <Text>
+                Keep descriptive name short as it is used in the calendar widget
+              </Text>
+            </View>
+          </View>
+        </View>
+        <Text>New Periods</Text>
+        <ScrollView style={{ height: height * 0.5 }}>
+          {newPeriods.map(period => (
+            <PeriodBlock
+              period={period}
+              periods={newPeriods}
+              onSetNewPeriods={out => {
+                setNewPeriods([...out]);
+              }}
+            />
+          ))}
+        </ScrollView>
+        {newPeriods.length < 20 ? (
           <Pressable
             onPress={() => {
-              navigate('/profile/government/calendar/schedule');
+              setNewPeriods([
+                ...newPeriods,
+                {
+                  startHour: new Date().getHours(),
+                  startMinute: new Date().getMinutes(),
+                  endHour: new Date().getHours(),
+                  endMinute: new Date().getMinutes(),
+                  id: createUUID(),
+                },
+              ]);
             }}
           >
-            <Text>Back</Text>
+            <Text>Add Period</Text>
           </Pressable>
-          <View
-            style={{
-              width,
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text>{isCreatingSchedule ? 'Create' : 'Edit'} Schedule</Text>
-          </View>
-          <View style={{ height: height * 0.2 }}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text>Proper Name:</Text>
-              <TextInput
-                style={{ width }}
-                value={scheduleProperName}
-                onChangeText={setScheduleProperName}
-                placeholder="Proper Name ex. Schedule One"
-              />
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Text>Descriptive Name:</Text>
-              <TextInput
-                style={{ width }}
-                value={scheduleDescriptiveName}
-                onChangeText={setScheduleDescriptiveName}
-                placeholder="Descriptive Name ex. Regular Schedule"
-              />
-            </View>
-            <View
-              style={{ margin: 5, borderRadius: 5, backgroundColor: '#FF6700' }}
-            >
-              <View style={{ margin: 10, flexDirection: 'row' }}>
-                <WarningIcon width={14} height={14} />
-                <Text>
-                  Keep descriptive name short as it is used in the calendar
-                  widget
-                </Text>
-              </View>
-            </View>
-          </View>
-          <Text>New Periods</Text>
-          <ScrollView style={{ height: height * 0.5 }}>
-            {newPeriods.map(period => (
-              <PeriodBlock
-                period={period}
-                periods={newPeriods}
-                onSetNewPeriods={out => {
-                  setNewPeriods([...out]);
+        ) : null}
+        <Pressable
+          onPress={() => setIsPickingColor(true)}
+          style={{
+            margin: 10,
+            backgroundColor: '#FFFFFF',
+            shadowColor: 'black',
+            shadowOffset: { width: 1, height: 1 },
+            shadowOpacity: 1,
+            shadowRadius: 5,
+            borderRadius: 15,
+          }}
+        >
+          <View style={{ margin: 10 }}>
+            <Text>Color</Text>
+            <View style={{ flexDirection: 'row', marginTop: 10 }}>
+              <View
+                style={{
+                  width: 32.4,
+                  height: 32.4,
+                  backgroundColor: color,
+                  borderRadius: 7,
+                  borderWidth: 2,
+                  borderColor: Colors.black,
                 }}
               />
-            ))}
-          </ScrollView>
-          {newPeriods.length < 20 ? (
-            <Pressable
-              onPress={() => {
-                setNewPeriods([
-                  ...newPeriods,
-                  {
-                    startHour: new Date().getHours(),
-                    startMinute: new Date().getMinutes(),
-                    endHour: new Date().getHours(),
-                    endMinute: new Date().getMinutes(),
-                    id: createUUID(),
-                  },
-                ]);
-              }}
-            >
-              <Text>Add Period</Text>
-            </Pressable>
-          ) : null}
-          <Pressable
-            onPress={() => setIsPickingColor(true)}
-            style={{
-              margin: 10,
-              backgroundColor: '#FFFFFF',
-              shadowColor: 'black',
-              shadowOffset: { width: 1, height: 1 },
-              shadowOpacity: 1,
-              shadowRadius: 5,
-              borderRadius: 15,
-            }}
-          >
-            <View style={{ margin: 10 }}>
-              <Text>Color</Text>
-              <View style={{ flexDirection: 'row', marginTop: 10 }}>
+              <Pressable style={{ marginLeft: 5 }}>
+                <ColorPicker
+                  style={{ width: width - 77.4, height: 16.5 }}
+                  value={color}
+                  onComplete={e => setColor(e.hex)}
+                >
+                  <InputWidget
+                    disableAlphaChannel
+                    defaultFormat="HEX"
+                    formats={['HEX']}
+                    inputTitleStyle={{ display: 'none' }}
+                  />
+                </ColorPicker>
+              </Pressable>
+              <Modal visible={isPickingColor} animationType="slide">
                 <View
                   style={{
-                    width: 32.4,
-                    height: 32.4,
-                    backgroundColor: color,
-                    borderRadius: 7,
-                    borderWidth: 2,
-                    borderColor: Colors.black,
+                    alignContent: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width,
+                    height,
                   }}
-                />
-                <Pressable style={{ marginLeft: 5 }}>
+                >
+                  <Pressable
+                    onPress={() => setIsPickingColor(false)}
+                    style={{
+                      position: 'absolute',
+                      top: height * 0.1,
+                      left: width * 0.1,
+                    }}
+                  >
+                    <CloseIcon width={14} height={14} />
+                  </Pressable>
                   <ColorPicker
-                    style={{ width: width - 77.4, height: 16.5 }}
+                    style={{ width: width * 0.7 }}
                     value={color}
                     onComplete={e => setColor(e.hex)}
                   >
-                    <InputWidget
-                      disableAlphaChannel
-                      defaultFormat="HEX"
-                      formats={['HEX']}
-                      inputTitleStyle={{ display: 'none' }}
+                    <View style={{ flexDirection: 'row' }}>
+                      <Preview
+                        hideText
+                        hideInitialColor
+                        style={{
+                          width: width * 0.1,
+                          height: height * 0.5,
+                          borderTopRightRadius: 0,
+                          borderBottomRightRadius: 0,
+                        }}
+                      />
+                      <View
+                        style={{
+                          borderTopRightRadius: 5,
+                          borderBottomRightRadius: 5,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <Panel1
+                          style={{
+                            width: width * 0.6,
+                            height: height * 0.5,
+                            borderRadius: 0,
+                          }}
+                          renderThumb={e => (
+                            <CustomColorThumb e={e} diameter={15} />
+                          )}
+                        />
+                      </View>
+                    </View>
+                    <HueSlider
+                      renderThumb={e => <CustomColorThumb e={e} />}
+                      style={{ height: 30, marginTop: 10 }}
                     />
                   </ColorPicker>
-                </Pressable>
-                <Modal visible={isPickingColor} animationType="slide">
-                  <View
+                  <Pressable
                     style={{
+                      marginTop: 10,
+                      backgroundColor: Colors.darkGray,
+                      borderRadius: 15,
+                      width: width * 0.5,
                       alignContent: 'center',
-                      justifyContent: 'center',
                       alignItems: 'center',
-                      width,
-                      height,
+                      justifyContent: 'center',
                     }}
+                    onPress={() => setIsPickingColor(false)}
                   >
-                    <Pressable
-                      onPress={() => setIsPickingColor(false)}
-                      style={{
-                        position: 'absolute',
-                        top: height * 0.1,
-                        left: width * 0.1,
-                      }}
-                    >
-                      <CloseIcon width={14} height={14} />
-                    </Pressable>
-                    <ColorPicker
-                      style={{ width: width * 0.7 }}
-                      value={color}
-                      onComplete={e => setColor(e.hex)}
-                    >
-                      <View style={{ flexDirection: 'row' }}>
-                        <Preview
-                          hideText
-                          hideInitialColor
-                          style={{
-                            width: width * 0.1,
-                            height: height * 0.5,
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                          }}
-                        />
-                        <View
-                          style={{
-                            borderTopRightRadius: 5,
-                            borderBottomRightRadius: 5,
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <Panel1
-                            style={{
-                              width: width * 0.6,
-                              height: height * 0.5,
-                              borderRadius: 0,
-                            }}
-                            renderThumb={e => (
-                              <CustomColorThumb e={e} diameter={15} />
-                            )}
-                          />
-                        </View>
-                      </View>
-                      <HueSlider
-                        renderThumb={e => <CustomColorThumb e={e} />}
-                        style={{ height: 30, marginTop: 10 }}
-                      />
-                    </ColorPicker>
-                    <Pressable
-                      style={{
-                        marginTop: 10,
-                        backgroundColor: Colors.darkGray,
-                        borderRadius: 15,
-                        width: width * 0.5,
-                        alignContent: 'center',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                      onPress={() => setIsPickingColor(false)}
-                    >
-                      <Text style={{ margin: 10, color: Colors.white }}>
-                        OK
-                      </Text>
-                    </Pressable>
-                  </View>
-                </Modal>
-              </View>
+                    <Text style={{ margin: 10, color: Colors.white }}>
+                      OK
+                    </Text>
+                  </Pressable>
+                </View>
+              </Modal>
             </View>
-          </Pressable>
+          </View>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            if (
+              createScheduleLoadingState === loadingStateEnum.notStarted &&
+              isValidHexaCode(color)
+            ) {
+              submitSchedule();
+            }
+          }}
+          style={{
+            margin: 10,
+            backgroundColor: Colors.white,
+            shadowColor: 'black',
+            shadowOffset: { width: 1, height: 1 },
+            shadowOpacity: 1,
+            shadowRadius: 5,
+            borderRadius: 15,
+          }}
+        >
+          <Text style={{ margin: 10 }}>
+            {!isValidHexaCode(color)
+              ? 'Cannot Start'
+              : createScheduleLoadingState === loadingStateEnum.notStarted
+              ? `${isCreatingSchedule ? 'Create' : 'Save'} Schedule`
+              : createScheduleLoadingState === loadingStateEnum.loading
+              ? 'Loading'
+              : createScheduleLoadingState === loadingStateEnum.success
+              ? 'Success'
+              : 'Failed'}
+          </Text>
+        </Pressable>
+        {!isCreatingSchedule ? (
           <Pressable
-            onPress={() => {
-              if (
-                createScheduleLoadingState === loadingStateEnum.notStarted &&
-                isValidHexaCode(color)
-              ) {
-                submitSchedule();
-              }
-            }}
+            onPress={() => deleteFunction()}
             style={{
               margin: 10,
-              backgroundColor: Colors.white,
-              shadowColor: 'black',
-              shadowOffset: { width: 1, height: 1 },
-              shadowOpacity: 1,
-              shadowRadius: 5,
+              backgroundColor: Colors.danger,
               borderRadius: 15,
             }}
           >
             <Text style={{ margin: 10 }}>
-              {!isValidHexaCode(color)
-                ? 'Cannot Start'
-                : createScheduleLoadingState === loadingStateEnum.notStarted
-                ? `${isCreatingSchedule ? 'Create' : 'Save'} Schedule`
-                : createScheduleLoadingState === loadingStateEnum.loading
-                ? 'Loading'
-                : createScheduleLoadingState === loadingStateEnum.success
-                ? 'Success'
-                : 'Failed'}
+              {deleteState == loadingStateEnum.notStarted
+                ? 'DELETE'
+                : deleteState === loadingStateEnum.loading
+                ? 'LOADING'
+                : 'FAILED'}
             </Text>
           </Pressable>
-          {!isCreatingSchedule ? (
-            <Pressable
-              onPress={() => deleteFunction()}
-              style={{
-                margin: 10,
-                backgroundColor: Colors.danger,
-                borderRadius: 15,
-              }}
-            >
-              <Text style={{ margin: 10 }}>
-                {deleteState == loadingStateEnum.notStarted
-                  ? 'DELETE'
-                  : deleteState === loadingStateEnum.loading
-                  ? 'LOADING'
-                  : 'FAILED'}
-              </Text>
-            </Pressable>
-          ) : null}
-        </ScrollView>
-      ) : (
-        <>
-          {loadScheduleState === loadingStateEnum.loading ? (
-            <View
-              style={{
-                width,
-                height,
-                backgroundColor: Colors.white,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Pressable
-                onPress={() => {
-                  navigate('/profile/government/calendar/schedule');
-                }}
-                style={{ position: 'absolute', top: 0, left: 0 }}
-              >
-                <Text>Back</Text>
-              </Pressable>
-              <ProgressView width={width * 0.1} height={height * 0.1} />
-              <Text>Loading</Text>
-            </View>
-          ) : (
-            <>
-              {deleteState === loadingStateEnum.success ? (
-                <View
-                  style={{
-                    width,
-                    height,
-                    backgroundColor: Colors.white,
-                  }}
-                >
-                  <Pressable
-                    onPress={() => {
-                      navigate('/profile/government/calendar/schedule');
-                    }}
-                  >
-                    <Text>Back</Text>
-                  </Pressable>
-                  <Text>Schedule Deleted</Text>
-                </View>
-              ) : (
-                <View
-                  style={{
-                    width,
-                    height,
-                    backgroundColor: Colors.white,
-                  }}
-                >
-                  <Pressable
-                    onPress={() => {
-                      navigate('/profile/government/calendar/schedule');
-                    }}
-                  >
-                    <Text>Back</Text>
-                  </Pressable>
-                  <Text>Failed</Text>
-                </View>
-              )}
-            </>
-          )}
-        </>
-      )}
-    </>
+        ) : null}
+      </ScrollView>
+    )
+  }
+
+  if (loadScheduleState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            navigate('/profile/government/calendar/schedule');
+          }}
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        >
+          <Text>Back</Text>
+        </Pressable>
+        <ProgressView width={width * 0.1} height={height * 0.1} />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  return (
+    <View
+      style={{
+        width,
+        height,
+        backgroundColor: Colors.white,
+      }}
+    >
+      <Pressable
+        onPress={() => {
+          navigate('/profile/government/calendar/schedule');
+        }}
+      >
+        <Text>Back</Text>
+      </Pressable>
+      <Text>Failed</Text>
+    </View>
   );
 }
 
@@ -505,19 +498,19 @@ function PeriodBlock({
     useState<boolean>(false);
   const [isSelectingEndTime, setIsSelectingEndTime] = useState<boolean>(false);
 
-  function deleteItem(period: periodType) {
+  function deleteItem(deletePeriod: periodType) {
     const newNewPeriodsArray: periodType[] = periods;
     if (newNewPeriodsArray.length === 1) {
       newNewPeriodsArray.pop();
       onSetNewPeriods(newNewPeriodsArray);
     } else {
       const indexToRemove = newNewPeriodsArray.findIndex(e => {
-        return e.id === period.id;
+        return e.id === deletePeriod.id;
       });
       if (indexToRemove !== -1) {
         newNewPeriodsArray.splice(indexToRemove, indexToRemove);
       } else {
-        // TO DO something went wrong this should not be possible though
+        // TODO something went wrong this should not be possible though
       }
       onSetNewPeriods(newNewPeriodsArray);
     }
@@ -553,8 +546,8 @@ function PeriodBlock({
           onDismiss={() => setIsSelectingStartTime(false)}
           onConfirm={e => {
             const newPeriods: periodType[] = periods;
-            const update = newPeriods.findIndex(e => {
-              return e.id === period.id;
+            const update = newPeriods.findIndex(testIndex => {
+              return testIndex.id === period.id;
             });
             if (update !== -1) {
               newPeriods[update].startHour = e.hours;
@@ -582,8 +575,8 @@ function PeriodBlock({
           onDismiss={() => setIsSelectingEndTime(false)}
           onConfirm={e => {
             const newPeriods: periodType[] = periods;
-            const update = newPeriods.findIndex(e => {
-              return e.id === period.id;
+            const update = newPeriods.findIndex(testIndex => {
+              return testIndex.id === period.id;
             });
             if (update !== -1) {
               newPeriods[update].endHour = e.hours;
@@ -609,10 +602,10 @@ function PeriodBlock({
 
 function CustomColorThumb({
   e,
-  diameter,
+  diameter = undefined,
 }: {
   e: RenderThumbProps;
-  diameter?: number;
+  diameter: number | undefined;
 }) {
   const animatedStyle = useAnimatedStyle(() => {
     return {

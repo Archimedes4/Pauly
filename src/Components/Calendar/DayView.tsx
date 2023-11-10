@@ -1,18 +1,18 @@
-//
-//  DayView.tsx
-//  Pauly
-//
-//  Created by Andrew Mainella on 2023-07-21.
-//
+/*
+  Pauly
+  Andrew Mainella
+  July 7 2023
+  DayView.tsx
+  This holds the events as a day meaning each hour is represented and a red line is present at the current time.
+*/
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, ScrollView, useColorScheme, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
   calculateIfShowing,
   computeEventHeight,
   findTimeOffset,
-  isDateToday,
 } from '../../Functions/calendar/calendarFunctions';
 import { RootState } from '../../Redux/store';
 import createUUID from '../../Functions/ultility/createUUID';
@@ -78,7 +78,7 @@ export default function DayView({
     }
   }
 
-  function loadCalendarContent() {
+  const loadCalendarContent = useCallback(() => {
     const currentDate = new Date();
     const resultHeightTopOffset = findTimeOffset(currentDate, height);
     setHeightOffsetTop(resultHeightTopOffset);
@@ -91,7 +91,7 @@ export default function DayView({
       y: resultHeightTopOffset,
       animated: false,
     });
-  }
+  }, [height]);
 
   // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
   // Upadtes every second
@@ -112,12 +112,12 @@ export default function DayView({
     }, 1000);
 
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [currentMinuteInt, height]); 
+  }, [currentMinuteInt, height]);
 
   useEffect(() => {
     setHourLength(height * 0.1);
     loadCalendarContent();
-  }, []);
+  }, [height, loadCalendarContent]);
 
   async function getClassesEvents() {
     const result = await getClassEventsFromDay();
@@ -232,13 +232,11 @@ function EventBlock({
   width,
   height,
   eventPane,
-  setEventPane,
 }: {
   event: eventType;
   width: number;
   height: number;
   eventPane: number[][];
-  setEventPane: (item: number[][]) => void;
 }) {
   const EventHeight = computeEventHeight(
     new Date(event.startTime),

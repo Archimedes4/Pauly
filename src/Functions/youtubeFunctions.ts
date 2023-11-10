@@ -1,6 +1,8 @@
 import { loadingStateEnum } from '../types';
 
-export default async function getYoutubeVideos(pageToken?: string | undefined): Promise<
+export default async function getYoutubeVideos(
+  pageToken: string | undefined = undefined,
+): Promise<
   | {
       result: loadingStateEnum.success;
       data: youtubeVideoType[];

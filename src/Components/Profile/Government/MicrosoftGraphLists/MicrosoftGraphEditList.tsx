@@ -1,4 +1,4 @@
-import { View, Text, Button, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import * as Clipboard from 'expo-clipboard';
@@ -133,12 +133,11 @@ export default function MicrosoftGraphEditList() {
           >
             <Text>{item.displayName}</Text>
             {item.indexed === false ? (
-              <Button
-                title="Index This Propertie"
-                onPress={() => {
-                  indexColumn(item.id);
-                }}
-              />
+              <Pressable onPress={() => {
+                indexColumn(item.id);
+              }}>
+                <Text>Index this Property</Text>
+              </Pressable>
             ) : (
               <Text>Already Indexed</Text>
             )}
