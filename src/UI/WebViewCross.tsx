@@ -83,9 +83,11 @@ export default function WebViewCross({
       </View>
     );
   }
-  return (
-    <View style={[{ margin: 10 }, style]}>
-      {rawHtml !== undefined ? { rawHtml } : null}
-    </View>
-  );
+  if (rawHtml !== undefined) {
+    return (
+      <View style={[{ margin: 10 }, style]}>
+        <div dangerouslySetInnerHTML={{ __html: rawHtml }} />
+      </View>
+    );
+  }
 }

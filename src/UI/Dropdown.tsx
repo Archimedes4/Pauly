@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import { View, Text, Pressable, StyleProp, ViewStyle } from 'react-native';
 import React, { ReactNode, useEffect, useState } from 'react';
 
@@ -16,11 +17,11 @@ export default function Dropdown({
   children: ReactNode;
   selectedIndex: number;
   onSetSelectedIndex: (item: number) => void;
-  style?: StyleProp<ViewStyle>;
-  expandedStyle?: StyleProp<ViewStyle>;
-  options?: string[];
-  setExpanded?: (item: boolean) => void;
-  expanded?: boolean;
+  style?: StyleProp<ViewStyle> | undefined;
+  expandedStyle?: StyleProp<ViewStyle> | undefined;
+  options?: string[] | undefined;
+  setExpanded?: undefined | ((item: boolean) => void);
+  expanded?: boolean | undefined;
 }) {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   useEffect(() => {
@@ -28,63 +29,62 @@ export default function Dropdown({
       setIsExpanded(expanded);
     }
   }, [expanded]);
+  if (isExpanded) {
+    return (
+      <View style={[expandedStyle, { position: 'absolute' }]}>
+        {options ? (
+          <>
+            {options.map((option, index) => (
+              <Pressable
+                key={`Option_${index}`}
+                onPress={() => {
+                  onSetSelectedIndex(index);
+                  setIsExpanded(false);
+                  if (setExpanded) {
+                    setExpanded(false);
+                  }
+                }}
+              >
+                <Text>{option}</Text>
+              </Pressable>
+            ))}
+          </>
+        ) : (
+          <>
+            {React.Children.map(children, (child, index) => (
+              <Pressable
+                key={`Option_${index}`}
+                onPress={() => {
+                  onSetSelectedIndex(index);
+                  setIsExpanded(false);
+                  if (setExpanded) {
+                    setExpanded(true);
+                  }
+                }}
+              >
+                {child}
+              </Pressable>
+            ))}
+          </>
+        )}
+      </View>
+    );
+  }
   return (
-    <>
-      {isExpanded ? (
-        <View style={[expandedStyle, { position: 'absolute' }]}>
-          {options ? (
-            <>
-              {options.map((option, index) => (
-                <Pressable
-                  key={`Option_${index}`}
-                  onPress={() => {
-                    onSetSelectedIndex(index);
-                    setIsExpanded(false);
-                    if (setExpanded) {
-                      setExpanded(false);
-                    }
-                  }}
-                >
-                  <Text>{option}</Text>
-                </Pressable>
-              ))}
-            </>
-          ) : (
-            <>
-              {React.Children.map(children, (child, index) => (
-                <Pressable
-                  key={`Option_${index}`}
-                  onPress={() => {
-                    onSetSelectedIndex(index);
-                    setIsExpanded(false);
-                    if (setExpanded) {
-                      setExpanded(true);
-                    }
-                  }}
-                >
-                  <>{child}</>
-                </Pressable>
-              ))}
-            </>
-          )}
-        </View>
+    <Pressable
+      onPress={() => {
+        setIsExpanded(true);
+        if (setExpanded) {
+          setExpanded(true);
+        }
+      }}
+      style={style}
+    >
+      {options ? (
+        <Text>{options[selectedIndex]}</Text>
       ) : (
-        <Pressable
-          onPress={() => {
-            setIsExpanded(true);
-            if (setExpanded) {
-              setExpanded(true);
-            }
-          }}
-          style={style}
-        >
-          {options ? (
-            <Text>{options[selectedIndex]}</Text>
-          ) : (
-            <>{children[selectedIndex]}</>
-          )}
-        </Pressable>
+        children[selectedIndex]
       )}
-    </>
+    </Pressable>
   );
 }

@@ -48,7 +48,7 @@ export default function AppMain({
   );
 
   const redirectUri = makeRedirectUri({
-    scheme: 'Pauly',
+    scheme: 'com.Archimedes4.Pauly',
     path: 'auth',
   });
 

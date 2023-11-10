@@ -1,5 +1,5 @@
 # <img src="./assets/images/PaulyLogo.png" height="28px" alt="logo"/> Pauly
-Last updated October 28 2023 \
+Last updated November 9 2023 \
 Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
 Saint Paul's High School Student Council 2023-2024
@@ -81,13 +81,13 @@ Commands to setup Azure services
   az login
 ```
 
-https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-create
+https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-create \
 Save appId for use later
 ```
   az ad app create --display-name Pauly   
 ```
 
-https://learn.microsoft.com/en-us/cli/azure/ad/signed-in-user?view=azure-cli-latest
+https://learn.microsoft.com/en-us/cli/azure/ad/signed-in-user?view=azure-cli-latest \
 Save userId for use later
 ```
   az ad signed-in-user show
@@ -98,29 +98,30 @@ https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#a
   az ad app owner add --id {appId} --owner-object-id {userId}
 ```
 
-https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update 
+https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update \
 update azure ad app
 ```
-  az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['http://localhost:19006/auth']},publicClientApplication: {redirectUris: ['Pauly://auth']}, signInAudience: "AzureADMyOrg"}"
+  az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['http://localhost:19006/auth', 'https://paulysphs.ca']},publicClientApplication: {redirectUris: ['com.Archimedes4.Pauly://auth']}, signInAudience: "AzureADMyOrg"}"
 ```
 
 #### Create Static Web App
 
-https://learn.microsoft.com/en-us/azure/static-web-apps/get-started-cli?tabs=vanilla-javascript
-The resource group that you use will be tied to the web app. Some other resource group can be used but this method is preferable.
+https://learn.microsoft.com/en-us/azure/static-web-apps/get-started-cli?tabs=vanilla-javascript \
+Note: The resource group that you use will be tied to the web app. Some other resource group can be used but this method is preferable.
+##### Create Resouce Group
 ```
   az group create \
   --name Pauly-SWA \
   --location "eastus2"
 ```
-
+##### Create static web app
 ```
   az staticwebapp create \
     --name Pauly-Static-Web-App \
     --resource-group Pauly-SWA \
     --source https://github.com/AMCanada16/Pauly.git \
     --location "eastus2" \
-    --branch Static-Web-Live \
+    --branch master \
     --app-location "/web-build" \
     --output-location "build" \
     --login-with-github
@@ -138,6 +139,12 @@ https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az
 ```
   az functionapp create --name Pauly-Functions --resource-group Pauly-SWA --storage-account paulystorage  --consumption-plan-location eastus2 --runtime node --functions-version 4
 ```
+#### Allow cors for function app
+https://learn.microsoft.com/en-us/cli/azure/functionapp/cors?view=azure-cli-latest \
+Note: http://localhost:19006 is for development purposes and can be removed.
+```
+  az functionapp cors add -g Pauly-SWA -n Pauly-Functions --allowed-origins https://www.paulysphs.ca https://paulysphs.ca http://localhost:19006
+```
 
 #### Attach to github workflow
 https://learn.microsoft.com/en-us/cli/azure/functionapp/deployment/github-actions?view=azure-cli-latest
@@ -153,6 +160,7 @@ Pauly has a config file named PaulyConfig which contains three values these valu
   3. org id (the id of Pauly's group)
 
 ### Setp #3 Initilize Pauly
+Go to the admin panel and initilize pauly. Code will break if Pauly is already initilized. If hard reseting Pauly delete Pauly group and Pauly extensions. This can all be done in the graph section of Government.
 ![Graph Permissions](./ReamMeImages/GraphPermissions.png)
 
 ## Graph Permissions

@@ -1,9 +1,9 @@
 /*
+  Pauly
   Andrew Mainella
   November 9 2023
   AppMain.web.tsx
   Holds authentication for web, using the native azure msal library
-  
 */
 import { SafeAreaView, ScaledSize } from 'react-native';
 import React, { useEffect } from 'react';

@@ -1,7 +1,7 @@
 /*
   Pauly
   Andrew Mainella
-  November 9 2023s
+  November 9 2023
 */
 import {
   View,
