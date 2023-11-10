@@ -161,9 +161,9 @@ function AuthDeep({
     }
   }, [dispatch, instance, mounted]);
 
-  useEffect(() => {
-    refreshToken();
-  }, [authenticationCall, refreshToken]);
+  // useEffect(() => {
+  //   refreshToken();
+  // }, [authenticationCall, refreshToken]);
 
   return (
     <SafeAreaView
