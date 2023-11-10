@@ -29,13 +29,11 @@ import {
 } from '../src/Functions/handleGovernmentLogin';
 import { RootState } from '../src/Redux/store';
 
-console.log(window.location.href.split('#')[0].split('?')[0]);
 // This is for the microsoft authentication on web.
 const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: window.location.href.split('#')[0].split('?')[0],
   },
 });
 
@@ -137,6 +135,7 @@ function AuthDeep({
 
   useEffect(() => {
     getAuthToken(false);
+    console.log(window.location.href.split('#')[0].split('?')[0]);
   }, []);
 
   const refreshToken = useCallback(async () => {

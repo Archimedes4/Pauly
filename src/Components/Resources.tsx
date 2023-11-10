@@ -1,7 +1,7 @@
 /*
+  Pauly
   Andrew Mainella
   20 October 2023
-  Pauly
   Resources.tsx
   This is the main component for the resources section of pauly.
   See README.md for more information about the resources section.
