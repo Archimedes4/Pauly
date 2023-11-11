@@ -40,6 +40,7 @@ export default async function getUsersTasks(
             taskData.value[index].status as keyof typeof taskStatusEnum
           ],
         excess: false,
+        state: loadingStateEnum.notStarted,
       });
     }
     resultTasks.unshift({
@@ -48,6 +49,7 @@ export default async function getUsersTasks(
       id: '',
       status: taskStatusEnum.notStarted,
       excess: true,
+      state: loadingStateEnum.notStarted,
     });
     return { result: loadingStateEnum.success, data: resultTasks };
   }

@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 10 2023
+*/
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
 import { Image } from 'react-native';
@@ -12,21 +17,6 @@ export default function PDFView({ width }: { width: number }) {
     (state: RootState) => state.pdfData,
   );
   const [imageHeight, setImageHeight] = useState<number>(0);
-  // const dispatch = useDispatch();
-
-  // async function loadData() {
-  //   const dataResult = await fetch(powerpointBlob);
-  //   if (dataResult.ok) {
-  //     const blob = await dataResult.blob();
-  //     const file = new Blob([blob], { type: 'application/pdf' });
-  //     const fileURL = URL.createObjectURL(file);
-  //     dispatch(pdfDataSlice.actions.setInject(fileURL));
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   loadData();
-  // }, []);
 
   function tapChangePage() {
     if (pageNumber + 1 < images.length) {

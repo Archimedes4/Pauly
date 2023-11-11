@@ -337,6 +337,7 @@ declare global {
     importance: taskImportanceEnum;
     status: taskStatusEnum;
     excess: boolean;
+    state: loadingStateEnum;
   };
   type paulyEventTypes = 'schoolDay' | 'schoolYear';
   type eventType = {
