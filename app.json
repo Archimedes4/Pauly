@@ -39,9 +39,11 @@
       "intentFilters": [
         {
           "action": "VIEW",
+          "autoVerify": true,
           "data": [
             {
-              "scheme": "com.Archimedes4.Pauly.auth"
+              "scheme": "com.Archimedes4.Pauly",
+              "host": "auth"
             }
           ],
           "category": [

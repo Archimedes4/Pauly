@@ -231,4 +231,5 @@ function App() {
   );
 }
 
+// <meta name="apple-itunes-app" content="app-id=6445966725" />
 export default App;
