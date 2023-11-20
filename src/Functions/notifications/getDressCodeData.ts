@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  getDressCodeData.ts
+*/
 import store from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
 import callMsGraph from '../ultility/microsoftAssets';
@@ -26,7 +32,7 @@ export default async function getDressCodeData(): Promise<{
           dressCodeIncentives: [],
         });
       } catch {
-        continue;
+        //continue on
       }
     }
     return { result: loadingStateEnum.success, data: newDressCodes };

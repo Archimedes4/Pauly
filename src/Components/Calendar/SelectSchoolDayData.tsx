@@ -143,7 +143,7 @@ function SchoolDaySelect({
       (loadingState !== loadingStateEnum.success || timetable === undefined) ? (
         <Text>Failed</Text>
       ) : null}
-      {loadingState === loadingStateEnum.success && timetable !== undefined ? 
+      {loadingState === loadingStateEnum.success && timetable !== undefined ? (
         <ScrollView style={{ width, height }}>
           {timetable.days.map(day => (
             <Pressable
@@ -176,7 +176,7 @@ function SchoolDaySelect({
             </Pressable>
           ))}
         </ScrollView>
-        : null}
+      ) : null}
     </View>
   );
 }

@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  ScrollingTextAnimation.tsx
+  Used in Home view for current break point = 0
+*/
 import { View, Text, Animated, Easing, Platform } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useFonts } from 'expo-font';

@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  microsoftGroupsFunctions.ts
+  common function to access microsoft group/teams data
+*/
 import { loadingStateEnum, resourceResponce } from '../types';
 import getResource from './getResources';
 import callMsGraph from './ultility/microsoftAssets';
@@ -95,7 +102,7 @@ export async function getPosts(
   return { result: loadingStateEnum.failed };
 }
 
-// Id group id
+// Id group id of a microsoft teams group
 export async function getResourceChannels(
   id: string,
 ): Promise<

@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  Slider.tsx
+  Used in commissions
+*/
 import React, { useEffect, useRef } from 'react';
 import {
   View,
@@ -105,7 +112,7 @@ function Box({
       />
     </View>
   );
-};
+}
 
 interface SliderProps {
   width: number;

@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  getLocation.ts
+*/
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import { locationStateEnum } from '../../types';

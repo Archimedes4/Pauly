@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  CalendarTypePicker.tsx
+  Top compoent in calendar picker
+*/
 import { View, Text, Animated, Pressable } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

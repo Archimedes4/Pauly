@@ -195,216 +195,215 @@ export default function CommissionsView({
           />
           <Text>Loading</Text>
         </View>
-      ) : (commissionState === loadingStateEnum.success && commissionData !== undefined) ?
-      (
+      ) : commissionState === loadingStateEnum.success &&
+        commissionData !== undefined ? (
         <View>
-              <View style={{ height: height * 0.1, overflow: 'hidden' }}>
-                <Pressable
-                  onPress={() => onClose()}
-                  style={{ marginTop: 10, marginLeft: 10 }}
-                >
-                  <CloseIcon
-                    width={width < height ? width * 0.05 : height * 0.05}
-                    height={width < height ? width * 0.05 : height * 0.05}
+          <View style={{ height: height * 0.1, overflow: 'hidden' }}>
+            <Pressable
+              onPress={() => onClose()}
+              style={{ marginTop: 10, marginLeft: 10 }}
+            >
+              <CloseIcon
+                width={width < height ? width * 0.05 : height * 0.05}
+                height={width < height ? width * 0.05 : height * 0.05}
+              />
+            </Pressable>
+            <View
+              style={{
+                width: width * 0.9,
+                alignContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text style={{ fontSize: height * 0.03 }}>
+                Commission: {commissionData.title}
+              </Text>
+            </View>
+          </View>
+          <ScrollView
+            style={{ height: isOverflowing ? height * 0.6 : height * 0.7 }}
+          >
+            <View
+              onLayout={e => {
+                if (e.nativeEvent.layout.height >= height * 0.6) {
+                  setIsOverflowing(true);
+                  setEvaluatedOverflow(true);
+                } else if (!evaluatedOverflow) {
+                  setIsOverflowing(false);
+                }
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  margin: 10,
+                  backgroundColor: Colors.maroon,
+                  borderRadius: 15,
+                  shadowOffset: { width: 2, height: 3 },
+                }}
+              >
+                <View style={{ margin: 10, flexDirection: 'row' }}>
+                  <Image
+                    source={require('../../../assets/images/PaulyLogo.png')}
+                    resizeMode="contain"
+                    style={{ width: 50, height: 50 }}
                   />
-                </Pressable>
-                <View
-                  style={{
-                    width: width * 0.9,
-                    alignContent: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Text style={{ fontSize: height * 0.03 }}>
-                    Commission: {commissionData.title}
+                  <Text
+                    style={{
+                      fontSize: 45,
+                      color: Colors.white,
+                      fontFamily: 'BukhariScript',
+                      width: 100,
+                      paddingLeft: 10,
+                    }}
+                  >
+                    {commissionData.points}
                   </Text>
                 </View>
               </View>
-              <ScrollView
-                style={{ height: isOverflowing ? height * 0.6 : height * 0.7 }}
-              >
-                <View
-                  onLayout={e => {
-                    if (e.nativeEvent.layout.height >= height * 0.6) {
-                      setIsOverflowing(true);
-                      setEvaluatedOverflow(true);
-                    } else if (!evaluatedOverflow) {
-                      setIsOverflowing(false);
-                    }
-                  }}
-                >
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      margin: 10,
-                      backgroundColor: Colors.maroon,
-                      borderRadius: 15,
-                      shadowOffset: { width: 2, height: 3 },
-                    }}
-                  >
-                    <View style={{ margin: 10, flexDirection: 'row' }}>
-                      <Image
-                        source={require('../../../assets/images/PaulyLogo.png')}
-                        resizeMode="contain"
-                        style={{ width: 50, height: 50 }}
-                      />
-                      <Text
-                        style={{
-                          fontSize: 45,
-                          color: Colors.white,
-                          fontFamily: 'BukhariScript',
-                          width: 100,
-                          paddingLeft: 10,
-                        }}
-                      >
-                        {commissionData.points}
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={{ marginLeft: width * 0.05 }}>
-                    <WebViewCross html={messageData} width={width * 0.7} />
-                  </View>
-                  {commissionData.value === commissionTypeEnum.Image ||
-                  commissionData.value === commissionTypeEnum.ImageLocation ? (
-                    <>
-                      {imageUri !== '' ? (
-                        <Image
-                          source={{ uri: imageUri }}
-                          width={width * 0.7}
-                          resizeMode="center"
-                          style={{
-                            width: width * 0.7,
-                            height: imageHeight,
-                            marginLeft: 'auto',
-                            marginRight: 'auto',
-                            alignContent: 'center',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: '#FFFFFF',
-                            shadowOffset: { width: 0, height: 1 },
-                            shadowOpacity: 0.8,
-                            shadowRadius: 10,
-                            borderRadius: 15,
-                          }}
-                        />
-                      ) : (
-                        <View
-                          style={{
-                            width: width * 0.7,
-                            height: height * 0.3,
-                            marginLeft: 'auto',
-                            marginRight: 'auto',
-                            alignContent: 'center',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: '#FFFFFF',
-                            shadowOffset: { width: 0, height: 1 },
-                            shadowOpacity: 0.8,
-                            shadowRadius: 10,
-                            borderRadius: 15,
-                          }}
-                        >
-                          <Text>No Photo Selected</Text>
-                        </View>
-                      )}
-                      <Pressable
-                        onPress={() => takeImage()}
-                        style={{
-                          marginLeft: 'auto',
-                          marginRight: 'auto',
-                          marginTop: 15,
-                          backgroundColor: '#ededed',
-                          width: width * 0.7,
-                          borderRadius: 15,
-                          alignItems: 'center',
-                          alignContent: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        {takeImageState === CameraResult.loading ? (
-                          <ProgressView
-                            width={14}
-                            height={14}
-                            style={{ margin: 10 }}
-                          />
-                        ) : (
-                          <Text style={{ margin: 10, fontWeight: 'bold' }}>
-                            {takeImageState === CameraResult.notStarted
-                              ? 'TAKE PHOTO'
-                              : takeImageState === CameraResult.goToSettings
-                              ? 'Go To Settings And Give Camera Permissions'
-                              : takeImageState === CameraResult.permissionDenied
-                              ? 'Permission Denied'
-                              : takeImageState === CameraResult.success
-                              ? 'TAKE DIFFERENT PHOTO'
-                              : 'AN ERROR OCCURED'}
-                          </Text>
-                        )}
-                      </Pressable>
-                      <Pressable
-                        onPress={() => pickImage()}
-                        style={{
-                          marginLeft: 'auto',
-                          marginRight: 'auto',
-                          marginTop: 10,
-                          backgroundColor: '#ededed',
-                          width: width * 0.7,
-                          borderRadius: 15,
-                          alignItems: 'center',
-                          alignContent: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        {pickImageState === CameraResult.loading ? (
-                          <ProgressView
-                            width={14}
-                            height={14}
-                            style={{ margin: 10 }}
-                          />
-                        ) : (
-                          <Text style={{ margin: 10, fontWeight: 'bold' }}>
-                            {pickImageState === CameraResult.notStarted
-                              ? 'CHOOSE PHOTO'
-                              : pickImageState === CameraResult.permissionDenied
-                              ? 'Permission Denied'
-                              : pickImageState === CameraResult.success
-                              ? 'USE A DIFFERENT PHOTO'
-                              : 'AN ERROR OCCURED'}
-                          </Text>
-                        )}
-                      </Pressable>
-                    </>
-                  ) : null}
-                  {isOverflowing ? null : (
-                    <View style={{ marginTop: 10, marginBottom: 10 }}>
-                      <CommissionClaim commission={commissionData} />
+              <View style={{ marginLeft: width * 0.05 }}>
+                <WebViewCross html={messageData} width={width * 0.7} />
+              </View>
+              {commissionData.value === commissionTypeEnum.Image ||
+              commissionData.value === commissionTypeEnum.ImageLocation ? (
+                <>
+                  {imageUri !== '' ? (
+                    <Image
+                      source={{ uri: imageUri }}
+                      width={width * 0.7}
+                      resizeMode="center"
+                      style={{
+                        width: width * 0.7,
+                        height: imageHeight,
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        alignContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#FFFFFF',
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: 0.8,
+                        shadowRadius: 10,
+                        borderRadius: 15,
+                      }}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: width * 0.7,
+                        height: height * 0.3,
+                        marginLeft: 'auto',
+                        marginRight: 'auto',
+                        alignContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#FFFFFF',
+                        shadowOffset: { width: 0, height: 1 },
+                        shadowOpacity: 0.8,
+                        shadowRadius: 10,
+                        borderRadius: 15,
+                      }}
+                    >
+                      <Text>No Photo Selected</Text>
                     </View>
                   )}
-                </View>
-              </ScrollView>
-              {isOverflowing ? (
-                <View
-                  style={{
-                    height: height * 0.1,
-                    alignContent: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <CommissionClaim
-                    commission={commissionData}
-                    imageData={imageUri !== '' ? imageUri : undefined}
-                  />
-                </View>
+                  <Pressable
+                    onPress={() => takeImage()}
+                    style={{
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                      marginTop: 15,
+                      backgroundColor: '#ededed',
+                      width: width * 0.7,
+                      borderRadius: 15,
+                      alignItems: 'center',
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {takeImageState === CameraResult.loading ? (
+                      <ProgressView
+                        width={14}
+                        height={14}
+                        style={{ margin: 10 }}
+                      />
+                    ) : (
+                      <Text style={{ margin: 10, fontWeight: 'bold' }}>
+                        {takeImageState === CameraResult.notStarted
+                          ? 'TAKE PHOTO'
+                          : takeImageState === CameraResult.goToSettings
+                          ? 'Go To Settings And Give Camera Permissions'
+                          : takeImageState === CameraResult.permissionDenied
+                          ? 'Permission Denied'
+                          : takeImageState === CameraResult.success
+                          ? 'TAKE DIFFERENT PHOTO'
+                          : 'AN ERROR OCCURED'}
+                      </Text>
+                    )}
+                  </Pressable>
+                  <Pressable
+                    onPress={() => pickImage()}
+                    style={{
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                      marginTop: 10,
+                      backgroundColor: '#ededed',
+                      width: width * 0.7,
+                      borderRadius: 15,
+                      alignItems: 'center',
+                      alignContent: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {pickImageState === CameraResult.loading ? (
+                      <ProgressView
+                        width={14}
+                        height={14}
+                        style={{ margin: 10 }}
+                      />
+                    ) : (
+                      <Text style={{ margin: 10, fontWeight: 'bold' }}>
+                        {pickImageState === CameraResult.notStarted
+                          ? 'CHOOSE PHOTO'
+                          : pickImageState === CameraResult.permissionDenied
+                          ? 'Permission Denied'
+                          : pickImageState === CameraResult.success
+                          ? 'USE A DIFFERENT PHOTO'
+                          : 'AN ERROR OCCURED'}
+                      </Text>
+                    )}
+                  </Pressable>
+                </>
               ) : null}
-        </View> 
-      ):(
+              {isOverflowing ? null : (
+                <View style={{ marginTop: 10, marginBottom: 10 }}>
+                  <CommissionClaim commission={commissionData} />
+                </View>
+              )}
+            </View>
+          </ScrollView>
+          {isOverflowing ? (
+            <View
+              style={{
+                height: height * 0.1,
+                alignContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <CommissionClaim
+                commission={commissionData}
+                imageData={imageUri !== '' ? imageUri : undefined}
+              />
+            </View>
+          ) : null}
+        </View>
+      ) : (
         <View>
           <Text>Something Went Wrong</Text>
         </View>
-      )
-      }
+      )}
     </View>
   );
 }

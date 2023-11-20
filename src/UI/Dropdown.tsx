@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  Dropdown.tsx
+*/
 /* eslint-disable react/require-default-props */
 import { View, Text, Pressable, StyleProp, ViewStyle } from 'react-native';
 import React, { ReactNode, useEffect, useState } from 'react';

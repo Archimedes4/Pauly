@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  NavComponent.tsx
+  renders svg given width and height for native devices. Uses react-native-svg
+*/
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-native';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
@@ -12,7 +19,6 @@ import {
   HomeIcon,
   MedalIcon,
   PersonIcon,
-  SportsIcon,
   StudentSearchIcon,
 } from './Icons/Icons';
 import { expandedModeSlice } from '../Redux/reducers/expandedModeReducer';

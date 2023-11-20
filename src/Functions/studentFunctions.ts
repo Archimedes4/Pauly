@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  studentFunctions.ts
+*/
 import { loadingStateEnum } from '../types';
 import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer';
 import store from '../Redux/store';

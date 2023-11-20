@@ -30,8 +30,10 @@ async function getResourceFollows() {
     store.getState().paulyList.resourceListId
   }/items?expand=fields($select=resourceGroupId,resourceConversationId)&$select=id`;
   while (nextLink !== '') {
+    // eslint-disable-next-line no-await-in-loop
     const result = await callMsGraph(nextLink);
     if (result.ok) {
+      // eslint-disable-next-line no-await-in-loop
       const data = await result.json();
       if (data['@odata.nextLink'] !== undefined) {
         nextLink = data['@odata.nextLink'];
@@ -113,7 +115,7 @@ export async function getResources(category?: resourceMode) {
     index < store.getState().resources.resourceFollow.length;
     index += 1
   ) {
-    // resourceGroupId
+    // adding data to make request for getting resource messages of the resources that are followed
     batchDataRequests[batchCount].push({
       id: (index + 1).toString(),
       method: 'GET',
@@ -128,6 +130,7 @@ export async function getResources(category?: resourceMode) {
       batchCount += 1;
     }
   }
+  // making those batch requests
   for (let index = 0; index < batchDataRequests.length; index += 1) {
     const batchData = {
       requests: batchDataRequests[index],

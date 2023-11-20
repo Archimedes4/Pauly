@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  getSubmissions.ts
+*/
 import store from '../../Redux/store';
 import { loadingStateEnum, submissionTypeEnum } from '../../types';
 import callMsGraph from '../ultility/microsoftAssets';

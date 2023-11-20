@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  updateCommission.ts
+*/
 import store from '../../Redux/store';
 import { commissionTypeEnum, loadingStateEnum } from '../../types';
 import callMsGraph from '../ultility/microsoftAssets';

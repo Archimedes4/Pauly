@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  microsoftFilePickerFunctions.ts
+  functions for src/UI/MicorosftFilePicker.tsx
+*/
 import { loadingStateEnum } from '../types';
 import callMsGraph from './ultility/microsoftAssets';
 

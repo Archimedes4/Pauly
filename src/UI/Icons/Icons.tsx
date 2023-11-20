@@ -240,8 +240,6 @@ export function CloseIcon({ width, height, style }: iconProps) {
       viewBox="0 0 24 24"
       fill="none"
     >
-      <G strokeWidth="0" />
-      <G strokeLinecap="round" strokeLinejoin="round" />
       <G>
         <Path
           fillRule="evenodd"

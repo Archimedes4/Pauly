@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  
+*/
 import { View, Platform } from 'react-native';
 import React from 'react';
 import WebView from 'react-native-webview';

@@ -1,7 +1,7 @@
 /*
   Pauly
   Andrew Mainella
-  July 21 2023
+  21 July 2023
   calendarFunctions.ts
   Basic calendar functions non api not async
 */

@@ -177,7 +177,7 @@ export default function GovernmentSchedule() {
         </Pressable>
         <Text>Schedule Deleted</Text>
       </View>
-    )
+    );
   }
 
   if (isCreatingSchedule || loadScheduleState === loadingStateEnum.success) {
@@ -377,9 +377,7 @@ export default function GovernmentSchedule() {
                     }}
                     onPress={() => setIsPickingColor(false)}
                   >
-                    <Text style={{ margin: 10, color: Colors.white }}>
-                      OK
-                    </Text>
+                    <Text style={{ margin: 10, color: Colors.white }}>OK</Text>
                   </Pressable>
                 </View>
               </Modal>
@@ -436,7 +434,7 @@ export default function GovernmentSchedule() {
           </Pressable>
         ) : null}
       </ScrollView>
-    )
+    );
   }
 
   if (loadScheduleState === loadingStateEnum.loading) {
@@ -462,7 +460,7 @@ export default function GovernmentSchedule() {
         <ProgressView width={width * 0.1} height={height * 0.1} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   return (

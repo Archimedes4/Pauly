@@ -49,7 +49,8 @@ function AuthDeep({
   );
   const [mounted, setMounted] = useState<boolean>(false);
 
-  const getAuthToken = useCallback(async (userInitated: boolean, government?: boolean) => {
+  const getAuthToken = useCallback(
+    async (userInitated: boolean, government?: boolean) => {
       // Account selection logic is app dependent. Adjust as needed for different use cases.
       // Set active acccount on page load
       if (government !== undefined) {

@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  getCommissions.ts
+*/
 import { commissionsSlice } from '../../Redux/reducers/commissionsReducer';
 import store from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
@@ -331,7 +337,6 @@ async function getCommissionsBatch(
   }
   return { result: loadingStateEnum.failed };
 }
-
 
 export async function getUnclaimedCommissions(): Promise<{
   result: loadingStateEnum;

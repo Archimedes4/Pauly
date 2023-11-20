@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  sportsFunctions.ts
+*/
 import store from '../../Redux/store';
 import {
   dataContentTypeOptions,
@@ -216,7 +222,6 @@ export async function getSportsContent(
     }
     return { result: loadingStateEnum.failed };
   }
-  const data = await result.json();
   return { result: loadingStateEnum.failed };
 }
 

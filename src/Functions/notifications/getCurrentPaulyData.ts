@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 9 2023
+  getCurrentPaulyData.ts
+*/
 import store from '../../Redux/store';
 import callMsGraph from '../ultility/microsoftAssets';
 import { loadingStateEnum } from '../../types';

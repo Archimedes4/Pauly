@@ -597,7 +597,7 @@ function RosterView({
           )}
         />
       </View>
-    )
+    );
   }
 
   return (

@@ -15,7 +15,11 @@ function EventBlock({ event }: { event: eventType }) {
   return (
     <View>
       <Text>{event.name}</Text>
-      <Text>{new Date(event.startTime).getDay()} {new Date(event.startTime).getHours()} {new Date(event.startTime).getMinutes()}</Text>
+      <Text>
+        {new Date(event.startTime).getDay()}{' '}
+        {new Date(event.startTime).getHours()}{' '}
+        {new Date(event.startTime).getMinutes()}
+      </Text>
     </View>
   );
 }

@@ -163,12 +163,6 @@ export default function MicrosoftFilePicker({
   );
 }
 
-enum teamFileMode {
-  team,
-  channel,
-  file,
-}
-
 function TeamsBlock({
   userTeams,
   height,
@@ -176,8 +170,6 @@ function TeamsBlock({
   userTeams: teamsGroupType[];
   height: number;
 }) {
-  const [selectedTeamFileMode, setSelectedTeamFileMode] =
-    useState<teamFileMode>(teamFileMode.team);
   return (
     <FlatList
       data={userTeams}
@@ -216,6 +208,7 @@ function PersonalBlock({
   const [getFilesState, setGetFilesState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
+  const [mounted, setMounted] = useState<boolean>(false);
 
   const loadGetUserMicrosoftFiles = useCallback(async (path: string) => {
     setGetFilesState(loadingStateEnum.loading);
@@ -232,8 +225,11 @@ function PersonalBlock({
   }, []);
 
   useEffect(() => {
-    loadGetUserMicrosoftFiles(microsoftPath);
-  }, [loadGetUserMicrosoftFiles]);
+    if (!mounted) {
+      setMounted(true);
+      loadGetUserMicrosoftFiles(microsoftPath);
+    }
+  }, [loadGetUserMicrosoftFiles, mounted, microsoftPath]);
 
   return (
     <ScrollView style={{ height: height - 20 }}>

@@ -200,7 +200,7 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
           store.getState().homepageData.userTasks[task.index].name ===
           taskNameSave
         ) {
-          console.log("Running");
+          console.log('Running');
           updateTaskText(task);
         }
       }, 1500);

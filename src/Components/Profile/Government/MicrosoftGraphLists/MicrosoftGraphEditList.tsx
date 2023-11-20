@@ -133,9 +133,11 @@ export default function MicrosoftGraphEditList() {
           >
             <Text>{item.displayName}</Text>
             {item.indexed === false ? (
-              <Pressable onPress={() => {
-                indexColumn(item.id);
-              }}>
+              <Pressable
+                onPress={() => {
+                  indexColumn(item.id);
+                }}
+              >
                 <Text>Index this Property</Text>
               </Pressable>
             ) : (

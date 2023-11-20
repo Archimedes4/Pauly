@@ -109,7 +109,9 @@ function WebViewInject() {
             async function loadData() {
               const dataResult = await fetch("https://graph.microsoft.com/v1.0/shares/${powerpointShare}/driveItem/content?format=pdf", {
                 headers: {
-                  "Authorization":"Bearer ${store.getState().authenticationToken}"
+                  "Authorization":"Bearer ${
+                    store.getState().authenticationToken
+                  }"
                 }
               })
               if (!dataResult.ok) {window.ReactNativeWebView.postMessage('failed'); return};

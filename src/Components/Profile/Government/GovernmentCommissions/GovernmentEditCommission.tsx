@@ -850,17 +850,14 @@ function PostSelection({
                         : Colors.white,
                   }}
                 >
-                  <WebViewCross
-                    html={post.item.body}
-                    width={width * 0.9}
-                  />
+                  <WebViewCross html={post.item.body} width={width * 0.9} />
                 </Pressable>
               ) : null}
             </>
           )}
         />
       </ScrollView>
-    )
+    );
   }
 
   return (

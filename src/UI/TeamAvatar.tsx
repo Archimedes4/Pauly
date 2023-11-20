@@ -39,32 +39,32 @@ export default function TeamAvatar({ teamId }: { teamId: string }) {
     getTeamsAvatar(teamId);
   }, [teamId]);
 
+  if (currentLoadingResult === loadingStateEnum.loading) {
+    return (
+      <View>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+
+  if (currentLoadingResult === loadingStateEnum.success) {
+    return (
+      <View>
+        {teamAvatarDataUrl !== '' && (
+          <Image
+            width={100}
+            height={100}
+            style={{ width: 100, height: 100 }}
+            source={{ uri: teamAvatarDataUrl }}
+          />
+        )}
+      </View>
+    );
+  }
+
   return (
     <View>
-      {currentLoadingResult === loadingStateEnum.loading ? (
-        <View>
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <View>
-          {currentLoadingResult === loadingStateEnum.success ? (
-            <View>
-              {teamAvatarDataUrl !== '' && (
-                <Image
-                  width={100}
-                  height={100}
-                  style={{ width: 100, height: 100 }}
-                  source={{ uri: teamAvatarDataUrl }}
-                />
-              )}
-            </View>
-          ) : (
-            <View>
-              <Text>Uh Oh something went wrong</Text>
-            </View>
-          )}
-        </View>
-      )}
+      <Text>Uh Oh something went wrong</Text>
     </View>
   );
 }
