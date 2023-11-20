@@ -1,7 +1,7 @@
 /*
+  Pauly
   Andrew Mainella
   October 18 2023
-  Pauly
   AddEvent.tsx
 */
 

@@ -179,7 +179,7 @@ export default function Login({
                 fontWeight: 'bold',
               }}
             >
-              LOGIN
+              SIGN IN
             </Text>
           )}
         </Pressable>
@@ -220,7 +220,7 @@ export default function Login({
                 fontWeight: 'bold',
               }}
             >
-              LOGIN AS ADMIN
+              SIGN IN AS ADMIN
             </Text>
           </Pressable>
         ) : null}

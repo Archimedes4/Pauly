@@ -35,7 +35,21 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#793033"
       },
-      "package": "com.Archimedes4.Pauly"
+      "package": "com.Archimedes4.Pauly",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "com.Archimedes4.Pauly.auth"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/icon.png"
@@ -44,6 +58,9 @@
       "eas": {
         "projectId": "41b62420-4ae0-49b3-be2c-3eeb912dc208"
       }
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }

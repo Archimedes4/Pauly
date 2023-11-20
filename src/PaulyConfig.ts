@@ -1,6 +1,6 @@
 /*
   Andrew Mainella
-  21 October 2023
+  October 21 2023
   Pauly
   See README.md for more information about the setup process and what to put in each of these values
 */

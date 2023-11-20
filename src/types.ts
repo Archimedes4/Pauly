@@ -1,9 +1,10 @@
-// Andrew Mainella
-// Pauly
-// October 3 2023
-
-// types.ts
-// Stores all of paulys types
+/* 
+  Pauly
+  Andrew Mainella
+  October 3 2023
+  types.ts
+  Stores all of paulys types
+*/
 
 // From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 export enum breakPointMode {

@@ -49,6 +49,114 @@ import ResourcesNews from './ResourcesNews';
 // -> Annoucments
 // -> News (special from crusader news weebly)
 
+function SearchBox() {
+  // Dimentsions
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+
+  const [mounted, setMounted] = useState<boolean>(false);
+  const { searchValue } = useSelector((state: RootState) => state.resources);
+  const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Boolean true if text overflowing. This is telling the search icon to show or not.
+  const style = Platform.OS === 'web' ? { outlineStyle: 'none' } : undefined; // Style to remove ourline around textbox on web
+  const dispatch = useDispatch();
+
+  // Getting search results on value chage
+  useEffect(() => {
+    if (mounted) {
+      // Checking so that this isn't called on start
+      const searchValueSave = searchValue; // saving value to check if change in 1.5 s
+      setTimeout(() => {
+        // Waiting 1.5s
+        if (store.getState().resources.searchValue === searchValueSave) {
+          // Checking if value changed
+          getResourcesSearch(searchValue); // getting search data
+        }
+      }, 1500);
+    } else {
+      setMounted(true); // Setting that it has been called on start
+    }
+  }, [searchValue]);
+
+  return (
+    <View
+      key="Search_View_Top"
+      style={{
+        width,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        top: height * 0.1 - 19,
+        zIndex: 2,
+      }}
+    >
+      <View
+        key="Search_View_Mid"
+        style={{
+          width: width * 0.8,
+          shadowColor: 'black',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          borderRadius: 25,
+          flexDirection: 'row',
+          backgroundColor: Colors.white,
+        }}
+      >
+        {isOverflowing ? null : (
+          <View
+            key="Search_View_Search_Icon"
+            style={{
+              width: 20,
+              height: 40,
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 10,
+            }}
+          >
+            <SearchIcon key="Search_Icon" width={15} height={15} />
+          </View>
+        )}
+        <View key="Search_View_Input">
+          <TextInput
+            key="Search_TextInput"
+            placeholder="Search"
+            placeholderTextColor="black"
+            value={searchValue}
+            onChangeText={e => {
+              dispatch(resourcesSlice.actions.setSearchValue(e));
+            }}
+            style={[
+              {
+                width: isOverflowing ? width * 0.8 - 20 : width * 0.8 - 50,
+                height: 20,
+                margin: 10,
+                borderWidth: 0,
+              },
+              style,
+            ]}
+            enterKeyHint="search"
+            inputMode="search"
+          />
+          <View
+            style={{ height: 0, alignSelf: 'flex-start', overflow: 'hidden' }}
+            onLayout={e => {
+              if (e.nativeEvent.layout.width > width * 0.8 - 20) {
+                setIsOverflowing(true);
+              } else {
+                setIsOverflowing(false);
+              }
+            }}
+            key="Search_View_Text"
+          >
+            <Text style={{ color: 'white' }}>{searchValue}</Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 function PickerPiece({
   text,
   item,
@@ -443,61 +551,57 @@ export default function Resources() {
         />
         {selectedResourceMode === resourceMode.news ? (
           <ResourcesNews isHoverPicker={isHoverPicker} />
-        ) : (
-          <>
-            {selectedResourceMode === resourceMode.scholarships ? (
-              <ResourceScholarships isHoverPicker={isHoverPicker} />
-            ) : (
+        ) : null}
+        {selectedResourceMode === resourceMode.scholarships ? (
+          <ResourceScholarships isHoverPicker={isHoverPicker} />
+        ) : null}
+        {selectedResourceMode !== resourceMode.scholarships && selectedResourceMode !== resourceMode.news ?
+          <View
+            style={{
+              height: isHoverPicker ? height * 0.75 : height * 0.8,
+              width,
+              backgroundColor: Colors.lightGray,
+            }}
+          >
+            {loadingState === loadingStateEnum.loading ? (
               <View
                 style={{
-                  height: isHoverPicker ? height * 0.75 : height * 0.8,
                   width,
-                  backgroundColor: Colors.lightGray,
+                  height: isHoverPicker ? height * 0.75 : height * 0.8,
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <>
-                  {loadingState === loadingStateEnum.loading ? (
-                    <View
-                      style={{
-                        width,
-                        height: isHoverPicker ? height * 0.75 : height * 0.8,
-                        alignContent: 'center',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <ProgressView
-                        width={width < height ? width * 0.05 : height * 0.05}
-                        height={width < height ? width * 0.05 : height * 0.05}
-                      />
-                      <Text>Loading</Text>
-                    </View>
-                  ) : (
-                    <>
-                      {loadingState === loadingStateEnum.success ? (
-                        <FlatList
-                          data={resources}
-                          renderItem={resource => (
-                            <ResourceBlock
-                              resource={resource}
-                              key={resource.item.id}
-                              setIsShowingCategoryView={
-                                setIsShowingCategoryView
-                              }
-                              setSelectedPost={setSelectedPost}
-                            />
-                          )}
-                        />
-                      ) : (
-                        <Text>Failed</Text>
-                      )}
-                    </>
-                  )}
-                </>
+                <ProgressView
+                  width={width < height ? width * 0.05 : height * 0.05}
+                  height={width < height ? width * 0.05 : height * 0.05}
+                />
+                <Text>Loading</Text>
               </View>
+            ) : (
+              <>
+                {loadingState === loadingStateEnum.success ? (
+                  <FlatList
+                    data={resources}
+                    renderItem={resource => (
+                      <ResourceBlock
+                        resource={resource}
+                        key={resource.item.id}
+                        setIsShowingCategoryView={
+                          setIsShowingCategoryView
+                        }
+                        setSelectedPost={setSelectedPost}
+                      />
+                    )}
+                  />
+                ) : (
+                  <Text>Failed</Text>
+                )}
+              </>
             )}
-          </>
-        )}
+          </View>:null
+        }
         <Pressable
           style={{ height: isHoverPicker ? height * 0.1 : height * 0.05 }}
           onHoverIn={() => {
@@ -822,114 +926,6 @@ function GovernmentCategoryView({
       >
         <Text>{getTextState(categoryState, { notStarted: 'Confirm' })}</Text>
       </Pressable>
-    </View>
-  );
-}
-
-function SearchBox() {
-  // Dimentsions
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
-
-  const [mounted, setMounted] = useState<boolean>(false);
-  const { searchValue } = useSelector((state: RootState) => state.resources);
-  const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Boolean true if text overflowing. This is telling the search icon to show or not.
-  const style = Platform.OS === 'web' ? { outlineStyle: 'none' } : undefined; // Style to remove ourline around textbox on web
-  const dispatch = useDispatch();
-
-  // Getting search results on value chage
-  useEffect(() => {
-    if (mounted) {
-      // Checking so that this isn't called on start
-      const searchValueSave = searchValue; // saving value to check if change in 1.5 s
-      setTimeout(() => {
-        // Waiting 1.5s
-        if (store.getState().resources.searchValue === searchValueSave) {
-          // Checking if value changed
-          getResourcesSearch(searchValue); // getting search data
-        }
-      }, 1500);
-    } else {
-      setMounted(true); // Setting that it has been called on start
-    }
-  }, [searchValue]);
-
-  return (
-    <View
-      key="Search_View_Top"
-      style={{
-        width,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        top: height * 0.1 - 19,
-        zIndex: 2,
-      }}
-    >
-      <View
-        key="Search_View_Mid"
-        style={{
-          width: width * 0.8,
-          shadowColor: 'black',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.8,
-          shadowRadius: 10,
-          borderRadius: 25,
-          flexDirection: 'row',
-          backgroundColor: Colors.white,
-        }}
-      >
-        {isOverflowing ? null : (
-          <View
-            key="Search_View_Search_Icon"
-            style={{
-              width: 20,
-              height: 40,
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft: 10,
-            }}
-          >
-            <SearchIcon key="Search_Icon" width={15} height={15} />
-          </View>
-        )}
-        <View key="Search_View_Input">
-          <TextInput
-            key="Search_TextInput"
-            placeholder="Search"
-            placeholderTextColor="black"
-            value={searchValue}
-            onChangeText={e => {
-              dispatch(resourcesSlice.actions.setSearchValue(e));
-            }}
-            style={[
-              {
-                width: isOverflowing ? width * 0.8 - 20 : width * 0.8 - 50,
-                height: 20,
-                margin: 10,
-                borderWidth: 0,
-              },
-              style,
-            ]}
-            enterKeyHint="search"
-            inputMode="search"
-          />
-          <View
-            style={{ height: 0, alignSelf: 'flex-start', overflow: 'hidden' }}
-            onLayout={e => {
-              if (e.nativeEvent.layout.width > width * 0.8 - 20) {
-                setIsOverflowing(true);
-              } else {
-                setIsOverflowing(false);
-              }
-            }}
-            key="Search_View_Text"
-          >
-            <Text style={{ color: 'white' }}>{searchValue}</Text>
-          </View>
-        </View>
-      </View>
     </View>
   );
 }

@@ -2,6 +2,7 @@
   Pauly
   Andrew Mainella
   November 10 2023
+  CommissionClaim.native.tsx
 */
 import { refreshAsync, useAutoDiscovery } from 'expo-auth-session';
 import React, { useState } from 'react';
