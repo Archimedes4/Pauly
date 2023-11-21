@@ -81,7 +81,7 @@ const validateToken = (req: HttpRequest): Promise<string> => {
       const token = authHeader.split(' ').pop();
 
       const validationOptions = {
-        audience: `${process.env.CLIENTID}`,
+        audience: `api://${process.env.CLIENTID}`,
       };
 
       verify(token, getSigningKeys, validationOptions, (err, payload) => {
