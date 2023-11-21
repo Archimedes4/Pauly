@@ -42,7 +42,10 @@ export async function ClaimCommission(
       return { status: 400, body: 'Bad Request' };
     }
 
-    const requestBody = await req.json();
+    let requestBody = undefined
+    if (req.method === 'POST') {
+      requestBody = await req.json();
+    }
 
     const commissionId =
       req.query.get('commissionId') || requestBody["commissionId"];
