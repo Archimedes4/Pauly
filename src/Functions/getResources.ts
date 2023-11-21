@@ -394,6 +394,7 @@ export async function getScholarships(): Promise<
         cover: data.items[index].cover,
       });
     }
+    console.log(scholarships)
     return { result: loadingStateEnum.success, data: scholarships };
   }
   return { result: loadingStateEnum.failed };

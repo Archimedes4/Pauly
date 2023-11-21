@@ -381,8 +381,7 @@ function ResourceBlock({
   );
 }
 
-function ScholarshipBlock({ item }: { item: ListRenderItemInfo<scholarship> }) {
-  const { width } = useSelector((state: RootState) => state.dimentions);
+function ScholarshipBlock({ item, width }: { item: ListRenderItemInfo<scholarship>, width: number }) {
   const [height, setHeight] = useState<number>(0);
   useEffect(() => {
     Image.getSize(item.item.cover, (imgWidth, imgHeight) => {
@@ -412,6 +411,15 @@ function ScholarshipBlock({ item }: { item: ListRenderItemInfo<scholarship> }) {
       <Text style={{ marginBottom: 10, margin: 10 }}>{item.item.note}</Text>
     </Pressable>
   );
+}
+
+function numberScholarBlock(width: number): number {
+  const newValue = width / 500
+  if (newValue < 1) {
+    return 1
+  } else {
+    return newValue
+  }
 }
 
 function ResourceScholarships({ isHoverPicker }: { isHoverPicker: boolean }) {
@@ -453,8 +461,10 @@ function ResourceScholarships({ isHoverPicker }: { isHoverPicker: boolean }) {
   if (scholarState === loadingStateEnum.success) {
     return (
       <FlatList
+        key={`Students_${createUUID()}`}
         data={scholarships}
-        renderItem={item => <ScholarshipBlock item={item} />}
+        renderItem={item => <ScholarshipBlock item={item} width={width/numberScholarBlock(width)} />}
+        numColumns={numberScholarBlock(width)}
         style={{
           height: isHoverPicker ? height * 0.75 : height * 0.8,
           width,
