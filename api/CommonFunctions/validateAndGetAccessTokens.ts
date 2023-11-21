@@ -41,7 +41,7 @@ export default async function validateAndGetAccessTokens(
       },
     );
     const clientCredentialsResultData = await clientCredentialsResult.json();
-    console.log("MARK4", clientCredentialsResult)
+    console.log("MARK4", clientCredentialsResultData)
     return {
       onBehalfOfAccessToken: authResultData.access_token,
       clientCredentialsAccessToken: clientCredentialsResultData.access_token,
