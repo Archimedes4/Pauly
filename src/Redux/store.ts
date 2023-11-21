@@ -26,6 +26,7 @@ import pdfDataReducer from './reducers/pdfDataReducer';
 import monthViewReducer from './reducers/monthViewReducer';
 import authenticationCallReducer from './reducers/authenticationCallReducer';
 import studentSearchReducer from './reducers/studentSearchReducer';
+import authLoadingReducer from './reducers/authLoadingReducer';
 
 const store = configureStore({
   reducer: {
@@ -55,6 +56,7 @@ const store = configureStore({
     tasksDeltaLink: tasksDeltaReducer,
     selectedDate: selectedDateReducer,
     studentSearch: studentSearchReducer,
+    authLoading: authLoadingReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

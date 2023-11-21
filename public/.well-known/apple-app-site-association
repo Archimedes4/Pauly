@@ -1,0 +1,27 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": [
+          "SYV2CK2N9N.Archimedes4.Pauly"
+        ],
+        "components": [
+          {
+            "/": "*",
+            "comment": "Matches all routes"
+          }
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "SYV2CK2N9N.Archimedes4.Pauly"
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "SYV2CK2N9N.Archimedes4.Pauly"
+    ]
+  }
+}

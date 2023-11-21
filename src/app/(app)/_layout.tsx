@@ -5,7 +5,7 @@
   AuthenticatedViewMain.tsx
   This holds the main router to Pauly once authenticated.
 */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, ScaledSize } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,7 +14,8 @@ import { RootState } from '../../Redux/store';
 import ProfileBlock from './Profile/ProfileBlock';
 import { Colors } from '../../types';
 import LoadingScreen from '../../components/LoadingScreen';
-import { Slot } from 'expo-router';
+import { Redirect, Slot } from 'expo-router';
+import { getSession } from '../../Functions/ultility/checkIfSessionExists';
 
 export default function AuthenticatedView() {
   const { height, currentBreakPoint, totalWidth } = useSelector(
@@ -29,6 +30,11 @@ export default function AuthenticatedView() {
   );
   const insets = useSafeAreaInsets();
   const [overide, setOveride] = useState<boolean>(false);
+
+  useEffect(() => {
+    getSession();
+  }, [])
+
   if ((siteId !== '' || overide) && authenticationToken !== '') {
     return (
       <View style={{ width: totalWidth, top: -insets.top }}>
@@ -55,6 +61,8 @@ export default function AuthenticatedView() {
       </View>
     );
   }
-  
-  return <LoadingScreen setOveride={setOveride}/>;
+  if (siteId === '' && authenticationToken !== '') {
+    return <LoadingScreen setOveride={setOveride}/>;
+  }
+  return <Redirect href="/sign-in" />;
 }

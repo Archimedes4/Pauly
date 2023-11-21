@@ -4,7 +4,7 @@ Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
 Saint Paul's High School Student Council 2023-2024
 # Technologies
-Power by expo using expo router at its core.
+Power by expo using expo router at its core. Application also uses redux for storage.
 # Backend
 Pauly uses Microsoft graph and SharePoint lists as a database
 ## Structure 

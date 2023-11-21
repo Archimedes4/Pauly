@@ -1,5 +1,5 @@
 import { useMsal } from "@azure/msal-react";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
 import store from "../../Redux/store";
 import { scopes } from "../../PaulyConfig";
@@ -8,27 +8,29 @@ import getPaulyLists from "../ultility/getPaulyLists";
 import getUserProfile from "../ultility/getUserProfile";
 import { EventType } from "@azure/msal-browser";
 
-export const refreshToken = useCallback(async () => {
+export const refreshToken = () => {
   const { instance } = useMsal();
-  const result = await instance.acquireTokenSilent({
+  const result = instance.acquireTokenSilent({
     scopes,
   });
-  store.dispatch(
-    authenticationTokenSlice.actions.setAuthenticationToken(
-      result.accessToken,
-    ),
-  );
-}, []);
+  result.then((result) => {
+    store.dispatch(
+      authenticationTokenSlice.actions.setAuthenticationToken(
+        result.accessToken,
+      ),
+    );
+  })
+}
 
-export const getAuthToken = useCallback(
-  async (userInitated: boolean, government?: boolean) => {
-    const { instance } = useMsal();
-    // Account selection logic is app dependent. Adjust as needed for different use cases.
-    // Set active acccount on page load
+export const login = (userInitated: boolean, government?: boolean) => {
+  const { instance } = useMsal();
+  // Account selection logic is app dependent. Adjust as needed for different use cases.
+  // Set active acccount on page load
+  async function webAuth() {
     if (government !== undefined) {
       setWantGovernment(government);
     }
-
+  
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
       instance.setActiveAccount(accounts[0]);
@@ -50,7 +52,7 @@ export const getAuthToken = useCallback(
         return;
       }
     }
-
+  
     instance.addEventCallback((event: any) => {
       // set active account after redirect
       if (
@@ -63,7 +65,7 @@ export const getAuthToken = useCallback(
         console.log('failed On line 89');
       }
     });
-
+  
     // handle auth redired/do all initial setup for msal
     instance
       .handleRedirectPromise()
@@ -108,6 +110,9 @@ export const getAuthToken = useCallback(
           getUserProfile();
         } catch (e) {}
       });
-  },
-  [],
-);
+  }
+
+  useEffect(() => {
+    webAuth();
+  }, [])
+}

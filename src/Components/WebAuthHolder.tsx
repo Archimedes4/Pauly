@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  WebAuthHolder.tsx
+  holder with the MsalProvider
+*/
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { Slot } from "expo-router";

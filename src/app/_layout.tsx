@@ -18,7 +18,6 @@ import {
 } from 'react-native-safe-area-context';
 import store, { RootState } from '../Redux/store';
 import { dimentionsSlice } from '../Redux/reducers/dimentionsReducer';
-import AppMain from '../components/AppMain/AppMain';
 import { Colors, breakPointMode } from '../types';
 import { Slot } from 'expo-router';
 import WebAuthHolder from '../components/WebAuthHolder';
@@ -26,15 +25,16 @@ import WebAuthHolder from '../components/WebAuthHolder';
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
 
+//Holds main slot redirects to web slot with msal provider if web.
 function SlotHolder() {
   if (Platform.OS === 'web') {
-    <WebAuthHolder />
+    return <WebAuthHolder />
   }
-  return (
-    <Slot />
-  )
+  return <Slot />
 }
 
+
+//App core holds dimentions
 function AppCore() {
   // Dimentions
   const safeAreaColors = useSelector(
@@ -231,7 +231,18 @@ const theme = {
   },
 };
 
+//Main Root app holds providers
 export default function App() {
+  //Hydration holder
+  const [mounted, setMounted] = useState<boolean>(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+
   return (
     <Provider store={store}>
       <PaperProvider theme={theme}>
