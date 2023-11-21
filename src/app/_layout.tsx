@@ -18,7 +18,7 @@ import {
 } from 'react-native-safe-area-context';
 import store, { RootState } from '../Redux/store';
 import { dimentionsSlice } from '../Redux/reducers/dimentionsReducer';
-import AppMain from '../AppMain/AppMain';
+import AppMain from '../components/AppMain/AppMain';
 import { Colors, breakPointMode } from '../types';
 import { Slot } from 'expo-router';
 

@@ -15,19 +15,19 @@ import {
   UnauthenticatedTemplate,
   useMsal,
 } from '@azure/msal-react';
-import Login from '../components/login';
-import AuthenticatedViewMain from '../app/(app)/AuthenticatedViewMain';
-import { clientId, scopes, tenantId } from '../PaulyConfig';
-import getPaulyLists from '../Functions/ultility/getPaulyLists';
-import getUserProfile from '../Functions/ultility/getUserProfile';
-import { authenticationTokenSlice } from '../Redux/reducers/authenticationTokenReducer';
+import Login from '../login';
+import AuthenticatedViewMain from '../../app/(app)/AuthenticatedViewMain';
+import { clientId, scopes, tenantId } from '../../PaulyConfig';
+import getPaulyLists from '../../Functions/ultility/getPaulyLists';
+import getUserProfile from '../../Functions/ultility/getUserProfile';
+import { authenticationTokenSlice } from '../../Redux/reducers/authenticationTokenReducer';
 import {
   checkIfGovernmentMode,
   getWantGovernment,
   setWantGovernment,
   validateGovernmentMode,
-} from '../Functions/handleGovernmentLogin';
-import { RootState } from '../Redux/store';
+} from '../../Functions/handleGovernmentLogin';
+import { RootState } from '../../Redux/store';
 
 // This is for the microsoft authentication on web.
 const pca = new PublicClientApplication({
