@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponseInit } from '@azure/functions';
+import { HttpResponseInit } from '@azure/functions';
 import callMsGraph from './callMsGraph';
 
 declare global {

@@ -1,7 +1,6 @@
-import { Context, HttpRequest } from '@azure/functions';
+import { HttpRequest } from '@azure/functions';
 import { JwtHeader, SigningKeyCallback, verify } from 'jsonwebtoken';
 import { JwksClient } from 'jwks-rsa';
-import { config } from '../config';
 
 type validationReturn = {
   onBehalfOfAccessToken: string;
@@ -9,15 +8,14 @@ type validationReturn = {
 };
 
 export default async function validateAndGetAccessTokens(
-  context: Context,
   req: HttpRequest,
-): Promise<validationReturn> {
+): Promise<validationReturn | undefined> {
   // On behalf of flow
   try {
     const token = await validateToken(req);
-    const authPostData = `&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&client_id=${config.auth.clientId}&client_secret=${config.auth.clientSecret}&assertion=${token}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&requested_token_use=on_behalf_of`;
+    const authPostData = `&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&client_id=${process.env.CLIENTID}&client_secret=${process.env.CLIENTSECRET}&assertion=${token}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&requested_token_use=on_behalf_of`;
     const authResult = await fetch(
-      `https://login.microsoftonline.com/${config.tenantId}/oauth2/v2.0/token`,
+      `https://login.microsoftonline.com/${process.env.TENANTID}/oauth2/v2.0/token`,
       {
         method: 'POST',
         body: authPostData,
@@ -25,18 +23,14 @@ export default async function validateAndGetAccessTokens(
       },
     );
     if (!authResult.ok) {
-      context.res = {
-        status: 401,
-        body: 'Unauthorized: something went wrong validating token',
-      };
       return;
     }
     const authResultData = await authResult.json();
 
     // Client Credentials
-    const postData = `&grant_type=client_credentials&client_id=${config.auth.clientId}&client_secret=${config.auth.clientSecret}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default`;
+    const postData = `&grant_type=client_credentials&client_id=${process.env.CLIENTID}&client_secret=${process.env.CLIENTSECRET}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default`;
     const clientCredentialsResult = await fetch(
-      `https://login.microsoftonline.com/${config.tenantId}/oauth2/v2.0/token`,
+      `https://login.microsoftonline.com/${process.env.TENANTID}/oauth2/v2.0/token`,
       {
         method: 'POST',
         body: postData,
@@ -49,10 +43,7 @@ export default async function validateAndGetAccessTokens(
       clientCredentialsAccessToken: clientCredentialsResultData.access_token,
     };
   } catch {
-    context.res = {
-      status: 401,
-      body: 'Unauthorized: something went wrong validating token',
-    };
+    return
   }
 }
 
@@ -79,12 +70,12 @@ const getSigningKeys = (header: JwtHeader, callback: SigningKeyCallback) => {
  */
 const validateToken = (req: HttpRequest): Promise<string> => {
   return new Promise(async (resolve, reject) => {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.get('authorization');
     if (authHeader) {
       const token = authHeader.split(' ').pop();
 
       const validationOptions = {
-        audience: `${config.auth.clientId}`,
+        audience: `${process.env.CLIENTSECRET}`,
       };
 
       verify(token, getSigningKeys, validationOptions, (err, payload) => {

@@ -1,39 +1,58 @@
-import { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import validateAndGetAccessTokens from '../CommonFunctions/validateAndGetAccessTokens';
-import getPaulyList from '../CommonFunctions/getPaulyList';
-import callMsGraph from '../CommonFunctions/callMsGraph';
-import create_UUID from '../CommonFunctions/createUUID';
+import {
+  app,
+  HttpRequest,
+  HttpResponseInit,
+  InvocationContext,
+} from '@azure/functions';
+import validateAndGetAccessTokens from '../../CommonFunctions/validateAndGetAccessTokens';
+import getPaulyList from '../../CommonFunctions/getPaulyList';
+import callMsGraph from '../../CommonFunctions/callMsGraph';
+import createUUID from '../../CommonFunctions/createUUID';
 
-const httpTrigger: AzureFunction = async function (
-  context: Context,
+function isListResponse(
+  response: listResponce | HttpResponseInit,
+): response is listResponce {
+  return (response as listResponce).siteId !== undefined;
+}
+
+export async function ClaimCommission(
   req: HttpRequest,
-): Promise<void> {
+): Promise<HttpResponseInit> {
   try {
-    const accessTokens = await validateAndGetAccessTokens(context, req);
+    const accessTokens = await validateAndGetAccessTokens(req);
+    if (accessTokens == undefined) {
+      return {
+        status: 401,
+        body: 'Unauthorized: something went wrong validating token',
+      };
+    }
     const paulyListResult = await getPaulyList(
-      context,
-      req,
       accessTokens.onBehalfOfAccessToken,
     );
-    if (paulyListResult === undefined || accessTokens === undefined) {
-      return;
+
+    if (!isListResponse(paulyListResult)) {
+      return paulyListResult;
     }
 
+    if (paulyListResult === undefined || accessTokens === undefined) {
+      return { status: 400, body: 'Bad Request' };
+    }
+
+    const requestBody = await req.json();
+
     const commissionId =
-      req.query.commissionId || (req.body && req.body.commissionId);
+      req.query.get('commissionId') || requestBody["commissionId"];
     if (commissionId === undefined || commissionId === '') {
-      context.res = {
+      return {
         status: 400,
         body: 'Error: The CommissionId needs to be supplied',
       };
-      return;
     }
     if (typeof commissionId !== 'string') {
-      context.res = {
+      return {
         status: 400,
         body: 'Error: The CommissionId needs to be a string',
       };
-      return;
     }
 
     const commissionResult = await callMsGraph(
@@ -41,27 +60,24 @@ const httpTrigger: AzureFunction = async function (
       `https://graph.microsoft.com/v1.0/sites/${paulyListResult.siteId}/lists/${paulyListResult.commissionListId}/items?expand=fields&$filter=fields/commissionID%20eq%20'${commissionId}'`,
     ); // TO DO check for sql injection
     if (!commissionResult.ok) {
-      context.res = {
+      return {
         status: 500,
         body: "Internal Error: Unable To Get Commission (This doesn't mean that the commission does not exist)",
       };
-      return;
     }
 
     const commissionResultData = await commissionResult.json();
     if (commissionResultData.value.length !== 1) {
       if (commissionResultData.value.length !== 0) {
-        context.res = {
+        return {
           status: 400,
           body: "Error: The CommissionId supplied doesn't have any asociated commissions attached to it",
         };
-        return;
       }
-      context.res = {
+      return {
         status: 500,
         body: 'Internal Error: The CommissionId supplied has mutiple commissions. Please submit a bug report',
       };
-      return;
     }
     ``;
     const { maxNumberOfClaims } = commissionResultData.value[0].fields;
@@ -76,35 +92,34 @@ const httpTrigger: AzureFunction = async function (
     const resultSubmissionData: any = {};
     if (value === 2 || value === 4) {
       const latCoordinate =
-        req.query.latCoordinate || (req.body && req.body.latCoordinate);
+        req.query.get('latCoordinate') ||
+        (req.body && requestBody["latCoordinate"]);
       if (latCoordinate === undefined || latCoordinate === '') {
-        context.res = {
+        return {
           status: 400,
           body: 'Error: A lat coordinaten needs to be supplied',
         };
-        return;
       }
       const lngCoordinate =
-        req.query.lngCoordinate || (req.body && req.body.lngCoordinate);
+        req.query.get('lngCoordinate') ||
+        (req.body && requestBody["lngCoordinate"]);
       if (lngCoordinate === undefined || lngCoordinate === '') {
-        context.res = {
+        return {
           status: 400,
           body: 'Error: A lng coordinaten needs to be supplied',
         };
-        return;
       }
       resultSubmissionData.location.lat = latCoordinate;
       resultSubmissionData.location.lng = lngCoordinate;
     }
     if (value === 3 || value === 4) {
-      const imageShare =
-        req.query.imageShare || (req.body && req.body.imageShare);
+      const imageShare: string =
+        req.query.get('imageShare') || (req.body && requestBody["imageShare"]);
       if (imageShare === undefined || imageShare === '') {
-        context.res = {
+        return {
           status: 400,
           body: 'Error: The ImageShare needs to be supplied',
         };
-        return;
       }
       // TO DO validate share link
       resultSubmissionData.image = imageShare;
@@ -115,7 +130,7 @@ const httpTrigger: AzureFunction = async function (
       'https://graph.microsoft.com/v1.0/me',
     );
     if (!getUserResult.ok) {
-      context.res = { status: 500, body: 'Internal Error: Could Not Get User' };
+      return { status: 500, body: 'Internal Error: Could Not Get User' };
       return;
     }
     const getUserData = await getUserResult.json();
@@ -129,7 +144,7 @@ const httpTrigger: AzureFunction = async function (
         nextUrl,
       );
       if (!submissionResultClaimed.ok) {
-        context.res = {
+        return {
           status: 500,
           body: 'Internal Error: Could Not Get Submissions',
         };
@@ -150,7 +165,7 @@ const httpTrigger: AzureFunction = async function (
     }
 
     if (reachedMaxNumberOfClaims) {
-      context.res = { status: 400, body: 'Reached max number of claims' };
+      return { status: 400, body: 'Reached max number of claims' };
       return;
     }
 
@@ -161,26 +176,20 @@ const httpTrigger: AzureFunction = async function (
     const submissionResultUnclaimedData =
       await submissionResultUnClaimed.json();
     if (!submissionResultUnClaimed.ok) {
-      context.res = {
-        status: 500,
-        body: 'Internal Error: Could Not Get Submissions',
-      };
+      return { status: 500, body: 'Internal Error: Could Not Get Submissions' };
       return;
     }
 
     if (submissionResultUnclaimedData.value !== undefined) {
       if (submissionResultUnclaimedData.value.count >= 1) {
         if (!allowMultipleSubmissions) {
-          context.res = {
-            status: 400,
-            body: 'Reached max number of submissions',
-          };
+          return { status: 400, body: 'Reached max number of submissions' };
           return;
         }
       }
     }
 
-    const submissionId = create_UUID();
+    const submissionId = createUUID();
     const submissionData = {
       fields: {
         Title: submissionId,
@@ -201,7 +210,7 @@ const httpTrigger: AzureFunction = async function (
       JSON.stringify(submissionData),
     );
     if (!submitResult.ok) {
-      context.res = {
+      return {
         status: 500,
         body: 'Internal Error: Unable to create submission',
       };
@@ -209,14 +218,15 @@ const httpTrigger: AzureFunction = async function (
     }
     console.log('submission Sent');
 
-    context.res = { status: 200, body: 'Ok' };
+    return { status: 200, body: 'Ok' };
   } catch (e) {
     console.log('This is the error', e);
-    context.res = {
-      status: 500,
-      body: 'Something has gone wrong',
-    };
+    return { status: 500, body: 'Something has gone wrong' };
   }
-};
+}
 
-export default httpTrigger;
+app.http('SubmitCommission', {
+  methods: ['GET', 'POST'],
+  authLevel: 'anonymous',
+  handler: ClaimCommission,
+});
