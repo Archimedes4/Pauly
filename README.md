@@ -146,6 +146,18 @@ Note: http://localhost:19006 is for development purposes and can be removed.
   az functionapp cors add -g Pauly-SWA -n Pauly-Functions --allowed-origins https://www.paulysphs.ca https://paulysphs.ca http://localhost:19006
 ```
 
+#### Set Environment Variables
+https://learn.microsoft.com/en-us/cli/azure/functionapp/config/appsettings?view=azure-cli-latest#az-functionapp-config-appsettings-set \
+Replace the values in the command. To get the tenant id, client id and client secret go to portal.azure.com. \
+-Microsoft Entra Id -> App Registrations -> Pauly \
+Then copy the client Id and Tenant Id
+![portal image](./READMEImages/PortalOverview.png)
+Then navigate to Certificates & Secrets. Click "New Client Secret" the set the description to "Pauly Functions" or whatever. Press add and copy the newly created client secret and add it to this function.
+![client secret](./READMEImages/PortalCert.png)
+```
+  az functionapp config appsettings set --name Pauly-Functions --resource-group Pauly-SWA --settings "CLIENTID={ClientId goes here (remove brakets)} TENANTID={TenantId goes here} CLIENTSECRET={client secret goes here}"
+```
+
 #### Attach to github workflow
 https://learn.microsoft.com/en-us/cli/azure/functionapp/deployment/github-actions?view=azure-cli-latest
 
@@ -162,6 +174,9 @@ Pauly has a config file named PaulyConfig which contains three values these valu
 ### Setp #3 Initilize Pauly
 Go to the admin panel and initilize pauly. Code will break if Pauly is already initilized. If hard reseting Pauly delete Pauly group and Pauly extensions. This can all be done in the graph section of Government.
 ![Graph Permissions](./ReamMeImages/GraphPermissions.png)
+
+### Maintenance
+Rotating client secrets after 160 days. Follow the steps in Set Environment Variables no need to change teant id and client id tho.
 
 ## Graph Permissions
 > **Reference**
