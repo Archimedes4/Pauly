@@ -138,7 +138,6 @@ export async function ClaimCommission(
     );
     if (!getUserResult.ok) {
       return { status: 500, body: 'Internal Error: Could Not Get User' };
-      return;
     }
     const getUserData = await getUserResult.json();
 
@@ -155,7 +154,6 @@ export async function ClaimCommission(
           status: 500,
           body: 'Internal Error: Could Not Get Submissions',
         };
-        return;
       }
       const submissionResultClaimedData = await submissionResultClaimed.json();
       if (submissionResultClaimedData.value !== undefined) {
@@ -173,7 +171,6 @@ export async function ClaimCommission(
 
     if (reachedMaxNumberOfClaims) {
       return { status: 400, body: 'Reached max number of claims' };
-      return;
     }
 
     const submissionResultUnClaimed = await callMsGraph(
@@ -184,7 +181,6 @@ export async function ClaimCommission(
       await submissionResultUnClaimed.json();
     if (!submissionResultUnClaimed.ok) {
       return { status: 500, body: 'Internal Error: Could Not Get Submissions' };
-      return;
     }
 
     if (submissionResultUnclaimedData.value !== undefined) {
@@ -217,6 +213,7 @@ export async function ClaimCommission(
       JSON.stringify(submissionData),
     );
     if (!submitResult.ok) {
+      console.log(await submitResult.json())
       return {
         status: 500,
         body: 'Internal Error: Unable to create submission',
