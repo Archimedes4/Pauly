@@ -12,7 +12,7 @@ import {
   loadingStateEnum,
   postType,
 } from '../../../../../types';
-import SportsYoutube from '../../../../../UI/SportsYoutube';
+import SportsYoutube from '../../../../../components/SportsYoutube';
 import { getTextState } from '../../../../../Functions/ultility/createUUID';
 
 function getDenyText(reviewed: boolean, accepted: boolean) {

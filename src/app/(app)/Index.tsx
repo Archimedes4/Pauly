@@ -15,9 +15,9 @@ import MonthView from '../../components/MonthView';
 import store, { RootState } from '../../Redux/store';
 import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer';
 import getCurrentPaulyData from '../../Functions/notifications/getCurrentPaulyData';
-import ProgressView from '../../UI/ProgressView';
-import { BookIcon, MedalIcon, PersonIcon } from '../../UI/Icons/Icons';
-import ScrollingTextAnimation from '../../UI/ScrollingTextAnimation';
+import ProgressView from '../../components/ProgressView';
+import { BookIcon, MedalIcon, PersonIcon } from '../../components/Icons/Icons';
+import ScrollingTextAnimation from '../../components/ScrollingTextAnimation';
 import { Colors, loadingStateEnum } from '../../types';
 import { Link, useRouter } from "expo-router";
 

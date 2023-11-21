@@ -7,7 +7,7 @@ import {
   DownIcon,
   UpIcon,
   WarningIcon,
-} from '../../../../../../UI/Icons/Icons';
+} from '../../../../../../components/Icons/Icons';
 
 export default function DressCodeBlock({
   dressCode,

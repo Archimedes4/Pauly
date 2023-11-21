@@ -8,7 +8,7 @@ import {
   RightAlignmentIcon,
   StrikeThroughIcon,
   UnderlineIcon,
-} from '../../../../../UI/Icons/Icons';
+} from '../../../../../components/Icons/Icons';
 
 export default function TextEditorHeader() {
   return (

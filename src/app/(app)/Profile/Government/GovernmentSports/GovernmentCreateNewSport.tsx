@@ -6,7 +6,7 @@ import { RootState } from '../../../../../Redux/store';
 import createUUID from '../../../../../Functions/ultility/createUUID';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '../../../../../types';
-import SVGXml from '../../../../../UI/SVGXml/SVGXml';
+import SVGXml from '../../../../../components/SVGXml/SVGXml';
 
 export default function GovernmentCreateNewSport() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

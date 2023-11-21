@@ -18,7 +18,7 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '../../../../Redux/store';
 import callMsGraph from '../../../../Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum, resourceResponce } from '../../../../types';
-import ProgressView from '../../../../UI/ProgressView';
+import ProgressView from '../../../../components/ProgressView';
 import getResource from '../../../../Functions/getResources';
 import GovernmentResourcesPost from './GovernmentResourcesPost/GovernmentResourcesPost';
 import { getChannels } from '../../../../Functions/microsoftGroupsFunctions';

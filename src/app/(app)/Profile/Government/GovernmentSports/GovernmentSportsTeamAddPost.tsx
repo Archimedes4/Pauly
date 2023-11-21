@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SegmentedButtons } from 'react-native-paper';
-import MicrosoftFilePicker from '../../../../../UI/MicrosoftFilePicker';
+import MicrosoftFilePicker from '../../../../../components/MicrosoftFilePicker';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 import createUUID from '../../../../../Functions/ultility/createUUID';
 import store, { RootState } from '../../../../../Redux/store';
@@ -20,7 +20,7 @@ import {
   getSports,
   getSportsTeams,
 } from '../../../../../Functions/sports/sportsFunctions';
-import ProgressView from '../../../../../UI/ProgressView';
+import ProgressView from '../../../../../components/ProgressView';
 import getYoutubeVideos from '../../../../../Functions/youtubeFunctions';
 
 function YoutubeVideosSelector({

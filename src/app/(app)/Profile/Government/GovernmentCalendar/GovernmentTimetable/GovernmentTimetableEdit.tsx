@@ -11,11 +11,11 @@ import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
 import createUUID from '../../../../../../Functions/ultility/createUUID';
-import { DownIcon, UpIcon, WarningIcon } from '../../../../../../UI/Icons/Icons';
+import { DownIcon, UpIcon, WarningIcon } from '../../../../../../components/Icons/Icons';
 import { Colors, loadingStateEnum } from '../../../../../../types';
 import { RootState } from '../../../../../../Redux/store';
 import getDressCodeData from '../../../../../../Functions/notifications/getDressCodeData';
-import ListItem from '../../../../../../UI/ListItem';
+import ListItem from '../../../../../../components/ListItem';
 import { getSchedules } from '../../../../../../Functions/calendar/calendarFunctionsGraph';
 
 // TO DO longest amount of school days is 20 make sure this is enforced

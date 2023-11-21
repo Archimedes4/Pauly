@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '../../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../../types';
-import { WarningIcon } from '../../../../../UI/Icons/Icons';
+import { WarningIcon } from '../../../../../components/Icons/Icons';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 import createUUID, {
   getTextState,

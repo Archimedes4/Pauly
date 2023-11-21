@@ -10,8 +10,8 @@ import {
   getSport,
   getSportsTeams,
 } from '../../../../../Functions/sports/sportsFunctions';
-import { WarningIcon } from '../../../../../UI/Icons/Icons';
-import SVGXml from '../../../../../UI/SVGXml/SVGXml';
+import { WarningIcon } from '../../../../../components/Icons/Icons';
+import SVGXml from '../../../../../components/SVGXml/SVGXml';
 import { getTextState } from '../../../../../Functions/ultility/createUUID';
 
 function SportsUpdateModel({

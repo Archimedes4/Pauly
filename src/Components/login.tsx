@@ -15,9 +15,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootState } from '../Redux/store';
 import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
-import { GearIcon } from '../UI/Icons/Icons';
+import { GearIcon } from '../components/Icons/Icons';
 import { Colors } from '../types';
-import ProgressView from '../UI/ProgressView';
+import ProgressView from '../components/ProgressView';
 
 export default function Login({
   onGetAuthToken,

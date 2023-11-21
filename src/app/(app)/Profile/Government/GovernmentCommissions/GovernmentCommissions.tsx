@@ -12,7 +12,7 @@ import {
   loadingStateEnum,
   submissionTypeEnum,
 } from '../../../../../types';
-import ProgressView from '../../../../../UI/ProgressView';
+import ProgressView from '../../../../../components/ProgressView';
 
 export default function GovernmentCommissions() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);

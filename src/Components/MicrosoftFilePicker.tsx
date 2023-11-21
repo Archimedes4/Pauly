@@ -33,8 +33,8 @@ export default function MicrosoftFilePicker({
 }: {
   height: number;
   width: number;
-  onSetIsShowingUpload: ((item: boolean) => void) | undefined;
-  onSetIsShowingMicrosoftUpload: ((item: boolean) => void) | undefined;
+  onSetIsShowingUpload?: ((item: boolean) => void) | undefined;
+  onSetIsShowingMicrosoftUpload?: ((item: boolean) => void) | undefined;
   onSelectedFile: (item: microsoftFileType) => void;
 }) {
   const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([]);

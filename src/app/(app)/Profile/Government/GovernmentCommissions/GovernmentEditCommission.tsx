@@ -19,13 +19,13 @@ import {
   loadingStateEnum,
   submissionTypeEnum,
 } from '../../../../../types';
-import SegmentedPicker from '../../../../../UI/Pickers/SegmentedPicker';
-import ProgressView from '../../../../../UI/ProgressView';
-import WebViewCross from '../../../../../UI/WebViewCross';
-import { CloseIcon } from '../../../../../UI/Icons/Icons';
-import MapWeb from '../../../../../UI/Map/Map';
-import Slider from '../../../../../UI/Slider';
-import BackButton from '../../../../../UI/BackButton';
+import SegmentedPicker from '../../../../../components/Pickers/SegmentedPicker';
+import ProgressView from '../../../../../components/ProgressView';
+import WebViewCross from '../../../../../components/WebViewCross';
+import { CloseIcon } from '../../../../../components/Icons/Icons';
+import MapWeb from '../../../../../components/Map/Map';
+import Slider from '../../../../../components/Slider';
+import BackButton from '../../../../../components/BackButton';
 import {
   getChannels,
   getPosts,

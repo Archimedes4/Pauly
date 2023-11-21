@@ -10,10 +10,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors, loadingStateEnum } from '../types';
-import ProgressView from '../UI/ProgressView';
-import WebViewCross from '../UI/WebViewCross';
+import ProgressView from '../components/ProgressView';
+import WebViewCross from '../components/WebViewCross';
 import { RootState } from '../Redux/store';
-import { CloseIcon } from '../UI/Icons/Icons';
+import { CloseIcon } from '../components/Icons/Icons';
 import { getNewsPosts } from '../Functions/getResources';
 
 export default function ResourcesNews({

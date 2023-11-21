@@ -27,17 +27,17 @@ import {
   getSportsTeams,
 } from '../../Functions/sports/sportsFunctions';
 import getFileWithShareID from '../../Functions/ultility/getFileWithShareID';
-import SegmentedPicker from '../../UI/Pickers/SegmentedPicker';
-import SVGXml from '../../UI/SVGXml/SVGXml';
-import BackButton from '../../UI/BackButton';
-import ProgressView from '../../UI/ProgressView';
+import SegmentedPicker from '../../components/Pickers/SegmentedPicker';
+import SVGXml from '../../components/SVGXml/SVGXml';
+import BackButton from '../../components/BackButton';
+import ProgressView from '../../components/ProgressView';
 import {
   Colors,
   dataContentTypeOptions,
   loadingStateEnum,
   postType,
 } from '../../types';
-import SportsYoutube from '../../UI/SportsYoutube';
+import SportsYoutube from '../../components/SportsYoutube';
 
 export default function Sports() {
   const { width, height, currentBreakPoint } = useSelector(

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import { RootState } from '../../../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../../../types';
-import ProgressView from '../../../../../../UI/ProgressView';
+import ProgressView from '../../../../../../components/ProgressView';
 import { getSchedules } from '../../../../../../Functions/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';
 

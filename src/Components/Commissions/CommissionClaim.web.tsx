@@ -14,7 +14,7 @@ import {
   loadingStateEnum,
   locationStateEnum,
 } from '../../types';
-import ProgressView from '../../UI/ProgressView';
+import ProgressView from '../../components/ProgressView';
 import { getTextState } from '../../Functions/ultility/createUUID';
 
 export default function CommissionClaim({

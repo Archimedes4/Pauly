@@ -33,11 +33,11 @@ import {
   getResourcesSearch,
   getScholarships,
 } from '../../Functions/getResources';
-import { CloseIcon, SearchIcon } from '../../UI/Icons/Icons';
-import WebViewCross from '../../UI/WebViewCross';
-import BackButton from '../../UI/BackButton';
-import ProgressView from '../../UI/ProgressView';
-import MimeTypeIcon from '../../UI/Icons/MimeTypeIcon';
+import { CloseIcon, SearchIcon } from '../../components/Icons/Icons';
+import WebViewCross from '../../components/WebViewCross';
+import BackButton from '../../components/BackButton';
+import ProgressView from '../../components/ProgressView';
+import MimeTypeIcon from '../../components/Icons/MimeTypeIcon';
 import { Colors, loadingStateEnum, resourceMode } from '../../types';
 import ResourcesNews from '../../components/ResourcesNews';
 

@@ -18,10 +18,10 @@ import callMsGraph from '../../Functions/ultility/microsoftAssets';
 import SelectTimetable from './SelectTimetable';
 import SelectSchoolDayData from './SelectSchoolDayData';
 import { Colors, loadingStateEnum, paulyEventType } from '../../types';
-import PickerWrapper from '../../UI/Pickers/Picker';
-import { CalendarIcon, CloseIcon, TimeIcon } from '../../UI/Icons/Icons';
 import updateEvent from '../../Functions/updateEvent';
 import { getTextState } from '../../Functions/ultility/createUUID';
+import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons/Icons';
+import PickerWrapper from '../Pickers/Picker';
 
 function GovernmentCalendarOptions({
   width,

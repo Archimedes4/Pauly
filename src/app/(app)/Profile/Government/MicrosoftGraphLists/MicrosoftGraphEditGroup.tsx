@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-native';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
-import { CopyIcon } from '../../../../../UI/Icons/Icons';
+import { CopyIcon } from '../../../../../components/Icons/Icons';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import { RootState } from '../../../../../Redux/store';
 import { getTextState } from '../../../../../Functions/ultility/createUUID';

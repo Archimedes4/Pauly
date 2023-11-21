@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import BackButton from '../../../../UI/BackButton';
-import MicrosoftFilePicker from '../../../../UI/MicrosoftFilePicker';
+import BackButton from '../../../../components/BackButton';
+import MicrosoftFilePicker from '../../../../components/MicrosoftFilePicker';
 import store, { RootState } from '../../../../Redux/store';
 import {
   changeStudentSelection,
@@ -20,10 +20,10 @@ import {
   getUsers,
   removeStudentSelection,
 } from '../../../../Functions/studentFunctions';
-import { CloseIcon, SearchIcon } from '../../../../UI/Icons/Icons';
+import { CloseIcon, SearchIcon } from '../../../../components/Icons/Icons';
 import { studentSearchSlice } from '../../../../Redux/reducers/studentSearchReducer';
 import { Colors, loadingStateEnum } from '../../../../types';
-import ProgressView from '../../../../UI/ProgressView';
+import ProgressView from '../../../../components/ProgressView';
 import addImage from '../../../../Functions/addImage';
 import { getTextState } from '../../../../Functions/ultility/createUUID';
 

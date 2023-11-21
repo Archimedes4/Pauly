@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../../../Redux/store';
 import { Colors, loadingStateEnum } from '../../../../../../types';
-import ListItem from '../../../../../../UI/ListItem';
+import ListItem from '../../../../../../components/ListItem';
 import getDressCodeData from '../../../../../../Functions/notifications/getDressCodeData';
 import { Link } from 'expo-router';
 

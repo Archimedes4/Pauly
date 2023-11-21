@@ -8,7 +8,7 @@ import { Colors, loadingStateEnum } from '../../../../../../types';
 import DressCodeBlock from './DressCodeBlock';
 import { createDressCode } from '../../../../../../Functions/calendar/calendarFunctionsGraph';
 import getDressCode from '../../../../../../Functions/notifications/getDressCode';
-import ProgressView from '../../../../../../UI/ProgressView';
+import ProgressView from '../../../../../../components/ProgressView';
 import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
 import { Link } from 'expo-router';
 

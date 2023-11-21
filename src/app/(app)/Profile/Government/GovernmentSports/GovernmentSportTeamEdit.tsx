@@ -20,9 +20,9 @@ import {
 } from '../../../../../types';
 import store, { RootState } from '../../../../../Redux/store';
 import { getTeams } from '../../../../../Functions/microsoftGroupsFunctions';
-import ProgressView from '../../../../../UI/ProgressView';
-import MicrosoftFilePicker from '../../../../../UI/MicrosoftFilePicker';
-import { CloseIcon } from '../../../../../UI/Icons/Icons';
+import ProgressView from '../../../../../components/ProgressView';
+import MicrosoftFilePicker from '../../../../../components/MicrosoftFilePicker';
+import { CloseIcon } from '../../../../../components/Icons/Icons';
 import getFileWithShareID from '../../../../../Functions/ultility/getFileWithShareID';
 
 export default function GovernmentCreateNewTeam() {

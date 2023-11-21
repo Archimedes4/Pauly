@@ -10,7 +10,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { useNavigate } from 'react-router-native';
 import createUUID from '../../../../../Functions/ultility/createUUID';
 import { loadingStateEnum } from '../../../../../types';
-import ProgressView from '../../../../../UI/ProgressView';
+import ProgressView from '../../../../../components/ProgressView';
 import getSubmissions from '../../../../../Functions/sports/sportsFunctions';
 
 export default function GovernmentHandleFileSubmissions({

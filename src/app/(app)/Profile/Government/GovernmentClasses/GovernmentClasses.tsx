@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-native';
 import { RootState } from '../../../../../Redux/store';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 import createUUID from '../../../../../Functions/ultility/createUUID';
 import { Colors, loadingStateEnum, semesters } from '../../../../../types';
-import ProgressView from '../../../../../UI/ProgressView';
+import ProgressView from '../../../../../components/ProgressView';
 import { Link } from 'expo-router';
 
 export default function GovernmentClasses() {

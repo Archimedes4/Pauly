@@ -17,8 +17,8 @@ import { safeAreaColorsSlice } from '../../Redux/reducers/safeAreaColorsReducer'
 import createUUID from '../../Functions/ultility/createUUID';
 import getPoints from '../../Functions/commissions/getPoints';
 import getCommissions from '../../Functions/commissions/getCommissions';
-import ProgressView from '../../UI/ProgressView';
-import BackButton from '../../UI/BackButton';
+import ProgressView from '../../components/ProgressView';
+import BackButton from '../../components/BackButton';
 import { Colors, loadingStateEnum } from '../../types';
 
 function PickerPiece({

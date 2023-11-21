@@ -19,10 +19,10 @@ import { useMsal } from '@azure/msal-react';
 import { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import { authenticationTokenSlice } from '../Redux/reducers/authenticationTokenReducer';
 import store, { RootState } from '../Redux/store';
-import ProgressView from '../UI/ProgressView';
+import ProgressView from '../components/ProgressView';
 import { Colors } from '../types';
 import { tenantId } from '../PaulyConfig';
-import { OfflineIcon } from '../UI/Icons/Icons';
+import { OfflineIcon } from '../components/Icons/Icons';
 
 function signOutNative(discovery: DiscoveryDocument) {
   revokeAsync({ token: store.getState().authenticationToken }, discovery);

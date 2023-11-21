@@ -6,13 +6,13 @@ import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 import store, { RootState } from '../../../../../Redux/store';
 import { Colors, loadingStateEnum, semesters } from '../../../../../types';
 import getSchoolYears from '../../../../../Functions/calendar/getSchoolYears';
-import SegmentedPicker from '../../../../../UI/Pickers/SegmentedPicker';
+import SegmentedPicker from '../../../../../components/Pickers/SegmentedPicker';
 import {
   getEvent,
   getTimetable,
 } from '../../../../../Functions/calendar/calendarFunctionsGraph';
-import { CloseIcon, WarningIcon } from '../../../../../UI/Icons/Icons';
-import Dropdown from '../../../../../UI/Dropdown';
+import { CloseIcon, WarningIcon } from '../../../../../components/Icons/Icons';
+import Dropdown from '../../../../../components/Dropdown';
 import { getRoom, getRooms } from '../../../../../Functions/classesFunctions';
 
 export default function GovernmentClassesEdit() {

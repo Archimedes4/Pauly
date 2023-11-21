@@ -7,7 +7,7 @@ import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import { RootState } from '../../../../../Redux/store';
 import { getSports } from '../../../../../Functions/sports/sportsFunctions';
-import ProgressView from '../../../../../UI/ProgressView';
+import ProgressView from '../../../../../components/ProgressView';
 
 export default function GovernmentSports() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
