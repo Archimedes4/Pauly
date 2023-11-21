@@ -20,20 +20,24 @@ export async function ClaimCommission(
 ): Promise<HttpResponseInit> {
   try {
     const accessTokens = await validateAndGetAccessTokens(req);
-    if (accessTokens == undefined) {
+    console.log('MARK HERE')
+    console.log(accessTokens)
+    if (accessTokens === undefined) {
       return {
         status: 401,
         body: 'Unauthorized: something went wrong validating token',
       };
     }
+    console.log('MARK HERE 1')
     const paulyListResult = await getPaulyList(
       accessTokens.onBehalfOfAccessToken,
     );
-
+    console.log('MARK HERE 2')
     if (!isListResponse(paulyListResult)) {
       return paulyListResult;
     }
 
+    console.log('MARK HERE 3')
     if (paulyListResult === undefined || accessTokens === undefined) {
       return { status: 400, body: 'Bad Request' };
     }
@@ -214,7 +218,6 @@ export async function ClaimCommission(
         status: 500,
         body: 'Internal Error: Unable to create submission',
       };
-      return;
     }
     console.log('submission Sent');
 

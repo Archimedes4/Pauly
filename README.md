@@ -3,6 +3,8 @@ Last updated November 9 2023 \
 Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
 Saint Paul's High School Student Council 2023-2024
+# Technologies
+Power by expo using expo router at its core.
 # Backend
 Pauly uses Microsoft graph and SharePoint lists as a database
 ## Structure 
@@ -30,10 +32,8 @@ TODO: https://learn.microsoft.com/en-us/graph/api/resources/todo-overview?view=g
 Insights (used, trending): https://learn.microsoft.com/en-us/graph/api/resources/officegraphinsights?view=graph-rest-1.0 \
 Board: https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format?view=graph-rest-1.0&tabs=http
 
-
-
 ### Resources
-The resource page takes teams posts and displays them. It has access to files and sections.
+The resource page takes teams posts and displays them. It has access to files and sections. Resource has a news section powered by the wordpress api. Resources has a scholarship database powered by the raindrop api.
 
 ### Sports
 This is the sports page that shows sport highlights and has team rosters. The sports page has embeded youtube videos from the Saint Paul's High School youtube page. It also as videos and images uploaded through government.
