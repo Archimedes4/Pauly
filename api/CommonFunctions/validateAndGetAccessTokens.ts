@@ -75,8 +75,11 @@ const getSigningKeys = (header: JwtHeader, callback: SigningKeyCallback) => {
  */
 const validateToken = (req: HttpRequest): Promise<string> => {
   return new Promise(async (resolve, reject) => {
+    console.log('MARK 1.1.1')
+    console.log(req.headers.get('Authorization'))
     const authHeader = req.headers.get('Authorization');
     if (authHeader) {
+      console.log('MARK 1.1')
       const token = authHeader.split(' ').pop();
 
       const validationOptions = {
@@ -84,14 +87,17 @@ const validateToken = (req: HttpRequest): Promise<string> => {
       };
 
       verify(token, getSigningKeys, validationOptions, (err, payload) => {
+        console.log('MARK 1.3')
         if (err) {
+          console.log('MARK 1.4')
           reject(403);
           return;
         }
-
+        console.log('MARK 1.5')
         resolve(token);
       });
     } else {
+      console.log('MARK 1.2')
       reject(401);
     }
   });
