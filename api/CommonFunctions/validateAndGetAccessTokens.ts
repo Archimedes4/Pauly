@@ -70,7 +70,7 @@ const getSigningKeys = (header: JwtHeader, callback: SigningKeyCallback) => {
  */
 const validateToken = (req: HttpRequest): Promise<string> => {
   return new Promise(async (resolve, reject) => {
-    const authHeader = req.headers.get('authorization');
+    const authHeader = req.headers.get('Authorization');
     if (authHeader) {
       const token = authHeader.split(' ').pop();
 
