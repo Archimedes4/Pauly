@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, Platform, View } from 'react-native';
 import { DefaultTheme, PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useSelector } from 'react-redux';
@@ -20,9 +20,20 @@ import store, { RootState } from '../Redux/store';
 import { dimentionsSlice } from '../Redux/reducers/dimentionsReducer';
 import AppMain from '../components/AppMain/AppMain';
 import { Colors, breakPointMode } from '../types';
+import { Slot } from 'expo-router';
+import WebAuthHolder from '../components/WebAuthHolder';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
+
+function SlotHolder() {
+  if (Platform.OS === 'web') {
+    <WebAuthHolder />
+  }
+  return (
+    <Slot />
+  )
+}
 
 function AppCore() {
   // Dimentions
@@ -153,7 +164,7 @@ function AppCore() {
           position: 'absolute',
         }}
       >
-        <AppMain dimensions={dimensions} />
+        <SlotHolder />
       </SafeAreaView>
       <View
         style={{
