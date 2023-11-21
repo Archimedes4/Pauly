@@ -205,7 +205,6 @@ export async function ClaimCommission(
       },
     };
     console.log(submissionData);
-    console.log(accessTokens.clientCredentialsAccessToken)
     const submitResult = await callMsGraph(
       accessTokens.clientCredentialsAccessToken,
       `https://graph.microsoft.com/v1.0/sites/${paulyListResult.siteId}/lists/${paulyListResult.commissionSubmissionsListId}/items`,

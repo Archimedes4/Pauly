@@ -155,7 +155,7 @@ export async function claimCommissionPost(
     outResult += `&imageShare=${imageShare}`;
   }
   const bearer = `Bearer ${auth}`;
-  // try {
+  try {
     const result = await fetch(
       `https://pauly-functions.azurewebsites.net/api/SubmitCommission?code=628ObqnRS5VxdYijTEz8sHucuLuihwin7ulwkUK6L5uCAzFuyFZ0Ng==&orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`,
       {
@@ -170,8 +170,7 @@ export async function claimCommissionPost(
       return loadingStateEnum.success;
     }
     return loadingStateEnum.failed;
-  // } catch {
-    
-  //   return loadingStateEnum.failed;
-  // }
+  } catch {
+    return loadingStateEnum.failed;
+  }
 }
