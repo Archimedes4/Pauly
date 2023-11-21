@@ -75,11 +75,9 @@ const getSigningKeys = (header: JwtHeader, callback: SigningKeyCallback) => {
  */
 const validateToken = (req: HttpRequest): Promise<string> => {
   return new Promise(async (resolve, reject) => {
-    console.log('MARK 1.1.1')
-    console.log(req.headers.get('Authorization'))
     const authHeader = req.headers.get('Authorization');
     if (authHeader) {
-      console.log('MARK 1.1')
+      console.log('MARK 1.1', process.env.CLIENTID)
       const token = authHeader.split(' ').pop();
 
       const validationOptions = {
