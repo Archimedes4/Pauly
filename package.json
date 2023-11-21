@@ -1,7 +1,7 @@
 {
   "name": "pauly",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@azure/msal-browser": "^2.38.2",
     "@azure/msal-react": "^1.5.11",
+    "@babel/plugin-proposal-private-methods": "^7.18.6",
     "@expo/config-plugins": "^7.2.5",
     "@expo/webpack-config": "^19.0.0",
     "@react-google-maps/api": "^2.19.2",
@@ -63,6 +64,7 @@
     "react-qr-code": "^2.0.12",
     "react-quill": "^2.0.0",
     "react-redux": "^8.1.2",
+    "react-refresh": "^0.14.0",
     "react-router-native": "^6.16.0",
     "reanimated-color-picker": "^2.4.0",
     "redux": "^4.2.1",

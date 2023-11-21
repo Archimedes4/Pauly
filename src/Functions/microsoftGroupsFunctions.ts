@@ -42,8 +42,10 @@ export async function getChannels(
   teamId: string,
   nextLink: string | undefined = undefined,
 ): Promise<{
-  result: loadingStateEnum;
-  data?: channelType[];
+  result: loadingStateEnum.failed;
+}|{
+  result: loadingStateEnum.success;
+  data: channelType[];
   nextLink?: string;
 }> {
   const result = await callMsGraph(

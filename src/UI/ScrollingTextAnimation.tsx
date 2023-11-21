@@ -51,7 +51,7 @@ export default function ScrollingTextAnimation({
 
   // Font
   const [fontsLoaded] = useFonts({
-    GochiHand: require('../../assets/fonts/GochiHand-Regular.ttf'),
+    GochiHand: require('../assets/fonts/GochiHand-Regular.ttf'),
   });
 
   useCallback(async () => {

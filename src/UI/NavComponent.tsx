@@ -6,7 +6,6 @@
   renders svg given width and height for native devices. Uses react-native-svg
 */
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-native';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFonts } from 'expo-font';
@@ -24,6 +23,7 @@ import {
 import { expandedModeSlice } from '../Redux/reducers/expandedModeReducer';
 import { isShowingProfileBlockSlice } from '../Redux/reducers/isShowingProfileBlockReducer';
 import { Colors } from '../types';
+import { Link } from 'expo-router';
 
 function NavBarBlock({
   des,
@@ -43,80 +43,78 @@ function NavBarBlock({
   setIsExpandedMode: () => void;
 }) {
   const [isHover, setIsHover] = useState<boolean>(false);
-  const navigation = useNavigate();
   return (
-    <Pressable
-      style={{
-        height: blockLength,
-        width: expandedMode ? width * 2.5 : width,
-        backgroundColor: isHover ? Colors.darkGray : 'transparent',
-        alignItems: 'center',
-      }}
-      onPress={() => {
-        navigation(des);
-      }}
-      onHoverIn={() => {
-        setIsHover(true);
-        setIsExpandedMode();
-      }}
-      onHoverOut={() => {
-        setIsHover(false);
-      }}
-    >
-      <View
-        style={[
-          styles.LinkStyle,
-          {
-            height: blockLength,
-            width: expandedMode ? blockLength * 2.5 : blockLength,
-            margin: 0,
-            position: expandedMode ? 'absolute' : 'relative',
-            left: expandedMode ? (width - blockLength) / 2 : undefined,
-            alignItems: 'center',
-          },
-        ]}
+    <Link href={des}>
+      <Pressable
+        style={{
+          height: blockLength,
+          width: expandedMode ? width * 2.5 : width,
+          backgroundColor: isHover ? Colors.darkGray : 'transparent',
+          alignItems: 'center',
+        }}
+        onHoverIn={() => {
+          setIsHover(true);
+          setIsExpandedMode();
+        }}
+        onHoverOut={() => {
+          setIsHover(false);
+        }}
       >
         <View
-          id="ViewHigh"
-          style={{
-            width: expandedMode ? blockLength * 2.5 : blockLength,
-            flexDirection: 'row',
-            margin: 'auto',
-            padding: 0,
-            alignItems: 'center',
-            alignContent: 'center',
-            justifyContent: 'center',
-          }}
+          style={[
+            styles.LinkStyle,
+            {
+              height: blockLength,
+              width: expandedMode ? blockLength * 2.5 : blockLength,
+              margin: 0,
+              position: expandedMode ? 'absolute' : 'relative',
+              left: expandedMode ? (width - blockLength) / 2 : undefined,
+              alignItems: 'center',
+            },
+          ]}
         >
           <View
-            style={[
-              {
-                height: blockLength,
-                width: blockLength,
-                position: expandedMode ? 'absolute' : 'relative',
-                left: expandedMode ? 0 : undefined,
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
-            ]}
+            id="ViewHigh"
+            style={{
+              width: expandedMode ? blockLength * 2.5 : blockLength,
+              flexDirection: 'row',
+              margin: 'auto',
+              padding: 0,
+              alignItems: 'center',
+              alignContent: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <>{children}</>
-          </View>
-          {expandedMode ? (
-            <Text
-              style={{
-                position: 'absolute',
-                left: blockLength,
-                color: Colors.white,
-                marginLeft: 8,
-              }}
+            <View
+              style={[
+                {
+                  height: blockLength,
+                  width: blockLength,
+                  position: expandedMode ? 'absolute' : 'relative',
+                  left: expandedMode ? 0 : undefined,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                },
+              ]}
             >
-              {text}
-            </Text>
-          ) : null}
+              <>{children}</>
+            </View>
+            {expandedMode ? (
+              <Text
+                style={{
+                  position: 'absolute',
+                  left: blockLength,
+                  color: Colors.white,
+                  marginLeft: 8,
+                }}
+              >
+                {text}
+              </Text>
+            ) : null}
+          </View>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </Link>
   );
 }
 
@@ -133,7 +131,6 @@ export default function NavBarComponent({
   const expandedMode = useSelector((state: RootState) => state.expandedMode);
   const [blockLength, setBlockLength] = useState<number>(0);
   const [iconLength, setIconLength] = useState<number>(0);
-  const navigation = useNavigate();
   const dispatch = useDispatch();
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
@@ -154,7 +151,7 @@ export default function NavBarComponent({
   }, [width, height]);
 
   const [fontsLoaded] = useFonts({
-    'Gochi Hand': require('../../assets/fonts/GochiHand-Regular.ttf'),
+    'Gochi Hand': require('../assets/fonts/GochiHand-Regular.ttf'),
   });
 
   useCallback(async () => {
@@ -222,7 +219,7 @@ export default function NavBarComponent({
               }}
             >
               <Image
-                source={require('../../assets/images/PaulyLogo.png')}
+                source={require('../assets/images/PaulyLogo.png')}
                 resizeMode="contain"
                 style={{ width: blockLength, height: blockLength }}
               />
@@ -306,7 +303,7 @@ export default function NavBarComponent({
           }}
         >
           <Image
-            source={require('../../assets/images/Football.png')}
+            source={require('../assets/images/Football.png')}
             resizeMode="contain"
             style={{ width: iconLength, height: iconLength }}
           />

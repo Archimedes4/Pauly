@@ -1,8 +1,8 @@
 import { View, Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
-import { useNavigate } from 'react-router-native';
 import createUUID from '../Functions/ultility/createUUID';
 import { Colors } from '../types';
+import { useRouter } from 'expo-router';
 
 export default function ListItem({
   to = undefined,
@@ -14,17 +14,17 @@ export default function ListItem({
 }: {
   title: string;
   width: number;
-  caption: string | undefined;
-  to: string | undefined;
-  onPress: (() => void) | undefined;
-  style: ViewStyle | undefined;
+  caption?: string | undefined;
+  to?: string | undefined;
+  onPress?: (() => void) | undefined;
+  style?: ViewStyle | undefined;
 }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <Pressable
       onPress={() => {
         if (to !== undefined) {
-          navigate(to);
+          router.replace(to)
         }
         if (onPress !== undefined) {
           onPress();
