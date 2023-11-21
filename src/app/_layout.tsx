@@ -20,7 +20,6 @@ import store, { RootState } from '../Redux/store';
 import { dimentionsSlice } from '../Redux/reducers/dimentionsReducer';
 import AppMain from '../components/AppMain/AppMain';
 import { Colors, breakPointMode } from '../types';
-import { Slot } from 'expo-router';
 
 const windowDimensions = Dimensions.get('window');
 const screenDimensions = Dimensions.get('screen');
@@ -94,6 +93,7 @@ function AppCore() {
             store.dispatch(
               dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
                 width: newWidth * 0.75,
+                totalWidth: dimensions.window.width,
                 currentBreakPoint,
               }),
             );
@@ -101,6 +101,7 @@ function AppCore() {
             store.dispatch(
               dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
                 width: newWidth * 0.9,
+                totalWidth: dimensions.window.width,
                 currentBreakPoint,
               }),
             );
@@ -109,6 +110,7 @@ function AppCore() {
           store.dispatch(
             dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
               width: newWidth,
+              totalWidth: dimensions.window.width,
               currentBreakPoint,
             }),
           );

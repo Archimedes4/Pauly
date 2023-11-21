@@ -49,7 +49,7 @@ interface colorIconProps extends iconProps {
 // WarningIcon
 // SearchIcon
 
-export function CalendarIcon({ width, height, style }: iconProps) {
+export function CalendarIcon({ width, height, style, color }: colorIconProps) {
   return (
     <View>
       <Svg
@@ -61,27 +61,27 @@ export function CalendarIcon({ width, height, style }: iconProps) {
       >
         <Path
           d="M7.75 2.5C7.75 2.08579 7.41421 1.75 7 1.75C6.58579 1.75 6.25 2.08579 6.25 2.5V4.07926C4.81067 4.19451 3.86577 4.47737 3.17157 5.17157C2.47737 5.86577 2.19451 6.81067 2.07926 8.25H21.9207C21.8055 6.81067 21.5226 5.86577 20.8284 5.17157C20.1342 4.47737 19.1893 4.19451 17.75 4.07926V2.5C17.75 2.08579 17.4142 1.75 17 1.75C16.5858 1.75 16.25 2.08579 16.25 2.5V4.0129C15.5847 4 14.839 4 14 4H10C9.16097 4 8.41527 4 7.75 4.0129V2.5Z"
-          fill="#000000"
+          fill={color ? color:"#000000"}
         />
         <Path
           fillRule="evenodd"
           clipRule="evenodd"
           d="M2 12C2 11.161 2 10.4153 2.0129 9.75H21.9871C22 10.4153 22 11.161 22 12V14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V12ZM17 14C17.5523 14 18 13.5523 18 13C18 12.4477 17.5523 12 17 12C16.4477 12 16 12.4477 16 13C16 13.5523 16.4477 14 17 14ZM17 18C17.5523 18 18 17.5523 18 17C18 16.4477 17.5523 16 17 16C16.4477 16 16 16.4477 16 17C16 17.5523 16.4477 18 17 18ZM13 13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13C11 12.4477 11.4477 12 12 12C12.5523 12 13 12.4477 13 13ZM13 17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17C11 16.4477 11.4477 16 12 16C12.5523 16 13 16.4477 13 17ZM7 14C7.55228 14 8 13.5523 8 13C8 12.4477 7.55228 12 7 12C6.44772 12 6 12.4477 6 13C6 13.5523 6.44772 14 7 14ZM7 18C7.55228 18 8 17.5523 8 17C8 16.4477 7.55228 16 7 16C6.44772 16 6 16.4477 6 17C6 17.5523 6.44772 18 7 18Z"
-          fill="#000000"
+          fill={color ? color:"#000000"}
         />
       </Svg>
     </View>
   );
 }
 
-export function MedalIcon({ width, height, style }: iconProps) {
+export function MedalIcon({ width, height, style, color }: colorIconProps) {
   return (
     <Svg
       width={width}
       height={height}
       style={style}
       viewBox="0 0 297.334 297.334"
-      fill="#000000"
+      fill={color ? color:"#000000"}
     >
       <G id="SVGRepo_bgCarrier" strokeWidth="0" />
       <G
@@ -102,9 +102,9 @@ export function MedalIcon({ width, height, style }: iconProps) {
   );
 }
 
-export function BookIcon({ width, height, style }: iconProps) {
+export function BookIcon({ width, height, style, color }: colorIconProps) {
   return (
-    <Svg width={width} height={height} style={style} viewBox="0 0 512 512">
+    <Svg width={width} height={height} style={style} viewBox="0 0 512 512" fill={color}>
       <Path d="m202.24 74c-36.13-17.25-86.63-25.7-154.24-26a31.36 31.36 0 0 0 -17.92 5.33 32 32 0 0 0 -14.08 26.57v286.1c0 19.34 13.76 33.93 32 33.93 71.07 0 142.36 6.64 185.06 47a4.11 4.11 0 0 0 6.94-3v-337.11a15.89 15.89 0 0 0 -5.46-12 143 143 0 0 0 -32.3-20.82z" />
       <Path d="m481.92 53.3a31.33 31.33 0 0 0 -17.92-5.3c-67.61.3-118.11 8.71-154.24 26a143.31 143.31 0 0 0 -32.31 20.78 15.93 15.93 0 0 0 -5.45 12v337.13a3.93 3.93 0 0 0 6.68 2.81c25.67-25.5 70.72-46.82 185.36-46.81a32 32 0 0 0 32-32v-288a32 32 0 0 0 -14.12-26.61z" />
     </Svg>
@@ -130,13 +130,14 @@ export function GovernmentIcon({ width, height, style }: iconProps) {
   );
 }
 
-export function HomeIcon({ width, height, style }: iconProps) {
+export function HomeIcon({ width, height, style, color }: colorIconProps) {
   return (
     <Svg
       width={width}
       height={height}
       style={style}
       viewBox="0 0 460.298 460.297"
+      fill={color}
     >
       <Path
         d="M230.149,120.939L65.986,256.274c0,0.191-0.048,0.472-0.144,0.855c-0.094,0.38-0.144,0.656-0.144,0.852v137.041
@@ -464,13 +465,13 @@ export function WarningIcon({
   );
 }
 
-export function SearchIcon({ width, height, style }: iconProps) {
+export function SearchIcon({ width, height, style, color }: colorIconProps) {
   return (
     <Svg
       width={width}
       height={height}
       style={style}
-      fill="#000000"
+      fill={color ? color:"#000000"}
       id="Capa_1"
       viewBox="0 0 488.4 488.4"
     >
@@ -1023,7 +1024,7 @@ export function GraphAPILogo({ width, height, style }: iconProps) {
   );
 }
 
-export function StudentSearchIcon({ width, height, style }: iconProps) {
+export function StudentSearchIcon({ width, height, style, color }: colorIconProps) {
   return (
     <Svg
       width={width}
@@ -1041,7 +1042,7 @@ export function StudentSearchIcon({ width, height, style }: iconProps) {
       <G id="SVGRepo_iconCarrier">
         <Path
           d="M18.5 19.5L20 21M11 21H5.6C5.03995 21 4.75992 21 4.54601 20.891C4.35785 20.7951 4.20487 20.6422 4.10899 20.454C4 20.2401 4 19.9601 4 19.4V17.6841C4 17.0485 4 16.7306 4.04798 16.4656C4.27087 15.2344 5.23442 14.2709 6.46558 14.048C6.5425 14.0341 6.6237 14.0242 6.71575 14.0172C6.94079 14 7.05331 13.9914 7.20361 14.0026C7.35983 14.0143 7.4472 14.0297 7.59797 14.0722C7.74302 14.1131 8.00429 14.2315 8.52682 14.4682C9.13692 14.7446 9.8015 14.9218 10.5 14.9795M19 17.5C19 18.8807 17.8807 20 16.5 20C15.1193 20 14 18.8807 14 17.5C14 16.1193 15.1193 15 16.5 15C17.8807 15 19 16.1193 19 17.5ZM15 7C15 9.20914 13.2091 11 11 11C8.79086 11 7 9.20914 7 7C7 4.79086 8.79086 3 11 3C13.2091 3 15 4.79086 15 7Z"
-          stroke="#000000"
+          stroke={color ? color:"#000000"}
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"

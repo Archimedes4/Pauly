@@ -38,15 +38,13 @@ function signOutWeb(instance: IPublicClientApplication, account?: AccountInfo) {
 
 export default function LoadingView({
   setOveride,
-  width,
 }: {
   setOveride: (item: boolean) => void;
-  width: number;
 }) {
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
-  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
   const insets = useSafeAreaInsets();
   const [isShowingLogout, setIsShowingLogout] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>(true);
@@ -98,7 +96,7 @@ export default function LoadingView({
   return (
     <View
       style={{
-        width,
+        width: totalWidth,
         top: -insets.top,
         height,
         alignContent: 'center',

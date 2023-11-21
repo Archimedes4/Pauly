@@ -16,14 +16,8 @@ import { Colors } from '../../types';
 import LoadingScreen from '../../components/LoadingScreen';
 import { Slot } from 'expo-router';
 
-export default function AuthenticatedView({
-  dimensions,
-  width,
-}: {
-  dimensions: { window: ScaledSize; screen: ScaledSize };
-  width: number;
-}) {
-  const { height, currentBreakPoint } = useSelector(
+export default function AuthenticatedView() {
+  const { height, currentBreakPoint, totalWidth } = useSelector(
     (state: RootState) => state.dimentions,
   );
   const { siteId } = useSelector((state: RootState) => state.paulyList);
@@ -37,17 +31,17 @@ export default function AuthenticatedView({
   const [overide, setOveride] = useState<boolean>(false);
   if ((siteId !== '' || overide) && authenticationToken !== '') {
     return (
-      <View style={{ width, top: -insets.top }}>
-        <View style={{ flexDirection: 'row', width }}>
+      <View style={{ width: totalWidth, top: -insets.top }}>
+        <View style={{ flexDirection: 'row', width: totalWidth }}>
           {currentBreakPoint >= 1 ? (
             <NavBarComponent
-              width={width * 0.1}
-              height={dimensions.window.height}
+              width={totalWidth * 0.1}
+              height={height}
             />
           ) : null}
           <View
             style={{
-              width: currentBreakPoint >= 1 ? width * 0.9 : width,
+              width: totalWidth,
               height,
               backgroundColor: Colors.maroon,
             }}
@@ -61,5 +55,6 @@ export default function AuthenticatedView({
       </View>
     );
   }
-  return <LoadingScreen setOveride={setOveride} width={width} />;
+  
+  return <LoadingScreen setOveride={setOveride}/>;
 }

@@ -16,7 +16,6 @@ import {
   useMsal,
 } from '@azure/msal-react';
 import Login from '../login';
-import AuthenticatedViewMain from '../../app/(app)/AuthenticatedViewMain';
 import { clientId, scopes, tenantId } from '../../PaulyConfig';
 import getPaulyLists from '../../Functions/ultility/getPaulyLists';
 import getUserProfile from '../../Functions/ultility/getUserProfile';
@@ -28,6 +27,7 @@ import {
   validateGovernmentMode,
 } from '../../Functions/handleGovernmentLogin';
 import { RootState } from '../../Redux/store';
+import { Slot } from 'expo-router';
 
 // This is for the microsoft authentication on web.
 const pca = new PublicClientApplication({
@@ -175,10 +175,7 @@ function AuthDeep({
       }}
     >
       <AuthenticatedTemplate>
-        <AuthenticatedViewMain
-          dimensions={dimensions}
-          width={dimensions.window.width}
-        />
+        <Slot />
       </AuthenticatedTemplate>
       <UnauthenticatedTemplate>
         <Login

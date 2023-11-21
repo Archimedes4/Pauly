@@ -18,7 +18,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ScaledSize } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Login from '../login';
-import AuthenticatedView from '../../app/(app)/AuthenticatedViewMain';
 import { clientId, scopes, tenantId } from '../../PaulyConfig';
 import { authenticationRefreshTokenSlice } from '../../Redux/reducers/authenticationRefreshTokenReducer';
 import { authenticationTokenSlice } from '../../Redux/reducers/authenticationTokenReducer';
@@ -26,6 +25,7 @@ import store, { RootState } from '../../Redux/store';
 import { validateGovernmentMode } from '../../Functions/handleGovernmentLogin';
 import getPaulyLists from '../../Functions/ultility/getPaulyLists';
 import getUserProfile from '../../Functions/ultility/getUserProfile';
+import { Slot } from 'expo-router';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -161,10 +161,7 @@ export default function AppMain({
 
   if (authenticationToken !== '') {
     return (
-      <AuthenticatedView
-        dimensions={dimensions}
-        width={dimensions.window.width}
-      />
+      <Slot/>
     );
   }
 

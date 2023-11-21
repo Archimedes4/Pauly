@@ -8,9 +8,10 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 const initalState: {
   width: number;
+  totalWidth: number//the width of entire screen
   height: number;
   currentBreakPoint: number;
-} = { width: 0, height: 0, currentBreakPoint: 0 };
+} = { width: 0, totalWidth: 0, height: 0, currentBreakPoint: 0 };
 
 export const dimentionsSlice = createSlice({
   name: 'dimentions',
@@ -19,16 +20,18 @@ export const dimentionsSlice = createSlice({
     setDimentionsWidth: (state, action: PayloadAction<number>) => {
       return {
         width: action.payload,
+        totalWidth: state.totalWidth,
         height: state.height,
         currentBreakPoint: state.currentBreakPoint,
       };
     },
     setDimentionsWidthCurrentBreakPoint: (
       state,
-      action: PayloadAction<{ width: number; currentBreakPoint: number }>,
+      action: PayloadAction<{ width: number; totalWidth: number; currentBreakPoint: number }>,
     ) => {
       return {
         width: action.payload.width,
+        totalWidth: action.payload.totalWidth,
         height: state.height,
         currentBreakPoint: action.payload.currentBreakPoint,
       };
@@ -36,6 +39,7 @@ export const dimentionsSlice = createSlice({
     setDimentionsHeight: (state, action: PayloadAction<number>) => {
       return {
         width: state.width,
+        totalWidth: state.totalWidth,
         height: action.payload,
         currentBreakPoint: state.currentBreakPoint,
       };
