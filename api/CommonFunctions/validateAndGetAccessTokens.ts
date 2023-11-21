@@ -83,7 +83,6 @@ const validateToken = (req: HttpRequest): Promise<string> => {
       const validationOptions = {
         audience: `api://${process.env.CLIENTID}/api`,
       };
-      console.log(JSON.parse(token));
 
       verify(token, getSigningKeys, validationOptions, (err, payload) => {
         console.log('MARK 1.3')
