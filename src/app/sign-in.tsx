@@ -18,20 +18,29 @@ import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import { GearIcon } from '../components/Icons/Icons';
 import { Colors } from '../types';
 import ProgressView from '../components/ProgressView';
-import { useInvokeLogin } from '../Functions/authentication';
-import { useSilentLogin } from '../Functions/authentication/index.web';
+import { useInvokeLogin, useSilentLogin } from '../Functions/authentication';
+import { useSession } from '../Functions/ultility/getWebSession.web';
 
 export default function SignIn() {
   //visual
+  const silentLogin = useSilentLogin();
+  const getSession = useSession();
   const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
+  const { siteId } = useSelector((state: RootState) => state.paulyList);
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(0);
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
   const [mounted, setMounted] = useState<boolean>(false)
+
   useEffect(() => {
-    setMounted(true)
+    if (siteId === '' && !mounted) {
+      console.log('mount one')
+      setMounted(true)
+      silentLogin();
+      getSession()
+    }
   }, [])
 
   const safeArea = useCallback(
@@ -70,14 +79,9 @@ export default function SignIn() {
 
   //authentication
   const login = useInvokeLogin();
-  const silentLogin = useSilentLogin();
   const authLoading = useSelector((state: RootState) => state.authLoading);
   const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
     useState<boolean>(false);
-  
-    useEffect(() => {
-      silentLogin();
-    }, [])
 
   if (!fontsLoaded) {
     return null;

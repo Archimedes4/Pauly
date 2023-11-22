@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  November 22 2023
+  +html.tsx
+  holds based html for web version. Used to add apple itunes meta tag.
+*/
 import React, { PropsWithChildren } from "react";
 
 export default function Root({ children }: PropsWithChildren) {

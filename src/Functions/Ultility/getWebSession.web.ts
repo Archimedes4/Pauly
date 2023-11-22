@@ -15,6 +15,7 @@ export function useSession(): () => void  {
         //return nothing just don't fail
       }
     }
+    return false
   }
   return main
 }

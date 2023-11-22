@@ -15,7 +15,6 @@ import ProfileBlock from './Profile/ProfileBlock';
 import { Colors } from '../../types';
 import LoadingScreen from '../../components/LoadingScreen';
 import { Redirect, Slot, router } from 'expo-router';
-import { useSession } from '../../Functions/ultility/getWebSession.web';
 
 export default function AuthenticatedView() {
   const { height, currentBreakPoint, totalWidth } = useSelector(
@@ -30,20 +29,6 @@ export default function AuthenticatedView() {
   );
   const insets = useSafeAreaInsets();
   const [overide, setOveride] = useState<boolean>(false);
-  const getSession = useSession();
-
-  useEffect(() => {
-    getSession()
-  }, [])
-
-  const [mounted, setMounted] = useState<boolean>(false)
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
   
   if ((siteId !== '' || overide) && authenticationToken !== '') {
     return (
@@ -74,5 +59,6 @@ export default function AuthenticatedView() {
   if (siteId === '' && authenticationToken !== '') {
     return <LoadingScreen setOveride={setOveride}/>;
   }
-  return <Redirect href="/sign-in" />;
+
+  return <Redirect href={`/sign-in`} />;
 }

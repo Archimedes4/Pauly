@@ -15,6 +15,7 @@ import getPaulyLists from "../ultility/getPaulyLists";
 import getUserProfile from "../ultility/getUserProfile";
 import { EventType } from "@azure/msal-browser";
 import { useRouter } from "expo-router";
+import { authenticationRefreshTokenSlice } from "../../Redux/reducers/authenticationRefreshTokenReducer";
 
 export const refreshToken = () => {
   const { instance } = useMsal();
@@ -39,65 +40,21 @@ export function useSilentLogin(): (() => Promise<void>) {
   const instance = instanceFunction()
   const route = useRouter();
   async function main() {
-    //checking if an account exists
-    const accounts = instance.getAllAccounts();
-    if (accounts.length > 0) {
-      //getting the first account
-      instance.setActiveAccount(accounts[0]);
-      const accountResult = await instance.getActiveAccount();
-      if (accountResult !== null) {
-        const result = await instance.acquireTokenSilent({
-          scopes,
-        });
-        store.dispatch(
-          authenticationTokenSlice.actions.setAuthenticationToken(
-            result.accessToken,
-          ),
-        );
-        route.replace('/')
-        getPaulyLists();
-        getUserProfile();
-        if (await getWantGovernment()) {
-          checkIfGovernmentMode();
-        }
-        return;
-      }
-    }
-    instance.addEventCallback((event: any) => {
-      // set active account after redirect
-      if (
-        event.eventType === EventType.LOGIN_SUCCESS &&
-        event.payload.account
-      ) {
-        const { account } = event.payload;
-        instance.setActiveAccount(account);
-      }
-    });
     // handle auth redired/do all initial setup for msal
-    instance
-      .handleRedirectPromise()
-      .then(async authResult => {
-        // Check if user signed in
-        const account = instance.getActiveAccount();
-        if (account) {
-          if (authResult !== undefined && authResult !== null) {
-            store.dispatch(
-              authenticationTokenSlice.actions.setAuthenticationToken(
-                authResult.accessToken,
-              ),
-            );
-            if (await getWantGovernment()) {
-              validateGovernmentMode();
-            }
-            route.replace('/')
-            getPaulyLists();
-            getUserProfile();
-          }
-        }
-      })
-      .catch(async err => {
-        // TODO: Handle errors
-        try {
+    const redirectResult = await instance.handleRedirectPromise();
+    if (redirectResult !== null) {
+      instance.setActiveAccount(redirectResult.account);
+      store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(redirectResult.accessToken))
+      route.push('/');
+    } else {
+      console.log('silent login called')
+      //checking if an account exists
+      const accounts = instance.getAllAccounts();
+      if (accounts.length > 0) {
+        //getting the first account
+        instance.setActiveAccount(accounts[0]);
+        const accountResult = await instance.getActiveAccount();
+        if (accountResult !== null) {
           const result = await instance.acquireTokenSilent({
             scopes,
           });
@@ -106,14 +63,17 @@ export function useSilentLogin(): (() => Promise<void>) {
               result.accessToken,
             ),
           );
-          if (await getWantGovernment()) {
-            validateGovernmentMode();
-          }
-          route.replace('/')
+          console.log('route called')
+          route.push('/')
           getPaulyLists();
           getUserProfile();
-        } catch (e) {}
-      });
+          if (await getWantGovernment()) {
+            checkIfGovernmentMode();
+          }
+          return;
+        }
+      }
+    }
   }
   return main;
 }
