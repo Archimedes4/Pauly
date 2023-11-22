@@ -10,7 +10,6 @@ import { Dimensions, Platform, View } from 'react-native';
 import { DefaultTheme, PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useSelector } from 'react-redux';
-
 import {
   SafeAreaProvider,
   SafeAreaView,
@@ -27,6 +26,14 @@ const screenDimensions = Dimensions.get('screen');
 
 //Holds main slot redirects to web slot with msal provider if web.
 function SlotHolder() {
+  const [mounted, setMounted] = useState<boolean>(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
   if (Platform.OS === 'web') {
     return <WebAuthHolder />
   }
@@ -145,6 +152,15 @@ function AppCore() {
     }
   }, [dimensions]);
 
+  const [mounted, setMounted] = useState<boolean>(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+
   return (
     <>
       <View
@@ -236,6 +252,7 @@ export default function App() {
   //Hydration holder
   const [mounted, setMounted] = useState<boolean>(false)
   useEffect(() => {
+    console.log('mount')
     setMounted(true)
   }, [])
 

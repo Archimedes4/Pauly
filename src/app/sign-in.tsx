@@ -18,18 +18,21 @@ import { safeAreaColorsSlice } from '../Redux/reducers/safeAreaColorsReducer';
 import { GearIcon } from '../components/Icons/Icons';
 import { Colors } from '../types';
 import ProgressView from '../components/ProgressView';
-import { login } from '../Functions/authentication';
+import { useInvokeLogin } from '../Functions/authentication';
+import { useSilentLogin } from '../Functions/authentication/index.web';
 
 export default function SignIn() {
+  //visual
   const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
-  const authLoading = useSelector((state: RootState) => state.authLoading);
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(0);
-  const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
-    useState<boolean>(false);
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
+  const [mounted, setMounted] = useState<boolean>(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const safeArea = useCallback(
     async function setSafeAreaColors() {
@@ -65,7 +68,22 @@ export default function SignIn() {
     }
   }, [fontsLoaded]);
 
+  //authentication
+  const login = useInvokeLogin();
+  const silentLogin = useSilentLogin();
+  const authLoading = useSelector((state: RootState) => state.authLoading);
+  const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
+    useState<boolean>(false);
+  
+    useEffect(() => {
+      silentLogin();
+    }, [])
+
   if (!fontsLoaded) {
+    return null;
+  }
+
+  if (!mounted) {
     return null;
   }
 
@@ -137,9 +155,7 @@ export default function SignIn() {
           23/24 Saint Paul&#39;s High School Student Council
         </Text>
         <Pressable
-          onPress={async () => {
-            login(false);
-          }}
+          onPress={() => {login()}}
           onHoverIn={() => {
             setIsButtonHover(true);
           }}
@@ -177,7 +193,7 @@ export default function SignIn() {
         </Pressable>
         {isShowingGovernmentLogin ? (
           <Pressable
-            onPress={async () => {
+            onPress={() => {
               login(true);
             }}
             onHoverIn={() => {

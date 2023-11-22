@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  21 November 2023
+  authentiation/index.web.ts
+  authentication component web, using msal library.
+*/
 import { useMsal } from "@azure/msal-react";
 import { useCallback, useEffect } from "react";
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
@@ -7,6 +14,7 @@ import { checkIfGovernmentMode, getWantGovernment, setWantGovernment, validateGo
 import getPaulyLists from "../ultility/getPaulyLists";
 import getUserProfile from "../ultility/getUserProfile";
 import { EventType } from "@azure/msal-browser";
+import { useRouter } from "expo-router";
 
 export const refreshToken = () => {
   const { instance } = useMsal();
@@ -22,17 +30,19 @@ export const refreshToken = () => {
   })
 }
 
-export const login = (userInitated: boolean, government?: boolean) => {
+function instanceFunction() {
   const { instance } = useMsal();
-  // Account selection logic is app dependent. Adjust as needed for different use cases.
-  // Set active acccount on page load
-  async function webAuth() {
-    if (government !== undefined) {
-      setWantGovernment(government);
-    }
-  
+  return instance
+}
+
+export function useSilentLogin(): (() => Promise<void>) {
+  const instance = instanceFunction()
+  const route = useRouter();
+  async function main() {
+    //checking if an account exists
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
+      //getting the first account
       instance.setActiveAccount(accounts[0]);
       const accountResult = await instance.getActiveAccount();
       if (accountResult !== null) {
@@ -44,6 +54,7 @@ export const login = (userInitated: boolean, government?: boolean) => {
             result.accessToken,
           ),
         );
+        route.replace('/')
         getPaulyLists();
         getUserProfile();
         if (await getWantGovernment()) {
@@ -52,7 +63,6 @@ export const login = (userInitated: boolean, government?: boolean) => {
         return;
       }
     }
-  
     instance.addEventCallback((event: any) => {
       // set active account after redirect
       if (
@@ -61,23 +71,15 @@ export const login = (userInitated: boolean, government?: boolean) => {
       ) {
         const { account } = event.payload;
         instance.setActiveAccount(account);
-      } else {
-        console.log('failed On line 89');
       }
     });
-  
     // handle auth redired/do all initial setup for msal
     instance
       .handleRedirectPromise()
       .then(async authResult => {
         // Check if user signed in
         const account = instance.getActiveAccount();
-        if (!account && userInitated) {
-          // redirect anonymous user to login page
-          instance.loginRedirect({
-            scopes,
-          });
-        } else if (account) {
+        if (account) {
           if (authResult !== undefined && authResult !== null) {
             store.dispatch(
               authenticationTokenSlice.actions.setAuthenticationToken(
@@ -87,6 +89,7 @@ export const login = (userInitated: boolean, government?: boolean) => {
             if (await getWantGovernment()) {
               validateGovernmentMode();
             }
+            route.replace('/')
             getPaulyLists();
             getUserProfile();
           }
@@ -106,13 +109,24 @@ export const login = (userInitated: boolean, government?: boolean) => {
           if (await getWantGovernment()) {
             validateGovernmentMode();
           }
+          route.replace('/')
           getPaulyLists();
           getUserProfile();
         } catch (e) {}
       });
   }
+  return main;
+}
 
-  useEffect(() => {
-    webAuth();
-  }, [])
+export function useInvokeLogin(): ((government?: boolean) => Promise<void>) {
+  const instance = instanceFunction()
+  //Invoking the login redirect does not handle the token
+  async function loginFunction(government?: boolean) {
+    if (government !== undefined) {
+      setWantGovernment(government);
+    }
+    instance.loginRedirect({scopes});
+  }
+
+  return loginFunction;
 }

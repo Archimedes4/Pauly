@@ -6,9 +6,16 @@ import { authenticationRefreshTokenSlice } from "../../Redux/reducers/authentica
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
 import getUserProfile from "../ultility/getUserProfile";
 import getPaulyLists from "../ultility/getPaulyLists";
-import { useCallback, useEffect } from "react";
 
-export const login = (government?: boolean) => {
+//placeholder function
+export function useSilentLogin(): (government?: boolean) => Promise<void> {
+  async function main(government?: boolean) {
+    return;
+  }
+  return main
+}
+
+export function useInvokeLogin(government?: boolean): ((government?: boolean) => Promise<void>) {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
@@ -28,12 +35,12 @@ export const login = (government?: boolean) => {
     discovery,
   );
 
-  if (discovery !== null) {
-    store.dispatch(authLoadingSlice.actions.setAuthLoading(true));
-    const res = promptAsync();
-    res.then((res) => {
+  async function main() {
+    if (discovery !== null) {
+      store.dispatch(authLoadingSlice.actions.setAuthLoading(true));
+      const res = await promptAsync();
       if (authRequest && res?.type === 'success' && discovery) {
-        const exchangeRes = exchangeCodeAsync(
+        const exchangeRes = await exchangeCodeAsync(
           {
             clientId,
             code: res.params.code,
@@ -45,38 +52,38 @@ export const login = (government?: boolean) => {
           },
           discovery,
         );
-        exchangeRes.then((exchangeRes) => {
-          if (exchangeRes.refreshToken !== undefined) {
-            store.dispatch(
-              authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(
-                exchangeRes.refreshToken,
-              ),
-            );
-          }
+        if (exchangeRes.refreshToken !== undefined) {
           store.dispatch(
-            authenticationTokenSlice.actions.setAuthenticationToken(
-              exchangeRes.accessToken,
+            authenticationRefreshTokenSlice.actions.setAuthenticationRefreshToken(
+              exchangeRes.refreshToken,
             ),
           );
-          getPaulyLists();
-          getUserProfile();
-          store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
-        })
+        }
+        store.dispatch(
+          authenticationTokenSlice.actions.setAuthenticationToken(
+            exchangeRes.accessToken,
+          ),
+        );
+        getPaulyLists();
+        getUserProfile();
+        store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
       } else {
         store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
       }
-    })
+    }
   }
+  return main
 }
 
-export const refresh = () => {
+//Refresh block to take a refresh token and get a new access token.
+export function refresh(): (() => Promise<void>) {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
-  useEffect(() => {
+  async function main() {
     if (discovery !== null) {
       try {
-        const result = refreshAsync(
+        const result = await refreshAsync(
           {
             refreshToken: store.getState().authenticationRefreshToken,
             clientId,
@@ -84,18 +91,17 @@ export const refresh = () => {
           },
           discovery,
         );
-        result.then((result) => {
-          store.dispatch(
-            authenticationTokenSlice.actions.setAuthenticationToken(
-              result.accessToken,
-            ),
-          );
-        })
+        store.dispatch(
+          authenticationTokenSlice.actions.setAuthenticationToken(
+            result.accessToken,
+          ),
+        );
       } catch {
         store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
       }
     } else {
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
     }
-  }, [])
+  }
+  return main;
 }

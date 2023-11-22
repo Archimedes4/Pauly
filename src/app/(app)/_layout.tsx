@@ -6,7 +6,7 @@
   This holds the main router to Pauly once authenticated.
 */
 import React, { useEffect, useState } from 'react';
-import { View, ScaledSize } from 'react-native';
+import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NavBarComponent from '../../components/NavComponent';
@@ -14,8 +14,8 @@ import { RootState } from '../../Redux/store';
 import ProfileBlock from './Profile/ProfileBlock';
 import { Colors } from '../../types';
 import LoadingScreen from '../../components/LoadingScreen';
-import { Redirect, Slot } from 'expo-router';
-import { getSession } from '../../Functions/ultility/checkIfSessionExists';
+import { Redirect, Slot, router } from 'expo-router';
+import { useSession } from '../../Functions/ultility/getWebSession.web';
 
 export default function AuthenticatedView() {
   const { height, currentBreakPoint, totalWidth } = useSelector(
@@ -30,11 +30,21 @@ export default function AuthenticatedView() {
   );
   const insets = useSafeAreaInsets();
   const [overide, setOveride] = useState<boolean>(false);
+  const getSession = useSession();
 
   useEffect(() => {
-    getSession();
+    getSession()
   }, [])
 
+  const [mounted, setMounted] = useState<boolean>(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+  
   if ((siteId !== '' || overide) && authenticationToken !== '') {
     return (
       <View style={{ width: totalWidth, top: -insets.top }}>
