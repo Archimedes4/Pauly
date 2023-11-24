@@ -1,4 +1,4 @@
-import { Prompt, exchangeCodeAsync, makeRedirectUri, refreshAsync, useAuthRequest, useAutoDiscovery } from "expo-auth-session";
+import { Prompt, exchangeCodeAsync, makeRedirectUri, refreshAsync, revokeAsync, useAuthRequest, useAutoDiscovery } from "expo-auth-session";
 import { clientId, scopes, tenantId } from "../../PaulyConfig";
 import store from "../../Redux/store";
 import { authLoadingSlice } from "../../Redux/reducers/authLoadingReducer";
@@ -6,13 +6,19 @@ import { authenticationRefreshTokenSlice } from "../../Redux/reducers/authentica
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
 import getUserProfile from "../ultility/getUserProfile";
 import getPaulyLists from "../ultility/getPaulyLists";
+import { Redirect, useRouter } from "expo-router";
 
 //placeholder function
 export function useSilentLogin(): (government?: boolean) => Promise<void> {
   async function main(government?: boolean) {
-    return;
+    const router = useRouter();
+    if (store.getState().authenticationToken === '') { //checking if auth token exists
+      router.replace('/sign-in')
+      return; //Needed to finish function
+    }
+    return; //Needed to finish function
   }
-  return main
+  return main;
 }
 
 export function useInvokeLogin(government?: boolean): ((government?: boolean) => Promise<void>) {
@@ -104,4 +110,17 @@ export function refresh(): (() => Promise<void>) {
     }
   }
   return main;
+}
+
+export function useSignOut(): (() => void) {
+  const discovery = useAutoDiscovery(
+    `https://login.microsoftonline.com/${tenantId}/v2.0`,
+  );
+  async function main() {
+    if (discovery !== null) {
+      revokeAsync({ token: store.getState().authenticationToken }, discovery);
+      store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
+    }
+  }
+  return main
 }

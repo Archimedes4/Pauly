@@ -4,7 +4,6 @@
  *
  * @format
  */
-
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Platform, View } from 'react-native';
 import { DefaultTheme, PaperProvider } from 'react-native-paper';
@@ -17,26 +16,19 @@ import {
 } from 'react-native-safe-area-context';
 import store, { RootState } from '../Redux/store';
 import { Colors } from '../types';
-import { Slot } from 'expo-router';
 import WebAuthHolder from '../components/WebAuthHolder';
 import setDimentions from '../Functions/ultility/setDimentions';
+import AuthenticatedView from '../components/AuthenticatedView';
+import { Navigator } from "expo-router";
 
 const windowDimensions = Dimensions.get('window');
 
 //Holds main slot redirects to web slot with msal provider if web.
 function SlotHolder() {
-  const [mounted, setMounted] = useState<boolean>(false)
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
   if (Platform.OS === 'web') {
     return <WebAuthHolder />
   }
-  return <Slot />
+  return <AuthenticatedView />
 }
 
 
@@ -70,15 +62,6 @@ function AppCore() {
     setDimentions(newDimensions.width, newDimensions.height, insets);
   }, [])
 
-  const [mounted, setMounted] = useState<boolean>(false)
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
-
   return (
     <>
       <View
@@ -98,7 +81,9 @@ function AppCore() {
           position: 'absolute',
         }}
       >
-        <SlotHolder />
+        <Navigator>
+          <SlotHolder />
+        </Navigator>
       </SafeAreaView>
       <View
         style={{
@@ -167,17 +152,6 @@ const theme = {
 
 //Main Root app holds providers
 export default function App() {
-  //Hydration holder
-  const [mounted, setMounted] = useState<boolean>(false)
-  useEffect(() => {
-    console.log('mount')
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
-
   return (
     <Provider store={store}>
       <PaperProvider theme={theme}>

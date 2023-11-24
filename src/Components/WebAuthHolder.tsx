@@ -9,7 +9,9 @@ import { MsalProvider } from "@azure/msal-react";
 import { Slot } from "expo-router";
 import { clientId, tenantId } from "../PaulyConfig";
 import React from "react";
+import AuthenticatedView from "./AuthenticatedView";
 // This is for the microsoft authentication on web.
+console.log(window.location.protocol + '//' + window.location.host + '/')
 const pca = new PublicClientApplication({
   auth: {
     clientId,
@@ -21,7 +23,7 @@ const pca = new PublicClientApplication({
 export default function WebAuthHolder() {
   return (
     <MsalProvider instance={pca}>
-      <Slot />
+      <AuthenticatedView />
     </MsalProvider>
   )
 }

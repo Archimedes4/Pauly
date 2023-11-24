@@ -6,21 +6,17 @@
   authentication component web, using msal library.
 */
 import { useMsal } from "@azure/msal-react";
-import { useCallback, useEffect } from "react";
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
 import store from "../../Redux/store";
 import { scopes } from "../../PaulyConfig";
-import { checkIfGovernmentMode, getWantGovernment, setWantGovernment, validateGovernmentMode } from "../handleGovernmentLogin";
-import getPaulyLists from "../ultility/getPaulyLists";
-import getUserProfile from "../ultility/getUserProfile";
-import { EventType } from "@azure/msal-browser";
+import { setWantGovernment } from "../handleGovernmentLogin";
 import { useRouter } from "expo-router";
-import { authenticationRefreshTokenSlice } from "../../Redux/reducers/authenticationRefreshTokenReducer";
 
 export const refreshToken = () => {
   const { instance } = useMsal();
   const result = instance.acquireTokenSilent({
     scopes,
+    prompt: 'select_account',
   });
   result.then((result) => {
     store.dispatch(
@@ -31,55 +27,48 @@ export const refreshToken = () => {
   })
 }
 
-function instanceFunction() {
-  const { instance } = useMsal();
-  return instance
-}
-
 export function useSilentLogin(): (() => Promise<void>) {
-  const instance = instanceFunction()
-  const route = useRouter();
+  const { instance } = useMsal();
+  const router = useRouter();
   async function main() {
     // handle auth redired/do all initial setup for msal
+    console.log('top')
     const redirectResult = await instance.handleRedirectPromise();
     if (redirectResult !== null) {
+      console.log('redirect')
       instance.setActiveAccount(redirectResult.account);
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(redirectResult.accessToken))
-      route.push('/');
-    } else {
-      console.log('silent login called')
-      //checking if an account exists
-      const accounts = instance.getAllAccounts();
-      if (accounts.length > 0) {
-        //getting the first account
-        instance.setActiveAccount(accounts[0]);
-        const accountResult = await instance.getActiveAccount();
-        if (accountResult !== null) {
-          const result = await instance.acquireTokenSilent({
-            scopes,
-          });
-          store.dispatch(
-            authenticationTokenSlice.actions.setAuthenticationToken(
-              result.accessToken,
-            ),
-          );
-          console.log('route called')
-          route.push('/')
-          getPaulyLists();
-          getUserProfile();
-          if (await getWantGovernment()) {
-            checkIfGovernmentMode();
-          }
-          return;
-        }
+      return;
+    } 
+    console.log('account')
+    //checking if an account exists
+    const accounts = instance.getAllAccounts();
+    if (accounts.length > 0) {
+      //getting the first account
+      instance.setActiveAccount(accounts[0]);
+      const accountResult = await instance.getActiveAccount();
+      if (accountResult !== null) {
+        const result = await instance.acquireTokenSilent({
+          scopes,
+        });
+        store.dispatch(
+          authenticationTokenSlice.actions.setAuthenticationToken(
+            result.accessToken,
+          ),
+        );
+        return;
       }
+    } else {
+      //router.push('/sign-in')
     }
+    console.log('reached')
+    return;
   }
   return main;
 }
 
 export function useInvokeLogin(): ((government?: boolean) => Promise<void>) {
-  const instance = instanceFunction()
+  const { instance } = useMsal();
   //Invoking the login redirect does not handle the token
   async function loginFunction(government?: boolean) {
     if (government !== undefined) {
@@ -89,4 +78,16 @@ export function useInvokeLogin(): ((government?: boolean) => Promise<void>) {
   }
 
   return loginFunction;
+}
+
+export function useSignOut(): (() => void) {
+  const { instance } = useMsal();
+  async function main() {
+    const account = instance.getActiveAccount();
+    store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
+    instance.logoutPopup({
+      account,
+    });
+  }
+  return main
 }

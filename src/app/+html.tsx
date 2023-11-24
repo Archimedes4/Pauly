@@ -16,6 +16,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="apple-itunes-app" content="app-id=6445966725" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body>{children}</body>
     </html>

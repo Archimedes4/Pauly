@@ -23,25 +23,12 @@ import { useSession } from '../Functions/ultility/getWebSession.web';
 
 export default function SignIn() {
   //visual
-  const silentLogin = useSilentLogin();
-  const getSession = useSession();
   const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
-  const { siteId } = useSelector((state: RootState) => state.paulyList);
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(0);
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
-  const [mounted, setMounted] = useState<boolean>(false)
-
-  useEffect(() => {
-    if (siteId === '' && !mounted) {
-      console.log('mount one')
-      setMounted(true)
-      silentLogin();
-      getSession()
-    }
-  }, [])
 
   const safeArea = useCallback(
     async function setSafeAreaColors() {
@@ -84,10 +71,6 @@ export default function SignIn() {
     useState<boolean>(false);
 
   if (!fontsLoaded) {
-    return null;
-  }
-
-  if (!mounted) {
     return null;
   }
 

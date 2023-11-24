@@ -17,10 +17,10 @@ export const dimentionsSlice = createSlice({
   name: 'dimentions',
   initialState: initalState,
   reducers: {
-    setDimentionsWidth: (state, action: PayloadAction<number>) => {
+    setDimentionsWidth: (state, action: PayloadAction<{width: number, totalWidth: number}>) => {
       return {
-        width: action.payload,
-        totalWidth: state.totalWidth,
+        width: action.payload.width,
+        totalWidth: action.payload.totalWidth,
         height: state.height,
         currentBreakPoint: state.currentBreakPoint,
       };
