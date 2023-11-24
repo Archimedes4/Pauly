@@ -106,6 +106,7 @@
   },
   "resolutions": {
     "metro": "0.76.7",
-    "metro-resolver": "0.76.7"
+    "metro-resolver": "0.76.7",
+    "react-refresh": "~0.14.0"
   }
 }

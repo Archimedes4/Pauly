@@ -14,12 +14,11 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import store, { RootState } from '../Redux/store';
-import { Colors } from '../types';
-import WebAuthHolder from '../components/WebAuthHolder';
-import setDimentions from '../Functions/ultility/setDimentions';
-import AuthenticatedView from '../components/AuthenticatedView';
-import { Navigator } from "expo-router";
+import store, { RootState } from '@/Redux/store';
+import { Colors } from '@/types';
+import WebAuthHolder from '@/components/WebAuthHolder';
+import setDimentions from '@/Functions/ultility/setDimentions';
+import { Navigator, Slot } from "expo-router";
 import 'raf/polyfill';
 
 const windowDimensions = Dimensions.get('window');
@@ -29,7 +28,7 @@ function SlotHolder() {
   if (Platform.OS === 'web') {
     return <WebAuthHolder />
   }
-  return <AuthenticatedView />
+  return <Slot />
 }
 
 

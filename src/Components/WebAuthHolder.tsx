@@ -7,9 +7,8 @@
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
 import { Slot } from "expo-router";
-import { clientId, tenantId } from "../PaulyConfig";
+import { clientId, tenantId } from "@/PaulyConfig";
 import React from "react";
-import AuthenticatedView from "./AuthenticatedView";
 console.log(window.location.protocol + '//' + window.location.host)
 //stop redirect error
 function getRedirectUri() {
@@ -31,7 +30,7 @@ const pca = new PublicClientApplication({
 export default function WebAuthHolder() {
   return (
     <MsalProvider instance={pca}>
-      <AuthenticatedView />
+      <Slot />
     </MsalProvider>
   )
 }
