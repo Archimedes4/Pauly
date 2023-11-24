@@ -4,10 +4,15 @@ module.exports = function (api) {
     presets: ['babel-preset-expo'],
     plugins: [
       'expo-router/babel',
-      '@babel/plugin-proposal-export-namespace-from',
-      '@babel/plugin-transform-private-methods',
-      '@babel/plugin-proposal-class-properties',
-      '@babel/plugin-proposal-private-methods',
+      [
+        'module-resolver',
+        {
+          alias: {
+            '@': './src',
+            'assets': './assets',
+          }
+        },
+      ],
       'react-native-reanimated/plugin',
     ],
   };

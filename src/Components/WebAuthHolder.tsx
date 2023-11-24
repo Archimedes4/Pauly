@@ -10,13 +10,21 @@ import { Slot } from "expo-router";
 import { clientId, tenantId } from "../PaulyConfig";
 import React from "react";
 import AuthenticatedView from "./AuthenticatedView";
+console.log(window.location.protocol + '//' + window.location.host)
+//stop redirect error
+function getRedirectUri() {
+  if (typeof window !== "undefined") { //checking if window is undefined as it is in node
+    return (window.location.protocol + '//' + window.location.host)
+  }
+  return ''
+}
+
 // This is for the microsoft authentication on web.
-console.log(window.location.protocol + '//' + window.location.host + '/')
 const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: window.location.protocol + '//' + window.location.host
+    redirectUri: getRedirectUri()//to stop node js error
   },
 });
 

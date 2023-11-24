@@ -151,7 +151,7 @@ export default function NavBarComponent({
   }, [width, height]);
 
   const [fontsLoaded] = useFonts({
-    'Gochi Hand': require('../assets/fonts/GochiHand-Regular.ttf'),
+    'Gochi Hand': require('../../assets/fonts/GochiHand-Regular.ttf'),
   });
 
   useCallback(async () => {
@@ -219,7 +219,7 @@ export default function NavBarComponent({
               }}
             >
               <Image
-                source={require('../assets/images/PaulyLogo.png')}
+                source={require('../../assets/images/PaulyLogo.png')}
                 resizeMode="contain"
                 style={{ width: blockLength, height: blockLength }}
               />
@@ -303,7 +303,7 @@ export default function NavBarComponent({
           }}
         >
           <Image
-            source={require('../assets/images/Football.png')}
+            source={require('../../assets/images/Football.png')}
             resizeMode="contain"
             style={{ width: iconLength, height: iconLength }}
           />

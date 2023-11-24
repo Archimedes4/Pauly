@@ -9,12 +9,11 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import NavBarComponent from './NavComponent';
-import { RootState } from '../Redux/store';
-import ProfileBlock from '../app/Profile/ProfileBlock';
-import { Colors } from '../types';
+import NavBarComponent from '@/components/NavComponent';
+import { RootState } from '@/Redux/store';
+import ProfileBlock from '@/app/(root)/Profile/ProfileBlock';
+import { Colors } from '@/types';
 import { Slot, usePathname } from 'expo-router';
-import LoadingView from './Loading';
 
 export default function AuthenticatedView() {
   const { height, currentBreakPoint, totalWidth, width } = useSelector(
@@ -64,6 +63,8 @@ export default function AuthenticatedView() {
   if (pathname === '/sign-in') {
     return <Slot />
   }
-  return <LoadingView />
+  return <Slot screenOptions={{
+    
+  }} />
   // return <Redirect href={'/'}/>
 }

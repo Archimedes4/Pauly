@@ -394,7 +394,7 @@ export default function AddEvent({
   }
 
   const [fontsLoaded] = useFonts({
-    BukhariScript: require('../../assets/fonts/BukhariScript.ttf'),
+    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
   useCallback(async () => {

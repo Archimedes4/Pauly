@@ -1,13 +1,12 @@
 import { Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import * as PDFJS from 'pdfjs-dist';
 import { useSelector } from 'react-redux';
 import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import store, { RootState } from '../../Redux/store';
 import { pdfDataSlice } from '../../Redux/reducers/pdfDataReducer';
 
-PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`;
+//PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`;
 
 export default function PDFView({ width }: { width: number }) {
   const { powerpointBlob } = useSelector((state: RootState) => state.paulyData);
@@ -24,22 +23,22 @@ export default function PDFView({ width }: { width: number }) {
       const file = new Blob([blob], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       const docInitParams: DocumentInitParameters = { url: fileURL };
-
-      const pdf = await PDFJS.getDocument(docInitParams).promise;
-      const canvas = document.createElement('canvas'); // Fail
-      for (let i = 0; i < pdf.numPages; i += 1) {
-        const page = await pdf.getPage(i + 1);
-        const viewport = page.getViewport({ scale: 1 });
-        const context = canvas.getContext('2d'); // Fail
-        canvas.height = viewport.height; // Fail
-        canvas.width = viewport.width; // Fail
-        if (context !== null) {
-          await page.render({ canvasContext: context, viewport }).promise;
-          imagesArray.push(canvas.toDataURL());
-        }
-      }
-      canvas.remove();
-      store.dispatch(pdfDataSlice.actions.setImages(imagesArray));
+    
+      // const pdf = await pdfjsLib.getDocument(docInitParams).promise;
+      // const canvas = document.createElement('canvas'); // Fail
+      // for (let i = 0; i < pdf.numPages; i += 1) {
+      //   const page = await pdf.getPage(i + 1);
+      //   const viewport = page.getViewport({ scale: 1 });
+      //   const context = canvas.getContext('2d'); // Fail
+      //   canvas.height = viewport.height; // Fail
+      //   canvas.width = viewport.width; // Fail
+      //   if (context !== null) {
+      //     await page.render({ canvasContext: context, viewport }).promise;
+      //     imagesArray.push(canvas.toDataURL());
+      //   }
+      // }
+      // canvas.remove();
+      // store.dispatch(pdfDataSlice.actions.setImages(imagesArray));
     }
   }
 
@@ -92,18 +91,17 @@ export default function PDFView({ width }: { width: number }) {
     }
   }, [pageNumber, images, width]);
 
-  return (
-    <>
-      {pageNumber < images.length ? (
-        <GestureDetector gesture={compound}>
-          <Image
-            source={{ uri: images[pageNumber], width }}
-            style={{ borderRadius: 15, width, height: imageHeight }}
-            height={imageHeight}
-            width={width}
-          />
-        </GestureDetector>
-      ) : null}
-    </>
-  );
+  if (pageNumber < images.length) {
+    return (
+      <GestureDetector gesture={compound}>
+        <Image
+          source={{ uri: images[pageNumber], width }}
+          style={{ borderRadius: 15, width, height: imageHeight }}
+          height={imageHeight}
+          width={width}
+        />
+      </GestureDetector>
+    )
+  }
+  return null
 }

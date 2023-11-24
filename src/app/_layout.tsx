@@ -20,6 +20,7 @@ import WebAuthHolder from '../components/WebAuthHolder';
 import setDimentions from '../Functions/ultility/setDimentions';
 import AuthenticatedView from '../components/AuthenticatedView';
 import { Navigator } from "expo-router";
+import 'raf/polyfill';
 
 const windowDimensions = Dimensions.get('window');
 
@@ -81,7 +82,7 @@ function AppCore() {
           position: 'absolute',
         }}
       >
-        <Navigator>
+        <Navigator initialRouteName='/sign-in'>
           <SlotHolder />
         </Navigator>
       </SafeAreaView>

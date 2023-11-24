@@ -25,7 +25,7 @@
     "Buffer": "^0.0.0",
     "better-docs": "^2.7.2",
     "buffer": "^6.0.3",
-    "expo": "^49.0.11",
+    "expo": "^49.0.20",
     "expo-auth-session": "~5.0.2",
     "expo-av": "~13.4.1",
     "expo-clipboard": "~4.3.1",
@@ -48,6 +48,7 @@
     "jsdoc": "^4.0.2",
     "pdfjs": "^2.5.2",
     "pdfjs-dist": "^3.11.174",
+    "raf": "^3.4.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.72.6",
@@ -55,7 +56,7 @@
     "react-native-maps": "1.7.1",
     "react-native-paper": "^5.10.6",
     "react-native-paper-dates": "^0.19.8",
-    "react-native-reanimated": "~3.3.0",
+    "react-native-reanimated": "^3.5.4",
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
     "react-native-svg": "13.9.0",
@@ -98,5 +99,13 @@
     "transformIgnorePatterns": [
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
     ]
+  },
+  "overrides": {
+    "metro": "0.76.7",
+    "metro-resolver": "0.76.7"
+  },
+  "resolutions": {
+    "metro": "0.76.7",
+    "metro-resolver": "0.76.7"
   }
 }

@@ -153,7 +153,7 @@ export default function CommissionsView({
 
   const [fontsLoaded] = useFonts({
     // eslint-disable-next-line global-require
-    BukhariScript: require('../../assets/fonts/BukhariScript.ttf'),
+    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
   useCallback(async () => {
@@ -245,7 +245,7 @@ export default function CommissionsView({
               >
                 <View style={{ margin: 10, flexDirection: 'row' }}>
                   <Image
-                    source={require('../../assets/images/PaulyLogo.png')}
+                    source={require('../../../assets/images/PaulyLogo.png')}
                     resizeMode="contain"
                     style={{ width: 50, height: 50 }}
                   />
