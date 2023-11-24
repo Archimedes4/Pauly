@@ -1,15 +1,18 @@
-import { View, Text } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useSignOut, useSilentLogin } from '@/Functions/authentication';
 import { useSession } from '@/Functions/ultility/getWebSession.web';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@/Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import * as Network from 'expo-network';
 import getPaulyLists from '@/Functions/ultility/getPaulyLists';
 import getUserProfile from '@/Functions/ultility/getUserProfile';
 import { checkIfGovernmentMode, getWantGovernment } from '@/Functions/handleGovernmentLogin';
+import ProgressView from '@/components/ProgressView';
+import { Colors } from '@/types';
+import { OfflineIcon } from '@/components/Icons/Icons';
 
 export default function index() {
   const isGovernmentMode = useSelector(
@@ -23,6 +26,8 @@ export default function index() {
   const getSession = useSession();
   const signOut = useSignOut();
   const router = useRouter();
+  const [mounted, setMounted] = useState<boolean>(false);
+  const pathname = usePathname();
   
   async function checkIfConnected() {
     const result = await Network.getNetworkStateAsync();
@@ -75,6 +80,11 @@ export default function index() {
       setIsShowingLogout(true);
     }, 10000);
   }, []);
+
+
+  if (!mounted) {
+    return null
+  }
 
   return (
     <View
