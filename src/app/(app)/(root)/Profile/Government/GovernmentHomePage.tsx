@@ -1,9 +1,9 @@
 import { View, Text, Pressable, TextInput, Switch } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
-import MicrosoftFilePicker from '../../../../../components/MicrosoftFilePicker';
-import store, { RootState } from '../../../../../Redux/store';
+import callMsGraph from '@/Functions/ultility/microsoftAssets';
+import MicrosoftFilePicker from '@/components/MicrosoftFilePicker';
+import store, { RootState } from '@/Redux/store';
 import getCurrentPaulyData from '../../../../../Functions/notifications/getCurrentPaulyData';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import { Link } from 'expo-router';

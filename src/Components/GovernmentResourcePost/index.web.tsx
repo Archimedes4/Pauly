@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import TextEditorHeader from './TextEditorHeader';
 
-export default function GovernmentResourcesPost() {
+export default function GovernmentResourcePost() {
   const [postData, setPostData] = useState<string>('');
   return (
     <View>

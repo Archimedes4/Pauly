@@ -13,12 +13,12 @@ import { View, Text, Pressable, Image } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { RootState } from '@/Redux/store';
 import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
 import { GearIcon } from '@/components/Icons/Icons';
 import { Colors } from '@/types';
 import ProgressView from '@/components/ProgressView';
-import { useInvokeLogin, useSilentLogin } from '@/Functions/authentication';
+import { useInvokeLogin } from '@/hooks/authentication';
+import { RootState } from '@/Redux/store';
 
 export default function SignIn() {
   //visual

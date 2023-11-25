@@ -4,8 +4,8 @@ import store from "../../Redux/store";
 import { authLoadingSlice } from "../../Redux/reducers/authLoadingReducer";
 import { authenticationRefreshTokenSlice } from "../../Redux/reducers/authenticationRefreshTokenReducer";
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
-import getUserProfile from "../ultility/getUserProfile";
-import getPaulyLists from "../ultility/getPaulyLists";
+import getUserProfile from "../../Functions/ultility/getUserProfile";
+import getPaulyLists from "../../Functions/ultility/getPaulyLists";
 import { Redirect, useRouter } from "expo-router";
 
 //placeholder function

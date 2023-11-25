@@ -30,7 +30,7 @@ import getInsightData from '@/Functions/notifications/getInsightData';
 import CustomCheckBox from '@/components/CheckMark/CustomCheckBox';
 import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
 import { homepageDataSlice } from '@/Redux/reducers/homepageDataReducer';
-import PDFView from '@/components/PDF/PDFView.d';
+import PDFView from '@/components/PDF';
 import BackButton from '@/components/BackButton';
 import MimeTypeIcon from '@/components/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '@/Functions/classesFunctions';

@@ -9,7 +9,7 @@ import { useMsal } from "@azure/msal-react";
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
 import store from "../../Redux/store";
 import { scopes } from "../../PaulyConfig";
-import { setWantGovernment } from "../handleGovernmentLogin";
+import { setWantGovernment } from "../../Functions/handleGovernmentLogin";
 import { useRouter } from "expo-router";
 
 export const refreshToken = () => {

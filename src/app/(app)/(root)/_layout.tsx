@@ -13,9 +13,9 @@ import NavBarComponent from '@/components/NavComponent';
 import { RootState } from '@/Redux/store';
 import ProfileBlock from '@/app/(app)/(root)/Profile/ProfileBlock';
 import { Colors } from '@/types';
-import { Slot, usePathname } from 'expo-router';
+import { Redirect, Slot, useFocusEffect, usePathname, useRouter } from 'expo-router';
 
-export default function AuthenticatedView() {
+function AuthenticatedView() {
   const { height, currentBreakPoint, totalWidth, width } = useSelector(
     (state: RootState) => state.dimentions,
   );
@@ -47,5 +47,37 @@ export default function AuthenticatedView() {
         </View>
       </View>
     </View>
+  );
+}
+
+function PushToAuth() {
+  const router = useRouter();
+  useFocusEffect(() => {
+    try {
+      router.push('(auth)/sign-in');
+    } catch (error) {
+      console.error(error);
+    }
+  });
+  return (
+    null
+  )
+}
+
+export default function Main() {
+  const { siteId } = useSelector((state: RootState) => state.paulyList);
+  const authenticationToken = useSelector(
+    (state: RootState) => state.authenticationToken,
+  );
+  const overide = false;
+
+  if (((siteId !== '' || overide) && authenticationToken !== '')) {
+    return (
+      <AuthenticatedView />
+    )
+  }
+
+  return (
+    <PushToAuth />
   );
 }

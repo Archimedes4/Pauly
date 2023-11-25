@@ -6,6 +6,8 @@
   Stores all of paulys types
 */
 
+import { DefaultTheme } from "react-native-paper";
+
 // From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 export enum breakPointMode {
   xSmall, // <576px  ->0
@@ -507,3 +509,42 @@ export class Colors {
 
   static danger = 'red';
 }
+
+//constance
+export const paperTheme = {
+  ...DefaultTheme,
+  roundness: 2,
+  colors: {
+    // Primary
+    primary: Colors.darkGray, // ALL G
+    primaryContainer: Colors.maroon, // Selected Am Mode
+    onPrimary: Colors.black, // This is special Text
+    onPrimaryContainer: Colors.black,
+    inversePrimary: Colors.white,
+
+    secondary: Colors.black,
+    secondaryContainer: Colors.lightGray, // Back box of selected time or hour
+    onSecondary: Colors.black, // text like if hour or minute is selected
+    onSecondaryContainer: Colors.black,
+
+    // Tertiary
+    tertiary: Colors.darkGray,
+    tertiaryContainer: Colors.darkGray,
+    onTertiary: Colors.darkGray,
+
+    // Background
+    surface: Colors.white, // ALL G
+    surfaceVariant: Colors.lightGray, // ALL G this is the circle
+    onSurfaceVariant: Colors.black, // This is am pm and title text
+    background: Colors.lightGray,
+    onSurface: Colors.black, // This is most text
+    onBackground: Colors.black,
+    backdrop: 'rgba(237, 237, 237, 0.77)',
+
+    outline: Colors.black, // ALL G
+    outlineVariant: Colors.black,
+
+    shadow: Colors.black,
+    scrim: Colors.black,
+  },
+};

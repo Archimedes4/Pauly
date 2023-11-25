@@ -6,7 +6,7 @@
 */
 import { PublicClientApplication } from "@azure/msal-browser";
 import { MsalProvider } from "@azure/msal-react";
-import { Slot } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import { clientId, tenantId } from "@/PaulyConfig";
 import React from "react";
 console.log(window.location.protocol + '//' + window.location.host)
@@ -30,7 +30,18 @@ const pca = new PublicClientApplication({
 export default function WebAuthHolder() {
   return (
     <MsalProvider instance={pca}>
-      <Slot />
+      <Stack>
+        <Stack.Screen name='(root)' options={{
+          headerShown: false
+        }}/>
+        <Stack.Screen
+          name="sign-in"
+          options={{
+            presentation: 'modal',
+            headerShown: false
+          }}
+        />
+      </Stack>
     </MsalProvider>
   )
 }
