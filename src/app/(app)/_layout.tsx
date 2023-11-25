@@ -20,6 +20,9 @@ function Loading() {
   const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
   const insets = useSafeAreaInsets();
   const isShowingLogout = useIsShowingLogout();
+  useEffect(() => {
+    console.log('loading')
+  }, [])
   return (
     <View
       style={{
@@ -54,13 +57,17 @@ function Loading() {
   );
 }
 
+export const unstable_settings = {
+  initialRouteName: '(root)',
+};
+
 export default function Layout() {
   const isConnected = useIsConnected();
   const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
   const insets = useSafeAreaInsets();
   const isLoading = useAuthentication();
 
-  if (isLoading) {
+  if (isLoading && isConnected) {
     return <Loading />
   }
 

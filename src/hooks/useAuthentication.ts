@@ -17,11 +17,11 @@ export default function main() {
   async function loadContent() {
     await silentLogin();
     if (store.getState().authenticationToken !== '') {
-      getSession();
-      getPaulyLists();
-      getUserProfile();
+      await getSession();
+      await getPaulyLists();
+      await getUserProfile();
       if (await getWantGovernment()) {
-        checkIfGovernmentMode();
+        await checkIfGovernmentMode();
       }
       setIsLoading(false);
     } else {
@@ -32,5 +32,6 @@ export default function main() {
   useEffect(() => {
     loadContent(); 
   }, [])
+  console.log(isLoading)
   return isLoading
 }

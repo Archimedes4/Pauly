@@ -23,6 +23,5 @@ export default function useIsConnected() {
 
     return () => clearInterval(intervalId);
   }, []);
-  console.log('connected:', isConnected)
   return isConnected
 }

@@ -8,7 +8,6 @@
 import {
   View,
   Text,
-  Pressable,
   TextInput,
   ViewStyle,
   Platform,
@@ -28,9 +27,9 @@ import { studentSearchSlice } from '@/Redux/reducers/studentSearchReducer';
 import BackButton from '@/components/BackButton';
 import { getNumberOfBlocks, getUsers } from '@/Functions/studentFunctions';
 import callMsGraph from '@/Functions/ultility/microsoftAssets';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
 import createUUID from '@/Functions/ultility/createUUID';
 import { Link } from 'expo-router';
+import { useStudentSafeArea } from '@/hooks/safeAreaHooks';
 
 function SearchBox({ onGetUsers }: { onGetUsers: (item: string) => void }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -39,6 +38,7 @@ function SearchBox({ onGetUsers }: { onGetUsers: (item: string) => void }) {
   const style: ViewStyle =
     Platform.OS === 'web' ? { outlineStyle: 'none' } : {};
   const [mounted, setMounted] = useState<boolean>(false);
+  const [called, setCalled] = useState<boolean>(true);
   const dispatch = useDispatch();
 
   const updateText = useCallback(() => {
@@ -46,7 +46,10 @@ function SearchBox({ onGetUsers }: { onGetUsers: (item: string) => void }) {
       const searchValueSave = searchText;
       setTimeout(() => {
         if (store.getState().studentSearch.searchText === searchValueSave) {
-          onGetUsers(store.getState().studentSearch.searchText);
+          if (!called) {
+            setCalled(true);
+            onGetUsers(store.getState().studentSearch.searchText);
+          }
         }
       }, 1500);
     } else {
@@ -107,6 +110,7 @@ function SearchBox({ onGetUsers }: { onGetUsers: (item: string) => void }) {
             value={searchText}
             onChangeText={e => {
               dispatch(studentSearchSlice.actions.setStudentSearch(e));
+              setCalled(false);
             }}
             style={[
               {
@@ -268,13 +272,13 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
 }
 
 export default function Students() {
+  useStudentSafeArea();
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
   );
   const { usersState, users, nextLink } = useSelector(
     (state: RootState) => state.studentSearch,
   );
-
   const dispatch = useDispatch();
 
   async function loadUsers() {
@@ -282,30 +286,9 @@ export default function Students() {
   }
 
   useEffect(() => {
+    console.log('Called EFFECT')
     loadUsers();
   }, []);
-
-  const updateOutColors = useCallback(() => {
-    if (usersState === loadingStateEnum.loading) {
-      dispatch(
-        safeAreaColorsSlice.actions.setSafeAreaColors({
-          top: Colors.maroon,
-          bottom: Colors.maroon,
-        }),
-      );
-    } else {
-      dispatch(
-        safeAreaColorsSlice.actions.setSafeAreaColors({
-          top: Colors.darkGray,
-          bottom: currentBreakPoint === 0 ? Colors.maroon : Colors.white,
-        }),
-      );
-    }
-  }, [currentBreakPoint, dispatch, usersState]);
-
-  useEffect(() => {
-    updateOutColors();
-  }, [updateOutColors, usersState]);
 
   const [fontsLoaded] = useFonts({
     // eslint-disable-next-line global-require
@@ -369,9 +352,11 @@ export default function Students() {
         <SearchBox
           onGetUsers={e => {
             if (e !== '') {
+              console.log('Called SEARCH')
               getUsers(undefined, e);
               dispatch(studentSearchSlice.actions.setNextLink(undefined));
             } else {
+              console.log('Called SEARCH BOTTOm')
               getUsers();
             }
           }}
@@ -384,6 +369,7 @@ export default function Students() {
           numColumns={getNumberOfBlocks(width)}
           onEndReached={() => {
             if (nextLink !== undefined) {
+              console.log('Called Flat')
               getUsers(nextLink);
             }
           }}

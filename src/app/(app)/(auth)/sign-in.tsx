@@ -19,6 +19,8 @@ import { Colors } from '@/types';
 import ProgressView from '@/components/ProgressView';
 import { useInvokeLogin } from '@/hooks/authentication';
 import { RootState } from '@/Redux/store';
+import useIsAuthenticated from '@/hooks/useIsAuthenticated';
+import { router } from 'expo-router';
 
 export default function SignIn() {
   //visual
@@ -68,6 +70,13 @@ export default function SignIn() {
   const authLoading = useSelector((state: RootState) => state.authLoading);
   const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
     useState<boolean>(false);
+  const isAuthenticated = useIsAuthenticated();
+  
+  useEffect(() => {
+    if (isAuthenticated.authenticated) {
+      router.push('/')
+    }
+  }, [isAuthenticated])
 
   if (!fontsLoaded) {
     return null;

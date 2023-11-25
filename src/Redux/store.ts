@@ -1,3 +1,4 @@
+import isOverrideReducer, { isOverrideSlice } from './reducers/isOverrideReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import monthDataReducer from './reducers/monthDataReducer';
 import resourcesLastCallReducer, {
@@ -56,7 +57,8 @@ const store = configureStore({
     tasksDeltaLink: tasksDeltaReducer,
     selectedDate: selectedDateReducer,
     studentSearch: studentSearchReducer,
-    authLoading: authLoadingReducer
+    authLoading: authLoadingReducer,
+    isOverride: isOverrideReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -14,6 +14,7 @@ import { RootState } from '@/Redux/store';
 import ProfileBlock from '@/app/(app)/(root)/Profile/ProfileBlock';
 import { Colors } from '@/types';
 import { Redirect, Slot, useFocusEffect, usePathname, useRouter } from 'expo-router';
+import useIsAuthenticated from '@/hooks/useIsAuthenticated';
 
 function AuthenticatedView() {
   const { height, currentBreakPoint, totalWidth, width } = useSelector(
@@ -50,7 +51,7 @@ function AuthenticatedView() {
   );
 }
 
-function PushToAuth() {
+function PushToAuth({isAuth}:{isAuth: boolean}) {
   const router = useRouter();
   useFocusEffect(() => {
     try {
@@ -65,19 +66,15 @@ function PushToAuth() {
 }
 
 export default function Main() {
-  const { siteId } = useSelector((state: RootState) => state.paulyList);
-  const authenticationToken = useSelector(
-    (state: RootState) => state.authenticationToken,
-  );
-  const overide = false;
-
-  if (((siteId !== '' || overide) && authenticationToken !== '')) {
+  const isAuthenticated = useIsAuthenticated();
+  if (isAuthenticated.authenticated) {
     return (
       <AuthenticatedView />
     )
   }
 
-  return (
-    <PushToAuth />
-  );
+  if (!isAuthenticated.loading) {
+    return (<PushToAuth isAuth={isAuthenticated.authenticated}/>)
+  }
+  return null
 }
