@@ -5,11 +5,12 @@
   SVGXml.tsx
   This is a placeholder file and should not be complied on production.
 */
-
-declare const SVGXml: ({
+interface SXGXmlProps {
   xml: string,
   width: number,
   height: number,
-}) => React.JSX.Element 
+}
+
+declare const SVGXml: React.FC<SXGXmlProps>
 
 export = SVGXml

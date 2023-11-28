@@ -13,8 +13,8 @@ import { Colors, loadingStateEnum } from '../types';
 import ProgressView from '../components/ProgressView';
 import WebViewCross from '../components/WebViewCross';
 import { RootState } from '../Redux/store';
-import { CloseIcon } from '../components/Icons/Icons';
 import { getNewsPosts } from '../Functions/getResources';
+import ResourceNewsPage from './ResouceNewsPage/index.native';
 
 export default function ResourcesNews({
   isHoverPicker,
@@ -32,6 +32,7 @@ export default function ResourcesNews({
   const [nextLink, setNextLink] = useState<undefined | string>(undefined);
 
   const loadArticles = useCallback(async () => {
+    console.log('called')
     const result = await getNewsPosts(nextLink);
     if (result.result === loadingStateEnum.success) {
       setPosts([...posts, ...result.data]);
@@ -48,48 +49,7 @@ export default function ResourcesNews({
 
   if (selectedPost !== undefined) {
     return (
-      <ScrollView
-        style={{
-          width,
-          height: isHoverPicker ? height * 0.75 : height * 0.8,
-          backgroundColor: Colors.lightGray,
-        }}
-      >
-        <Pressable
-          onPress={() => {
-            setSelectedPost(undefined);
-          }}
-        >
-          <CloseIcon width={14} height={14} />
-        </Pressable>
-        <Text>{selectedPost.title}</Text>
-        <WebViewCross
-          rawHtml={`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <link crossorigin="anonymous" rel="stylesheet" id="all-css-8-1" href="https://s0.wp.com/wp-content/themes/pub/baskerville-2/style.css?m=1645133114i&amp;cssminify=yes" type="text/css" media="all">
-            <meta name="viewport" content="width=${width - 20}px"/>
-            <style>
-              body {font-weight: normal; font-family: Arial; width: 100%}
-              div {font-weight: normal; font-family: Arial; width: 100%; padding: 0; margin: 0; font-size: 15px}
-              .main {
-                padding: 0;
-                margin: 0;
-                position: absolute;
-              }
-            </style>
-          </head>
-          <body>
-            <div id="pauly-main" class="main">
-              ${selectedPost.content}
-            </div>
-          </body>
-          </html>`}
-          width={width * 0.9}
-          height={isHoverPicker ? height * 0.75 : height * 0.8}
-        />
-      </ScrollView>
+      <ResourceNewsPage selectedPost={selectedPost} setSelectedPost={setSelectedPost} isHoverPicker={isHoverPicker}/>
     );
   }
 

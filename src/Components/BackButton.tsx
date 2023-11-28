@@ -19,22 +19,18 @@ export default function BackButton({
   style?: ViewStyle | undefined;
 }) {
   return (
-    <Link href={to}>
-      <Pressable
-        style={[
-          {
-            position: 'absolute',
-            flexDirection: 'row',
-            top: 0,
-            left: 5,
-            zIndex: 100,
-          },
-          style,
-        ]}
-      >
-        <ChevronLeft width={14} height={14} />
-        <Text>Back</Text>
-      </Pressable>
+    <Link href={to} style={[
+      {
+        position: 'absolute',
+        flexDirection: 'row',
+        top: 0,
+        left: 5,
+        zIndex: 100,
+      },
+      style,
+    ]}>
+      <ChevronLeft width={14} height={14} />
+      <Text>Back</Text>
     </Link>
   );
 }
