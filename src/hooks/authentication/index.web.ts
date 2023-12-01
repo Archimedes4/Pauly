@@ -5,12 +5,13 @@
   authentiation/index.web.ts
   authentication component web, using msal library.
 */
-import { useMsal } from "@azure/msal-react";
+// import { useMsal } from "@azure/msal-react";
 import { authenticationTokenSlice } from "@Redux/reducers/authenticationTokenReducer";
 import store from "@Redux/store";
 import { scopes } from "@src/PaulyConfig";
 import { setWantGovernment } from "@Functions/handleGovernmentLogin";
 import { useRouter } from "expo-router";
+import { useMsal } from "@azure/msal-react";
 
 export const refreshToken = () => {
   const { instance } = useMsal();

@@ -3,7 +3,7 @@ import { paulyListSlice } from "../../Redux/reducers/paulyListReducer"
 import store from "../../Redux/store"
 import { useEffect } from "react";
 
-export function useWebSession() {
+export default function useWebSession() {
   function main() {
     const stringListItem = window && window.sessionStorage && sessionStorage.getItem('listStore')
     if (stringListItem !== null) {
@@ -11,12 +11,15 @@ export function useWebSession() {
         const parsedListItem: paulyListType = JSON.parse(stringListItem);
         store.dispatch(paulyListSlice.actions.setPaulyList(parsedListItem))
       } catch {
+        console.log('failed to get list')
         //return nothing just don't fail
       }
+    } else {
+      console.log("list does not exist")
     }
   }
   useEffect(() => {
     main();
   }, [])
-  return;
+  return null;
 }

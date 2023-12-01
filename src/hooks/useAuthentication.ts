@@ -7,11 +7,10 @@ import { checkIfGovernmentMode, getWantGovernment } from "@Functions/handleGover
 import { router, usePathname } from "expo-router";
 import { useEffect, useState } from "react";
 
-export default function main() {
+export default function useAuthentication() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const silentLogin = useSilentLogin();
-  useWebSession();
-  const pathname = usePathname();
+  const webSession = useWebSession();
 
   //main function
   async function loadContent() {
@@ -31,6 +30,6 @@ export default function main() {
   useEffect(() => {
     loadContent(); 
   }, [])
-  console.log(isLoading)
+
   return isLoading
 }

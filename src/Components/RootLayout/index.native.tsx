@@ -5,7 +5,7 @@
  * @format
  */
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Platform, View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useSelector } from 'react-redux';
@@ -17,8 +17,7 @@ import {
 import store, { RootState } from '@Redux/store';
 import { Colors, paperTheme } from '@src/types';
 import setDimentions from '@Functions/ultility/setDimentions';
-import { Navigator, Slot, Stack, useRootNavigationState } from "expo-router";
-import 'raf/polyfill';
+import { Slot } from "expo-router";
 
 const windowDimensions = Dimensions.get('window');
 

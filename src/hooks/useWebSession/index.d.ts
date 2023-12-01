@@ -1,2 +1,2 @@
-declare const useWebSession: () => void
+declare const useWebSession:  () => null
 export = useWebSession

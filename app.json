@@ -66,6 +66,7 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "experiments": { "tsconfigPaths": true }
   }
 }

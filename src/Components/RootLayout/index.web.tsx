@@ -5,7 +5,7 @@
  * @format
  */
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Platform, View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useSelector } from 'react-redux';
@@ -22,6 +22,8 @@ import 'raf/polyfill';
 import { clientId, tenantId } from '@src/PaulyConfig';
 import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
+// import { MsalProvider } from '@azure/msal-react';
+// import { PublicClientApplication } from '@azure/msal-browser';
 
 //stop redirect error
 function getRedirectUri() {
@@ -128,7 +130,6 @@ export default function RootLayout() {
   const [mounted, setMounted] = useState(false);
 
   async function wait() {
-    await pca.initialize();
     setMounted(true)
   }
 

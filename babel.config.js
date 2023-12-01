@@ -21,6 +21,7 @@ module.exports = function (api) {
             ".jsx",
             ".ts",
             ".tsx",
+            ".cjs"
           ]
         },
       ],
