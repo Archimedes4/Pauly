@@ -16,8 +16,12 @@
     "esModuleInterop": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "assets/*": ["assets/*"]
+      "@src/*":["src/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@Redux/*": ["src/Redux/*"],
+      "@Functions/*": ["src/Functions/*"],
+      "@components/*": ["src/components/*"],
+      "assets/*": ["assets/*"],
     }
   },
   "extends": "expo/tsconfig.base"

@@ -10,18 +10,18 @@ import { useFonts } from 'expo-font';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/Redux/store';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
+import { RootState } from '@Redux/store';
+import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
 import {
   GearIcon,
   GovernmentIcon,
   PersonIcon,
   StudentSearchIcon,
-} from '@/components/Icons/Icons';
-import BackButton from '@/components/BackButton';
-import { Colors, loadingStateEnum } from '@/types';
+} from '@components/Icons/Icons';
+import BackButton from '@components/BackButton';
+import { Colors, loadingStateEnum } from '@src/types';
 import { Link, useRouter } from 'expo-router';
-import { useSignOut } from '@/hooks/authentication';
+import { useSignOut } from '@hooks/authentication';
 
 export default function Settings() {
   const router = useRouter();

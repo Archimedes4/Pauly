@@ -2,8 +2,8 @@ import { View, Text, ScrollView, Pressable } from 'react-native'
 import React from 'react'
 import WebViewCross from '../WebViewCross';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/Redux/store';
-import { Colors } from '@/types';
+import { RootState } from '@Redux/store';
+import { Colors } from '@src/types';
 import { CloseIcon } from '../Icons/Icons';
 
 export default function ResourceNewsPage({selectedPost, setSelectedPost, isHoverPicker}:{selectedPost: newsPost, setSelectedPost: (item: undefined) => void,  isHoverPicker: boolean}) {

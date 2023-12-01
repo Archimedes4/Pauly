@@ -1,13 +1,13 @@
 import { useSelector } from 'react-redux';
 import { Pressable, View, Text, TextInput } from 'react-native';
 import React from 'react';
-import { RootState } from '@/Redux/store';
+import { RootState } from '@Redux/store';
 import {
   CloseIcon,
   DownIcon,
   UpIcon,
   WarningIcon,
-} from '@/components/Icons/Icons';
+} from '@components/Icons/Icons';
 
 export default function DressCodeBlock({
   dressCode,

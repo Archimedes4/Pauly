@@ -19,17 +19,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { Colors, loadingStateEnum } from '@/types';
-import store, { RootState } from '@/Redux/store';
-import ProgressView from '@/components/ProgressView';
-import { PersonIcon, SearchIcon } from '@/components/Icons/Icons';
-import { studentSearchSlice } from '@/Redux/reducers/studentSearchReducer';
-import BackButton from '@/components/BackButton';
-import { getNumberOfBlocks, getUsers } from '@/Functions/studentFunctions';
-import callMsGraph from '@/Functions/ultility/microsoftAssets';
-import createUUID from '@/Functions/ultility/createUUID';
+import { Colors, loadingStateEnum } from '@src/types';
+import store, { RootState } from '@Redux/store';
+import ProgressView from '@components/ProgressView';
+import { PersonIcon, SearchIcon } from '@components/Icons/Icons';
+import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
+import BackButton from '@components/BackButton';
+import { getNumberOfBlocks, getUsers } from '@Functions/studentFunctions';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import createUUID from '@Functions/ultility/createUUID';
 import { Link } from 'expo-router';
-import { useStudentSafeArea } from '@/hooks/safeAreaHooks';
+import { useStudentSafeArea } from '@hooks/safeAreaHooks';
 
 function SearchBox({ onGetUsers }: { onGetUsers: (item: string) => void }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

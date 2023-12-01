@@ -6,5 +6,8 @@ const { getDefaultConfig } = require('expo/metro-config');
 const config = getDefaultConfig(__dirname, {
   // Enable CSS support.
   isCSSEnabled: true,
+  resolver: {
+    sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs'],
+  },
 });
 module.exports = config;

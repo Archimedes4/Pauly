@@ -22,24 +22,24 @@ import {
   Image,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import store, { RootState } from '@/Redux/store';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
-import { resourcesSlice } from '@/Redux/reducers/resourcesReducer';
-import createUUID, { getTextState } from '@/Functions/ultility/createUUID';
-import callMsGraph from '@/Functions/ultility/microsoftAssets';
+import store, { RootState } from '@Redux/store';
+import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
+import { resourcesSlice } from '@Redux/reducers/resourcesReducer';
+import createUUID, { getTextState } from '@Functions/ultility/createUUID';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 import {
   convertResourceModeString,
   getResources,
   getResourcesSearch,
   getScholarships,
-} from '@/Functions/getResources';
-import { CloseIcon, SearchIcon } from '@/components/Icons/Icons';
-import WebViewCross from '@/components/WebViewCross';
-import BackButton from '@/components/BackButton';
-import ProgressView from '@/components/ProgressView';
-import MimeTypeIcon from '@/components/Icons/MimeTypeIcon';
-import { Colors, loadingStateEnum, resourceMode } from '@/types';
-import ResourcesNews from '@/components/ResourcesNews';
+} from '@Functions/getResources';
+import { CloseIcon, SearchIcon } from '@components/Icons/Icons';
+import WebViewCross from '@components/WebViewCross';
+import BackButton from '@components/BackButton';
+import ProgressView from '@components/ProgressView';
+import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
+import { Colors, loadingStateEnum, resourceMode } from '@src/types';
+import ResourcesNews from '@components/ResourcesNews';
 
 // Resources
 // -> Sports

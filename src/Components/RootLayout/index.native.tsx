@@ -14,40 +14,13 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import store, { RootState } from '@/Redux/store';
-import { Colors, paperTheme } from '@/types';
-import WebAuthHolder from '@/components/WebAuthHolder';
-import setDimentions from '@/Functions/ultility/setDimentions';
+import store, { RootState } from '@Redux/store';
+import { Colors, paperTheme } from '@src/types';
+import setDimentions from '@Functions/ultility/setDimentions';
 import { Navigator, Slot, Stack, useRootNavigationState } from "expo-router";
 import 'raf/polyfill';
 
 const windowDimensions = Dimensions.get('window');
-
-//Holds main slot redirects to web slot with msal provider if web.
-function SlotHolder() {
-  const rootNavigationState = useRootNavigationState();
-
-  if (!rootNavigationState?.key) return null;
-  
-  if (Platform.OS === 'web') {
-    return <WebAuthHolder />
-  }
-  return (
-    <Stack>
-      <Stack.Screen name='(root)' options={{
-        headerShown: false
-      }}/>
-      <Stack.Screen
-        name="sign-in"
-        options={{
-          presentation: 'modal',
-          headerShown: false
-        }}
-      />
-    </Stack>
-  )
-}
-
 
 //App core holds dimentions
 function AppCore() {
@@ -98,7 +71,7 @@ function AppCore() {
           position: 'absolute',
         }}
       > 
-        <SlotHolder />      
+        <Slot />      
       </SafeAreaView>
       <View
         style={{

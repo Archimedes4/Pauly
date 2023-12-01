@@ -1,16 +1,16 @@
 import { View, Text, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import useIsConnected from '@/hooks/useIsConnected'
-import { Colors } from '@/types';
-import { OfflineIcon } from '@/components/Icons/Icons';
+import useIsConnected from '@hooks/useIsConnected'
+import { Colors } from '@src/types';
+import { OfflineIcon } from '@components/Icons/Icons';
 import { Slot, Stack } from 'expo-router';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/Redux/store';
+import { RootState } from '@Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import useAuthentication from '@/hooks/useAuthentication';
-import { useSignOut } from '@/hooks/authentication';
-import ProgressView from '@/components/ProgressView';
-import { useIsShowingLogout } from '@/hooks/useIsShowingLogout';
+import useAuthentication from '@hooks/useAuthentication';
+import { useSignOut } from '@hooks/authentication';
+import ProgressView from '@components/ProgressView';
+import { useIsShowingLogout } from '@hooks/useIsShowingLogout';
 
 function Loading() {
   const isGovernmentMode = useSelector(

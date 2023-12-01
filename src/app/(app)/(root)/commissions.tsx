@@ -10,16 +10,16 @@ import {
   Image,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import CommissionsView from '@/components/Commissions/CommissionsView';
-import { commissionsSlice } from '@/Redux/reducers/commissionsReducer';
-import { RootState } from '@/Redux/store';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
-import createUUID from '@/Functions/ultility/createUUID';
-import getPoints from '@/Functions/commissions/getPoints';
-import getCommissions from '@/Functions/commissions/getCommissions';
-import ProgressView from '@/components/ProgressView';
-import BackButton from '@/components/BackButton';
-import { Colors, loadingStateEnum } from '@/types';
+import CommissionsView from '@components/Commissions/CommissionsView';
+import { commissionsSlice } from '@Redux/reducers/commissionsReducer';
+import { RootState } from '@Redux/store';
+import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
+import createUUID from '@Functions/ultility/createUUID';
+import getPoints from '@Functions/commissions/getPoints';
+import getCommissions from '@Functions/commissions/getCommissions';
+import ProgressView from '@components/ProgressView';
+import BackButton from '@components/BackButton';
+import { Colors, loadingStateEnum } from '@src/types';
 
 function PickerPiece({
   text,

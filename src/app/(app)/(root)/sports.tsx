@@ -18,19 +18,19 @@ import {
   ListRenderItemInfo,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@/Redux/store';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
+import { RootState } from '@Redux/store';
+import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
 import {
   getRoster,
   getSports,
   getSportsContent,
   getSportsTeams,
-} from '@/Functions/sports/sportsFunctions';
-import getFileWithShareID from '@/Functions/ultility/getFileWithShareID';
-import SegmentedPicker from '@/components/Pickers/SegmentedPicker';
-import SVGXml from '@/components/SVGXml';
-import BackButton from '@/components/BackButton';
-import ProgressView from '@/components/ProgressView';
+} from '@Functions/sports/sportsFunctions';
+import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
+import SegmentedPicker from '@components/Pickers/SegmentedPicker';
+import SVGXml from '@components/SVGXml';
+import BackButton from '@components/BackButton';
+import ProgressView from '@components/ProgressView';
 import {
   Colors,
   dataContentTypeOptions,

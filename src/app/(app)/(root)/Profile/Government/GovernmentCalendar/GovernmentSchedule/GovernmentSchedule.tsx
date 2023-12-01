@@ -2,10 +2,10 @@ import { View, Text, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
-import { RootState } from '@/Redux/store';
-import { Colors, loadingStateEnum } from '@/types';
-import ProgressView from '@/components/ProgressView';
-import { getSchedules } from '@/Functions/calendar/calendarFunctionsGraph';
+import { RootState } from '@Redux/store';
+import { Colors, loadingStateEnum } from '@src/types';
+import ProgressView from '@components/ProgressView';
+import { getSchedules } from '@Functions/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';
 
 export default function GovernmentSchedule() {

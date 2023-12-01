@@ -1,11 +1,10 @@
 import { useMsal } from "@azure/msal-react";
 import { paulyListSlice } from "../../Redux/reducers/paulyListReducer"
 import store from "../../Redux/store"
+import { useEffect } from "react";
 
-export function useSession(): () => void  {
-  const { instance } = useMsal();
+export function useWebSession() {
   function main() {
-    console.log(instance.getAllAccounts());
     const stringListItem = window && window.sessionStorage && sessionStorage.getItem('listStore')
     if (stringListItem !== null) {
       try {
@@ -15,7 +14,9 @@ export function useSession(): () => void  {
         //return nothing just don't fail
       }
     }
-    return false
   }
-  return main
+  useEffect(() => {
+    main();
+  }, [])
+  return;
 }

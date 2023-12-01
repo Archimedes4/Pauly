@@ -2,18 +2,18 @@ import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-native';
-import callMsGraph from '@/Functions/ultility/microsoftAssets';
-import store, { RootState } from '@/Redux/store';
-import { Colors, loadingStateEnum, semesters } from '@/types';
-import getSchoolYears from '@/Functions/calendar/getSchoolYears';
-import SegmentedPicker from '@/components/Pickers/SegmentedPicker';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import store, { RootState } from '@Redux/store';
+import { Colors, loadingStateEnum, semesters } from '@src/types';
+import getSchoolYears from '@Functions/calendar/getSchoolYears';
+import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import {
   getEvent,
   getTimetable,
-} from '@/Functions/calendar/calendarFunctionsGraph';
-import { CloseIcon, WarningIcon } from '@/components/Icons/Icons';
-import Dropdown from '@/components/Dropdown';
-import { getRoom, getRooms } from '@/Functions/classesFunctions';
+} from '@Functions/calendar/calendarFunctionsGraph';
+import { CloseIcon, WarningIcon } from '@components/Icons/Icons';
+import Dropdown from '@components/Dropdown';
+import { getRoom, getRooms } from '@Functions/classesFunctions';
 
 export default function GovernmentClassesEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

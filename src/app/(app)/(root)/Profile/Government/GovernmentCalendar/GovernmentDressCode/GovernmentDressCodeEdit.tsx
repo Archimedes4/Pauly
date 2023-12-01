@@ -2,14 +2,14 @@ import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-native';
-import store, { RootState } from '@/Redux/store';
-import createUUID from '@/Functions/ultility/createUUID';
-import { Colors, loadingStateEnum } from '@/types';
+import store, { RootState } from '@Redux/store';
+import createUUID from '@Functions/ultility/createUUID';
+import { Colors, loadingStateEnum } from '@src/types';
 import DressCodeBlock from './DressCodeBlock';
-import { createDressCode } from '@/Functions/calendar/calendarFunctionsGraph';
-import getDressCode from '@/Functions/notifications/getDressCode';
-import ProgressView from '@/components/ProgressView';
-import callMsGraph from '@/Functions/ultility/microsoftAssets';
+import { createDressCode } from '@Functions/calendar/calendarFunctionsGraph';
+import getDressCode from '@Functions/notifications/getDressCode';
+import ProgressView from '@components/ProgressView';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { Link } from 'expo-router';
 
 export default function GovernmentDressCodeEdit() {

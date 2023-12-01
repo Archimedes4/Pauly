@@ -9,12 +9,12 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import NavBarComponent from '@/components/NavComponent';
-import { RootState } from '@/Redux/store';
-import ProfileBlock from '@/app/(app)/(root)/Profile/ProfileBlock';
-import { Colors } from '@/types';
+import NavBarComponent from '@components/NavComponent';
+import { RootState } from '@Redux/store';
+import ProfileBlock from '@src/app/(app)/(root)/Profile/ProfileBlock';
+import { Colors } from '@src/types';
 import { Redirect, Slot, useFocusEffect, usePathname, useRouter } from 'expo-router';
-import useIsAuthenticated from '@/hooks/useIsAuthenticated';
+import useIsAuthenticated from '@hooks/useIsAuthenticated';
 
 function AuthenticatedView() {
   const { height, currentBreakPoint, totalWidth, width } = useSelector(

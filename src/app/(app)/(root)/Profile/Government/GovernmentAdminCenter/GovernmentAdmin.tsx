@@ -6,11 +6,11 @@ import {
   initializePaulyPartOne,
   initializePaulyPartThree,
   initializePaulyPartTwo,
-} from '@/Functions/ﻩgovernment/initializePauly/initializePauly';
-import { RootState } from '@/Redux/store';
-import { addDataArray } from '@/Functions/ﻩgovernment/initializePauly/initializePaulyData';
-import callMsGraph from '@/Functions/ultility/microsoftAssets';
-import { Colors, loadingStateEnum } from '@/types';
+} from '@Functions/ﻩgovernment/initializePauly/initializePauly';
+import { RootState } from '@Redux/store';
+import { addDataArray } from '@Functions/ﻩgovernment/initializePauly/initializePaulyData';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import { Colors, loadingStateEnum } from '@src/types';
 
 enum initStage {
   notStarted,

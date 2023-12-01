@@ -9,9 +9,19 @@ module.exports = function (api) {
         'module-resolver',
         {
           alias: {
-            '@': './src',
+            "@src/*":"src/*",
+            "@hooks/*": "src/hooks/*",
+            "@Redux/*": "src/Redux/*",
+            "@Functions/*": "src/Functions/*",
+            "@components/*": "src/components/*",
             'assets': './assets',
-          }
+          },
+          "extensions": [
+            ".js",
+            ".jsx",
+            ".ts",
+            ".tsx",
+          ]
         },
       ],
       'react-native-reanimated/plugin',

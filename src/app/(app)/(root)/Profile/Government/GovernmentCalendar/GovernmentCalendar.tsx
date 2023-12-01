@@ -2,8 +2,8 @@ import { View, Text, Pressable } from 'react-native';
 import React from 'react';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/Redux/store';
-import { Colors } from '@/types';
+import { RootState } from '@Redux/store';
+import { Colors } from '@src/types';
 
 export default function GovernmentCalendar() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

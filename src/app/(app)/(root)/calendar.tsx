@@ -18,21 +18,21 @@ import React, { useCallback, useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch, useSelector } from 'react-redux';
-import createUUID from '@/Functions/ultility/createUUID';
-import Week from '@/components/Calendar/Week';
-import AddEvent from '@/components/Calendar/AddEvent';
-import CalendarTypePicker from '@/components/CalendarTypePicker';
-import { AddIcon, ChevronLeft, ChevronRight } from '@/components/Icons/Icons';
-import { RootState } from '@/Redux/store';
-import { selectedDateSlice } from '@/Redux/reducers/selectedDateReducer';
-import { Colors, calendarMode } from '@/types';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
-import BackButton from '@/components/BackButton';
-import { addEventSlice } from '@/Redux/reducers/addEventReducer';
-import { getClasses } from '@/Functions/classesFunctions';
-import getEvents from '@/Functions/calendar/getEvents';
-import { getMonthData } from '@/Functions/calendar/calendarFunctionsGraph';
-import EventView from '@/components/Calendar/EventView';
+import createUUID from '@Functions/ultility/createUUID';
+import Week from '@components/Calendar/Week';
+import AddEvent from '@components/Calendar/AddEvent';
+import CalendarTypePicker from '@components/CalendarTypePicker';
+import { AddIcon, ChevronLeft, ChevronRight } from '@components/Icons/Icons';
+import { RootState } from '@Redux/store';
+import { selectedDateSlice } from '@Redux/reducers/selectedDateReducer';
+import { Colors, calendarMode } from '@src/types';
+import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
+import BackButton from '@components/BackButton';
+import { addEventSlice } from '@Redux/reducers/addEventReducer';
+import { getClasses } from '@Functions/classesFunctions';
+import getEvents from '@Functions/calendar/getEvents';
+import { getMonthData } from '@Functions/calendar/calendarFunctionsGraph';
+import EventView from '@components/Calendar/EventView';
 
 function getBackgroundColor(selectedDate: string, dayData: number): string {
   if (dayData === new Date(selectedDate).getDate()) {

@@ -2,13 +2,13 @@ import { View, Text, Pressable, TextInput } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import store, { RootState } from '@/Redux/store';
-import { Colors, loadingStateEnum } from '@/types';
-import { WarningIcon } from '@/components/Icons/Icons';
-import callMsGraph from '@/Functions/ultility/microsoftAssets';
+import store, { RootState } from '@Redux/store';
+import { Colors, loadingStateEnum } from '@src/types';
+import { WarningIcon } from '@components/Icons/Icons';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 import createUUID, {
   getTextState,
-} from '@/Functions/ultility/createUUID';
+} from '@Functions/ultility/createUUID';
 
 export default function GovermentRoomsCreate() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

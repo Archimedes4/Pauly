@@ -14,15 +14,14 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import store, { RootState } from '@/Redux/store';
-import { Colors, paperTheme } from '@/types';
-import WebAuthHolder from '@/components/WebAuthHolder';
-import setDimentions from '@/Functions/ultility/setDimentions';
-import { Navigator, Slot, Stack, useRootNavigationState } from "expo-router";
+import store, { RootState } from '@Redux/store';
+import { Colors, paperTheme } from '@src/types';
+import setDimentions from '@Functions/ultility/setDimentions';
+import { Slot } from "expo-router";
 import 'raf/polyfill';
+import { clientId, tenantId } from '@src/PaulyConfig';
 import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
-import { clientId, tenantId } from '@/PaulyConfig';
 
 //stop redirect error
 function getRedirectUri() {
@@ -127,8 +126,14 @@ function AppCore() {
 //Main Root app holds providers
 export default function RootLayout() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => {
+
+  async function wait() {
+    await pca.initialize();
     setMounted(true)
+  }
+
+  useEffect(() => {
+    wait();
   }, [])
   if (!mounted) {
     return null

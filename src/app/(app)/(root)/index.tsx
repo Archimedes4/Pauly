@@ -21,20 +21,20 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { FlatList } from 'react-native-gesture-handler';
-import store, { RootState } from '@/Redux/store';
-import getCurrentPaulyData from '@/Functions/notifications/getCurrentPaulyData';
-import { Colors, loadingStateEnum, taskStatusEnum } from '@/types';
-import getUsersTasks from '@/Functions/notifications/getUsersTasks';
-import ProgressView from '@/components/ProgressView';
-import getInsightData from '@/Functions/notifications/getInsightData';
-import CustomCheckBox from '@/components/CheckMark/CustomCheckBox';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
-import { homepageDataSlice } from '@/Redux/reducers/homepageDataReducer';
-import PDFView from '@/components/PDF';
-import BackButton from '@/components/BackButton';
-import MimeTypeIcon from '@/components/Icons/MimeTypeIcon';
-import { getClassEventsFromDay } from '@/Functions/classesFunctions';
-import { TrashIcon, WarningIcon } from '@/components/Icons/Icons';
+import store, { RootState } from '@Redux/store';
+import getCurrentPaulyData from '@Functions/notifications/getCurrentPaulyData';
+import { Colors, loadingStateEnum, taskStatusEnum } from '@src/types';
+import getUsersTasks from '@Functions/notifications/getUsersTasks';
+import ProgressView from '@components/ProgressView';
+import getInsightData from '@Functions/notifications/getInsightData';
+import CustomCheckBox from '@components/CheckMark/CustomCheckBox';
+import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
+import { homepageDataSlice } from '@Redux/reducers/homepageDataReducer';
+import PDFView from '@components/PDF';
+import BackButton from '@components/BackButton';
+import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
+import { getClassEventsFromDay } from '@Functions/classesFunctions';
+import { TrashIcon, WarningIcon } from '@components/Icons/Icons';
 import {
   deleteTask,
   updateTaskText,

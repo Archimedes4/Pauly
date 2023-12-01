@@ -11,14 +11,14 @@ import React, { useEffect, useCallback } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import MonthView from '@/components/MonthView';
-import store, { RootState } from '@/Redux/store';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
-import getCurrentPaulyData from '@/Functions/notifications/getCurrentPaulyData';
-import ProgressView from '@/components/ProgressView';
-import { BookIcon, MedalIcon, PersonIcon } from '@/components/Icons/Icons';
-import ScrollingTextAnimation from '@/components/ScrollingTextAnimation';
-import { Colors, loadingStateEnum } from '@/types';
+import MonthView from '@components/MonthView';
+import store, { RootState } from '@Redux/store';
+import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
+import getCurrentPaulyData from '@Functions/notifications/getCurrentPaulyData';
+import ProgressView from '@components/ProgressView';
+import { BookIcon, MedalIcon, PersonIcon } from '@components/Icons/Icons';
+import ScrollingTextAnimation from '@components/ScrollingTextAnimation';
+import { Colors, loadingStateEnum } from '@src/types';
 import { Link, useRouter } from "expo-router";
 
 export default function HomePage() {

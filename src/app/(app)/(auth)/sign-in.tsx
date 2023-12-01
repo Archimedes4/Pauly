@@ -13,13 +13,13 @@ import { View, Text, Pressable, Image } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { safeAreaColorsSlice } from '@/Redux/reducers/safeAreaColorsReducer';
-import { GearIcon } from '@/components/Icons/Icons';
-import { Colors } from '@/types';
-import ProgressView from '@/components/ProgressView';
-import { useInvokeLogin } from '@/hooks/authentication';
-import { RootState } from '@/Redux/store';
-import useIsAuthenticated from '@/hooks/useIsAuthenticated';
+import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
+import { GearIcon } from '@components/Icons/Icons';
+import { Colors } from '@src/types';
+import ProgressView from '@components/ProgressView';
+import { useInvokeLogin } from '@hooks/authentication';
+import { RootState } from '@Redux/store';
+import useIsAuthenticated from '@hooks/useIsAuthenticated';
 import { router } from 'expo-router';
 
 export default function SignIn() {

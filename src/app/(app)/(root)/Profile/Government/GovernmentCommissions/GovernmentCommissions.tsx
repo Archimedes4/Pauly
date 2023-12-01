@@ -3,16 +3,16 @@ import { View, Text, Pressable } from 'react-native';
 import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
-import getCommissions from '@/Functions/commissions/getCommissions';
-import getSubmissions from '@/Functions/commissions/getSubmissions';
-import createUUID from '@/Functions/ultility/createUUID';
-import { RootState } from '@/Redux/store';
+import getCommissions from '@Functions/commissions/getCommissions';
+import getSubmissions from '@Functions/commissions/getSubmissions';
+import createUUID from '@Functions/ultility/createUUID';
+import { RootState } from '@Redux/store';
 import {
   Colors,
   loadingStateEnum,
   submissionTypeEnum,
-} from '@/types';
-import ProgressView from '@/components/ProgressView';
+} from '@src/types';
+import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 
 export default function GovernmentCommissions() {
