@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  useIsConnected
+  holds the connection api, tests every 5 seconds to see if user is connected to a network.
+  If user is connected to network returns true otherwise false.
+*/
 import { useState, useEffect } from 'react';
 import * as Network from 'expo-network';
 

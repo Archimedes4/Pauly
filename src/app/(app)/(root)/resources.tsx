@@ -40,6 +40,7 @@ import ProgressView from '@components/ProgressView';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { Colors, loadingStateEnum, resourceMode } from '@src/types';
 import ResourcesNews from '@components/ResourcesNews';
+import ResourceBar from '@src/components/resourceBar';
 
 // Resources
 // -> Sports
@@ -564,7 +565,7 @@ export default function Resources() {
         {selectedResourceMode !== resourceMode.scholarships && selectedResourceMode !== resourceMode.news ?
           <View
             style={{
-              height: isHoverPicker ? height * 0.75 : height * 0.8,
+              height: height * 0.9,
               width,
               backgroundColor: Colors.lightGray,
             }}
@@ -573,7 +574,7 @@ export default function Resources() {
               <View
                 style={{
                   width,
-                  height: isHoverPicker ? height * 0.75 : height * 0.8,
+                  height: height * 0.9,
                   alignContent: 'center',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -606,6 +607,7 @@ export default function Resources() {
                 )}
               </>
             )}
+            <ResourceBar />
           </View>:null
         }
         

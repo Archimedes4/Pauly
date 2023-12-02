@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  2 December 2023
+  safeAreaHooks.ts
+*/
 import { safeAreaColorsSlice } from "@Redux/reducers/safeAreaColorsReducer";
 import store, { RootState } from "@Redux/store";
 import { Colors, loadingStateEnum } from "@src/types";

@@ -20,18 +20,14 @@ export default function useAuthentication() {
   async function loadContent() {
     await silentLogin();
     if (store.getState().authenticationToken !== '') {
-      console.log("MARK USE AUTH HOOK FIVE")
       const webResult = webSession()
-      console.log("MARK USE AUTH HOOK SIX")
       if (!webResult) {
         await getPaulyLists();
       }
-      console.log("MARK USE AUTH HOOK SEVEN")
       await getUserProfile();
       if (await getWantGovernment()) {
         await checkIfGovernmentMode();
       }
-      console.log("MARK USE AUTH HOOK EIGHT")
       setIsLoading(false);
     } else {
       setIsLoading(false);
