@@ -276,9 +276,8 @@ export default function GovernmentReviewFileSubmission() {
               postType.youtubeVideo ? (
                 <View style={{ height: ((width * 0.9) / 16) * 9 }}>
                   <SportsYoutube
-                    videoId={currentSubmissionInfomration.fileId}
-                    width={width * 0.9}
-                  />
+                          videoId={currentSubmissionInfomration.fileId}
+                          width={width * 0.9} height={undefined}                  />
                 </View>
               ) : null}
               <Pressable

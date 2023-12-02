@@ -1,3 +1,7 @@
+/*
+  Pauly
+  Andrew Mainella
+*/
 import {
   View,
   Text,
@@ -10,20 +14,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import { convertYearToSchoolYear } from '../../../../../../Functions/calendar/calendarFunctions';
-import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
-import createUUID from '../../../../../../Functions/ultility/createUUID';
+import { convertYearToSchoolYear } from '@Functions/calendar/calendarFunctions';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import createUUID from '@Functions/ultility/createUUID';
 import {
   Colors,
   dataContentTypeOptions,
   loadingStateEnum,
-} from '../../../../../../types';
-import store, { RootState } from '../../../../../../Redux/store';
-import { getTeams } from '../../../../../../Functions/microsoftGroupsFunctions';
-import ProgressView from '../../../../../../components/ProgressView';
-import MicrosoftFilePicker from '../../../../../../components/MicrosoftFilePicker';
-import { CloseIcon } from '../../../../../../components/Icons/Icons';
-import getFileWithShareID from '../../../../../../Functions/ultility/getFileWithShareID';
+} from '@src/types';
+import store, { RootState } from '@Redux/store';
+import { getTeams } from '@Functions/microsoftGroupsFunctions';
+import ProgressView from '@components/ProgressView';
+import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
+import { CloseIcon } from '@components/Icons/Icons';
+import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
 
 export default function GovernmentCreateNewTeam() {
   const { sport, id, teamId } = useParams();

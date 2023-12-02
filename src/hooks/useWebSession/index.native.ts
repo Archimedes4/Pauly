@@ -1,3 +1,6 @@
 export default function useWebSession() {
-  return false;
+  function main() {
+    return false;
+  }
+  return main;
 }

@@ -1,8 +1,6 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import { Button } from 'react-native-paper';
 import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
 import { Colors, loadingStateEnum } from '../../../../../../types';
 import { RootState } from '../../../../../../Redux/store';

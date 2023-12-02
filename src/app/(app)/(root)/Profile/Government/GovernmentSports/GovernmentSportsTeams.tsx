@@ -3,16 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
-import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
-import store, { RootState } from '../../../../../../Redux/store';
-import { Colors, loadingStateEnum } from '../../../../../../types';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import store, { RootState } from '@Redux/store';
+import { Colors, loadingStateEnum } from '@src/types';
 import {
   getSport,
   getSportsTeams,
-} from '../../../../../../Functions/sports/sportsFunctions';
-import { WarningIcon } from '../../../../../../components/Icons/Icons';
-import SVGXml from '../../../../../../components/SVGXml';
-import { getTextState } from '../../../../../../Functions/ultility/createUUID';
+} from '@Functions/sports/sportsFunctions';
+import { WarningIcon } from '@components/Icons/Icons';
+import SVGXml from '@components/SVGXml';
+import { getTextState } from '@Functions/ultility/createUUID';
 
 function SportsUpdateModel({
   isPickingSvg,

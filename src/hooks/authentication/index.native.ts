@@ -16,11 +16,11 @@ import getPaulyLists from "../../Functions/ultility/getPaulyLists";
 import { Redirect, useRouter } from "expo-router";
 
 //placeholder function
-export function useSilentLogin(): (government?: boolean) => Promise<void> {
-  async function main(government?: boolean) {
-    const router = useRouter();
+export function useSilentLogin(): () => Promise<void> {
+  const router = useRouter();
+  async function main() {
     if (store.getState().authenticationToken === '') { //checking if auth token exists
-      router.replace('/sign-in')
+      router.push('/sign-in')
       return; //Needed to finish function
     }
     return; //Needed to finish function

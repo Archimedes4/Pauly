@@ -11,11 +11,11 @@ import YoutubeWeb from './youtubeIframeFunction';
 export default function SportsYoutube({
   videoId,
   width,
-  height = undefined,
+  height,
 }: {
   videoId: string;
   width: number;
-  height: number | undefined;
+  height?: number | undefined;
 }) {
   if (Platform.OS === 'web') {
     return (

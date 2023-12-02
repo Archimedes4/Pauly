@@ -55,10 +55,6 @@ function Loading() {
   );
 }
 
-export const unstable_settings = {
-  initialRouteName: '(root)',
-};
-
 export default function Layout() {
   const isConnected = useIsConnected();
   const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);

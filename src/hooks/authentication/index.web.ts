@@ -13,7 +13,7 @@ import { setWantGovernment } from "@Functions/handleGovernmentLogin";
 import { useRouter } from "expo-router";
 import { useMsal } from "@azure/msal-react";
 
-export const refreshToken = () => {
+export const refresh = () => {
   const { instance } = useMsal();
   const result = instance.acquireTokenSilent({
     scopes,

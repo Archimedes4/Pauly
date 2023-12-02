@@ -49,7 +49,7 @@ function AppCore() {
     const newDimensions = Dimensions.get('window');
     setStateDimensions(newDimensions);
     setDimentions(newDimensions.width, newDimensions.height, insets);
-  }, [])
+  }, []);
 
   return (
     <>

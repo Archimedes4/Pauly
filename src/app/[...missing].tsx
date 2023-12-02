@@ -5,16 +5,19 @@
   [...missing.tsx]
 */
 import { useFocusEffect, useRouter } from 'expo-router'
+import { Platform } from 'react-native';
 
 export default function Missing() {
-  const router = useRouter();
-  useFocusEffect(() => {
-    try {
-      router.push('/');
-    } catch (error) {
-      console.error(error);
-    }
-  });
+  if (Platform.OS === 'web') {
+    const router = useRouter();
+    useFocusEffect(() => {
+      try {
+        router.push('/');
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  }
   return (
     null
   )
