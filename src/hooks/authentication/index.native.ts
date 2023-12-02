@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  1 December 2023
+  authentication/index.native.ts
+  authentication hook for native
+*/
 import { Prompt, exchangeCodeAsync, makeRedirectUri, refreshAsync, revokeAsync, useAuthRequest, useAutoDiscovery } from "expo-auth-session";
 import { clientId, scopes, tenantId } from "../../PaulyConfig";
 import store from "../../Redux/store";

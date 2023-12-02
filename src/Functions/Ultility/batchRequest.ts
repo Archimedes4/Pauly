@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  1 December 2023
+  batchRequest.ts
+*/
 import { loadingStateEnum } from '../../types';
 import callMsGraph from './microsoftAssets';
 

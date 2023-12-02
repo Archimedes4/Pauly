@@ -4,7 +4,6 @@
   October 18 2023
   AddEvent.tsx
 */
-
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';

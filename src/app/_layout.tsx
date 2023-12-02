@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  1 December 2023
+  _layout.tsx
+*/
 import RootLayout from "@components/RootLayout";
 import React, { useEffect, useState } from "react";
 
