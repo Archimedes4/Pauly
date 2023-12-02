@@ -16,7 +16,7 @@ import callMsGraph from '@Functions/ultility/microsoftAssets';
 import createUUID from '@Functions/ultility/createUUID';
 import store, { RootState } from '@Redux/store';
 import { Colors, loadingStateEnum } from '@src/types';
-import { CloseIcon, WarningIcon } from '@components/Icons/Icons';
+import { CloseIcon, WarningIcon } from '@src/components/Icons';
 import ProgressView from '@components/ProgressView';
 import { getSchedule } from '@Functions/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';

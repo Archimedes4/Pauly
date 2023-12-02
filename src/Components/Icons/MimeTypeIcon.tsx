@@ -12,7 +12,7 @@ import {
   PowerpointIcon,
   VideoIcon,
   WordIcon,
-} from './Icons';
+} from '.';
 
 interface iconProps {
   width: number;

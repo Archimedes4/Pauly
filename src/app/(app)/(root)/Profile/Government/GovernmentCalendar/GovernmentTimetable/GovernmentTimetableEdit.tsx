@@ -16,7 +16,7 @@ import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import createUUID from '@Functions/ultility/createUUID';
-import { DownIcon, UpIcon, WarningIcon } from '@components/Icons/Icons';
+import { DownIcon, UpIcon, WarningIcon } from '@src/components/Icons';
 import { Colors, loadingStateEnum } from '@src/types';
 import { RootState } from '@Redux/store';
 import getDressCodeData from '@Functions/notifications/getDressCodeData';

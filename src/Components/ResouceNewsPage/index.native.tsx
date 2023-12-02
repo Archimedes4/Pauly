@@ -4,7 +4,7 @@ import WebViewCross from '../WebViewCross';
 import { useSelector } from 'react-redux';
 import { RootState } from '@Redux/store';
 import { Colors } from '@src/types';
-import { CloseIcon } from '../Icons/Icons';
+import { CloseIcon } from '../Icons';
 
 export default function ResourceNewsPage({selectedPost, setSelectedPost, isHoverPicker}:{selectedPost: newsPost, setSelectedPost: (item: undefined) => void,  isHoverPicker: boolean}) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

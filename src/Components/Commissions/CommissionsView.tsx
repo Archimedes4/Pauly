@@ -10,7 +10,7 @@ import CommissionClaim from './CommissionClaim';
 import getCommission from '../../Functions/commissions/getCommission';
 import callMsGraph from '../../Functions/ultility/microsoftAssets';
 import ProgressView from '../../components/ProgressView';
-import { CloseIcon } from '../../components/Icons/Icons';
+import { CloseIcon } from '../Icons';
 import WebViewCross from '../../components/WebViewCross';
 import { Colors, commissionTypeEnum, loadingStateEnum } from '../../types';
 

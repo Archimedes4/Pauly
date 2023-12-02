@@ -19,7 +19,7 @@ import SelectSchoolDayData from './SelectSchoolDayData';
 import { Colors, loadingStateEnum, paulyEventType } from '../../types';
 import updateEvent from '../../Functions/updateEvent';
 import { getTextState } from '../../Functions/ultility/createUUID';
-import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons/Icons';
+import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons';
 import PickerWrapper from '../Pickers/Picker';
 
 function GovernmentCalendarOptions({

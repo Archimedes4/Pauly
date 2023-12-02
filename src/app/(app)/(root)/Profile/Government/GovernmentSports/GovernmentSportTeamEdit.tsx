@@ -26,7 +26,7 @@ import store, { RootState } from '@Redux/store';
 import { getTeams } from '@Functions/microsoftGroupsFunctions';
 import ProgressView from '@components/ProgressView';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
-import { CloseIcon } from '@components/Icons/Icons';
+import { CloseIcon } from '@src/components/Icons';
 import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
 
 export default function GovernmentCreateNewTeam() {

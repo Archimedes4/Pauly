@@ -14,7 +14,7 @@ const center = {
 
 type LatLngLiteral = google.maps.LatLngLiteral;
 
-export default function MapWeb({
+export default function Map({
   proximity,
   onSetSelectedPositionIn,
   width,

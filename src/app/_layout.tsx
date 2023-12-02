@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
-  initialRouteName: '(app)/(root)/index',
+  initialRouteName: '(app)/(root)/home',
 };
 
 export default function App() {

@@ -11,7 +11,7 @@ import {
   getEvent,
   getTimetable,
 } from '@Functions/calendar/calendarFunctionsGraph';
-import { CloseIcon, WarningIcon } from '@components/Icons/Icons';
+import { CloseIcon, WarningIcon } from '@src/components/Icons';
 import Dropdown from '@components/Dropdown';
 import { getRoom, getRooms } from '@Functions/classesFunctions';
 

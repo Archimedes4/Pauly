@@ -18,7 +18,7 @@ import {
   HomeIcon,
   MedalIcon,
   StudentSearchIcon,
-} from '@components/Icons/Icons';
+} from '@src/components/Icons';
 import { RootState } from '@Redux/store';
 import { Colors } from '@src/types';
 import { Link, useRouter } from 'expo-router';

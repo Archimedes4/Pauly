@@ -22,7 +22,7 @@ import {
 import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import ProgressView from '@components/ProgressView';
 import WebViewCross from '@components/WebViewCross';
-import { CloseIcon } from '@components/Icons/Icons';
+import { CloseIcon } from '@src/components/Icons';
 import MapWeb from '@src/components/Map/index.d';
 import Slider from '@components/Slider';
 import BackButton from '@components/BackButton';
@@ -241,7 +241,7 @@ export default function GovernmentEditCommission() {
             >
               <MapWeb
                 proximity={proximity}
-                selectedPositionIn={selectedPositionIn}
+                // selectedPositionIn={selectedPositionIn}
                 onSetSelectedPositionIn={setSelectedPositionIn}
                 width={width * 0.8}
                 height={height * 0.3}

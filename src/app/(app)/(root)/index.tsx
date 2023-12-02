@@ -34,7 +34,7 @@ import PDFView from '@components/PDF';
 import BackButton from '@components/BackButton';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '@Functions/classesFunctions';
-import { TrashIcon, WarningIcon } from '@components/Icons/Icons';
+import { TrashIcon, WarningIcon } from '@src/components/Icons';
 import {
   deleteTask,
   updateTaskText,

@@ -22,7 +22,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Colors, loadingStateEnum } from '@src/types';
 import store, { RootState } from '@Redux/store';
 import ProgressView from '@components/ProgressView';
-import { PersonIcon, SearchIcon } from '@components/Icons/Icons';
+import { PersonIcon, SearchIcon } from '@src/components/Icons';
 import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
 import BackButton from '@components/BackButton';
 import { getNumberOfBlocks, getUsers } from '@Functions/studentFunctions';

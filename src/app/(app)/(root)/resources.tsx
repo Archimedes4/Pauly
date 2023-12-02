@@ -33,7 +33,7 @@ import {
   getResourcesSearch,
   getScholarships,
 } from '@Functions/getResources';
-import { CloseIcon, SearchIcon } from '@components/Icons/Icons';
+import { CloseIcon, SearchIcon } from '@src/components/Icons';
 import WebViewCross from '@components/WebViewCross';
 import BackButton from '@components/BackButton';
 import ProgressView from '@components/ProgressView';
@@ -608,89 +608,7 @@ export default function Resources() {
             )}
           </View>:null
         }
-        <Pressable
-          style={{ height: isHoverPicker ? height * 0.1 : height * 0.05 }}
-          onHoverIn={() => {
-            setIsHoverPicker(true);
-          }}
-          onHoverOut={() => {
-            setIsHoverPicker(false);
-          }}
-        >
-          <ScrollView
-            horizontal
-            style={{
-              height: isHoverPicker ? height * 0.1 : height * 0.05,
-              width,
-              backgroundColor: Colors.white,
-            }}
-            showsHorizontalScrollIndicator={false}
-          >
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="Home"
-              item={resourceMode.home}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="Sports"
-              item={resourceMode.sports}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="Advancement"
-              item={resourceMode.advancement}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="School Events"
-              item={resourceMode.schoolEvents}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="Annoucments"
-              item={resourceMode.annoucments}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="Fitness"
-              item={resourceMode.fitness}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="Files"
-              item={resourceMode.files}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="Crusader News"
-              item={resourceMode.news}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-            <PickerPiece
-              key={`Button_${createUUID()}`}
-              text="Scholarships"
-              item={resourceMode.scholarships}
-              isHoverPicker={isHoverPicker}
-              setIsHoverPicker={setIsHoverPicker}
-            />
-          </ScrollView>
-        </Pressable>
+        
       </View>
       {isGovernmentMode &&
       isShowingCategoryView &&

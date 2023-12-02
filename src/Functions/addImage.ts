@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  
+*/
 import store from '../Redux/store';
 import { loadingStateEnum } from '../types';
 import callMsGraph from './ultility/microsoftAssets';

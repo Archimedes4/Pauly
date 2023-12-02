@@ -14,7 +14,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
-import { GearIcon } from '@components/Icons/Icons';
+import { GearIcon } from '@src/components/Icons';
 import { Colors } from '@src/types';
 import ProgressView from '@components/ProgressView';
 import { useInvokeLogin } from '@hooks/authentication';
@@ -56,7 +56,8 @@ export default function SignIn() {
   // Font
   const [fontsLoaded] = useFonts({
     BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-    'Gochi Hand': require('assets/fonts/GochiHand-Regular.ttf'),
+    'Gochi-Hand': require('assets/fonts/GochiHand-Regular.ttf'),
+    'Roboto': require('assets/fonts/Roboto-Regular.ttf')
   });
 
   useCallback(async () => {
@@ -132,7 +133,7 @@ export default function SignIn() {
               position: 'absolute',
               left: fontSize * 0.5,
               top: fontSize * 0.22,
-              fontFamily: 'Gochi Hand',
+              fontFamily: 'Gochi-Hand',
               fontSize: fontSize - fontSize / 3,
               textShadowColor: 'rgba(0, 0, 0, 1)',
               textShadowOffset: { width: 4, height: 5 },

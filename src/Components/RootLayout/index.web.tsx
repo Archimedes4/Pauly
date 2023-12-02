@@ -77,6 +77,10 @@ function AppCore() {
     setDimentions(newDimensions.width, newDimensions.height, insets);
   }, [])
 
+  useEffect(() => {
+    setDimentions(dimensions.width, dimensions.height, insets);
+  }, [expandedMode])
+
   return (
     <>
       <View

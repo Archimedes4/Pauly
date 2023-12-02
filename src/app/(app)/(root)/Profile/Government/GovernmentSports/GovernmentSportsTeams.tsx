@@ -10,7 +10,7 @@ import {
   getSport,
   getSportsTeams,
 } from '@Functions/sports/sportsFunctions';
-import { WarningIcon } from '@components/Icons/Icons';
+import { WarningIcon } from '@src/components/Icons';
 import SVGXml from '@components/SVGXml';
 import { getTextState } from '@Functions/ultility/createUUID';
 

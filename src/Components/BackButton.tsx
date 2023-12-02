@@ -7,7 +7,7 @@
 */
 import { Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
-import { ChevronLeft } from './Icons/Icons';
+import { ChevronLeft } from './Icons';
 import { Link } from 'expo-router';
 
 export default function BackButton({

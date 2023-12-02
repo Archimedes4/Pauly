@@ -13,7 +13,7 @@ import { authenticationRefreshTokenSlice } from "../../Redux/reducers/authentica
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
 import getUserProfile from "../../Functions/ultility/getPaulyLists";
 import getPaulyLists from "../../Functions/ultility/getPaulyLists";
-import { Redirect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 //placeholder function
 export function useSilentLogin(): () => Promise<void> {

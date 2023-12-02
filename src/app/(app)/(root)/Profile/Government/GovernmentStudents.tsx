@@ -20,7 +20,7 @@ import {
   getUsers,
   removeStudentSelection,
 } from '../../../../../Functions/studentFunctions';
-import { CloseIcon, SearchIcon } from '../../../../../components/Icons/Icons';
+import { CloseIcon, SearchIcon } from '../../../../../components/Icons';
 import { studentSearchSlice } from '../../../../../Redux/reducers/studentSearchReducer';
 import { Colors, loadingStateEnum } from '../../../../../types';
 import ProgressView from '../../../../../components/ProgressView';

@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  Main authentication method hold logic calling platform based login methods.
+*/
 import getPaulyLists from "@src/Functions/ultility/getPaulyLists";
 import useGetUserProfile from "@src/hooks/useGetUserProfile";
 import useWebSession from "@hooks/useWebSession";
@@ -13,9 +18,7 @@ export default function useAuthentication() {
   const getUserProfile = useGetUserProfile();
   //main function
   async function loadContent() {
-    console.log("MARK USE AUTH HOOK THREE")
     await silentLogin();
-    console.log("MARK USE AUTH HOOK FOUR")
     if (store.getState().authenticationToken !== '') {
       console.log("MARK USE AUTH HOOK FIVE")
       const webResult = webSession()
@@ -36,7 +39,6 @@ export default function useAuthentication() {
   }
 
   useEffect(() => {
-    console.log("MARK USE AUTH HOOK NINE")
     loadContent(); 
   }, [])
 

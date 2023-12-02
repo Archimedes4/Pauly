@@ -36,8 +36,8 @@ import {
   dataContentTypeOptions,
   loadingStateEnum,
   postType,
-} from '../../../types';
-import SportsYoutube from '../../../components/SportsYoutube';
+} from '@src/types';
+import SportsYoutube from '@components/SportsYoutube';
 
 export default function Sports() {
   const { width, height, currentBreakPoint } = useSelector(

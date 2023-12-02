@@ -19,7 +19,7 @@ import {
   MedalIcon,
   PersonIcon,
   StudentSearchIcon,
-} from './Icons/Icons';
+} from './Icons';
 import { expandedModeSlice } from '../Redux/reducers/expandedModeReducer';
 import { isShowingProfileBlockSlice } from '../Redux/reducers/isShowingProfileBlockReducer';
 import { Colors } from '../types';
