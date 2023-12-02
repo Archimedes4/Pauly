@@ -6,7 +6,7 @@
 // An timetable selector that direcets to creating a new timetable or editing one.
 //
 
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import SelectTimetable from '@components/Calendar/SelectTimetable';

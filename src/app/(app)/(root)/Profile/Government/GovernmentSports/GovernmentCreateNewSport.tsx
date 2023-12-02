@@ -7,11 +7,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-native';
-import { RootState } from '../../../../../../Redux/store';
-import createUUID, { getTextState } from '../../../../../../Functions/ultility/createUUID';
-import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
-import { Colors, loadingStateEnum } from '../../../../../../types';
-import SVGXml from '../../../../../../components/SVGXml';
+import { RootState } from '@Redux/store';
+import createUUID, { getTextState } from '@Functions/ultility/createUUID';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import { Colors, loadingStateEnum } from '@src/types';
+import SVGXml from '@components/SVGXml';
 
 export default function GovernmentCreateNewSport() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

@@ -23,7 +23,7 @@ import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import ProgressView from '@components/ProgressView';
 import WebViewCross from '@components/WebViewCross';
 import { CloseIcon } from '@components/Icons/Icons';
-import MapWeb from '@components/Map/Map';
+import MapWeb from '@src/components/Map/index.d';
 import Slider from '@components/Slider';
 import BackButton from '@components/BackButton';
 import {

@@ -2,10 +2,10 @@ import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
-import { Colors, loadingStateEnum } from '../../../../../../types';
-import { RootState } from '../../../../../../Redux/store';
-import { getSports } from '../../../../../../Functions/sports/sportsFunctions';
-import ProgressView from '../../../../../../components/ProgressView';
+import { Colors, loadingStateEnum } from '@src/types';
+import { RootState } from '@Redux/store';
+import { getSports } from '@Functions/sports/sportsFunctions';
+import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 
 export default function GovernmentSports() {

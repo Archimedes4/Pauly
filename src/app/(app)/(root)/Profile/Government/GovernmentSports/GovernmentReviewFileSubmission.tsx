@@ -1,19 +1,24 @@
+/*
+  Pauly
+  Andrew Mainella
+  2 December 2023
+*/
 import { View, Text, Image, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ResizeMode, Video } from 'expo-av';
-import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
-import getFileWithShareID from '../../../../../../Functions/ultility/getFileWithShareID';
-import store, { RootState } from '../../../../../../Redux/store';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
+import store, { RootState } from '@Redux/store';
 import {
   Colors,
   dataContentTypeOptions,
   loadingStateEnum,
   postType,
-} from '../../../../../../types';
-import SportsYoutube from '../../../../../../components/SportsYoutube';
-import { getTextState } from '../../../../../../Functions/ultility/createUUID';
+} from '@src/types';
+import SportsYoutube from '@components/SportsYoutube';
+import { getTextState } from '@Functions/ultility/createUUID';
 
 function getDenyText(reviewed: boolean, accepted: boolean) {
   if (!reviewed && !accepted) {

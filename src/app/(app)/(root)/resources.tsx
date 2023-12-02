@@ -256,126 +256,123 @@ function ResourceBlock({
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
-  return (
-    <View>
-      {isGovernmentMode ? (
-        <Pressable
-          onPress={() => {
-            setIsShowingCategoryView(true);
-            setSelectedPost({
-              teamId: resource.item.teamId,
-              conversationId: resource.item.conversationId,
-              messageId: resource.item.id,
-            });
-          }}
-          style={{
-            width: width * 0.8,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            backgroundColor: Colors.white,
-            borderRadius: 15,
-            marginBottom: height * 0.01,
-          }}
-        >
-          {resource.item.body !== '' &&
-          checkIfResourceDataJustAttachment(resource.item.body) ? (
-            <WebViewCross
-              width={width * 0.8 - 20}
-              html={
-                resource.item.html
-                  ? resource.item.body
-                  : `<div><div>${resource.item.body}</div></div>`
-              }
-            />
-          ) : null}
-          {resource.item.attachments !== undefined ? (
-            <View
-              style={{
-                marginLeft: 10,
-                marginBottom: 10,
-                marginRight: 10,
-                marginTop:
-                  resource.item.body === '' ||
-                  !checkIfResourceDataJustAttachment(resource.item.body)
-                    ? 10
-                    : 0,
-                overflow: 'scroll',
-              }}
-            >
-              {resource.item.attachments?.map(attachment => (
-                <Pressable
-                  style={{ flexDirection: 'row' }}
-                  onPress={() => {
-                    Linking.openURL(attachment.webUrl);
-                  }}
-                >
-                  <MimeTypeIcon
-                    width={14}
-                    height={14}
-                    mimeType={attachment.type}
-                  />
-                  <Text>{attachment.title}</Text>
-                </Pressable>
-              ))}
-            </View>
-          ) : null}
-        </Pressable>
-      ) : (
+  if (isGovernmentMode) {
+    <Pressable
+      onPress={() => {
+        setIsShowingCategoryView(true);
+        setSelectedPost({
+          teamId: resource.item.teamId,
+          conversationId: resource.item.conversationId,
+          messageId: resource.item.id,
+        });
+      }}
+      style={{
+        width: width * 0.8,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        backgroundColor: Colors.white,
+        borderRadius: 15,
+        marginBottom: height * 0.01,
+      }}
+    >
+      {resource.item.body !== '' &&
+      checkIfResourceDataJustAttachment(resource.item.body) ? (
+        <WebViewCross
+          width={width * 0.8 - 20}
+          html={
+            resource.item.html
+              ? resource.item.body
+              : `<div><div>${resource.item.body}</div></div>`
+          }
+        />
+      ) : null}
+      {resource.item.attachments !== undefined ? (
         <View
           style={{
-            width: width * 0.8,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            backgroundColor: Colors.white,
-            borderRadius: 15,
-            marginBottom: height * 0.01,
+            marginLeft: 10,
+            marginBottom: 10,
+            marginRight: 10,
+            marginTop:
+              resource.item.body === '' ||
+              !checkIfResourceDataJustAttachment(resource.item.body)
+                ? 10
+                : 0,
+            overflow: 'scroll',
           }}
         >
-          {resource.item.body !== '' &&
-          checkIfResourceDataJustAttachment(resource.item.body) ? (
-            <WebViewCross
-              width={width * 0.8 - 20}
-              html={
-                resource.item.html
-                  ? resource.item.body
-                  : `<div><div>${resource.item.body}</div></div>`
-              }
-            />
-          ) : null}
-          {resource.item.attachments !== undefined ? (
-            <View
-              style={{
-                marginLeft: 10,
-                marginBottom: 10,
-                marginRight: 10,
-                marginTop:
-                  resource.item.body === '' ||
-                  !checkIfResourceDataJustAttachment(resource.item.body)
-                    ? 10
-                    : 0,
-                overflow: 'scroll',
+          {resource.item.attachments?.map(attachment => (
+            <Pressable
+              style={{ flexDirection: 'row' }}
+              onPress={() => {
+                Linking.openURL(attachment.webUrl);
               }}
             >
-              {resource.item.attachments.map(attachment => (
-                <Pressable
-                  key={attachment.id}
-                  style={{ flexDirection: 'row' }}
-                  onPress={() => {
-                    Linking.openURL(attachment.webUrl);
-                  }}
-                >
-                  <MimeTypeIcon
-                    width={14}
-                    height={14}
-                    mimeType={attachment.type}
-                  />
-                  <Text>{attachment.title}</Text>
-                </Pressable>
-              ))}
-            </View>
-          ) : null}
+              <MimeTypeIcon
+                width={14}
+                height={14}
+                mimeType={attachment.type}
+              />
+              <Text>{attachment.title}</Text>
+            </Pressable>
+          ))}
         </View>
-      )}
+      ) : null}
+    </Pressable>
+  }
+  return (
+    <View
+      style={{
+        width: width * 0.8,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        backgroundColor: Colors.white,
+        borderRadius: 15,
+        marginBottom: height * 0.01,
+      }}
+    >
+      {resource.item.body !== '' &&
+      checkIfResourceDataJustAttachment(resource.item.body) ? (
+        <WebViewCross
+          width={width * 0.8 - 20}
+          html={
+            resource.item.html
+              ? resource.item.body
+              : `<div><div>${resource.item.body}</div></div>`
+          }
+        />
+      ) : null}
+      {resource.item.attachments !== undefined ? (
+        <View
+          style={{
+            marginLeft: 10,
+            marginBottom: 10,
+            marginRight: 10,
+            marginTop:
+              resource.item.body === '' ||
+              !checkIfResourceDataJustAttachment(resource.item.body)
+                ? 10
+                : 0,
+            overflow: 'scroll',
+          }}
+        >
+          {resource.item.attachments.map(attachment => (
+            <Pressable
+              key={attachment.id}
+              style={{ flexDirection: 'row' }}
+              onPress={() => {
+                Linking.openURL(attachment.webUrl);
+              }}
+            >
+              <MimeTypeIcon
+                width={14}
+                height={14}
+                mimeType={attachment.type}
+              />
+              <Text>{attachment.title}</Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
     </View>
   );
 }
