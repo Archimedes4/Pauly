@@ -51,7 +51,7 @@ export default async function getPaulyLists() {
         paulyListSlice.actions.setPaulyList(paulyListData),
       );
       if (Platform.OS == 'web' && sessionStorage !== undefined) {
-        sessionStorage.setItem('listItem', JSON.stringify(paulyListData))
+        sessionStorage.setItem('listStore', JSON.stringify(paulyListData))
       }
     } else {
       // TO DO THIS IS A BIG PROBLEM SHUT DOWN APP BC most of it don't work lost connection to server

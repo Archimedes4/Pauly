@@ -30,18 +30,14 @@ export const refreshToken = () => {
 
 export function useSilentLogin(): (() => Promise<void>) {
   const { instance } = useMsal();
-  const router = useRouter();
   async function main() {
     // handle auth redired/do all initial setup for msal
-    console.log('top')
     const redirectResult = await instance.handleRedirectPromise();
     if (redirectResult !== null) {
-      console.log('redirect')
       instance.setActiveAccount(redirectResult.account);
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(redirectResult.accessToken))
       return;
     } 
-    console.log('account')
     //checking if an account exists
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
@@ -59,10 +55,7 @@ export function useSilentLogin(): (() => Promise<void>) {
         );
         return;
       }
-    } else {
-      //router.push('/sign-in')
     }
-    console.log('reached')
     return;
   }
   return main;

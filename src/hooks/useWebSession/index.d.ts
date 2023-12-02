@@ -1,2 +1,2 @@
-declare const useWebSession:  () => null
+declare const useWebSession:  () => () => boolean
 export = useWebSession

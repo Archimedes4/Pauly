@@ -1,22 +1,25 @@
-import getPaulyLists from "@Functions/ultility/getPaulyLists";
-import getUserProfile from "@Functions/ultility/getUserProfile";
+import getPaulyLists from "@src/Functions/ultility/getPaulyLists";
+import useGetUserProfile from "@src/hooks/useGetUserProfile";
 import useWebSession from "@hooks/useWebSession";
 import store from "@Redux/store";
 import { useSilentLogin } from "./authentication";
 import { checkIfGovernmentMode, getWantGovernment } from "@Functions/handleGovernmentLogin";
-import { router, usePathname } from "expo-router";
 import { useEffect, useState } from "react";
 
 export default function useAuthentication() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const silentLogin = useSilentLogin();
   const webSession = useWebSession();
+  const getUserProfile = useGetUserProfile();
 
   //main function
   async function loadContent() {
     await silentLogin();
     if (store.getState().authenticationToken !== '') {
-      await getPaulyLists();
+      const webResult = webSession()
+      if (!webResult) {
+        await getPaulyLists();
+      }
       await getUserProfile();
       if (await getWantGovernment()) {
         await checkIfGovernmentMode();

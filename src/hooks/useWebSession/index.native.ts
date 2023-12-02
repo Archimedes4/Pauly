@@ -1,3 +1,3 @@
 export default function useWebSession() {
-  return null;
+  return false;
 }
