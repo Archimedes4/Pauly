@@ -36,7 +36,7 @@ function AuthenticatedView() {
         ) : null}
         <View
           style={{
-            width: totalWidth,
+            width: width,
             height,
             backgroundColor: Colors.maroon,
           }}

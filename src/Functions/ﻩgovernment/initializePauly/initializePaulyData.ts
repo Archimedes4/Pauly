@@ -80,6 +80,11 @@ export const paulyListData = {
       required: true,
     },
     {
+      name: 'eventSyncIdExtensionId',
+      text: {},
+      required: true,
+    },
+    {
       name: 'resourceExtensionId',
       text: {},
       required: true,

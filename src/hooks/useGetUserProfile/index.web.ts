@@ -2,10 +2,12 @@ import { microsoftProfileDataSlice } from '../../Redux/reducers/microsoftProfile
 import store from '@Redux/store';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { useMsal } from '@azure/msal-react';
+import getUserImage from './getUserImage';
 
 export default function getUserProfile() {
   const { instance } = useMsal();
   async function main() {
+    getUserImage();
     const account = instance.getActiveAccount()
     if (account !== null && account.name !== undefined && account.localAccountId) {
       store.dispatch(
