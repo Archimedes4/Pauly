@@ -90,9 +90,9 @@ export async function getCalendar(
         batchData.push({
           "id":batchIndex + 1,
           "method":"GET",
-          "url":`/groups/${orgWideGroupID}/calendar/events??$expand=singleValueExtendedProperties($filter=id%20eq%20'${
-            store.getState().paulyList.eventTypeExtensionId
-          }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`
+          "url":`/groups/${orgWideGroupID}/calendar/events?$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${
+            paulyListResult.eventSyncIdExtensionId
+          }'%20and%20ep/value%20eq%20'${resultChunck[index][batchIndex].uid}')`,
         })
       }
       batchRequests.push(
@@ -101,17 +101,23 @@ export async function getCalendar(
         }
       )
     }
-    let url: string = `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events`;
-    while (url !== '') {
-      const furtherResult = await getGraphEvents(url);
-      if (
-        furtherResult.result === loadingStateEnum.success &&
-        furtherResult.events !== undefined
-      ) {
-        outputEvents = [...outputEvents, ...furtherResult.events];
-        url = furtherResult.nextLink !== undefined ? furtherResult.nextLink : '';
-      } else {
-        url = '';
+
+    let batchPromises: Promise<Response>[] = []
+    for (let index = 0; index < batchRequests.length; index += 1) {
+      batchPromises.push(fetch('https://graph.microsoft.com/v1.0/$batch', {
+        method: 'POST',
+        body: JSON.stringify(batchRequests[index]),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        }
+      }))
+    }
+    const finalBatchRequests: Response[] = await Promise.all(batchPromises)
+    for (let index = 0; index < finalBatchRequests.length; index += 1) {
+      if (finalBatchRequests[index].ok) {
+        const data = await finalBatchRequests[index].json();
+        console.log(data)
       }
     }
 

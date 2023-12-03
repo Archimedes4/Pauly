@@ -8,6 +8,7 @@ declare global {
     commissionListId: string;
     userExtensionId: string;
     commissionSubmissionsListId: string;
+    eventSyncIdExtensionId: string;
   };
 }
 
@@ -51,5 +52,6 @@ export default async function getPaulyList(
     userExtensionId: paulyListResultData.value[0].fields.userExtensionId,
     commissionSubmissionsListId:
       paulyListResultData.value[0].fields.commissionSubmissionsListId,
+    eventSyncIdExtensionId: paulyListResultData.value[0].fields.eventSyncIdExtensionId
   };
 }
