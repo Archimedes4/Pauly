@@ -2,12 +2,12 @@ import { View, Text, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
-import PickerWrapper from '../../../../../../components/Pickers/Picker';
-import { Colors, loadingStateEnum } from '../../../../../../types';
-import { RootState } from '../../../../../../Redux/store';
-import { clientId } from '../../../../../../PaulyConfig';
-import { getTeams } from '../../../../../../Functions/microsoftGroupsFunctions';
+import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
+import PickerWrapper from '../../../../../components/Pickers/Picker';
+import { Colors, loadingStateEnum } from '../../../../../types';
+import { RootState } from '../../../../../Redux/store';
+import { clientId } from '../../../../../PaulyConfig';
+import { getTeams } from '../../../../../Functions/microsoftGroupsFunctions';
 
 type listType = {
   displayName: string;

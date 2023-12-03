@@ -151,7 +151,7 @@ export default function SignIn() {
           23/24 Saint Paul&#39;s High School Student Council
         </Text>
         <Pressable
-          onPress={() => {login()}}
+          onPress={() => {login(false)}}
           onHoverIn={() => {
             setIsButtonHover(true);
           }}

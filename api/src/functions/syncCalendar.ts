@@ -10,6 +10,12 @@ import callMsGraph from '../../CommonFunctions/callMsGraph';
 import createUUID from '../../CommonFunctions/createUUID';
 import { loadingStateEnum, orgWideGroupID } from '../../CommonFunctions/constants';
 
+function isListResponse(
+  response: listResponce | HttpResponseInit,
+): response is listResponce {
+  return (response as listResponce).siteId !== undefined;
+}
+
 export async function getCalendar(
   req: HttpRequest,
 ): Promise<HttpResponseInit> {
@@ -20,6 +26,13 @@ export async function getCalendar(
         status: 401,
         body: 'Unauthorized: something went wrong validating token',
       };
+    }
+
+    const paulyListResult = await getPaulyList(
+      accessTokens.onBehalfOfAccessToken,
+    );
+    if (!isListResponse(paulyListResult)) {
+      return paulyListResult;
     }
 
 
@@ -69,10 +82,24 @@ export async function getCalendar(
     }
 
     //Make batch requests from the chunks
-    let pendingRequests = []
+    let batchRequests = []
     for (let index = 0; index < resultChunck.length; index += 1) {
       //Prepare batch data
-      
+      const batchData = []
+      for (let batchIndex = 0; batchIndex < resultChunck[index].length; batchIndex += 1) {
+        batchData.push({
+          "id":batchIndex + 1,
+          "method":"GET",
+          "url":`/groups/${orgWideGroupID}/calendar/events??$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+            store.getState().paulyList.eventTypeExtensionId
+          }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`
+        })
+      }
+      batchRequests.push(
+        {
+          "requests": batchData
+        }
+      )
     }
     let url: string = `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events`;
     while (url !== '') {

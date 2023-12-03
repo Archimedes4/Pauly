@@ -8,7 +8,7 @@ import useGetUserProfile from "@src/hooks/useGetUserProfile";
 import useWebSession from "@hooks/useWebSession";
 import store from "@Redux/store";
 import { useSilentLogin } from "./authentication";
-import { checkIfGovernmentMode, getWantGovernment } from "@Functions/handleGovernmentLogin";
+import { checkIfGovernmentMode, getWantGovernment, validateGovernmentMode } from "@Functions/handleGovernmentLogin";
 import { useEffect, useState } from "react";
 
 export default function useAuthentication() {
@@ -25,8 +25,12 @@ export default function useAuthentication() {
         await getPaulyLists();
       }
       await getUserProfile();
+      console.log("at want")
       if (await getWantGovernment()) {
-        await checkIfGovernmentMode();
+        console.log("it Wanted")
+        await validateGovernmentMode()
+      } else {
+        console.log('Not wanted')
       }
       setIsLoading(false);
     } else {

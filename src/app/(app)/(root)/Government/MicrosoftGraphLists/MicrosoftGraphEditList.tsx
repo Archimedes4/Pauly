@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-native';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
-import { CopyIcon } from '../../../../../../components/Icons';
-import { RootState } from '../../../../../../Redux/store';
-import { Colors } from '../../../../../../types';
+import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
+import { CopyIcon } from '../../../../../components/Icons';
+import { RootState } from '../../../../../Redux/store';
+import { Colors } from '../../../../../types';
 
 export default function MicrosoftGraphEditList() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

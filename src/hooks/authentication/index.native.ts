@@ -14,6 +14,7 @@ import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTok
 import getUserProfile from "../../Functions/ultility/getPaulyLists";
 import getPaulyLists from "../../Functions/ultility/getPaulyLists";
 import { useRouter } from "expo-router";
+import { setWantGovernment } from "@src/Functions/handleGovernmentLogin";
 
 //placeholder function
 export function useSilentLogin(): () => Promise<void> {
@@ -28,7 +29,7 @@ export function useSilentLogin(): () => Promise<void> {
   return main;
 }
 
-export function useInvokeLogin(government?: boolean): ((government?: boolean) => Promise<void>) {
+export function useInvokeLogin(): ((government?: boolean) => Promise<void>) {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
@@ -48,8 +49,11 @@ export function useInvokeLogin(government?: boolean): ((government?: boolean) =>
     discovery,
   );
 
-  async function main() {
+  async function main(government?: boolean) {
     if (discovery !== null) {
+      if (government !== undefined) {
+        await setWantGovernment(government);
+      }
       store.dispatch(authLoadingSlice.actions.setAuthLoading(true));
       const res = await promptAsync();
       if (authRequest && res?.type === 'success' && discovery) {

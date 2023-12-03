@@ -66,7 +66,8 @@ export function useInvokeLogin(): ((government?: boolean) => Promise<void>) {
   //Invoking the login redirect does not handle the token
   async function loginFunction(government?: boolean) {
     if (government !== undefined) {
-      setWantGovernment(government);
+      console.log('want red')
+      await setWantGovernment(government);
     }
     instance.loginRedirect({scopes});
   }

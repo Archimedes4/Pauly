@@ -20,8 +20,6 @@ export async function ClaimCommission(
 ): Promise<HttpResponseInit> {
   try {
     const accessTokens = await validateAndGetAccessTokens(req);
-    console.log('MARK HERE')
-    console.log(accessTokens)
     if (accessTokens === undefined) {
       return {
         status: 401,

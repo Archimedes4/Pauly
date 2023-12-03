@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-native';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../../../Functions/ultility/microsoftAssets';
-import { CopyIcon } from '../../../../../../components/Icons';
-import { Colors, loadingStateEnum } from '../../../../../../types';
-import { RootState } from '../../../../../../Redux/store';
-import { getTextState } from '../../../../../../Functions/ultility/createUUID';
+import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
+import { CopyIcon } from '../../../../../components/Icons';
+import { Colors, loadingStateEnum } from '../../../../../types';
+import { RootState } from '../../../../../Redux/store';
+import { getTextState } from '../../../../../Functions/ultility/createUUID';
 
 export default function MicrosoftGraphEditGroup() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);
