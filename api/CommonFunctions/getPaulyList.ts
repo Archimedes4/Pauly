@@ -1,5 +1,6 @@
 import { HttpResponseInit } from '@azure/functions';
 import callMsGraph from './callMsGraph';
+import { orgWideGroupID } from './constants';
 
 declare global {
   type listResponce = {
@@ -9,8 +10,6 @@ declare global {
     commissionSubmissionsListId: string;
   };
 }
-
-const orgWideGroupID = 'd2c0dd90-a426-4539-882c-aa87e5787a92';
 
 export default async function getPaulyList(
   accessToken: string,

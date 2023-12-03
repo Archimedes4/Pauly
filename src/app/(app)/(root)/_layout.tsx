@@ -5,7 +5,7 @@
   AuthenticatedViewMain.tsx
   This holds the main router to Pauly once authenticated.
 */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -51,7 +51,7 @@ function AuthenticatedView() {
   );
 }
 
-function PushToAuth({isAuth}:{isAuth: boolean}) {
+function PushToAuth() {
   const router = useRouter();
   useFocusEffect(() => {
     try {
@@ -74,7 +74,7 @@ export default function Main() {
   }
 
   if (!isAuthenticated.loading) {
-    return (<PushToAuth isAuth={isAuthenticated.authenticated}/>)
+    return (<PushToAuth />)
   }
   return null
 }

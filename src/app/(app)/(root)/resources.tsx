@@ -40,7 +40,7 @@ import ProgressView from '@components/ProgressView';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { Colors, loadingStateEnum, resourceMode } from '@src/types';
 import ResourcesNews from '@components/ResourcesNews';
-import ResourceBar from '@src/components/resourceBar';
+import ResourceBar from '@components/ResourceBar'
 
 // Resources
 // -> Sports
@@ -64,13 +64,15 @@ function SearchBox() {
     if (mounted) {
       // Checking so that this isn't called on start
       const searchValueSave = searchValue; // saving value to check if change in 1.5 s
-      setTimeout(() => {
-        // Waiting 1.5s
-        if (store.getState().resources.searchValue === searchValueSave) {
-          // Checking if value changed
-          getResourcesSearch(searchValue); // getting search data
-        }
-      }, 1500);
+      if (searchValue !== "") {
+        setTimeout(() => {
+          // Waiting 1.5s
+          if (store.getState().resources.searchValue === searchValueSave) {
+            // Checking if value changed
+            getResourcesSearch(searchValue); // getting search data
+          }
+        }, 1500);
+      }
     } else {
       setMounted(true); // Setting that it has been called on start
     }
@@ -565,7 +567,7 @@ export default function Resources() {
         {selectedResourceMode !== resourceMode.scholarships && selectedResourceMode !== resourceMode.news ?
           <View
             style={{
-              height: height * 0.9,
+              height: height * 0.85,
               width,
               backgroundColor: Colors.lightGray,
             }}
@@ -574,7 +576,7 @@ export default function Resources() {
               <View
                 style={{
                   width,
-                  height: height * 0.9,
+                  height: height * 0.85,
                   alignContent: 'center',
                   alignItems: 'center',
                   justifyContent: 'center',
