@@ -173,9 +173,7 @@ function WebViewInject() {
       }}
       style={{ width: 0, height: 0 }}
       onMessage={e => {
-        console.log('Data message');
         if (e.nativeEvent.data.length >= 7) {
-          console.log('Data working', e.nativeEvent.data);
           dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data));
         } else {
           console.log('Error', e.nativeEvent.data);

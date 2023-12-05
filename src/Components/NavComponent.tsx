@@ -322,7 +322,7 @@ export default function NavBarComponent({
         </NavBarBlock>
         {isGovernmentMode ? (
           <NavBarBlock
-            des="/profile/government"
+            des="/government"
             expandedMode={expandedMode}
             blockLength={blockLength}
             text="Government"

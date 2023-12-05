@@ -2,12 +2,13 @@ import { EdgeInsets } from "react-native-safe-area-context";
 import { dimentionsSlice } from "../../Redux/reducers/dimentionsReducer";
 import store from "../../Redux/store";
 import { breakPointMode } from "../../types";
+import getMainHeight from "../getMainHeight";
 
-export default function setDimentions(dimWidth: number, dimHeight: number, insets: EdgeInsets) {
+export default function setDimentions(dimWidth: number, dimHeight: number, insets: EdgeInsets, isTop: boolean, isBottom: boolean) {
   const oldWidth = store.getState().dimentions.width;
   const { height } = store.getState().dimentions;
   const newWidth = dimWidth - insets.left - insets.right;
-  const newHeight = dimHeight - insets.bottom - insets.top;
+  const newHeight = getMainHeight(dimHeight, insets.top, insets.bottom, isTop, isBottom)
   if (oldWidth !== newWidth) {
     const oldCurrentBreakPointMode: breakPointMode =
       store.getState().dimentions.currentBreakPoint;

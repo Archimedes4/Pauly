@@ -261,7 +261,7 @@ export default function GovernmentStudents() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <BackButton to="/profile/government/" />
+        <BackButton to="/government/" />
         <Text style={{ marginTop: 14 }}>Government Students</Text>
       </View>
       <SearchBox

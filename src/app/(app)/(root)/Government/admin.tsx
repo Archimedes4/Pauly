@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, TextInput, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-native';
 import {
   initializePaulyPartOne,
   initializePaulyPartThree,
@@ -11,6 +10,7 @@ import { RootState } from '@Redux/store';
 import { addDataArray } from '@Functions/ﻩgovernment/initializePauly/initializePaulyData';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '@src/types';
+import { Link } from 'expo-router';
 
 enum initStage {
   notStarted,
@@ -32,7 +32,6 @@ export default function GovernmentAdmin() {
   const [timeElapsed, setTimeElapsed] = useState<string>('Not Started');
   const [createdGroupId, setCreatedGroupId] = useState<string>('');
   const [selectedUpdates, setSelectedUpdates] = useState<string[]>([]);
-  const navigate = useNavigate();
 
   // Start Times
   const [startTime, setStartTime] = useState<Date>(new Date());
@@ -250,9 +249,9 @@ export default function GovernmentAdmin() {
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
       <View>
-        <Pressable onPress={() => navigate('/profile/government')}>
-          <Text>Back</Text>
-        </Pressable>
+        <Link href={'/government'}>
+          Back
+        </Link>
       </View>
       <View style={{ flexDirection: 'row' }}>
         <View>

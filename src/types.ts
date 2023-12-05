@@ -271,6 +271,12 @@ declare global {
     playerNumber?: string;
     posts?: string[];
   };
+  type safeAreaType = {
+    top: string;
+    bottom: string;
+    isTopTransparent: boolean;
+    isBottomTransparent: boolean;
+  }
   type scholarship = {
     title: string;
     note: string;

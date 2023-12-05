@@ -8,7 +8,6 @@
 import { View, Text, FlatList, Pressable } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { ScrollView } from 'react-native-gesture-handler';
 import { Colors, loadingStateEnum } from '../types';
 import ProgressView from '../components/ProgressView';
 import WebViewCross from '../components/WebViewCross';
@@ -16,11 +15,7 @@ import { RootState } from '../Redux/store';
 import { getNewsPosts } from '../Functions/getResources';
 import ResourceNewsPage from './ResouceNewsPage/index.native';
 
-export default function ResourcesNews({
-  isHoverPicker,
-}: {
-  isHoverPicker: boolean;
-}) {
+export default function ResourcesNews() {
   const [posts, setPosts] = useState<newsPost[]>([]);
   const [postState, setPostState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -32,7 +27,6 @@ export default function ResourcesNews({
   const [nextLink, setNextLink] = useState<undefined | string>(undefined);
 
   const loadArticles = useCallback(async () => {
-    console.log('called')
     const result = await getNewsPosts(nextLink);
     if (result.result === loadingStateEnum.success) {
       setPosts([...posts, ...result.data]);
@@ -49,7 +43,7 @@ export default function ResourcesNews({
 
   if (selectedPost !== undefined) {
     return (
-      <ResourceNewsPage selectedPost={selectedPost} setSelectedPost={setSelectedPost} isHoverPicker={isHoverPicker}/>
+      <ResourceNewsPage selectedPost={selectedPost} setSelectedPost={setSelectedPost}/>
     );
   }
 
@@ -58,7 +52,7 @@ export default function ResourcesNews({
       <View
         style={{
           width,
-          height: isHoverPicker ? height * 0.75 : height * 0.8,
+          height: height * 0.85,
           alignItems: 'center',
           alignContent: 'center',
           justifyContent: 'center',
@@ -116,7 +110,7 @@ export default function ResourcesNews({
     <View
       style={{
         width,
-        height: isHoverPicker ? height * 0.75 : height * 0.8,
+        height: height * 0.85,
         backgroundColor: Colors.lightGray,
       }}
     >

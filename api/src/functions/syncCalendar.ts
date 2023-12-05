@@ -9,6 +9,7 @@ import getPaulyList from '../../CommonFunctions/getPaulyList';
 import callMsGraph from '../../CommonFunctions/callMsGraph';
 import createUUID from '../../CommonFunctions/createUUID';
 import { loadingStateEnum, orgWideGroupID } from '../../CommonFunctions/constants';
+import getClientCredential from '../../CommonFunctions/getClientCredential';
 
 function isListResponse(
   response: listResponce | HttpResponseInit,
@@ -20,8 +21,8 @@ export async function getCalendar(
   req: HttpRequest,
 ): Promise<HttpResponseInit> {
   try {
-    const accessTokens = await validateAndGetAccessTokens(req);
-    if (accessTokens === undefined) {
+    const accessToken = await getClientCredential();
+    if (accessToken === '') {
       return {
         status: 401,
         body: 'Unauthorized: something went wrong validating token',
@@ -29,7 +30,7 @@ export async function getCalendar(
     }
 
     const paulyListResult = await getPaulyList(
-      accessTokens.onBehalfOfAccessToken,
+      accessToken,
     );
     if (!isListResponse(paulyListResult)) {
       return paulyListResult;
@@ -118,6 +119,7 @@ export async function getCalendar(
       if (finalBatchRequests[index].ok) {
         const data = await finalBatchRequests[index].json();
         console.log(data)
+        
       }
     }
 

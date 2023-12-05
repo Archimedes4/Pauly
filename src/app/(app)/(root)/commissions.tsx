@@ -232,7 +232,7 @@ export default function Commissions() {
             justifyContent: 'center',
           }}
         >
-          {currentBreakPoint <= 0 ? <BackButton to="/" /> : null}
+          {currentBreakPoint <= 0 ? <BackButton to="/home" /> : null}
           <Text
             style={{
               fontFamily: 'BukhariScript',

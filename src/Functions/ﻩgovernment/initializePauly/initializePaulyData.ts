@@ -99,6 +99,11 @@ export const paulyListData = {
       text: {},
       required: true,
     },
+    {
+      name:'calendarSyncListId',
+      text: {},
+      required: true
+    }
   ],
   list: {
     template: 'genericList',
@@ -573,6 +578,26 @@ export const noClassData = {
     template: 'genericList',
   },
 };
+export const calendarSyncData  = {
+  displayName: 'Calendar Sync',
+  columns: [
+    {
+      name: 'eventId',
+      text: {},
+      required: true,
+      indexed: true,
+    },
+    {
+      name: 'syncId',
+      text: {},
+      required: true,
+      indexed: true,
+    },
+  ],
+  list: {
+    template: 'genericList',
+  },
+}
 
 // Extensions
 export const paulyClassExtensionData = {
@@ -683,4 +708,10 @@ export const addDataArray: addDataType[] = [
     urlTwo: '/lists',
     id: 'noClassListId',
   },
+  {
+    data: calendarSyncData,
+    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
+    urlTwo: '/lists',
+    id: 'calendarSyncListId',
+  }
 ];

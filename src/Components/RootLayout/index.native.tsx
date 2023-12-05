@@ -18,6 +18,7 @@ import store, { RootState } from '@Redux/store';
 import { Colors, paperTheme } from '@src/types';
 import setDimentions from '@Functions/ultility/setDimentions';
 import { Slot } from "expo-router";
+import getMainHeight from '@src/Functions/getMainHeight';
 
 const windowDimensions = Dimensions.get('window');
 
@@ -39,48 +40,56 @@ function AppCore() {
       'change',
       ({window}) => {
         setStateDimensions(window);
-        setDimentions(window.width, window.height, insets);
+        setDimentions(window.width, window.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
       },
     );
     return () => subscription?.remove();
   });
 
   useEffect(() => {
+    setDimentions(dimensions.width, dimensions.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
+  }, [expandedMode, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent])
+
+  useEffect(() => {
     const newDimensions = Dimensions.get('window');
     setStateDimensions(newDimensions);
-    setDimentions(newDimensions.width, newDimensions.height, insets);
+    setDimentions(newDimensions.width, newDimensions.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
   }, []);
 
   return (
     <>
+      {!safeAreaColors.isTopTransparent ?
+        <View
+          style={{
+            width: dimensions.width,
+            height: insets.top,
+            backgroundColor: safeAreaColors.top
+          }}
+        />:null
+      }
       <View
-        style={{
-          width: dimensions.width,
-          height: insets.top,
-          backgroundColor: safeAreaColors.top,
-        }}
-      />
-      <SafeAreaView
         style={{
           backgroundColor: safeAreaColors.bottom,
           width: dimensions.width,
-          height: dimensions.height - (insets.top + insets.bottom),
+          height: getMainHeight(dimensions.height, insets.top, insets.bottom, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent),
           zIndex: 10,
-          top: insets.top,
-          position: 'absolute',
+          top: safeAreaColors.isTopTransparent ? 0:insets.top,
+          position: 'absolute'
         }}
       > 
         <Slot />      
-      </SafeAreaView>
-      <View
-        style={{
-          width: dimensions.width,
-          height: insets.bottom,
-          backgroundColor: safeAreaColors.bottom,
-          position: 'absolute',
-          bottom: 0,
-        }}
-      />
+      </View>
+      {!safeAreaColors.isBottomTransparent ? 
+        <View
+          style={{
+            width: dimensions.width,
+            height: insets.bottom,
+            backgroundColor: safeAreaColors.bottom,
+            position: 'absolute',
+            bottom: 0,
+          }}
+        />:null
+      }
       {currentBreakPoint >= 1 ? (
         <View
           style={{

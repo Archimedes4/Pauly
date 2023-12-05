@@ -1,22 +1,20 @@
 import { View, Text, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-native';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
 import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
 import { CopyIcon } from '../../../../../components/Icons';
 import { RootState } from '../../../../../Redux/store';
 import { Colors } from '../../../../../types';
+import { Link, useLocalSearchParams } from 'expo-router';
 
 export default function MicrosoftGraphEditList() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
   const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([]);
-  const { id } = useParams();
+  const { id } = useLocalSearchParams();
   const [isCoppiedToClipboard, setIsCoppiedToClipboard] =
     useState<boolean>(false);
-
-  const navigate = useNavigate();
 
   async function getListItems() {
     const result = await callMsGraph(
@@ -90,9 +88,9 @@ export default function MicrosoftGraphEditList() {
         backgroundColor: Colors.white,
       }}
     >
-      <Pressable onPress={() => navigate('/profile/government/graph/list')}>
-        <Text>Back</Text>
-      </Pressable>
+      <Link href={'/profile/government/graph/list'}>
+        Back
+      </Link>
       <Text>Microsoft Graph Edit List</Text>
       <View style={{ flexDirection: 'row' }}>
         <Text>{id}</Text>

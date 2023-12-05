@@ -288,7 +288,7 @@ export default function GovernmentResources() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Link href='/profile/government'>
+        <Link href='/government'>
           <Text>Back</Text>
         </Link>
         <Text>Government Resources</Text>

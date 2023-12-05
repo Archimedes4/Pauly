@@ -79,7 +79,7 @@ export default function MicrosoftGraphCreateList() {
   }
   return (
     <View style={{ width }}>
-      <Link to="/profile/government/graph">
+      <Link to="/government/graph">
         <Text>Back</Text>
       </Link>
       <Text>Microsoft Graph Create</Text>

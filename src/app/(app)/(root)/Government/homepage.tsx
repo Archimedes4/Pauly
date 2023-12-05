@@ -90,7 +90,7 @@ export default function GovernmentHomePage() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href="/profile/government">
+      <Link href="/government">
         <Text>Back</Text>
       </Link>
       <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>Home Page</Text>

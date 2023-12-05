@@ -159,77 +159,6 @@ function SearchBox() {
   );
 }
 
-function PickerPiece({
-  text,
-  item,
-  isHoverPicker,
-  setIsHoverPicker,
-}: {
-  text: string;
-  item: resourceMode;
-  isHoverPicker: boolean;
-  setIsHoverPicker: (item: boolean) => void;
-}) {
-  const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
-  const { selectedResourceMode } = useSelector(
-    (state: RootState) => state.resources,
-  );
-  const [isSelected, setIsSelected] = useState<boolean>(false);
-  const dispatch = useDispatch();
-  return (
-    <Pressable
-      onPress={() => {
-        dispatch(resourcesSlice.actions.setSelectedResourceMode(item));
-      }}
-      onHoverIn={() => {
-        setIsHoverPicker(true);
-        setIsSelected(true);
-      }}
-      onHoverOut={() => setIsSelected(false)}
-      style={{
-        height: isHoverPicker ? height * 0.1 : height * 0.05,
-        width: isSelected
-          ? currentBreakPoint >= 2
-            ? width * 0.3
-            : width * 0.6
-          : currentBreakPoint >= 2
-          ? width * 0.2
-          : width * 0.4,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.white,
-      }}
-    >
-      <View
-        style={{
-          height: isHoverPicker ? height * 0.06 : height * 0.03,
-          width: isSelected
-            ? currentBreakPoint >= 2
-              ? width * 0.28
-              : width * 0.46
-            : currentBreakPoint >= 2
-            ? width * 0.18
-            : width * 0.36,
-          marginLeft: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
-          marginRight: currentBreakPoint >= 2 ? width * 0.01 : width * 0.02,
-          backgroundColor: Colors.darkGray,
-          borderWidth: item !== selectedResourceMode ? 0 : 2,
-          borderColor: 'black',
-          borderRadius: 15,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Text style={{ color: Colors.white }}>{text}</Text>
-      </View>
-    </Pressable>
-  );
-}
-
 function checkIfResourceDataJustAttachment(body: string): boolean {
   if (body.length === 67) {
     const start = body.slice(0, 15);
@@ -421,7 +350,7 @@ function numberScholarBlock(width: number): number {
   }
 }
 
-function ResourceScholarships({ isHoverPicker }: { isHoverPicker: boolean }) {
+function ResourceScholarships() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);
   const [scholarState, setScholarState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -446,7 +375,7 @@ function ResourceScholarships({ isHoverPicker }: { isHoverPicker: boolean }) {
     return (
       <View
         style={{
-          height: isHoverPicker ? height * 0.75 : height * 0.8,
+          height: height * 0.85,
           width,
           backgroundColor: Colors.lightGray,
         }}
@@ -465,7 +394,7 @@ function ResourceScholarships({ isHoverPicker }: { isHoverPicker: boolean }) {
         renderItem={item => <ScholarshipBlock item={item} width={width/numberScholarBlock(width)} />}
         numColumns={numberScholarBlock(width)}
         style={{
-          height: isHoverPicker ? height * 0.75 : height * 0.8,
+          height: height * 0.85,
           width,
           backgroundColor: Colors.lightGray,
         }}
@@ -476,7 +405,7 @@ function ResourceScholarships({ isHoverPicker }: { isHoverPicker: boolean }) {
   return (
     <View
       style={{
-        height: isHoverPicker ? height * 0.75 : height * 0.8,
+        height: height * 0.85,
         width,
         backgroundColor: Colors.lightGray,
       }}
@@ -493,7 +422,6 @@ export default function Resources() {
   const { resources, loadingState, selectedResourceMode } = useSelector(
     (state: RootState) => state.resources,
   );
-  const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
@@ -508,7 +436,7 @@ export default function Resources() {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
-        bottom: Colors.white,
+        bottom: Colors.lightGray,
       }),
     );
   }, [dispatch]);
@@ -545,7 +473,7 @@ export default function Resources() {
             justifyContent: 'center',
           }}
         >
-          {currentBreakPoint <= 0 ? <BackButton to="/" /> : null}
+          {currentBreakPoint <= 0 ? <BackButton to="/home" /> : null}
           <Text style={{ fontFamily: 'BukhariScript', color: Colors.white }}>
             Resources
           </Text>
@@ -559,10 +487,16 @@ export default function Resources() {
           }}
         />
         {selectedResourceMode === resourceMode.news ? (
-          <ResourcesNews isHoverPicker={isHoverPicker} />
+          <>
+            <ResourcesNews />
+            <ResourceBar />
+          </>
         ) : null}
         {selectedResourceMode === resourceMode.scholarships ? (
-          <ResourceScholarships isHoverPicker={isHoverPicker} />
+          <>
+            <ResourceScholarships />
+            <ResourceBar />
+          </>
         ) : null}
         {selectedResourceMode !== resourceMode.scholarships && selectedResourceMode !== resourceMode.news ?
           <View

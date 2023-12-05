@@ -26,7 +26,7 @@ function AuthenticatedView() {
   const insets = useSafeAreaInsets();
   
   return (
-    <View style={{ width: totalWidth, top: -insets.top }}>
+    <View style={{ width: totalWidth}}>
       <View style={{ flexDirection: 'row', width: totalWidth }}>
         {currentBreakPoint >= 1 ? (
           <NavBarComponent
@@ -37,7 +37,6 @@ function AuthenticatedView() {
         <View
           style={{
             width: width,
-            height,
             backgroundColor: Colors.maroon,
           }}
         >

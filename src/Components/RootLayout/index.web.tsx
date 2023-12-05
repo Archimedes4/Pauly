@@ -65,7 +65,7 @@ function AppCore() {
       'change',
       ({window}) => {
         setStateDimensions(window);
-        setDimentions(window.width, window.height, insets);
+        setDimentions(window.width, window.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
       },
     );
     return () => subscription?.remove();
@@ -74,11 +74,11 @@ function AppCore() {
   useEffect(() => {
     const newDimensions = Dimensions.get('window');
     setStateDimensions(newDimensions);
-    setDimentions(newDimensions.width, newDimensions.height, insets);
+    setDimentions(newDimensions.width, newDimensions.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
   }, [])
 
   useEffect(() => {
-    setDimentions(dimensions.width, dimensions.height, insets);
+    setDimentions(dimensions.width, dimensions.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
   }, [expandedMode])
 
   return (

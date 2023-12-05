@@ -1,9 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { Colors } from '../../types';
 
-const initalState: { top: string; bottom: string } = {
+const initalState: safeAreaType = {
   top: Colors.maroon,
   bottom: Colors.maroon,
+  isTopTransparent: false,
+  isBottomTransparent: false
 };
 
 export const safeAreaColorsSlice = createSlice({
@@ -14,10 +16,12 @@ export const safeAreaColorsSlice = createSlice({
       state,
       action: PayloadAction<{ top: string; bottom: string }>,
     ) => {
-      if (state !== action.payload) {
-        return action.payload;
+      return {
+        isTopTransparent: state.isTopTransparent,
+        isBottomTransparent: state.isBottomTransparent,
+        top: action.payload.top,
+        bottom: action.payload.bottom
       }
-      return state;
     },
     setSafeAreaColorTop: (state, action: PayloadAction<string>) => {
       return { ...state, top: action.payload };
@@ -25,6 +29,9 @@ export const safeAreaColorsSlice = createSlice({
     setSafeAreaColorBottom: (state, action: PayloadAction<string>) => {
       return { ...state, bottom: action.payload };
     },
+    setSafeArea: (_state, action: PayloadAction<safeAreaType>) => {
+      return action.payload
+    }
   },
 });
 

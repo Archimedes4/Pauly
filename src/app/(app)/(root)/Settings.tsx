@@ -76,7 +76,7 @@ export default function Settings() {
 
   return (
     <View>
-      <BackButton to="/" />
+      <BackButton to="/home" />
       <View
         style={{
           alignContent: 'center',
@@ -187,7 +187,7 @@ export default function Settings() {
         </View>
       </Link>
       {isGovernmentMode ? (
-        <Link href={"/profile/government"}>
+        <Link href={"/government"}>
           <Pressable
             style={{
               width: width * 0.8,

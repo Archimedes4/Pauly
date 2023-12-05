@@ -42,9 +42,11 @@ export default function HomePage() {
 
   const updateOutColors = useCallback(() => {
     dispatch(
-      safeAreaColorsSlice.actions.setSafeAreaColors({
+      safeAreaColorsSlice.actions.setSafeArea({
         top: Colors.maroon,
         bottom: Colors.maroon,
+        isTopTransparent: false,
+        isBottomTransparent: false
       }),
     );
   }, [dispatch]);

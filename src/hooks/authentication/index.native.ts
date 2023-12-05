@@ -13,18 +13,23 @@ import { authenticationRefreshTokenSlice } from "../../Redux/reducers/authentica
 import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
 import getUserProfile from "../../Functions/ultility/getPaulyLists";
 import getPaulyLists from "../../Functions/ultility/getPaulyLists";
-import { useRouter } from "expo-router";
+import { useRootNavigationState, useRouter } from "expo-router";
 import { setWantGovernment } from "@src/Functions/handleGovernmentLogin";
 
 //placeholder function
 export function useSilentLogin(): () => Promise<void> {
   const router = useRouter();
+  const rootNavigationState = useRootNavigationState()
   async function main() {
-    if (store.getState().authenticationToken === '') { //checking if auth token exists
-      router.push('/sign-in')
-      return; //Needed to finish function
-    }
-    return; //Needed to finish function
+    setInterval(() => {
+      if (rootNavigationState?.key != null) {
+        if (store.getState().authenticationToken === '') { //checking if auth token exists
+          router.push('/sign-in')
+          return; //Needed to finish function
+        }
+        return; //Needed to finish function
+      }
+    }, 1000)
   }
   return main;
 }

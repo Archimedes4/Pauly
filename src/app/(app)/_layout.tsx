@@ -74,7 +74,6 @@ export default function Layout() {
         <Stack.Screen
           name="(auth)"
           options={{
-            presentation: 'modal',
             headerShown: false
           }}
         />

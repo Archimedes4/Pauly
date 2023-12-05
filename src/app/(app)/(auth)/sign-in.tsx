@@ -33,10 +33,12 @@ export default function SignIn() {
 
   const safeArea = useCallback(
     async function setSafeAreaColors() {
-      dispatch(safeAreaColorsSlice.actions.setSafeAreaColorTop(Colors.maroon));
-      dispatch(
-        safeAreaColorsSlice.actions.setSafeAreaColorBottom(Colors.maroon),
-      );
+      dispatch(safeAreaColorsSlice.actions.setSafeArea({
+        top: Colors.maroon,
+        bottom: Colors.maroon,
+        isTopTransparent: false,
+        isBottomTransparent: false
+      }))
     },
     [dispatch],
   );
@@ -92,8 +94,7 @@ export default function SignIn() {
         justifyContent: 'center',
         height,
         width: totalWidth,
-        overflow: 'hidden',
-        top: -insets.top,
+        overflow: 'hidden'
       }}
       onLongPress={() => {
         setIsShowingGovernmentLogin(true);

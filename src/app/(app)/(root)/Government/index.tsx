@@ -167,7 +167,7 @@ export default function Government() {
           }}
         >
           <Block
-            href='/profile/government/graph/list'
+            href='/government/graph'
             width={100}
             height={100}
             text="Graph"
@@ -175,7 +175,7 @@ export default function Government() {
             <GraphAPILogo width={50} height={50} />
           </Block>
           <Block
-            href='/profile/government/commissions'
+            href='/government/commissions'
             width={100}
             height={100}
             text="Commissions"
@@ -187,10 +187,10 @@ export default function Government() {
             height={100}
             text="Sports"
             imageSource={require('assets/images/Football.png')}
-            href='/profile/government/sports'
+            href='/government/sports'
           />
           <Block
-            href='/profile/government/homepage'
+            href='/government/homepage'
             width={100}
             height={100}
             text="Homepage"
@@ -198,7 +198,7 @@ export default function Government() {
             <HomeIcon width={50} height={50} />
           </Block>
           <Block
-            href='/profile/government/calendar'
+            href='/government/calendar'
             width={100}
             height={100}
             text="Calendar"
@@ -206,7 +206,7 @@ export default function Government() {
             <CalendarIcon width={50} height={50} />
           </Block>
           <Block
-            href='/profile/government/classes'
+            href='/government/classes'
             width={100}
             height={100}
             text="Classes"
@@ -214,7 +214,7 @@ export default function Government() {
             <GraduationHatIcon width={50} height={50} />
           </Block>
           <Block
-            href='/profile/government/admin'
+            href='/government/admin'
             width={100}
             height={100}
             text="Admin"
@@ -222,7 +222,7 @@ export default function Government() {
             <GearIcon width={50} height={50} />
           </Block>
           <Block
-            href='/profile/government/resources'
+            href='/government/resources'
             width={100}
             height={100}
             text="Resources"
@@ -230,7 +230,7 @@ export default function Government() {
             <BookIcon width={50} height={50} />
           </Block>
           <Block
-            href='/profile/government/students'
+            href='/government/students'
             width={100}
             height={100}
             text="Students"

@@ -6,13 +6,13 @@ import { RootState } from '@Redux/store';
 import { Colors } from '@src/types';
 import { CloseIcon } from '../Icons';
 
-export default function ResourceNewsPage({selectedPost, setSelectedPost, isHoverPicker}:{selectedPost: newsPost, setSelectedPost: (item: undefined) => void,  isHoverPicker: boolean}) {
+export default function ResourceNewsPage({selectedPost, setSelectedPost}:{selectedPost: newsPost, setSelectedPost: (item: undefined) => void}) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   return (
     <ScrollView
       style={{
         width,
-        height: isHoverPicker ? height * 0.75 : height * 0.8,
+        height: height * 0.85,
         backgroundColor: Colors.lightGray,
       }}
     >
@@ -48,7 +48,7 @@ export default function ResourceNewsPage({selectedPost, setSelectedPost, isHover
         </body>
         </html>`}
         width={width * 0.9}
-        height={isHoverPicker ? height * 0.75 : height * 0.8}
+        height={height * 0.85}
       />
       
     </ScrollView>

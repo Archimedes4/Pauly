@@ -39,6 +39,7 @@ import {
   deleteTask,
   updateTaskText,
 } from '../../../Functions/notifications/updateTasks';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Get Messages
 // Last Chat Message Channels Included
@@ -649,6 +650,7 @@ export default function Notifications() {
   );
   const { message } = useSelector((state: RootState) => state.paulyData);
   const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
 
   const loadData = useCallback(async () => {
     // Calendar Data
@@ -685,9 +687,11 @@ export default function Notifications() {
 
   useEffect(() => {
     dispatch(
-      safeAreaColorsSlice.actions.setSafeAreaColors({
+      safeAreaColorsSlice.actions.setSafeArea({
         top: Colors.white,
         bottom: Colors.white,
+        isTopTransparent: true,
+        isBottomTransparent: true
       }),
     );
   }, [dispatch]);
@@ -709,12 +713,14 @@ export default function Notifications() {
 
   return (
     <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
-      {currentBreakPoint === 0 ? <BackButton to="/" /> : null}
+      <View style={{height: insets.top}}>
+      </View>
+      {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
       <View
         style={{
           width,
           height: height * 0.1,
-          marginTop: currentBreakPoint === 0 ? 10 : 0,
+          marginTop: currentBreakPoint === 0 ? 10 : 0
         }}
       >
         <View

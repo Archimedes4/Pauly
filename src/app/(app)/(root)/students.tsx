@@ -344,7 +344,7 @@ export default function Students() {
             backgroundColor: Colors.darkGray,
           }}
         >
-          {currentBreakPoint === 0 ? <BackButton to="/profile" /> : null}
+          {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
           <Text style={{ fontFamily: 'BukhariScript', color: Colors.white }}>
             Students
           </Text>

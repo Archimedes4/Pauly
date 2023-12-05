@@ -1,6 +1,5 @@
 interface ResourceNewsPageProps {
   selectedPost: newsPost;
-  isHoverPicker: boolean;
   setSelectedPost: (item: undefined) => void;
 }
 

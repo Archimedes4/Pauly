@@ -9,6 +9,9 @@ import { Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
 import { ChevronLeft } from './Icons';
 import { Link } from 'expo-router';
+import { RootState } from '@src/Redux/store';
+import { useSelector } from 'react-redux';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function BackButton({
   to,
@@ -18,12 +21,16 @@ export default function BackButton({
   // eslint-disable-next-line react/require-default-props
   style?: ViewStyle | undefined;
 }) {
+  const isTopTransparent = useSelector(
+    (state: RootState) => state.safeAreaColors.isTopTransparent,
+  );
+  const insets = useSafeAreaInsets();
   return (
     <Link href={to} style={[
       {
         position: 'absolute',
         flexDirection: 'row',
-        top: 0,
+        top: isTopTransparent ? insets.top:0,
         left: 5,
         zIndex: 100,
       },

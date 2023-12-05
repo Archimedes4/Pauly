@@ -188,7 +188,7 @@ export default function GovernmentEditCommission() {
       }}
     >
       <ScrollView style={{ height, width, zIndex: 1 }}>
-        <BackButton to="/profile/government/commissions" />
+        <BackButton to="/government/commissions" />
         <View
           style={{
             alignContent: 'center',
