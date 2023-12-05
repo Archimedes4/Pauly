@@ -4,12 +4,12 @@
   November 9 2023
   studentFunctions.ts
 */
-import { loadingStateEnum } from '../types';
-import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer';
-import store from '../Redux/store';
-import largeBatch from './ultility/batchRequest';
-import callMsGraph from './ultility/microsoftAssets';
-import { domainName } from '../PaulyConfig';
+import { loadingStateEnum } from '@src/types';
+import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
+import store from '@Redux/store';
+import largeBatch from '@Functions/ultility/batchRequest';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import { domainName } from '@src/PaulyConfig';
 
 function checkIfStudent(role: string): {
   result: boolean;

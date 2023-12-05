@@ -1,13 +1,13 @@
-import store from '../Redux/store';
+import store from '@Redux/store';
 import callMsGraph from './ultility/microsoftAssets';
-import { homepageDataSlice } from '../Redux/reducers/homepageDataReducer';
+import { homepageDataSlice } from '@Redux/reducers/homepageDataReducer';
 import {
   getEvent,
   getSchoolDay,
   getTimetable,
   getSchedule,
 } from './calendar/calendarFunctionsGraph';
-import { Colors, loadingStateEnum, semesters } from '../types';
+import { Colors, loadingStateEnum, semesters } from '@src/types';
 
 export async function getRooms(
   nextLink?: string,

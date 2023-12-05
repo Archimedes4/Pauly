@@ -2,8 +2,8 @@ import { View, Text, Button, TextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
-import { RootState } from '../../../../../Redux/store';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import { RootState } from '@Redux/store';
 
 type MicrosoftGraphColumnDefinitions =
   | 'text'

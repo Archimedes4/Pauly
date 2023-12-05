@@ -1,9 +1,9 @@
-import { orgWideGroupID } from '../PaulyConfig';
-import { addEventSlice } from '../Redux/reducers/addEventReducer';
-import { currentEventsSlice } from '../Redux/reducers/currentEventReducer';
-import store from '../Redux/store';
-import { Colors, loadingStateEnum, paulyEventType } from '../types';
-import callMsGraph from './ultility/microsoftAssets';
+import { orgWideGroupID } from '@src/PaulyConfig';
+import { addEventSlice } from '@Redux/reducers/addEventReducer';
+import { currentEventsSlice } from '@Redux/reducers/currentEventReducer';
+import store from '@Redux/store';
+import { Colors, loadingStateEnum, paulyEventType } from '@src/types';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 
 export default async function createEvent(): Promise<undefined> {
   if (store.getState().addEvent.selectedEventType === paulyEventType.personal) {

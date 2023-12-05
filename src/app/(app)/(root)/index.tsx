@@ -38,7 +38,7 @@ import { TrashIcon, WarningIcon } from '@src/components/Icons';
 import {
   deleteTask,
   updateTaskText,
-} from '../../../Functions/notifications/updateTasks';
+} from '@Functions/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Get Messages

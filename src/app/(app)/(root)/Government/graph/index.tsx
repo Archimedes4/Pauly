@@ -1,13 +1,13 @@
 import { View, Text, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '../../../../../Functions/ultility/microsoftAssets';
-import PickerWrapper from '../../../../../components/Pickers/Picker';
-import { Colors, loadingStateEnum } from '../../../../../types';
-import { RootState } from '../../../../../Redux/store';
-import { clientId } from '../../../../../PaulyConfig';
-import { getTeams } from '../../../../../Functions/microsoftGroupsFunctions';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import PickerWrapper from '@components/Pickers/Picker';
+import { Colors, loadingStateEnum } from '@src/types';
+import { RootState } from '@Redux/store';
+import { clientId } from '@src/PaulyConfig';
+import { getTeams } from '@Functions/microsoftGroupsFunctions';
+import { Link, useLocalSearchParams } from 'expo-router';
 
 type listType = {
   displayName: string;
@@ -38,7 +38,7 @@ export default function MicrosoftGraphOverview() {
   const [selectedGraphMode, setSelectedGraphMode] = useState<graphMode>(
     graphMode.list,
   );
-  const { mode } = useParams();
+  const { mode } = useLocalSearchParams();
 
   // loading states
   const [groupLoadingState, setGroupLoadingState] = useState<loadingStateEnum>(
@@ -155,7 +155,7 @@ export default function MicrosoftGraphOverview() {
 
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
-      <Link to="/profile/government">
+      <Link href="/government">
         <Text>Back</Text>
       </Link>
       <Text>Microsoft Graph Overview</Text>
@@ -181,7 +181,7 @@ export default function MicrosoftGraphOverview() {
                     {lists.map((item: listType) => (
                       <Link
                         key={`${item.listId}Link`}
-                        to={`/profile/government/graph/list/edit/${item.listId}`}
+                        href={`/government/graph/list/edit/${item.listId}`}
                       >
                         <View key={item.listId}>
                           {
@@ -223,7 +223,7 @@ export default function MicrosoftGraphOverview() {
                   <View>
                     {groups.map(group => (
                       <Link
-                        to={`/profile/government/graph/group/edit/${group.id}`}
+                        href={`/government/graph/group/${group.id}`}
                         key={`group_${group.id}`}
                       >
                         <View>
@@ -252,7 +252,7 @@ export default function MicrosoftGraphOverview() {
                     </View>
                     {applicationExtensions.map(extension => (
                       <Link
-                        to={`/profile/government/graph/extension/edit/${extension.id}`}
+                        href={`/government/graph/extension/${extension.id}`}
                         key={`extension_${extension.id}`}
                         style={{ borderWidth: 2, borderColor: 'black' }}
                       >
@@ -267,7 +267,7 @@ export default function MicrosoftGraphOverview() {
                     </View>
                     {extensions.map(extension => (
                       <Link
-                        to={`/profile/government/graph/extension/edit/${extension.id}`}
+                        href={`/government/graph/extension/${extension.id}`}
                         key={`extension_${extension.id}`}
                         style={{ borderWidth: 2, borderColor: 'black' }}
                       >
@@ -286,7 +286,7 @@ export default function MicrosoftGraphOverview() {
           </View>
         ) : null}
       </ScrollView>
-      <Link to="/profile/government/graph/list/create">
+      <Link href="/government/graph/list/create">
         <Text>Create List</Text>
       </Link>
     </View>

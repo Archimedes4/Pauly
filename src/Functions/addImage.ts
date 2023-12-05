@@ -3,9 +3,9 @@
   Andrew Mainella
   
 */
-import store from '../Redux/store';
-import { loadingStateEnum } from '../types';
-import callMsGraph from './ultility/microsoftAssets';
+import store from '@Redux/store';
+import { loadingStateEnum } from '@src/types';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 
 // https://stackoverflow.com/questions/3583724/how-do-i-add-a-delay-in-a-javascript-loop
 const timer = (ms: number | undefined) =>

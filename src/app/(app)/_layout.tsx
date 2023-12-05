@@ -1,9 +1,9 @@
 import { View, Text, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import useIsConnected from '@hooks/useIsConnected'
 import { Colors } from '@src/types';
 import { OfflineIcon } from '@src/components/Icons';
-import { Slot, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@Redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

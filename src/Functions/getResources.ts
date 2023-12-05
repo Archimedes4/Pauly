@@ -1,8 +1,8 @@
-import { loadingStateEnum, resourceMode, resourceResponce } from '../types';
-import store from '../Redux/store';
-import callMsGraph from './ultility/microsoftAssets';
-import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
-import { raindropToken } from '../PaulyConfig';
+import { loadingStateEnum, resourceMode, resourceResponce } from '@src/types';
+import store from '@Redux/store';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import { resourcesSlice } from '@Redux/reducers/resourcesReducer';
+import { raindropToken } from '@src/PaulyConfig';
 
 export function convertResourceModeString(convert?: resourceMode): string {
   if (convert === resourceMode.sports) {

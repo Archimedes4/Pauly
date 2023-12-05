@@ -4,15 +4,15 @@
   November 9 2023
   sportsFunctions.ts
 */
-import store from '../../Redux/store';
+import store from '@Redux/store';
 import {
   dataContentTypeOptions,
   loadingStateEnum,
   postType,
-} from '../../types';
-import batchRequest from '../ultility/batchRequest';
-import getFileWithShareID from '../ultility/getFileWithShareID';
-import callMsGraph from '../ultility/microsoftAssets';
+} from '@src/types';
+import batchRequest from '@Functions/ultility/batchRequest';
+import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 
 export async function getSports(): Promise<{
   result: loadingStateEnum;
