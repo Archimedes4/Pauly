@@ -12,7 +12,7 @@ import createUUID from '../../Functions/ultility/createUUID';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
 import { Colors } from '../../types';
-import { ChevronLeft, ChevronRight } from '../../UI/Icons/Icons';
+import { ChevronLeft, ChevronRight } from '../Icons';
 
 export default function Week({
   width,

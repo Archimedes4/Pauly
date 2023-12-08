@@ -16,6 +16,12 @@ export const microsoftProfileDataSlice = createSlice({
     ) => {
       return action.payload;
     },
+    setMicrosftProfileUrl: (state, action: PayloadAction<string>) => {
+      return {uri: action.payload, displayName: state.displayName, id: state.id}
+    },
+    setMicrosoftProfileInformation: (state, action: PayloadAction<{ displayName: string; id: string }>) => {
+      return {uri: state.uri, displayName: action.payload.displayName, id: action.payload.id}
+    },
   },
 });
 

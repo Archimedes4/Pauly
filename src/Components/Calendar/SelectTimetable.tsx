@@ -6,11 +6,11 @@
 */
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '../../Functions/ultility/microsoftAssets';
 import { RootState } from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
+import { useRouter } from 'expo-router';
 
 export default function SelectTimetable({
   governmentMode,
@@ -19,6 +19,7 @@ export default function SelectTimetable({
   governmentMode: boolean;
   onSelect?: (item: timetableStringType) => void;
 }) {
+  const router = useRouter();
   const { timetablesListId, siteId } = useSelector(
     (state: RootState) => state.paulyList,
   );
@@ -28,7 +29,6 @@ export default function SelectTimetable({
   const [loadedTimetables, setLoadedTimetables] = useState<
     timetableStringType[]
   >([]);
-  const navigate = useNavigate();
 
   const getTimetables = useCallback(async () => {
     const result = await callMsGraph(
@@ -73,9 +73,7 @@ export default function SelectTimetable({
               key={`Timetable_${timetable.id}`}
               onPress={() => {
                 if (governmentMode) {
-                  navigate(
-                    `/profile/government/calendar/timetable/${timetable.id}`,
-                  );
+                  router.replace(`/profile/government/calendar/timetable/${timetable.id}`);
                 } else if (onSelect !== undefined) {
                   onSelect(timetable);
                 }

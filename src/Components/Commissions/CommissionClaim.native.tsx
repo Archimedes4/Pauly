@@ -20,7 +20,7 @@ import {
   addImage,
   claimCommissionPost,
 } from '../../Functions/commissions/claimCommissionsFunctions';
-import ProgressView from '../../UI/ProgressView';
+import ProgressView from '../../components/ProgressView';
 import { getTextState } from '../../Functions/ultility/createUUID';
 
 /**

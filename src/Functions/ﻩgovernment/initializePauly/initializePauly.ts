@@ -137,16 +137,6 @@ export async function initializePaulyPartThree(
       paulyListNewData.fields[callData.id] = data.id;
     }
   }
-  if (getPaulyListResultData.fields !== undefined) {
-    if (getPaulyListResultData.fields.eventTypeExtensionId !== undefined) {
-      paulyListNewData.fields.eventTypeExtensionId =
-        getPaulyListResultData.fields.eventTypeExtensionId;
-    } else {
-      paulyListNewData.fields.eventTypeExtensionId = `String {${createUUID()}} Name eventType`;
-    }
-  } else {
-    paulyListNewData.fields.eventTypeExtensionId = `String {${createUUID()}} Name eventType`;
-  }
 
   if (getPaulyListResultData.fields !== undefined) {
     if (getPaulyListResultData.fields.eventDataExtensionId !== undefined) {
@@ -161,9 +151,23 @@ export async function initializePaulyPartThree(
     } else {
       paulyListNewData.fields.resourceExtensionId = `String {${createUUID()}} Name resourceData`;
     }
+    if (getPaulyListResultData.fields.eventTypeExtensionId !== undefined) {
+      paulyListNewData.fields.eventTypeExtensionId =
+        getPaulyListResultData.fields.eventTypeExtensionId;
+    } else {
+      paulyListNewData.fields.eventTypeExtensionId = `String {${createUUID()}} Name eventType`;
+    }
+    if (getPaulyListResultData.fields.eventSyncIdExtensionId !== undefined) {
+      paulyListNewData.fields.eventSyncIdExtensionId =
+        getPaulyListResultData.fields.eventSyncIdExtensionId;
+    } else {
+      paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventType`;
+    }
   } else {
     paulyListNewData.fields.eventDataExtensionId = `String {${createUUID()}} Name eventData`;
     paulyListNewData.fields.resourceExtensionId = `String {${createUUID()}} Name resourceData`;
+    paulyListNewData.fields.eventTypeExtensionId = `String {${createUUID()}} Name eventType`;
+    paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventType`;
   }
 
   if (paulyListNewData.fields.paulyDataListId === undefined) {

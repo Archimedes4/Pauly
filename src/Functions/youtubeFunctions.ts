@@ -1,4 +1,4 @@
-import { loadingStateEnum } from '../types';
+import { loadingStateEnum } from '@src/types';
 
 export default async function getYoutubeVideos(
   pageToken: string | undefined = undefined,

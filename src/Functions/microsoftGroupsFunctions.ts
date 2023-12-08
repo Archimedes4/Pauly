@@ -5,9 +5,9 @@
   microsoftGroupsFunctions.ts
   common function to access microsoft group/teams data
 */
-import { loadingStateEnum, resourceResponce } from '../types';
-import getResource from './getResources';
-import callMsGraph from './ultility/microsoftAssets';
+import { loadingStateEnum, resourceResponce } from '@src/types';
+import getResource from '@Functions/getResources';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 
 export async function getTeams(nextLink?: string): Promise<{
   result: loadingStateEnum;
@@ -42,8 +42,10 @@ export async function getChannels(
   teamId: string,
   nextLink: string | undefined = undefined,
 ): Promise<{
-  result: loadingStateEnum;
-  data?: channelType[];
+  result: loadingStateEnum.failed;
+}|{
+  result: loadingStateEnum.success;
+  data: channelType[];
   nextLink?: string;
 }> {
   const result = await callMsGraph(

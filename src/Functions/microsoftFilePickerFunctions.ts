@@ -3,10 +3,10 @@
   Andrew Mainella
   November 9 2023
   microsoftFilePickerFunctions.ts
-  functions for src/UI/MicorosftFilePicker.tsx
+  functions for src/components/MicorosftFilePicker.tsx
 */
-import { loadingStateEnum } from '../types';
-import callMsGraph from './ultility/microsoftAssets';
+import { loadingStateEnum } from '@src/types';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 
 export async function getUserMicrosoftFiles(
   path: string,

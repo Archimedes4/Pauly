@@ -1,3 +1,4 @@
+import isOverrideReducer, { isOverrideSlice } from './reducers/isOverrideReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import monthDataReducer from './reducers/monthDataReducer';
 import resourcesLastCallReducer, {
@@ -26,6 +27,8 @@ import pdfDataReducer from './reducers/pdfDataReducer';
 import monthViewReducer from './reducers/monthViewReducer';
 import authenticationCallReducer from './reducers/authenticationCallReducer';
 import studentSearchReducer from './reducers/studentSearchReducer';
+import authLoadingReducer from './reducers/authLoadingReducer';
+import paulyLoadingReducer from './reducers/paulyLoadingReducer';
 
 const store = configureStore({
   reducer: {
@@ -55,6 +58,9 @@ const store = configureStore({
     tasksDeltaLink: tasksDeltaReducer,
     selectedDate: selectedDateReducer,
     studentSearch: studentSearchReducer,
+    authLoading: authLoadingReducer,
+    isOverride: isOverrideReducer,
+    paulyLoading: paulyLoadingReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

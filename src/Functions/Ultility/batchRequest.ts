@@ -1,5 +1,11 @@
-import { loadingStateEnum } from '../../types';
-import callMsGraph from './microsoftAssets';
+/*
+  Pauly
+  Andrew Mainella
+  1 December 2023
+  batchRequest.ts
+*/
+import { loadingStateEnum } from '@src/types';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 
 export default async function largeBatch(
   defaultBatchData?: { id: string; method: 'GET' | 'POST'; url: string }[][],

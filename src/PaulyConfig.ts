@@ -1,7 +1,7 @@
 /*
-  Andrew Mainella
-  October 21 2023
   Pauly
+  Andrew Mainella
+  21 October 2023
   See README.md for more information about the setup process and what to put in each of these values
 */
 // The org wide group id is the id of a group (teams) that every user is apart of.

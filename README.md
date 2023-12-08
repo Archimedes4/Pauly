@@ -4,7 +4,7 @@ Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
 Saint Paul's High School Student Council 2023-2024
 # Technologies
-Power by expo using expo router at its core.
+Power by expo using expo router at its core. Application also uses redux for storage.
 # Backend
 Pauly uses Microsoft graph and SharePoint lists as a database
 ## Structure 
@@ -206,3 +206,5 @@ All permissions are Delegated permissions
 | Application.ReadWrite.All | YES                    | Allows the app to create, read, update and delete applications and service principals on behalf of the signed-in user. |
 | Sites.Manage.All          | YES                    | Allows the app to manage and create lists, documents, and list items in all site collections on behalf of the signed-in user. |
 | TeamMember.Read.All       | YES                    | Read the members of teams, on behalf of the signed-in user. |
+
+## General Reference

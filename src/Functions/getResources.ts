@@ -1,8 +1,8 @@
-import { loadingStateEnum, resourceMode, resourceResponce } from '../types';
-import store from '../Redux/store';
-import callMsGraph from './ultility/microsoftAssets';
-import { resourcesSlice } from '../Redux/reducers/resourcesReducer';
-import { raindropToken } from '../PaulyConfig';
+import { loadingStateEnum, resourceMode, resourceResponce } from '@src/types';
+import store from '@Redux/store';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import { resourcesSlice } from '@Redux/reducers/resourcesReducer';
+import { raindropToken } from '@src/PaulyConfig';
 
 export function convertResourceModeString(convert?: resourceMode): string {
   if (convert === resourceMode.sports) {
@@ -387,12 +387,14 @@ export async function getScholarships(): Promise<
     const data = await result.json();
     const scholarships: scholarship[] = [];
     for (let index = 0; index < data.items.length; index += 1) {
-      scholarships.push({
-        title: data.items[index].title,
-        note: data.items[index].note,
-        link: data.items[index].link,
-        cover: data.items[index].cover,
-      });
+      if (data.items[index].cover !== undefined) {
+        scholarships.push({
+          title: data.items[index].title,
+          note: data.items[index].note,
+          link: data.items[index].link,
+          cover: data.items[index].cover,
+        });
+      }
     }
     return { result: loadingStateEnum.success, data: scholarships };
   }

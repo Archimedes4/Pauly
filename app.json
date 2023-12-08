@@ -5,10 +5,12 @@
     "scheme": "com.Archimedes4.Pauly",
     "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "jsEngine": "hermes",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "light",
+    "tsconfigPaths":true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#793033"
     },
@@ -32,7 +34,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#793033"
       },
       "package": "com.Archimedes4.Pauly",
@@ -54,7 +56,9 @@
       ]
     },
     "web": {
-      "favicon": "./assets/icon.png"
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/icon.png"
     },
     "extra": {
       "eas": {
@@ -63,6 +67,7 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "experiments": { "tsconfigPaths": true }
   }
 }

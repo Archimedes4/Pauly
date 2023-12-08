@@ -1,6 +1,7 @@
 import { HttpRequest } from '@azure/functions';
 import { JwtHeader, SigningKeyCallback, verify } from 'jsonwebtoken';
 import { JwksClient } from 'jwks-rsa';
+import getClientCredential from './getClientCredential';
 
 type validationReturn = {
   onBehalfOfAccessToken: string;
@@ -31,9 +32,9 @@ export default async function validateAndGetAccessTokens(
     console.log("MARK3")
 
     // Client Credentials
-    const postData = `&grant_type=client_credentials&client_id=${process.env.CLIENTID}&client_secret=${process.env.CLIENTSECRET}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default`;
+    const postData = `&grant_type=client_credentials&client_id=${config.auth.clientId}&client_secret=${config.auth.clientSecret}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default`;
     const clientCredentialsResult = await fetch(
-      `https://login.microsoftonline.com/${process.env.TENANTID}/oauth2/v2.0/token`,
+      `https://login.microsoftonline.com/${config.tenantId}/oauth2/v2.0/token`,
       {
         method: 'POST',
         body: postData,
@@ -41,10 +42,9 @@ export default async function validateAndGetAccessTokens(
       },
     );
     const clientCredentialsResultData = await clientCredentialsResult.json();
-    console.log("MARK4", clientCredentialsResultData)
     return {
       onBehalfOfAccessToken: authResultData.access_token,
-      clientCredentialsAccessToken: clientCredentialsResultData.access_token,
+      clientCredentialsAccessToken: credentialToken,
     };
   } catch (e) {
     console.log(e)

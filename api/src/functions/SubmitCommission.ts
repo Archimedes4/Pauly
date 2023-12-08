@@ -8,6 +8,16 @@ import validateAndGetAccessTokens from '../../CommonFunctions/validateAndGetAcce
 import getPaulyList from '../../CommonFunctions/getPaulyList';
 import callMsGraph from '../../CommonFunctions/callMsGraph';
 import createUUID from '../../CommonFunctions/createUUID';
+import {
+  app,
+  HttpRequest,
+  HttpResponseInit,
+  InvocationContext,
+} from '@azure/functions';
+import validateAndGetAccessTokens from '../../CommonFunctions/validateAndGetAccessTokens';
+import getPaulyList from '../../CommonFunctions/getPaulyList';
+import callMsGraph from '../../CommonFunctions/callMsGraph';
+import createUUID from '../../CommonFunctions/createUUID';
 
 function isListResponse(
   response: listResponce | HttpResponseInit,
@@ -19,16 +29,7 @@ export async function ClaimCommission(
   req: HttpRequest,
 ): Promise<HttpResponseInit> {
   try {
-    const accessTokens = await validateAndGetAccessTokens(req);
-    console.log('MARK HERE')
-    console.log(accessTokens)
-    if (accessTokens === undefined) {
-      return {
-        status: 401,
-        body: 'Unauthorized: something went wrong validating token',
-      };
-    }
-    console.log('MARK HERE 1')
+    const accessTokens = await validateAndGetAccessTokens(context, req);
     const paulyListResult = await getPaulyList(
       accessTokens.onBehalfOfAccessToken,
     );

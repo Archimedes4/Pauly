@@ -4,12 +4,12 @@
   November 9 2023
   studentFunctions.ts
 */
-import { loadingStateEnum } from '../types';
-import { studentSearchSlice } from '../Redux/reducers/studentSearchReducer';
-import store from '../Redux/store';
-import largeBatch from './ultility/batchRequest';
-import callMsGraph from './ultility/microsoftAssets';
-import { domainName } from '../PaulyConfig';
+import { loadingStateEnum } from '@src/types';
+import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
+import store from '@Redux/store';
+import largeBatch from '@Functions/ultility/batchRequest';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
+import { domainName } from '@src/PaulyConfig';
 
 function checkIfStudent(role: string): {
   result: boolean;
@@ -75,7 +75,6 @@ function checkIfStudent(role: string): {
 
 export async function getUsers(url?: string, search?: string) {
   const filter = search ? `&$search="displayName:${search}"` : '';
-
   const result = await callMsGraph(
     url ||
       `https://graph.microsoft.com/v1.0/users?$select=displayName,id,mail${filter}`,
@@ -90,7 +89,7 @@ export async function getUsers(url?: string, search?: string) {
     for (let index = 0; index < data.value.length; index += 1) {
       userIds.push(data.value[index].id);
     }
-
+    console.log('Mark One')
     // Getting selected user images from student files list in a batch request.
     const batchResult = await largeBatch(undefined, {
       firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
@@ -106,11 +105,13 @@ export async function getUsers(url?: string, search?: string) {
       batchResult.result === loadingStateEnum.success &&
       batchResult.data !== undefined
     ) {
+      console.log('Mark Two')
       for (
         let batchIndex = 0;
         batchIndex < batchResult.data.length;
         batchIndex += 1
       ) {
+        console.log('Mark Three')
         if (batchResult.data[batchIndex].status === 200) {
           // TO DO OK
           if (batchResult.data[batchIndex].body.value.length === 1) {

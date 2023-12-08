@@ -13,7 +13,16 @@
     "skipLibCheck": true,
     "strict": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@src/*":["src/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@Redux/*": ["src/Redux/*"],
+      "@Functions/*": ["src/Functions/*"],
+      "@components/*": ["src/components/*"],
+      "assets/*": ["assets/*"],
+    }
   },
   "extends": "expo/tsconfig.base"
 }

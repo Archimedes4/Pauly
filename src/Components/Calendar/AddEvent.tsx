@@ -4,7 +4,6 @@
   October 18 2023
   AddEvent.tsx
 */
-
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -18,13 +17,10 @@ import callMsGraph from '../../Functions/ultility/microsoftAssets';
 import SelectTimetable from './SelectTimetable';
 import SelectSchoolDayData from './SelectSchoolDayData';
 import { Colors, loadingStateEnum, paulyEventType } from '../../types';
-import PickerWrapper from '../../UI/Pickers/Picker';
-import { CalendarIcon, CloseIcon, TimeIcon } from '../../UI/Icons/Icons';
 import updateEvent from '../../Functions/updateEvent';
 import { getTextState } from '../../Functions/ultility/createUUID';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const BukhariScript = require('../../../assets/fonts/BukhariScript.ttf');
+import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons';
+import PickerWrapper from '../Pickers/Picker';
 
 function GovernmentCalendarOptions({
   width,
@@ -397,7 +393,7 @@ export default function AddEvent({
   }
 
   const [fontsLoaded] = useFonts({
-    BukhariScript,
+    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
   });
 
   useCallback(async () => {
