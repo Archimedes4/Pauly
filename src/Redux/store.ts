@@ -28,6 +28,7 @@ import monthViewReducer from './reducers/monthViewReducer';
 import authenticationCallReducer from './reducers/authenticationCallReducer';
 import studentSearchReducer from './reducers/studentSearchReducer';
 import authLoadingReducer from './reducers/authLoadingReducer';
+import paulyLoadingReducer from './reducers/paulyLoadingReducer';
 
 const store = configureStore({
   reducer: {
@@ -58,7 +59,8 @@ const store = configureStore({
     selectedDate: selectedDateReducer,
     studentSearch: studentSearchReducer,
     authLoading: authLoadingReducer,
-    isOverride: isOverrideReducer
+    isOverride: isOverrideReducer,
+    paulyLoading: paulyLoadingReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -4,9 +4,9 @@
   November 9 2023
   getDressCode.ts
 */
-import store from '../../Redux/store';
-import { loadingStateEnum } from '../../types';
-import callMsGraph from '../ultility/microsoftAssets';
+import store from '@Redux/store';
+import { loadingStateEnum } from '@src/types';
+import callMsGraph from '@Functions/ultility/microsoftAssets';
 
 export default async function getDressCode(
   dressCodeId: string,

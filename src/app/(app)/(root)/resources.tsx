@@ -329,10 +329,12 @@ function ScholarshipBlock({ item, width }: { item: ListRenderItemInfo<scholarshi
         backgroundColor: Colors.white,
       }}
     >
-      <Image
-        source={{ uri: item.item.cover }}
-        style={{ width: width - 10, height }}
-      />
+      { item.item.cover !== undefined ?
+        <Image
+          source={{ uri: item.item.cover }}
+          style={{ width: width - 10, height }}
+        />:null
+      }
       <Text style={{ fontSize: 16, margin: 5, marginLeft: 10 }}>
         {item.item.title}
       </Text>

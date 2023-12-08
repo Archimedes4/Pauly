@@ -387,14 +387,15 @@ export async function getScholarships(): Promise<
     const data = await result.json();
     const scholarships: scholarship[] = [];
     for (let index = 0; index < data.items.length; index += 1) {
-      scholarships.push({
-        title: data.items[index].title,
-        note: data.items[index].note,
-        link: data.items[index].link,
-        cover: data.items[index].cover,
-      });
+      if (data.items[index].cover !== undefined) {
+        scholarships.push({
+          title: data.items[index].title,
+          note: data.items[index].note,
+          link: data.items[index].link,
+          cover: data.items[index].cover,
+        });
+      }
     }
-    console.log(scholarships)
     return { result: loadingStateEnum.success, data: scholarships };
   }
   return { result: loadingStateEnum.failed };

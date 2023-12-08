@@ -6,7 +6,7 @@ import { RootState } from '@Redux/store';
 import { Colors } from '@src/types';
 import { CloseIcon } from '../Icons';
 
-export default function ResourceNewsPage({selectedPost, setSelectedPost, isHoverPicker}:{selectedPost: newsPost, setSelectedPost: (item: undefined) => void,  isHoverPicker: boolean}) {
+export default function ResourceNewsPage({selectedPost, setSelectedPost}:{selectedPost: newsPost, setSelectedPost: (item: undefined) => void}) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   return (
     <ScrollView

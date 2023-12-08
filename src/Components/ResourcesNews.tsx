@@ -99,7 +99,7 @@ export default function ResourcesNews() {
         }}
         style={{
           width,
-          height: isHoverPicker ? height * 0.75 : height * 0.8,
+          height: height * 0.8,
           backgroundColor: Colors.lightGray,
         }}
       />

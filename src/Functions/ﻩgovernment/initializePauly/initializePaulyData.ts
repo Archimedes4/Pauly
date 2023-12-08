@@ -103,6 +103,11 @@ export const paulyListData = {
       name:'calendarSyncListId',
       text: {},
       required: true
+    },
+    {
+      name:'calendarSyncStateListId',
+      text: {},
+      required: true
     }
   ],
   list: {
@@ -598,6 +603,35 @@ export const calendarSyncData  = {
     template: 'genericList',
   },
 }
+export const calendarSyncStateData = {
+  displayName: "Calendar Sync State",
+  columns: [
+    {
+      name: "startTime",
+      text: {},
+      required: true,
+    },
+    {
+      name: "endTime",
+      text: {},
+      required: true
+    },
+    {
+      name: "invocationId",
+      text: {},
+      required: true,
+      indexed: true
+    },
+    {
+      name: "state",
+      text: {},
+      required: true
+    }
+  ],
+  list: {
+    template: "genericList"
+  },
+}
 
 // Extensions
 export const paulyClassExtensionData = {
@@ -713,5 +747,11 @@ export const addDataArray: addDataType[] = [
     urlOne: 'https://graph.microsoft.com/v1.0/sites/',
     urlTwo: '/lists',
     id: 'calendarSyncListId',
+  },
+  {
+    data: calendarSyncStateData,
+    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
+    urlTwo: '/lists',
+    id: 'calendarSyncStateListId',
   }
 ];

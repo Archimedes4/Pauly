@@ -38,7 +38,6 @@ export default function MicrosoftGraphOverview() {
   const [selectedGraphMode, setSelectedGraphMode] = useState<graphMode>(
     graphMode.list,
   );
-  const { mode } = useLocalSearchParams();
 
   // loading states
   const [groupLoadingState, setGroupLoadingState] = useState<loadingStateEnum>(
@@ -136,16 +135,6 @@ export default function MicrosoftGraphOverview() {
       setSchemaLoadingState(loadingStateEnum.failed);
     }
   }
-
-  useEffect(() => {
-    if (mode === 'list') {
-      setSelectedGraphMode(graphMode.list);
-    } else if (mode === 'group') {
-      setSelectedGraphMode(graphMode.group);
-    } else if (mode === 'extension') {
-      setSelectedGraphMode(graphMode.extension);
-    }
-  }, [mode]);
 
   useEffect(() => {
     getLists();

@@ -3,6 +3,7 @@ import { orgWideGroupID } from '../../PaulyConfig';
 import store from '../../Redux/store';
 import { paulyListSlice } from '../../Redux/reducers/paulyListReducer';
 import { Platform } from 'react-native';
+import { router } from 'expo-router';
 
 export default async function getPaulyLists() {
   const getRootSiteIdResult = await callMsGraph(

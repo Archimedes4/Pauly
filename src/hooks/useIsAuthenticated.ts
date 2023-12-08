@@ -1,4 +1,5 @@
 import { RootState } from "@Redux/store";
+import { getWantGovernment } from "@src/Functions/handleGovernmentLogin";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -15,18 +16,42 @@ export default function useIsAuthenticated() {
     (state: RootState) => state.authenticationToken,
   );
   const isOveride =  useSelector((state: RootState) => state.isOverride);
-  useEffect(() => {
-    if (((siteId !== '' || isOveride) && authenticationToken !== '')) {
-      setIsAuthenticated({
-        loading: false,
-        authenticated: true
-      })
+  async function checkAuthentication() {
+    const wantGovernment = await getWantGovernment(); 
+    if (wantGovernment) {
+      if (((siteId !== '' || isOveride) && authenticationToken !== '')) {
+        setIsAuthenticated({
+          loading: false,
+          authenticated: true
+        })
+      } else if (authenticationToken !== "") {
+        setIsAuthenticated({
+          loading: true,
+          authenticated: true
+        })
+      } else {
+        setIsAuthenticated({
+          loading: false,
+          authenticated: false
+        })
+      }
     } else {
-      setIsAuthenticated({
-        loading: false,
-        authenticated: false
-      })
+      if (((siteId !== '' || isOveride) && authenticationToken !== '')) {
+        setIsAuthenticated({
+          loading: false,
+          authenticated: true
+        })
+      } else {
+        setIsAuthenticated({
+          loading: false,
+          authenticated: false
+        })
+      }
     }
+    
+  }
+  useEffect(() => {
+    checkAuthentication()
   }, [siteId, authenticationToken, isOveride])
   return isAuthenticated
 }
