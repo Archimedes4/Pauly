@@ -71,7 +71,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.11",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
     "eslint": "^8.2.0",

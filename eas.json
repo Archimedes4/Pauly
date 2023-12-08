@@ -14,7 +14,11 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {},
+    "production": {
+      "ios": {
+        "image": "latest"
+      }
+    },
     "development-simulator": {
       "distribution": "internal",
       "developmentClient": true,
