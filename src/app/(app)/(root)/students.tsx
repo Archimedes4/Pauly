@@ -27,7 +27,7 @@ import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
 import BackButton from '@components/BackButton';
 import { getNumberOfBlocks, getUsers } from '@Functions/studentFunctions';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@Functions/ultility/createUUID';
+import createUUID from '@src/Functions/ultility/createUUID';
 import { Link } from 'expo-router';
 import { useStudentSafeArea } from '@hooks/safeAreaHooks';
 

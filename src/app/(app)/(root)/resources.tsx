@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '@Redux/store';
 import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
 import { resourcesSlice } from '@Redux/reducers/resourcesReducer';
-import createUUID, { getTextState } from '@Functions/ultility/createUUID';
+import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import {
   convertResourceModeString,
@@ -40,7 +40,7 @@ import ProgressView from '@components/ProgressView';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { Colors, loadingStateEnum, resourceMode } from '@src/types';
 import ResourcesNews from '@components/ResourcesNews';
-import ResourceBar from '@components/ResourceBar'
+import ResourceBar from '@src/components/ResourceBar'
 
 // Resources
 // -> Sports

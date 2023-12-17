@@ -1,6 +1,5 @@
 import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import ReactQuill from 'react-quill';
 import TextEditorHeader from './TextEditorHeader';
 
 export default function GovernmentResourcePost() {

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '@src/types';
 import { RootState } from '@Redux/store';
-import { getTextState } from '@Functions/ultility/createUUID';
+import { getTextState } from '@src/Functions/ultility/createUUID';
 
 export default function MicrosoftGraphEditExtension() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);

@@ -18,7 +18,7 @@ import {
   postType,
 } from '@src/types';
 import SportsYoutube from '@components/SportsYoutube';
-import { getTextState } from '@Functions/ultility/createUUID';
+import { getTextState } from '@src/Functions/ultility/createUUID';
 
 function getDenyText(reviewed: boolean, accepted: boolean) {
   if (!reviewed && !accepted) {

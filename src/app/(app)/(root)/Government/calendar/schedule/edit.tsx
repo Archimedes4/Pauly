@@ -13,7 +13,7 @@ import ColorPicker, {
   InputWidget,
 } from 'reanimated-color-picker';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@Functions/ultility/createUUID';
+import createUUID from '@src/Functions/ultility/createUUID';
 import store, { RootState } from '@Redux/store';
 import { Colors, loadingStateEnum } from '@src/types';
 import { CloseIcon, WarningIcon } from '@src/components/Icons';

@@ -13,7 +13,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { SegmentedButtons } from 'react-native-paper';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@Functions/ultility/createUUID';
+import createUUID from '@src/Functions/ultility/createUUID';
 import store, { RootState } from '@Redux/store';
 import { Colors, loadingStateEnum, postType } from '@src/types';
 import {

@@ -8,7 +8,7 @@ import { WarningIcon } from '@src/components/Icons';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import createUUID, {
   getTextState,
-} from '@Functions/ultility/createUUID';
+} from '@src/Functions/ultility/createUUID';
 
 export default function GovermentRoomsCreate() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

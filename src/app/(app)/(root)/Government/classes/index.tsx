@@ -3,7 +3,7 @@ import { View, Text, Pressable, ScrollView, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@Redux/store';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@Functions/ultility/createUUID';
+import createUUID from '@src/Functions/ultility/createUUID';
 import { Colors, loadingStateEnum, semesters } from '@src/types';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';

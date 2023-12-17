@@ -6,7 +6,7 @@ import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { CopyIcon } from '@components/Icons';
 import { Colors, loadingStateEnum } from '@src/types';
 import { RootState } from '@Redux/store';
-import { getTextState } from '@Functions/ultility/createUUID';
+import { getTextState } from '@src/Functions/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
 
 export default function MicrosoftGraphEditGroup() {

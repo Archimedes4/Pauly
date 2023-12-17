@@ -12,7 +12,7 @@ import {
 } from '@Functions/sports/sportsFunctions';
 import { WarningIcon } from '@src/components/Icons';
 import SVGXml from '@components/SVGXml';
-import { getTextState } from '@Functions/ultility/createUUID';
+import { getTextState } from '@src/Functions/ultility/createUUID';
 
 function SportsUpdateModel({
   isPickingSvg,

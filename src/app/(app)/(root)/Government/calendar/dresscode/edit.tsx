@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-native';
 import store, { RootState } from '@Redux/store';
-import createUUID from '@Functions/ultility/createUUID';
+import createUUID from '@src/Functions/ultility/createUUID';
 import { Colors, loadingStateEnum } from '@src/types';
 import DressCodeBlock from '../../../../../../components/DressCodeBlock';
 import { createDressCode } from '@Functions/calendar/calendarFunctionsGraph';

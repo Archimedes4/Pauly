@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { convertYearToSchoolYear } from '@Functions/calendar/calendarFunctions';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@Functions/ultility/createUUID';
+import createUUID from '@src/Functions/ultility/createUUID';
 import {
   Colors,
   dataContentTypeOptions,

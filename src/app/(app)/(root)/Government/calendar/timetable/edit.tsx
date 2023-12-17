@@ -15,7 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@Functions/ultility/createUUID';
+import createUUID from '@src/Functions/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '@src/components/Icons';
 import { Colors, loadingStateEnum } from '@src/types';
 import { RootState } from '@Redux/store';

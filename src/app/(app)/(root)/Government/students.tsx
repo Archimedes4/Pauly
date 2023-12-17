@@ -30,7 +30,7 @@ import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
 import { Colors, loadingStateEnum } from '@src/types';
 import ProgressView from '@components/ProgressView';
 import addImage from '@Functions/addImage';
-import { getTextState } from '@Functions/ultility/createUUID';
+import { getTextState } from '@src/Functions/ultility/createUUID';
 
 function SelectMainFile({
   userId,

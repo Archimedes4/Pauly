@@ -18,7 +18,6 @@ import store, { RootState } from '@Redux/store';
 import { Colors, paperTheme } from '@src/types';
 import setDimentions from '@Functions/ultility/setDimentions';
 import { Slot } from "expo-router";
-import 'raf/polyfill';
 import { clientId, tenantId } from '@src/PaulyConfig';
 import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
