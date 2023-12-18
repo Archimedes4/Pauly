@@ -21,8 +21,10 @@ import useIsAuthenticated from '@hooks/useIsAuthenticated';
 import { router } from 'expo-router';
 
 export default function SignIn() {
-  //visual
-  const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
+  // visual
+  const { height, totalWidth } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(0);
@@ -31,12 +33,14 @@ export default function SignIn() {
 
   const safeArea = useCallback(
     async function setSafeAreaColors() {
-      dispatch(safeAreaColorsSlice.actions.setSafeArea({
-        top: Colors.maroon,
-        bottom: Colors.maroon,
-        isTopTransparent: false,
-        isBottomTransparent: false
-      }))
+      dispatch(
+        safeAreaColorsSlice.actions.setSafeArea({
+          top: Colors.maroon,
+          bottom: Colors.maroon,
+          isTopTransparent: false,
+          isBottomTransparent: false,
+        }),
+      );
     },
     [dispatch],
   );
@@ -55,18 +59,18 @@ export default function SignIn() {
   }, [height, totalWidth]);
   // Fon
 
-  //authentication
+  // authentication
   const login = useInvokeLogin();
   const authLoading = useSelector((state: RootState) => state.authLoading);
   const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
     useState<boolean>(false);
   const isAuthenticated = useIsAuthenticated();
-  
+
   useEffect(() => {
     if (isAuthenticated.authenticated) {
-      router.push('/')
+      router.push('/');
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated]);
 
   return (
     <Pressable
@@ -77,7 +81,7 @@ export default function SignIn() {
         justifyContent: 'center',
         height,
         width: totalWidth,
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
       onLongPress={() => {
         setIsShowingGovernmentLogin(true);
@@ -135,7 +139,9 @@ export default function SignIn() {
           23/24 Saint Paul&#39;s High School Student Council
         </Text>
         <Pressable
-          onPress={() => {login(false)}}
+          onPress={() => {
+            login(false);
+          }}
           onHoverIn={() => {
             setIsButtonHover(true);
           }}

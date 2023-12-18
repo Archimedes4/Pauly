@@ -48,7 +48,7 @@ export default function Settings() {
   }, [dispatch]);
 
   const returnHome = useCallback(() => {
-    router.replace('/')
+    router.replace('/');
   }, [router]);
 
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function Settings() {
       >
         <Text style={{ fontWeight: 'bold' }}>SIGN OUT</Text>
       </Pressable>
-      <Link href={'/students'}>
+      <Link href="/students">
         <View
           style={{
             width: width * 0.8,
@@ -170,7 +170,7 @@ export default function Settings() {
         </View>
       </Link>
       {isGovernmentMode ? (
-        <Link href={"/government"}>
+        <Link href="/government">
           <Pressable
             style={{
               width: width * 0.8,

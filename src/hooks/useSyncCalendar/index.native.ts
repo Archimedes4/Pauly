@@ -1,7 +1,7 @@
-import { clientId, tenantId } from "@src/PaulyConfig";
-import store from "@src/Redux/store";
-import { loadingStateEnum } from "@src/types";
-import { refreshAsync, useAutoDiscovery } from "expo-auth-session";
+import { clientId, tenantId } from '@src/PaulyConfig';
+import store from '@src/Redux/store';
+import { loadingStateEnum } from '@src/types';
+import { refreshAsync, useAutoDiscovery } from 'expo-auth-session';
 
 export default function useSyncCalendar() {
   const discovery = useAutoDiscovery(
@@ -17,20 +17,21 @@ export default function useSyncCalendar() {
         },
         discovery,
       );
-      const result = await fetch('http://localhost:8500/api/orchestrators/snycCalendarOrchOrchestrator', {
-        method: 'GET',
-        headers: {
-          'Authorization':`Bearer ${apiResult.accessToken}`
-        }
-      })
+      const result = await fetch(
+        'http://localhost:8500/api/orchestrators/snycCalendarOrchOrchestrator',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${apiResult.accessToken}`,
+          },
+        },
+      );
       if (result.ok) {
-        return loadingStateEnum.success
-      } else {
-        return loadingStateEnum.failed
+        return loadingStateEnum.success;
       }
-    } else {
-      return loadingStateEnum.failed
+      return loadingStateEnum.failed;
     }
+    return loadingStateEnum.failed;
   }
-  return main
+  return main;
 }

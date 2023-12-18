@@ -19,7 +19,7 @@ export default function GovernmentTimetable() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Link href={'/profile/government/calendar/'}>
+        <Link href="/profile/government/calendar/">
           <Text>Back</Text>
         </Link>
         <Text>Timetables</Text>
@@ -27,7 +27,7 @@ export default function GovernmentTimetable() {
       <View style={{ height: height * 0.85 }}>
         <SelectTimetable governmentMode />
       </View>
-      <Link href={'/profile/government/calendar/timetable/create'}>
+      <Link href="/profile/government/calendar/timetable/create">
         <Text>Create New</Text>
       </Link>
     </View>

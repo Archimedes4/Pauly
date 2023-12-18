@@ -12,7 +12,7 @@ export default function SVGXml({
   xml,
   height,
   width,
-}:{
+}: {
   xml: string;
   width: number;
   height: number;

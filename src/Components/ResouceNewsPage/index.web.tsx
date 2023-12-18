@@ -1,12 +1,18 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
-import React from 'react'
-import WebViewCross from '../WebViewCross';
+import { View, Text, ScrollView, Pressable } from 'react-native';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@Redux/store';
 import { Colors } from '@src/types';
+import WebViewCross from '../WebViewCross';
 import { CloseIcon } from '../Icons';
 
-export default function ResourceNewsPage({selectedPost, setSelectedPost}:{selectedPost: newsPost, setSelectedPost: (item: undefined) => void}) {
+export default function ResourceNewsPage({
+  selectedPost,
+  setSelectedPost,
+}: {
+  selectedPost: newsPost;
+  setSelectedPost: (item: undefined) => void;
+}) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   return (
     <ScrollView
@@ -50,7 +56,6 @@ export default function ResourceNewsPage({selectedPost, setSelectedPost}:{select
         width={width * 0.9}
         height={height * 0.85}
       />
-      
     </ScrollView>
-  )
+  );
 }

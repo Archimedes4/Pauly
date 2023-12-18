@@ -1,10 +1,16 @@
-export default function getMainHeight(full: number, top: number, bottom: number, isTop: boolean, isBottom: boolean) {
-  let result = full
+export default function getMainHeight(
+  full: number,
+  top: number,
+  bottom: number,
+  isTop: boolean,
+  isBottom: boolean,
+) {
+  let result = full;
   if (!isTop) {
-    result -= top
+    result -= top;
   }
   if (!isBottom) {
-    result -= bottom
+    result -= bottom;
   }
-  return result
+  return result;
 }

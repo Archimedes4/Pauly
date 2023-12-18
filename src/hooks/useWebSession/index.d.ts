@@ -1,2 +1,2 @@
-declare const useWebSession:  () => () => boolean
-export = useWebSession
+declare const useWebSession: () => () => boolean;
+export = useWebSession;

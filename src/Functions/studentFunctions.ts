@@ -89,7 +89,7 @@ export async function getUsers(url?: string, search?: string) {
     for (let index = 0; index < data.value.length; index += 1) {
       userIds.push(data.value[index].id);
     }
-    console.log('Mark One')
+    console.log('Mark One');
     // Getting selected user images from student files list in a batch request.
     const batchResult = await largeBatch(undefined, {
       firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
@@ -105,13 +105,13 @@ export async function getUsers(url?: string, search?: string) {
       batchResult.result === loadingStateEnum.success &&
       batchResult.data !== undefined
     ) {
-      console.log('Mark Two')
+      console.log('Mark Two');
       for (
         let batchIndex = 0;
         batchIndex < batchResult.data.length;
         batchIndex += 1
       ) {
-        console.log('Mark Three')
+        console.log('Mark Three');
         if (batchResult.data[batchIndex].status === 200) {
           // TO DO OK
           if (batchResult.data[batchIndex].body.value.length === 1) {

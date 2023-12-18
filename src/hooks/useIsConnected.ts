@@ -20,7 +20,7 @@ export default function useIsConnected() {
     }
   }
 
-  //connection hook
+  // connection hook
   useEffect(() => {
     checkIfConnected();
     const intervalId = setInterval(() => {
@@ -30,5 +30,5 @@ export default function useIsConnected() {
 
     return () => clearInterval(intervalId);
   }, []);
-  return isConnected
+  return isConnected;
 }

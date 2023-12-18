@@ -6,9 +6,7 @@ import store, { RootState } from '@Redux/store';
 import { Colors, loadingStateEnum } from '@src/types';
 import { WarningIcon } from '@src/components/Icons';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID, {
-  getTextState,
-} from '@src/Functions/ultility/createUUID';
+import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
 
 export default function GovermentRoomsCreate() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

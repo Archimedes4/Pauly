@@ -32,7 +32,7 @@ export default async function getDressCodeData(): Promise<{
           dressCodeIncentives: [],
         });
       } catch {
-        //continue on
+        // continue on
       }
     }
     return { result: loadingStateEnum.success, data: newDressCodes };

@@ -32,7 +32,7 @@ export default function GovernmentSchedule() {
   return (
     <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Link href={'/profile/government/calendar'}>
+        <Link href="/profile/government/calendar">
           <Text>Back</Text>
         </Link>
         <View
@@ -65,7 +65,9 @@ export default function GovernmentSchedule() {
             <FlatList
               data={loadedSchedules}
               renderItem={schedule => (
-                <Link href={`/profile/government/calendar/schedule/${schedule.item.id}`}>
+                <Link
+                  href={`/profile/government/calendar/schedule/${schedule.item.id}`}
+                >
                   <View
                     style={{
                       backgroundColor: Colors.white,
@@ -79,7 +81,9 @@ export default function GovernmentSchedule() {
                     }}
                     key={schedule.item.id}
                   >
-                    <Text style={{ margin: 10 }}>{schedule.item.properName}</Text>
+                    <Text style={{ margin: 10 }}>
+                      {schedule.item.properName}
+                    </Text>
                   </View>
                 </Link>
               )}
@@ -90,7 +94,7 @@ export default function GovernmentSchedule() {
         </View>
       ) : null}
       {loadingState === loadingStateEnum.failed ? <Text>Failure</Text> : null}
-      <Link href={'/profile/government/calendar/schedule/create'}>
+      <Link href="/profile/government/calendar/schedule/create">
         <View
           style={{
             backgroundColor: Colors.white,

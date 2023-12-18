@@ -249,9 +249,7 @@ export default function GovernmentAdmin() {
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
       <View>
-        <Link href={'/government'}>
-          Back
-        </Link>
+        <Link href="/government">Back</Link>
       </View>
       <View style={{ flexDirection: 'row' }}>
         <View>
@@ -381,12 +379,12 @@ export default function GovernmentAdmin() {
               {initResult === loadingStateEnum.cannotStart
                 ? 'Please Pick a User'
                 : initResult === loadingStateEnum.notStarted
-                ? 'initialize Pauly on New Tenant'
-                : initResult === loadingStateEnum.loading
-                ? `Loading ${timeLeft}`
-                : initResult === loadingStateEnum.success
-                ? 'Success'
-                : 'Failed'}
+                  ? 'initialize Pauly on New Tenant'
+                  : initResult === loadingStateEnum.loading
+                    ? `Loading ${timeLeft}`
+                    : initResult === loadingStateEnum.success
+                      ? 'Success'
+                      : 'Failed'}
             </Text>
           </Pressable>
           {initTwoResult !== loadingStateEnum.cannotStart ? (
@@ -399,10 +397,10 @@ export default function GovernmentAdmin() {
                 {initTwoResult === loadingStateEnum.notStarted
                   ? 'Start From Part Two'
                   : initTwoResult === loadingStateEnum.loading
-                  ? 'Loading'
-                  : initTwoResult === loadingStateEnum.success
-                  ? 'Success'
-                  : 'Failed'}
+                    ? 'Loading'
+                    : initTwoResult === loadingStateEnum.success
+                      ? 'Success'
+                      : 'Failed'}
               </Text>
             </Pressable>
           ) : null}
@@ -454,10 +452,10 @@ export default function GovernmentAdmin() {
                   {initThreeResult === loadingStateEnum.notStarted
                     ? 'Start From Part Three'
                     : initThreeResult === loadingStateEnum.loading
-                    ? 'Loading'
-                    : initThreeResult === loadingStateEnum.success
-                    ? 'Success'
-                    : 'Failed'}
+                      ? 'Loading'
+                      : initThreeResult === loadingStateEnum.success
+                        ? 'Success'
+                        : 'Failed'}
                 </Text>
               </Pressable>
             </View>

@@ -1,0 +1,8 @@
+{
+  "name":"Pauly",
+  "short_name":"Pauly",
+  "start_url":".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "An app for students by students. Designed in Manitoba by Andrew Mainella 2023"
+}

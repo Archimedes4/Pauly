@@ -41,13 +41,16 @@ export async function getTeams(nextLink?: string): Promise<{
 export async function getChannels(
   teamId: string,
   nextLink: string | undefined = undefined,
-): Promise<{
-  result: loadingStateEnum.failed;
-}|{
-  result: loadingStateEnum.success;
-  data: channelType[];
-  nextLink?: string;
-}> {
+): Promise<
+  | {
+      result: loadingStateEnum.failed;
+    }
+  | {
+      result: loadingStateEnum.success;
+      data: channelType[];
+      nextLink?: string;
+    }
+> {
   const result = await callMsGraph(
     nextLink || `https://graph.microsoft.com/v1.0/teams/${teamId}/allChannels`,
   );

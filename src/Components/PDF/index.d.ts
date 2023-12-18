@@ -5,8 +5,6 @@
   PDFView.tsx
   Used to stop type errors never compiled.
 */
-declare const PDFView: ({
-  width: number,
-}) => React.JSX.Element 
+declare const PDFView: ({ width: number }) => React.JSX.Element;
 
-export = SVGXml
+export = SVGXml;

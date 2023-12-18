@@ -17,11 +17,7 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { convertYearToSchoolYear } from '@Functions/calendar/calendarFunctions';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import createUUID from '@src/Functions/ultility/createUUID';
-import {
-  Colors,
-  dataContentTypeOptions,
-  loadingStateEnum,
-} from '@src/types';
+import { Colors, dataContentTypeOptions, loadingStateEnum } from '@src/types';
 import store, { RootState } from '@Redux/store';
 import { getTeams } from '@Functions/microsoftGroupsFunctions';
 import ProgressView from '@components/ProgressView';
@@ -444,10 +440,10 @@ export default function GovernmentCreateNewTeam() {
                   ? 'CREATE TEAM'
                   : 'UPDATE TEAM'
                 : createTeamLoadingState === loadingStateEnum.loading
-                ? 'LOADING'
-                : createTeamLoadingState === loadingStateEnum.success
-                ? 'SUCCESS'
-                : 'FAILED'}
+                  ? 'LOADING'
+                  : createTeamLoadingState === loadingStateEnum.success
+                    ? 'SUCCESS'
+                    : 'FAILED'}
             </Text>
           </Pressable>
         </ScrollView>

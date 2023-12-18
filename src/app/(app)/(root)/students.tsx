@@ -284,7 +284,7 @@ export default function Students() {
   }
 
   useEffect(() => {
-    console.log('Called EFFECT')
+    console.log('Called EFFECT');
     loadUsers();
   }, []);
 
@@ -335,11 +335,11 @@ export default function Students() {
         <SearchBox
           onGetUsers={e => {
             if (e !== '') {
-              console.log('Called SEARCH')
+              console.log('Called SEARCH');
               getUsers(undefined, e);
               dispatch(studentSearchSlice.actions.setNextLink(undefined));
             } else {
-              console.log('Called SEARCH BOTTOm')
+              console.log('Called SEARCH BOTTOm');
               getUsers();
             }
           }}
@@ -352,7 +352,7 @@ export default function Students() {
           numColumns={getNumberOfBlocks(width)}
           onEndReached={() => {
             if (nextLink !== undefined) {
-              console.log('Called Flat')
+              console.log('Called Flat');
               getUsers(nextLink);
             }
           }}
@@ -370,7 +370,7 @@ export default function Students() {
         backgroundColor: currentBreakPoint === 0 ? Colors.maroon : Colors.white,
       }}
     >
-      <Link href={"/"}>
+      <Link href="/">
         <Text>Back</Text>
       </Link>
       <Text>Something went wrong</Text>

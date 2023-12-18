@@ -1,5 +1,5 @@
-import { View, Text, Pressable } from 'react-native'
-import React from 'react'
+import { View, Text, Pressable } from 'react-native';
+import React from 'react';
 import { Link } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@src/Redux/store';
@@ -11,7 +11,7 @@ export default function calendarSync() {
   const syncCalendar = useSyncCalendar();
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/profile/government/calendar/'}>
+      <Link href="/profile/government/calendar/">
         <Text>Back</Text>
       </Link>
       <Text>Calendar Sync</Text>
@@ -19,5 +19,5 @@ export default function calendarSync() {
         <Text>Sync Calendar</Text>
       </Pressable>
     </View>
-  )
+  );
 }

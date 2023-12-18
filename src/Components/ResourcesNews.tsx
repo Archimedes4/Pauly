@@ -43,7 +43,10 @@ export default function ResourcesNews() {
 
   if (selectedPost !== undefined) {
     return (
-      <ResourceNewsPage selectedPost={selectedPost} setSelectedPost={setSelectedPost}/>
+      <ResourceNewsPage
+        selectedPost={selectedPost}
+        setSelectedPost={setSelectedPost}
+      />
     );
   }
 

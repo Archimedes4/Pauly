@@ -1,3 +1,3 @@
-declare const RootLayout: () => React.JSX.Element 
+declare const RootLayout: () => React.JSX.Element;
 
-export = RootLayout
+export = RootLayout;

@@ -55,7 +55,7 @@ export default function GovernmentHandleFileSubmissions({
     >
       <ProgressView width={0} height={0} />
       <Text>loading</Text>
-    </View>
+    </View>;
   }
 
   if (loadingSubmissionsState === loadingStateEnum.success) {
@@ -67,7 +67,9 @@ export default function GovernmentHandleFileSubmissions({
           <Pressable
             key={`Submission_${item.item.submissionId}_${createUUID()}`}
             onPress={() =>
-              router.replace(`/profile/government/sports/post/review/${item.item.submissionId}`)
+              router.replace(
+                `/profile/government/sports/post/review/${item.item.submissionId}`,
+              )
             }
             style={{ borderColor: 'black', borderWidth: 2 }}
           >
@@ -78,7 +80,7 @@ export default function GovernmentHandleFileSubmissions({
           </Pressable>
         )}
       />
-    </View>
+    </View>;
   }
 
   return (

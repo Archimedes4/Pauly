@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  17 December 2023
+  commissions.tsx
+  Holds the main commission view. To learn about what commissions are see README
+*/
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   FlatList,

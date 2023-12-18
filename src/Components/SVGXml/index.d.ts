@@ -7,11 +7,11 @@
 */
 
 interface SXGXmlProps {
-  xml: string,
-  width: number,
-  height: number,
+  xml: string;
+  width: number;
+  height: number;
 }
 
-declare const SVGXml: React.FC<SXGXmlProps>
+declare const SVGXml: React.FC<SXGXmlProps>;
 
-export = SVGXml
+export = SVGXml;

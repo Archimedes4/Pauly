@@ -688,21 +688,20 @@ export default function Notifications() {
         top: Colors.white,
         bottom: Colors.white,
         isTopTransparent: true,
-        isBottomTransparent: true
+        isBottomTransparent: true,
       }),
     );
   }, [dispatch]);
 
   return (
     <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
-      <View style={{height: insets.top}}>
-      </View>
+      <View style={{ height: insets.top }} />
       {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
       <View
         style={{
           width,
           height: height * 0.1,
-          marginTop: currentBreakPoint === 0 ? 10 : 0
+          marginTop: currentBreakPoint === 0 ? 10 : 0,
         }}
       >
         <View

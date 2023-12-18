@@ -5,7 +5,7 @@ const initalState: safeAreaType = {
   top: Colors.maroon,
   bottom: Colors.maroon,
   isTopTransparent: false,
-  isBottomTransparent: false
+  isBottomTransparent: false,
 };
 
 export const safeAreaColorsSlice = createSlice({
@@ -20,8 +20,8 @@ export const safeAreaColorsSlice = createSlice({
         isTopTransparent: state.isTopTransparent,
         isBottomTransparent: state.isBottomTransparent,
         top: action.payload.top,
-        bottom: action.payload.bottom
-      }
+        bottom: action.payload.bottom,
+      };
     },
     setSafeAreaColorTop: (state, action: PayloadAction<string>) => {
       return { ...state, top: action.payload };
@@ -30,8 +30,8 @@ export const safeAreaColorsSlice = createSlice({
       return { ...state, bottom: action.payload };
     },
     setSafeArea: (_state, action: PayloadAction<safeAreaType>) => {
-      return action.payload
-    }
+      return action.payload;
+    },
   },
 });
 

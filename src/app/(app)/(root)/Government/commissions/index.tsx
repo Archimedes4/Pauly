@@ -7,11 +7,7 @@ import getCommissions from '@Functions/commissions/getCommissions';
 import getSubmissions from '@Functions/commissions/getSubmissions';
 import createUUID from '@src/Functions/ultility/createUUID';
 import { RootState } from '@Redux/store';
-import {
-  Colors,
-  loadingStateEnum,
-  submissionTypeEnum,
-} from '@src/types';
+import { Colors, loadingStateEnum, submissionTypeEnum } from '@src/types';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 

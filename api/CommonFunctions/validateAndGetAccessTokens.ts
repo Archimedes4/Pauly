@@ -13,9 +13,9 @@ export default async function validateAndGetAccessTokens(
 ): Promise<validationReturn | undefined> {
   // On behalf of flow
   try {
-    console.log("MARK1")
+    console.log('MARK1');
     const token = await validateToken(req);
-    console.log("MARK2")
+    console.log('MARK2');
     const authPostData = `&grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer&client_id=${process.env.CLIENTID}&client_secret=${process.env.CLIENTSECRET}&assertion=${token}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default&requested_token_use=on_behalf_of`;
     const authResult = await fetch(
       `https://login.microsoftonline.com/${process.env.TENANTID}/oauth2/v2.0/token`,
@@ -29,7 +29,7 @@ export default async function validateAndGetAccessTokens(
       return;
     }
     const authResultData = await authResult.json();
-    console.log("MARK3")
+    console.log('MARK3');
 
     // Client Credentials
     const postData = `&grant_type=client_credentials&client_id=${config.auth.clientId}&client_secret=${config.auth.clientSecret}&scope=https%3A%2F%2Fgraph.microsoft.com%2F.default`;
@@ -47,8 +47,7 @@ export default async function validateAndGetAccessTokens(
       clientCredentialsAccessToken: credentialToken,
     };
   } catch (e) {
-    console.log(e)
-    return
+    console.log(e);
   }
 }
 

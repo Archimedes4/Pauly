@@ -59,10 +59,10 @@ function MonthBlock({
               day == textval
                 ? 'red'
                 : day >= textval + 1
-                ? 'gray'
-                : monthViewData !== undefined
-                ? monthViewData.eventColor
-                : Colors.white,
+                  ? 'gray'
+                  : monthViewData !== undefined
+                    ? monthViewData.eventColor
+                    : Colors.white,
           }}
         />
       ) : (

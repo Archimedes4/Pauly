@@ -17,12 +17,12 @@ import {
 import store, { RootState } from '@Redux/store';
 import { Colors, paperTheme } from '@src/types';
 import setDimentions from '@Functions/ultility/setDimentions';
-import { Slot } from "expo-router";
+import { Slot } from 'expo-router';
 import getMainHeight from '@src/Functions/getMainHeight';
 
 const windowDimensions = Dimensions.get('window');
 
-//App core holds dimentions
+// App core holds dimentions
 function AppCore() {
   // Dimentions
   const safeAreaColors = useSelector(
@@ -36,50 +36,75 @@ function AppCore() {
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener(
-      'change',
-      ({window}) => {
-        setStateDimensions(window);
-        setDimentions(window.width, window.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
-      },
-    );
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setStateDimensions(window);
+      setDimentions(
+        window.width,
+        window.height,
+        insets,
+        safeAreaColors.isTopTransparent,
+        safeAreaColors.isBottomTransparent,
+      );
+    });
     return () => subscription?.remove();
   });
 
   useEffect(() => {
-    setDimentions(dimensions.width, dimensions.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
-  }, [expandedMode, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent])
+    setDimentions(
+      dimensions.width,
+      dimensions.height,
+      insets,
+      safeAreaColors.isTopTransparent,
+      safeAreaColors.isBottomTransparent,
+    );
+  }, [
+    expandedMode,
+    safeAreaColors.isTopTransparent,
+    safeAreaColors.isBottomTransparent,
+  ]);
 
   useEffect(() => {
     const newDimensions = Dimensions.get('window');
     setStateDimensions(newDimensions);
-    setDimentions(newDimensions.width, newDimensions.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
+    setDimentions(
+      newDimensions.width,
+      newDimensions.height,
+      insets,
+      safeAreaColors.isTopTransparent,
+      safeAreaColors.isBottomTransparent,
+    );
   }, []);
 
   return (
     <>
-      {!safeAreaColors.isTopTransparent ?
+      {!safeAreaColors.isTopTransparent ? (
         <View
           style={{
             width: dimensions.width,
             height: insets.top,
-            backgroundColor: safeAreaColors.top
+            backgroundColor: safeAreaColors.top,
           }}
-        />:null
-      }
+        />
+      ) : null}
       <View
         style={{
           backgroundColor: safeAreaColors.bottom,
           width: dimensions.width,
-          height: getMainHeight(dimensions.height, insets.top, insets.bottom, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent),
+          height: getMainHeight(
+            dimensions.height,
+            insets.top,
+            insets.bottom,
+            safeAreaColors.isTopTransparent,
+            safeAreaColors.isBottomTransparent,
+          ),
           zIndex: 10,
-          top: safeAreaColors.isTopTransparent ? 0:insets.top,
-          position: 'absolute'
+          top: safeAreaColors.isTopTransparent ? 0 : insets.top,
+          position: 'absolute',
         }}
-      > 
-        <Slot />      
+      >
+        <Slot />
       </View>
-      {!safeAreaColors.isBottomTransparent ? 
+      {!safeAreaColors.isBottomTransparent ? (
         <View
           style={{
             width: dimensions.width,
@@ -88,8 +113,8 @@ function AppCore() {
             position: 'absolute',
             bottom: 0,
           }}
-        />:null
-      }
+        />
+      ) : null}
       {currentBreakPoint >= 1 ? (
         <View
           style={{
@@ -108,7 +133,7 @@ function AppCore() {
   );
 }
 
-//Main Root app holds providers
+// Main Root app holds providers
 export default function RootLayout() {
   return (
     <Provider store={store}>

@@ -1,8 +1,8 @@
-import { microsoftProfileDataSlice } from '../../Redux/reducers/microsoftProfileDataReducer';
 import store from '@Redux/store';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { fetchUserInfoAsync, useAutoDiscovery } from 'expo-auth-session';
 import { tenantId } from '@src/PaulyConfig';
+import { microsoftProfileDataSlice } from '../../Redux/reducers/microsoftProfileDataReducer';
 
 export default function getUserProfile() {
   const discovery = useAutoDiscovery(
@@ -10,10 +10,13 @@ export default function getUserProfile() {
   );
   async function main() {
     if (discovery !== null) {
-      const account = await fetchUserInfoAsync({
-        accessToken: store.getState().authenticationToken
-      }, discovery)
-      console.log(account)
+      const account = await fetchUserInfoAsync(
+        {
+          accessToken: store.getState().authenticationToken,
+        },
+        discovery,
+      );
+      console.log(account);
     }
     // if (account !== null && account.name !== undefined && account.localAccountId) {
     //   store.dispatch(
@@ -23,21 +26,21 @@ export default function getUserProfile() {
     //     }),
     //   );
     // } else {
-      const profileResult = await callMsGraph(
-        'https://graph.microsoft.com/v1.0/me',
-        'GET',
+    const profileResult = await callMsGraph(
+      'https://graph.microsoft.com/v1.0/me',
+      'GET',
+    );
+    if (profileResult.ok) {
+      const profileData = await profileResult.json();
+      store.dispatch(
+        microsoftProfileDataSlice.actions.setMicrosoftProfileInformation({
+          displayName: profileData.displayName,
+          id: profileData.id,
+        }),
       );
-      if (profileResult.ok) {
-        const profileData = await profileResult.json();
-        store.dispatch(
-          microsoftProfileDataSlice.actions.setMicrosoftProfileInformation({
-            displayName: profileData.displayName,
-            id: profileData.id,
-          }),
-        );
-      }
-      //No need to fail they will have no name. If something like this where to fail they would most likly be redirected for having some other problem.
-   // }
+    }
+    // No need to fail they will have no name. If something like this where to fail they would most likly be redirected for having some other problem.
+    // }
   }
-  return main
+  return main;
 }

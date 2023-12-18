@@ -6,7 +6,7 @@
   Stores all of paulys types
 */
 
-import { DefaultTheme } from "react-native-paper";
+import { DefaultTheme } from 'react-native-paper';
 
 // From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 export enum breakPointMode {
@@ -276,7 +276,7 @@ declare global {
     bottom: string;
     isTopTransparent: boolean;
     isBottomTransparent: boolean;
-  }
+  };
   type scholarship = {
     title: string;
     note: string;
@@ -516,7 +516,7 @@ export class Colors {
   static danger = 'red';
 }
 
-//constance
+// constance
 export const paperTheme = {
   ...DefaultTheme,
   roundness: 2,

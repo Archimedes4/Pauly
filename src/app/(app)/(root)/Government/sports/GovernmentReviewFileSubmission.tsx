@@ -281,8 +281,10 @@ export default function GovernmentReviewFileSubmission() {
               postType.youtubeVideo ? (
                 <View style={{ height: ((width * 0.9) / 16) * 9 }}>
                   <SportsYoutube
-                          videoId={currentSubmissionInfomration.fileId}
-                          width={width * 0.9} height={undefined}                  />
+                    videoId={currentSubmissionInfomration.fileId}
+                    width={width * 0.9}
+                    height={undefined}
+                  />
                 </View>
               ) : null}
               <Pressable
@@ -303,13 +305,13 @@ export default function GovernmentReviewFileSubmission() {
                   {approveSubmissionState === loadingStateEnum.loading
                     ? 'Loading'
                     : approveSubmissionState === loadingStateEnum.success ||
-                      approveSubmissionState === loadingStateEnum.notStarted
-                    ? currentSubmissionInfomration.reviewed
-                      ? currentSubmissionInfomration.accepted
-                        ? 'Submission Approved'
+                        approveSubmissionState === loadingStateEnum.notStarted
+                      ? currentSubmissionInfomration.reviewed
+                        ? currentSubmissionInfomration.accepted
+                          ? 'Submission Approved'
+                          : 'Approve'
                         : 'Approve'
-                      : 'Approve'
-                    : 'Failed'}
+                      : 'Failed'}
                 </Text>
               </Pressable>
               <Pressable onPress={() => denySubmission()}>

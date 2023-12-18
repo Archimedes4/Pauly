@@ -1,3 +1,3 @@
-declare const GovernmentResourcePost: () => React.JSX.Element 
+declare const GovernmentResourcePost: () => React.JSX.Element;
 
-export = GovernmentResourcePost
+export = GovernmentResourcePost;

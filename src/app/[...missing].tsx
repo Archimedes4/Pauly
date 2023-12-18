@@ -4,7 +4,7 @@
   23 November 2023
   [...missing.tsx]
 */
-import { useFocusEffect, useRouter } from 'expo-router'
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Platform } from 'react-native';
 
 export default function Missing() {
@@ -18,7 +18,5 @@ export default function Missing() {
       }
     });
   }
-  return (
-    null
-  )
+  return null;
 }

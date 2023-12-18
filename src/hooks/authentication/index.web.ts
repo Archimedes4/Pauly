@@ -6,12 +6,12 @@
   authentication component web, using msal library.
 */
 // import { useMsal } from "@azure/msal-react";
-import { authenticationTokenSlice } from "@Redux/reducers/authenticationTokenReducer";
-import store from "@Redux/store";
-import { scopes } from "@src/PaulyConfig";
-import { setWantGovernment } from "@Functions/handleGovernmentLogin";
-import { useRouter } from "expo-router";
-import { useMsal } from "@azure/msal-react";
+import { authenticationTokenSlice } from '@Redux/reducers/authenticationTokenReducer';
+import store from '@Redux/store';
+import { scopes } from '@src/PaulyConfig';
+import { setWantGovernment } from '@Functions/handleGovernmentLogin';
+import { useRouter } from 'expo-router';
+import { useMsal } from '@azure/msal-react';
 
 export const refresh = () => {
   const { instance } = useMsal();
@@ -19,29 +19,33 @@ export const refresh = () => {
     scopes,
     prompt: 'select_account',
   });
-  result.then((result) => {
+  result.then(result => {
     store.dispatch(
       authenticationTokenSlice.actions.setAuthenticationToken(
         result.accessToken,
       ),
     );
-  })
-}
+  });
+};
 
-export function useSilentLogin(): (() => Promise<void>) {
+export function useSilentLogin(): () => Promise<void> {
   const { instance } = useMsal();
   async function main() {
     // handle auth redired/do all initial setup for msal
     const redirectResult = await instance.handleRedirectPromise();
     if (redirectResult !== null) {
       instance.setActiveAccount(redirectResult.account);
-      store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(redirectResult.accessToken))
+      store.dispatch(
+        authenticationTokenSlice.actions.setAuthenticationToken(
+          redirectResult.accessToken,
+        ),
+      );
       return;
-    } 
-    //checking if an account exists
+    }
+    // checking if an account exists
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
-      //getting the first account
+      // getting the first account
       instance.setActiveAccount(accounts[0]);
       const accountResult = await instance.getActiveAccount();
       if (accountResult !== null) {
@@ -53,29 +57,27 @@ export function useSilentLogin(): (() => Promise<void>) {
             result.accessToken,
           ),
         );
-        return;
       }
     }
-    return;
   }
   return main;
 }
 
-export function useInvokeLogin(): ((government?: boolean) => Promise<void>) {
+export function useInvokeLogin(): (government?: boolean) => Promise<void> {
   const { instance } = useMsal();
-  //Invoking the login redirect does not handle the token
+  // Invoking the login redirect does not handle the token
   async function loginFunction(government?: boolean) {
     if (government !== undefined) {
-      console.log('want red')
+      console.log('want red');
       await setWantGovernment(government);
     }
-    instance.loginRedirect({scopes});
+    instance.loginRedirect({ scopes });
   }
 
   return loginFunction;
 }
 
-export function useSignOut(): (() => void) {
+export function useSignOut(): () => void {
   const { instance } = useMsal();
   async function main() {
     const account = instance.getActiveAccount();
@@ -84,5 +86,5 @@ export function useSignOut(): (() => void) {
       account,
     });
   }
-  return main
+  return main;
 }

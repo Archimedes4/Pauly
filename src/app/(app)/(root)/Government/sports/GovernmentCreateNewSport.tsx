@@ -116,7 +116,7 @@ export default function GovernmentCreateNewSport() {
         <Text>
           {getTextState(createSportLoadingState, {
             notStarted: 'Create',
-            success: 'Sport Created!'
+            success: 'Sport Created!',
           })}
         </Text>
       </Pressable>

@@ -12,7 +12,6 @@ export default async function getClientCredentiall(): Promise<string> {
   if (clientCredentialsResult.ok) {
     const clientCredentialsResultData = await clientCredentialsResult.json();
     return clientCredentialsResultData.access_token;
-  } else {
-    return "";
   }
+  return '';
 }

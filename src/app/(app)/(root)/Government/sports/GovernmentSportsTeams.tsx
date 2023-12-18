@@ -6,10 +6,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import store, { RootState } from '@Redux/store';
 import { Colors, loadingStateEnum } from '@src/types';
-import {
-  getSport,
-  getSportsTeams,
-} from '@Functions/sports/sportsFunctions';
+import { getSport, getSportsTeams } from '@Functions/sports/sportsFunctions';
 import { WarningIcon } from '@src/components/Icons';
 import SVGXml from '@components/SVGXml';
 import { getTextState } from '@src/Functions/ultility/createUUID';
@@ -224,10 +221,10 @@ export default function GovernmentSportsTeams() {
             {deleteSportState === loadingStateEnum.loading
               ? 'Loading'
               : deleteSportState === loadingStateEnum.notStarted
-              ? 'Delete Sport'
-              : deleteSportState === loadingStateEnum.success
-              ? 'Sport Deleted'
-              : 'Failed To Delete Sport'}
+                ? 'Delete Sport'
+                : deleteSportState === loadingStateEnum.success
+                  ? 'Sport Deleted'
+                  : 'Failed To Delete Sport'}
           </Text>
         </View>
       </Pressable>

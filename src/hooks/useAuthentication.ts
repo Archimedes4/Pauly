@@ -3,34 +3,38 @@
   Andrew Mainella
   Main authentication method hold logic calling platform based login methods.
 */
-import getPaulyLists from "@src/Functions/ultility/getPaulyLists";
-import useGetUserProfile from "@src/hooks/useGetUserProfile";
-import useWebSession from "@hooks/useWebSession";
-import store from "@Redux/store";
-import { useSilentLogin } from "./authentication";
-import { checkIfGovernmentMode, getWantGovernment, validateGovernmentMode } from "@Functions/handleGovernmentLogin";
-import { useEffect, useState } from "react";
+import getPaulyLists from '@src/Functions/ultility/getPaulyLists';
+import useGetUserProfile from '@src/hooks/useGetUserProfile';
+import useWebSession from '@hooks/useWebSession';
+import store from '@Redux/store';
+import {
+  checkIfGovernmentMode,
+  getWantGovernment,
+  validateGovernmentMode,
+} from '@Functions/handleGovernmentLogin';
+import { useEffect, useState } from 'react';
+import { useSilentLogin } from './authentication';
 
 export default function useAuthentication() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const silentLogin = useSilentLogin();
   const webSession = useWebSession();
   const getUserProfile = useGetUserProfile();
-  //main function
+  // main function
   async function loadContent() {
     await silentLogin();
     if (store.getState().authenticationToken !== '') {
-      const webResult = webSession()
+      const webResult = webSession();
       if (!webResult) {
         await getPaulyLists();
       }
       await getUserProfile();
-      console.log("at want")
+      console.log('at want');
       if (await getWantGovernment()) {
-        console.log("it Wanted")
-        await validateGovernmentMode()
+        console.log('it Wanted');
+        await validateGovernmentMode();
       } else {
-        console.log('Not wanted')
+        console.log('Not wanted');
       }
       setIsLoading(false);
     } else {
@@ -39,8 +43,8 @@ export default function useAuthentication() {
   }
 
   useEffect(() => {
-    loadContent(); 
-  }, [])
+    loadContent();
+  }, []);
 
-  return isLoading
+  return isLoading;
 }

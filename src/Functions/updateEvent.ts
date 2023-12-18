@@ -181,17 +181,17 @@ export default async function createEvent(): Promise<undefined> {
           paulyEventType.schoolDay
             ? 'schoolDay'
             : store.getState().addEvent.selectedEventType ===
-              paulyEventType.schoolYear
-            ? 'schoolYear'
-            : undefined,
+                paulyEventType.schoolYear
+              ? 'schoolYear'
+              : undefined,
         paulyEventData:
           store.getState().addEvent.selectedEventType ===
           paulyEventType.schoolDay
             ? JSON.stringify(store.getState().addEvent.selectedSchoolDayData)
             : store.getState().addEvent.selectedEventType ===
-              paulyEventType.schoolYear
-            ? store.getState().addEvent.selectedTimetable.id
-            : undefined,
+                paulyEventType.schoolYear
+              ? store.getState().addEvent.selectedTimetable.id
+              : undefined,
         microsoftEvent: true,
         microsoftReference: `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${dataOut.id}`,
         allDay: false,

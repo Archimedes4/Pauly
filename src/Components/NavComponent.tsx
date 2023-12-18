@@ -8,6 +8,7 @@
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'expo-router';
 import store, { RootState } from '../Redux/store';
 import {
   BookIcon,
@@ -21,7 +22,6 @@ import {
 import { expandedModeSlice } from '../Redux/reducers/expandedModeReducer';
 import { isShowingProfileBlockSlice } from '../Redux/reducers/isShowingProfileBlockReducer';
 import { Colors } from '../types';
-import { Link } from 'expo-router';
 
 function NavBarBlock({
   des,

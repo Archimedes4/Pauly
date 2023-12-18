@@ -7,11 +7,11 @@
 */
 import { Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
-import { ChevronLeft } from './Icons';
 import { Link } from 'expo-router';
 import { RootState } from '@src/Redux/store';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ChevronLeft } from './Icons';
 
 export default function BackButton({
   to,
@@ -26,16 +26,19 @@ export default function BackButton({
   );
   const insets = useSafeAreaInsets();
   return (
-    <Link href={to} style={[
-      {
-        position: 'absolute',
-        flexDirection: 'row',
-        top: isTopTransparent ? insets.top:0,
-        left: 5,
-        zIndex: 100,
-      },
-      style,
-    ]}>
+    <Link
+      href={to}
+      style={[
+        {
+          position: 'absolute',
+          flexDirection: 'row',
+          top: isTopTransparent ? insets.top : 0,
+          left: 5,
+          zIndex: 100,
+        },
+        style,
+      ]}
+    >
       <ChevronLeft width={14} height={14} />
       <Text>Back</Text>
     </Link>

@@ -198,10 +198,10 @@ export default function GovernmentTimetableEdit() {
           createTimetableLoadingState === loadingStateEnum.notStarted
             ? 'Create Timetable'
             : createTimetableLoadingState === loadingStateEnum.loading
-            ? 'Loading'
-            : createTimetableLoadingState === loadingStateEnum.success
-            ? 'Success'
-            : 'Failed'
+              ? 'Loading'
+              : createTimetableLoadingState === loadingStateEnum.success
+                ? 'Success'
+                : 'Failed'
         }
         onPress={() => {
           if (createTimetableLoadingState === loadingStateEnum.notStarted) {

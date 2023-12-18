@@ -1,2 +1,2 @@
-declare function useSyncCalendar(): () => Promise<loadingStateEnum>
-export = useSyncCalendar
+declare function useSyncCalendar(): () => Promise<loadingStateEnum>;
+export = useSyncCalendar;

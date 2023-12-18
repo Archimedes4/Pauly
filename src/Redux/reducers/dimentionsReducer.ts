@@ -8,7 +8,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 const initalState: {
   width: number;
-  totalWidth: number//the width of entire screen
+  totalWidth: number; // the width of entire screen
   height: number;
   currentBreakPoint: number;
 } = { width: 0, totalWidth: 0, height: 0, currentBreakPoint: 0 };
@@ -17,7 +17,10 @@ export const dimentionsSlice = createSlice({
   name: 'dimentions',
   initialState: initalState,
   reducers: {
-    setDimentionsWidth: (state, action: PayloadAction<{width: number, totalWidth: number}>) => {
+    setDimentionsWidth: (
+      state,
+      action: PayloadAction<{ width: number; totalWidth: number }>,
+    ) => {
       return {
         width: action.payload.width,
         totalWidth: action.payload.totalWidth,
@@ -27,7 +30,11 @@ export const dimentionsSlice = createSlice({
     },
     setDimentionsWidthCurrentBreakPoint: (
       state,
-      action: PayloadAction<{ width: number; totalWidth: number; currentBreakPoint: number }>,
+      action: PayloadAction<{
+        width: number;
+        totalWidth: number;
+        currentBreakPoint: number;
+      }>,
     ) => {
       return {
         width: action.payload.width,

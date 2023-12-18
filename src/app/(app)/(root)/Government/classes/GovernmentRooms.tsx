@@ -30,7 +30,7 @@ export default function GovernmentRooms() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/profile/government/classes'}>
+      <Link href="/profile/government/classes">
         <Text>Back</Text>
       </Link>
       <Text>Rooms</Text>
@@ -53,7 +53,7 @@ export default function GovernmentRooms() {
           </View>
         )}
       </View>
-      <Link href={'/profile/government/classes/room/create'}>
+      <Link href="/profile/government/classes/room/create">
         <Text>Create Room</Text>
       </Link>
     </View>

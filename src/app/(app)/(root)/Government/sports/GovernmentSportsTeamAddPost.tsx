@@ -16,10 +16,7 @@ import callMsGraph from '@Functions/ultility/microsoftAssets';
 import createUUID from '@src/Functions/ultility/createUUID';
 import store, { RootState } from '@Redux/store';
 import { Colors, loadingStateEnum, postType } from '@src/types';
-import {
-  getSports,
-  getSportsTeams,
-} from '@Functions/sports/sportsFunctions';
+import { getSports, getSportsTeams } from '@Functions/sports/sportsFunctions';
 import ProgressView from '@components/ProgressView';
 import getYoutubeVideos from '@Functions/youtubeFunctions';
 

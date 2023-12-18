@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
 import { Colors, loadingStateEnum } from '@src/types';
 import { RootState } from '@Redux/store';
 import { getSports } from '@Functions/sports/sportsFunctions';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
+import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';
 
 export default function GovernmentSports() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -34,9 +34,7 @@ export default function GovernmentSports() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Link href={'/profile/government/'}>
-          Back
-        </Link>
+        <Link href="/profile/government/">Back</Link>
         <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>
           Government Sports
         </Text>
@@ -82,12 +80,8 @@ export default function GovernmentSports() {
         )}
       </View>
       <View style={{ height: height * 0.1, overflow: 'hidden' }}>
-        <Link href={'/profile/government/sports/create'}>
-          Create Sport
-        </Link>
-        <Link href={'/profile/government/sports/post/create'}>
-          Create Post
-        </Link>
+        <Link href="/profile/government/sports/create">Create Sport</Link>
+        <Link href="/profile/government/sports/post/create">Create Post</Link>
       </View>
       <GovernmentHandleFileSubmissions width={width} height={height * 0.4} />
     </View>

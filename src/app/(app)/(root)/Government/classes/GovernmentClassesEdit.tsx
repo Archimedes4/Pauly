@@ -387,12 +387,12 @@ export default function GovernmentClassesEdit() {
               {updateClassState === loadingStateEnum.cannotStart
                 ? 'Cannot Update Class'
                 : updateClassState === loadingStateEnum.notStarted
-                ? 'Update Class'
-                : updateClassState === loadingStateEnum.loading
-                ? 'Loading'
-                : updateClassState === loadingStateEnum.success
-                ? 'Updated Class'
-                : 'Failed To Update Class'}
+                  ? 'Update Class'
+                  : updateClassState === loadingStateEnum.loading
+                    ? 'Loading'
+                    : updateClassState === loadingStateEnum.success
+                      ? 'Updated Class'
+                      : 'Failed To Update Class'}
             </Text>
           </Pressable>
         </View>

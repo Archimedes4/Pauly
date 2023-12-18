@@ -5,7 +5,7 @@
   Sports page renders the scroll view an content.
 */
 import { ResizeMode, Video } from 'expo-av';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -241,8 +241,8 @@ export default function Sports() {
                               !isShowingTeams
                                 ? 0
                                 : isShowingTeams
-                                ? 5
-                                : 10,
+                                  ? 5
+                                  : 10,
                           }}
                         >
                           {sport.name}
@@ -480,7 +480,11 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
           </>
         ) : null}
         {post.item.data.postType === postType.youtubeVideo ? (
-          <SportsYoutube width={width * 0.9} videoId={post.item.data.fileId} height={100} />
+          <SportsYoutube
+            width={width * 0.9}
+            videoId={post.item.data.fileId}
+            height={100}
+          />
         ) : null}
       </View>
     </View>
@@ -619,12 +623,10 @@ function RosterImage({ id }: { id?: string }) {
 
   if (imageState === loadingStateEnum.success) {
     return (
-      <View>
-        <Image
-          source={{ uri: imageUrl }}
-          style={{ width: 20, height: 20, borderRadius: 10 }}
-        />
-      </View>
+      <Image
+        source={{ uri: imageUrl }}
+        style={{ width: 20, height: 20, borderRadius: 10 }}
+      />
     );
   }
 

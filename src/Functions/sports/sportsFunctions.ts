@@ -5,11 +5,7 @@
   sportsFunctions.ts
 */
 import store from '@Redux/store';
-import {
-  dataContentTypeOptions,
-  loadingStateEnum,
-  postType,
-} from '@src/types';
+import { dataContentTypeOptions, loadingStateEnum, postType } from '@src/types';
 import batchRequest from '@Functions/ultility/batchRequest';
 import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
 import callMsGraph from '@Functions/ultility/microsoftAssets';

@@ -7,10 +7,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
+import { useRouter } from 'expo-router';
 import callMsGraph from '../../Functions/ultility/microsoftAssets';
 import { RootState } from '../../Redux/store';
 import { loadingStateEnum } from '../../types';
-import { useRouter } from 'expo-router';
 
 export default function SelectTimetable({
   governmentMode,
@@ -73,7 +73,9 @@ export default function SelectTimetable({
               key={`Timetable_${timetable.id}`}
               onPress={() => {
                 if (governmentMode) {
-                  router.replace(`/profile/government/calendar/timetable/${timetable.id}`);
+                  router.replace(
+                    `/profile/government/calendar/timetable/${timetable.id}`,
+                  );
                 } else if (onSelect !== undefined) {
                   onSelect(timetable);
                 }

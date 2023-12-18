@@ -31,7 +31,7 @@ export default function GovernmentDressCode() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/profile/government/calendar'}>
+      <Link href="/profile/government/calendar">
         <Text>Back</Text>
       </Link>
       <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>
@@ -49,7 +49,11 @@ export default function GovernmentDressCode() {
                     key={dressCode.id}
                     to={`/profile/government/calendar/dresscode/${dressCode.id}`}
                     title={dressCode.name}
-                    width={width}caption={undefined} onPress={undefined} style={undefined}                  />
+                    width={width}
+                    caption={undefined}
+                    onPress={undefined}
+                    style={undefined}
+                  />
                 ))}
               </View>
             ) : (
@@ -58,7 +62,7 @@ export default function GovernmentDressCode() {
           </View>
         )}
       </View>
-      <Link href={'/profile/government/calendar/dresscode/create'}>
+      <Link href="/profile/government/calendar/dresscode/create">
         Create Dress Code
       </Link>
     </View>

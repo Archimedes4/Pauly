@@ -24,20 +24,17 @@ function AuthenticatedView() {
     (state: RootState) => state.isShowingProfileBlock,
   );
   const insets = useSafeAreaInsets();
-  
+
   return (
-    <View style={{ width: totalWidth, overflow: 'hidden'}}>
+    <View style={{ width: totalWidth, overflow: 'hidden' }}>
       <View style={{ flexDirection: 'row', width: totalWidth }}>
         {currentBreakPoint >= 1 ? (
-          <NavBarComponent
-            width={totalWidth * 0.1}
-            height={height}
-          />
+          <NavBarComponent width={totalWidth * 0.1} height={height} />
         ) : null}
         <View
           style={{
-            width: width,
-            backgroundColor: Colors.maroon
+            width,
+            backgroundColor: Colors.maroon,
           }}
         >
           <Slot />
@@ -59,21 +56,17 @@ function PushToAuth() {
       console.error(error);
     }
   });
-  return (
-    null
-  )
+  return null;
 }
 
 export default function Main() {
   const isAuthenticated = useIsAuthenticated();
   if (isAuthenticated.authenticated) {
-    return (
-      <AuthenticatedView />
-    )
+    return <AuthenticatedView />;
   }
 
   if (!isAuthenticated.loading) {
-    return (<PushToAuth />)
+    return <PushToAuth />;
   }
-  return null
+  return null;
 }

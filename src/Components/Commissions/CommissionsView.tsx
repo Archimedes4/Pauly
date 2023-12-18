@@ -316,12 +316,12 @@ export default function CommissionsView({
                         {takeImageState === CameraResult.notStarted
                           ? 'TAKE PHOTO'
                           : takeImageState === CameraResult.goToSettings
-                          ? 'Go To Settings And Give Camera Permissions'
-                          : takeImageState === CameraResult.permissionDenied
-                          ? 'Permission Denied'
-                          : takeImageState === CameraResult.success
-                          ? 'TAKE DIFFERENT PHOTO'
-                          : 'AN ERROR OCCURED'}
+                            ? 'Go To Settings And Give Camera Permissions'
+                            : takeImageState === CameraResult.permissionDenied
+                              ? 'Permission Denied'
+                              : takeImageState === CameraResult.success
+                                ? 'TAKE DIFFERENT PHOTO'
+                                : 'AN ERROR OCCURED'}
                       </Text>
                     )}
                   </Pressable>
@@ -350,10 +350,10 @@ export default function CommissionsView({
                         {pickImageState === CameraResult.notStarted
                           ? 'CHOOSE PHOTO'
                           : pickImageState === CameraResult.permissionDenied
-                          ? 'Permission Denied'
-                          : pickImageState === CameraResult.success
-                          ? 'USE A DIFFERENT PHOTO'
-                          : 'AN ERROR OCCURED'}
+                            ? 'Permission Denied'
+                            : pickImageState === CameraResult.success
+                              ? 'USE A DIFFERENT PHOTO'
+                              : 'AN ERROR OCCURED'}
                       </Text>
                     )}
                   </Pressable>

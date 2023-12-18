@@ -1,8 +1,8 @@
 import { View, Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
+import { useRouter } from 'expo-router';
 import createUUID from '../Functions/ultility/createUUID';
 import { Colors } from '../types';
-import { useRouter } from 'expo-router';
 
 export default function ListItem({
   to = undefined,
@@ -24,7 +24,7 @@ export default function ListItem({
     <Pressable
       onPress={() => {
         if (to !== undefined) {
-          router.replace(to)
+          router.replace(to);
         }
         if (onPress !== undefined) {
           onPress();

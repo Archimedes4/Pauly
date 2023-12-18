@@ -8,9 +8,9 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
+import { Link } from 'expo-router';
 import { RootState } from '../Redux/store';
 import { Colors } from '../types';
-import { Link } from 'expo-router';
 
 export default function PageNotFound() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);
@@ -27,7 +27,7 @@ export default function PageNotFound() {
       }}
     >
       <Text>Page Not Found</Text>
-      <Link href={'/'}>
+      <Link href="/">
         <Pressable
           onHoverIn={() => {
             setIsButtonHover(true);

@@ -34,9 +34,7 @@ import {
 import getCommission from '@Functions/commissions/getCommission';
 import getSubmissions from '@Functions/commissions/getSubmissions';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID, {
-  getTextState,
-} from '@src/Functions/ultility/createUUID';
+import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
 import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
 import updateCommission from '@Functions/commissions/updateCommission';
 
@@ -508,10 +506,10 @@ export default function GovernmentEditCommission() {
                 ? 'Create Commission'
                 : 'Save Changes'
               : submitCommissionState === loadingStateEnum.loading
-              ? 'Loading'
-              : submitCommissionState === loadingStateEnum.success
-              ? 'Success'
-              : 'Failed'}
+                ? 'Loading'
+                : submitCommissionState === loadingStateEnum.success
+                  ? 'Success'
+                  : 'Failed'}
           </Text>
         </Pressable>
         {!isCreating ? (
@@ -1183,10 +1181,10 @@ function SubmissionView({
               ? 'REMOVE APPROVAL'
               : 'APPROVE'
             : changeState === loadingStateEnum.loading
-            ? 'Loading'
-            : changeState === loadingStateEnum.success
-            ? 'Success'
-            : 'Failed'}
+              ? 'Loading'
+              : changeState === loadingStateEnum.success
+                ? 'Success'
+                : 'Failed'}
         </Text>
       </Pressable>
     </View>

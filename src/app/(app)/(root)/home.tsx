@@ -17,7 +17,7 @@ import ProgressView from '@components/ProgressView';
 import { BookIcon, MedalIcon, PersonIcon } from '@src/components/Icons';
 import ScrollingTextAnimation from '@components/ScrollingTextAnimation';
 import { Colors, loadingStateEnum } from '@src/types';
-import { Link, useRouter } from "expo-router";
+import { Link, useRouter } from 'expo-router';
 
 export default function HomePage() {
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function HomePage() {
         top: Colors.maroon,
         bottom: Colors.maroon,
         isTopTransparent: false,
-        isBottomTransparent: false
+        isBottomTransparent: false,
       }),
     );
   }, [dispatch]);
@@ -76,9 +76,7 @@ export default function HomePage() {
     <>
       <View style={{ backgroundColor: Colors.maroon, overflow: 'hidden' }}>
         <Link href="/notifications">
-          <Pressable
-            style={{ width: width * 1.0, height: height * 0.08 }}
-          >
+          <Pressable style={{ width: width * 1.0, height: height * 0.08 }}>
             {paulyDataState === loadingStateEnum.loading ? (
               <View
                 style={{
@@ -113,10 +111,8 @@ export default function HomePage() {
             )}
           </Pressable>
         </Link>
-        <Link href={"/calendar"}>
-          <Pressable
-            style={{ width: width * 0.999, height: height * 0.42 }}
-          >
+        <Link href="/calendar">
+          <Pressable style={{ width: width * 0.999, height: height * 0.42 }}>
             <View>
               <View
                 style={{
@@ -146,7 +142,7 @@ export default function HomePage() {
             height: height * 0.25,
           }}
         >
-          <Link href={"/commissions"}>
+          <Link href="/commissions">
             <View style={{ borderColor: 'black', borderWidth: 2 }}>
               <View
                 style={{
@@ -165,10 +161,8 @@ export default function HomePage() {
               />
             </View>
           </Link>
-          <Link href={"/sports"}>
-            <Pressable
-              style={{ borderColor: 'black', borderWidth: 2 }}
-            >
+          <Link href="/sports">
+            <Pressable style={{ borderColor: 'black', borderWidth: 2 }}>
               <View
                 style={{
                   backgroundColor: Colors.maroon,
@@ -203,7 +197,7 @@ export default function HomePage() {
             height: height * 0.25,
           }}
         >
-          <Link href={"/resources"}>
+          <Link href="/resources">
             <View style={{ borderColor: 'black', borderWidth: 2 }}>
               <View
                 style={{
@@ -222,7 +216,7 @@ export default function HomePage() {
               />
             </View>
           </Link>
-          <Link href={"/profile"}>
+          <Link href="/profile">
             <View style={{ borderColor: 'black', borderWidth: 2 }}>
               <View
                 style={{

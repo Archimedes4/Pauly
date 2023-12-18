@@ -1,9 +1,9 @@
+import { Platform } from 'react-native';
+import { router } from 'expo-router';
 import callMsGraph from './microsoftAssets';
 import { orgWideGroupID } from '../../PaulyConfig';
 import store from '../../Redux/store';
 import { paulyListSlice } from '../../Redux/reducers/paulyListReducer';
-import { Platform } from 'react-native';
-import { router } from 'expo-router';
 
 export default async function getPaulyLists() {
   const getRootSiteIdResult = await callMsGraph(
@@ -23,8 +23,7 @@ export default async function getPaulyLists() {
         siteId: getRootSiteIdResultData.id,
         studentFilesListId:
           paulyListResultData.value[0].fields.studentFilesListId,
-        commissionListId:
-          paulyListResultData.value[0].fields.commissionListId,
+        commissionListId: paulyListResultData.value[0].fields.commissionListId,
         commissionSubmissionsListId:
           paulyListResultData.value[0].fields.commissionSubmissionsListId,
         paulyDataListId: paulyListResultData.value[0].fields.paulyDataListId,
@@ -34,25 +33,21 @@ export default async function getPaulyLists() {
           paulyListResultData.value[0].fields.sportsApprovedSubmissionsListId,
         sportsSubmissionsListId:
           paulyListResultData.value[0].fields.sportsSubmissionsListId,
-        timetablesListId:
-          paulyListResultData.value[0].fields.timetablesListId,
+        timetablesListId: paulyListResultData.value[0].fields.timetablesListId,
         resourceListId: paulyListResultData.value[0].fields.resourceListId,
         dressCodeListId: paulyListResultData.value[0].fields.dressCodeListId,
         eventTypeExtensionId:
           paulyListResultData.value[0].fields.eventTypeExtensionId,
         eventDataExtensionId:
           paulyListResultData.value[0].fields.eventDataExtensionId,
-        classExtensionId:
-          paulyListResultData.value[0].fields.classExtensionId,
+        classExtensionId: paulyListResultData.value[0].fields.classExtensionId,
         resourceExtensionId:
           paulyListResultData.value[0].fields.resourceExtensionId,
         roomListId: paulyListResultData.value[0].fields.roomListId,
-      }
-      store.dispatch(
-        paulyListSlice.actions.setPaulyList(paulyListData),
-      );
+      };
+      store.dispatch(paulyListSlice.actions.setPaulyList(paulyListData));
       if (Platform.OS == 'web' && sessionStorage !== undefined) {
-        sessionStorage.setItem('listStore', JSON.stringify(paulyListData))
+        sessionStorage.setItem('listStore', JSON.stringify(paulyListData));
       }
     } else {
       // TO DO THIS IS A BIG PROBLEM SHUT DOWN APP BC most of it don't work lost connection to server

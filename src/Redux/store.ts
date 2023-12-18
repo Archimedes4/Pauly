@@ -1,5 +1,7 @@
-import isOverrideReducer, { isOverrideSlice } from './reducers/isOverrideReducer';
 import { configureStore } from '@reduxjs/toolkit';
+import isOverrideReducer, {
+  isOverrideSlice,
+} from './reducers/isOverrideReducer';
 import monthDataReducer from './reducers/monthDataReducer';
 import resourcesLastCallReducer, {
   resourcesLastCalled,
@@ -60,7 +62,7 @@ const store = configureStore({
     studentSearch: studentSearchReducer,
     authLoading: authLoadingReducer,
     isOverride: isOverrideReducer,
-    paulyLoading: paulyLoadingReducer
+    paulyLoading: paulyLoadingReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

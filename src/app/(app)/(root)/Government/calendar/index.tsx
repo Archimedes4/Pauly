@@ -2,7 +2,7 @@ import { View, Text } from 'react-native';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@Redux/store';
-import { Colors } from '@src/types'
+import { Colors } from '@src/types';
 import { Link } from 'expo-router';
 
 export default function GovernmentCalendar() {
@@ -15,12 +15,12 @@ export default function GovernmentCalendar() {
         backgroundColor: Colors.lightGray,
       }}
     >
-      <Link href={'/government'}>
+      <Link href="/government">
         <Text>Back</Text>
       </Link>
       <Text>Government Calendar</Text>
       <Link
-        href={'/government/calendar/schedule'}
+        href="/government/calendar/schedule"
         style={{
           backgroundColor: '#FFFFFF',
           shadowColor: 'black',
@@ -35,7 +35,7 @@ export default function GovernmentCalendar() {
         <Text style={{ margin: 10 }}>Schedule</Text>
       </Link>
       <Link
-        href={'/government/calendar/timetable'}
+        href="/government/calendar/timetable"
         style={{
           backgroundColor: '#FFFFFF',
           shadowColor: 'black',
@@ -50,7 +50,7 @@ export default function GovernmentCalendar() {
         <Text style={{ margin: 10 }}>Timetables</Text>
       </Link>
       <Link
-        href={'/government/calendar/dresscode'}
+        href="/government/calendar/dresscode"
         style={{
           backgroundColor: '#FFFFFF',
           shadowColor: 'black',
@@ -65,7 +65,7 @@ export default function GovernmentCalendar() {
         <Text style={{ margin: 10 }}>Dress Code</Text>
       </Link>
       <Link
-        href={'/government/calendar/calendarSync'}
+        href="/government/calendar/calendarSync"
         style={{
           backgroundColor: '#FFFFFF',
           shadowColor: 'black',

@@ -13,6 +13,6 @@ interface MapProps {
   height: number;
 }
 
-declare const Map: React.FC<MapProps>
+declare const Map: React.FC<MapProps>;
 
-export = Map
+export = Map;

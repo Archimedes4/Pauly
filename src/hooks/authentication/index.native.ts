@@ -5,36 +5,45 @@
   authentication/index.native.ts
   authentication hook for native
 */
-import { Prompt, exchangeCodeAsync, makeRedirectUri, refreshAsync, revokeAsync, useAuthRequest, useAutoDiscovery } from "expo-auth-session";
-import { clientId, scopes, tenantId } from "../../PaulyConfig";
-import store from "../../Redux/store";
-import { authLoadingSlice } from "../../Redux/reducers/authLoadingReducer";
-import { authenticationRefreshTokenSlice } from "../../Redux/reducers/authenticationRefreshTokenReducer";
-import { authenticationTokenSlice } from "../../Redux/reducers/authenticationTokenReducer";
-import getUserProfile from "../../Functions/ultility/getPaulyLists";
-import getPaulyLists from "../../Functions/ultility/getPaulyLists";
-import { useRootNavigationState, useRouter } from "expo-router";
-import { setWantGovernment } from "@src/Functions/handleGovernmentLogin";
+import {
+  Prompt,
+  exchangeCodeAsync,
+  makeRedirectUri,
+  refreshAsync,
+  revokeAsync,
+  useAuthRequest,
+  useAutoDiscovery,
+} from 'expo-auth-session';
+import { useRootNavigationState, useRouter } from 'expo-router';
+import { setWantGovernment } from '@src/Functions/handleGovernmentLogin';
+import { clientId, scopes, tenantId } from '../../PaulyConfig';
+import store from '../../Redux/store';
+import { authLoadingSlice } from '../../Redux/reducers/authLoadingReducer';
+import { authenticationRefreshTokenSlice } from '../../Redux/reducers/authenticationRefreshTokenReducer';
+import { authenticationTokenSlice } from '../../Redux/reducers/authenticationTokenReducer';
+import getUserProfile from '../../Functions/ultility/getPaulyLists';
+import getPaulyLists from '../../Functions/ultility/getPaulyLists';
 
-//placeholder function
+// placeholder function
 export function useSilentLogin(): () => Promise<void> {
   const router = useRouter();
-  const rootNavigationState = useRootNavigationState()
+  const rootNavigationState = useRootNavigationState();
   async function main() {
     setInterval(() => {
       if (rootNavigationState?.key != null) {
-        if (store.getState().authenticationToken === '') { //checking if auth token exists
-          router.push('/sign-in')
-          return; //Needed to finish function
+        if (store.getState().authenticationToken === '') {
+          // checking if auth token exists
+          router.push('/sign-in');
+          // Needed to finish function
         }
-        return; //Needed to finish function
+        // Needed to finish function
       }
-    }, 1000)
+    }, 1000);
   }
   return main;
 }
 
-export function useInvokeLogin(): ((government?: boolean) => Promise<void>) {
+export function useInvokeLogin(): (government?: boolean) => Promise<void> {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
@@ -94,11 +103,11 @@ export function useInvokeLogin(): ((government?: boolean) => Promise<void>) {
       }
     }
   }
-  return main
+  return main;
 }
 
-//Refresh block to take a refresh token and get a new access token.
-export function refresh(): (() => Promise<void>) {
+// Refresh block to take a refresh token and get a new access token.
+export function refresh(): () => Promise<void> {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
@@ -119,24 +128,30 @@ export function refresh(): (() => Promise<void>) {
           ),
         );
       } catch {
-        store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
+        store.dispatch(
+          authenticationTokenSlice.actions.setAuthenticationToken(''),
+        );
       }
     } else {
-      store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
+      store.dispatch(
+        authenticationTokenSlice.actions.setAuthenticationToken(''),
+      );
     }
   }
   return main;
 }
 
-export function useSignOut(): (() => void) {
+export function useSignOut(): () => void {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${tenantId}/v2.0`,
   );
   async function main() {
     if (discovery !== null) {
       revokeAsync({ token: store.getState().authenticationToken }, discovery);
-      store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
+      store.dispatch(
+        authenticationTokenSlice.actions.setAuthenticationToken(''),
+      );
     }
   }
-  return main
+  return main;
 }

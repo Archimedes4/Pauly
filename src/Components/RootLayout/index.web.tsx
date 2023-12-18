@@ -17,19 +17,20 @@ import {
 import store, { RootState } from '@Redux/store';
 import { Colors, paperTheme } from '@src/types';
 import setDimentions from '@Functions/ultility/setDimentions';
-import { Slot } from "expo-router";
+import { Slot } from 'expo-router';
 import { clientId, tenantId } from '@src/PaulyConfig';
 import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
 // import { MsalProvider } from '@azure/msal-react';
 // import { PublicClientApplication } from '@azure/msal-browser';
 
-//stop redirect error
+// stop redirect error
 function getRedirectUri() {
-  if (typeof window !== "undefined") { //checking if window is undefined as it is in node
-    return (window.location.protocol + '//' + window.location.host)
+  if (typeof window !== 'undefined') {
+    // checking if window is undefined as it is in node
+    return `${window.location.protocol}//${window.location.host}`;
   }
-  return ''
+  return '';
 }
 
 // This is for the microsoft authentication on web.
@@ -37,16 +38,15 @@ const pca = new PublicClientApplication({
   auth: {
     clientId,
     authority: `https://login.microsoftonline.com/${tenantId}/`,
-    redirectUri: getRedirectUri()//to stop node js error
+    redirectUri: getRedirectUri(), // to stop node js error
   },
 });
 
 const windowDimensions = Dimensions.get('window');
 
-//Holds main slot redirects to web slot with msal provider if web.
+// Holds main slot redirects to web slot with msal provider if web.
 
-
-//App core holds dimentions
+// App core holds dimentions
 function AppCore() {
   // Dimentions
   const safeAreaColors = useSelector(
@@ -60,25 +60,40 @@ function AppCore() {
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener(
-      'change',
-      ({window}) => {
-        setStateDimensions(window);
-        setDimentions(window.width, window.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
-      },
-    );
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setStateDimensions(window);
+      setDimentions(
+        window.width,
+        window.height,
+        insets,
+        safeAreaColors.isTopTransparent,
+        safeAreaColors.isBottomTransparent,
+      );
+    });
     return () => subscription?.remove();
   });
 
   useEffect(() => {
     const newDimensions = Dimensions.get('window');
     setStateDimensions(newDimensions);
-    setDimentions(newDimensions.width, newDimensions.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
-  }, [])
+    setDimentions(
+      newDimensions.width,
+      newDimensions.height,
+      insets,
+      safeAreaColors.isTopTransparent,
+      safeAreaColors.isBottomTransparent,
+    );
+  }, []);
 
   useEffect(() => {
-    setDimentions(dimensions.width, dimensions.height, insets, safeAreaColors.isTopTransparent, safeAreaColors.isBottomTransparent);
-  }, [expandedMode])
+    setDimentions(
+      dimensions.width,
+      dimensions.height,
+      insets,
+      safeAreaColors.isTopTransparent,
+      safeAreaColors.isBottomTransparent,
+    );
+  }, [expandedMode]);
 
   return (
     <>
@@ -97,10 +112,10 @@ function AppCore() {
           zIndex: 10,
           top: insets.top,
           position: 'absolute',
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
-      > 
-        <Slot />      
+      >
+        <Slot />
       </SafeAreaView>
       <View
         style={{
@@ -129,19 +144,19 @@ function AppCore() {
   );
 }
 
-//Main Root app holds providers
+// Main Root app holds providers
 export default function RootLayout() {
   const [mounted, setMounted] = useState(false);
 
   async function wait() {
-    setMounted(true)
+    setMounted(true);
   }
 
   useEffect(() => {
     wait();
-  }, [])
+  }, []);
   if (!mounted) {
-    return null
+    return null;
   }
   return (
     <Provider store={store}>

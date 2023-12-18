@@ -53,7 +53,7 @@ export default function GovernmentClasses() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View>
-        <Link href={'/profile/government/'}>
+        <Link href="/profile/government/">
           <Text>Back</Text>
         </Link>
         <Text>Classes</Text>
@@ -71,7 +71,9 @@ export default function GovernmentClasses() {
                 <FlatList
                   data={classes}
                   renderItem={classMap => (
-                    <Link href={`/profile/government/classes/edit/${classMap.item.id}`}>
+                    <Link
+                      href={`/profile/government/classes/edit/${classMap.item.id}`}
+                    >
                       <Pressable
                         key={`Class_${classMap.item.id}_${createUUID()}`}
                         style={{
@@ -98,7 +100,7 @@ export default function GovernmentClasses() {
           )}
         </>
       </ScrollView>
-      <Link href={'/profile/government/classes/room'}>
+      <Link href="/profile/government/classes/room">
         <Text>Rooms</Text>
       </Link>
     </View>

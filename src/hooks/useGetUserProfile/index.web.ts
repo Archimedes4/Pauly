@@ -1,15 +1,19 @@
-import { microsoftProfileDataSlice } from '../../Redux/reducers/microsoftProfileDataReducer';
 import store from '@Redux/store';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { useMsal } from '@azure/msal-react';
+import { microsoftProfileDataSlice } from '../../Redux/reducers/microsoftProfileDataReducer';
 import getUserImage from './getUserImage';
 
 export default function getUserProfile() {
   const { instance } = useMsal();
   async function main() {
     getUserImage();
-    const account = instance.getActiveAccount()
-    if (account !== null && account.name !== undefined && account.localAccountId) {
+    const account = instance.getActiveAccount();
+    if (
+      account !== null &&
+      account.name !== undefined &&
+      account.localAccountId
+    ) {
       store.dispatch(
         microsoftProfileDataSlice.actions.setMicrosoftProfileInformation({
           displayName: account.name,
@@ -30,8 +34,8 @@ export default function getUserProfile() {
           }),
         );
       }
-      //No need to fail they will have no name. If something like this where to fail they would most likly be redirected for having some other problem.
+      // No need to fail they will have no name. If something like this where to fail they would most likly be redirected for having some other problem.
     }
   }
-  return main
+  return main;
 }

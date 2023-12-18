@@ -52,6 +52,7 @@ export default async function getPaulyList(
     userExtensionId: paulyListResultData.value[0].fields.userExtensionId,
     commissionSubmissionsListId:
       paulyListResultData.value[0].fields.commissionSubmissionsListId,
-    eventSyncIdExtensionId: paulyListResultData.value[0].fields.eventSyncIdExtensionId
+    eventSyncIdExtensionId:
+      paulyListResultData.value[0].fields.eventSyncIdExtensionId,
   };
 }

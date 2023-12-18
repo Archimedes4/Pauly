@@ -38,7 +38,7 @@ import ProgressView from '@components/ProgressView';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { Colors, loadingStateEnum, resourceMode } from '@src/types';
 import ResourcesNews from '@components/ResourcesNews';
-import ResourceBar from '@src/components/ResourceBar'
+import ResourceBar from '@src/components/ResourceBar';
 
 // Resources
 // -> Sports
@@ -62,7 +62,7 @@ function SearchBox() {
     if (mounted) {
       // Checking so that this isn't called on start
       const searchValueSave = searchValue; // saving value to check if change in 1.5 s
-      if (searchValue !== "") {
+      if (searchValue !== '') {
         setTimeout(() => {
           // Waiting 1.5s
           if (store.getState().resources.searchValue === searchValueSave) {
@@ -237,17 +237,13 @@ function ResourceBlock({
                 Linking.openURL(attachment.webUrl);
               }}
             >
-              <MimeTypeIcon
-                width={14}
-                height={14}
-                mimeType={attachment.type}
-              />
+              <MimeTypeIcon width={14} height={14} mimeType={attachment.type} />
               <Text>{attachment.title}</Text>
             </Pressable>
           ))}
         </View>
       ) : null}
-    </Pressable>
+    </Pressable>;
   }
   return (
     <View
@@ -293,11 +289,7 @@ function ResourceBlock({
                 Linking.openURL(attachment.webUrl);
               }}
             >
-              <MimeTypeIcon
-                width={14}
-                height={14}
-                mimeType={attachment.type}
-              />
+              <MimeTypeIcon width={14} height={14} mimeType={attachment.type} />
               <Text>{attachment.title}</Text>
             </Pressable>
           ))}
@@ -307,7 +299,13 @@ function ResourceBlock({
   );
 }
 
-function ScholarshipBlock({ item, width }: { item: ListRenderItemInfo<scholarship>, width: number }) {
+function ScholarshipBlock({
+  item,
+  width,
+}: {
+  item: ListRenderItemInfo<scholarship>;
+  width: number;
+}) {
   const [height, setHeight] = useState<number>(0);
   useEffect(() => {
     Image.getSize(item.item.cover, (imgWidth, imgHeight) => {
@@ -327,12 +325,12 @@ function ScholarshipBlock({ item, width }: { item: ListRenderItemInfo<scholarshi
         backgroundColor: Colors.white,
       }}
     >
-      { item.item.cover !== undefined ?
+      {item.item.cover !== undefined ? (
         <Image
           source={{ uri: item.item.cover }}
           style={{ width: width - 10, height }}
-        />:null
-      }
+        />
+      ) : null}
       <Text style={{ fontSize: 16, margin: 5, marginLeft: 10 }}>
         {item.item.title}
       </Text>
@@ -342,12 +340,11 @@ function ScholarshipBlock({ item, width }: { item: ListRenderItemInfo<scholarshi
 }
 
 function numberScholarBlock(width: number): number {
-  const newValue = width / 500
+  const newValue = width / 500;
   if (newValue < 1) {
-    return 1
-  } else {
-    return newValue
+    return 1;
   }
+  return newValue;
 }
 
 function ResourceScholarships() {
@@ -391,7 +388,12 @@ function ResourceScholarships() {
       <FlatList
         key={`Students_${createUUID()}`}
         data={scholarships}
-        renderItem={item => <ScholarshipBlock item={item} width={width/numberScholarBlock(width)} />}
+        renderItem={item => (
+          <ScholarshipBlock
+            item={item}
+            width={width / numberScholarBlock(width)}
+          />
+        )}
         numColumns={numberScholarBlock(width)}
         style={{
           height: height * 0.85,
@@ -483,7 +485,8 @@ export default function Resources() {
             <ResourceBar />
           </>
         ) : null}
-        {selectedResourceMode !== resourceMode.scholarships && selectedResourceMode !== resourceMode.news ?
+        {selectedResourceMode !== resourceMode.scholarships &&
+        selectedResourceMode !== resourceMode.news ? (
           <View
             style={{
               height: height * 0.85,
@@ -516,9 +519,7 @@ export default function Resources() {
                       <ResourceBlock
                         resource={resource}
                         key={resource.item.id}
-                        setIsShowingCategoryView={
-                          setIsShowingCategoryView
-                        }
+                        setIsShowingCategoryView={setIsShowingCategoryView}
                         setSelectedPost={setSelectedPost}
                       />
                     )}
@@ -529,9 +530,8 @@ export default function Resources() {
               </>
             )}
             <ResourceBar />
-          </View>:null
-        }
-        
+          </View>
+        ) : null}
       </View>
       {isGovernmentMode &&
       isShowingCategoryView &&

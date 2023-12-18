@@ -3,8 +3,8 @@
   Andrew Mainella
   25 November 2023
 */
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native';
+import React from 'react';
 
 export default function termsOfService() {
   return (
@@ -253,5 +253,5 @@ export default function termsOfService() {
         ● By sending us an email: [WEBSITE_CONTACT_EMAIL]`}
       </Text>
     </View>
-  )
+  );
 }

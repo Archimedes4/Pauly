@@ -5,12 +5,12 @@ import { useParams } from 'react-router-native';
 import store, { RootState } from '@Redux/store';
 import createUUID from '@src/Functions/ultility/createUUID';
 import { Colors, loadingStateEnum } from '@src/types';
-import DressCodeBlock from '../../../../../../components/DressCodeBlock';
 import { createDressCode } from '@Functions/calendar/calendarFunctionsGraph';
 import getDressCode from '@Functions/notifications/getDressCode';
 import ProgressView from '@components/ProgressView';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { Link } from 'expo-router';
+import DressCodeBlock from '../../../../../../components/DressCodeBlock';
 
 export default function GovernmentDressCodeEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -23,7 +23,6 @@ export default function GovernmentDressCodeEdit() {
 
   const [createDressCodeState, setCreateDressCodeState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
-
 
   async function loadCreateDressCode() {
     const result = await createDressCode(dressCodeName, dressCodeData);
@@ -91,7 +90,7 @@ export default function GovernmentDressCodeEdit() {
             backgroundColor: Colors.white,
           }}
         >
-          <Link href={'/profile/government/calendar/dresscode'}>
+          <Link href="/profile/government/calendar/dresscode">
             <Text>Back</Text>
           </Link>
           <Text>Create Dress Code</Text>
@@ -128,10 +127,10 @@ export default function GovernmentDressCodeEdit() {
               {createDressCodeState === loadingStateEnum.notStarted
                 ? 'Create Dress Code'
                 : createDressCodeState === loadingStateEnum.loading
-                ? 'Loading'
-                : createDressCodeState === loadingStateEnum.success
-                ? 'Created Dress Code'
-                : 'Failed'}
+                  ? 'Loading'
+                  : createDressCodeState === loadingStateEnum.success
+                    ? 'Created Dress Code'
+                    : 'Failed'}
             </Text>
           </Pressable>
           {!isCreatingDressCode ? (
@@ -140,10 +139,10 @@ export default function GovernmentDressCodeEdit() {
                 {deleteDressCodeState === loadingStateEnum.notStarted
                   ? 'Delete'
                   : deleteDressCodeState === loadingStateEnum.loading
-                  ? 'Loading'
-                  : deleteDressCodeState === loadingStateEnum.success
-                  ? 'Success'
-                  : 'Failed'}
+                    ? 'Loading'
+                    : deleteDressCodeState === loadingStateEnum.success
+                      ? 'Success'
+                      : 'Failed'}
               </Text>
             </Pressable>
           ) : null}
@@ -161,7 +160,7 @@ export default function GovernmentDressCodeEdit() {
                 justifyContent: 'center',
               }}
             >
-              <Link href={'/profile/government/calendar/dresscode'}>
+              <Link href="/profile/government/calendar/dresscode">
                 <Text>Back</Text>
               </Link>
               <ProgressView width={14} height={14} />
@@ -169,7 +168,7 @@ export default function GovernmentDressCodeEdit() {
             </View>
           ) : (
             <View>
-              <Link href={'/profile/government/calendar/dresscode'}>
+              <Link href="/profile/government/calendar/dresscode">
                 <Text>Back</Text>
               </Link>
               <Text>Failed</Text>

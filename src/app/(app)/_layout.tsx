@@ -1,6 +1,12 @@
-import { View, Text, Pressable } from 'react-native'
-import React, { useCallback } from 'react'
-import useIsConnected from '@hooks/useIsConnected'
+/*
+  Pauly
+  Andrew Mainella
+  17 December 2023
+  Authenticated layout
+*/
+import { View, Text, Pressable } from 'react-native';
+import React, { useCallback } from 'react';
+import useIsConnected from '@hooks/useIsConnected';
 import { Colors } from '@src/types';
 import { OfflineIcon } from '@src/components/Icons';
 import { Stack } from 'expo-router';
@@ -19,7 +25,9 @@ function Loading() {
     (state: RootState) => state.isGovernmentMode,
   );
   const signOut = useSignOut();
-  const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
+  const { height, totalWidth } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
   const insets = useSafeAreaInsets();
   const isShowingLogout = useIsShowingLogout();
 
@@ -37,9 +45,7 @@ function Loading() {
       <ProgressView width={14} height={14} />
       <Text style={{ color: Colors.white }}>Loading</Text>
       {isGovernmentMode ? (
-        <Pressable
-          style={{ margin: 5 }}
-        >
+        <Pressable style={{ margin: 5 }}>
           <Text style={{ color: Colors.white }}>Overide</Text>
         </Pressable>
       ) : null}
@@ -61,15 +67,17 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
   const isConnected = useIsConnected();
-  const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
+  const { height, totalWidth } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
   const insets = useSafeAreaInsets();
   const isLoading = useAuthentication();
-  
+
   const [fontsLoaded] = useFonts({
     BukhariScript: require('assets/fonts/BukhariScript.ttf'),
     'Gochi-Hand': require('assets/fonts/GochiHand-Regular.ttf'),
-    'Roboto': require('assets/fonts/Roboto-Regular.ttf'),
-    'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf')
+    Roboto: require('assets/fonts/Roboto-Regular.ttf'),
+    'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf'),
   });
 
   const onLayoutRootView = useCallback(async () => {
@@ -83,25 +91,28 @@ export default function Layout() {
   }
 
   if (isLoading && isConnected) {
-    return <Loading />
+    return <Loading />;
   }
 
   if (isConnected) {
     return (
       <View onLayout={onLayoutRootView}>
         <Stack>
-          <Stack.Screen name='(root)' options={{
-            headerShown: false
-          }}/>
+          <Stack.Screen
+            name="(root)"
+            options={{
+              headerShown: false,
+            }}
+          />
           <Stack.Screen
             name="(auth)"
             options={{
-              headerShown: false
+              headerShown: false,
             }}
           />
         </Stack>
       </View>
-    )
+    );
   }
 
   return (
@@ -117,5 +128,5 @@ export default function Layout() {
     >
       <OfflineIcon width={50} height={50} color={Colors.white} />
     </View>
-  )
+  );
 }

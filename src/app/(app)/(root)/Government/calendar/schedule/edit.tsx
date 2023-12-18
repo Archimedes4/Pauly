@@ -168,7 +168,7 @@ export default function GovernmentSchedule() {
           backgroundColor: Colors.white,
         }}
       >
-        <Link href={'/profile/government/calendar/schedule'}>
+        <Link href="/profile/government/calendar/schedule">
           <Text>Back</Text>
         </Link>
         <Text>Schedule Deleted</Text>
@@ -185,7 +185,7 @@ export default function GovernmentSchedule() {
           backgroundColor: Colors.white,
         }}
       >
-        <Link href={'/profile/government/calendar/schedule'}>
+        <Link href="/profile/government/calendar/schedule">
           <Text>Back</Text>
         </Link>
         <View
@@ -353,7 +353,9 @@ export default function GovernmentSchedule() {
                       </View>
                     </View>
                     <HueSlider
-                      renderThumb={e => <CustomColorThumb e={e} diameter={10} />}
+                      renderThumb={e => (
+                        <CustomColorThumb e={e} diameter={10} />
+                      )}
                       style={{ height: 30, marginTop: 10 }}
                     />
                   </ColorPicker>
@@ -399,12 +401,12 @@ export default function GovernmentSchedule() {
             {!isValidHexaCode(color)
               ? 'Cannot Start'
               : createScheduleLoadingState === loadingStateEnum.notStarted
-              ? `${isCreatingSchedule ? 'Create' : 'Save'} Schedule`
-              : createScheduleLoadingState === loadingStateEnum.loading
-              ? 'Loading'
-              : createScheduleLoadingState === loadingStateEnum.success
-              ? 'Success'
-              : 'Failed'}
+                ? `${isCreatingSchedule ? 'Create' : 'Save'} Schedule`
+                : createScheduleLoadingState === loadingStateEnum.loading
+                  ? 'Loading'
+                  : createScheduleLoadingState === loadingStateEnum.success
+                    ? 'Success'
+                    : 'Failed'}
           </Text>
         </Pressable>
         {!isCreatingSchedule ? (
@@ -420,8 +422,8 @@ export default function GovernmentSchedule() {
               {deleteState == loadingStateEnum.notStarted
                 ? 'DELETE'
                 : deleteState === loadingStateEnum.loading
-                ? 'LOADING'
-                : 'FAILED'}
+                  ? 'LOADING'
+                  : 'FAILED'}
             </Text>
           </Pressable>
         ) : null}
@@ -441,7 +443,7 @@ export default function GovernmentSchedule() {
           justifyContent: 'center',
         }}
       >
-        <Link href={'/profile/government/calendar/schedule'}>
+        <Link href="/profile/government/calendar/schedule">
           <View style={{ position: 'absolute', top: 0, left: 0 }}>
             <Text>Back</Text>
           </View>
@@ -460,7 +462,7 @@ export default function GovernmentSchedule() {
         backgroundColor: Colors.white,
       }}
     >
-      <Link href={'/profile/government/calendar/schedule'}>
+      <Link href="/profile/government/calendar/schedule">
         <Text>Back</Text>
       </Link>
       <Text>Failed</Text>

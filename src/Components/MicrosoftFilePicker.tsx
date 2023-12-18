@@ -98,9 +98,9 @@ export default function MicrosoftFilePicker({
               selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal
                 ? 0
                 : selectedMicrosoftUploadMode ===
-                  MicrosoftUploadModeType.ShareLink
-                ? 1
-                : 2
+                    MicrosoftUploadModeType.ShareLink
+                  ? 1
+                  : 2
             }
             onSetSelectedIndex={(item: number) => {
               item === 0
@@ -108,10 +108,12 @@ export default function MicrosoftFilePicker({
                     MicrosoftUploadModeType.Personal,
                   )
                 : item === 1
-                ? setSelectedMicrosoftUploadMode(
-                    MicrosoftUploadModeType.ShareLink,
-                  )
-                : setSelectedMicrosoftUploadMode(MicrosoftUploadModeType.Site);
+                  ? setSelectedMicrosoftUploadMode(
+                      MicrosoftUploadModeType.ShareLink,
+                    )
+                  : setSelectedMicrosoftUploadMode(
+                      MicrosoftUploadModeType.Site,
+                    );
             }}
             width={width}
             height={30}

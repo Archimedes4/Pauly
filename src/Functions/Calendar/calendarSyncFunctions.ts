@@ -1,3 +1,1 @@
-export async function getSyncCalenderStates() {
-
-}
+export async function getSyncCalenderStates() {}

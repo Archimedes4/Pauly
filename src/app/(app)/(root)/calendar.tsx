@@ -5,11 +5,7 @@
   Calendar.tsx
   Main Calendar for Pauly see README.md for more info.
 */
-import {
-  View,
-  Text,
-  Pressable,
-} from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Week from '@components/Calendar/Week';
@@ -138,7 +134,7 @@ export default function Calendar() {
     getEvents();
     getClasses();
   }, [selectedDate]);
-  
+
   return (
     <View>
       <View style={{ height: height * 0.1, backgroundColor: Colors.darkGray }}>

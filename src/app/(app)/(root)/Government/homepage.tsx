@@ -136,7 +136,10 @@ export default function GovernmentHomePage() {
           width={width}
           onSelectedFile={selectedFile => {
             setSelectedPowerpoint(selectedFile);
-          } } onSetIsShowingUpload={undefined} onSetIsShowingMicrosoftUpload={undefined}        />
+          }}
+          onSetIsShowingUpload={undefined}
+          onSetIsShowingMicrosoftUpload={undefined}
+        />
       </View>
       <Pressable
         onPress={async () => {

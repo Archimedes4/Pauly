@@ -15,14 +15,16 @@ import getDressCode from '../notifications/getDressCode';
 import { findFirstDayinMonth } from './calendarFunctions';
 import { monthDataSlice } from '../../Redux/reducers/monthDataReducer';
 
-function eventTypeToPaulyEventType(eventType: string | undefined): paulyEventTypes | undefined {
+function eventTypeToPaulyEventType(
+  eventType: string | undefined,
+): paulyEventTypes | undefined {
   if (eventType === 'schoolYear') {
-    return 'schoolYear'
+    return 'schoolYear';
   }
   if (eventType === 'schoolDay') {
-    return 'schoolDay'
+    return 'schoolDay';
   }
-  return undefined
+  return undefined;
 }
 
 // Defaults to org wide events
@@ -34,7 +36,7 @@ export async function getGraphEvents(
   events?: eventType[];
   nextLink?: string;
 }> {
-  const defaultUrl = `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`
+  const defaultUrl = `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`;
   const result = await callMsGraph(
     url !== undefined ? url : defaultUrl,
     'GET',
@@ -50,12 +52,12 @@ export async function getGraphEvents(
     const data = await result.json();
     const newEvents: eventType[] = [];
     for (let index = 0; index < data.value.length; index += 1) {
-      //list constansts
+      // list constansts
       const eventTypeExtensionID =
         store.getState().paulyList.eventTypeExtensionId;
       const eventDataExtensionID =
         store.getState().paulyList.eventDataExtensionId;
-      //event data
+      // event data
       const { singleValueExtendedProperties } = data.value[index];
       const eventType: string | undefined =
         data.value[index].singleValueExtendedProperties !== undefined
@@ -133,7 +135,7 @@ export async function getEvent(
       const eventType = eventData.find(e => {
         return e.id === store.getState().paulyList.eventTypeExtensionId;
       })?.value;
-      event.paulyEventType = eventTypeToPaulyEventType(eventType)
+      event.paulyEventType = eventTypeToPaulyEventType(eventType);
       event.paulyEventData = eventData.find(e => {
         return e.id === store.getState().paulyList.eventDataExtensionId;
       })?.value;
