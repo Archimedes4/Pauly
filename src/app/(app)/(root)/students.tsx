@@ -17,8 +17,6 @@ import {
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { Colors, loadingStateEnum } from '@src/types';
 import store, { RootState } from '@Redux/store';
 import ProgressView from '@components/ProgressView';
@@ -289,21 +287,6 @@ export default function Students() {
     console.log('Called EFFECT')
     loadUsers();
   }, []);
-
-  const [fontsLoaded] = useFonts({
-    // eslint-disable-next-line global-require
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   if (usersState === loadingStateEnum.loading) {
     return (

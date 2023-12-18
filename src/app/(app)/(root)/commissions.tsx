@@ -1,5 +1,3 @@
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   FlatList,
@@ -203,21 +201,6 @@ export default function Commissions() {
   useEffect(() => {
     loadData();
   }, [loadData]);
-
-  const [fontsLoaded] = useFonts({
-    // eslint-disable-next-line global-require
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <>

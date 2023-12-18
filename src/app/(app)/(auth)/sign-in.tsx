@@ -7,8 +7,6 @@
 */
 /* eslint-disable global-require */
 /* This is for the requires which is not possible to not use require and docs for relevant resources use requrire. */
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { View, Text, Pressable, Image } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -55,18 +53,7 @@ export default function SignIn() {
       setFontSize(height / 3);
     }
   }, [height, totalWidth]);
-  // Font
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-    'Gochi-Hand': require('assets/fonts/GochiHand-Regular.ttf'),
-    'Roboto': require('assets/fonts/Roboto-Regular.ttf')
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+  // Fon
 
   //authentication
   const login = useInvokeLogin();
@@ -80,10 +67,6 @@ export default function SignIn() {
       router.push('/')
     }
   }, [isAuthenticated])
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <Pressable

@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from 'react-native'
-import React from 'react'
+import React, { useCallback } from 'react'
 import useIsConnected from '@hooks/useIsConnected'
 import { Colors } from '@src/types';
 import { OfflineIcon } from '@src/components/Icons';
@@ -11,6 +11,8 @@ import useAuthentication from '@hooks/useAuthentication';
 import { useSignOut } from '@hooks/authentication';
 import ProgressView from '@components/ProgressView';
 import { useIsShowingLogout } from '@hooks/useIsShowingLogout';
+import { useFonts } from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 function Loading() {
   const isGovernmentMode = useSelector(
@@ -55,11 +57,30 @@ function Loading() {
   );
 }
 
+SplashScreen.preventAutoHideAsync();
+
 export default function Layout() {
   const isConnected = useIsConnected();
   const { height, totalWidth } = useSelector((state: RootState) => state.dimentions);
   const insets = useSafeAreaInsets();
   const isLoading = useAuthentication();
+  
+  const [fontsLoaded] = useFonts({
+    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
+    'Gochi-Hand': require('assets/fonts/GochiHand-Regular.ttf'),
+    'Roboto': require('assets/fonts/Roboto-Regular.ttf'),
+    'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf')
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   if (isLoading && isConnected) {
     return <Loading />
@@ -67,17 +88,19 @@ export default function Layout() {
 
   if (isConnected) {
     return (
-      <Stack>
-        <Stack.Screen name='(root)' options={{
-          headerShown: false
-        }}/>
-        <Stack.Screen
-          name="(auth)"
-          options={{
+      <View onLayout={onLayoutRootView}>
+        <Stack>
+          <Stack.Screen name='(root)' options={{
             headerShown: false
-          }}
-        />
-      </Stack>
+          }}/>
+          <Stack.Screen
+            name="(auth)"
+            options={{
+              headerShown: false
+            }}
+          />
+        </Stack>
+      </View>
     )
   }
 

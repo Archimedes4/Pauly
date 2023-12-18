@@ -7,8 +7,6 @@
 */
 import { View, Text, Animated, Easing, Platform } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors } from '../types';
 
@@ -48,21 +46,6 @@ export default function ScrollingTextAnimation({
       mainLoop(childWidth);
     }
   }, [childWidth, mainLoop]);
-
-  // Font
-  const [fontsLoaded] = useFonts({
-    GochiHand: require('../../assets/fonts/GochiHand-Regular.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <View style={{ width, height, overflow: 'hidden' }}>

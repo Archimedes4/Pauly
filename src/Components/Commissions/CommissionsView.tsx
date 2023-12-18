@@ -1,5 +1,3 @@
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
@@ -150,21 +148,6 @@ export default function CommissionsView({
   useEffect(() => {
     getCommissionInformation();
   }, [getCommissionInformation]);
-
-  const [fontsLoaded] = useFonts({
-    // eslint-disable-next-line global-require
-    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <View

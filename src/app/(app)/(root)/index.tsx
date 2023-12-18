@@ -4,9 +4,6 @@
   October 18 2023
   Notifications.tsx
 */
-
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -695,21 +692,6 @@ export default function Notifications() {
       }),
     );
   }, [dispatch]);
-
-  const [fontsLoaded] = useFonts({
-    // eslint-disable-next-line global-require
-    'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <ScrollView style={{ width, height, backgroundColor: Colors.white }}>

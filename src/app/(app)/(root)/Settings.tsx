@@ -5,8 +5,6 @@
   Settings.tsx
   Settings for when current breake point is 0 (less than 576), allows the user to logout, go to the student search page and access goverment if in government mode.
 */
-import * as SplashScreen from 'expo-splash-screen';
-import { useFonts } from 'expo-font';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -58,21 +56,6 @@ export default function Settings() {
       returnHome();
     }
   }, [currentBreakPoint, returnHome]);
-
-  const [fontsLoaded] = useFonts({
-    // eslint-disable-next-line global-require
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <View>

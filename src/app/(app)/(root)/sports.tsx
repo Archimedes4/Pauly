@@ -5,8 +5,6 @@
   Sports page renders the scroll view an content.
 */
 import { ResizeMode, Video } from 'expo-av';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
@@ -111,20 +109,6 @@ export default function Sports() {
   useEffect(() => {
     loadSportsContent();
   }, [selectedTeam]);
-
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <View
@@ -530,20 +514,6 @@ function RosterView({
   useEffect(() => {
     loadRoster();
   }, []);
-
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   if (rosterLoadingState === loadingStateEnum.loading) {
     return (

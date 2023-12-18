@@ -6,8 +6,6 @@
   This is the main component for the resources section of pauly.
   See README.md for more information about the resources section.
 */
-import * as SplashScreen from 'expo-splash-screen';
-import { useFonts } from 'expo-font';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
@@ -446,21 +444,6 @@ export default function Resources() {
   useEffect(() => {
     getResources(selectedResourceMode);
   }, [selectedResourceMode]);
-
-  // Fonts
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <>

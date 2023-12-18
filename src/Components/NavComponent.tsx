@@ -8,8 +8,6 @@
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import store, { RootState } from '../Redux/store';
 import {
   BookIcon,
@@ -150,20 +148,6 @@ export default function NavBarComponent({
     }
   }, [width, height]);
 
-  const [fontsLoaded] = useFonts({
-    'Gochi Hand': require('../../assets/fonts/GochiHand-Regular.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
   return (
     <Pressable
       id="Pressable"
@@ -227,7 +211,7 @@ export default function NavBarComponent({
             {expandedMode ? (
               <Text
                 style={{
-                  fontFamily: 'Gochi Hand',
+                  fontFamily: 'Gochi-Hand',
                   color: Colors.white,
                   position: 'absolute',
                   top: blockLength * 0.3,

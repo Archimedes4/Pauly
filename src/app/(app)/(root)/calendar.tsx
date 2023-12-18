@@ -11,8 +11,6 @@ import {
   Pressable,
 } from 'react-native';
 import React, { useCallback, useEffect } from 'react';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { useDispatch, useSelector } from 'react-redux';
 import Week from '@components/Calendar/Week';
 import AddEvent from '@components/Calendar/AddEvent';
@@ -140,23 +138,7 @@ export default function Calendar() {
     getEvents();
     getClasses();
   }, [selectedDate]);
-
-  // Fonts
-  const [fontsLoaded] = useFonts({
-    // eslint-disable-next-line global-require
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
-
+  
   return (
     <View>
       <View style={{ height: height * 0.1, backgroundColor: Colors.darkGray }}>

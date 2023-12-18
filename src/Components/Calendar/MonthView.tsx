@@ -5,8 +5,6 @@ import { Colors } from "@src/types";
 import React, { useCallback, useEffect } from "react";
 import { FlatList, ListRenderItemInfo, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { ChevronLeft, ChevronRight } from "../Icons";
 import { getMonthData } from "@src/Functions/calendar/calendarFunctionsGraph";
 import { addEventSlice } from "@src/Redux/reducers/addEventReducer";
@@ -217,24 +215,10 @@ function MonthView({ width, height }: { width: number; height: number }) {
   const { fontScale } = useWindowDimensions();
 
   const dispatch = useDispatch();
-  const [fontsLoaded] = useFonts({
-    // eslint-disable-next-line global-require
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
 
   useEffect(() => {
     getMonthData(new Date(selectedDate));
   }, [selectedDate, currentEvents]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <>

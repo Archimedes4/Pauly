@@ -4,8 +4,6 @@
   October 18 2023
   AddEvent.tsx
 */
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Pressable, View, Text, Switch, TextInput } from 'react-native';
 import { TimePickerModal, DatePickerModal } from 'react-native-paper-dates';
@@ -390,20 +388,6 @@ export default function AddEvent({
         // TO DO throw error
       }
     }
-  }
-
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('../../../assets/fonts/BukhariScript.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
   }
 
   return (

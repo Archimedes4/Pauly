@@ -6,6 +6,7 @@
 */
 import RootLayout from "@components/RootLayout";
 import React, { useEffect, useState } from "react";
+import Head from "expo-router/head"
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
@@ -23,6 +24,11 @@ export default function App() {
   }
   
   return (
-    <RootLayout />
+    <>
+      <Head>
+        <title>Pauly</title>
+      </Head>
+      <RootLayout />
+    </>
   ) 
 }

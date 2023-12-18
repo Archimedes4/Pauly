@@ -1,3 +1,7 @@
+/*
+  Pauly
+  Andrew Mainella
+*/
 import {
   View,
   Text,
@@ -6,8 +10,6 @@ import {
   Pressable,
 } from 'react-native';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { useSelector } from 'react-redux';
 import {
   BookIcon,
@@ -95,14 +97,6 @@ export default function Government() {
       router.replace('/');
     }
   }, []);
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-  });
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
 
   const [mainWidth, setMainWidth] = useState<number>(0);
   useEffect(() => {
@@ -110,9 +104,7 @@ export default function Government() {
     const remainder = (width * 0.8) % (100 + fivePercent);
     setMainWidth(width * 0.8 - remainder - fivePercent);
   }, [width]);
-  if (!fontsLoaded) {
-    return null;
-  }
+
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
       {currentBreakPoint <= 0 ? (

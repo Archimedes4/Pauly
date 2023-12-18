@@ -5,8 +5,6 @@
   HomePage.tsx
   This is the homepage for when the width is less than 576
 */
-import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import React, { useEffect, useCallback } from 'react';
 import { View, Text, Image, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -73,24 +71,6 @@ export default function HomePage() {
       backToHome();
     }
   }, [backToHome, currentBreakPoint]);
-
-  // Font
-  const [fontsLoaded] = useFonts({
-    // eslint-disable-next-line global-require
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-    // eslint-disable-next-line global-require
-    GochiHand: require('assets/fonts/GochiHand-Regular.ttf'),
-  });
-
-  useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   return (
     <>

@@ -97,6 +97,7 @@ function AppCore() {
           zIndex: 10,
           top: insets.top,
           position: 'absolute',
+          overflow: 'hidden'
         }}
       > 
         <Slot />      
