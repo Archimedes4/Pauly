@@ -65,7 +65,7 @@ export default async function getEvents() {
       furtherResult.result === loadingStateEnum.success &&
       furtherResult.events !== undefined
     ) {
-      outputEvents = [...outputEvents, ...furtherResult.events];
+      outputEvents = [... new Set([...outputEvents, ...furtherResult.events])];
       url = furtherResult.nextLink !== undefined ? furtherResult.nextLink : '';
     } else {
       url = '';

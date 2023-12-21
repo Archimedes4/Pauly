@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  Government Sports overview page. 
+*/
 import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -65,9 +70,7 @@ export default function GovernmentSports() {
                     href={`/profile/government/sports/team/${item.name}/${item.id}`}
                     key={item.id}
                   >
-                    <View>
-                      <Text>{item.name}</Text>
-                    </View>
+                    <Text>{item.name}</Text>
                   </Link>
                 ))}
               </View>

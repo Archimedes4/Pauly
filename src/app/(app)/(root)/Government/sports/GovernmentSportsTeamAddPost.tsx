@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  20 December 2023
+  Governemnt sports teamm add a post. This creates a post in the sports page. Could be a youtube video, image, or video.
+*/
 import {
   View,
   Text,

@@ -35,6 +35,7 @@ function AuthenticatedView() {
           style={{
             width,
             backgroundColor: Colors.maroon,
+            overflow: 'hidden'
           }}
         >
           <Slot />

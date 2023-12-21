@@ -15,9 +15,10 @@ function checkIfStudent(role: string): {
   result: boolean;
   grade?: '9' | '10' | '11' | '12';
 } {
-  if (role.length >= 20) {
+  if (role !== null && role.length >= 20) {
     const reversed = role.split('').reverse().join('');
-    const slice = reversed.slice(0, domainName.length);
+    const domainLength = domainName.length;
+    const slice = reversed.slice(0, domainLength);
     if (slice === domainName.split('').reverse().join('')) {
       const getMonth = new Date().getMonth();
       let schoolYear = new Date().getFullYear();

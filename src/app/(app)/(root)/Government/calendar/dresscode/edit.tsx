@@ -1,16 +1,21 @@
+/*
+  Pauly
+  Andrew Mainella
+  21 Decemeber 2023
+*/
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-native';
 import store, { RootState } from '@Redux/store';
-import createUUID from '@src/Functions/ultility/createUUID';
+import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
 import { Colors, loadingStateEnum } from '@src/types';
 import { createDressCode } from '@Functions/calendar/calendarFunctionsGraph';
 import getDressCode from '@Functions/notifications/getDressCode';
 import ProgressView from '@components/ProgressView';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { Link } from 'expo-router';
-import DressCodeBlock from '../../../../../../components/DressCodeBlock';
+import DressCodeBlock from '@components/DressCodeBlock';
 
 export default function GovernmentDressCodeEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -80,10 +85,9 @@ export default function GovernmentDressCodeEdit() {
     loadData();
   }, [id]);
 
-  return (
-    <>
-      {isCreatingDressCode || getDressCodeState === loadingStateEnum.success ? (
-        <View
+  if (isCreatingDressCode || getDressCodeState === loadingStateEnum.success) {
+    return (
+<View
           style={{
             width,
             height,
@@ -124,58 +128,51 @@ export default function GovernmentDressCodeEdit() {
           </Pressable>
           <Pressable onPress={() => loadCreateDressCode()}>
             <Text>
-              {createDressCodeState === loadingStateEnum.notStarted
-                ? 'Create Dress Code'
-                : createDressCodeState === loadingStateEnum.loading
-                  ? 'Loading'
-                  : createDressCodeState === loadingStateEnum.success
-                    ? 'Created Dress Code'
-                    : 'Failed'}
+              {getTextState(deleteDressCodeState, {
+                notStarted: 'Create Dress Code'
+              })}
             </Text>
           </Pressable>
           {!isCreatingDressCode ? (
             <Pressable style={{ margin: 10 }} onPress={() => deleteDressCode()}>
               <Text>
-                {deleteDressCodeState === loadingStateEnum.notStarted
-                  ? 'Delete'
-                  : deleteDressCodeState === loadingStateEnum.loading
-                    ? 'Loading'
-                    : deleteDressCodeState === loadingStateEnum.success
-                      ? 'Success'
-                      : 'Failed'}
+                {getTextState(deleteDressCodeState, {
+                  notStarted: "Delete"
+                })}
               </Text>
             </Pressable>
           ) : null}
         </View>
-      ) : (
-        <>
-          {getDressCodeState === loadingStateEnum.loading ? (
-            <View
-              style={{
-                width,
-                height,
-                backgroundColor: Colors.white,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Link href="/profile/government/calendar/dresscode">
-                <Text>Back</Text>
-              </Link>
-              <ProgressView width={14} height={14} />
-              <Text>Loading</Text>
-            </View>
-          ) : (
-            <View>
-              <Link href="/profile/government/calendar/dresscode">
-                <Text>Back</Text>
-              </Link>
-              <Text>Failed</Text>
-            </View>
-          )}
-        </>
-      )}
-    </>
+    )
+  }
+
+  if (getDressCodeState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Link href="/profile/government/calendar/dresscode">
+          <Text>Back</Text>
+        </Link>
+        <ProgressView width={14} height={14} />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  return (
+    <View>
+      <Link href="/profile/government/calendar/dresscode">
+        <Text>Back</Text>
+      </Link>
+      <Text>Failed</Text>
+    </View>
   );
 }

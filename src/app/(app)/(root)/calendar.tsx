@@ -12,7 +12,7 @@ import Week from '@components/Calendar/Week';
 import AddEvent from '@components/Calendar/AddEvent';
 import CalendarTypePicker from '@components/CalendarTypePicker';
 import { AddIcon } from '@src/components/Icons';
-import { RootState } from '@Redux/store';
+import store, { RootState } from '@Redux/store';
 import { Colors, calendarMode } from '@src/types';
 import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
 import BackButton from '@components/BackButton';
@@ -21,6 +21,17 @@ import { getClasses } from '@Functions/classesFunctions';
 import getEvents from '@Functions/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@src/components/Calendar/MonthView';
+import callMsGraph from '@src/Functions/ultility/microsoftAssets';
+import { currentEventsSlice } from '@src/Redux/reducers/currentEventReducer';
+import { orgWideGroupID } from '@src/PaulyConfig';
+
+async function deleteEvents() {
+  const array = store.getState().currentEvents;
+  for (let index = 0; index < array.length; index += 1) {
+    callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${array[index].id}`, "DELETE")
+  }
+  store.dispatch(currentEventsSlice.actions.setCurrentEvents([]))
+}
 
 function TopView({ width, height }: { width: number; height: number }) {
   const dispatch = useDispatch();
@@ -131,6 +142,7 @@ export default function Calendar() {
   // This is the main (only) process that updates the events
   // In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
   useEffect(() => {
+    console.log("CALLED TO GET EVENTS")
     getEvents();
     getClasses();
   }, [selectedDate]);

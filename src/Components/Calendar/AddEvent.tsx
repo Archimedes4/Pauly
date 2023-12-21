@@ -449,7 +449,7 @@ export default function AddEvent({
               shadowRadius: 2,
             }}
           >
-            <Text style={{ zIndex: -1 }}>
+            <Text selectable={false} style={{ zIndex: -1 }}>
               {getTextState(createEventState, {
                 notStarted: isEditing ? 'Save' : 'Create',
               })}
@@ -476,7 +476,7 @@ export default function AddEvent({
               shadowRadius: 2,
             }}
           >
-            <Text style={{ zIndex: -1 }}>Delete</Text>
+            <Text selectable={false} style={{ zIndex: -1 }}>Delete</Text>
           </Pressable>
         ) : null}
       </View>

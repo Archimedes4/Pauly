@@ -65,7 +65,7 @@ export default function GovernmentCalendar() {
         <Text style={{ margin: 10 }}>Dress Code</Text>
       </Link>
       <Link
-        href="/government/calendar/calendarSync"
+        href="/government/calendar/sync"
         style={{
           backgroundColor: '#FFFFFF',
           shadowColor: 'black',
