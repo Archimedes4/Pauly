@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  25 December 2023
+  MicrosoftFilePicker.tsx
+  Can select file from one drive a share point link or a teams channel that the user is in.
+*/
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Pressable,

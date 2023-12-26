@@ -8,19 +8,16 @@
 import {
   View,
   Text,
-  TextInput,
-  ViewStyle,
-  Platform,
   ListRenderItemInfo,
   Image,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import { Colors, loadingStateEnum } from '@src/types';
 import store, { RootState } from '@Redux/store';
 import ProgressView from '@components/ProgressView';
-import { PersonIcon, SearchIcon } from '@src/components/Icons';
+import { PersonIcon } from '@src/components/Icons';
 import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
 import BackButton from '@components/BackButton';
 import { getNumberOfBlocks, getUsers } from '@Functions/studentFunctions';
@@ -28,118 +25,7 @@ import callMsGraph from '@Functions/ultility/microsoftAssets';
 import createUUID from '@src/Functions/ultility/createUUID';
 import { Link } from 'expo-router';
 import { useStudentSafeArea } from '@hooks/safeAreaHooks';
-
-function SearchBox({ onGetUsers }: { onGetUsers: (item: string) => void }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const { searchText } = useSelector((state: RootState) => state.studentSearch);
-  const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
-  const style: ViewStyle =
-    Platform.OS === 'web' ? { outlineStyle: 'none' } : {};
-  const [mounted, setMounted] = useState<boolean>(false);
-  const [called, setCalled] = useState<boolean>(true);
-  const dispatch = useDispatch();
-
-  const updateText = useCallback(() => {
-    if (mounted) {
-      const searchValueSave = searchText;
-      setTimeout(() => {
-        if (store.getState().studentSearch.searchText === searchValueSave) {
-          if (!called) {
-            setCalled(true);
-            onGetUsers(store.getState().studentSearch.searchText);
-          }
-        }
-      }, 1500);
-    } else {
-      setMounted(true);
-    }
-  }, [mounted, onGetUsers, searchText]);
-
-  useEffect(() => {
-    updateText();
-  }, [searchText, updateText]);
-
-  return (
-    <View
-      key="Search_View_Top"
-      style={{
-        width,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        top: height * 0.15 - 19,
-        zIndex: 2,
-      }}
-    >
-      <View
-        key="Search_View_Mid"
-        style={{
-          width: width * 0.8,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.8,
-          shadowRadius: 10,
-          borderRadius: 25,
-          flexDirection: 'row',
-          backgroundColor: Colors.white,
-        }}
-      >
-        {isOverflowing ? null : (
-          <View
-            key="Search_View_Search_Icon"
-            style={{
-              width: 20,
-              height: 40,
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft: 10,
-            }}
-          >
-            <SearchIcon key="Search_Icon" width={15} height={15} />
-          </View>
-        )}
-        <View key="Search_View_Input">
-          <TextInput
-            key="Search_TextInput"
-            placeholder="Search"
-            placeholderTextColor="black"
-            value={searchText}
-            onChangeText={e => {
-              dispatch(studentSearchSlice.actions.setStudentSearch(e));
-              setCalled(false);
-            }}
-            style={[
-              {
-                width: isOverflowing ? width * 0.8 - 20 : width * 0.8 - 50,
-                height: 20,
-                margin: 10,
-                borderWidth: 0,
-              },
-              style,
-            ]}
-            enterKeyHint="search"
-            inputMode="search"
-          />
-          <View
-            style={{ height: 0, alignSelf: 'flex-start', overflow: 'hidden' }}
-            onLayout={e => {
-              if (e.nativeEvent.layout.width > width * 0.8 - 20) {
-                setIsOverflowing(true);
-              } else {
-                setIsOverflowing(false);
-              }
-            }}
-            key="Search_View_Text"
-          >
-            <Text style={{ color: Colors.white }}>{searchText}</Text>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
-}
+import SearchBar from '@src/components/SearchBar';
 
 function StudentImage({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
   if (user.item.imageState === loadingStateEnum.loading) {
@@ -277,6 +163,7 @@ export default function Students() {
   const { usersState, users, nextLink } = useSelector(
     (state: RootState) => state.studentSearch,
   );
+  const { searchText } = useSelector((state: RootState) => state.studentSearch);
   const dispatch = useDispatch();
 
   async function loadUsers() {
@@ -332,17 +219,18 @@ export default function Students() {
             Students
           </Text>
         </View>
-        <SearchBox
-          onGetUsers={e => {
-            if (e !== '') {
-              console.log('Called SEARCH');
-              getUsers(undefined, e);
+        <SearchBar
+          value={searchText}
+          onChangeText={(e) => dispatch(studentSearchSlice.actions.setStudentSearch(e))}
+          onSearch={() => {
+            if (searchText !== '') {
+              getUsers(undefined, searchText);
               dispatch(studentSearchSlice.actions.setNextLink(undefined));
             } else {
-              console.log('Called SEARCH BOTTOm');
               getUsers();
             }
           }}
+          top={height * 0.15-19}
         />
         <FlatList
           key={`Students_${createUUID()}`}

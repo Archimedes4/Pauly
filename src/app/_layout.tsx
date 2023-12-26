@@ -14,6 +14,7 @@ export const unstable_settings = {
 };
 
 export default function App() {
+  //Fixing hydration issues
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);

@@ -25,12 +25,14 @@ import {
   getUsers,
   removeStudentSelection,
 } from '@Functions/studentFunctions';
-import { CloseIcon, SearchIcon } from '@components/Icons';
+import { CloseIcon } from '@components/Icons';
 import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
 import { Colors, loadingStateEnum } from '@src/types';
 import ProgressView from '@components/ProgressView';
 import addImage from '@Functions/addImage';
 import { getTextState } from '@src/Functions/ultility/createUUID';
+import SecondStyledButton from '@src/components/SecondStyledButton';
+import SearchBar from '@src/components/SearchBar';
 
 function SelectMainFile({
   userId,
@@ -249,6 +251,7 @@ export default function GovernmentStudents() {
   const { usersState, users } = useSelector(
     (state: RootState) => state.studentSearch,
   );
+  const dispatch = useDispatch();
 
   async function loadUsers() {
     getUsers();
@@ -260,17 +263,17 @@ export default function GovernmentStudents() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <View style={{ height: height * 0.1 }}>
+      <View style={{ height: height * 0.15, backgroundColor: Colors.darkGray}}>
         <BackButton to="/government/" />
-        <Text style={{ marginTop: 14 }}>Government Students</Text>
+        <Text style={{ marginTop: 8 + 14, fontSize: 35, marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', color: Colors.white}}>Government Students</Text>
       </View>
-      <SearchBox
-        getUsers={() => {
-          loadUsers();
-        }}
+      <SearchBar
+        value={store.getState().studentSearch.searchText}
+        onChangeText={(e) => {dispatch(studentSearchSlice.actions.setStudentSearch(e))}}
+        onSearch={() => loadUsers()}
       />
       <View style={{ width, height: height * 0.05 }} />
-      <View style={{ height: height * 0.75 }}>
+      <View style={{ height: height * 0.7 }}>
         {usersState === loadingStateEnum.loading ? (
           <View
             style={{
@@ -295,12 +298,8 @@ export default function GovernmentStudents() {
         )}
       </View>
       <View style={{ flexDirection: 'row', height: height * 0.1 }}>
-        <Pressable>
-          <Text>Select Folder</Text>
-        </Pressable>
-        <Pressable>
-          <Text>Select Maping Keys</Text>
-        </Pressable>
+        <SecondStyledButton text='Select Folder' width={100} style={{marginLeft: 10, marginTop: 'auto', marginBottom: 'auto'}}/>
+        <SecondStyledButton text='Select Maping Keys' width={100} style={{marginLeft: 10, marginTop: 'auto', marginBottom: 'auto'}}/>
       </View>
     </View>
   );
@@ -365,108 +364,108 @@ function StudentItem({ e }: { e: ListRenderItemInfo<schoolUserType> }) {
   );
 }
 
-function SearchBox({ getUsers }: { getUsers: (item: string) => void }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const { searchText } = useSelector((state: RootState) => state.studentSearch);
-  const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
-  const style: ViewStyle =
-    Platform.OS === 'web' ? { outlineStyle: 'none' } : {};
-  const [mounted, setMounted] = useState<boolean>(false);
-  const dispatch = useDispatch();
+// function SearchBox({ getUsers }: { getUsers: (item: string) => void }) {
+//   const { width, height } = useSelector((state: RootState) => state.dimentions);
+//   const { searchText } = useSelector((state: RootState) => state.studentSearch);
+//   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
+//   const style: ViewStyle =
+//     Platform.OS === 'web' ? { outlineStyle: 'none' } : {};
+//   const [mounted, setMounted] = useState<boolean>(false);
+//   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (mounted) {
-      const searchValueSave = searchText;
-      setTimeout(() => {
-        if (store.getState().studentSearch.searchText === searchValueSave) {
-          getUsers(store.getState().studentSearch.searchText);
-        }
-      }, 1500);
-    } else {
-      setMounted(true);
-    }
-  }, [searchText]);
+//   useEffect(() => {
+//     if (mounted) {
+//       const searchValueSave = searchText;
+//       setTimeout(() => {
+//         if (store.getState().studentSearch.searchText === searchValueSave) {
+//           getUsers(store.getState().studentSearch.searchText);
+//         }
+//       }, 1500);
+//     } else {
+//       setMounted(true);
+//     }
+//   }, [searchText]);
 
-  return (
-    <View
-      key="Search_View_Top"
-      style={{
-        width,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        top: height * 0.1 - 19,
-        zIndex: 2,
-      }}
-    >
-      <View
-        key="Search_View_Mid"
-        style={{
-          width: width * 0.8,
-          shadowColor: 'black',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.8,
-          shadowRadius: 10,
-          borderRadius: 25,
-          flexDirection: 'row',
-          backgroundColor: Colors.white,
-        }}
-      >
-        {isOverflowing ? null : (
-          <View
-            key="Search_View_Search_Icon"
-            style={{
-              width: 20,
-              height: 40,
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginLeft: 10,
-            }}
-          >
-            <SearchIcon key="Search_Icon" width={15} height={15} />
-          </View>
-        )}
-        <View key="Search_View_Input">
-          <TextInput
-            key="Search_TextInput"
-            placeholder="Search"
-            placeholderTextColor="black"
-            value={searchText}
-            onChangeText={e => {
-              dispatch(studentSearchSlice.actions.setStudentSearch(e));
-            }}
-            style={[
-              {
-                width: isOverflowing ? width * 0.8 - 20 : width * 0.8 - 50,
-                height: 20,
-                margin: 10,
-                borderWidth: 0,
-              },
-              style,
-            ]}
-            enterKeyHint="search"
-            inputMode="search"
-          />
-          <View
-            style={{ height: 0, alignSelf: 'flex-start', overflow: 'hidden' }}
-            onLayout={e => {
-              if (e.nativeEvent.layout.width > width * 0.8 - 20) {
-                setIsOverflowing(true);
-              } else {
-                setIsOverflowing(false);
-              }
-            }}
-            key="Search_View_Text"
-          >
-            <Text style={{ color: 'white' }}>{searchText}</Text>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
-}
+//   return (
+//     <View
+//       key="Search_View_Top"
+//       style={{
+//         width,
+//         alignContent: 'center',
+//         alignItems: 'center',
+//         justifyContent: 'center',
+//         position: 'absolute',
+//         top: height * 0.15 - 19,
+//         zIndex: 2,
+//       }}
+//     >
+//       <View
+//         key="Search_View_Mid"
+//         style={{
+//           width: width * 0.8,
+//           shadowColor: 'black',
+//           shadowOffset: { width: 0, height: 1 },
+//           shadowOpacity: 0.8,
+//           shadowRadius: 10,
+//           borderRadius: 25,
+//           flexDirection: 'row',
+//           backgroundColor: Colors.white,
+//         }}
+//       >
+//         {isOverflowing ? null : (
+//           <View
+//             key="Search_View_Search_Icon"
+//             style={{
+//               width: 20,
+//               height: 40,
+//               alignContent: 'center',
+//               alignItems: 'center',
+//               justifyContent: 'center',
+//               marginLeft: 10,
+//             }}
+//           >
+//             <SearchIcon key="Search_Icon" width={15} height={15} />
+//           </View>
+//         )}
+//         <View key="Search_View_Input">
+//           <TextInput
+//             key="Search_TextInput"
+//             placeholder="Search"
+//             placeholderTextColor="black"
+//             value={searchText}
+//             onChangeText={e => {
+//               dispatch(studentSearchSlice.actions.setStudentSearch(e));
+//             }}
+//             style={[
+//               {
+//                 width: isOverflowing ? width * 0.8 - 20 : width * 0.8 - 50,
+//                 height: 20,
+//                 margin: 10,
+//                 borderWidth: 0,
+//               },
+//               style,
+//             ]}
+//             enterKeyHint="search"
+//             inputMode="search"
+//           />
+//           <View
+//             style={{ height: 0, alignSelf: 'flex-start', overflow: 'hidden' }}
+//             onLayout={e => {
+//               if (e.nativeEvent.layout.width > width * 0.8 - 20) {
+//                 setIsOverflowing(true);
+//               } else {
+//                 setIsOverflowing(false);
+//               }
+//             }}
+//             key="Search_View_Text"
+//           >
+//             <Text style={{ color: 'white' }}>{searchText}</Text>
+//           </View>
+//         </View>
+//       </View>
+//     </View>
+//   );
+// }
 
 function StudentsSelectFile({
   setFilePickingMode,

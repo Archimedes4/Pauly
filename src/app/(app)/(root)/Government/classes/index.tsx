@@ -7,6 +7,7 @@ import createUUID from '@src/Functions/ultility/createUUID';
 import { Colors, loadingStateEnum, semesters } from '@src/types';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
+import StyledButton from '@src/components/SecondStyledButton';
 
 export default function GovernmentClasses() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -56,7 +57,7 @@ export default function GovernmentClasses() {
         <Link href="/profile/government/">
           <Text>Back</Text>
         </Link>
-        <Text>Classes</Text>
+        <Text style={{marginLeft: 'auto', marginRight: 'auto',}}>Classes</Text>
       </View>
       <ScrollView style={{ height: height * 0.85 }}>
         <>
@@ -100,9 +101,7 @@ export default function GovernmentClasses() {
           )}
         </>
       </ScrollView>
-      <Link href="/profile/government/classes/room">
-        <Text>Rooms</Text>
-      </Link>
+      <StyledButton to="/profile/government/classes/room" text='Rooms' width={100} style={{marginLeft: 10, marginRight: 10, marginBottom: 20}}/>
     </View>
   );
 }

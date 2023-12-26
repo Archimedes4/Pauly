@@ -3,7 +3,7 @@
   Andrew Mainella
 */
 import { View, Text, Pressable, ViewStyle } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import createUUID from '../Functions/ultility/createUUID';
 import { Colors } from '../types';
@@ -24,8 +24,13 @@ export default function StyledButton({
   style?: ViewStyle | undefined;
 }) {
   const router = useRouter();
+  const [isSecond, setIsSecond] = useState<boolean>(false);
   return (
     <Pressable
+      onHoverIn={() => setIsSecond(true)}
+      onHoverOut={() => setIsSecond(false)}
+      onPressIn={() => setIsSecond(true)}
+      onPressOut={() => setIsSecond(false)}
       onPress={() => {
         if (onPress !== undefined) {
           onPress();
@@ -34,26 +39,24 @@ export default function StyledButton({
           router.replace(to);
         }
       }}
-      key={createUUID()}
       style={[
         {
+          backgroundColor: isSecond ? Colors.lightGray:Colors.darkGray,
           shadowColor: Colors.black,
-          shadowOffset: { width: 0, height: 1 },
+          shadowOffset: { width: 2, height: 2 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
           borderRadius: 15,
-          marginLeft: width * 0.03,
-          marginRight: width * 0.03,
+          padding: 10,
+          height: 36
         },
         style,
       ]}
     >
-      <View style={{ margin: 10 }}>
-        <Text style={{ fontSize: 16 }}>{text}</Text>
-        {caption !== undefined ? (
-          <Text style={{ fontSize: 12 }}>{caption}</Text>
-        ) : null}
-      </View>
+      <Text style={{ fontSize: 16, color: isSecond ? Colors.black:Colors.white, fontFamily: 'Roboto' }}>{text}</Text>
+      {caption !== undefined ? (
+        <Text style={{ fontSize: 12 }}>{caption}</Text>
+      ) : null}
     </Pressable>
   );
 }

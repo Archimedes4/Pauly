@@ -12,6 +12,7 @@ import store, { RootState } from '@Redux/store';
 import getCurrentPaulyData from '@Functions/notifications/getCurrentPaulyData';
 import { Colors, loadingStateEnum } from '@src/types';
 import { Link } from 'expo-router';
+import SecondStyledButton from '@src/components/SecondStyledButton';
 
 export default function GovernmentHomePage() {
   const { paulyDataListId, siteId } = useSelector(
@@ -27,7 +28,10 @@ export default function GovernmentHomePage() {
   );
 
   // New Data
-  const [newMessageText, setNewMessageText] = useState(
+  const [newText, setNewText] = useState(
+    store.getState().paulyData.message,
+  );
+  const [serverText, setServerText] = useState(
     store.getState().paulyData.message,
   );
   const [newAnimationSpeed, setNewAnnimationSpeed] = useState(
@@ -76,13 +80,13 @@ export default function GovernmentHomePage() {
   }
 
   useEffect(() => {
-    const storeText = newMessageText;
+    const storeText = newText;
     setTimeout(() => {
-      if (isAutoUpdatingText && newMessageText === storeText) {
-        updatePaulyData('message', newMessageText);
+      if (isAutoUpdatingText && newText === storeText) {
+        updatePaulyData('message', newText);
       }
     }, 2000);
-  }, [newMessageText]);
+  }, [newText]);
 
   useEffect(() => {
     loadCurrentPaulyData();
@@ -93,26 +97,21 @@ export default function GovernmentHomePage() {
       <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>Home Page</Text>
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Home Page</Text>
       <View>
         <View style={{ flexDirection: 'row' }}>
           <TextInput
-            value={newMessageText}
+            value={newText}
             onChangeText={e => {
-              setNewMessageText(e);
+              setNewText(e);
             }}
+            style={{padding: 10, paddingLeft: 15, paddingRight: 15, width: width - width * 0.1, marginLeft: 'auto', marginRight: 'auto', borderRadius: 30, borderWidth: 1}}
           />
         </View>
-        {isAutoUpdatingText ? (
+        {isAutoUpdatingText  ? (
           <View style={{ height: 14 }} />
         ) : (
-          <Pressable
-            onPress={() => {
-              updatePaulyData('message', newMessageText);
-            }}
-          >
-            <Text>Update Text</Text>
-          </Pressable>
+          <SecondStyledButton onPress={() => updatePaulyData('message', newText)} text={'Update Text'} width={100} style={{marginTop: 10, marginBottom: 10}} />
         )}
         <View style={{ flexDirection: 'row' }}>
           <Text>Is auto updating text: </Text>
@@ -125,7 +124,7 @@ export default function GovernmentHomePage() {
           />
         </View>
       </View>
-      <View style={{ marginBottom: 20 }}>
+      <View style={{ marginBottom: 20, paddingLeft: 5, paddingRight: 5 }}>
         <View>
           <Text style={{ margin: 5 }}>
             Select Powerpoint: {selectedPowerpoint?.name}
@@ -141,7 +140,7 @@ export default function GovernmentHomePage() {
           onSetIsShowingMicrosoftUpload={undefined}
         />
       </View>
-      <Pressable
+      <SecondStyledButton
         onPress={async () => {
           if (selectedPowerpoint !== undefined) {
             const shareId = await createShareId(selectedPowerpoint);
@@ -150,9 +149,9 @@ export default function GovernmentHomePage() {
             }
           }
         }}
-      >
-        <Text>Save Changes</Text>
-      </Pressable>
+        text='Save Changes'
+        width={100}
+      />
     </View>
   );
 }
