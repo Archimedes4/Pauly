@@ -1,19 +1,18 @@
 import { View, Text, Pressable, TextInput } from 'react-native';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@Redux/store';
 import { Colors, loadingStateEnum } from '@src/types';
 import { WarningIcon } from '@src/components/Icons';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
+import { Link } from 'expo-router';
 
 export default function GovermentRoomsCreate() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [createRoomState, setCreateRoomState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
-  const navigate = useNavigate();
   const [roomName, setRoomName] = useState<string>('');
 
   async function createRoom() {
@@ -49,13 +48,9 @@ export default function GovermentRoomsCreate() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Pressable
-        onPress={() => {
-          navigate('/profile/government/classes/room');
-        }}
-      >
-        <Text>Back</Text>
-      </Pressable>
+      <Link href={'/profile/government/classes/room'}>
+        Back
+      </Link>
       <View
         style={{
           justifyContent: 'center',

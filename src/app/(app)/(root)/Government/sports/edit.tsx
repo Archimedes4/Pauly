@@ -11,7 +11,7 @@ import {
   Image,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-native';
+import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { convertYearToSchoolYear } from '@Functions/calendar/calendarFunctions';
@@ -24,12 +24,12 @@ import ProgressView from '@components/ProgressView';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import { CloseIcon } from '@src/components/Icons';
 import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
+import { Link } from 'expo-router';
 
 export default function GovernmentCreateNewTeam() {
   const { sport, id, teamId } = useParams();
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
-  const navigate = useNavigate();
 
   const [createTeamLoadingState, setCreateTeamLoadingState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
@@ -274,13 +274,9 @@ export default function GovernmentCreateNewTeam() {
             backgroundColor: Colors.white,
           }}
         >
-          <Pressable
-            onPress={() =>
-              navigate(`/profile/government/sports/team/${sport}/${id}`)
-            }
-          >
-            <Text>Back</Text>
-          </Pressable>
+          <Link href={`/profile/government/sports/team/${sport}/${id}`}>
+            Back
+          </Link>
           <View>
             <Text>
               {isCreatingTeam
@@ -465,13 +461,9 @@ export default function GovernmentCreateNewTeam() {
             </View>
           ) : (
             <View>
-              <Pressable
-                onPress={() => {
-                  navigate(`/profile/government/sports/team/${sport}/${id}`);
-                }}
-              >
-                <Text>Back</Text>
-              </Pressable>
+              <Link href={`/profile/government/sports/team/${sport}/${id}`}>
+                Back
+              </Link>
               <Text>Failed</Text>
             </View>
           )}

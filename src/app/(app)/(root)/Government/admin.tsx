@@ -520,42 +520,46 @@ function UserBlock({
     getUsers();
   }, []);
 
+  if (loadUsersResult === loadingStateEnum.loading) {
+    return (
+      <View style={{ height: height * 0.6 }}>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+  if (loadUsersResult === loadingStateEnum.success) {
+    return (
+      <View style={{ height: height * 0.6 }}>
+        <FlatList
+          data={loadedUsers}
+          renderItem={user => (
+            <View key={`User_${user.item.id}`}>
+              {user.item.id !== currentUserId ? (
+                <Pressable
+                  onPress={() => {
+                    setSelectedUser(user.item);
+                    setInitResult(loadingStateEnum.notStarted);
+                  }}
+                >
+                  <View>
+                    <Text>{user.item.displayName}</Text>
+                  </View>
+                </Pressable>
+              ) : null}
+            </View>
+          )}
+          onEndReached={() => {
+            if (nextLink !== undefined) {
+              getUsers(nextLink);
+            }
+          }}
+        />
+      </View>
+    );
+  }
   return (
     <View style={{ height: height * 0.6 }}>
-      {loadUsersResult === loadingStateEnum.loading ? (
-        <Text>Loading</Text>
-      ) : (
-        <>
-          {loadUsersResult === loadingStateEnum.success ? (
-            <FlatList
-              data={loadedUsers}
-              renderItem={user => (
-                <View key={`User_${user.item.id}`}>
-                  {user.item.id !== currentUserId ? (
-                    <Pressable
-                      onPress={() => {
-                        setSelectedUser(user.item);
-                        setInitResult(loadingStateEnum.notStarted);
-                      }}
-                    >
-                      <View>
-                        <Text>{user.item.displayName}</Text>
-                      </View>
-                    </Pressable>
-                  ) : null}
-                </View>
-              )}
-              onEndReached={() => {
-                if (nextLink !== undefined) {
-                  getUsers(nextLink);
-                }
-              }}
-            />
-          ) : (
-            <Text>Failed</Text>
-          )}
-        </>
-      )}
+      <Text>Failed</Text>
     </View>
-  );
+  )
 }

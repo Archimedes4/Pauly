@@ -1,7 +1,6 @@
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-native';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import store, { RootState } from '@Redux/store';
 import { Colors, loadingStateEnum, semesters } from '@src/types';
@@ -14,12 +13,12 @@ import {
 import { CloseIcon, WarningIcon } from '@src/components/Icons';
 import Dropdown from '@components/Dropdown';
 import { getRoom, getRooms } from '@Functions/classesFunctions';
+import { Link } from 'expo-router';
+import { useParams } from 'react-router-native';
 
 export default function GovernmentClassesEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const { id } = useParams();
-  const navigate = useNavigate();
-
   const [selectedSemester, setSelectedSemester] = useState<semesters>(
     semesters.semesterOne,
   );
@@ -204,13 +203,9 @@ export default function GovernmentClassesEdit() {
       <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
         {classState === loadingStateEnum.loading ? (
           <View>
-            <Pressable
-              onPress={() => {
-                navigate('/profile/government/classes');
-              }}
-            >
-              <Text>Back</Text>
-            </Pressable>
+            <Link href={'/profile/government/classes'}>
+              Back
+            </Link>
             <Text>Loading</Text>
           </View>
         ) : (
@@ -223,13 +218,9 @@ export default function GovernmentClassesEdit() {
                   backgroundColor: Colors.white,
                 }}
               >
-                <Pressable
-                  onPress={() => {
-                    navigate('/profile/government/classes');
-                  }}
-                >
-                  <Text>Back</Text>
-                </Pressable>
+                <Link href={'/profile/government/classes'}>
+                  Back
+                </Link>
                 <Text>Add Class Data</Text>
                 <View>
                   <Text>Name:</Text>

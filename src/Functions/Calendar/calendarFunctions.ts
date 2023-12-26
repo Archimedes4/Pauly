@@ -125,3 +125,14 @@ export function computeEventHeight(
   const ReturnOffset = HourHeight * deltaHours + MinuteHeight * deltaMinutes;
   return ReturnOffset;
 }
+
+export function isTimeOnDay(lhs: string, rhs: string): boolean {
+  if (new Date(lhs).getFullYear() !== new Date(rhs).getFullYear()) {
+    return false
+  } else if (new Date(lhs).getMonth() !== new Date(rhs).getMonth()) {
+    return false
+  } else if (new Date(lhs).getDate() !== new Date(rhs).getDate()) {
+    return false
+  }
+  return true
+}

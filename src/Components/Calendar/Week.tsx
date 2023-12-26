@@ -5,14 +5,61 @@
   Week.tsx
 */
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import DayView from './DayView';
+import WeekDayView from './WeekDayView';
 import createUUID from '../../Functions/ultility/createUUID';
 import { RootState } from '../../Redux/store';
 import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
 import { Colors } from '../../types';
 import { ChevronLeft, ChevronRight } from '../Icons';
+import DayView from './DayView';
+
+function WeekDayButton({width, day}:{width: number, day: Date}) {
+  const selectedDateRedux: string = useSelector((state: RootState) => state.selectedDate);
+  const dispatch = useDispatch();
+
+  const [isHover, setIsHover] = useState<boolean>(false)
+  return (
+    <Pressable
+      onPress={() => {
+        dispatch(
+          selectedDateSlice.actions.setSelectedDate(
+            day.toISOString(),
+          ),
+        );
+      }}
+      key={`${day.getDay()}`}
+      onHoverIn={() => setIsHover(true)}
+      onHoverOut={() => setIsHover(false)}
+      onPressIn={() =>  setIsHover(true)}
+      onPressOut={() => setIsHover(false)}
+      style={{
+        width: width * 0.08888888888888889,
+        height: width * 0.08888888888888889,
+        margin: width * 0.01111111111111111,
+        borderRadius: 50,
+        backgroundColor: (isHover) ? Colors.lightGray:Colors.darkGray,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor:
+          day.getDate() === new Date(selectedDateRedux).getDate()
+            ? 'black'
+            : Colors.maroon,
+        borderWidth:
+          new Date().getDate() === day.getDate() ||
+          day.getDate() === new Date(selectedDateRedux).getDate()
+            ? 5
+            : 0,
+        shadowRadius: 4,
+        shadowColor: 'black'
+      }}
+    >
+      <Text selectable={false} style={{ color: isHover ? Colors.black:Colors.white }}>{day.getDate()}</Text>
+    </Pressable>
+  )
+}
 
 export default function Week({
   width,
@@ -39,12 +86,36 @@ export default function Week({
   useEffect(() => {
     setDaysOfWeek(getDOW(new Date(selectedDateRedux)));
   }, [selectedDateRedux]);
+
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View>
         {/* 768 TO DO get dimentiosn value */}
-        {false ? (
-          <View />
+        {width >= 768 ? (
+          <View>
+            <View style={{flexDirection: 'row', height: 40}}>
+              {daysOfWeek.map((dow) => (
+                <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                  <Text>{dow.toLocaleDateString("en-US", {weekday: 'long'})}</Text>
+                  <Text style={{marginLeft: 'auto', marginRight: 'auto'}}>{dow.toLocaleDateString("en-US", {day: "numeric"})}</Text>
+                </View>
+              ))}
+            </View>
+            <ScrollView style={{height}}>
+              <View style={{flexDirection: 'row'}}>
+                {daysOfWeek.map((day, index) => (
+                  <WeekDayView
+                    width={width/7}
+                    height={false ? height * 0.757 : height}
+                    week={true}
+                    start={index === 0 ? true:false}
+                    day={day}
+                    key={day.getDate()}
+                  />
+                ))}
+              </View>
+            </ScrollView>
+          </View>
         ) : (
           <View>
             <View
@@ -70,37 +141,7 @@ export default function Week({
                 />
               </Pressable>
               {daysOfWeek.map(day => (
-                <Pressable
-                  onPress={() => {
-                    dispatch(
-                      selectedDateSlice.actions.setSelectedDate(
-                        day.toISOString(),
-                      ),
-                    );
-                  }}
-                  key={`${day.getDay()}_${createUUID()}`}
-                  style={{
-                    width: width * 0.08888888888888889,
-                    height: width * 0.08888888888888889,
-                    margin: width * 0.01111111111111111,
-                    borderRadius: 50,
-                    backgroundColor: Colors.darkGray,
-                    alignContent: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderColor:
-                      day.getDate() === new Date(selectedDateRedux).getDate()
-                        ? 'black'
-                        : Colors.maroon,
-                    borderWidth:
-                      new Date().getDate() === day.getDate() ||
-                      day.getDate() === new Date(selectedDateRedux).getDate()
-                        ? 5
-                        : 0,
-                  }}
-                >
-                  <Text style={{ color: Colors.white }}>{day.getDate()}</Text>
-                </Pressable>
+                <WeekDayButton width={width} day={day} />
               ))}
               <Pressable
                 style={{ margin: width * 0.01111111111111111 }}

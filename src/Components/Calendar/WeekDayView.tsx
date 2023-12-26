@@ -1,241 +1,12 @@
-/*
-  Pauly
-  Andrew Mainella
-  July 7 2023
-  DayView.tsx
-  This holds the events as a day meaning each hour is represented and a red line is present at the current time.
-*/
-
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, ScrollView, useColorScheme, Text } from 'react-native';
-import { useSelector } from 'react-redux';
-import {
-  calculateIfShowing,
-  computeEventHeight,
-  findTimeOffset,
-} from '../../Functions/calendar/calendarFunctions';
-import { RootState } from '../../Redux/store';
-import createUUID from '../../Functions/ultility/createUUID';
-import { Colors, loadingStateEnum } from '../../types';
-import { getClassEventsFromDay } from '../../Functions/classesFunctions';
-
-export default function DayView({
-  width,
-  height,
-  week,
-  start
-}: {
-  width: number;
-  height: number;
-  week?: undefined;
-  start?: undefined;
-} | {
-  width: number;
-  height: number;
-  week: true;
-  start: boolean;
-
-}) {
-  const colorScheme = useColorScheme();
-  const currentEvents = useSelector((state: RootState) => state.currentEvents);
-  const selectedDate = useSelector((state: RootState) => state.selectedDate);
-  const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0);
-  const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0);
-  const [currentTime, setCurrentTime] = useState<string>('12:00');
-  const [isShowingTime, setIsShowingTime] = useState<boolean>(true);
-  const [hourLength, setHourLength] = useState<number>(0);
-  const hoursText: string[] = [
-    '12AM',
-    '1AM',
-    '2AM',
-    '3AM',
-    '4AM',
-    '5AM',
-    '6AM',
-    '7AM',
-    '8AM',
-    '9AM',
-    '10AM',
-    '11AM',
-    '12PM',
-    '1PM',
-    '2PM',
-    '3PM',
-    '4PM',
-    '5PM',
-    '6PM',
-    '7PM',
-    '8PM',
-    '9PM',
-    '10PM',
-    '11PM',
-  ];
-  const mainScrollRef = useRef<ScrollView>(null);
-  const [eventsPane, setEventsPane] = useState<number[][]>([[]]); // This is a sorted 2d array for calculating the horizintal shift of an event
-  const [schoolEvents, setSchoolEvents] = useState<eventType[]>();
-
-  function setCurrentTimeFunction(hour: number, minuite: number) {
-    if (minuite.toString().length === 1) {
-      if (hour === 12) {
-        setCurrentTime(`12:0${minuite.toString()}`);
-      } else {
-        setCurrentTime(`${(hour % 12).toString()}:0${minuite.toString()}`);
-      }
-    } else if (hour === 12) {
-      setCurrentTime(`12:${minuite}`);
-    } else {
-      setCurrentTime(`${(hour % 12).toString()}:${minuite.toString()}`);
-    }
-  }
-
-  const loadCalendarContent = useCallback(() => {
-    const currentDate = new Date();
-    const resultHeightTopOffset = findTimeOffset(currentDate, height);
-    setHeightOffsetTop(resultHeightTopOffset);
-    const minuiteInt: number = currentDate.getMinutes();
-    setCurrentMinuteInt(minuiteInt);
-    const hourInt = currentDate.getHours();
-    setCurrentTimeFunction(hourInt, minuiteInt);
-    mainScrollRef.current?.scrollTo({
-      x: 0,
-      y: resultHeightTopOffset,
-      animated: false,
-    });
-  }, [height]);
-
-  // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
-  // Upadtes every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const minuiteInt = new Date().getMinutes();
-      if (currentMinuteInt !== minuiteInt!) {
-        setCurrentMinuteInt(minuiteInt);
-
-        const hourInt = new Date().getHours();
-        if (minuiteInt.toString().length === 1) {
-          setCurrentTimeFunction(hourInt, minuiteInt);
-        } else {
-          setCurrentTimeFunction(hourInt, minuiteInt);
-        }
-        setHeightOffsetTop(findTimeOffset(new Date(), height));
-      }
-    }, 1000);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [currentMinuteInt, height]);
-
-  useEffect(() => {
-    setHourLength(height * 0.1);
-    loadCalendarContent();
-  }, [height, loadCalendarContent]);
-
-  async function getClassesEvents() {
-    const result = await getClassEventsFromDay();
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
-    ) {
-      setSchoolEvents(result.data);
-    }
-  }
-
-  useEffect(() => {
-    getClassesEvents();
-  }, [selectedDate]);
-
-  return (
-    <ScrollView
-      style={{ height: week ? undefined:height, width, backgroundColor: Colors.white }}
-      ref={mainScrollRef}
-      scrollEnabled={week == true ? false:true}
-    >
-      <>
-        {isShowingTime ? (
-          <>
-            {hoursText.map(value => (
-              <View
-                key={`${value}_${createUUID()}`}
-                style={{ flexDirection: 'row', height: hourLength }}
-              >
-                {calculateIfShowing(value, new Date(selectedDate)) && (week === undefined || start === true) ? (
-                  <Text
-                    selectable={false}
-                    style={{
-                      color: colorScheme == 'dark' ? Colors.white : 'black',
-                    }}
-                  >
-                    {value}
-                  </Text>
-                ) : null}
-                <View
-                  style={{
-                    backgroundColor: 'black',
-                    width: width * 0.9,
-                    height: 6,
-                    position: 'absolute',
-                    right: 0,
-                    borderRadius: 25,
-                  }}
-                />
-              </View>
-            ))}
-          </>
-        ) : null}
-      </>
-      {currentEvents.map(event => (
-        <>
-          {event.allDay ||
-          new Date(event.endTime).getFullYear() !==
-            new Date(selectedDate).getFullYear() ||
-          new Date(event.endTime).getMonth() !==
-            new Date(selectedDate).getMonth() ||
-          new Date(event.endTime).getDate() !==
-            new Date(selectedDate).getDate() ? null : (
-            <EventBlock
-              event={event}
-              width={width}
-              height={height}
-              eventPane={eventsPane}
-            />
-          )}
-        </>
-      ))}
-      {schoolEvents?.map(event => (
-        <EventBlock
-          event={event}
-          width={width}
-          height={height}
-          eventPane={eventsPane}
-        />
-      ))}
-      {(week === undefined && start === false) && new Date(selectedDate).getDate() === new Date().getDate() &&
-      new Date(selectedDate).getMonth() === new Date().getMonth() &&
-      new Date(selectedDate).getFullYear() === new Date().getFullYear() ? (
-        <View
-          style={{
-            position: 'absolute',
-            top: heightOffsetTop,
-            height: height * 0.005,
-            width,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>{currentTime}</Text>
-          <View
-            style={{
-              backgroundColor: 'red',
-              width: width * 0.914,
-              height: 6,
-              position: 'absolute',
-              right: 0,
-            }}
-          />
-        </View>
-      ) : null}
-    </ScrollView>
-  );
-}
+import { calculateIfShowing, computeEventHeight, findTimeOffset, isTimeOnDay } from "@src/Functions/calendar/calendarFunctions";
+import { getClassEventsFromDay } from "@src/Functions/classesFunctions";
+import { RootState } from "@src/Redux/store";
+import { Colors, loadingStateEnum } from "@src/types";
+import createUUID from "api/CommonFunctions/createUUID";
+import React, { useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ScrollView, View, useColorScheme, Text } from "react-native";
+import { useSelector } from "react-redux";
 
 function EventBlock({
   event,
@@ -366,6 +137,210 @@ function EventBlock({
           minute: 'numeric',
         })}
       </Text>
+    </View>
+  );
+}
+
+
+export default function WeekDayView({
+  width,
+  height,
+  week,
+  start,
+  day
+}: {
+  width: number;
+  height: number;
+  week: true;
+  start: boolean;
+  day: Date
+}) {
+  const colorScheme = useColorScheme();
+  const currentEvents = useSelector((state: RootState) => state.currentEvents);
+  const selectedDate = useSelector((state: RootState) => state.selectedDate);
+  const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0);
+  const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0);
+  const [currentTime, setCurrentTime] = useState<string>('12:00');
+  const [isShowingTime, setIsShowingTime] = useState<boolean>(true);
+  const [hourLength, setHourLength] = useState<number>(0);
+  const hoursText: string[] = [
+    '12AM',
+    '1AM',
+    '2AM',
+    '3AM',
+    '4AM',
+    '5AM',
+    '6AM',
+    '7AM',
+    '8AM',
+    '9AM',
+    '10AM',
+    '11AM',
+    '12PM',
+    '1PM',
+    '2PM',
+    '3PM',
+    '4PM',
+    '5PM',
+    '6PM',
+    '7PM',
+    '8PM',
+    '9PM',
+    '10PM',
+    '11PM',
+  ];
+  const mainScrollRef = useRef<ScrollView>(null);
+  const [eventsPane, setEventsPane] = useState<number[][]>([[]]); // This is a sorted 2d array for calculating the horizintal shift of an event
+  const [schoolEvents, setSchoolEvents] = useState<eventType[]>();
+
+  function setCurrentTimeFunction(hour: number, minuite: number) {
+    if (minuite.toString().length === 1) {
+      if (hour === 12) {
+        setCurrentTime(`12:0${minuite.toString()}`);
+      } else {
+        setCurrentTime(`${(hour % 12).toString()}:0${minuite.toString()}`);
+      }
+    } else if (hour === 12) {
+      setCurrentTime(`12:${minuite}`);
+    } else {
+      setCurrentTime(`${(hour % 12).toString()}:${minuite.toString()}`);
+    }
+  }
+
+  const loadCalendarContent = useCallback(() => {
+    const currentDate = new Date();
+    const resultHeightTopOffset = findTimeOffset(currentDate, height);
+    setHeightOffsetTop(resultHeightTopOffset);
+    const minuiteInt: number = currentDate.getMinutes();
+    setCurrentMinuteInt(minuiteInt);
+    const hourInt = currentDate.getHours();
+    setCurrentTimeFunction(hourInt, minuiteInt);
+    mainScrollRef.current?.scrollTo({
+      x: 0,
+      y: resultHeightTopOffset,
+      animated: false,
+    });
+  }, [height]);
+
+  // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
+  // Upadtes every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const minuiteInt = new Date().getMinutes();
+      if (currentMinuteInt !== minuiteInt!) {
+        setCurrentMinuteInt(minuiteInt);
+
+        const hourInt = new Date().getHours();
+        if (minuiteInt.toString().length === 1) {
+          setCurrentTimeFunction(hourInt, minuiteInt);
+        } else {
+          setCurrentTimeFunction(hourInt, minuiteInt);
+        }
+        setHeightOffsetTop(findTimeOffset(new Date(), height));
+      }
+    }, 1000);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [currentMinuteInt, height]);
+
+  useEffect(() => {
+    setHourLength(height * 0.1);
+    loadCalendarContent();
+  }, [height, loadCalendarContent]);
+
+  async function getClassesEvents() {
+    const result = await getClassEventsFromDay();
+    if (
+      result.result === loadingStateEnum.success &&
+      result.data !== undefined
+    ) {
+      setSchoolEvents(result.data);
+    }
+  }
+
+  useEffect(() => {
+    getClassesEvents();
+  }, [selectedDate]);
+
+  return (
+    <View style={{ height: week ? undefined:height, width, backgroundColor: Colors.white }}>
+      <>
+        {isShowingTime ? (
+          <>
+            {hoursText.map(value => (
+              <View
+                key={`${value}_${createUUID()}`}
+                style={{ flexDirection: 'row', height: hourLength }}
+              >
+                {calculateIfShowing(value, new Date(selectedDate)) && (week === undefined || start === true) ? (
+                  <Text
+                    selectable={false}
+                    style={{
+                      color: colorScheme == 'dark' ? Colors.white : 'black',
+                    }}
+                  >
+                    {value}
+                  </Text>
+                ) : null}
+                <View
+                  style={{
+                    backgroundColor: 'black',
+                    width: start ? width * 0.8:width,
+                    height: 6,
+                    position: 'absolute',
+                    right: 0,
+                    borderEndStartRadius: start ? 25:0,
+                    borderStartStartRadius: start ? 25:0
+                  }}
+                />
+              </View>
+            ))}
+          </>
+        ) : null}
+      </>
+      {currentEvents.map(event => (
+        <>
+          {event.allDay || !isTimeOnDay(event.endTime, selectedDate) ? null : (
+            <EventBlock
+              event={event}
+              width={width}
+              height={height}
+              eventPane={eventsPane}
+            />
+          )}
+        </>
+      ))}
+      {schoolEvents?.map(event => (
+        <EventBlock
+          event={event}
+          width={width}
+          height={height}
+          eventPane={eventsPane}
+        />
+      ))}
+      {isTimeOnDay(selectedDate, day.toISOString()) ? (
+        <View
+          style={{
+            position: 'absolute',
+            top: heightOffsetTop,
+            height: height * 0.005,
+            width,
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>{currentTime}</Text>
+          <View
+            style={{
+              backgroundColor: 'red',
+              width: width * 0.914,
+              height: 6,
+              position: 'absolute',
+              right: 0,
+            }}
+          />
+        </View>
+      ) : null}
     </View>
   );
 }

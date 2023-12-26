@@ -13,7 +13,6 @@ import {
   Image,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SegmentedButtons } from 'react-native-paper';
@@ -25,6 +24,7 @@ import { Colors, loadingStateEnum, postType } from '@src/types';
 import { getSports, getSportsTeams } from '@Functions/sports/sportsFunctions';
 import ProgressView from '@components/ProgressView';
 import getYoutubeVideos from '@Functions/youtubeFunctions';
+import { Link } from 'expo-router';
 
 function YoutubeVideosSelector({
   onSelect,
@@ -99,7 +99,6 @@ export default function GovernmentSportsTeamAddPost() {
   const [postName, setPostName] = useState<string>('');
   const [postSubmissionState, setPostSubmissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
-  const navigate = useNavigate();
   const [selectedSportId, setSelectedSportId] = useState<string>('');
   const [selectedTeamId, setSelectedTeamId] = useState<string>('');
   const [postMode, setPostMode] = useState(postType.microsoftFile);
@@ -164,13 +163,9 @@ export default function GovernmentSportsTeamAddPost() {
   }
   return (
     <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
-      <Pressable
-        onPress={() => {
-          navigate('/profile/government/sports');
-        }}
-      >
-        <Text>Back</Text>
-      </Pressable>
+      <Link href={'/profile/government/sports'}>
+        Back
+      </Link>
       <Text>Add Sports Team Post</Text>
       <TextInput
         value={postName}

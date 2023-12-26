@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Modal, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-native';
+import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
@@ -10,6 +10,7 @@ import { getSport, getSportsTeams } from '@Functions/sports/sportsFunctions';
 import { WarningIcon } from '@src/components/Icons';
 import SVGXml from '@components/SVGXml';
 import { getTextState } from '@src/Functions/ultility/createUUID';
+import { Link } from 'expo-router';
 
 function SportsUpdateModel({
   isPickingSvg,
@@ -124,7 +125,6 @@ function SportsUpdateModel({
 export default function GovernmentSportsTeams() {
   const { sport, id } = useParams();
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const navigate = useNavigate();
 
   const [dataResult, setDataResult] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -200,9 +200,9 @@ export default function GovernmentSportsTeams() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Pressable onPress={() => navigate('/profile/government/sports')}>
-        <Text>Back</Text>
-      </Pressable>
+      <Link href={'/profile/government/sports'}>
+        Back
+      </Link>
       <Text>{sport} Teams</Text>
       <Pressable
         style={{ borderRadius: 15, backgroundColor: 'red' }}
@@ -249,16 +249,9 @@ export default function GovernmentSportsTeams() {
               <FlatList
                 data={currentTeams}
                 renderItem={item => (
-                  <Pressable
-                    key={`TeamBlock_${item.item.teamId}`}
-                    onPress={() =>
-                      navigate(
-                        `/profile/government/sports/team/${sport}/${id}/${item.item.teamId}`,
-                      )
-                    }
-                  >
-                    <Text style={{ margin: 10 }}>{item.item.teamName}</Text>
-                  </Pressable>
+                  <Link href={`/profile/government/sports/team/${sport}/${id}/${item.item.teamId}`} key={`TeamBlock_${item.item.teamId}`} style={{padding: 10}}>
+                    {item.item.teamName}
+                  </Link>
                 )}
               />
             ) : (
@@ -269,13 +262,9 @@ export default function GovernmentSportsTeams() {
           </>
         )}
       </View>
-      <Pressable
-        onPress={() =>
-          navigate(`/profile/government/sports/team/${sport}/${id}/create`)
-        }
-      >
-        <Text>Create New Team</Text>
-      </Pressable>
+      <Link href={`/profile/government/sports/team/${sport}/${id}/create`}>
+        Create New Team
+      </Link>
     </View>
   );
 }

@@ -167,6 +167,7 @@ export default function SignIn() {
             <ProgressView width={14} height={14} />
           ) : (
             <Text
+              selectable={false}
               style={{
                 textAlign: 'center',
                 color: isBottonHover ? Colors.white : 'black',
@@ -208,6 +209,7 @@ export default function SignIn() {
           >
             <GearIcon width={18} height={18} />
             <Text
+              selectable={false}
               style={{
                 textAlign: 'center',
                 color: isBottonHover ? Colors.white : 'black',

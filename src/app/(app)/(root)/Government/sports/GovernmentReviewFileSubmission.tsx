@@ -5,7 +5,7 @@
 */
 import { View, Text, Image, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-native';
+import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ResizeMode, Video } from 'expo-av';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
@@ -19,6 +19,7 @@ import {
 } from '@src/types';
 import SportsYoutube from '@components/SportsYoutube';
 import { getTextState } from '@src/Functions/ultility/createUUID';
+import { Link } from 'expo-router';
 
 function getDenyText(reviewed: boolean, accepted: boolean) {
   if (!reviewed && !accepted) {
@@ -37,7 +38,6 @@ export default function GovernmentReviewFileSubmission() {
     useState<dataContentTypeOptions>(dataContentTypeOptions.unknown);
   const [currentSubmissionInfomration, setCurrentSubmissionInformation] =
     useState<mediaSubmissionType | undefined>(undefined);
-  const navigate = useNavigate();
 
   // Loading States
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(
@@ -247,9 +247,9 @@ export default function GovernmentReviewFileSubmission() {
                 backgroundColor: Colors.white,
               }}
             >
-              <Pressable onPress={() => navigate('/profile/government/sports')}>
-                <Text>Back</Text>
-              </Pressable>
+              <Link href={'/profile/government/sports'}>
+                Back
+              </Link>
               <Text>GovernmentReviewFileSubmission</Text>
               {dataURL !== '' && (
                 <View>
@@ -302,16 +302,7 @@ export default function GovernmentReviewFileSubmission() {
                 }}
               >
                 <Text>
-                  {approveSubmissionState === loadingStateEnum.loading
-                    ? 'Loading'
-                    : approveSubmissionState === loadingStateEnum.success ||
-                        approveSubmissionState === loadingStateEnum.notStarted
-                      ? currentSubmissionInfomration.reviewed
-                        ? currentSubmissionInfomration.accepted
-                          ? 'Submission Approved'
-                          : 'Approve'
-                        : 'Approve'
-                      : 'Failed'}
+                  {getTextState(approveSubmissionState)}
                 </Text>
               </Pressable>
               <Pressable onPress={() => denySubmission()}>
@@ -331,9 +322,9 @@ export default function GovernmentReviewFileSubmission() {
             </View>
           ) : (
             <View style={{ width, height }}>
-              <Pressable onPress={() => navigate('/profile/government/sports')}>
-                <Text>Back</Text>
-              </Pressable>
+              <Link href={'/profile/government/sports'}>
+                Back
+              </Link>
               <Text>Failed</Text>
             </View>
           )}

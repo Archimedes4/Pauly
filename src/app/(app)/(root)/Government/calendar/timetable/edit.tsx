@@ -20,7 +20,7 @@ import { DownIcon, UpIcon, WarningIcon } from '@src/components/Icons';
 import { Colors, loadingStateEnum } from '@src/types';
 import { RootState } from '@Redux/store';
 import getDressCodeData from '@Functions/notifications/getDressCodeData';
-import ListItem from '@components/ListItem';
+import ListItem from '@src/components/StyledButton';
 import { getSchedules } from '@Functions/calendar/calendarFunctionsGraph';
 
 // TO DO longest amount of school days is 20 make sure this is enforced

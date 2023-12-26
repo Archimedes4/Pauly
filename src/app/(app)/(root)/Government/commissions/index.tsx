@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { useNavigate } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import getCommissions from '@Functions/commissions/getCommissions';
@@ -17,7 +16,6 @@ export default function GovernmentCommissions() {
   const [commissionsState, setCommissionsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
-  const navigate = useNavigate();
 
   async function loadData() {
     const result = await getCommissions();
@@ -36,13 +34,9 @@ export default function GovernmentCommissions() {
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Pressable
-          onPress={() => {
-            navigate('/profile/government');
-          }}
-        >
+        <Link href={'/profile/government'}>
           <Text>Back</Text>
-        </Pressable>
+        </Link>
         <View
           style={{
             width,
@@ -76,13 +70,9 @@ export default function GovernmentCommissions() {
         )}
       </View>
       <View style={{ height: height * 0.05 }}>
-        <Pressable
-          onPress={() => {
-            navigate('/profile/government/commissions/create');
-          }}
-        >
-          <Text>Create New Commission</Text>
-        </Pressable>
+        <Link href={'/profile/government/commissions/create'}>
+          Create New Commission
+        </Link>
       </View>
     </View>
   );

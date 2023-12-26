@@ -6,12 +6,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-native';
 import { RootState } from '@Redux/store';
 import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
 import callMsGraph from '@Functions/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '@src/types';
 import SVGXml from '@components/SVGXml';
+import { Link } from 'expo-router';
 
 export default function GovernmentCreateNewSport() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -23,7 +23,6 @@ export default function GovernmentCreateNewSport() {
   const [svgData, setSvgData] = useState<string>('');
   const [createSportLoadingState, setCreateSportLoadingState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
-  const navigate = useNavigate();
 
   async function createSport() {
     setCreateSportLoadingState(loadingStateEnum.loading);
@@ -87,13 +86,9 @@ export default function GovernmentCreateNewSport() {
   }
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Pressable
-        onPress={() => {
-          navigate('/profile/government/sports');
-        }}
-      >
+      <Link href={'/profile/government/sports'}>
         <Text>Back</Text>
-      </Pressable>
+      </Link>
       <Text>Create New Sport</Text>
       <Text>Sport Name</Text>
       <TextInput value={sportName} onChangeText={setSportName} />
