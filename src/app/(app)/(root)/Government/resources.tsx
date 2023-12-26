@@ -15,13 +15,13 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import store, { RootState } from '@Redux/store';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import { Colors, loadingStateEnum, resourceResponce } from '@src/types';
+import store, { RootState } from '@redux/store';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import { Colors, loadingStateEnum, resourceResponce } from '@constants';
 import ProgressView from '@components/ProgressView';
-import getResource from '@Functions/getResources';
+import getResource from '@utils/getResources';
 import GovernmentResourcesPost from '@components/GovernmentResourcePost';
-import { getChannels } from '@Functions/microsoftGroupsFunctions';
+import { getChannels } from '@utils/microsoftGroupsFunctions';
 import { Link } from 'expo-router';
 
 type resourceGroupType = {

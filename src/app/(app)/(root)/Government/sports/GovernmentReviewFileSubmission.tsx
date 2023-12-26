@@ -8,17 +8,17 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ResizeMode, Video } from 'expo-av';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
-import store, { RootState } from '@Redux/store';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import getFileWithShareID from '@utils/ultility/getFileWithShareID';
+import store, { RootState } from '@redux/store';
 import {
   Colors,
   dataContentTypeOptions,
   loadingStateEnum,
   postType,
-} from '@src/types';
+} from '@constants';
 import SportsYoutube from '@components/SportsYoutube';
-import { getTextState } from '@src/Functions/ultility/createUUID';
+import { getTextState } from '@utils/ultility/createUUID';
 import { Link } from 'expo-router';
 
 function getDenyText(reviewed: boolean, accepted: boolean) {

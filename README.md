@@ -1,5 +1,5 @@
 # <img src="./assets/images/PaulyLogo.png" height="28px" alt="logo"/> Pauly
-Last updated November 9 2023 \
+READ ME Last updated December 26 2023 \
 Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
 Saint Paul's High School Student Council 2023-2024

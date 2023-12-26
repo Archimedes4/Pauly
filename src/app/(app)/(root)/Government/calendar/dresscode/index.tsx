@@ -1,10 +1,10 @@
 import { View, Text, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@Redux/store';
-import { Colors, loadingStateEnum } from '@src/types';
+import { RootState } from '@redux/store';
+import { Colors, loadingStateEnum } from '@constants';
 import ListItem from '@src/components/StyledButton';
-import getDressCodeData from '@Functions/notifications/getDressCodeData';
+import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { Link } from 'expo-router';
 
 export default function GovernmentDressCode() {

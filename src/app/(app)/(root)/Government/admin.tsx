@@ -5,11 +5,11 @@ import {
   initializePaulyPartOne,
   initializePaulyPartThree,
   initializePaulyPartTwo,
-} from '@Functions/ﻩgovernment/initializePauly/initializePauly';
-import { RootState } from '@Redux/store';
-import { addDataArray } from '@Functions/ﻩgovernment/initializePauly/initializePaulyData';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import { Colors, loadingStateEnum } from '@src/types';
+} from '@utils/ﻩgovernment/initializePauly/initializePauly';
+import { RootState } from '@redux/store';
+import { addDataArray } from '@utils/ﻩgovernment/initializePauly/initializePaulyData';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import { Colors, loadingStateEnum } from '@constants';
 import { Link } from 'expo-router';
 
 enum initStage {

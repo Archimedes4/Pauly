@@ -14,14 +14,14 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@src/Functions/ultility/createUUID';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import createUUID from '@utils/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '@src/components/Icons';
-import { Colors, loadingStateEnum } from '@src/types';
-import { RootState } from '@Redux/store';
-import getDressCodeData from '@Functions/notifications/getDressCodeData';
+import { Colors, loadingStateEnum } from '@constants';
+import { RootState } from '@redux/store';
+import getDressCodeData from '@utils/notifications/getDressCodeData';
 import ListItem from '@src/components/StyledButton';
-import { getSchedules } from '@Functions/calendar/calendarFunctionsGraph';
+import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
 
 // TO DO longest amount of school days is 20 make sure this is enforced
 export default function GovernmentTimetableEdit() {

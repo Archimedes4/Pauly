@@ -8,8 +8,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@Redux/store';
-import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
+import { RootState } from '@redux/store';
+import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import {
   GearIcon,
   GovernmentIcon,
@@ -17,7 +17,7 @@ import {
   StudentSearchIcon,
 } from '@src/components/Icons';
 import BackButton from '@components/BackButton';
-import { Colors, loadingStateEnum } from '@src/types';
+import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';
 import { useSignOut } from '@hooks/authentication';
 

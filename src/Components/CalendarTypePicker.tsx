@@ -8,9 +8,9 @@
 import { View, Text, Animated, Pressable } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addEventSlice } from '../Redux/reducers/addEventReducer';
-import { RootState } from '../Redux/store';
-import { Colors } from '../types';
+import { addEventSlice } from '../redux/reducers/addEventReducer';
+import { RootState } from '../redux/store';
+import { Colors } from '../constants';
 
 interface PickerWrapperProps {
   width: number;

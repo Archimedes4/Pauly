@@ -13,11 +13,11 @@ import {
   calculateIfShowing,
   computeEventHeight,
   findTimeOffset,
-} from '../../Functions/calendar/calendarFunctions';
-import { RootState } from '../../Redux/store';
-import createUUID from '../../Functions/ultility/createUUID';
-import { Colors, loadingStateEnum } from '../../types';
-import { getClassEventsFromDay } from '../../Functions/classesFunctions';
+} from '../../utils/calendar/calendarFunctions';
+import { RootState } from '../../redux/store';
+import createUUID from '../../utils/ultility/createUUID';
+import { Colors, loadingStateEnum } from '../../constants';
+import { getClassEventsFromDay } from '../../utils/classesFunctions';
 
 export default function DayView({
   width,

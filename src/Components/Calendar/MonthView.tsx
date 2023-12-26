@@ -1,7 +1,7 @@
-import createUUID from '@src/Functions/ultility/createUUID';
-import { selectedDateSlice } from '@src/Redux/reducers/selectedDateReducer';
-import { RootState } from '@src/Redux/store';
-import { Colors } from '@src/types';
+import createUUID from '@utils/ultility/createUUID';
+import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
+import { RootState } from '@redux/store';
+import { Colors } from '@constants';
 import React, { useCallback, useEffect } from 'react';
 import {
   FlatList,
@@ -13,8 +13,8 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMonthData } from '@src/Functions/calendar/calendarFunctionsGraph';
-import { addEventSlice } from '@src/Redux/reducers/addEventReducer';
+import { getMonthData } from '@utils/calendar/calendarFunctionsGraph';
+import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { ChevronLeft, ChevronRight } from '../Icons';
 
 function getBackgroundColor(selectedDate: string, dayData: number): string {

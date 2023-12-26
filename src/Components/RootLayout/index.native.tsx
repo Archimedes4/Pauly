@@ -14,11 +14,11 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import store, { RootState } from '@Redux/store';
-import { Colors, paperTheme } from '@src/types';
-import setDimentions from '@Functions/ultility/setDimentions';
+import store, { RootState } from '@redux/store';
+import { Colors, paperTheme } from '@constants';
+import setDimentions from '@utils/ultility/setDimentions';
 import { Slot } from 'expo-router';
-import getMainHeight from '@src/Functions/getMainHeight';
+import getMainHeight from '@utils/getMainHeight';
 
 const windowDimensions = Dimensions.get('window');
 

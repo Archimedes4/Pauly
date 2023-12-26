@@ -1,18 +1,18 @@
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import store, { RootState } from '@Redux/store';
-import { Colors, loadingStateEnum, semesters } from '@src/types';
-import getSchoolYears from '@Functions/calendar/getSchoolYears';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import store, { RootState } from '@redux/store';
+import { Colors, loadingStateEnum, semesters } from '@constants';
+import getSchoolYears from '@utils/calendar/getSchoolYears';
 import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import {
   getEvent,
   getTimetable,
-} from '@Functions/calendar/calendarFunctionsGraph';
+} from '@utils/calendar/calendarFunctionsGraph';
 import { CloseIcon, WarningIcon } from '@src/components/Icons';
 import Dropdown from '@components/Dropdown';
-import { getRoom, getRooms } from '@Functions/classesFunctions';
+import { getRoom, getRooms } from '@utils/classesFunctions';
 import { Link } from 'expo-router';
 import { useParams } from 'react-router-native';
 

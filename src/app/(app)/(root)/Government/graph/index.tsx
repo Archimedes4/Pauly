@@ -1,12 +1,12 @@
 import { View, Text, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import PickerWrapper from '@components/Pickers/Picker';
-import { Colors, loadingStateEnum } from '@src/types';
-import { RootState } from '@Redux/store';
+import { Colors, loadingStateEnum } from '@constants';
+import { RootState } from '@redux/store';
 import { clientId } from '@src/PaulyConfig';
-import { getTeams } from '@Functions/microsoftGroupsFunctions';
+import { getTeams } from '@utils/microsoftGroupsFunctions';
 import { Link, useLocalSearchParams } from 'expo-router';
 
 type listType = {

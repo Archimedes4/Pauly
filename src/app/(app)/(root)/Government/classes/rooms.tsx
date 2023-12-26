@@ -1,9 +1,9 @@
 import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@Redux/store';
-import { Colors, loadingStateEnum } from '@src/types';
-import { getRooms } from '@Functions/classesFunctions';
+import { RootState } from '@redux/store';
+import { Colors, loadingStateEnum } from '@constants';
+import { getRooms } from '@utils/classesFunctions';
 import { Link } from 'expo-router';
 
 export default function GovernmentRooms() {

@@ -2,11 +2,11 @@ import { View, Text, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import { CopyIcon } from '@components/Icons';
-import { Colors, loadingStateEnum } from '@src/types';
-import { RootState } from '@Redux/store';
-import { getTextState } from '@src/Functions/ultility/createUUID';
+import { Colors, loadingStateEnum } from '@constants';
+import { RootState } from '@redux/store';
+import { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
 
 export default function MicrosoftGraphEditGroup() {

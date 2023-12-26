@@ -12,17 +12,17 @@ import Week from '@components/Calendar/Week';
 import AddEvent from '@components/Calendar/AddEvent';
 import CalendarTypePicker from '@components/CalendarTypePicker';
 import { AddIcon } from '@src/components/Icons';
-import store, { RootState } from '@Redux/store';
-import { Colors, calendarMode } from '@src/types';
-import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
+import store, { RootState } from '@redux/store';
+import { Colors, calendarMode } from '@constants';
+import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import BackButton from '@components/BackButton';
-import { addEventSlice } from '@Redux/reducers/addEventReducer';
-import { getClasses } from '@Functions/classesFunctions';
-import getEvents from '@Functions/calendar/getEvents';
+import { addEventSlice } from '@redux/reducers/addEventReducer';
+import { getClasses } from '@utils/classesFunctions';
+import getEvents from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@src/components/Calendar/MonthView';
-import callMsGraph from '@src/Functions/ultility/microsoftAssets';
-import { currentEventsSlice } from '@src/Redux/reducers/currentEventReducer';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import { orgWideGroupID } from '@src/PaulyConfig';
 
 async function deleteEvents() {
@@ -31,6 +31,16 @@ async function deleteEvents() {
     callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${array[index].id}`, "DELETE")
   }
   store.dispatch(currentEventsSlice.actions.setCurrentEvents([]))
+}
+
+function getCalendarFontSize(breakPoint: number, height: number) {
+  if (breakPoint === 0) {
+    return height * 0.35
+  }
+  if (breakPoint === 1) {
+    return height * 0.6
+  } 
+  return height * 0.7
 }
 
 function TopView({ width, height }: { width: number; height: number }) {
@@ -63,7 +73,7 @@ function TopView({ width, height }: { width: number; height: number }) {
           numberOfLines={1}
           style={{
             fontFamily: 'BukhariScript',
-            fontSize: currentBreakPoint === 0 ? height * 0.35 : height * 0.7,
+            fontSize: getCalendarFontSize(currentBreakPoint, height),
             width: width * 0.4,
             height: currentBreakPoint === 0 ? height * 0.5 : height * 0.9,
             color: Colors.white,
@@ -183,7 +193,7 @@ export default function Calendar() {
               backgroundColor: Colors.white,
             }}
           >
-            <EventView />
+            <EventView width={width} height={height * 0.9}/>
           </View>
         ) : null}
       </View>

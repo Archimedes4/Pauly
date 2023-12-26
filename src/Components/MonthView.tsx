@@ -12,11 +12,11 @@ import {
   findFirstDayinMonth,
   getDay,
   getDaysInMonth,
-} from '../Functions/calendar/calendarFunctions';
-import { getSchoolDays } from '../Functions/calendar/calendarFunctionsGraph';
-import { RootState } from '../Redux/store';
-import { monthViewSlice } from '../Redux/reducers/monthViewReducer';
-import { Colors, loadingStateEnum } from '../types';
+} from '../utils/calendar/calendarFunctions';
+import { getSchoolDays } from '../utils/calendar/calendarFunctionsGraph';
+import { RootState } from '../redux/store';
+import { monthViewSlice } from '../redux/reducers/monthViewReducer';
+import { Colors, loadingStateEnum } from '../constants';
 
 function MonthBlock({
   value,

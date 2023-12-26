@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Pressable, View, Text, TextInput } from 'react-native';
 import React from 'react';
-import { RootState } from '@Redux/store';
+import { RootState } from '@redux/store';
 import {
   CloseIcon,
   DownIcon,

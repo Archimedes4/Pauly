@@ -7,11 +7,11 @@
 import { View, Text, Pressable } from 'react-native';
 import React, { useCallback } from 'react';
 import useIsConnected from '@hooks/useIsConnected';
-import { Colors } from '@src/types';
+import { Colors } from '@constants';
 import { OfflineIcon } from '@src/components/Icons';
 import { Stack } from 'expo-router';
 import { useSelector } from 'react-redux';
-import { RootState } from '@Redux/store';
+import { RootState } from '@redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useAuthentication from '@hooks/useAuthentication';
 import { useSignOut } from '@hooks/authentication';

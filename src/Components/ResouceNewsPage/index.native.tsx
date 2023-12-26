@@ -1,8 +1,8 @@
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@Redux/store';
-import { Colors } from '@src/types';
+import { RootState } from '@redux/store';
+import { Colors } from '@constants';
 import WebViewCross from '../WebViewCross';
 import { CloseIcon } from '../Icons';
 

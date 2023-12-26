@@ -7,10 +7,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import createUUID from '@src/Functions/ultility/createUUID';
-import { loadingStateEnum } from '@src/types';
+import createUUID from '@utils/ultility/createUUID';
+import { loadingStateEnum } from '@constants
 import ProgressView from '@components/ProgressView';
-import getSubmissions from '@Functions/sports/sportsFunctions';
+import getSubmissions from '@utils/sports/sportsFunctions';
 import { useRouter } from 'expo-router';
 
 export default function GovernmentHandleFileSubmissions({

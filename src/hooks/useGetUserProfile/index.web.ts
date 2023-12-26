@@ -1,7 +1,7 @@
-import store from '@Redux/store';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
+import store from '@redux/store';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import { useMsal } from '@azure/msal-react';
-import { microsoftProfileDataSlice } from '../../Redux/reducers/microsoftProfileDataReducer';
+import { microsoftProfileDataSlice } from '../../redux/reducers/microsoftProfileDataReducer';
 import getUserImage from './getUserImage';
 
 export default function getUserProfile() {

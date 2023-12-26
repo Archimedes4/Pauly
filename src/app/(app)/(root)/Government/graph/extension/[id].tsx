@@ -2,10 +2,10 @@ import { View, Text, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import { Colors, loadingStateEnum } from '@src/types';
-import { RootState } from '@Redux/store';
-import { getTextState } from '@src/Functions/ultility/createUUID';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import { Colors, loadingStateEnum } from '@constants';
+import { RootState } from '@redux/store';
+import { getTextState } from '@utils/ultility/createUUID';
 
 export default function MicrosoftGraphEditExtension() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);

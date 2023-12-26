@@ -18,24 +18,24 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { FlatList } from 'react-native-gesture-handler';
-import store, { RootState } from '@Redux/store';
-import getCurrentPaulyData from '@Functions/notifications/getCurrentPaulyData';
-import { Colors, loadingStateEnum, taskStatusEnum } from '@src/types';
-import getUsersTasks from '@Functions/notifications/getUsersTasks';
+import store, { RootState } from '@redux/store';
+import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
+import { Colors, loadingStateEnum, taskStatusEnum } from '@constants';
+import getUsersTasks from '@utils/notifications/getUsersTasks';
 import ProgressView from '@components/ProgressView';
-import getInsightData from '@Functions/notifications/getInsightData';
+import getInsightData from '@utils/notifications/getInsightData';
 import CustomCheckBox from '@components/CheckMark/CustomCheckBox';
-import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
-import { homepageDataSlice } from '@Redux/reducers/homepageDataReducer';
+import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
+import { homepageDataSlice } from '@redux/reducers/homepageDataReducer';
 import PDFView from '@components/PDF';
 import BackButton from '@components/BackButton';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
-import { getClassEventsFromDay } from '@Functions/classesFunctions';
+import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { TrashIcon, WarningIcon } from '@src/components/Icons';
 import {
   deleteTask,
   updateTaskText,
-} from '@Functions/notifications/updateTasks';
+} from '@utils/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Get Messages

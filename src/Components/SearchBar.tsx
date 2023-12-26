@@ -1,5 +1,5 @@
-import { RootState } from "@src/Redux/store";
-import { Colors } from "@src/types";
+import { RootState } from "@redux/store";
+import { Colors } from "@constants";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Platform, TextInput, View, Text, StyleProp, TextStyle } from "react-native";

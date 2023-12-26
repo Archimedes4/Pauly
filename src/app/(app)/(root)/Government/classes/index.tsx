@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
-import { RootState } from '@Redux/store';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@src/Functions/ultility/createUUID';
-import { Colors, loadingStateEnum, semesters } from '@src/types';
+import { RootState } from '@redux/store';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import createUUID from '@utils/ultility/createUUID';
+import { Colors, loadingStateEnum, semesters } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import StyledButton from '@src/components/SecondStyledButton';

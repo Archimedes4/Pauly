@@ -5,8 +5,8 @@
   useWebSession/index.web.ts
   main module for use webSession. useWebSession checks if their is a session storage of Pauly list to save api resources.
 */
-import { paulyListSlice } from '../../Redux/reducers/paulyListReducer';
-import store from '../../Redux/store';
+import { paulyListSlice } from '../../redux/reducers/paulyListReducer';
+import store from '../../redux/store';
 
 // If true a web session had been found
 export default function useWebSession() {

@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import store, { RootState } from '@Redux/store';
-import { Colors, loadingStateEnum } from '@src/types';
-import { getSport, getSportsTeams } from '@Functions/sports/sportsFunctions';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import store, { RootState } from '@redux/store';
+import { Colors, loadingStateEnum } from '@constants';
+import { getSport, getSportsTeams } from '@utils/sports/sportsFunctions';
 import { WarningIcon } from '@src/components/Icons';
 import SVGXml from '@components/SVGXml';
-import { getTextState } from '@src/Functions/ultility/createUUID';
+import { getTextState } from '@utils/ultility/createUUID';
 import { Link } from 'expo-router';
 
 function SportsUpdateModel({

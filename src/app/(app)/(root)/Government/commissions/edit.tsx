@@ -12,13 +12,13 @@ import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
-import store, { RootState } from '@Redux/store';
+import store, { RootState } from '@redux/store';
 import {
   Colors,
   commissionTypeEnum,
   loadingStateEnum,
   submissionTypeEnum,
-} from '@src/types';
+} from '@constants';
 import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import ProgressView from '@components/ProgressView';
 import WebViewCross from '@components/WebViewCross';
@@ -30,13 +30,13 @@ import {
   getChannels,
   getPosts,
   getTeams,
-} from '@Functions/microsoftGroupsFunctions';
-import getCommission from '@Functions/commissions/getCommission';
-import getSubmissions from '@Functions/commissions/getSubmissions';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
-import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
-import updateCommission from '@Functions/commissions/updateCommission';
+} from '@utils/microsoftGroupsFunctions';
+import getCommission from '@utils/commissions/getCommission';
+import getSubmissions from '@utils/commissions/getSubmissions';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import createUUID, { getTextState } from '@utils/ultility/createUUID';
+import getFileWithShareID from '@utils/ultility/getFileWithShareID';
+import updateCommission from '@utils/commissions/updateCommission';
 
 enum datePickingMode {
   none,

@@ -8,7 +8,7 @@
 import { Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
 import { Link } from 'expo-router';
-import { RootState } from '@src/Redux/store';
+import { RootState } from '@redux/store';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft } from './Icons';

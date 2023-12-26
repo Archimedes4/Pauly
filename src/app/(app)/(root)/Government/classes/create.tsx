@@ -1,11 +1,11 @@
 import { View, Text, Pressable, TextInput } from 'react-native';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import store, { RootState } from '@Redux/store';
-import { Colors, loadingStateEnum } from '@src/types';
+import store, { RootState } from '@redux/store';
+import { Colors, loadingStateEnum } from '@constants';
 import { WarningIcon } from '@src/components/Icons';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { Link } from 'expo-router';
 
 export default function GovermentRoomsCreate() {

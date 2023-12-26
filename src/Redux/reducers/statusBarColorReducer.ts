@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { Colors } from '../../types';
+import { Colors } from '../../constants';
 
 const initalState: string = Colors.maroon;
 

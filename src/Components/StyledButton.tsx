@@ -5,8 +5,8 @@
 import { View, Text, Pressable, ViewStyle } from 'react-native';
 import React from 'react';
 import { useRouter } from 'expo-router';
-import createUUID from '../Functions/ultility/createUUID';
-import { Colors } from '../types';
+import createUUID from '../utils/ultility/createUUID';
+import { Colors } from '../constants';
 
 export default function StyledButton({
   to,

@@ -1,7 +1,7 @@
 import { View, Text, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import callMsGraph from '../Functions/ultility/microsoftAssets';
-import { loadingStateEnum } from '../types';
+import callMsGraph from '../utils/ultility/microsoftAssets';
+import { loadingStateEnum } from '../constants';
 
 export default function TeamAvatar({ teamId }: { teamId: string }) {
   const [teamAvatarDataUrl, setTeamAvatarDataUrl] = useState('');

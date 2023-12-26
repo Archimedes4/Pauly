@@ -7,7 +7,7 @@
 */
 import React from 'react';
 import { Text, Pressable } from 'react-native';
-import { Colors } from '@src/types';
+import { Colors } from '@constants';
 import { useSignOut } from '@hooks/authentication';
 
 export default function ProfileBlock() {

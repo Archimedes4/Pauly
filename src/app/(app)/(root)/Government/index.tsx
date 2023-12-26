@@ -9,7 +9,7 @@ import {
   ImageSourcePropType,
   Pressable,
 } from 'react-native';
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   BookIcon,
@@ -21,8 +21,8 @@ import {
   MedalIcon,
   StudentSearchIcon,
 } from '@src/components/Icons';
-import { RootState } from '@Redux/store';
-import { Colors } from '@src/types';
+import { RootState } from '@redux/store';
+import { Colors } from '@constants';
 import { Link, useRouter } from 'expo-router';
 
 function Block({

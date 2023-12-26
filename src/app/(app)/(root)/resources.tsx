@@ -20,23 +20,23 @@ import {
   Image,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import store, { RootState } from '@Redux/store';
-import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
-import { resourcesSlice } from '@Redux/reducers/resourcesReducer';
-import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
+import store, { RootState } from '@redux/store';
+import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
+import { resourcesSlice } from '@redux/reducers/resourcesReducer';
+import createUUID, { getTextState } from '@utils/ultility/createUUID';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import {
   convertResourceModeString,
   getResources,
   getResourcesSearch,
   getScholarships,
-} from '@Functions/getResources';
+} from '@utils/getResources';
 import { CloseIcon, SearchIcon } from '@src/components/Icons';
 import WebViewCross from '@components/WebViewCross';
 import BackButton from '@components/BackButton';
 import ProgressView from '@components/ProgressView';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
-import { Colors, loadingStateEnum, resourceMode } from '@src/types';
+import { Colors, loadingStateEnum, resourceMode } from '@constants';
 import ResourcesNews from '@components/ResourcesNews';
 import ResourceBar from '@src/components/ResourceBar';
 import SearchBar from '@src/components/SearchBar';

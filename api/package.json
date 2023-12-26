@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "pauly-functions-one",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@azure/functions": "^4.0.0",
+    "durable-functions": "^3.0.0-alpha.5",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0"
   },

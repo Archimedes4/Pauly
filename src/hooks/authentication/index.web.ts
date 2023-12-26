@@ -6,10 +6,10 @@
   authentication component web, using msal library.
 */
 // import { useMsal } from "@azure/msal-react";
-import { authenticationTokenSlice } from '@Redux/reducers/authenticationTokenReducer';
-import store from '@Redux/store';
+import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
+import store from '@redux/store';
 import { scopes } from '@src/PaulyConfig';
-import { setWantGovernment } from '@Functions/handleGovernmentLogin';
+import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { useRouter } from 'expo-router';
 import { useMsal } from '@azure/msal-react';
 

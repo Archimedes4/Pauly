@@ -12,13 +12,13 @@ import ColorPicker, {
   RenderThumbProps,
   InputWidget,
 } from 'reanimated-color-picker';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@src/Functions/ultility/createUUID';
-import store, { RootState } from '@Redux/store';
-import { Colors, loadingStateEnum } from '@src/types';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import createUUID from '@utils/ultility/createUUID';
+import store, { RootState } from '@redux/store';
+import { Colors, loadingStateEnum } from '@constants';
 import { CloseIcon, WarningIcon } from '@src/components/Icons';
 import ProgressView from '@components/ProgressView';
-import { getSchedule } from '@Functions/calendar/calendarFunctionsGraph';
+import { getSchedule } from '@utils/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';
 
 function isValidHexaCode(input: string) {

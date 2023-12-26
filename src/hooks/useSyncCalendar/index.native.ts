@@ -1,6 +1,6 @@
 import { clientId, tenantId } from '@src/PaulyConfig';
-import store from '@src/Redux/store';
-import { loadingStateEnum } from '@src/types';
+import store from '@redux/store';
+import { loadingStateEnum } from '@constants';
 import { refreshAsync, useAutoDiscovery } from 'expo-auth-session';
 
 export default function useSyncCalendar() {

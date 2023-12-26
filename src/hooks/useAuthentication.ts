@@ -3,15 +3,15 @@
   Andrew Mainella
   Main authentication method hold logic calling platform based login methods.
 */
-import getPaulyLists from '@src/Functions/ultility/getPaulyLists';
+import getPaulyLists from '@utils/ultility/getPaulyLists';
 import useGetUserProfile from '@src/hooks/useGetUserProfile';
 import useWebSession from '@hooks/useWebSession';
-import store from '@Redux/store';
+import store from '@redux/store';
 import {
   checkIfGovernmentMode,
   getWantGovernment,
   validateGovernmentMode,
-} from '@Functions/handleGovernmentLogin';
+} from '@utils/handleGovernmentLogin';
 import { useEffect, useState } from 'react';
 import { useSilentLogin } from './authentication';
 

@@ -3,14 +3,14 @@
   Andrew Mainella
   2 December 2023
 */
-import { View, Text, Pressable, TextInput, Switch } from 'react-native';
+import { View, Text, TextInput, Switch } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
-import store, { RootState } from '@Redux/store';
-import getCurrentPaulyData from '@Functions/notifications/getCurrentPaulyData';
-import { Colors, loadingStateEnum } from '@src/types';
+import store, { RootState } from '@redux/store';
+import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
+import { Colors, loadingStateEnum } from '@constants';
 import { Link } from 'expo-router';
 import SecondStyledButton from '@src/components/SecondStyledButton';
 

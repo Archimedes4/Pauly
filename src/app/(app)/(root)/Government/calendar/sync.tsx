@@ -2,8 +2,8 @@ import { View, Text, Pressable } from 'react-native';
 import React from 'react';
 import { Link } from 'expo-router';
 import { useSelector } from 'react-redux';
-import { RootState } from '@src/Redux/store';
-import { Colors } from '@src/types';
+import { RootState } from '@redux/store';
+import { Colors } from '@constants';
 import useSyncCalendar from '@src/hooks/useSyncCalendar';
 
 export default function calendarSync() {

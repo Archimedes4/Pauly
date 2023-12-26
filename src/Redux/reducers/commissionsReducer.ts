@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { loadingStateEnum } from '../../types';
+import { loadingStateEnum } from '../../constants';
 
 type commissionsStateType = {
   commissionsState: loadingStateEnum;

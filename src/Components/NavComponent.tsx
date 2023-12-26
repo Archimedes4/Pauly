@@ -9,7 +9,7 @@ import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'expo-router';
-import store, { RootState } from '../Redux/store';
+import store, { RootState } from '../redux/store';
 import {
   BookIcon,
   CalendarIcon,
@@ -19,9 +19,9 @@ import {
   PersonIcon,
   StudentSearchIcon,
 } from './Icons';
-import { expandedModeSlice } from '../Redux/reducers/expandedModeReducer';
-import { isShowingProfileBlockSlice } from '../Redux/reducers/isShowingProfileBlockReducer';
-import { Colors } from '../types';
+import { expandedModeSlice } from '../redux/reducers/expandedModeReducer';
+import { isShowingProfileBlockSlice } from '../redux/reducers/isShowingProfileBlockReducer';
+import { Colors } from '../constants';
 
 function NavBarBlock({
   des,

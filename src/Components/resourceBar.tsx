@@ -1,9 +1,9 @@
 import { View, Text, Pressable } from 'react-native';
 import React, { ReactNode, useState } from 'react';
-import { Colors, resourceMode } from '@src/types';
-import { resourcesSlice } from '@src/Redux/reducers/resourcesReducer';
+import { Colors, resourceMode } from '@constants';
+import { resourcesSlice } from '@redux/reducers/resourcesReducer';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@src/Redux/store';
+import { RootState } from '@redux/store';
 import {
   CalendarIcon,
   DocumentIcon,

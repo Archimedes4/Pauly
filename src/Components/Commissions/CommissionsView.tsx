@@ -3,14 +3,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../Redux/store';
+import { RootState } from '../../redux/store';
 import CommissionClaim from './CommissionClaim';
-import getCommission from '../../Functions/commissions/getCommission';
-import callMsGraph from '../../Functions/ultility/microsoftAssets';
+import getCommission from '../../utils/commissions/getCommission';
+import callMsGraph from '../../utils/ultility/microsoftAssets';
 import ProgressView from '../../components/ProgressView';
 import { CloseIcon } from '../Icons';
 import WebViewCross from '../../components/WebViewCross';
-import { Colors, commissionTypeEnum, loadingStateEnum } from '../../types';
+import { Colors, commissionTypeEnum, loadingStateEnum } from '../../constants';
 
 enum CameraResult {
   notStarted,

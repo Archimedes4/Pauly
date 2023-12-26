@@ -10,9 +10,9 @@ import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NavBarComponent from '@components/NavComponent';
-import { RootState } from '@Redux/store';
+import { RootState } from '@reduxre';
 import ProfileBlock from '@src/components/ProfileBlock';
-import { Colors } from '@src/types';
+import { Colors } from '@constants';
 import { Slot, useFocusEffect, useRouter } from 'expo-router';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
 

@@ -8,10 +8,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import WeekDayView from './WeekDayView';
-import createUUID from '../../Functions/ultility/createUUID';
-import { RootState } from '../../Redux/store';
-import { selectedDateSlice } from '../../Redux/reducers/selectedDateReducer';
-import { Colors } from '../../types';
+import createUUID from '../../utils/ultility/createUUID';
+import { RootState } from '../../redux/store';
+import { selectedDateSlice } from '../../redux/reducers/selectedDateReducer';
+import { Colors } from '../../constants';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import DayView from './DayView';
 
@@ -104,14 +104,18 @@ export default function Week({
             <ScrollView style={{height}}>
               <View style={{flexDirection: 'row'}}>
                 {daysOfWeek.map((day, index) => (
-                  <WeekDayView
-                    width={width/7}
-                    height={false ? height * 0.757 : height}
-                    week={true}
-                    start={index === 0 ? true:false}
-                    day={day}
+                  <View 
                     key={day.getDate()}
-                  />
+                    id={day.getDate().toString()}
+                  >
+                    <WeekDayView
+                      width={width/7}
+                      height={false ? height * 0.757 : height}
+                      week={true}
+                      start={index === 0 ? true:false}
+                      day={day}
+                    />
+                  </View>
                 ))}
               </View>
             </ScrollView>

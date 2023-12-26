@@ -9,8 +9,8 @@ import React, { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Link } from 'expo-router';
-import { RootState } from '../Redux/store';
-import { Colors } from '../types';
+import { RootState } from '../redux/store';
+import { Colors } from '../constants';
 
 export default function PageNotFound() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);

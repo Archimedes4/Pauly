@@ -15,14 +15,14 @@ import {
   useAutoDiscovery,
 } from 'expo-auth-session';
 import { useRootNavigationState, useRouter } from 'expo-router';
-import { setWantGovernment } from '@src/Functions/handleGovernmentLogin';
+import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { clientId, scopes, tenantId } from '../../PaulyConfig';
-import store from '../../Redux/store';
-import { authLoadingSlice } from '../../Redux/reducers/authLoadingReducer';
-import { authenticationRefreshTokenSlice } from '../../Redux/reducers/authenticationRefreshTokenReducer';
-import { authenticationTokenSlice } from '../../Redux/reducers/authenticationTokenReducer';
-import getUserProfile from '../../Functions/ultility/getPaulyLists';
-import getPaulyLists from '../../Functions/ultility/getPaulyLists';
+import store from '../../redux/store';
+import { authLoadingSlice } from '../../redux/reducers/authLoadingReducer';
+import { authenticationRefreshTokenSlice } from '../../redux/reducers/authenticationRefreshTokenReducer';
+import { authenticationTokenSlice } from '../../redux/reducers/authenticationTokenReducer';
+import getUserProfile from '../../utils/ultility/getPaulyLists';
+import getPaulyLists from '../../utils/ultility/getPaulyLists';
 
 // placeholder function
 export function useSilentLogin(): () => Promise<void> {

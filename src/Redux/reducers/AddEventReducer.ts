@@ -4,7 +4,7 @@ import {
   paulyEventType,
   recurringType,
   loadingStateEnum,
-} from '../../types';
+} from '../../constants';
 
 type addEventStatesType = {
   eventName: string;

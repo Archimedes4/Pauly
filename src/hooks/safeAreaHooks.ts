@@ -4,9 +4,9 @@
   2 December 2023
   safeAreaHooks.ts
 */
-import { safeAreaColorsSlice } from '@Redux/reducers/safeAreaColorsReducer';
-import store, { RootState } from '@Redux/store';
-import { Colors, loadingStateEnum } from '@src/types';
+import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
+import store, { RootState } from '@redux/store';
+import { Colors, loadingStateEnum } from '@constants
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

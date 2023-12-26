@@ -1,6 +1,6 @@
-import store from '@src/Redux/store';
-import { microsoftProfileDataSlice } from '@src/Redux/reducers/microsoftProfileDataReducer';
-import callMsGraph from '../../Functions/ultility/microsoftAssets';
+import store from '@redux/store';
+import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
+import callMsGraph from '../../utils/ultility/microsoftAssets';
 
 export default async function getUserImage() {
   const result = await callMsGraph(

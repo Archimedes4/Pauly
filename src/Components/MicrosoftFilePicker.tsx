@@ -15,14 +15,14 @@ import {
   FlatList,
 } from 'react-native';
 import Picker from './Pickers/Picker';
-import callMsGraph from '../Functions/ultility/microsoftAssets';
+import callMsGraph from '../utils/ultility/microsoftAssets';
 import MimeTypeIcon from './Icons/MimeTypeIcon';
-import createUUID from '../Functions/ultility/createUUID';
+import createUUID from '../utils/ultility/createUUID';
 import {
   getUserMicrosoftFiles,
   getUserTeams,
-} from '../Functions/microsoftFilePickerFunctions';
-import { Colors, loadingStateEnum } from '../types';
+} from '../utils/microsoftFilePickerFunctions';
+import { Colors, loadingStateEnum } from '../constants';
 import ProgressView from './ProgressView';
 
 enum MicrosoftUploadModeType {

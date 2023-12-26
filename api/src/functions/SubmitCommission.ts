@@ -19,27 +19,34 @@ export async function ClaimCommission(
   req: HttpRequest,
 ): Promise<HttpResponseInit> {
   try {
-    const accessTokens = await validateAndGetAccessTokens(context, req);
+    const accessTokens = await validateAndGetAccessTokens(req);
+    if (accessTokens === undefined) {
+      return {
+        status: 401,
+        body: 'Unauthorized: something went wrong validating token',
+      };
+    }
+    console.log('MARK HERE 1')
     const paulyListResult = await getPaulyList(
       accessTokens.onBehalfOfAccessToken,
     );
-    console.log('MARK HERE 2');
+    console.log('MARK HERE 2')
     if (!isListResponse(paulyListResult)) {
       return paulyListResult;
     }
 
-    console.log('MARK HERE 3');
+    console.log('MARK HERE 3')
     if (paulyListResult === undefined || accessTokens === undefined) {
       return { status: 400, body: 'Bad Request' };
     }
 
-    let requestBody;
+    let requestBody = undefined
     if (req.method === 'POST') {
       requestBody = await req.json();
     }
 
     const commissionId =
-      req.query.get('commissionId') || requestBody.commissionId;
+      req.query.get('commissionId') || requestBody["commissionId"];
     if (commissionId === undefined || commissionId === '') {
       return {
         status: 400,
@@ -91,7 +98,7 @@ export async function ClaimCommission(
     if (value === 2 || value === 4) {
       const latCoordinate =
         req.query.get('latCoordinate') ||
-        (req.body && requestBody.latCoordinate);
+        (req.body && requestBody["latCoordinate"]);
       if (latCoordinate === undefined || latCoordinate === '') {
         return {
           status: 400,
@@ -100,7 +107,7 @@ export async function ClaimCommission(
       }
       const lngCoordinate =
         req.query.get('lngCoordinate') ||
-        (req.body && requestBody.lngCoordinate);
+        (req.body && requestBody["lngCoordinate"]);
       if (lngCoordinate === undefined || lngCoordinate === '') {
         return {
           status: 400,
@@ -112,7 +119,7 @@ export async function ClaimCommission(
     }
     if (value === 3 || value === 4) {
       const imageShare: string =
-        req.query.get('imageShare') || (req.body && requestBody.imageShare);
+        req.query.get('imageShare') || (req.body && requestBody["imageShare"]);
       if (imageShare === undefined || imageShare === '') {
         return {
           status: 400,
@@ -203,7 +210,7 @@ export async function ClaimCommission(
       JSON.stringify(submissionData),
     );
     if (!submitResult.ok) {
-      console.log(await submitResult.json());
+      console.log(await submitResult.json())
       return {
         status: 500,
         body: 'Internal Error: Unable to create submission',

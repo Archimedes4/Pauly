@@ -6,10 +6,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
-import { RootState } from '@Redux/store';
-import createUUID, { getTextState } from '@src/Functions/ultility/createUUID';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import { Colors, loadingStateEnum } from '@src/types';
+import { RootState } from '@redux/store';
+import createUUID, { getTextState } from '@utils/ultility/createUUID';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import { Colors, loadingStateEnum } from '@constants';
 import SVGXml from '@components/SVGXml';
 import { Link } from 'expo-router';
 

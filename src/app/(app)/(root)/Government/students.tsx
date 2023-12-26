@@ -18,19 +18,19 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BackButton from '@components/BackButton';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
-import store, { RootState } from '@Redux/store';
+import store, { RootState } from '@redux/store';
 import {
   changeStudentSelection,
   getStudentData,
   getUsers,
   removeStudentSelection,
-} from '@Functions/studentFunctions';
+} from '@utils/studentFunctions';
 import { CloseIcon } from '@components/Icons';
-import { studentSearchSlice } from '@Redux/reducers/studentSearchReducer';
-import { Colors, loadingStateEnum } from '@src/types';
+import { studentSearchSlice } from '@redux/reducers/studentSearchReducer';
+import { Colors, loadingStateEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
-import addImage from '@Functions/addImage';
-import { getTextState } from '@src/Functions/ultility/createUUID';
+import addImage from '@utils/addImage';
+import { getTextState } from '@utils/ultility/createUUID';
 import SecondStyledButton from '@src/components/SecondStyledButton';
 import SearchBar from '@src/components/SearchBar';
 

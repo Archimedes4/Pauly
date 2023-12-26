@@ -9,6 +9,8 @@ declare global {
     userExtensionId: string;
     commissionSubmissionsListId: string;
     eventSyncIdExtensionId: string;
+    calendarSyncListId: string;
+    calendarSyncStateListId: string;
   };
 }
 
@@ -28,7 +30,6 @@ export default async function getPaulyList(
 
   if (getRootSiteIdResultData.id === undefined) {
     return { status: 500, body: 'Internal Error: Unable To Get Site' };
-    return;
   }
   const paulyListResult = await callMsGraph(
     accessToken,
@@ -52,7 +53,8 @@ export default async function getPaulyList(
     userExtensionId: paulyListResultData.value[0].fields.userExtensionId,
     commissionSubmissionsListId:
       paulyListResultData.value[0].fields.commissionSubmissionsListId,
-    eventSyncIdExtensionId:
-      paulyListResultData.value[0].fields.eventSyncIdExtensionId,
+    eventSyncIdExtensionId: paulyListResultData.value[0].fields.eventSyncIdExtensionId,
+    calendarSyncListId: paulyListResultData.value[0].fields.calendarSyncListId,
+    calendarSyncStateListId: paulyListResultData.value[0].fields.calendarSyncStateListId
   };
 }

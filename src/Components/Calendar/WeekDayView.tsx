@@ -1,7 +1,7 @@
-import { calculateIfShowing, computeEventHeight, findTimeOffset, isTimeOnDay } from "@src/Functions/calendar/calendarFunctions";
-import { getClassEventsFromDay } from "@src/Functions/classesFunctions";
-import { RootState } from "@src/Redux/store";
-import { Colors, loadingStateEnum } from "@src/types";
+import { calculateIfShowing, computeEventHeight, findTimeOffset, isTimeOnDay } from "@utils/calendar/calendarFunctions";
+import { getClassEventsFromDay } from "@utils/classesFunctions";
+import { RootState } from "@redux/store";
+import { Colors, loadingStateEnum } from "@constants";
 import createUUID from "api/CommonFunctions/createUUID";
 import React, { useCallback } from "react";
 import { useEffect, useRef, useState } from "react";

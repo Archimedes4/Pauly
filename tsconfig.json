@@ -17,9 +17,10 @@
     "baseUrl": ".",
     "paths": {
       "@src/*":["src/*"],
+      "@constants":["src/constants.ts"],
       "@hooks/*": ["src/hooks/*"],
-      "@Redux/*": ["src/Redux/*"],
-      "@Functions/*": ["src/Functions/*"],
+      "@redux/*": ["src/redux/*"],
+      "@utils/*": ["src/utils/*"],
       "@components/*": ["src/components/*"],
       "assets/*": ["assets/*"],
     }

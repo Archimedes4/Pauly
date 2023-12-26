@@ -14,16 +14,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import { convertYearToSchoolYear } from '@Functions/calendar/calendarFunctions';
-import callMsGraph from '@Functions/ultility/microsoftAssets';
-import createUUID from '@src/Functions/ultility/createUUID';
-import { Colors, dataContentTypeOptions, loadingStateEnum } from '@src/types';
-import store, { RootState } from '@Redux/store';
-import { getTeams } from '@Functions/microsoftGroupsFunctions';
+import { convertYearToSchoolYear } from '@utils/calendar/calendarFunctions';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import createUUID from '@utils/ultility/createUUID';
+import { Colors, dataContentTypeOptions, loadingStateEnum } from '@constants
+import store, { RootState } from '@redux/store';
+import { getTeams } from '@utils/microsoftGroupsFunctions';
 import ProgressView from '@components/ProgressView';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import { CloseIcon } from '@src/components/Icons';
-import getFileWithShareID from '@Functions/ultility/getFileWithShareID';
+import getFileWithShareID from '@utils/ultility/getFileWithShareID';
 import { Link } from 'expo-router';
 
 export default function GovernmentCreateNewTeam() {

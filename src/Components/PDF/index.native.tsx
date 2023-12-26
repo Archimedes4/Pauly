@@ -9,8 +9,8 @@ import { Image } from 'react-native';
 import WebView from 'react-native-webview';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
-import { pdfDataSlice } from '../../Redux/reducers/pdfDataReducer';
-import store, { RootState } from '../../Redux/store';
+import { pdfDataSlice } from '../../redux/reducers/pdfDataReducer';
+import store, { RootState } from '../../redux/store';
 
 export default function PDFView({ width }: { width: number }) {
   const { images, pageNumber } = useSelector(

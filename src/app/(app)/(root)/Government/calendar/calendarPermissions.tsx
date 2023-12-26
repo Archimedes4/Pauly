@@ -2,8 +2,8 @@ import { View, Text } from 'react-native';
 import React, { useState } from 'react';
 import { Link } from 'expo-router';
 import { useSelector } from 'react-redux';
-import { RootState } from '@src/Redux/store';
-import { Colors } from '@src/types';
+import { RootState } from '@redux/store';
+import { Colors } from '@constants';
 
 export default function calendarPermissions() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

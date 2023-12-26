@@ -1,5 +1,5 @@
-import { RootState } from '@Redux/store';
-import { getWantGovernment } from '@src/Functions/handleGovernmentLogin';
+import { RootState } from '@redux/store';
+import { getWantGovernment } from '@utils/handleGovernmentLogin';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 

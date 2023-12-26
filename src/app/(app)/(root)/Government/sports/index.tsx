@@ -6,9 +6,9 @@
 import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Colors, loadingStateEnum } from '@src/types';
-import { RootState } from '@Redux/store';
-import { getSports } from '@Functions/sports/sportsFunctions';
+import { Colors, loadingStateEnum } from '@constants';
+import { RootState } from '@redux/store';
+import { getSports } from '@utils/sports/sportsFunctions';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import GovernmentHandleFileSubmissions from './GovernmentHandleFileSubmissions';

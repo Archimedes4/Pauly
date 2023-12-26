@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
-import getCommissions from '@Functions/commissions/getCommissions';
-import getSubmissions from '@Functions/commissions/getSubmissions';
-import createUUID from '@src/Functions/ultility/createUUID';
-import { RootState } from '@Redux/store';
-import { Colors, loadingStateEnum, submissionTypeEnum } from '@src/types';
+import getCommissions from '@utils/commissions/getCommissions';
+import getSubmissions from '@utils/commissions/getSubmissions';
+import createUUID from '@utils/ultility/createUUID';
+import { RootState } from '@redux/store';
+import { Colors, loadingStateEnum, submissionTypeEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 

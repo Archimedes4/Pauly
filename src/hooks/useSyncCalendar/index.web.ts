@@ -1,6 +1,6 @@
 import { useMsal } from '@azure/msal-react';
 import { clientId } from '@src/PaulyConfig';
-import { loadingStateEnum } from '@src/types';
+import { loadingStateEnum } from '@constants';
 
 export default function useSyncCalendar() {
   const { instance } = useMsal();

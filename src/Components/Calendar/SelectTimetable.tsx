@@ -8,9 +8,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
-import callMsGraph from '../../Functions/ultility/microsoftAssets';
-import { RootState } from '../../Redux/store';
-import { loadingStateEnum } from '../../types';
+import callMsGraph from '../../utils/ultility/microsoftAssets';
+import { RootState } from '../../redux/store';
+import { loadingStateEnum } from '../../constants';
 
 export default function SelectTimetable({
   governmentMode,

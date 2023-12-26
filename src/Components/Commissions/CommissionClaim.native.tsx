@@ -8,20 +8,20 @@ import { refreshAsync, useAutoDiscovery } from 'expo-auth-session';
 import React, { useState } from 'react';
 import { Pressable, View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import store, { RootState } from '../../Redux/store';
+import store, { RootState } from '../../redux/store';
 import {
   commissionTypeEnum,
   loadingStateEnum,
   locationStateEnum,
-} from '../../types';
+} from '../../constants';
 import { clientId, tenantId } from '../../PaulyConfig';
-import getUsersLocation from '../../Functions/commissions/getLocation';
+import getUsersLocation from '../../utils/commissions/getLocation';
 import {
   addImage,
   claimCommissionPost,
-} from '../../Functions/commissions/claimCommissionsFunctions';
+} from '../../utils/commissions/claimCommissionsFunctions';
 import ProgressView from '../../components/ProgressView';
-import { getTextState } from '../../Functions/ultility/createUUID';
+import { getTextState } from '../../utils/ultility/createUUID';
 
 /**
  *

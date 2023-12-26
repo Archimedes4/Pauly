@@ -3,7 +3,7 @@ import {
   loadingStateEnum,
   taskImportanceEnum,
   taskStatusEnum,
-} from '../../types';
+} from '../../constants';
 
 type homepageStatesType = {
   taskState: loadingStateEnum;
