@@ -1,13 +1,12 @@
 import { Platform } from 'react-native';
-import { router } from 'expo-router';
 import callMsGraph from './microsoftAssets';
-import { orgWideGroupID } from '../../PaulyConfig';
 import store from '../../redux/store';
 import { paulyListSlice } from '../../redux/reducers/paulyListReducer';
 
 export default async function getPaulyLists() {
   const getRootSiteIdResult = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/sites/root?$select=id`,
+    // @ts-expect-error
+    `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/sites/root?$select=id`,
     'GET',
   );
   if (getRootSiteIdResult.ok) {

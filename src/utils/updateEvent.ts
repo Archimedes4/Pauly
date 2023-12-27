@@ -1,4 +1,3 @@
-import { orgWideGroupID } from '@src/PaulyConfig';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import store from '@redux/store';
@@ -164,7 +163,8 @@ export default async function createEvent(): Promise<undefined> {
     }
     // TODO Reocurring
     const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events`,
+      // @ts-ignore
+      `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events`,
       'POST',
       JSON.stringify(data),
     );
@@ -193,7 +193,8 @@ export default async function createEvent(): Promise<undefined> {
               ? store.getState().addEvent.selectedTimetable.id
               : undefined,
         microsoftEvent: true,
-        microsoftReference: `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${dataOut.id}`,
+        // @ts-ignore
+        microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${dataOut.id}`,
         allDay: false,
       };
       store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent));

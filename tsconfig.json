@@ -25,5 +25,6 @@
       "assets/*": ["assets/*"],
     }
   },
-  "extends": "expo/tsconfig.base"
+  "extends": "expo/tsconfig.base",
+  "exclude": ["api/*"]
 }

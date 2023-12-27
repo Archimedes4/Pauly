@@ -6,7 +6,7 @@
   Main Calendar for Pauly see README.md for more info.
 */
 import { View, Text, Pressable } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Week from '@components/Calendar/Week';
 import AddEvent from '@components/Calendar/AddEvent';
@@ -23,12 +23,12 @@ import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@src/components/Calendar/MonthView';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
-import { orgWideGroupID } from '@src/PaulyConfig';
 
 async function deleteEvents() {
   const array = store.getState().currentEvents;
   for (let index = 0; index < array.length; index += 1) {
-    callMsGraph(`https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${array[index].id}`, "DELETE")
+    // @ts-ignore
+    callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${array[index].id}`, "DELETE")
   }
   store.dispatch(currentEventsSlice.actions.setCurrentEvents([]))
 }

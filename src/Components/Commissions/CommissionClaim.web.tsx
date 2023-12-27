@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Pressable, View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { clientId } from '../../PaulyConfig';
 import getUsersLocation from '../../utils/commissions/getLocation';
 import {
   addImage,
@@ -32,7 +31,8 @@ export default function CommissionClaim({
   async function claimCommission() {
     setClaimCommissionState(loadingStateEnum.loading);
     const apiResult = await instance.acquireTokenSilent({
-      scopes: [`api://${clientId}/api/commissions`],
+      // @ts-ignore
+      scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
     });
     let outImageUrl: string = '';
     if (

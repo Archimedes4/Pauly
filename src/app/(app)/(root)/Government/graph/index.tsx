@@ -5,9 +5,8 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import PickerWrapper from '@components/Pickers/Picker';
 import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
-import { clientId } from '@src/PaulyConfig';
 import { getTeams } from '@utils/microsoftGroupsFunctions';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link } from 'expo-router';
 
 type listType = {
   displayName: string;
@@ -94,7 +93,8 @@ export default function MicrosoftGraphOverview() {
   }
 
   async function getExtensions() {
-    let schemaExtensionsUrl = `https://graph.microsoft.com/v1.0/schemaExtensions?$filter=owner%20eq%20'${clientId}'`;
+    // @ts-expect-error
+    let schemaExtensionsUrl = `https://graph.microsoft.com/v1.0/schemaExtensions?$filter=owner%20eq%20'${process.env.EXPO_PUBLIC_CLIENTID}'`;
     const resultData: extensionType[] = [];
     while (schemaExtensionsUrl !== '') {
       const result = await callMsGraph(schemaExtensionsUrl);

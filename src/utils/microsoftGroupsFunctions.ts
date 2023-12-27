@@ -5,7 +5,7 @@
   microsoftGroupsFunctions.ts
   common function to access microsoft group/teams data
 */
-import { loadingStateEnum, resourceResponce } from '@constants
+import { loadingStateEnum, resourceResponce } from '@constants';
 import getResource from '@utils/getResources';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 

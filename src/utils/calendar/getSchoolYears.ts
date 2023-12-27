@@ -4,7 +4,6 @@
   November 10 2023
   getSchoolYears.ts
 */
-import { orgWideGroupID } from '../../PaulyConfig';
 import store from '../../redux/store';
 import { Colors, loadingStateEnum } from '../../constants';
 import callMsGraph from '../ultility/microsoftAssets';
@@ -16,7 +15,8 @@ export default async function getSchoolYears(nextLink?: string): Promise<{
 }> {
   const result = await callMsGraph(
     nextLink ||
-      `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    // @ts-expect-errors
+      `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
         store.getState().paulyList.eventTypeExtensionId
       }'%20or%20id%20eq%20'${
         store.getState().paulyList.eventDataExtensionId
@@ -65,7 +65,8 @@ export default async function getSchoolYears(nextLink?: string): Promise<{
               return e.id === eventDataExtensionID;
             })?.value,
             microsoftEvent: true,
-            microsoftReference: `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${data.value[index].id}`,
+            // @ts-expect-error
+            microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
           });
         }
       }

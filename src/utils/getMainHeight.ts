@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  26 December 2023
+  Calculating height of safe area
+*/
 export default function getMainHeight(
   full: number,
   top: number,

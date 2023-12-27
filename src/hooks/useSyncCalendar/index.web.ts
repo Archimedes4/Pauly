@@ -1,12 +1,12 @@
 import { useMsal } from '@azure/msal-react';
-import { clientId } from '@src/PaulyConfig';
 import { loadingStateEnum } from '@constants';
 
 export default function useSyncCalendar() {
   const { instance } = useMsal();
   async function main() {
     const apiResult = await instance.acquireTokenSilent({
-      scopes: [`api://${clientId}/api/commissions`],
+      // @ts-ignore
+      scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
     });
     // TODO change to production url
     const result = await fetch(

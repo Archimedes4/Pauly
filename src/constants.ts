@@ -554,3 +554,21 @@ export const paperTheme = {
     scrim: Colors.black,
   },
 };
+
+// DO NOT CHANGE SCOPES
+// See README.md for more imformation about the scopes.
+export const scopes = [
+  'User.Read',
+  'User.ReadBasic.All',
+  'Sites.Read.All',
+  'Sites.Manage.All',
+  'ChannelMessage.Read.All',
+  'Chat.ReadWrite',
+  'Calendars.ReadWrite',
+  'Team.ReadBasic.All',
+  'Group.ReadWrite.All',
+  'Tasks.ReadWrite',
+  'Channel.ReadBasic.All',
+  'Application.ReadWrite.All',
+  'TeamMember.Read.All',
+];

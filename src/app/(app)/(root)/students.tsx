@@ -25,7 +25,7 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID from '@utils/ultility/createUUID';
 import { Link } from 'expo-router';
 import { useStudentSafeArea } from '@hooks/safeAreaHooks';
-import SearchBar from '@src/components/SearchBar';
+import SearchBar from '@components/SearchBar';
 
 function StudentImage({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
   if (user.item.imageState === loadingStateEnum.loading) {

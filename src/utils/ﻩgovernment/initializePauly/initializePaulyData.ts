@@ -1,5 +1,3 @@
-import { clientId } from '../../../PaulyConfig';
-
 export const paulyListData = {
   displayName: 'PaulyList',
   // "name":"PaulyList",
@@ -638,7 +636,8 @@ export const paulyClassExtensionData = {
   id: 'paulyClass',
   description: 'Pauly Class Data',
   targetTypes: ['Group'],
-  owner: clientId,
+  // @ts-ignore
+  owner: process.env.EXPO_PUBLIC_CLIENTID,
   properties: [
     {
       name: 'className', // This property will be optional in the future

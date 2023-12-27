@@ -173,8 +173,7 @@ export default function GovernmentTimetableEdit() {
               <View>
                 {dressCodes.map(dressCode => (
                   <ListItem
-                    title={dressCode.name}
-                    width={width * 0.8}
+                    text={dressCode.name}
                     onPress={() => {
                       setSelectedDressCode(dressCode);
                     }}

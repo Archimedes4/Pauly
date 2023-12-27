@@ -16,13 +16,13 @@ import {
 } from 'expo-auth-session';
 import { useRootNavigationState, useRouter } from 'expo-router';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
-import { clientId, scopes, tenantId } from '../../PaulyConfig';
 import store from '../../redux/store';
 import { authLoadingSlice } from '../../redux/reducers/authLoadingReducer';
 import { authenticationRefreshTokenSlice } from '../../redux/reducers/authenticationRefreshTokenReducer';
 import { authenticationTokenSlice } from '../../redux/reducers/authenticationTokenReducer';
 import getUserProfile from '../../utils/ultility/getPaulyLists';
 import getPaulyLists from '../../utils/ultility/getPaulyLists';
+import { scopes } from '@src/constants';
 
 // placeholder function
 export function useSilentLogin(): () => Promise<void> {
@@ -45,7 +45,8 @@ export function useSilentLogin(): () => Promise<void> {
 
 export function useInvokeLogin(): (government?: boolean) => Promise<void> {
   const discovery = useAutoDiscovery(
-    `https://login.microsoftonline.com/${tenantId}/v2.0`,
+    // @ts-ignore
+    `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
 
   const redirectUri = makeRedirectUri({
@@ -55,7 +56,8 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
 
   const [authRequest, , promptAsync] = useAuthRequest(
     {
-      clientId,
+      // @ts-ignore
+      clientId: process.env.EXPO_PUBLIC_CLIENTID,
       redirectUri,
       scopes,
       prompt: Prompt.SelectAccount,
@@ -73,7 +75,8 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
       if (authRequest && res?.type === 'success' && discovery) {
         const exchangeRes = await exchangeCodeAsync(
           {
-            clientId,
+            // @ts-ignore
+            clientId: process.env.EXPO_PUBLIC_CLIENTID,
             code: res.params.code,
             extraParams: authRequest.codeVerifier
               ? { code_verifier: authRequest.codeVerifier }
@@ -109,7 +112,8 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
 // Refresh block to take a refresh token and get a new access token.
 export function refresh(): () => Promise<void> {
   const discovery = useAutoDiscovery(
-    `https://login.microsoftonline.com/${tenantId}/v2.0`,
+    // @ts-ignore
+    `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
   async function main() {
     if (discovery !== null) {
@@ -117,7 +121,8 @@ export function refresh(): () => Promise<void> {
         const result = await refreshAsync(
           {
             refreshToken: store.getState().authenticationRefreshToken,
-            clientId,
+            // @ts-ignore
+            clientId: process.env.EXPO_PUBLIC_CLIENTID,
             scopes,
           },
           discovery,
@@ -143,7 +148,8 @@ export function refresh(): () => Promise<void> {
 
 export function useSignOut(): () => void {
   const discovery = useAutoDiscovery(
-    `https://login.microsoftonline.com/${tenantId}/v2.0`,
+    // @ts-ignore
+    `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
   async function main() {
     if (discovery !== null) {

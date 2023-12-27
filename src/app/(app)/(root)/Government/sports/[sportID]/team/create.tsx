@@ -17,7 +17,7 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { convertYearToSchoolYear } from '@utils/calendar/calendarFunctions';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID from '@utils/ultility/createUUID';
-import { Colors, dataContentTypeOptions, loadingStateEnum } from '@constants
+import { Colors, dataContentTypeOptions, loadingStateEnum } from '@constants';
 import store, { RootState } from '@redux/store';
 import { getTeams } from '@utils/microsoftGroupsFunctions';
 import ProgressView from '@components/ProgressView';
@@ -274,7 +274,7 @@ export default function GovernmentCreateNewTeam() {
             backgroundColor: Colors.white,
           }}
         >
-          <Link href={`/profile/government/sports/team/${sport}/${id}`}>
+          <Link href={`/government/sports/${id}`}>
             Back
           </Link>
           <View>

@@ -12,6 +12,7 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '@constants';
 import SVGXml from '@components/SVGXml';
 import { Link } from 'expo-router';
+import SecondStyledButton from '@src/components/SecondStyledButton';
 
 export default function GovernmentCreateNewSport() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -86,12 +87,12 @@ export default function GovernmentCreateNewSport() {
   }
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/profile/government/sports'}>
+      <Link href={'/government/sports'}>
         <Text>Back</Text>
       </Link>
-      <Text>Create New Sport</Text>
-      <Text>Sport Name</Text>
-      <TextInput value={sportName} onChangeText={setSportName} />
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Create New Sport</Text>
+      <Text style={{marginLeft: 28, fontSize: 18, marginBottom: 2}}>Sport Name</Text>
+      <TextInput value={sportName} onChangeText={setSportName} style={{borderWidth: 1, borderRadius: 30, borderColor: Colors.black, padding: 10, marginLeft: 15, marginRight: 15}}/>
       <TextInput
         value={svgData}
         onChangeText={e => {
@@ -99,22 +100,23 @@ export default function GovernmentCreateNewSport() {
         }}
         multiline
         numberOfLines={25}
+        style={{marginLeft: 15, marginRight: 15, marginTop: 5}}
       />
-      <SVGXml xml={svgData} width={100} height={100} />
-      <Pressable
+      <View style={{marginLeft: 'auto', marginRight: 'auto', borderWidth: 1}}>
+        <SVGXml xml={svgData} width={100} height={100} />
+      </View>
+      <SecondStyledButton 
+        text={getTextState(createSportLoadingState, {
+          notStarted: 'Create',
+          success: 'Sport Created!',
+        })}
         onPress={() => {
           if (sportName !== '' && svgData !== '') {
             createSport();
           }
         }}
-      >
-        <Text>
-          {getTextState(createSportLoadingState, {
-            notStarted: 'Create',
-            success: 'Sport Created!',
-          })}
-        </Text>
-      </Pressable>
+        style={{marginBottom: 10, marginLeft: 15, marginRight: 15, marginTop: 10}}
+      />
     </View>
   );
 }

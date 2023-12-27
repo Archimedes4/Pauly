@@ -26,10 +26,11 @@ const initalState: homepageStatesType = {
   userTasks: [
     {
       name: '',
-      importance: taskImportanceEnum.normal,
       id: '',
+      importance: taskImportanceEnum.normal,
       status: taskStatusEnum.notStarted,
       excess: true,
+      state: loadingStateEnum.notStarted
     },
   ],
   schoolDayData: undefined,

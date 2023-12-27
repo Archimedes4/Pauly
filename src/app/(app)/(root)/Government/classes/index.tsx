@@ -101,7 +101,7 @@ export default function GovernmentClasses() {
           )}
         </>
       </ScrollView>
-      <StyledButton to="/profile/government/classes/room" text='Rooms' width={100} style={{marginLeft: 10, marginRight: 10, marginBottom: 20}}/>
+      <StyledButton to="/profile/government/classes/room" text='Rooms' style={{marginLeft: 10, marginRight: 10, marginBottom: 20}}/>
     </View>
   );
 }

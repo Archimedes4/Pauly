@@ -298,8 +298,8 @@ export default function GovernmentStudents() {
         )}
       </View>
       <View style={{ flexDirection: 'row', height: height * 0.1 }}>
-        <SecondStyledButton text='Select Folder' width={100} style={{marginLeft: 10, marginTop: 'auto', marginBottom: 'auto'}}/>
-        <SecondStyledButton text='Select Maping Keys' width={100} style={{marginLeft: 10, marginTop: 'auto', marginBottom: 'auto'}}/>
+        <SecondStyledButton text='Select Folder' style={{marginLeft: 10, marginTop: 'auto', marginBottom: 'auto'}}/>
+        <SecondStyledButton text='Select Maping Keys' style={{marginLeft: 10, marginTop: 'auto', marginBottom: 'auto'}}/>
       </View>
     </View>
   );

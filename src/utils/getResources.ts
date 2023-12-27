@@ -1,8 +1,12 @@
+/*
+  Pauly
+  Andrew Mainella
+
+*/
 import { loadingStateEnum, resourceMode, resourceResponce } from '@constants';
 import store from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { resourcesSlice } from '@redux/reducers/resourcesReducer';
-import { raindropToken } from '@src/PaulyConfig';
 
 export function convertResourceModeString(convert?: resourceMode): string {
   if (convert === resourceMode.sports) {
@@ -375,6 +379,8 @@ export async function getScholarships(): Promise<
 > {
   // https://developer.raindrop.io/v1/authentication/token
   // https://developer.raindrop.io/v1/raindrops/multiple
+  // @ts-expect-error
+  const raindropToken = process.env.EXPO_PUBLIC_RAINDROPTOKEN;
   const result = await fetch(
     'https://api.raindrop.io/rest/v1/raindrops/37695900',
     {

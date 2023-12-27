@@ -1,19 +1,21 @@
-import { clientId, tenantId } from '@src/PaulyConfig';
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import { refreshAsync, useAutoDiscovery } from 'expo-auth-session';
 
 export default function useSyncCalendar() {
   const discovery = useAutoDiscovery(
-    `https://login.microsoftonline.com/${tenantId}/v2.0`,
+    // @ts-ignore
+    `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
   async function main() {
     if (discovery !== null) {
       const apiResult = await refreshAsync(
         {
           refreshToken: store.getState().authenticationRefreshToken,
-          clientId,
-          scopes: [`api://${clientId}/api/commissions`],
+          // @ts-ignore
+          clientId: process.env.EXPO_PUBLIC_CLIENTID,
+          // @ts-ignore
+          scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
         },
         discovery,
       );

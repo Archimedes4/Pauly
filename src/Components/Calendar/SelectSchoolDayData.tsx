@@ -13,7 +13,6 @@ import {
   getGraphEvents,
   getTimetable,
 } from '../../utils/calendar/calendarFunctionsGraph';
-import { orgWideGroupID } from '../../PaulyConfig';
 import { addEventSlice } from '../../redux/reducers/addEventReducer';
 import store, { RootState } from '../../redux/store';
 import { loadingStateEnum, semesters } from '../../constants';
@@ -38,7 +37,8 @@ function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
 
   async function getData() {
     const result = await getGraphEvents(
-      `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+      // @ts-expect-error
+      `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
         store.getState().paulyList.eventTypeExtensionId
       }'%20or%20id%20eq%20'${
         store.getState().paulyList.eventDataExtensionId

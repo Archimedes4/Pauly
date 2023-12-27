@@ -1,3 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+  edit.tsx
+  edits and creates commissions
+*/
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -23,8 +29,7 @@ import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import ProgressView from '@components/ProgressView';
 import WebViewCross from '@components/WebViewCross';
 import { CloseIcon } from '@src/components/Icons';
-import MapWeb from '@src/components/Map/index.d';
-import Slider from '@components/Slider';
+import Map from '@src/components/Map/index.d';
 import BackButton from '@components/BackButton';
 import {
   getChannels,
@@ -37,6 +42,7 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import getFileWithShareID from '@utils/ultility/getFileWithShareID';
 import updateCommission from '@utils/commissions/updateCommission';
+import Slider from '@react-native-community/slider';
 
 enum datePickingMode {
   none,
@@ -237,7 +243,7 @@ export default function GovernmentEditCommission() {
                 alignItems: 'center',
               }}
             >
-              <MapWeb
+              <Map
                 proximity={proximity}
                 // selectedPositionIn={selectedPositionIn}
                 onSetSelectedPositionIn={setSelectedPositionIn}
@@ -263,13 +269,11 @@ export default function GovernmentEditCommission() {
               }}
             >
               <Slider
-                width={width * 0.9}
-                height={50}
+                style={{width: width * 0.9, height: 50}}
                 value={proximity / 1000}
                 onValueChange={value => {
                   setProximity(value * 1000);
                 }}
-                containerWidth={width}
               />
             </View>
           </View>

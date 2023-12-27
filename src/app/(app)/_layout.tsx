@@ -8,7 +8,7 @@ import { View, Text, Pressable } from 'react-native';
 import React, { useCallback } from 'react';
 import useIsConnected from '@hooks/useIsConnected';
 import { Colors } from '@constants';
-import { OfflineIcon } from '@src/components/Icons';
+import { OfflineIcon } from '@components/Icons';
 import { Stack } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';

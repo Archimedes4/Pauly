@@ -5,7 +5,6 @@
   claimCommissionsFunctions.ts
   Claim Commission function, this is mainly the part of formating call to commission api.
 */
-import { orgWideGroupID } from '../../PaulyConfig';
 import { loadingStateEnum } from '../../constants';
 import createUUID from '../ultility/createUUID';
 import callMsGraph from '../ultility/microsoftAssets';
@@ -157,7 +156,8 @@ export async function claimCommissionPost(
   const bearer = `Bearer ${auth}`;
   try {
     const result = await fetch(
-      `https://pauly-functions.azurewebsites.net/api/SubmitCommission?code=628ObqnRS5VxdYijTEz8sHucuLuihwin7ulwkUK6L5uCAzFuyFZ0Ng==&orgWideGroupId=${orgWideGroupID}&commissionId=${commissionId}${outResult}`,
+      // @ts-expect-error
+      `https://pauly-functions.azurewebsites.net/api/SubmitCommission?code=628ObqnRS5VxdYijTEz8sHucuLuihwin7ulwkUK6L5uCAzFuyFZ0Ng==&orgWideGroupId=${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}&commissionId=${commissionId}${outResult}`,
       {
         headers: {
           Authorization: bearer,

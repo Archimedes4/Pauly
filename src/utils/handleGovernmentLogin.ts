@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { orgWideGroupID } from '@src/PaulyConfig';
 import { isGovernmentModeSlice } from '@redux/reducers/isGovernmentModeReducer';
 import store from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
@@ -11,7 +10,8 @@ export async function validateGovernmentMode() {
   if (userResult.ok) {
     const userData = await userResult.json();
     const teamsResult = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/owners?$filter=id%20eq%20'${userData.id}'`,
+      // @ts-expect-error
+      `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/owners?$filter=id%20eq%20'${userData.id}'`,
     );
     if (teamsResult.ok) {
       const teamsData = await teamsResult.json();

@@ -6,13 +6,10 @@
   This is the main component for the resources section of pauly.
   See README.md for more information about the resources section.
 */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  ScrollView,
-  TextInput,
-  Platform,
   Pressable,
   Linking,
   FlatList,
@@ -31,7 +28,7 @@ import {
   getResourcesSearch,
   getScholarships,
 } from '@utils/getResources';
-import { CloseIcon, SearchIcon } from '@src/components/Icons';
+import { CloseIcon } from '@src/components/Icons';
 import WebViewCross from '@components/WebViewCross';
 import BackButton from '@components/BackButton';
 import ProgressView from '@components/ProgressView';

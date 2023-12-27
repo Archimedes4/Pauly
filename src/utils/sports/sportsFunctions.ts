@@ -11,8 +11,10 @@ import getFileWithShareID from '@utils/ultility/getFileWithShareID';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 
 export async function getSports(): Promise<{
-  result: loadingStateEnum;
-  data?: sportType[];
+  result: loadingStateEnum.success;
+  data: sportType[];
+}|{
+  result: loadingStateEnum.failed
 }> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
@@ -67,7 +69,9 @@ export async function getSportsTeams(
 
 export async function getSport(
   id: string,
-): Promise<{ result: loadingStateEnum; data?: sportType; listId?: string }> {
+): Promise<{ result: loadingStateEnum.success; data: sportType; listId: string } | {
+  result: loadingStateEnum.failed
+}> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId

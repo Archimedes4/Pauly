@@ -11,6 +11,7 @@ export default function SearchBar({value, onChangeText, onSearch, top}:{value: s
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [mounted, setMounted] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Boolean true if text overflowing. This is telling the search icon to show or not.
+  // @ts-expect-error
   const style: StyleProp<TextStyle> = Platform.OS === 'web' ? { outlineStyle: 'none' } : undefined; // Style to remove ourline around textbox on web
   const dispatch = useDispatch();
 

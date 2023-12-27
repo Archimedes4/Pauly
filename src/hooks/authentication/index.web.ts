@@ -8,10 +8,9 @@
 // import { useMsal } from "@azure/msal-react";
 import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
 import store from '@redux/store';
-import { scopes } from '@src/PaulyConfig';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
-import { useRouter } from 'expo-router';
 import { useMsal } from '@azure/msal-react';
+import { scopes } from '@src/constants';
 
 export const refresh = () => {
   const { instance } = useMsal();

@@ -8,18 +8,15 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import createUUID from '@utils/ultility/createUUID';
-import { loadingStateEnum } from '@constants
+import { Colors, loadingStateEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import getSubmissions from '@utils/sports/sportsFunctions';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
+import { useSelector } from 'react-redux';
+import { RootState } from '@src/redux/store';
+import SecondStyledButton from '@src/components/SecondStyledButton';
 
-export default function GovernmentHandleFileSubmissions({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) {
+function GovernmentSportsPostsBody() {
   const router = useRouter();
   const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<
     mediaSubmissionType[]
@@ -46,20 +43,20 @@ export default function GovernmentHandleFileSubmissions({
   if (loadingSubmissionsState === loadingStateEnum.loading) {
     <View
       style={{
-        width,
-        height,
+        width: '100%',
+        height: '100%',
         alignContent: 'center',
         justifyContent: 'center',
         alignItems: 'center',
       }}
     >
-      <ProgressView width={0} height={0} />
+      <ProgressView width={14} height={14} />
       <Text>loading</Text>
     </View>;
   }
 
   if (loadingSubmissionsState === loadingStateEnum.success) {
-    <View style={{ width, height, overflow: 'hidden' }}>
+    <View style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
       <Text>HandleFileSubmissions</Text>
       <FlatList
         data={currentMediaSubmissions}
@@ -86,8 +83,8 @@ export default function GovernmentHandleFileSubmissions({
   return (
     <View
       style={{
-        width,
-        height,
+        width: '100%',
+        height: '80%',
         alignContent: 'center',
         justifyContent: 'center',
         alignItems: 'center',
@@ -96,4 +93,20 @@ export default function GovernmentHandleFileSubmissions({
       <Text>Failed</Text>
     </View>
   );
+}
+
+export default function GovernmentSportsposts() {
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  return (
+    <View style={{width, height, backgroundColor: Colors.white}}>
+      <Link href={'/government/sports'}>
+        Back
+      </Link>
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Government Sports Posts</Text>
+      <View style={{flex:1,alignItems:'center',justifyContent:'center',margin:5}}>
+        <GovernmentSportsPostsBody />
+      </View>
+      <SecondStyledButton text='Create Post' style={{marginBottom: 10, marginTop: 5, marginLeft: 15, marginRight: 15}} to='/government/sports/posts/create'/>
+    </View>
+  )
 }

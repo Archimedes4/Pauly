@@ -76,6 +76,21 @@ export default function Dropdown({
       </View>
     );
   }
+  if (options) {
+    return (
+      <Pressable
+        onPress={() => {
+          setIsExpanded(true);
+          if (setExpanded) {
+            setExpanded(true);
+          }
+        }}
+        style={style}
+      >
+        <Text>{options[selectedIndex]}</Text>
+      </Pressable>
+    )
+  }
   return (
     <Pressable
       onPress={() => {
@@ -86,11 +101,9 @@ export default function Dropdown({
       }}
       style={style}
     >
-      {options ? (
-        <Text>{options[selectedIndex]}</Text>
-      ) : (
-        children[selectedIndex]
-      )}
+      {
+        React.Children.toArray(children)[selectedIndex]
+      }
     </Pressable>
   );
 }

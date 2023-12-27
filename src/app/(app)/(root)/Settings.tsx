@@ -15,7 +15,7 @@ import {
   GovernmentIcon,
   PersonIcon,
   StudentSearchIcon,
-} from '@src/components/Icons';
+} from '@components/Icons';
 import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';

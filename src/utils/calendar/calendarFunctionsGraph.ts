@@ -5,7 +5,6 @@
   calendarFunctionsGraph.ts
   calender function that use microsoft grap
 */
-import { orgWideGroupID } from '../../PaulyConfig';
 import callMsGraph from '../ultility/microsoftAssets';
 import { Colors, loadingStateEnum, semesters } from '../../constants';
 import store from '../../redux/store';
@@ -36,7 +35,8 @@ export async function getGraphEvents(
   events?: eventType[];
   nextLink?: string;
 }> {
-  const defaultUrl = `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`;
+  // @ts-expect-error
+  const defaultUrl = `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`;
   const result = await callMsGraph(
     url !== undefined ? url : defaultUrl,
     'GET',
@@ -88,7 +88,8 @@ export async function getGraphEvents(
         microsoftReference:
           referenceUrl !== undefined
             ? referenceUrl + data.value[index].id
-            : `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${data.value[index].id}`,
+            // @ts-expect-error
+            : `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
       });
     }
     return {
@@ -105,7 +106,8 @@ export async function getEvent(
   id: string,
 ): Promise<{ result: loadingStateEnum; data?: eventType }> {
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    // @ts-expect-error
+    `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`,
     'GET',
@@ -127,7 +129,8 @@ export async function getEvent(
       allDay: data.isAllDay,
       eventColor: Colors.white,
       microsoftEvent: true,
-      microsoftReference: `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${data.id}`,
+      // @ts-expect-error
+      microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.id}`,
     };
     if (data.singleValueExtendedProperties !== undefined) {
       const eventData: { id: string; value: string }[] =
@@ -317,7 +320,8 @@ export async function getSchoolDay(
     .toISOString()
     .slice(0, -1)}0000`;
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    // @ts-expect-error
+    `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${
       store.getState().paulyList.eventDataExtensionId
@@ -357,7 +361,8 @@ export async function getSchoolDay(
               allDay: data.value[index].isAllDay,
               eventColor: Colors.white,
               microsoftEvent: true,
-              microsoftReference: `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendar/events/${data.value[index].id}`,
+              // @ts-expect-error
+              microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
               paulyEventType:
                 eventData.find(e => {
                   return e.id === eventTypeExtensionID;
@@ -398,7 +403,8 @@ export async function getSchoolDays(date: Date): Promise<{
       .split(/[T ]/i, 1)[0]
   }T00:00:00.0000000`;
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/groups/${orgWideGroupID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    // @ts-expect-error
+    `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${
       store.getState().paulyList.eventDataExtensionId
@@ -552,7 +558,8 @@ async function getTimetablesFromSchoolYears(
 ): Promise<{ result: loadingStateEnum; data?: Map<string, timetableType> }> {
   // Get School Years
   const batchRequestResultSchoolYear = await batchRequest(undefined, {
-    firstUrl: `/groups/${orgWideGroupID}/calendar/events/`,
+    // @ts-expect-error
+    firstUrl: `/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
     secondUrl: `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`,
@@ -702,11 +709,11 @@ async function getTimetablesFromSchoolYears(
                 .fields.dressCodeId,
               dressCodeData: JSON.parse(
                 batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
-                  .fields.dressCodeData,
+                  .fields.dressCodeData
               ),
-              dressCodeIncentives:
-                batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
-                  .fields.dressCodeIncentivesData,
+              dressCodeIncentives: batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
+                .fields.dressCodeIncentivesData,
+              listId: ''
             },
           );
         } catch {

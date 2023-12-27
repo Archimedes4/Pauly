@@ -11,13 +11,11 @@ import { Colors } from '../constants';
 export default function StyledButton({
   to,
   text,
-  width,
   caption,
   onPress,
   style,
 }: {
   text: string;
-  width: number;
   caption?: string | undefined;
   to?: string | undefined;
   onPress?: (() => void) | undefined;
@@ -42,8 +40,6 @@ export default function StyledButton({
           shadowOpacity: 0.8,
           shadowRadius: 10,
           borderRadius: 15,
-          marginLeft: width * 0.03,
-          marginRight: width * 0.03,
         },
         style,
       ]}

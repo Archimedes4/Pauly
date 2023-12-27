@@ -3,7 +3,8 @@
 // Picker with animated black line
 
 import React, { ReactNode, useRef, useEffect, Children } from 'react';
-import { View, Pressable, Animated } from 'react-native';
+import { View, Pressable } from 'react-native';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 // import styles from './Picker.module.css'
 
 interface PickerWrapperProps {
@@ -21,20 +22,23 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
   width,
   height,
 }) => {
-  const pan = useRef(new Animated.Value(0)).current;
   const compoentWidth = width / Children.count(children);
+  const pan = useSharedValue(selectedIndex * compoentWidth);
   function fadeIn(id: number) {
     // Will change fadeAnim value to 1 in 5 seconds
-    Animated.timing(pan, {
-      toValue: id * compoentWidth,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
+    pan.value = withRepeat(
+      withTiming(0, {
+        duration: 100,
+        easing: Easing.linear,
+      }),
+      -1,
+      true
+    );
   }
 
-  useEffect(() => {
-    pan.setValue(selectedIndex * compoentWidth);
-  }, []);
+  const animatedDefault = useAnimatedStyle(() => ({
+    transform: [{ translateX: pan.value }],
+  }));
 
   return (
     <View style={{ flexDirection: 'row', height: height * 0.8, width }}>
@@ -57,9 +61,7 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
         </View>
       ))}
       <Animated.View
-        style={{
-          transform: [{ translateX: pan }],
-        }}
+        style={animatedDefault}
       >
         <View
           style={{

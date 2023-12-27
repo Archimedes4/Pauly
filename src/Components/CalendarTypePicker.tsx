@@ -5,12 +5,13 @@
   CalendarTypePicker.tsx
   Top compoent in calendar picker
 */
-import { View, Text, Animated, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEventSlice } from '../redux/reducers/addEventReducer';
 import { RootState } from '../redux/store';
 import { Colors } from '../constants';
+import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface PickerWrapperProps {
   width: number;
@@ -27,34 +28,20 @@ export default function CalendarTypePicker({
   width,
   height,
 }: PickerWrapperProps) {
-  const pan = useRef(new Animated.Value(0)).current;
+  const pan = useSharedValue(0);
   const [compoentWidth, setComponentWidth] = useState(width / 3);
   const { selectedCalendarMode } = useSelector(
     (state: RootState) => state.addEvent,
   );
   const dispatch = useDispatch();
-
-  function fadeIn(id: number) {
-    // Will change fadeAnim value to 1 in 5 seconds
-    Animated.timing(pan, {
-      toValue: id * compoentWidth + compoentWidth * 0.005,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  }
-
-  const setPanValue = useCallback(() => {
-    pan.setValue(selectedCalendarMode * compoentWidth + compoentWidth * 0.005);
+  const setPanValue = useCallback((selectedCalendarMode: calendarMode) => {
+    pan.value = withTiming(selectedCalendarMode * compoentWidth + compoentWidth * 0.005);
   }, [compoentWidth, pan, selectedCalendarMode]);
 
   useEffect(() => {
-    setPanValue();
-  }, [setPanValue]);
-
-  useEffect(() => {
     setComponentWidth(width / 3);
-    setPanValue();
-  }, [width, setPanValue]);
+    pan.value = selectedCalendarMode * (width/3) + (width/3) * 0.005;
+  }, [width]);
 
   return (
     <View
@@ -75,8 +62,9 @@ export default function CalendarTypePicker({
           dispatch(
             addEventSlice.actions.setSelectedCalendarMode(calendarMode.month),
           );
-          fadeIn(0);
+          setPanValue(calendarMode.month);
         }}
+        key={'Month_Button'}
         style={{
           position: 'absolute',
           width: compoentWidth,
@@ -100,8 +88,9 @@ export default function CalendarTypePicker({
           dispatch(
             addEventSlice.actions.setSelectedCalendarMode(calendarMode.week),
           );
-          fadeIn(1);
+          setPanValue(calendarMode.week);
         }}
+        key={'Week_Button'}
         style={{
           position: 'absolute',
           transform: [{ translateX: 1 * compoentWidth }],
@@ -126,8 +115,9 @@ export default function CalendarTypePicker({
           dispatch(
             addEventSlice.actions.setSelectedCalendarMode(calendarMode.day),
           );
-          fadeIn(2);
+          setPanValue(calendarMode.day);
         }}
+        key={'Day_Button'}
         style={{
           position: 'absolute',
           transform: [{ translateX: 2 * compoentWidth }],

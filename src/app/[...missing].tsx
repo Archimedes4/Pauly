@@ -9,6 +9,7 @@ import { Platform } from 'react-native';
 
 //takes the user back to the main page
 export default function Missing() {
+  console.log("Route Not Found")
   if (Platform.OS === 'web') {
     const router = useRouter();
     useFocusEffect(() => {

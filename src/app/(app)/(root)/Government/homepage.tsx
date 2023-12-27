@@ -111,7 +111,7 @@ export default function GovernmentHomePage() {
         {isAutoUpdatingText  ? (
           <View style={{ height: 14 }} />
         ) : (
-          <SecondStyledButton onPress={() => updatePaulyData('message', newText)} text={'Update Text'} width={100} style={{marginTop: 10, marginBottom: 10}} />
+          <SecondStyledButton onPress={() => updatePaulyData('message', newText)} text={'Update Text'} style={{marginTop: 10, marginBottom: 10}} />
         )}
         <View style={{ flexDirection: 'row' }}>
           <Text>Is auto updating text: </Text>
@@ -150,7 +150,6 @@ export default function GovernmentHomePage() {
           }
         }}
         text='Save Changes'
-        width={100}
       />
     </View>
   );

@@ -95,7 +95,9 @@ export default function MicrosoftGraphEditList() {
         {isCoppiedToClipboard ? (
           <Pressable
             onPress={async () => {
-              await Clipboard.setStringAsync(id);
+              if (typeof id === "string") {
+                await Clipboard.setStringAsync(id);
+              }
             }}
           >
             <Text>Copied To Clipboard!</Text>
@@ -103,8 +105,10 @@ export default function MicrosoftGraphEditList() {
         ) : (
           <Pressable
             onPress={async () => {
-              await Clipboard.setStringAsync(id);
-              setIsCoppiedToClipboard(true);
+              if (typeof id === "string") {
+                await Clipboard.setStringAsync(id);
+                setIsCoppiedToClipboard(true);
+              }
             }}
           >
             <CopyIcon width={14} height={14} />

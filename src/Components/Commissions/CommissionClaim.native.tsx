@@ -14,7 +14,6 @@ import {
   loadingStateEnum,
   locationStateEnum,
 } from '../../constants';
-import { clientId, tenantId } from '../../PaulyConfig';
 import getUsersLocation from '../../utils/commissions/getLocation';
 import {
   addImage,
@@ -40,7 +39,8 @@ export default function CommissionClaim({
   const { width } = useSelector((state: RootState) => state.dimentions);
 
   const discovery = useAutoDiscovery(
-    `https://login.microsoftonline.com/${tenantId}/v2.0`,
+    // @ts-ignore
+    `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
 
   async function claimCommission() {
@@ -50,8 +50,10 @@ export default function CommissionClaim({
         const apiResult = await refreshAsync(
           {
             refreshToken: store.getState().authenticationRefreshToken,
-            clientId,
-            scopes: [`api://${clientId}/api/commissions`],
+            // @ts-ignore
+            clientId: process.env.EXPO_PUBLIC_CLIENTID,
+            // @ts-ignore
+            scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
           },
           discovery,
         );

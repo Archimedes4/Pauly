@@ -15,10 +15,9 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import store, { RootState } from '@redux/store';
-import { Colors, paperTheme } from '@constants
+import { Colors, paperTheme } from '@constants';
 import setDimentions from '@utils/ultility/setDimentions';
 import { Slot } from 'expo-router';
-import { clientId, tenantId } from '@src/PaulyConfig';
 import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
 // import { MsalProvider } from '@azure/msal-react';
@@ -36,8 +35,10 @@ function getRedirectUri() {
 // This is for the microsoft authentication on web.
 const pca = new PublicClientApplication({
   auth: {
-    clientId,
-    authority: `https://login.microsoftonline.com/${tenantId}/`,
+    // @ts-ignore
+    clientId: process.env.EXPO_PUBLIC_CLIENTID,
+    // @ts-ignore
+    authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/`,
     redirectUri: getRedirectUri(), // to stop node js error
   },
 });

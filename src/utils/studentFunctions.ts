@@ -9,7 +9,6 @@ import { studentSearchSlice } from '@redux/reducers/studentSearchReducer';
 import store from '@redux/store';
 import largeBatch from '@utils/ultility/batchRequest';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import { domainName } from '@src/PaulyConfig';
 
 function checkIfStudent(role: string): {
   result: boolean;
@@ -17,6 +16,8 @@ function checkIfStudent(role: string): {
 } {
   if (role !== null && role.length >= 20) {
     const reversed = role.split('').reverse().join('');
+    // @ts-expect-error
+    const domainName = process.env.EXPO_PUBLIC_DOMAINNAME
     const domainLength = domainName.length;
     const slice = reversed.slice(0, domainLength);
     if (slice === domainName.split('').reverse().join('')) {

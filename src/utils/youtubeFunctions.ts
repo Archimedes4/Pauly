@@ -11,9 +11,11 @@ export default async function getYoutubeVideos(
   | { result: loadingStateEnum.failed }
 > {
   const result = await fetch(
-    `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=UU8HbRWjbR0xjOeE6OlQ1sLA&part=contentDetails,id,snippet${
+    // @ts-ignore
+    `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${process.env.EXPO_PUBLIC_YOUTUBEUPLOADSID}&part=contentDetails,id,snippet${
       pageToken ? `&pageToken=${pageToken}` : ''
-    }&key=AIzaSyAeyX34-ADpLxnfUIJk_osy5pgCvO3MtTY`,
+    // @ts-ignore
+    }&key=${process.env.EXPO_PUBLIC_YOUTUBEDATAKEY}`,
   );
   if (result.ok) {
     const data = await result.json();

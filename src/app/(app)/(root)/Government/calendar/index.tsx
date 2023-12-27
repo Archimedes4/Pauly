@@ -12,13 +12,13 @@ export default function GovernmentCalendar() {
       style={{
         width,
         height,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.white,
       }}
     >
       <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text>Government Calendar</Text>
+      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25}}>Government Calendar</Text>
       <Link
         href="/government/calendar/schedule"
         style={{
@@ -29,10 +29,11 @@ export default function GovernmentCalendar() {
           shadowRadius: 5,
           width: width - 20,
           margin: 10,
+          padding: 10,
           borderRadius: 15,
         }}
       >
-        <Text style={{ margin: 10 }}>Schedule</Text>
+        <Text>Schedule</Text>
       </Link>
       <Link
         href="/government/calendar/timetable"
@@ -44,10 +45,11 @@ export default function GovernmentCalendar() {
           shadowRadius: 5,
           width: width - 20,
           margin: 10,
+          padding: 10,
           borderRadius: 15,
         }}
       >
-        <Text style={{ margin: 10 }}>Timetables</Text>
+        <Text>Timetables</Text>
       </Link>
       <Link
         href="/government/calendar/dresscode"
@@ -59,10 +61,11 @@ export default function GovernmentCalendar() {
           shadowRadius: 5,
           width: width - 20,
           margin: 10,
+          padding: 10,
           borderRadius: 15,
         }}
       >
-        <Text style={{ margin: 10 }}>Dress Code</Text>
+        <Text>Dress Code</Text>
       </Link>
       <Link
         href="/government/calendar/sync"
@@ -74,10 +77,11 @@ export default function GovernmentCalendar() {
           shadowRadius: 5,
           width: width - 20,
           margin: 10,
+          padding: 10,
           borderRadius: 15,
         }}
       >
-        <Text style={{ margin: 10 }}>Calendar Sync</Text>
+        <Text>Calendar Sync</Text>
       </Link>
     </View>
   );

@@ -1,12 +1,12 @@
 import store from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { fetchUserInfoAsync, useAutoDiscovery } from 'expo-auth-session';
-import { tenantId } from '@src/PaulyConfig';
 import { microsoftProfileDataSlice } from '../../redux/reducers/microsoftProfileDataReducer';
 
 export default function getUserProfile() {
   const discovery = useAutoDiscovery(
-    `https://login.microsoftonline.com/${tenantId}/v2.0`,
+    // @ts-ignore
+    `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
   async function main() {
     if (discovery !== null) {

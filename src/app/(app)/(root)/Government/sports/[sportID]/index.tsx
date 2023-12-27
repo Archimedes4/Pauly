@@ -1,6 +1,5 @@
 import { View, Text, Pressable, Modal, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import callMsGraph from '@utils/ultility/microsoftAssets';
@@ -10,7 +9,8 @@ import { getSport, getSportsTeams } from '@utils/sports/sportsFunctions';
 import { WarningIcon } from '@src/components/Icons';
 import SVGXml from '@components/SVGXml';
 import { getTextState } from '@utils/ultility/createUUID';
-import { Link } from 'expo-router';
+import { Link, useGlobalSearchParams } from 'expo-router';
+import SecondStyledButton from '@src/components/SecondStyledButton';
 
 function SportsUpdateModel({
   isPickingSvg,
@@ -54,9 +54,7 @@ function SportsUpdateModel({
   async function loadSport() {
     const result = await getSport(id);
     if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined &&
-      result.listId !== undefined
+      result.result === loadingStateEnum.success
     ) {
       setListId(result.listId);
       setSvgData(result.data.svgData);
@@ -122,18 +120,65 @@ function SportsUpdateModel({
   );
 }
 
-export default function GovernmentSportsTeams() {
-  const { sport, id } = useParams();
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
-
-  const [dataResult, setDataResult] = useState<loadingStateEnum>(
+function GovernmentSportTeams({sportID}:{sportID: string}) {
+  const [teamState, setTeamState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
   const [currentTeams, setCurrentTeams] = useState<sportTeamType[]>([]);
+
+  async function loadData() {
+    const result = await getSportsTeams(sportID);
+    if (
+      result.result === loadingStateEnum.success &&
+      result.data !== undefined
+    ) {
+      setCurrentTeams(result.data);
+    }
+    setTeamState(result.result);
+  }
+
+  useEffect(() => {
+    loadData();
+  }, [])
+
+  if (teamState === loadingStateEnum.loading) {
+    return (
+      <View>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (teamState === loadingStateEnum.success) {
+    return (
+      <FlatList
+        data={currentTeams}
+        renderItem={item => (
+          <Link href={`/government/sports/${sportID}/team/${item.item.teamId}`} key={`TeamBlock_${item.item.teamId}`} style={{padding: 10}}>
+            {item.item.teamName}
+          </Link>
+        )}
+      />
+    )
+  }
+
+  return (
+    <View>
+      <Text>Error</Text>
+    </View>  
+  )
+}
+
+export default function GovernmentSport() {
+  const { sportID } = useGlobalSearchParams();
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+
+  const [sportName, setSportName] = useState<string | undefined>(undefined);
+  const [sportState, setSportState] = useState(loadingStateEnum.notStarted);
+
   const [deleteSportState, setDeleteSportState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
-
   const [isPickingSvg, setIsPickingSvg] = useState<boolean>(false);
 
   async function deleteSport() {
@@ -141,7 +186,7 @@ export default function GovernmentSportsTeams() {
     const listResult = await callMsGraph(
       `https://graph.microsoft.com/v1.0/sites/${
         store.getState().paulyList.siteId
-      }/lists/${id}`,
+      }/lists/${sportID}`,
       'DELETE',
     );
     if (listResult.ok) {
@@ -150,7 +195,7 @@ export default function GovernmentSportsTeams() {
           store.getState().paulyList.siteId
         }/lists/${
           store.getState().paulyList.sportsListId
-        }/items?$expand=fields&$filter=fields/sportId%20eq%20'${id}'&$select=id`,
+        }/items?$expand=fields&$filter=fields/sportId%20eq%20'${sportID}'&$select=id`,
       );
       if (getSportResult.ok) {
         const getSportData = await getSportResult.json();
@@ -179,33 +224,57 @@ export default function GovernmentSportsTeams() {
     }
   }
 
-  async function loadData() {
-    if (id !== undefined) {
-      const result = await getSportsTeams(id);
+
+  async function loadSport() {
+    console.log("HERE", sportID)
+    if (typeof sportID === 'string') {
+      const result = await getSport(sportID);
       if (
-        result.result === loadingStateEnum.success &&
-        result.data !== undefined
+        result.result === loadingStateEnum.success
       ) {
-        setCurrentTeams(result.data);
+        setSportName(result.data.name)
+        setSportState(loadingStateEnum.success);
+      } else {
+        setSportState(loadingStateEnum.failed);
       }
-      setDataResult(result.result);
-    } else {
-      setDataResult(loadingStateEnum.failed);
     }
   }
 
   useEffect(() => {
-    loadData();
+    loadSport();
   }, []);
+
+  if (sportState === loadingStateEnum.loading) {
+    return (
+      <View style={{ width, height, backgroundColor: Colors.white }}>
+        <Link href={'/government/sports'}>
+          Back
+        </Link>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (typeof sportName !== "string" || sportState !== loadingStateEnum.success || typeof sportID !== 'string') {
+    return (
+      <View style={{ width, height, backgroundColor: Colors.white }}>
+        <Link href={'/government/sports'}>
+          Back
+        </Link>
+        <Text>Failed</Text>
+      </View>
+    )
+  }
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/profile/government/sports'}>
+      <Link href={'/government/sports'}>
         Back
       </Link>
-      <Text>{sport} Teams</Text>
+      <Text>{sportName} Teams</Text>
+      <GovernmentSportTeams sportID={sportID} />
       <Pressable
-        style={{ borderRadius: 15, backgroundColor: 'red' }}
+        style={{ borderRadius: 15, backgroundColor: 'red', marginLeft: 15, marginRight: 15, marginBottom: 10 }}
         onPress={() => {
           if (
             deleteSportState === loadingStateEnum.notStarted ||
@@ -217,54 +286,22 @@ export default function GovernmentSportsTeams() {
       >
         <View style={{ flexDirection: 'row', margin: 10 }}>
           <WarningIcon width={14} height={14} />
-          <Text>
-            {deleteSportState === loadingStateEnum.loading
-              ? 'Loading'
-              : deleteSportState === loadingStateEnum.notStarted
-                ? 'Delete Sport'
-                : deleteSportState === loadingStateEnum.success
-                  ? 'Sport Deleted'
-                  : 'Failed To Delete Sport'}
+          <Text style={{fontFamily: 'Roboto'}}>
+            {getTextState(deleteSportState, {
+              notStarted: 'Delete Sport',
+              success: "Sport Deleted",
+              failed: "Failed To Delete Sport"
+            })}
           </Text>
         </View>
       </Pressable>
-      <Pressable onPress={() => setIsPickingSvg(true)}>
-        <Text>Pick Svg</Text>
-      </Pressable>
-      {id !== undefined ? (
-        <SportsUpdateModel
-          isPickingSvg={isPickingSvg}
-          setIsPickingSvg={setIsPickingSvg}
-          id={id}
-        />
-      ) : null}
-      <View>
-        {dataResult === loadingStateEnum.loading ? (
-          <View>
-            <Text>Loading</Text>
-          </View>
-        ) : (
-          <>
-            {dataResult === loadingStateEnum.success ? (
-              <FlatList
-                data={currentTeams}
-                renderItem={item => (
-                  <Link href={`/profile/government/sports/team/${sport}/${id}/${item.item.teamId}`} key={`TeamBlock_${item.item.teamId}`} style={{padding: 10}}>
-                    {item.item.teamName}
-                  </Link>
-                )}
-              />
-            ) : (
-              <View>
-                <Text>Error</Text>
-              </View>
-            )}
-          </>
-        )}
-      </View>
-      <Link href={`/profile/government/sports/team/${sport}/${id}/create`}>
-        Create New Team
-      </Link>
+      <SecondStyledButton style={{marginLeft: 15, marginRight: 15, marginBottom: 10}} text='Pick SVG' onPress={() => setIsPickingSvg(true)}/>
+      <SecondStyledButton style={{marginLeft: 15, marginRight: 15}} text='Create New Team' to={`/government/sports/${sportID}/team/create`}/>
+      <SportsUpdateModel
+        isPickingSvg={isPickingSvg}
+        setIsPickingSvg={setIsPickingSvg}
+        id={sportID}
+      />
     </View>
   );
 }
