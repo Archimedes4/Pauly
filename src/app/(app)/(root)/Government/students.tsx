@@ -102,7 +102,7 @@ function SelectMainFile({
         style={{
           height: height * 0.8,
           width: width * 0.8,
-          shadowColor: 'black',
+          shadowColor: Colors.black,
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
@@ -364,109 +364,6 @@ function StudentItem({ e }: { e: ListRenderItemInfo<schoolUserType> }) {
   );
 }
 
-// function SearchBox({ getUsers }: { getUsers: (item: string) => void }) {
-//   const { width, height } = useSelector((state: RootState) => state.dimentions);
-//   const { searchText } = useSelector((state: RootState) => state.studentSearch);
-//   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
-//   const style: ViewStyle =
-//     Platform.OS === 'web' ? { outlineStyle: 'none' } : {};
-//   const [mounted, setMounted] = useState<boolean>(false);
-//   const dispatch = useDispatch();
-
-//   useEffect(() => {
-//     if (mounted) {
-//       const searchValueSave = searchText;
-//       setTimeout(() => {
-//         if (store.getState().studentSearch.searchText === searchValueSave) {
-//           getUsers(store.getState().studentSearch.searchText);
-//         }
-//       }, 1500);
-//     } else {
-//       setMounted(true);
-//     }
-//   }, [searchText]);
-
-//   return (
-//     <View
-//       key="Search_View_Top"
-//       style={{
-//         width,
-//         alignContent: 'center',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//         position: 'absolute',
-//         top: height * 0.15 - 19,
-//         zIndex: 2,
-//       }}
-//     >
-//       <View
-//         key="Search_View_Mid"
-//         style={{
-//           width: width * 0.8,
-//           shadowColor: 'black',
-//           shadowOffset: { width: 0, height: 1 },
-//           shadowOpacity: 0.8,
-//           shadowRadius: 10,
-//           borderRadius: 25,
-//           flexDirection: 'row',
-//           backgroundColor: Colors.white,
-//         }}
-//       >
-//         {isOverflowing ? null : (
-//           <View
-//             key="Search_View_Search_Icon"
-//             style={{
-//               width: 20,
-//               height: 40,
-//               alignContent: 'center',
-//               alignItems: 'center',
-//               justifyContent: 'center',
-//               marginLeft: 10,
-//             }}
-//           >
-//             <SearchIcon key="Search_Icon" width={15} height={15} />
-//           </View>
-//         )}
-//         <View key="Search_View_Input">
-//           <TextInput
-//             key="Search_TextInput"
-//             placeholder="Search"
-//             placeholderTextColor="black"
-//             value={searchText}
-//             onChangeText={e => {
-//               dispatch(studentSearchSlice.actions.setStudentSearch(e));
-//             }}
-//             style={[
-//               {
-//                 width: isOverflowing ? width * 0.8 - 20 : width * 0.8 - 50,
-//                 height: 20,
-//                 margin: 10,
-//                 borderWidth: 0,
-//               },
-//               style,
-//             ]}
-//             enterKeyHint="search"
-//             inputMode="search"
-//           />
-//           <View
-//             style={{ height: 0, alignSelf: 'flex-start', overflow: 'hidden' }}
-//             onLayout={e => {
-//               if (e.nativeEvent.layout.width > width * 0.8 - 20) {
-//                 setIsOverflowing(true);
-//               } else {
-//                 setIsOverflowing(false);
-//               }
-//             }}
-//             key="Search_View_Text"
-//           >
-//             <Text style={{ color: 'white' }}>{searchText}</Text>
-//           </View>
-//         </View>
-//       </View>
-//     </View>
-//   );
-// }
-
 function StudentsSelectFile({
   setFilePickingMode,
   userId,
@@ -524,7 +421,7 @@ function StudentsSelectFile({
             style={{
               height: height * 0.8,
               width: width * 0.8,
-              shadowColor: 'black',
+              shadowColor: Colors.black,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.8,
               shadowRadius: 10,
@@ -548,7 +445,7 @@ function StudentsSelectFile({
             style={{
               height: height * 0.8,
               width: width * 0.8,
-              shadowColor: 'black',
+              shadowColor: Colors.black,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.8,
               shadowRadius: 10,

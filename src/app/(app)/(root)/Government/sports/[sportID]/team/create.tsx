@@ -11,12 +11,11 @@ import {
   Image,
 } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { convertYearToSchoolYear } from '@utils/calendar/calendarFunctions';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import createUUID from '@utils/ultility/createUUID';
+import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { Colors, dataContentTypeOptions, loadingStateEnum } from '@constants';
 import store, { RootState } from '@redux/store';
 import { getTeams } from '@utils/microsoftGroupsFunctions';
@@ -24,25 +23,14 @@ import ProgressView from '@components/ProgressView';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import { CloseIcon } from '@src/components/Icons';
 import getFileWithShareID from '@utils/ultility/getFileWithShareID';
-import { Link } from 'expo-router';
+import { Link, useGlobalSearchParams } from 'expo-router';
+import { getSport } from '@src/utils/sports/sportsFunctions';
+import SecondStyledButton from '@src/components/SecondStyledButton';
 
-export default function GovernmentCreateNewTeam() {
-  const { sport, id, teamId } = useParams();
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const { siteId } = useSelector((state: RootState) => state.paulyList);
-
-  const [createTeamLoadingState, setCreateTeamLoadingState] =
-    useState<loadingStateEnum>(loadingStateEnum.notStarted);
-  const [teamDataState, setTeamDataState] = useState<loadingStateEnum>(
-    loadingStateEnum.notStarted,
-  );
-  const [isCreatingTeam, setIsCreatingTeam] = useState<boolean>(true);
-
-  // Team Data
-  const [teamName, setTeamName] = useState<string>('');
-  const [season, setSeason] = useState<number>(new Date().getFullYear());
-  const [teamListItemId, setTeamListItemId] = useState<string>('');
-
+function SelectMicrosoftTeam({selectedMicrosoftTeam, setSelectedMicrosoftTeam}:{
+  selectedMicrosoftTeam: groupType | undefined
+  setSelectedMicrosoftTeam: (item: groupType) => void
+}) {
   const [teamsState, setTeamsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -50,11 +38,6 @@ export default function GovernmentCreateNewTeam() {
   const [teamsNextLink, setTeamsNextLink] = useState<undefined | string>(
     undefined,
   );
-  const [selectedMicrosoftTeam, setSelectedMicrosoftTeam] = useState<
-    groupType | undefined
-  >(undefined);
-  const [isSelectingFile, setIsSelectingFile] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<string>('');
 
   async function loadMicrosftTeams() {
     const result = await getTeams(
@@ -70,10 +53,76 @@ export default function GovernmentCreateNewTeam() {
     setTeamsState(result.result);
   }
 
+  useEffect(() => {
+    loadMicrosftTeams();
+  }, []);
+
+  if (teamsState === loadingStateEnum.loading) {
+    <View>
+      <Text>Loading</Text>
+    </View>
+  }
+
+  if (teamsState === loadingStateEnum.success) {
+    return (
+      <FlatList
+        data={teams}
+        renderItem={team => {
+          if (team.item.id !== selectedMicrosoftTeam?.id) {
+            return (
+              <Pressable
+                key={`Team_${team.item.id}_${createUUID()}`}
+                onPress={() => {
+                  setSelectedMicrosoftTeam(team.item);
+                }}
+              >
+                <Text>{team.item.name}</Text>
+              </Pressable>
+            )
+          }
+          return null
+        }}
+      />
+    )
+  }
+
+  return (
+    <View>
+      <Text>Something went wrong loading the teams.</Text>
+    </View>
+  )
+}
+
+export function GovernmentTeam({create}:{
+  create: boolean
+}) {
+  const { sportID, teamID } = useGlobalSearchParams();
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { siteId } = useSelector((state: RootState) => state.paulyList);
+
+  const [createTeamLoadingState, setCreateTeamLoadingState] =
+    useState<loadingStateEnum>(loadingStateEnum.notStarted);
+  const [teamDataState, setTeamDataState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
+
+  const [sportName, setSportName] = useState<string | undefined>(undefined);
+  const [sportState, setSportState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+
+  // Team Data
+  const [teamName, setTeamName] = useState<string>('');
+  const [season, setSeason] = useState<number>(new Date().getFullYear());
+  const [teamListItemId, setTeamListItemId] = useState<string>('');
+  const [selectedMicrosoftTeam, setSelectedMicrosoftTeam] = useState<
+    groupType | undefined
+  >(undefined);
+  const [isSelectingFile, setIsSelectingFile] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<string>('');
+
   async function updateTeam() {
     // This function will also create a team
     setCreateTeamLoadingState(loadingStateEnum.loading);
-    if (!isCreatingTeam) {
+    if (!create) {
       let data: object = {
         fields: {
           teamName,
@@ -90,7 +139,7 @@ export default function GovernmentCreateNewTeam() {
         };
       }
       const result = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items/${teamListItemId}`,
+        `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${sportID}/items/${teamListItemId}`,
         'PATCH',
         JSON.stringify(data),
       );
@@ -156,7 +205,7 @@ export default function GovernmentCreateNewTeam() {
           {
             id: '1',
             method: 'POST',
-            url: `/sites/${siteId}/lists/${id}/items`,
+            url: `/sites/${siteId}/lists/${sportID}/items`,
             body: data,
             headers: {
               'Content-Type': 'application/json',
@@ -189,7 +238,7 @@ export default function GovernmentCreateNewTeam() {
 
   async function deleteTeam() {
     const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items/${teamListItemId}`,
+      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${sportID}/items/${teamListItemId}`,
       'DELETE',
     );
     if (result.ok) {
@@ -218,264 +267,263 @@ export default function GovernmentCreateNewTeam() {
 
   async function getTeamData() {
     setTeamDataState(loadingStateEnum.loading);
-    const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}/items?expand=fields($select=teamId,teamName,season,microsoftTeamId)&$filter=fields/teamId%20eq%20'${teamId}'&$select=id`,
-    );
-    if (result.ok) {
-      const data = await result.json();
-      if (data.value.length === 1) {
-        setTeamName(data.value[0].fields.teamName);
-        setSeason(data.value[0].fields.season);
-        setTeamListItemId(data.value[0].id);
-        if (data.value[0].fields.microsoftTeamId !== undefined) {
-          const teamResult = await getMicrosoftTeam(
-            data.value[0].fields.microsoftTeamId,
-          );
-          if (
-            teamResult.result === loadingStateEnum.success &&
-            teamResult.data !== undefined
-          ) {
-            setSelectedMicrosoftTeam(teamResult.data);
-            setTeamDataState(loadingStateEnum.success);
+    if (typeof sportID === 'string') {
+      const sportResult = await getSport(sportID);
+      if (
+        sportResult.result === loadingStateEnum.success
+      ) {
+        setSportName(sportResult.data.name)
+        setSportState(loadingStateEnum.success);
+        const result = await callMsGraph(
+          `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${sportID}/items?expand=fields($select=teamId,teamName,season,microsoftTeamId)&$filter=fields/teamId%20eq%20'${teamID}'&$select=id`,
+        );
+        if (result.ok) {
+          const data = await result.json();
+          if (data.value.length === 1) {
+            setTeamName(data.value[0].fields.teamName);
+            setSeason(data.value[0].fields.season);
+            setTeamListItemId(data.value[0].id);
+            if (data.value[0].fields.microsoftTeamId !== undefined) {
+              const teamResult = await getMicrosoftTeam(
+                data.value[0].fields.microsoftTeamId,
+              );
+              if (
+                teamResult.result === loadingStateEnum.success &&
+                teamResult.data !== undefined
+              ) {
+                setSelectedMicrosoftTeam(teamResult.data);
+                setTeamDataState(loadingStateEnum.success);
+              } else {
+                setTeamDataState(loadingStateEnum.failed);
+              }
+            } else {
+              setTeamDataState(loadingStateEnum.success);
+            }
           } else {
             setTeamDataState(loadingStateEnum.failed);
           }
         } else {
-          setTeamDataState(loadingStateEnum.success);
+          setTeamDataState(loadingStateEnum.failed);
         }
       } else {
-        setTeamDataState(loadingStateEnum.failed);
+        setSportState(loadingStateEnum.failed);
       }
     } else {
-      setTeamDataState(loadingStateEnum.failed);
+      setSportState(loadingStateEnum.failed)
     }
   }
 
   useEffect(() => {
-    loadMicrosftTeams();
-  }, []);
+    getTeamData();
+  }, [])
+  
+  if (sportState === loadingStateEnum.loading) {
+    return (
+      <View style={{width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: "center", justifyContent: 'center'}}>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
 
-  useEffect(() => {
-    if (teamId === 'create') {
-      setIsCreatingTeam(true);
-    } else {
-      setIsCreatingTeam(false);
-      getTeamData();
-    }
-  }, [teamId]);
+  if (sportState !== loadingStateEnum.success || sportName === undefined || typeof sportID !== 'string') {
+    return (
+      <View>
+        <Link href={`/government/sports/${sportID}`}>
+          Back
+        </Link>
+        <Text>Something went wrong!</Text>
+      </View>
+    )
+  }
 
-  return (
-    <>
-      {isCreatingTeam || teamDataState === loadingStateEnum.success ? (
-        <ScrollView
+  if (isSelectingFile) {
+    return (
+      <RosterSelectFile
+        setIsSelectingFile={setIsSelectingFile}
+        setSelectedFile={setSelectedFile}
+      />
+    )
+  }
+
+  if (create || teamDataState === loadingStateEnum.success) {
+    return (
+      <ScrollView
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+        }}
+      >
+        <Link href={`/government/sports/${sportID}`}>
+          Back
+        </Link>
+        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>
+          {create
+            ? `Create a new ${sportName} team`
+            : `Edit the ${teamName} ${sportName} Team`}
+        </Text>
+        <View
           style={{
-            width,
-            height,
+            margin: 10,
+            shadowColor: 'black',
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.8,
+            shadowRadius: 10,
             backgroundColor: Colors.white,
+            borderRadius: 15,
           }}
         >
-          <Link href={`/government/sports/${id}`}>
-            Back
-          </Link>
-          <View>
-            <Text>
-              {isCreatingTeam
-                ? `Create a new ${sport} team`
-                : `Edit the ${teamName} ${sport} Team`}
-            </Text>
+          <View style={{ margin: 5 }}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text>Team Name:</Text>
+              <TextInput
+                value={teamName}
+                onChangeText={text => setTeamName(text)}
+                placeholder="Team Name"
+              />
+            </View>
+            <View>
+              <Text>Season</Text>
+              <Text>{convertYearToSchoolYear(season)}</Text>
+              <TextInput
+                keyboardType="numeric"
+                onChangeText={text => {
+                  if (text === '') {
+                    setSeason(0);
+                  } else {
+                    setSeason(parseFloat(text));
+                  }
+                }}
+                value={season.toString()}
+                maxLength={10} // setting limit of input
+              />
+            </View>
           </View>
+        </View>
+        <View
+          style={{
+            height: height * 0.5,
+            margin: 10,
+            shadowColor: Colors.black,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.8,
+            shadowRadius: 10,
+            backgroundColor: Colors.white,
+            borderRadius: 15,
+          }}
+        >
           <View
             style={{
               margin: 10,
-              shadowColor: 'black',
+              shadowColor: Colors.black,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.8,
               shadowRadius: 10,
-              backgroundColor: '#FFFFFF',
+              backgroundColor: Colors.white,
               borderRadius: 15,
             }}
           >
             <View style={{ margin: 5 }}>
-              <View style={{ flexDirection: 'row' }}>
-                <Text>Team Name:</Text>
-                <TextInput
-                  value={teamName}
-                  onChangeText={text => setTeamName(text)}
-                  placeholder="Team Name"
-                />
-              </View>
-              <View>
-                <Text>Season</Text>
-                <Text>{convertYearToSchoolYear(season)}</Text>
-                <TextInput
-                  keyboardType="numeric"
-                  onChangeText={text => {
-                    if (text === '') {
-                      setSeason(0);
-                    } else {
-                      setSeason(parseFloat(text));
-                    }
+              <Text>Selected Team</Text>
+              {selectedMicrosoftTeam !== undefined ? (
+                <Pressable
+                  onPress={() => {
+                    setSelectedMicrosoftTeam(undefined);
                   }}
-                  value={season.toString()}
-                  maxLength={10} // setting limit of input
+                >
+                  <Text>{selectedMicrosoftTeam.name}</Text>
+                </Pressable>
+              ) : (
+                <Text>NO TEAM SELECTED</Text>
+              )}
+            </View>
+          </View>
+          <View style={{ marginLeft: 5, marginRight: 5 }}>
+            <SelectMicrosoftTeam selectedMicrosoftTeam={selectedMicrosoftTeam} setSelectedMicrosoftTeam={setSelectedMicrosoftTeam}/>
+          </View>
+        </View>
+        {selectedMicrosoftTeam === undefined ? (
+          <View>
+            <Text>Select a team in order to get a roster</Text>
+          </View>
+        ) : (
+          <>
+            {create || typeof teamID !== "string" ? (
+              <View>
+                <Text>
+                  Please Create the team and return later to finish the roster
+                </Text>
+              </View>
+            ) : (
+              <View>
+                <Text>Roster</Text>
+                <RosterBlock
+                  microsoftTeamId={selectedMicrosoftTeam.id}
+                  width={100}
+                  height={100}
+                  teamId={teamID}
+                  selectedFile={selectedFile}
+                  setIsSelectingFile={setIsSelectingFile}
+                  setSelectedFile={setSelectedFile}
+                  isSelectingFile={isSelectingFile}
                 />
               </View>
-            </View>
-          </View>
-          <View
-            style={{
-              height: height * 0.5,
-              margin: 10,
-              shadowColor: 'black',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 10,
-              backgroundColor: '#FFFFFF',
-              borderRadius: 15,
-            }}
-          >
-            <View
-              style={{
-                margin: 10,
-                shadowColor: 'black',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.8,
-                shadowRadius: 10,
-                backgroundColor: '#FFFFFF',
-                borderRadius: 15,
-              }}
-            >
-              <View style={{ margin: 5 }}>
-                <Text>Selected Team</Text>
-                {selectedMicrosoftTeam !== undefined ? (
-                  <Pressable
-                    onPress={() => {
-                      setSelectedMicrosoftTeam(undefined);
-                    }}
-                  >
-                    <Text>{selectedMicrosoftTeam.name}</Text>
-                  </Pressable>
-                ) : (
-                  <Text>NO TEAM SELECTED</Text>
-                )}
-              </View>
-            </View>
-            <View style={{ marginLeft: 5, marginRight: 5 }}>
-              <FlatList
-                data={teams}
-                renderItem={team => (
-                  <>
-                    {team.item.id !== selectedMicrosoftTeam?.id ? (
-                      <Pressable
-                        key={`Team_${team.item.id}_${createUUID()}`}
-                        onPress={() => {
-                          setSelectedMicrosoftTeam(team.item);
-                        }}
-                      >
-                        <Text>{team.item.name}</Text>
-                      </Pressable>
-                    ) : null}
-                  </>
-                )}
-              />
-            </View>
-          </View>
-          {selectedMicrosoftTeam === undefined ? (
-            <View>
-              <Text>Select a team in order to get a roster</Text>
-            </View>
-          ) : (
-            <>
-              {isCreatingTeam || teamId === undefined ? (
-                <View>
-                  <Text>
-                    Please Create the team and return later to finish the roster
-                  </Text>
-                </View>
-              ) : (
-                <View>
-                  <Text>Roster</Text>
-                  <RosterBlock
-                    microsoftTeamId={selectedMicrosoftTeam.id}
-                    width={100}
-                    height={100}
-                    teamId={teamId}
-                    selectedFile={selectedFile}
-                    setIsSelectingFile={setIsSelectingFile}
-                    setSelectedFile={setSelectedFile}
-                    isSelectingFile={isSelectingFile}
-                  />
-                </View>
-              )}
-            </>
-          )}
-
-          <Pressable
-            style={{
-              margin: 10,
-              backgroundColor: 'red',
-              borderRadius: 15,
-              zIndex: -100,
-            }}
-            onPress={() => deleteTeam()}
-          >
-            <Text style={{ margin: 10 }}>Delete Team</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              if (createTeamLoadingState === loadingStateEnum.notStarted) {
-                updateTeam();
-              } else if (createTeamLoadingState === loadingStateEnum.failed) {
-                setCreateTeamLoadingState(loadingStateEnum.notStarted);
-              }
-            }}
-          >
-            <Text style={{ margin: 10 }}>
-              {createTeamLoadingState === loadingStateEnum.notStarted
-                ? isCreatingTeam
-                  ? 'CREATE TEAM'
-                  : 'UPDATE TEAM'
-                : createTeamLoadingState === loadingStateEnum.loading
-                  ? 'LOADING'
-                  : createTeamLoadingState === loadingStateEnum.success
-                    ? 'SUCCESS'
-                    : 'FAILED'}
-            </Text>
-          </Pressable>
-        </ScrollView>
-      ) : (
-        <>
-          {teamDataState === loadingStateEnum.loading ? (
-            <View
-              style={{
-                width,
-                height,
-                backgroundColor: Colors.white,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <ProgressView width={width * 0.1} height={height * 0.1} />
-              <Text>Loading</Text>
-            </View>
-          ) : (
-            <View>
-              <Link href={`/profile/government/sports/team/${sport}/${id}`}>
-                Back
-              </Link>
-              <Text>Failed</Text>
-            </View>
-          )}
-        </>
-      )}
-      {isSelectingFile ? (
-        <RosterSelectFile
-          setIsSelectingFile={setIsSelectingFile}
-          setSelectedFile={setSelectedFile}
+            )}
+          </>
+        )}
+        <Pressable
+          style={{
+            margin: 10,
+            backgroundColor: 'red',
+            borderRadius: 15,
+            zIndex: -100,
+          }}
+          onPress={() => deleteTeam()}
+        >
+          <Text style={{ margin: 10 }}>Delete Team</Text>
+        </Pressable>
+        <SecondStyledButton
+          style={{marginLeft: 15, marginRight: 15}}
+          text={getTextState(createTeamLoadingState, {
+            notStarted: create ? 'CREATE TEAM':'UPDATE TEAM'
+          })}
+          onPress={() => {
+            if (createTeamLoadingState === loadingStateEnum.notStarted) {
+              updateTeam();
+            } else if (createTeamLoadingState === loadingStateEnum.failed) {
+              setCreateTeamLoadingState(loadingStateEnum.notStarted);
+            }
+          }}
         />
-      ) : null}
-    </>
+      </ScrollView>
+    )
+  }
+
+  if (teamDataState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={width * 0.1} height={height * 0.1} />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  return (
+    <View>
+      <Link href={`/government/sports/${sportID}`}>
+        Back
+      </Link>
+      <Text>Failed</Text>
+    </View>
   );
 }
 
@@ -896,4 +944,8 @@ function RosterSelectFile({
       </View>
     </View>
   );
+}
+
+export default function GovernmentTeamID() {
+  return <GovernmentTeam create={true} />
 }

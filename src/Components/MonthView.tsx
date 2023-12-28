@@ -43,10 +43,9 @@ function MonthBlock({
       style={{
         width,
         height,
-        borderColor: 'black',
+        borderColor: Colors.black,
         borderWidth: 2,
       }}
-      id="This"
     >
       {value >= startDate - 1 && value <= daySelected && textval !== 0 ? (
         <View
@@ -92,7 +91,7 @@ function MonthBlock({
                 <>
                   <Text
                     style={{
-                      color: 'black',
+                      color: Colors.black,
                       fontSize: 10,
                       fontWeight: 'bold',
                       position: 'absolute',
@@ -102,14 +101,14 @@ function MonthBlock({
                   >
                     {monthViewData.schoolDayData.schoolDayData.shorthand}
                   </Text>
-                  <Text style={{ color: 'black' }}>{textval}</Text>
+                  <Text style={{ color: Colors.black }}>{textval}</Text>
                 </>
               ) : (
-                <Text style={{ color: 'black', zIndex: 2 }}>{textval}</Text>
+                <Text style={{ color: Colors.black, zIndex: 2 }}>{textval}</Text>
               )}
             </>
           ) : (
-            <Text id="This is text" style={{ color: 'black', zIndex: 2 }}>
+            <Text id="This is text" style={{ color: Colors.black, zIndex: 2 }}>
               {textval}
             </Text>
           )}

@@ -1163,7 +1163,7 @@ function SubmissionView({
                       alignContent: 'center',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      backgroundColor: '#FFFFFF',
+                      backgroundColor: Colors.white,
                       shadowOffset: { width: 0, height: 1 },
                       shadowOpacity: 0.8,
                       shadowRadius: 10,

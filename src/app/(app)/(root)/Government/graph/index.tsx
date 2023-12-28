@@ -243,7 +243,7 @@ export default function MicrosoftGraphOverview() {
                       <Link
                         href={`/government/graph/extension/${extension.id}`}
                         key={`extension_${extension.id}`}
-                        style={{ borderWidth: 2, borderColor: 'black' }}
+                        style={{ borderWidth: 2, borderColor: Colors.black }}
                       >
                         <View>
                           <Text>{extension.id}</Text>
@@ -258,7 +258,7 @@ export default function MicrosoftGraphOverview() {
                       <Link
                         href={`/government/graph/extension/${extension.id}`}
                         key={`extension_${extension.id}`}
-                        style={{ borderWidth: 2, borderColor: 'black' }}
+                        style={{ borderWidth: 2, borderColor: Colors.black }}
                       >
                         <View>
                           <Text>{extension.id}</Text>

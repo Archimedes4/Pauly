@@ -173,7 +173,7 @@ export default function Sports() {
                     style={{
                       backgroundColor: Colors.darkGray,
                       borderWidth: selectedSport === undefined ? 3 : 0,
-                      borderColor: 'black',
+                      borderColor: Colors.black,
                       borderRadius: 15,
                       alignContent: 'center',
                       alignItems: 'center',
@@ -211,7 +211,7 @@ export default function Sports() {
                       style={{
                         backgroundColor: Colors.darkGray,
                         borderWidth: selectedSport?.id === sport.id ? 3 : 0,
-                        borderColor: 'black',
+                        borderColor: Colors.black,
                         borderRadius: 15,
                         alignContent: 'center',
                         alignItems: 'center',
@@ -399,7 +399,7 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
             : height * 0.4,
         backgroundColor: Colors.white,
         elevation: 2,
-        shadowColor: 'black',
+        shadowColor: Colors.black,
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 1,
         shadowRadius: 10,

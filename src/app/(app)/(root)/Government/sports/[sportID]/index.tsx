@@ -11,6 +11,7 @@ import SVGXml from '@components/SVGXml';
 import { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import SecondStyledButton from '@src/components/SecondStyledButton';
+import ProgressView from '@src/components/ProgressView';
 
 function SportsUpdateModel({
   isPickingSvg,
@@ -143,7 +144,8 @@ function GovernmentSportTeams({sportID}:{sportID: string}) {
 
   if (teamState === loadingStateEnum.loading) {
     return (
-      <View>
+      <View style={{flex:1, alignItems:'center', justifyContent:'center', alignContent: 'center'}}>
+        <ProgressView width={14} height={14}/>
         <Text>Loading</Text>
       </View>
     )
@@ -226,7 +228,7 @@ export default function GovernmentSport() {
 
 
   async function loadSport() {
-    console.log("HERE", sportID)
+    setSportState(loadingStateEnum.loading)
     if (typeof sportID === 'string') {
       const result = await getSport(sportID);
       if (
@@ -246,10 +248,11 @@ export default function GovernmentSport() {
 
   if (sportState === loadingStateEnum.loading) {
     return (
-      <View style={{ width, height, backgroundColor: Colors.white }}>
-        <Link href={'/government/sports'}>
+      <View style={{ width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+        <Link href={'/government/sports'} style={{position: 'absolute', top: 0, left: 0}}>
           Back
         </Link>
+        <ProgressView width={14} height={14}/>
         <Text>Loading</Text>
       </View>
     )
@@ -271,8 +274,10 @@ export default function GovernmentSport() {
       <Link href={'/government/sports'}>
         Back
       </Link>
-      <Text>{sportName} Teams</Text>
+      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontSize: 25}}>{sportName} Teams</Text>
       <GovernmentSportTeams sportID={sportID} />
+      <SecondStyledButton style={{marginLeft: 15, marginRight: 15, marginBottom: 10}} text='Pick SVG' onPress={() => setIsPickingSvg(true)}/>
+      <SecondStyledButton style={{marginLeft: 15, marginRight: 15, marginBottom: 10}} text='Create New Team' to={`/government/sports/${sportID}/team/create`}/>
       <Pressable
         style={{ borderRadius: 15, backgroundColor: 'red', marginLeft: 15, marginRight: 15, marginBottom: 10 }}
         onPress={() => {
@@ -285,8 +290,8 @@ export default function GovernmentSport() {
         }}
       >
         <View style={{ flexDirection: 'row', margin: 10 }}>
-          <WarningIcon width={14} height={14} />
-          <Text style={{fontFamily: 'Roboto'}}>
+          <WarningIcon width={14} height={14} style={{marginTop: 'auto', marginBottom: 'auto'}}/>
+          <Text style={{fontFamily: 'Roboto', fontSize: 16, marginLeft: 2}}>
             {getTextState(deleteSportState, {
               notStarted: 'Delete Sport',
               success: "Sport Deleted",
@@ -295,8 +300,6 @@ export default function GovernmentSport() {
           </Text>
         </View>
       </Pressable>
-      <SecondStyledButton style={{marginLeft: 15, marginRight: 15, marginBottom: 10}} text='Pick SVG' onPress={() => setIsPickingSvg(true)}/>
-      <SecondStyledButton style={{marginLeft: 15, marginRight: 15}} text='Create New Team' to={`/government/sports/${sportID}/team/create`}/>
       <SportsUpdateModel
         isPickingSvg={isPickingSvg}
         setIsPickingSvg={setIsPickingSvg}

@@ -42,7 +42,7 @@ export default function SearchBar({value, onChangeText, onSearch, top}:{value: s
         key="Search_View_Mid"
         style={{
           width: width * 0.8,
-          shadowColor: 'black',
+          shadowColor: Colors.black,
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
@@ -70,7 +70,7 @@ export default function SearchBar({value, onChangeText, onSearch, top}:{value: s
           <TextInput
             key="Search_TextInput"
             placeholder="Search"
-            placeholderTextColor="black"
+            placeholderTextColor={Colors.black}
             value={value}
             onChangeText={onChangeText}
             style={[

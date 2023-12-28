@@ -22,8 +22,8 @@ export default function GovernmentCalendar() {
       <Link
         href="/government/calendar/schedule"
         style={{
-          backgroundColor: '#FFFFFF',
-          shadowColor: 'black',
+          backgroundColor: Colors.white,
+          shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
           shadowRadius: 5,
@@ -38,8 +38,8 @@ export default function GovernmentCalendar() {
       <Link
         href="/government/calendar/timetable"
         style={{
-          backgroundColor: '#FFFFFF',
-          shadowColor: 'black',
+          backgroundColor: Colors.white,
+          shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
           shadowRadius: 5,
@@ -54,8 +54,8 @@ export default function GovernmentCalendar() {
       <Link
         href="/government/calendar/dresscode"
         style={{
-          backgroundColor: '#FFFFFF',
-          shadowColor: 'black',
+          backgroundColor: Colors.white,
+          shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
           shadowRadius: 5,
@@ -70,8 +70,8 @@ export default function GovernmentCalendar() {
       <Link
         href="/government/calendar/sync"
         style={{
-          backgroundColor: '#FFFFFF',
-          shadowColor: 'black',
+          backgroundColor: Colors.white,
+          shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
           shadowOpacity: 1,
           shadowRadius: 5,

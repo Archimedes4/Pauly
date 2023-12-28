@@ -346,7 +346,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ color: 'black' }} selectable={false}>
+              <Text style={{ color: Colors.black }} selectable={false}>
                 {DOW.DOW}
               </Text>
             </View>

@@ -2,6 +2,7 @@
 // June 19 2023
 // Picker with animated black line
 
+import { Colors } from '@src/constants';
 import React, { ReactNode, useRef, useEffect, Children } from 'react';
 import { View, Pressable } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
@@ -67,7 +68,7 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
           style={{
             height: height * 0.2,
             width: compoentWidth,
-            backgroundColor: 'black',
+            backgroundColor: Colors.black,
             top: height * 0.6,
             borderRadius: 5,
             position: 'absolute',

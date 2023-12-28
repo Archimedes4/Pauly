@@ -121,9 +121,9 @@ export default function HomePage() {
                   alignItems: 'center',
                   alignContent: 'center',
                   justifyContent: 'center',
-                  borderTopColor: 'black',
+                  borderTopColor: Colors.black,
                   borderTopWidth: 2,
-                  borderBottomColor: 'black',
+                  borderBottomColor: Colors.black,
                   borderBottomWidth: 2,
                 }}
               >
@@ -143,14 +143,14 @@ export default function HomePage() {
           }}
         >
           <Link href="/commissions">
-            <View style={{ borderColor: 'black', borderWidth: 2 }}>
+            <View style={{ borderColor: Colors.black, borderWidth: 2 }}>
               <View
                 style={{
                   backgroundColor: Colors.maroon,
                   width: width * 0.5,
                   height: height * 0.25,
                   borderTopWidth: 1,
-                  borderTopColor: 'black',
+                  borderTopColor: Colors.black,
                   zIndex: 1,
                 }}
               />
@@ -162,14 +162,14 @@ export default function HomePage() {
             </View>
           </Link>
           <Link href="/sports">
-            <Pressable style={{ borderColor: 'black', borderWidth: 2 }}>
+            <Pressable style={{ borderColor: Colors.black, borderWidth: 2 }}>
               <View
                 style={{
                   backgroundColor: Colors.maroon,
                   width: width * 0.5,
                   height: height * 0.25,
                   borderTopWidth: 1,
-                  borderTopColor: 'black',
+                  borderTopColor: Colors.black,
                   zIndex: 1,
                 }}
               />
@@ -198,14 +198,14 @@ export default function HomePage() {
           }}
         >
           <Link href="/resources">
-            <View style={{ borderColor: 'black', borderWidth: 2 }}>
+            <View style={{ borderColor: Colors.black, borderWidth: 2 }}>
               <View
                 style={{
                   backgroundColor: Colors.maroon,
                   width: width * 0.5,
                   height: height * 0.25,
                   borderTopWidth: 1,
-                  borderTopColor: 'black',
+                  borderTopColor: Colors.black,
                   zIndex: 1,
                 }}
               />
@@ -217,14 +217,14 @@ export default function HomePage() {
             </View>
           </Link>
           <Link href="/profile">
-            <View style={{ borderColor: 'black', borderWidth: 2 }}>
+            <View style={{ borderColor: Colors.black, borderWidth: 2 }}>
               <View
                 style={{
                   backgroundColor: Colors.maroon,
                   width: width * 0.5,
                   height: height * 0.25,
                   borderTopWidth: 1,
-                  borderTopColor: 'black',
+                  borderTopColor: Colors.black,
                 }}
               />
               <PersonIcon
@@ -239,7 +239,7 @@ export default function HomePage() {
       <View
         style={{
           position: 'absolute',
-          backgroundColor: 'black',
+          backgroundColor: Colors.black,
           width: 4,
           left: width / 2 + 2,
           bottom: -insets.bottom,

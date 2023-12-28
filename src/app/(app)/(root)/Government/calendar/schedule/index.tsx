@@ -71,7 +71,7 @@ export default function GovernmentSchedule() {
                   <View
                     style={{
                       backgroundColor: Colors.white,
-                      shadowColor: 'black',
+                      shadowColor: Colors.black,
                       shadowOffset: { width: 1, height: 1 },
                       shadowOpacity: 1,
                       shadowRadius: 5,
@@ -98,7 +98,7 @@ export default function GovernmentSchedule() {
         <View
           style={{
             backgroundColor: Colors.white,
-            shadowColor: 'black',
+            shadowColor: Colors.black,
             shadowOffset: { width: 1, height: 1 },
             shadowOpacity: 1,
             shadowRadius: 5,

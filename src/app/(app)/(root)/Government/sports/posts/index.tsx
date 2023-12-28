@@ -68,7 +68,7 @@ function GovernmentSportsPostsBody() {
                 `/profile/government/sports/post/review/${item.item.submissionId}`,
               )
             }
-            style={{ borderColor: 'black', borderWidth: 2 }}
+            style={{ borderColor: Colors.black, borderWidth: 2 }}
           >
             <Text>{item.item.Title}</Text>
             <Text>Accepted: {item.item.accepted ? 'Yes' : 'No'}</Text>

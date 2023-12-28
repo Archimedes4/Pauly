@@ -156,7 +156,7 @@ export default function SignIn() {
             alignContent: 'center',
             alignItems: 'center',
             justifyContent: 'center',
-            shadowColor: isBottonHover ? Colors.white : 'black',
+            shadowColor: isBottonHover ? Colors.white : Colors.black,
             shadowOffset: { width: 0, height: 1 },
             shadowOpacity: 0.8,
             shadowRadius: 10,
@@ -170,7 +170,7 @@ export default function SignIn() {
               selectable={false}
               style={{
                 textAlign: 'center',
-                color: isBottonHover ? Colors.white : 'black',
+                color: isBottonHover ? Colors.white : Colors.black,
                 fontWeight: 'bold',
               }}
             >
@@ -199,7 +199,7 @@ export default function SignIn() {
               alignContent: 'center',
               alignItems: 'center',
               justifyContent: 'center',
-              shadowColor: isBottonHover ? Colors.white : 'black',
+              shadowColor: isBottonHover ? Colors.white : Colors.black,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.8,
               shadowRadius: 10,
@@ -212,7 +212,7 @@ export default function SignIn() {
               selectable={false}
               style={{
                 textAlign: 'center',
-                color: isBottonHover ? Colors.white : 'black',
+                color: isBottonHover ? Colors.white : Colors.black,
                 fontWeight: 'bold',
               }}
             >

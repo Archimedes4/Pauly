@@ -43,7 +43,7 @@ export default function GovernmentSchedule() {
   const [scheduleDescriptiveName, setScheduleDescriptiveName] =
     useState<string>('');
   const [newPeriods, setNewPeriods] = useState<periodType[]>([]);
-  const [color, setColor] = useState<string>('#ffffff');
+  const [color, setColor] = useState<string>(Colors.white);
 
   const [isPickingColor, setIsPickingColor] = useState<boolean>(false);
   const [isCreatingSchedule, setIsCreatingSchedule] = useState<boolean>(false);
@@ -262,8 +262,8 @@ export default function GovernmentSchedule() {
           onPress={() => setIsPickingColor(true)}
           style={{
             margin: 10,
-            backgroundColor: '#FFFFFF',
-            shadowColor: 'black',
+            backgroundColor: Colors.white,
+            shadowColor: Colors.black,
             shadowOffset: { width: 1, height: 1 },
             shadowOpacity: 1,
             shadowRadius: 5,
@@ -390,7 +390,7 @@ export default function GovernmentSchedule() {
           style={{
             margin: 10,
             backgroundColor: Colors.white,
-            shadowColor: 'black',
+            shadowColor: Colors.black,
             shadowOffset: { width: 1, height: 1 },
             shadowOpacity: 1,
             shadowRadius: 5,
@@ -506,7 +506,7 @@ function PeriodBlock({
       style={{
         margin: 10,
         backgroundColor: Colors.white,
-        shadowColor: 'black',
+        shadowColor: Colors.black,
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 1,
         shadowRadius: 5,

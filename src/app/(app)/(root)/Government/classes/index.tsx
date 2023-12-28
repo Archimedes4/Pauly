@@ -78,8 +78,8 @@ export default function GovernmentClasses() {
                       <Pressable
                         key={`Class_${classMap.item.id}_${createUUID()}`}
                         style={{
-                          backgroundColor: '#FFFFFF',
-                          shadowColor: 'black',
+                          backgroundColor: Colors.white,
+                          shadowColor: Colors.black,
                           shadowOffset: { width: 1, height: 1 },
                           shadowOpacity: 1,
                           shadowRadius: 5,

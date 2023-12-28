@@ -124,7 +124,7 @@ export function GovernmentIcon({ width, height, style }: iconProps) {
       height={height}
       style={style}
       viewBox="0 0 24 24"
-      fill="black"
+      fill={Colors.black}
     >
       <Path
         fillRule="evenodd"

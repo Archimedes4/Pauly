@@ -267,7 +267,7 @@ export default function GovernmentAdmin() {
                 height: height * 0.05,
                 width: height * 0.05,
                 backgroundColor:
-                  currentInitStage === initStage.partOne ? 'blue' : 'black',
+                  currentInitStage === initStage.partOne ? 'blue' : Colors.black,
                 borderRadius: 50,
               }}
             />

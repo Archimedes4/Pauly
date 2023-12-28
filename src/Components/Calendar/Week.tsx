@@ -45,7 +45,7 @@ function WeekDayButton({width, day}:{width: number, day: Date}) {
         justifyContent: 'center',
         borderColor:
           day.getDate() === new Date(selectedDateRedux).getDate()
-            ? 'black'
+            ? Colors.black
             : Colors.maroon,
         borderWidth:
           new Date().getDate() === day.getDate() ||
@@ -53,7 +53,7 @@ function WeekDayButton({width, day}:{width: number, day: Date}) {
             ? 5
             : 0,
         shadowRadius: 4,
-        shadowColor: 'black'
+        shadowColor: Colors.black
       }}
     >
       <Text selectable={false} style={{ color: isHover ? Colors.black:Colors.white }}>{day.getDate()}</Text>

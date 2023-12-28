@@ -113,7 +113,7 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
       style={{
         margin: 10,
         borderRadius: 15,
-        shadowColor: 'black',
+        shadowColor: Colors.black,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.8,
         shadowRadius: 10,

@@ -161,7 +161,7 @@ export default function DayView({
                   <Text
                     selectable={false}
                     style={{
-                      color: colorScheme == 'dark' ? Colors.white : 'black',
+                      color: colorScheme == 'dark' ? Colors.white : Colors.black,
                     }}
                   >
                     {value}
@@ -169,7 +169,7 @@ export default function DayView({
                 ) : null}
                 <View
                   style={{
-                    backgroundColor: 'black',
+                    backgroundColor: Colors.black,
                     width: width * 0.9,
                     height: 6,
                     position: 'absolute',

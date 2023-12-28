@@ -314,7 +314,7 @@ function TaskBlock() {
       </Text>
       <View
         style={{
-          shadowColor: 'black',
+          shadowColor: Colors.black,
           width: width * 0.9,
           marginLeft: width * 0.05,
           backgroundColor: Colors.white,
@@ -447,7 +447,7 @@ function BoardBlock() {
         height: height * 0.3,
         marginTop: height * 0.03,
         marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: Colors.white,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.8,
         shadowRadius: 10,
