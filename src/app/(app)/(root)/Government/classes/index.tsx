@@ -54,7 +54,7 @@ export default function GovernmentClasses() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View>
-        <Link href="/profile/government/">
+        <Link href="/government/">
           <Text>Back</Text>
         </Link>
         <Text style={{marginLeft: 'auto', marginRight: 'auto',}}>Classes</Text>
@@ -73,7 +73,7 @@ export default function GovernmentClasses() {
                   data={classes}
                   renderItem={classMap => (
                     <Link
-                      href={`/profile/government/classes/edit/${classMap.item.id}`}
+                      href={`/government/classes/${classMap.item.id}`}
                     >
                       <Pressable
                         key={`Class_${classMap.item.id}_${createUUID()}`}
@@ -101,7 +101,7 @@ export default function GovernmentClasses() {
           )}
         </>
       </ScrollView>
-      <StyledButton to="/profile/government/classes/room" text='Rooms' style={{marginLeft: 10, marginRight: 10, marginBottom: 20}}/>
+      <StyledButton to="/government/classes/room" text='Rooms' style={{marginLeft: 10, marginRight: 10, marginBottom: 20}}/>
     </View>
   );
 }

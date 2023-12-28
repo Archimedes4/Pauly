@@ -13,12 +13,14 @@ import {
 import { CloseIcon, WarningIcon } from '@src/components/Icons';
 import Dropdown from '@components/Dropdown';
 import { getRoom, getRooms } from '@utils/classesFunctions';
-import { Link } from 'expo-router';
-import { useParams } from 'react-router-native';
+import { Link, useGlobalSearchParams } from 'expo-router';
+import ProgressView from '@src/components/ProgressView';
+import SecondStyledButton from '@src/components/SecondStyledButton';
+import { getTextState } from '@src/utils/ultility/createUUID';
 
 export default function GovernmentClassesEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const { id } = useParams();
+  const { id } = useGlobalSearchParams();
   const [selectedSemester, setSelectedSemester] = useState<semesters>(
     semesters.semesterOne,
   );
@@ -198,33 +200,36 @@ export default function GovernmentClassesEdit() {
     loadSchoolYears();
   }, []);
 
+  if (classState === loadingStateEnum.loading) {
+    return (
+      <View style={{width, height, backgroundColor: Colors.white, alignContent: 'center', justifyContent: 'center', alignItems: "center"}}>
+        <Link style={{position: 'absolute', top: 0, left: 0}} href={'/government/classes'}>
+          Back
+        </Link>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
   return (
     <>
       <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
-        {classState === loadingStateEnum.loading ? (
-          <View>
-            <Link href={'/profile/government/classes'}>
-              Back
-            </Link>
-            <Text>Loading</Text>
-          </View>
-        ) : (
           <View>
             {classState === loadingStateEnum.success ? (
               <View
                 style={{
                   width,
-                  height,
                   backgroundColor: Colors.white,
                 }}
               >
-                <Link href={'/profile/government/classes'}>
+                <Link href={'/government/classes'}>
                   Back
                 </Link>
-                <Text>Add Class Data</Text>
+                <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Add Class Data</Text>
                 <View>
-                  <Text>Name:</Text>
-                  <TextInput value={className} onChangeText={setClassName} />
+                  <Text style={{marginLeft: 25}}>Name</Text>
+                  <TextInput value={className} onChangeText={setClassName} style={{padding: 10, borderWidth: 1, borderColor: Colors.black, borderRadius: 30, marginLeft: 15, marginRight: 15}}/>
                 </View>
                 <Text>School Years</Text>
                 <View style={{ height: height * 0.3 }}>
@@ -288,13 +293,15 @@ export default function GovernmentClassesEdit() {
                     </View>
                   )}
                 </View>
-                <SegmentedPicker
-                  selectedIndex={selectedSemester}
-                  setSelectedIndex={setSelectedSemester}
-                  options={['Semester One', 'Semester Two']}
-                  width={width * 0.85}
-                  height={height * 0.1}
-                />
+                <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                  <SegmentedPicker
+                    selectedIndex={selectedSemester}
+                    setSelectedIndex={setSelectedSemester}
+                    options={['Semester One', 'Semester Two']}
+                    width={width * 0.85}
+                    height={height * 0.1}
+                  />
+                </View>
                 <View style={{ flexDirection: 'row' }}>
                   {selectedRoom === undefined ? (
                     <WarningIcon width={12} height={12} outlineColor="red" />
@@ -324,19 +331,18 @@ export default function GovernmentClassesEdit() {
                     </View>
                   )}
                 </View>
-                <Pressable
+                <SecondStyledButton
+                  text='Create Class'
                   onPress={() => {
                     setIsShowingClassConfirmMenu(true);
                   }}
-                >
-                  <Text>Create Class</Text>
-                </Pressable>
+                  style={{marginBottom: 10, marginLeft: 15, marginRight: 15}}
+                />
               </View>
             ) : (
               <Text>Failed</Text>
             )}
           </View>
-        )}
       </ScrollView>
       {isShowingClassConfirmMenu ? (
         <View
@@ -375,15 +381,12 @@ export default function GovernmentClassesEdit() {
             }}
           >
             <Text style={{ margin: 10 }}>
-              {updateClassState === loadingStateEnum.cannotStart
-                ? 'Cannot Update Class'
-                : updateClassState === loadingStateEnum.notStarted
-                  ? 'Update Class'
-                  : updateClassState === loadingStateEnum.loading
-                    ? 'Loading'
-                    : updateClassState === loadingStateEnum.success
-                      ? 'Updated Class'
-                      : 'Failed To Update Class'}
+              {getTextState(updateClassState, {
+                cannotStart: 'Cannot Update Class',
+                notStarted: 'Update Class',
+                success: 'Updated Class',
+                failed: 'Failed To Update Class'
+              })}
             </Text>
           </Pressable>
         </View>

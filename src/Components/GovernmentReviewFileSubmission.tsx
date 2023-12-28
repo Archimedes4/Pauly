@@ -247,7 +247,7 @@ export default function GovernmentReviewFileSubmission() {
                 backgroundColor: Colors.white,
               }}
             >
-              <Link href={'/profile/government/sports'}>
+              <Link href={'/government/sports'}>
                 Back
               </Link>
               <Text>GovernmentReviewFileSubmission</Text>
@@ -322,7 +322,7 @@ export default function GovernmentReviewFileSubmission() {
             </View>
           ) : (
             <View style={{ width, height }}>
-              <Link href={'/profile/government/sports'}>
+              <Link href={'/government/sports'}>
                 Back
               </Link>
               <Text>Failed</Text>

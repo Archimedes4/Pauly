@@ -34,7 +34,7 @@ export default function GovernmentCommissions() {
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Link href={'/profile/government'}>
+        <Link href={'/government'}>
           <Text>Back</Text>
         </Link>
         <View
@@ -70,7 +70,7 @@ export default function GovernmentCommissions() {
         )}
       </View>
       <View style={{ height: height * 0.05 }}>
-        <Link href={'/profile/government/commissions/create'}>
+        <Link href={'/government/commissions/create'}>
           Create New Commission
         </Link>
       </View>
@@ -108,7 +108,7 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
   }, []);
   return (
     <Link
-      href={`/profile/government/commissions/${commission.commissionId}`}
+      href={`/government/commissions/${commission.commissionId}`}
       key={`Commission_${commission.commissionId}_${createUUID()}`}
       style={{
         margin: 10,

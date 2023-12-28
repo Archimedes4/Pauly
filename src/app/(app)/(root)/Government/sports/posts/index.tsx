@@ -65,7 +65,7 @@ function GovernmentSportsPostsBody() {
             key={`Submission_${item.item.submissionId}_${createUUID()}`}
             onPress={() =>
               router.replace(
-                `/profile/government/sports/post/review/${item.item.submissionId}`,
+                `/government/sports/post/review/${item.item.submissionId}`,
               )
             }
             style={{ borderColor: Colors.black, borderWidth: 2 }}

@@ -11,7 +11,7 @@ export default function calendarSync() {
   const syncCalendar = useSyncCalendar();
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href="/profile/government/calendar/">
+      <Link href="/government/calendar/">
         <Text>Back</Text>
       </Link>
       <Text>Calendar Sync</Text>

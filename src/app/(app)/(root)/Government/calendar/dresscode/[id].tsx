@@ -94,7 +94,7 @@ export default function GovernmentDressCodeEdit() {
             backgroundColor: Colors.white,
           }}
         >
-          <Link href="/profile/government/calendar/dresscode">
+          <Link href="/government/calendar/dresscode">
             <Text>Back</Text>
           </Link>
           <Text>Create Dress Code</Text>
@@ -158,7 +158,7 @@ export default function GovernmentDressCodeEdit() {
           justifyContent: 'center',
         }}
       >
-        <Link href="/profile/government/calendar/dresscode">
+        <Link href="/government/calendar/dresscode">
           <Text>Back</Text>
         </Link>
         <ProgressView width={14} height={14} />
@@ -169,7 +169,7 @@ export default function GovernmentDressCodeEdit() {
 
   return (
     <View>
-      <Link href="/profile/government/calendar/dresscode">
+      <Link href="/government/calendar/dresscode">
         <Text>Back</Text>
       </Link>
       <Text>Failed</Text>

@@ -168,7 +168,7 @@ export default function GovernmentSchedule() {
           backgroundColor: Colors.white,
         }}
       >
-        <Link href="/profile/government/calendar/schedule">
+        <Link href="/government/calendar/schedule">
           <Text>Back</Text>
         </Link>
         <Text>Schedule Deleted</Text>
@@ -185,7 +185,7 @@ export default function GovernmentSchedule() {
           backgroundColor: Colors.white,
         }}
       >
-        <Link href="/profile/government/calendar/schedule">
+        <Link href="/government/calendar/schedule">
           <Text>Back</Text>
         </Link>
         <View
@@ -443,7 +443,7 @@ export default function GovernmentSchedule() {
           justifyContent: 'center',
         }}
       >
-        <Link href="/profile/government/calendar/schedule">
+        <Link href="/government/calendar/schedule">
           <View style={{ position: 'absolute', top: 0, left: 0 }}>
             <Text>Back</Text>
           </View>
@@ -462,7 +462,7 @@ export default function GovernmentSchedule() {
         backgroundColor: Colors.white,
       }}
     >
-      <Link href="/profile/government/calendar/schedule">
+      <Link href="/government/calendar/schedule">
         <Text>Back</Text>
       </Link>
       <Text>Failed</Text>

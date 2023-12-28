@@ -81,7 +81,7 @@ export default function GovernmentSports() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
-        <Link href="/profile/government/">Back</Link>
+        <Link href="/government/">Back</Link>
         <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>
           Government Sports
         </Text>

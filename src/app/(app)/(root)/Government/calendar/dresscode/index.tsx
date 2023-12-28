@@ -42,7 +42,7 @@ function GovernmentDressCodeBody() {
         renderItem={dressCode => (
           <ListItem
             key={dressCode.item.id}
-            to={`/profile/government/calendar/dresscode/${dressCode.item.id}`}
+            to={`/government/calendar/dresscode/${dressCode.item.id}`}
             text={dressCode.item.name}
           />
         )}
@@ -59,14 +59,14 @@ export default function GovernmentDressCode() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href="/profile/government/calendar">
+      <Link href="/government/calendar">
         <Text>Back</Text>
       </Link>
       <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>
         Dress Codes
       </Text>
       <GovernmentDressCodeBody />
-      <SecondStyledButton style={{marginBottom: 15, marginLeft: 15, marginRight: 15, marginTop: 5}} text='Create Dress Code' to='/profile/government/calendar/dresscode/create'/>
+      <SecondStyledButton style={{marginBottom: 15, marginLeft: 15, marginRight: 15, marginTop: 5}} text='Create Dress Code' to='/government/calendar/dresscode/create'/>
     </View>
   );
 }

@@ -60,7 +60,7 @@ export default function MicrosoftGraphEditExtension() {
         backgroundColor: Colors.white,
       }}
     >
-      <Link to={`/profile/government/graph/${mode}`}>
+      <Link to={`/government/graph/${mode}`}>
         <Text>Back</Text>
       </Link>
       <Text>MicrosoftGraphEditExtension</Text>

@@ -122,7 +122,7 @@ export default function GovernmentTimetableEdit() {
         backgroundColor: Colors.white,
       }}
     >
-      <Link to="/profile/government/calendar/timetable/">
+      <Link to="/government/calendar/timetable/">
         <Text>Back</Text>
       </Link>
       <Text>Create Timetable</Text>

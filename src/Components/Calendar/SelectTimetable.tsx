@@ -74,7 +74,7 @@ export default function SelectTimetable({
               onPress={() => {
                 if (governmentMode) {
                   router.replace(
-                    `/profile/government/calendar/timetable/${timetable.id}`,
+                    `/government/calendar/timetable/${timetable.id}`,
                   );
                 } else if (onSelect !== undefined) {
                   onSelect(timetable);
