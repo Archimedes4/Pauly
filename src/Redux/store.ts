@@ -1,11 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import isOverrideReducer, {
-  isOverrideSlice,
-} from './reducers/isOverrideReducer';
+import isOverrideReducer from './reducers/isOverrideReducer';
 import monthDataReducer from './reducers/monthDataReducer';
-import resourcesLastCallReducer, {
-  resourcesLastCalled,
-} from './reducers/resourcesLastCallReducer';
+import resourcesLastCallReducer from './reducers/resourcesLastCallReducer';
 import safeAreaColorsReducer from './reducers/safeAreaColorsReducer';
 import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
 import currentEventsReducer from './reducers/currentEventReducer';

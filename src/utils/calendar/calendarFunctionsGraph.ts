@@ -31,9 +31,11 @@ export async function getGraphEvents(
   url?: string,
   referenceUrl?: string,
 ): Promise<{
-  result: loadingStateEnum;
-  events?: eventType[];
+  result: loadingStateEnum.success;
+  events: eventType[];
   nextLink?: string;
+} | {
+  result: loadingStateEnum.failed
 }> {
   // @ts-expect-error
   const defaultUrl = `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`;
@@ -149,9 +151,11 @@ export async function getEvent(
 }
 
 export async function getSchedule(id: string): Promise<{
-  result: loadingStateEnum;
-  schedule?: scheduleType;
-  listItemId?: string;
+  result: loadingStateEnum.success;
+  schedule: scheduleType;
+  listItemId: string;
+} | {
+  result: loadingStateEnum.failed;
 }> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
@@ -179,11 +183,11 @@ export async function getSchedule(id: string): Promise<{
           listItemId: data.value[0].id,
         };
       }
-      return { result: loadingStateEnum.failed, schedule: undefined };
+      return { result: loadingStateEnum.failed };
     }
-    return { result: loadingStateEnum.failed, schedule: undefined };
+    return { result: loadingStateEnum.failed };
   }
-  return { result: loadingStateEnum.failed, schedule: undefined };
+  return { result: loadingStateEnum.failed};
 }
 
 export async function getSchedules(): Promise<{
@@ -821,6 +825,8 @@ export function getMonthData(selectedDate: Date) {
   );
   const firstDayWeek = findFirstDayinMonth(selectedDate);
   const monthDataResult: monthDataType[] = [];
+  const currentEvents = store.getState().currentEvents;
+  console.log(currentEvents)
   for (let index = 0; index < 42; index += 1) {
     if (index >= firstDayWeek && index - firstDayWeek < lastDay.getDate()) {
       // In the current month
@@ -843,18 +849,18 @@ export function getMonthData(selectedDate: Date) {
       );
       for (
         let indexEvent = 0;
-        indexEvent < store.getState().currentEvents.length;
+        indexEvent < currentEvents.length;
         indexEvent += 1
       ) {
-        const event: eventType = store.getState().currentEvents[indexEvent]; // Event to be checked
+        const event: eventType = currentEvents[indexEvent]; // Event to be checked
 
         const startTimeDate = new Date(event.startTime); // String to date
         const endTimeDate = new Date(event.endTime); // String to date
 
         // First check if starts before date and ends after or on day
-        if (startTimeDate <= checkStart && endTimeDate > checkStart) {
+        if (startTimeDate.getTime() <= checkStart.getTime() && endTimeDate.getTime() > checkStart.getTime()) {
           events.push(event);
-        } else if (startTimeDate > checkStart && startTimeDate < checkEnd) {
+        } else if (startTimeDate.getTime() > checkStart.getTime() && startTimeDate.getTime() < checkEnd.getTime()) {
           // Second check if starts on day
           events.push(event);
         }

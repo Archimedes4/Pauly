@@ -5,25 +5,26 @@
   getEvents.ts
 */
 
-import { currentEventsSlice } from '../../redux/reducers/currentEventReducer';
-import store from '../../redux/store';
-import { loadingStateEnum } from '../../constants';
+import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
+import store from '@redux/store';
+import { loadingStateEnum } from '@constants';
 import { getGraphEvents } from './calendarFunctionsGraph';
 
 export default async function getEvents() {
   // date the user picks
   const selectedDate = new Date(store.getState().selectedDate);
   // Start of month that the selected date is in
-  const startDate = new Date(
+  const startDate = new Date(Date.UTC(
     selectedDate.getFullYear(),
     selectedDate.getMonth(),
-    1,
+    1)
   );
   // End of month that the selected date is in
   const endDate = new Date(
+    Date.UTC(
     selectedDate.getFullYear(),
     selectedDate.getMonth() + 1,
-    1,
+    1)
   );
 
   // Personal Calendar
@@ -63,8 +64,7 @@ export default async function getEvents() {
       `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
     );
     if (
-      furtherResult.result === loadingStateEnum.success &&
-      furtherResult.events !== undefined
+      furtherResult.result === loadingStateEnum.success
     ) {
       outputEvents = [... new Set([...outputEvents, ...furtherResult.events])];
       url = furtherResult.nextLink !== undefined ? furtherResult.nextLink : '';

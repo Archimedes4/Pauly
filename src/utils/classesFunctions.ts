@@ -68,9 +68,15 @@ export async function getRoom(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getClasses(): Promise<{
-  result: loadingStateEnum;
-  data?: classType[];
+export async function getClasses() {
+  
+}
+
+export async function getClassesSchedule(): Promise<{
+  result: loadingStateEnum.success;
+  data: classType[];
+} | {
+  result: loadingStateEnum.failed
 }> {
   let classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`;
   const batchDataRequests: { id: string; method: string; url: string }[][] = [
@@ -159,12 +165,10 @@ export async function getClassEvents(
   date: Date,
 ): Promise<{ result: loadingStateEnum; data?: eventType[] }> {
   const scheduleResult = await getSchedule(scheduleId);
-  const classResult = await getClasses();
+  const classResult = await getClassesSchedule();
   if (
     scheduleResult.result === loadingStateEnum.success &&
-    classResult.result === loadingStateEnum.success &&
-    classResult.data !== undefined &&
-    scheduleResult.schedule !== undefined
+    classResult.result === loadingStateEnum.success
   ) {
     const outputEvents: eventType[] = [];
     for (let index = 0; index < classResult.data.length; index += 1) {

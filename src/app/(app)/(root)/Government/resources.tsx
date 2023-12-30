@@ -21,7 +21,7 @@ import { Colors, loadingStateEnum, resourceResponce } from '@constants';
 import ProgressView from '@components/ProgressView';
 import getResource from '@utils/getResources';
 import GovernmentResourcesPost from '@components/GovernmentResourcePost';
-import { getChannels } from '@utils/microsoftGroupsFunctions';
+import { getResourceChannels } from '@utils/microsoftGroupsFunctions';
 import { Link } from 'expo-router';
 
 type resourceGroupType = {
@@ -145,6 +145,8 @@ function ChannelBlock({
               style={{
                 height: 12,
                 width: 12,
+                marginTop: 'auto',
+                marginBottom: 'auto',
                 borderRadius: 50,
                 backgroundColor: channel.item.selected ? 'green' : 'blue',
               }}
@@ -152,9 +154,73 @@ function ChannelBlock({
           )}
         </View>
       )}
-      <Text>{channel.item.displayName}</Text>
+      <Text style={{marginLeft: 2}}>{channel.item.displayName}</Text>
     </View>
   );
+}
+
+function GroupBlockBody({groupId, selectedGroup}:{groupId: string, selectedGroup: string}) {
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const [channels, setChannels] = useState<channelType[]>([]);
+  const [channelState, setChannelState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+
+  async function loadChannels() {
+    const result = await getResourceChannels(groupId);
+    if (result.result === loadingStateEnum.success) {
+      setChannels(result.data);
+      setChannelState(loadingStateEnum.success);
+    } else {
+      setChannelState(loadingStateEnum.failed);
+    }
+  }
+
+  useEffect(() => {
+    loadChannels();
+  }, []);
+
+  if (channelState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width: width * 0.9,
+          height: height * 0.2,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+  if (channelState === loadingStateEnum.success) {
+    return (
+      <FlatList
+        data={channels}
+        renderItem={channel => (
+          <ChannelBlock
+            key={channel.item.id}
+            channel={channel}
+            groupId={groupId}
+            onUpdate={item => {
+              const newChannels = [...channels];
+              newChannels[channel.index] = item;
+              setChannels([...newChannels]);
+            }}
+            selectedGroup={selectedGroup}
+          />
+        )}
+      />
+    )
+  }
+  return (
+    <View>
+      <Text>Failed</Text>
+    </View>
+  )
 }
 
 function GroupBlock({
@@ -167,24 +233,7 @@ function GroupBlock({
   setSelectedGroup: (item: string) => void;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const [channels, setChannels] = useState<channelType[]>([]);
-  const [channelState, setChannelState] = useState<loadingStateEnum>(
-    loadingStateEnum.loading,
-  );
-
-  async function loadChannels() {
-    const result = await getChannels(group.id);
-    if (result.result === loadingStateEnum.success) {
-      setChannels(result.data);
-      setChannelState(loadingStateEnum.success);
-    } else {
-      setChannelState(loadingStateEnum.failed);
-    }
-  }
-
-  useEffect(() => {
-    loadChannels();
-  }, []);
+  
   return (
     <Pressable
       key={`Team_${group.id}`}
@@ -208,55 +257,89 @@ function GroupBlock({
         <View style={{ margin: 10 }}>
           <Text>{group.name}</Text>
           <Text>Channels</Text>
-          {channelState === loadingStateEnum.loading ? (
-            <View
-              style={{
-                width: width * 0.9,
-                height: height * 0.2,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <ProgressView width={14} height={14} />
-              <Text>Loading</Text>
-            </View>
-          ) : (
-            <>
-              {channelState === loadingStateEnum.success ? (
-                <FlatList
-                  data={channels}
-                  renderItem={channel => (
-                    <ChannelBlock
-                      key={channel.item.id}
-                      channel={channel}
-                      groupId={group.id}
-                      onUpdate={item => {
-                        const newChannels = [...channels];
-                        newChannels[channel.index] = item;
-                        setChannels([...newChannels]);
-                      }}
-                      selectedGroup={selectedGroup}
-                    />
-                  )}
-                />
-              ) : (
-                <View>
-                  <Text>Failed</Text>
-                </View>
-              )}
-            </>
-          )}
+          <GroupBlockBody groupId={group.id} selectedGroup={selectedGroup}/>
         </View>
       </View>
     </Pressable>
   );
 }
 
+function GovernmentResourcesBody() {
+  const [groups, setGroups] = useState<resourceGroupType[]>([]);
+  const [teamsState, setTeamsState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [selectedGroup, setSelectedGroup] = useState<string>('');
+
+  async function getTeams() {
+    const result = await callMsGraph(
+      "https://graph.microsoft.com/v1.0/groups?$filter=resourceProvisioningOptions/Any(x:x eq 'Team')",
+    );
+    if (!result.ok) {
+      setTeamsState(loadingStateEnum.failed);
+      return;
+    }
+    const data = await result.json();
+    const resultGroups: resourceGroupType[] = [];
+    for (let index = 0; index < data.value.length; index += 1) {
+      resultGroups.push({
+        name: data.value[index].displayName,
+        id: data.value[index].id,
+      });
+    }
+    setTeamsState(loadingStateEnum.success);
+    setGroups(resultGroups);
+  }
+
+  useEffect(() => {
+    getTeams();
+  }, []);
+
+  if (teamsState === loadingStateEnum.loading) {
+    return (
+      <View style={{
+        flex:1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (teamsState === loadingStateEnum.success) {
+    return (
+      <FlatList 
+        data={groups}
+        renderItem={group => (
+          <GroupBlock
+            key={group.item.id}
+            group={group.item}
+            selectedGroup={selectedGroup}
+            setSelectedGroup={setSelectedGroup}
+          />
+        )}
+      />
+    )
+  }
+
+  return (
+    <View style={{
+      flex:1,
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <Text>Failed</Text>
+    </View>
+  )
+}
+
 export default function GovernmentResources() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [groups, setGroups] = useState<resourceGroupType[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string>('');
   const [getTeamsState, setGetTeamsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -285,46 +368,16 @@ export default function GovernmentResources() {
   useEffect(() => {
     getTeams();
   }, []);
+
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
         <Link href="/government">
           <Text>Back</Text>
         </Link>
-        <Text>Government Resources</Text>
-        <Pressable onPress={() => setIsShowingEditor(true)}>
-          <Text>Show</Text>
-        </Pressable>
-        <Modal
-          animationType="slide"
-          visible={isShowingEditor}
-          onRequestClose={() => setIsShowingEditor(false)}
-        >
-          <GovernmentResourcesPost />
-        </Modal>
+        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Government Resources</Text>
       </View>
-      <ScrollView style={{ height: height * 0.9 }}>
-        {getTeamsState === loadingStateEnum.loading ? (
-          <Text>Loading</Text>
-        ) : (
-          <View>
-            {getTeamsState === loadingStateEnum.success ? (
-              <View>
-                {groups.map(group => (
-                  <GroupBlock
-                    key={group.id}
-                    group={group}
-                    selectedGroup={selectedGroup}
-                    setSelectedGroup={setSelectedGroup}
-                  />
-                ))}
-              </View>
-            ) : (
-              <Text>Failed</Text>
-            )}
-          </View>
-        )}
-      </ScrollView>
+      <GovernmentResourcesBody />
     </View>
   );
 }

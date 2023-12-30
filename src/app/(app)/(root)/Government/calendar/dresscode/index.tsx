@@ -6,7 +6,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import ListItem from '@src/components/StyledButton';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { Link } from 'expo-router';
-import SecondStyledButton from '@src/components/SecondStyledButton';
+import SecondStyledButton from '@src/components/StyledButton';
 
 function GovernmentDressCodeBody() {
   const { width } = useSelector((state: RootState) => state.dimentions);

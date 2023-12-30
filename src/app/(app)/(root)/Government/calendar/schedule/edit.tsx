@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, Modal } from 'react-native';
+import { View, Text, TextInput, Pressable, Modal, FlatList } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
@@ -13,13 +13,14 @@ import ColorPicker, {
   InputWidget,
 } from 'reanimated-color-picker';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import createUUID from '@utils/ultility/createUUID';
+import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import store, { RootState } from '@redux/store';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, loadingStateEnum, styles } from '@constants';
 import { CloseIcon, WarningIcon } from '@src/components/Icons';
 import ProgressView from '@components/ProgressView';
 import { getSchedule } from '@utils/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';
+import SecondStyledButton from '@src/components/StyledButton';
 
 function isValidHexaCode(input: string) {
   // Define the regular expression pattern for a valid hexadecimal color code
@@ -31,7 +32,11 @@ function isValidHexaCode(input: string) {
 }
 
 // NOTE: period length cannot be longer than 20
-export default function GovernmentSchedule() {
+export function GovernmentSchedule({
+  create
+} : {
+  create: boolean
+}) {
   const { id } = useParams();
   const { width, height } = useSelector((state: RootState) => state.dimentions);
 
@@ -46,7 +51,6 @@ export default function GovernmentSchedule() {
   const [color, setColor] = useState<string>(Colors.white);
 
   const [isPickingColor, setIsPickingColor] = useState<boolean>(false);
-  const [isCreatingSchedule, setIsCreatingSchedule] = useState<boolean>(false);
 
   const [createScheduleLoadingState, setCreateScheduleLoadingState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
@@ -59,7 +63,7 @@ export default function GovernmentSchedule() {
 
   async function submitSchedule() {
     setCreateScheduleLoadingState(loadingStateEnum.loading);
-    if (isCreatingSchedule) {
+    if (create) {
       const data = {
         fields: {
           Title: scheduleProperName,
@@ -152,9 +156,7 @@ export default function GovernmentSchedule() {
   }, [id]);
 
   useEffect(() => {
-    if (id === 'create') {
-      setIsCreatingSchedule(true);
-    } else {
+    if (!create) {
       loadFunction();
     }
   }, [id, loadFunction]);
@@ -166,9 +168,12 @@ export default function GovernmentSchedule() {
           width,
           height,
           backgroundColor: Colors.white,
+          justifyContent: 'center',
+          alignContent: 'center',
+          alignItems: 'center'
         }}
       >
-        <Link href="/government/calendar/schedule">
+        <Link href="/government/calendar/schedule" style={{position: 'absolute'}}>
           <Text>Back</Text>
         </Link>
         <Text>Schedule Deleted</Text>
@@ -176,7 +181,7 @@ export default function GovernmentSchedule() {
     );
   }
 
-  if (isCreatingSchedule || loadScheduleState === loadingStateEnum.success) {
+  if (create || loadScheduleState === loadingStateEnum.success) {
     return (
       <ScrollView
         style={{
@@ -188,80 +193,66 @@ export default function GovernmentSchedule() {
         <Link href="/government/calendar/schedule">
           <Text>Back</Text>
         </Link>
+        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>{create ? 'Create' : 'Edit'} Schedule</Text>
+        <Text style={{fontFamily: 'Roboto', marginLeft: 25, marginBottom: 2}}>Proper Name</Text>
+        <TextInput
+          style={styles.textInputStyle}
+          value={scheduleProperName}
+          onChangeText={setScheduleProperName}
+          placeholder="Proper Name ex. Schedule One"
+        />
+        <Text style={{fontFamily: 'Roboto', marginLeft: 25, marginTop: 5}}>Descriptive Name</Text>
+        <TextInput
+          style={styles.textInputStyle}
+          value={scheduleDescriptiveName}
+          onChangeText={setScheduleDescriptiveName}
+          placeholder="Descriptive Name ex. Regular Schedule"
+        />
         <View
-          style={{
-            width,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          style={{ margin: 5, marginLeft: 15, marginRight: 15, borderRadius: 5, backgroundColor: '#FF6700' }}
         >
-          <Text>{isCreatingSchedule ? 'Create' : 'Edit'} Schedule</Text>
-        </View>
-        <View style={{ height: height * 0.2 }}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text>Proper Name:</Text>
-            <TextInput
-              style={{ width }}
-              value={scheduleProperName}
-              onChangeText={setScheduleProperName}
-              placeholder="Proper Name ex. Schedule One"
-            />
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            <Text>Descriptive Name:</Text>
-            <TextInput
-              style={{ width }}
-              value={scheduleDescriptiveName}
-              onChangeText={setScheduleDescriptiveName}
-              placeholder="Descriptive Name ex. Regular Schedule"
-            />
-          </View>
-          <View
-            style={{ margin: 5, borderRadius: 5, backgroundColor: '#FF6700' }}
-          >
-            <View style={{ margin: 10, flexDirection: 'row' }}>
-              <WarningIcon width={14} height={14} />
-              <Text>
-                Keep descriptive name short as it is used in the calendar widget
-              </Text>
-            </View>
+          <View style={{ margin: 10, flexDirection: 'row' }}>
+            <WarningIcon width={14} height={14} />
+            <Text>
+              Keep descriptive name short as it is used in the calendar widget
+            </Text>
           </View>
         </View>
-        <Text>New Periods</Text>
-        <ScrollView style={{ height: height * 0.5 }}>
-          {newPeriods.map(period => (
+
+        <Text style={{marginLeft: 15}}>New Periods</Text>
+        <FlatList 
+          data={newPeriods}
+          renderItem={period => (
             <PeriodBlock
-              period={period}
+              period={period.item}
               periods={newPeriods}
               onSetNewPeriods={out => {
                 setNewPeriods([...out]);
               }}
             />
-          ))}
-        </ScrollView>
+          )}
+          style={{height: height * 0.5}}
+        />
         {newPeriods.length < 20 ? (
-          <Pressable
-            onPress={() => {
-              setNewPeriods([
-                ...newPeriods,
-                {
-                  startHour: new Date().getHours(),
-                  startMinute: new Date().getMinutes(),
-                  endHour: new Date().getHours(),
-                  endMinute: new Date().getMinutes(),
-                  id: createUUID(),
-                },
-              ]);
-            }}
-          >
-            <Text>Add Period</Text>
-          </Pressable>
+          <SecondStyledButton text='Add Period' onPress={() => {
+            setNewPeriods([
+              ...newPeriods,
+              {
+                startHour: new Date().getHours(),
+                startMinute: new Date().getMinutes(),
+                endHour: new Date().getHours(),
+                endMinute: new Date().getMinutes(),
+                id: createUUID(),
+              },
+            ]);
+          }}
+            style={{marginLeft: 15, marginRight: 15}}
+          />
         ) : null}
         <Pressable
           onPress={() => setIsPickingColor(true)}
           style={{
-            margin: 10,
+            margin: 15,
             backgroundColor: Colors.white,
             shadowColor: Colors.black,
             shadowOffset: { width: 1, height: 1 },
@@ -285,7 +276,7 @@ export default function GovernmentSchedule() {
               />
               <Pressable style={{ marginLeft: 5 }}>
                 <ColorPicker
-                  style={{ width: width - 77.4, height: 16.5 }}
+                  style={{ width: width - 87.4, height: 16.5 }}
                   value={color}
                   onComplete={e => setColor(e.hex)}
                 >
@@ -378,7 +369,11 @@ export default function GovernmentSchedule() {
             </View>
           </View>
         </Pressable>
-        <Pressable
+        <SecondStyledButton 
+          text={!isValidHexaCode(color) ? 'Cannot Start' :
+            getTextState(createScheduleLoadingState, {
+              notStarted: `${create ? 'Create' : 'Save'} Schedule`
+          })}
           onPress={() => {
             if (
               createScheduleLoadingState === loadingStateEnum.notStarted &&
@@ -387,29 +382,9 @@ export default function GovernmentSchedule() {
               submitSchedule();
             }
           }}
-          style={{
-            margin: 10,
-            backgroundColor: Colors.white,
-            shadowColor: Colors.black,
-            shadowOffset: { width: 1, height: 1 },
-            shadowOpacity: 1,
-            shadowRadius: 5,
-            borderRadius: 15,
-          }}
-        >
-          <Text style={{ margin: 10 }}>
-            {!isValidHexaCode(color)
-              ? 'Cannot Start'
-              : createScheduleLoadingState === loadingStateEnum.notStarted
-                ? `${isCreatingSchedule ? 'Create' : 'Save'} Schedule`
-                : createScheduleLoadingState === loadingStateEnum.loading
-                  ? 'Loading'
-                  : createScheduleLoadingState === loadingStateEnum.success
-                    ? 'Success'
-                    : 'Failed'}
-          </Text>
-        </Pressable>
-        {!isCreatingSchedule ? (
+          style={{padding: 15, height: 46.4, marginLeft: 15, marginRight: 15, marginBottom: 10}}
+        />
+        {!create ? (
           <Pressable
             onPress={() => deleteFunction()}
             style={{
@@ -419,11 +394,9 @@ export default function GovernmentSchedule() {
             }}
           >
             <Text style={{ margin: 10 }}>
-              {deleteState == loadingStateEnum.notStarted
-                ? 'DELETE'
-                : deleteState === loadingStateEnum.loading
-                  ? 'LOADING'
-                  : 'FAILED'}
+              {getTextState(deleteState, {
+                notStarted: "DELETE"
+              })}
             </Text>
           </Pressable>
         ) : null}
@@ -520,7 +493,7 @@ function PeriodBlock({
           <Text>
             {period.startHour}:{period.startMinute}
           </Text>
-          <Pressable onPress={() => setIsSelectingStartTime(true)}>
+          <Pressable style={{marginLeft: 'auto'}} onPress={() => setIsSelectingStartTime(true)}>
             <Text>Pick start time</Text>
           </Pressable>
         </View>
@@ -549,7 +522,7 @@ function PeriodBlock({
           <Text>
             {period.endHour}:{period.endMinute}
           </Text>
-          <Pressable onPress={() => setIsSelectingEndTime(true)}>
+          <Pressable style={{marginLeft: 'auto'}} onPress={() => setIsSelectingEndTime(true)}>
             <Text>Pick end time</Text>
           </Pressable>
         </View>
@@ -613,4 +586,8 @@ function CustomColorThumb({
       ]}
     />
   );
+}
+
+export default function GovernmentScheduleMain() {
+  return <GovernmentSchedule create={false}/>
 }

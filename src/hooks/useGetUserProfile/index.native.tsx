@@ -1,7 +1,7 @@
 import store from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { fetchUserInfoAsync, useAutoDiscovery } from 'expo-auth-session';
-import { microsoftProfileDataSlice } from '../../redux/reducers/microsoftProfileDataReducer';
+import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
 
 export default function getUserProfile() {
   const discovery = useAutoDiscovery(

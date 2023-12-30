@@ -27,14 +27,10 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
   const pan = useSharedValue(selectedIndex * compoentWidth);
   function fadeIn(id: number) {
     // Will change fadeAnim value to 1 in 5 seconds
-    pan.value = withRepeat(
-      withTiming(0, {
-        duration: 100,
-        easing: Easing.linear,
-      }),
-      -1,
-      true
-    );
+    pan.value = withTiming(compoentWidth * id, {
+      duration: 250,
+      easing: Easing.linear,
+    })
   }
 
   const animatedDefault = useAnimatedStyle(() => ({

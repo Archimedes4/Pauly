@@ -28,15 +28,15 @@ import {
   getResourcesSearch,
   getScholarships,
 } from '@utils/getResources';
-import { CloseIcon } from '@src/components/Icons';
+import { CloseIcon } from '@components/Icons';
 import WebViewCross from '@components/WebViewCross';
 import BackButton from '@components/BackButton';
 import ProgressView from '@components/ProgressView';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { Colors, loadingStateEnum, resourceMode } from '@constants';
 import ResourcesNews from '@components/ResourcesNews';
-import ResourceBar from '@src/components/ResourceBar';
-import SearchBar from '@src/components/SearchBar';
+import ResourceBar from '@components/ResourceBar';
+import SearchBar from '@components/SearchBar';
 
 // Resources
 // -> Sports
@@ -368,13 +368,11 @@ export default function Resources() {
         {selectedResourceMode === resourceMode.news ? (
           <>
             <ResourcesNews />
-            <ResourceBar />
           </>
         ) : null}
         {selectedResourceMode === resourceMode.scholarships ? (
           <>
             <ResourceScholarships />
-            <ResourceBar />
           </>
         ) : null}
         {selectedResourceMode !== resourceMode.scholarships &&
@@ -424,6 +422,7 @@ export default function Resources() {
             <ResourceBar />
           </View>
         ) : null}
+        <ResourceBar />
       </View>
       {isGovernmentMode &&
       isShowingCategoryView &&

@@ -14,16 +14,14 @@ import {
   ScrollView,
   FlatList,
 } from 'react-native';
-import Picker from './Pickers/Picker';
-import callMsGraph from '../utils/ultility/microsoftAssets';
-import MimeTypeIcon from './Icons/MimeTypeIcon';
-import createUUID from '../utils/ultility/createUUID';
+import Picker from '../Pickers/Picker';
+import callMsGraph from '../../utils/ultility/microsoftAssets';
 import {
   getUserMicrosoftFiles,
   getUserTeams,
-} from '../utils/microsoftFilePickerFunctions';
-import { Colors, loadingStateEnum } from '../constants';
-import ProgressView from './ProgressView';
+} from '../../utils/microsoftFilePickerFunctions';
+import { Colors, loadingStateEnum } from '../../constants';
+import PersonalBlock from './PersonalBlock';
 
 enum MicrosoftUploadModeType {
   ShareLink,
@@ -37,12 +35,14 @@ export default function MicrosoftFilePicker({
   onSelectedFile,
   height,
   width,
+  allowedTypes,
 }: {
   height: number;
   width: number;
   onSetIsShowingUpload?: ((item: boolean) => void) | undefined;
   onSetIsShowingMicrosoftUpload?: ((item: boolean) => void) | undefined;
   onSelectedFile: (item: microsoftFileType) => void;
+  allowedTypes?: string[];
 }) {
   const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([]);
   const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] =
@@ -125,9 +125,9 @@ export default function MicrosoftFilePicker({
             width={width}
             height={30}
           >
-            <Text style={{ margin: 0, padding: 0 }}>Personal</Text>
-            <Text style={{ margin: 0, padding: 0 }}>Link</Text>
-            <Text style={{ margin: 0, padding: 0 }}>Teams</Text>
+            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>Personal</Text>
+            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>Link</Text>
+            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>Teams</Text>
           </Picker>
         </View>
         {selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal ? (
@@ -135,6 +135,7 @@ export default function MicrosoftFilePicker({
             height={height}
             width={width}
             onSelectedFile={onSelectedFile}
+            allowedTypes={allowedTypes}
           />
         ) : null}
         {selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink ? (
@@ -197,127 +198,5 @@ function TeamsBlock({
       )}
       style={{ height: height * 0.8 }}
     />
-  );
-}
-
-function PersonalBlock({
-  height,
-  width,
-  onSelectedFile,
-}: {
-  height: number;
-  width: number;
-  onSelectedFile: (item: microsoftFileType) => void;
-}) {
-  const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([]);
-  const [microsoftPath, setMicrosoftPath] = useState<string>(
-    'https://graph.microsoft.com/v1.0/me/drive/root/children',
-  );
-  const [fileBackAvaliable, setFilesBackAvaliable] = useState<boolean>(false);
-  const [getFilesState, setGetFilesState] = useState<loadingStateEnum>(
-    loadingStateEnum.notStarted,
-  );
-  const [mounted, setMounted] = useState<boolean>(false);
-
-  const loadGetUserMicrosoftFiles = useCallback(async (path: string) => {
-    setGetFilesState(loadingStateEnum.loading);
-    const result = await getUserMicrosoftFiles(path);
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
-    ) {
-      setUsersFies(result.data);
-      setGetFilesState(loadingStateEnum.success);
-    } else {
-      setGetFilesState(loadingStateEnum.failed);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) {
-      setMounted(true);
-      loadGetUserMicrosoftFiles(microsoftPath);
-    }
-  }, [loadGetUserMicrosoftFiles, mounted, microsoftPath]);
-
-  return (
-    <ScrollView style={{ height: height - 20 }}>
-      {fileBackAvaliable ? (
-        <Pressable
-          onPress={() => {
-            const microsftPathArray = microsoftPath.split('/');
-            microsftPathArray.pop();
-            microsftPathArray.pop();
-            microsftPathArray.pop();
-            let outputString = '';
-            for (let index = 0; index < microsftPathArray.length; index += 11) {
-              outputString += `${microsftPathArray[index]}/`;
-            }
-            outputString += '/items/root/children';
-            setMicrosoftPath(outputString);
-            loadGetUserMicrosoftFiles(outputString);
-            setFilesBackAvaliable(false);
-          }}
-        >
-          <Text>Back</Text>
-        </Pressable>
-      ) : null}
-      <>
-        {getFilesState === loadingStateEnum.loading ? (
-          <View
-            style={{
-              width,
-              height,
-              backgroundColor: Colors.white,
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <ProgressView width={14} height={14} />
-            <Text>Loading</Text>
-          </View>
-        ) : (
-          <>
-            {getFilesState === loadingStateEnum.success ? (
-              <FlatList
-                data={usersFiles}
-                renderItem={file => (
-                  <Pressable
-                    onPress={() => {
-                      if (file.item.folder) {
-                        setMicrosoftPath(
-                          `https://graph.microsoft.com/v1.0/drives/${file.item.parentDriveId}/items/${file.item.id}/children`,
-                        );
-                        loadGetUserMicrosoftFiles(
-                          `https://graph.microsoft.com/v1.0/drives/${file.item.parentDriveId}/items/${file.item.id}/children`,
-                        );
-                        setFilesBackAvaliable(true);
-                      } else {
-                        onSelectedFile(file.item);
-                      }
-                    }}
-                    key={`Users_${file.item.id}_${createUUID()}`}
-                  >
-                    <View style={{ flexDirection: 'row', margin: 5 }}>
-                      <MimeTypeIcon
-                        width={20}
-                        height={20}
-                        mimeType={file.item.type}
-                      />
-                      <Text style={{ padding: 0, margin: 0 }}>
-                        {file.item.name}
-                      </Text>
-                    </View>
-                  </Pressable>
-                )}
-              />
-            ) : (
-              <Text>Failed to load</Text>
-            )}
-          </>
-        )}
-      </>
-    </ScrollView>
   );
 }

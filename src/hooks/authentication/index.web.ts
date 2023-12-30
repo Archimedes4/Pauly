@@ -10,7 +10,7 @@ import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenRed
 import store from '@redux/store';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { useMsal } from '@azure/msal-react';
-import { scopes } from '@src/constants';
+import { scopes } from '@constants';
 
 export const refresh = () => {
   const { instance } = useMsal();

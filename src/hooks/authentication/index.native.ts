@@ -16,13 +16,13 @@ import {
 } from 'expo-auth-session';
 import { useRootNavigationState, useRouter } from 'expo-router';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
-import store from '../../redux/store';
-import { authLoadingSlice } from '../../redux/reducers/authLoadingReducer';
-import { authenticationRefreshTokenSlice } from '../../redux/reducers/authenticationRefreshTokenReducer';
-import { authenticationTokenSlice } from '../../redux/reducers/authenticationTokenReducer';
-import getUserProfile from '../../utils/ultility/getPaulyLists';
-import getPaulyLists from '../../utils/ultility/getPaulyLists';
-import { scopes } from '@src/constants';
+import store from '@redux/store';
+import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
+import { authenticationRefreshTokenSlice } from '@redux/reducers/authenticationRefreshTokenReducer';
+import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
+import getUserProfile from '@utils/ultility/getPaulyLists';
+import getPaulyLists from '@utils/ultility/getPaulyLists';
+import { scopes } from '@constants';
 
 // placeholder function
 export function useSilentLogin(): () => Promise<void> {

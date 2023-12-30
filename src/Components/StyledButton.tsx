@@ -2,11 +2,19 @@
   Pauly
   Andrew Mainella
 */
-import { View, Text, Pressable, ViewStyle } from 'react-native';
-import React from 'react';
-import { useRouter } from 'expo-router';
-import createUUID from '../utils/ultility/createUUID';
+import { Text, Pressable, ViewStyle } from 'react-native';
+import React, { useState } from 'react';
+import { Link } from 'expo-router';
 import { Colors } from '../constants';
+
+interface StyledButtonProps {
+  text: string;
+  caption?: string | undefined;
+  to?: string;
+  onPress?: (() => void);
+  style?: ViewStyle | undefined;
+  second?: boolean
+}
 
 export default function StyledButton({
   to,
@@ -14,42 +22,72 @@ export default function StyledButton({
   caption,
   onPress,
   style,
-}: {
-  text: string;
-  caption?: string | undefined;
-  to?: string | undefined;
-  onPress?: (() => void) | undefined;
-  style?: ViewStyle | undefined;
-}) {
-  const router = useRouter();
+  second,
+}: StyledButtonProps) {
+  const [isAlt, setIsAlt] = useState<boolean>(false);
+  if (typeof to === 'string') {
+    return (
+      <Link href={to} style={[
+        {
+          backgroundColor: ((second === true) ? isAlt:!isAlt) ? Colors.lightGray:Colors.darkGray,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 2, height: 2 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          borderRadius: 15,
+          height: 36
+        },
+        style,
+      ]}>
+        <Pressable
+          onHoverIn={() => setIsAlt(true)}
+          onHoverOut={() => setIsAlt(false)}
+          onPressIn={() => setIsAlt(true)}
+          onPressOut={() => setIsAlt(false)}
+          onPress={() => {
+            if (onPress !== undefined) {
+              onPress();
+            }
+          }}
+          style={{ padding: 10, width: '100%'}}
+        >
+          <Text style={{ fontSize: 16, color: ((second === true) ? isAlt:!isAlt) ? Colors.black:Colors.white, fontFamily: 'Roboto' }}>{text}</Text>
+          {caption !== undefined ? (
+            <Text style={{ fontSize: 12 }}>{caption}</Text>
+          ) : null}
+        </Pressable>
+      </Link>
+    )
+  }
   return (
     <Pressable
+      onHoverIn={() => setIsAlt(true)}
+      onHoverOut={() => setIsAlt(false)}
+      onPressIn={() => setIsAlt(true)}
+      onPressOut={() => setIsAlt(false)}
       onPress={() => {
         if (onPress !== undefined) {
           onPress();
         }
-        if (to !== undefined) {
-          router.replace(to);
-        }
       }}
-      key={createUUID()}
       style={[
         {
+          backgroundColor: isAlt ? Colors.lightGray:Colors.darkGray,
           shadowColor: Colors.black,
-          shadowOffset: { width: 0, height: 1 },
+          shadowOffset: { width: 2, height: 2 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
           borderRadius: 15,
+          padding: 10,
+          height: 36
         },
         style,
       ]}
     >
-      <View style={{ margin: 10 }}>
-        <Text style={{ fontSize: 16 }}>{text}</Text>
-        {caption !== undefined ? (
-          <Text style={{ fontSize: 12 }}>{caption}</Text>
-        ) : null}
-      </View>
+      <Text style={{ fontSize: 16, color: isAlt ? Colors.black:Colors.white, fontFamily: 'Roboto' }}>{text}</Text>
+      {caption !== undefined ? (
+        <Text style={{ fontSize: 12 }}>{caption}</Text>
+      ) : null}
     </Pressable>
   );
 }

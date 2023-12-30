@@ -17,7 +17,7 @@ import { Colors, calendarMode } from '@constants';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import BackButton from '@components/BackButton';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
-import { getClasses } from '@utils/classesFunctions';
+import { getClassesSchedule } from '@utils/classesFunctions';
 import getEvents from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@src/components/Calendar/MonthView';
@@ -25,11 +25,28 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 
 async function deleteEvents() {
-  const array = store.getState().currentEvents;
-  for (let index = 0; index < array.length; index += 1) {
-    // @ts-ignore
-    callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${array[index].id}`, "DELETE")
+  let nextUrl: string | undefined = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${'95fc4c55-f178-447d-a77e-3d13d6430c1a'}/items?expand=fields(select=eventId)&select=fields,id`
+  while (nextUrl !== undefined) {
+    const result = await callMsGraph(nextUrl)
+    if (result.ok) {
+      const data = await result.json();
+      for (let index = 0; index < data['value'].length; index += 1) {
+        // @ts-ignore
+        const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data['value'][index]["fields"]['eventId']}`, "DELETE")
+        if (deleteResult.ok || deleteResult.status === 404) {
+          const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${'95fc4c55-f178-447d-a77e-3d13d6430c1a'}/items/${data['value'][index]['id']}`, "DELETE")
+        }
+      } 
+      nextUrl = data["@odata.nextLink"]
+    } else {
+      nextUrl = undefined
+    }
   }
+  const currentEvents = store.getState().currentEvents;
+  for (let index = 0; index < currentEvents.length; index += 1) {
+    // @ts-ignore
+    callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${currentEvents[index]["id"]}`, "DELETE")
+  } 
   store.dispatch(currentEventsSlice.actions.setCurrentEvents([]))
 }
 
@@ -152,9 +169,8 @@ export default function Calendar() {
   // This is the main (only) process that updates the events
   // In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
   useEffect(() => {
-    console.log("CALLED TO GET EVENTS")
     getEvents();
-    getClasses();
+    getClassesSchedule();
   }, [selectedDate]);
 
   return (
@@ -163,6 +179,9 @@ export default function Calendar() {
         {currentBreakPoint >= 1 ? null : (
           <BackButton to="/home" style={{ zIndex: 100 }} />
         )}
+        <Pressable onPress={() => deleteEvents()}>
+          <Text>DELETE</Text>
+        </Pressable>
         <TopView width={width} height={height * 0.1} />
       </View>
       <View style={{ height: height * 0.9 }}>

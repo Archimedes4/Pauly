@@ -7,6 +7,7 @@
 */
 
 import { DefaultTheme } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
 
 // From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 export enum breakPointMode {
@@ -572,3 +573,15 @@ export const scopes = [
   'Application.ReadWrite.All',
   'TeamMember.Read.All',
 ];
+
+//styles
+export const styles = StyleSheet.create({
+  textInputStyle: {
+    marginLeft: 15,
+    marginRight: 15,
+    padding: 10,
+    borderRadius: 30,
+    borderColor: 'black',
+    borderWidth: 1
+  }
+})

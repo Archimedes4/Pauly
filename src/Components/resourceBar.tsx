@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from 'react-native';
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Colors, resourceMode } from '@constants';
 import { resourcesSlice } from '@redux/reducers/resourcesReducer';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,6 +16,7 @@ import {
   SportsIcon,
   UpIcon,
 } from './Icons';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 function BarPiece({
   children,
@@ -25,9 +26,6 @@ function BarPiece({
   mode: resourceMode;
 }) {
   const dispatch = useDispatch();
-  const selectedResourceMode = useSelector(
-    (state: RootState) => state.resources.selectedResourceMode,
-  );
   return (
     <Pressable
       onPress={() => {
@@ -35,9 +33,6 @@ function BarPiece({
       }}
       style={{
         padding: 10,
-        backgroundColor:
-          selectedResourceMode === mode ? Colors.lightGray : Colors.white,
-        borderRadius: 30,
       }}
     >
       {children}
@@ -168,6 +163,22 @@ export default function resourceBar() {
   const [barWidth, setBarWidth] = useState(0);
   const { width } = useSelector((state: RootState) => state.dimentions);
   const [isOpen, setIsOpen] = useState(false);
+  const selectedResourceMode = useSelector(
+    (state: RootState) => state.resources.selectedResourceMode,
+  );
+  
+  const pan = useSharedValue(selectedResourceMode * 45);
+
+  const animatedDefault = useAnimatedStyle(() => ({
+    transform: [{ translateX: pan.value }],
+  }));
+
+  useEffect(() => {
+    pan.value = withTiming(selectedResourceMode * 45, {
+      duration: 150,
+      easing: Easing.linear,
+    })
+  }, [selectedResourceMode])
 
   if (isOpen) {
     return <OpenBar onClose={() => setIsOpen(false)} barWidth={barWidth} />;
@@ -187,6 +198,7 @@ export default function resourceBar() {
         borderColor: Colors.black,
       }}
     >
+      <Animated.View style={[animatedDefault, {position: 'absolute', borderRadius: 30, width: 45, height: 45, backgroundColor: Colors.lightGray}]}/>
       <BarPiece mode={resourceMode.home}>
         <HomeIcon width={25} height={25} />
       </BarPiece>

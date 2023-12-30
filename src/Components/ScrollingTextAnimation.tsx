@@ -6,9 +6,9 @@
   Used in Home view for current break point = 0
 */
 import { View, Text, Animated, Easing, Platform } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Colors } from '../constants';
+import { Colors } from '@constants';
 
 export default function ScrollingTextAnimation({
   text,

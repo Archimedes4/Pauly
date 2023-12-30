@@ -4,11 +4,10 @@
   Main authentication method hold logic calling platform based login methods.
 */
 import getPaulyLists from '@utils/ultility/getPaulyLists';
-import useGetUserProfile from '@src/hooks/useGetUserProfile';
+import useGetUserProfile from '@hooks/useGetUserProfile';
 import useWebSession from '@hooks/useWebSession';
 import store from '@redux/store';
 import {
-  checkIfGovernmentMode,
   getWantGovernment,
   validateGovernmentMode,
 } from '@utils/handleGovernmentLogin';

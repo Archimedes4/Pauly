@@ -10,7 +10,7 @@ import { WarningIcon } from '@src/components/Icons';
 import SVGXml from '@components/SVGXml';
 import { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
-import SecondStyledButton from '@src/components/SecondStyledButton';
+import SecondStyledButton from '@src/components/StyledButton';
 import ProgressView from '@src/components/ProgressView';
 
 function SportsUpdateModel({

@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import store, { RootState } from '../../redux/store';
-import { pdfDataSlice } from '../../redux/reducers/pdfDataReducer';
+import store, { RootState } from '@redux/store';
+import { pdfDataSlice } from '@redux/reducers/pdfDataReducer';
 
 // PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`;
 

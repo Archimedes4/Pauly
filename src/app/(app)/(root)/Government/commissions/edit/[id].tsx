@@ -28,8 +28,8 @@ import {
 import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import ProgressView from '@components/ProgressView';
 import WebViewCross from '@components/WebViewCross';
-import { CloseIcon } from '@src/components/Icons';
-import Map from '@src/components/Map/index.d';
+import { CloseIcon } from '@components/Icons';
+import Map from '@components/Map/index.d';
 import BackButton from '@components/BackButton';
 import {
   getChannels,

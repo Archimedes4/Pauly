@@ -15,7 +15,7 @@ import Dropdown from '@components/Dropdown';
 import { getRoom, getRooms } from '@utils/classesFunctions';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import ProgressView from '@src/components/ProgressView';
-import SecondStyledButton from '@src/components/SecondStyledButton';
+import SecondStyledButton from '@src/components/StyledButton';
 import { getTextState } from '@src/utils/ultility/createUUID';
 
 export default function GovernmentClassesEdit() {

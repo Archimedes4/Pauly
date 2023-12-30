@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import { Link } from 'expo-router';
+import StyledButton from '@components/StyledButton';
 
 export default function GovernmentCalendar() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -19,70 +20,10 @@ export default function GovernmentCalendar() {
         <Text>Back</Text>
       </Link>
       <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25}}>Government Calendar</Text>
-      <Link
-        href="/government/calendar/schedule"
-        style={{
-          backgroundColor: Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          width: width - 20,
-          margin: 10,
-          padding: 10,
-          borderRadius: 15,
-        }}
-      >
-        <Text>Schedule</Text>
-      </Link>
-      <Link
-        href="/government/calendar/timetable"
-        style={{
-          backgroundColor: Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          width: width - 20,
-          margin: 10,
-          padding: 10,
-          borderRadius: 15,
-        }}
-      >
-        <Text>Timetables</Text>
-      </Link>
-      <Link
-        href="/government/calendar/dresscode"
-        style={{
-          backgroundColor: Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          width: width - 20,
-          margin: 10,
-          padding: 10,
-          borderRadius: 15,
-        }}
-      >
-        <Text>Dress Code</Text>
-      </Link>
-      <Link
-        href="/government/calendar/sync"
-        style={{
-          backgroundColor: Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          width: width - 20,
-          margin: 10,
-          padding: 10,
-          borderRadius: 15,
-        }}
-      >
-        <Text>Calendar Sync</Text>
-      </Link>
+      <StyledButton to={"/government/calendar/schedule"} text='Schedule' style={{marginLeft: 15, marginRight: 15, marginTop: 15}}/>
+      <StyledButton to={"/government/calendar/timetable"} text='Timetables' style={{marginLeft: 15, marginRight: 15, marginTop: 20}}/>
+      <StyledButton to={"/government/calendar/dresscode"} text='Dress Code' style={{marginLeft: 15, marginRight: 15, marginTop: 20}}/>
+      <StyledButton to={"/government/calendar/sync"} text='Calendar Sync' style={{marginLeft: 15, marginRight: 15, marginTop: 20}}/>
     </View>
   );
 }

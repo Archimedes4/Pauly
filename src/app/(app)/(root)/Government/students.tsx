@@ -7,9 +7,6 @@ import {
   View,
   Text,
   Pressable,
-  ViewStyle,
-  Platform,
-  TextInput,
   Modal,
   FlatList,
   ListRenderItemInfo,
@@ -17,7 +14,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import BackButton from '@components/BackButton';
-import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
+import MicrosoftFilePicker from '@src/components/MicrosoftFilePicker';
 import store, { RootState } from '@redux/store';
 import {
   changeStudentSelection,
@@ -31,7 +28,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import addImage from '@utils/addImage';
 import { getTextState } from '@utils/ultility/createUUID';
-import SecondStyledButton from '@src/components/SecondStyledButton';
+import SecondStyledButton from '@src/components/StyledButton';
 import SearchBar from '@src/components/SearchBar';
 
 function SelectMainFile({

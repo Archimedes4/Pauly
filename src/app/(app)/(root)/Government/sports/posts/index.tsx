@@ -14,7 +14,7 @@ import getSubmissions from '@utils/sports/sportsFunctions';
 import { Link, useRouter } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@src/redux/store';
-import SecondStyledButton from '@src/components/SecondStyledButton';
+import SecondStyledButton from '@src/components/StyledButton';
 
 function GovernmentSportsPostsBody() {
   const router = useRouter();

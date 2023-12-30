@@ -7,12 +7,13 @@ import { View, Text, TextInput, Switch } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
+import MicrosoftFilePicker from '@src/components/MicrosoftFilePicker';
 import store, { RootState } from '@redux/store';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, loadingStateEnum, styles } from '@constants';
 import { Link } from 'expo-router';
-import SecondStyledButton from '@src/components/SecondStyledButton';
+import StyledButton from '@src/components/StyledButton';
+import { powerpointTypes } from '@src/components/Icons/MimeTypeIcon';
 
 export default function GovernmentHomePage() {
   const { paulyDataListId, siteId } = useSelector(
@@ -99,19 +100,18 @@ export default function GovernmentHomePage() {
       </Link>
       <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Home Page</Text>
       <View>
-        <View style={{ flexDirection: 'row' }}>
-          <TextInput
-            value={newText}
-            onChangeText={e => {
-              setNewText(e);
-            }}
-            style={{padding: 10, paddingLeft: 15, paddingRight: 15, width: width - width * 0.1, marginLeft: 'auto', marginRight: 'auto', borderRadius: 30, borderWidth: 1}}
-          />
-        </View>
+        <TextInput
+          value={newText}
+          onChangeText={e => {
+            setNewText(e);
+          }}
+          style={styles.textInputStyle}
+          placeholder='Header Text'
+        />
         {isAutoUpdatingText  ? (
           <View style={{ height: 14 }} />
         ) : (
-          <SecondStyledButton onPress={() => updatePaulyData('message', newText)} text={'Update Text'} style={{marginTop: 10, marginBottom: 10}} />
+          <StyledButton second={true} onPress={() => updatePaulyData('message', newText)} text={'Update Text'} style={{marginTop: 10, marginBottom: 10, marginLeft: 15, marginRight: 15}} />
         )}
         <View style={{ flexDirection: 'row' }}>
           <Text>Is auto updating text: </Text>
@@ -138,9 +138,11 @@ export default function GovernmentHomePage() {
           }}
           onSetIsShowingUpload={undefined}
           onSetIsShowingMicrosoftUpload={undefined}
+          allowedTypes={powerpointTypes}
         />
       </View>
-      <SecondStyledButton
+      <StyledButton
+        second
         onPress={async () => {
           if (selectedPowerpoint !== undefined) {
             const shareId = await createShareId(selectedPowerpoint);
@@ -149,6 +151,7 @@ export default function GovernmentHomePage() {
             }
           }
         }}
+        style={{marginLeft: 15, marginRight: 15}}
         text='Save Changes'
       />
     </View>

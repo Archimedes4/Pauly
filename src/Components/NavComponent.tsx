@@ -5,11 +5,11 @@
   NavComponent.tsx
   renders svg given width and height for native devices. Uses react-native-svg
 */
-import React, { ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'expo-router';
-import store, { RootState } from '../redux/store';
+import store, { RootState } from '@redux/store';
 import {
   BookIcon,
   CalendarIcon,
@@ -25,34 +25,35 @@ import { Colors } from '../constants';
 
 function NavBarBlock({
   des,
-  expandedMode,
   blockLength,
   children,
   text,
-  width,
-  setIsExpandedMode,
 }: {
   des: string;
-  expandedMode: boolean;
   blockLength: number;
   text: string;
   children: ReactNode;
-  width: number;
-  setIsExpandedMode: () => void;
 }) {
+  const { totalWidth } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
   const [isHover, setIsHover] = useState<boolean>(false);
+  const expandedMode = useSelector((state: RootState) => state.expandedMode);
+  const dispatch = useDispatch();
   return (
-    <Link href={des}>
+    <Link href={des} style={{padding: 0, margin: 0, height: blockLength}}>
       <Pressable
         style={{
           height: blockLength,
-          width: expandedMode ? width * 2.5 : width,
+          width: expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
           backgroundColor: isHover ? Colors.darkGray : 'transparent',
           alignItems: 'center',
+          overflow: 'hidden',
+          margin: 0
         }}
         onHoverIn={() => {
           setIsHover(true);
-          setIsExpandedMode();
+          dispatch(expandedModeSlice.actions.setExpandedMode(true));
         }}
         onHoverOut={() => {
           setIsHover(false);
@@ -66,7 +67,7 @@ function NavBarBlock({
               width: expandedMode ? blockLength * 2.5 : blockLength,
               margin: 0,
               position: expandedMode ? 'absolute' : 'relative',
-              left: expandedMode ? (width - blockLength) / 2 : undefined,
+              left: expandedMode ? ((totalWidth * 0.1) - blockLength) / 2 : undefined,
               alignItems: 'center',
             },
           ]}
@@ -103,6 +104,7 @@ function NavBarBlock({
                   position: 'absolute',
                   left: blockLength,
                   color: Colors.white,
+                  margin: 0,
                   marginLeft: 8,
                 }}
               >
@@ -116,13 +118,10 @@ function NavBarBlock({
   );
 }
 
-export default function NavBarComponent({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) {
+export default function NavBarComponent() {
+  const { height, totalWidth } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
   const { uri, displayName } = useSelector(
     (state: RootState) => state.microsoftProfileData,
   );
@@ -136,17 +135,17 @@ export default function NavBarComponent({
 
   useEffect(() => {
     // checking to see if the width or the height is going to be the limiting factor.
-    if (width * 0.6 > (height * 0.6) / 8) {
+    if (totalWidth * 0.06 > (height * 0.6) / 8) {
       setBlockLength((height * 0.6) / 8);
     } else {
-      setBlockLength(width * 0.6);
+      setBlockLength(totalWidth * 0.06);
     }
-    if (width * 0.7 > (height * 0.7) / 8) {
+    if (totalWidth * 0.07 > (height * 0.7) / 8) {
       setIconLength((height * 0.6) / 8);
     } else {
-      setIconLength(width * 0.5);
+      setIconLength(totalWidth * 0.05);
     }
-  }, [width, height]);
+  }, [totalWidth, height]);
 
   return (
     <Pressable
@@ -164,7 +163,7 @@ export default function NavBarComponent({
           backgroundColor: Colors.maroon,
           height,
           overflow: 'hidden',
-          width: expandedMode ? width * 2.5 : width,
+          width: expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
           alignItems: 'center',
         }}
       >
@@ -173,7 +172,7 @@ export default function NavBarComponent({
             styles.LinkStyle,
             {
               height: blockLength,
-              width: expandedMode ? width * 2.5 : width,
+              width: expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
               margin: 0,
               marginTop: blockLength * 0.4,
               marginBottom: blockLength * 0.4,
@@ -189,10 +188,10 @@ export default function NavBarComponent({
           <View
             style={{
               flexDirection: 'row',
-              width: expandedMode ? blockLength * 2.5 : blockLength,
+              width: expandedMode ? blockLength * 0.25 : blockLength,
               height: blockLength,
               position: expandedMode ? 'absolute' : 'relative',
-              left: expandedMode ? (width - blockLength) / 2 : undefined,
+              left: expandedMode ? ((totalWidth * 0.1) - blockLength) / 2 : undefined,
             }}
             pointerEvents="none"
           >
@@ -230,61 +229,36 @@ export default function NavBarComponent({
         </Pressable>
         <NavBarBlock
           des="/notifications"
-          expandedMode={expandedMode}
           blockLength={blockLength}
           text="Notifications"
-          width={width}
-          setIsExpandedMode={() => {
-            dispatch(expandedModeSlice.actions.setExpandedMode(true));
-          }}
         >
           <HomeIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         <NavBarBlock
           des="/resources"
-          expandedMode={expandedMode}
           blockLength={blockLength}
           text="Resources"
-          width={width}
-          setIsExpandedMode={() => {
-            dispatch(expandedModeSlice.actions.setExpandedMode(true));
-          }}
         >
           <BookIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         <NavBarBlock
           des="/commissions"
-          expandedMode={expandedMode}
           blockLength={blockLength}
           text="Commissions"
-          width={width}
-          setIsExpandedMode={() => {
-            dispatch(expandedModeSlice.actions.setExpandedMode(true));
-          }}
         >
           <MedalIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         <NavBarBlock
           des="/calendar"
-          expandedMode={expandedMode}
           blockLength={blockLength}
           text="Calendar"
-          width={width}
-          setIsExpandedMode={() => {
-            dispatch(expandedModeSlice.actions.setExpandedMode(true));
-          }}
         >
           <CalendarIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         <NavBarBlock
           des="/sports"
-          expandedMode={expandedMode}
           blockLength={blockLength}
           text="Sports"
-          width={width}
-          setIsExpandedMode={() => {
-            dispatch(expandedModeSlice.actions.setExpandedMode(true));
-          }}
         >
           <Image
             source={require('../../assets/images/Football.png')}
@@ -294,26 +268,16 @@ export default function NavBarComponent({
         </NavBarBlock>
         <NavBarBlock
           des="/students"
-          expandedMode={expandedMode}
           blockLength={blockLength}
           text="Students"
-          width={width}
-          setIsExpandedMode={() => {
-            dispatch(expandedModeSlice.actions.setExpandedMode(true));
-          }}
         >
           <StudentSearchIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         {isGovernmentMode ? (
           <NavBarBlock
             des="/government"
-            expandedMode={expandedMode}
             blockLength={blockLength}
             text="Government"
-            width={width}
-            setIsExpandedMode={() => {
-              dispatch(expandedModeSlice.actions.setExpandedMode(true));
-            }}
           >
             <GovernmentIcon width={iconLength} height={iconLength} />
           </NavBarBlock>
@@ -336,14 +300,14 @@ export default function NavBarComponent({
               width: expandedMode ? blockLength * 2.5 : blockLength,
               margin: 0,
               position: 'absolute',
-              left: expandedMode ? (width - blockLength) / 2 : undefined,
+              left: expandedMode ? ((totalWidth * 0.1) - blockLength) / 2 : undefined,
               bottom: height * 0.05,
             },
           ]}
         >
           <View
             style={{
-              width: expandedMode ? blockLength * 2.5 : blockLength,
+              width: expandedMode ? blockLength * 0.25 : blockLength,
               height: iconLength,
               position: expandedMode ? 'absolute' : 'relative',
               left: expandedMode ? 0 : undefined,
@@ -395,9 +359,7 @@ export default function NavBarComponent({
 
 const styles = StyleSheet.create({
   LinkStyle: {
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 'auto',
   },
 });

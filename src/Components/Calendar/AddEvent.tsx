@@ -19,6 +19,7 @@ import updateEvent from '../../utils/updateEvent';
 import { getTextState } from '../../utils/ultility/createUUID';
 import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons';
 import PickerWrapper from '../Pickers/Picker';
+import SecondStyledButton from '../StyledButton';
 
 function GovernmentCalendarOptions({
   width,
@@ -418,66 +419,27 @@ export default function AddEvent({
         {isGovernmentMode ? (
           <GovernmentCalendarOptions width={width} height={height} />
         ) : null}
-        <View
-          style={{
-            width,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
+        <SecondStyledButton
+          onPress={() => {
+            dispatch(
+              addEventSlice.actions.setCreateEventState(
+                loadingStateEnum.loading,
+              ),
+            );
+            updateEvent();
           }}
-        >
-          <Pressable
-            onPress={() => {
-              dispatch(
-                addEventSlice.actions.setCreateEventState(
-                  loadingStateEnum.loading,
-                ),
-              );
-              updateEvent();
-            }}
-            style={{
-              width: 100,
-              height: 50,
-              backgroundColor: '#00a4db',
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 15,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 2,
-            }}
-          >
-            <Text selectable={false} style={{ zIndex: -1 }}>
-              {getTextState(createEventState, {
-                notStarted: isEditing ? 'Save' : 'Create',
-              })}
-            </Text>
-          </Pressable>
-        </View>
+          text={
+            getTextState(createEventState, {
+              notStarted: isEditing ? 'Save' : 'Create',
+            })
+          }
+          style={{marginBottom: 15, marginTop: 15}}
+        />
         {isEditing ? (
-          <Pressable
-            onPress={() => {
-              dispatch(addEventSlice.actions.setIsShowingAddDate(false));
-              deleteEvent();
-            }}
-            style={{
-              width: 100,
-              height: 50,
-              backgroundColor: '#00a4db',
-              alignContent: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 15,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 2,
-            }}
-          >
-            <Text selectable={false} style={{ zIndex: -1 }}>Delete</Text>
-          </Pressable>
+          <SecondStyledButton onPress={() => {
+            dispatch(addEventSlice.actions.setIsShowingAddDate(false));
+            deleteEvent();
+          }} text='Delete' />
         ) : null}
       </View>
     </View>

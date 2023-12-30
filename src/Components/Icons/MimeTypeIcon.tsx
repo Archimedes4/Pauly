@@ -31,7 +31,7 @@ const excelTypes = [
   'application/msexcel',
   'application/vnd.ms-excel',
 ];
-const powerpointTypes = [
+export const powerpointTypes = [
   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   'application/vnd.ms-powerpoint',
   'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
