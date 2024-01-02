@@ -126,14 +126,15 @@ function CommissionPoints() {
   );
 }
 
+function CommissionsBody() {
+
+}
+
 export default function Commissions() {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
   );
-  const { commissionNextLink } = useSelector(
-    (state: RootState) => state.commissions,
-  );
-  const { currentCommissions, selectedCommission, commissionsState, points } =
+  const { currentCommissions, selectedCommission, commissionsState, points, commissionNextLink } =
     useSelector((state: RootState) => state.commissions);
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
@@ -145,26 +146,24 @@ export default function Commissions() {
   const loadData = useCallback(async () => {
     const pointResult = await getPoints();
     if (
-      pointResult.result === loadingStateEnum.success &&
-      pointResult.data !== undefined
+      pointResult.result === loadingStateEnum.success
     ) {
       dispatch(commissionsSlice.actions.setPoints(pointResult.data));
       const commissionsResult = await getCommissions();
       if (
-        (commissionsResult.result === loadingStateEnum.success,
-        commissionsResult.data !== undefined)
+        (commissionsResult.result === loadingStateEnum.success)
       ) {
         dispatch(
           commissionsSlice.actions.setCurrentCommissions(
             commissionsResult.data,
           ),
         );
+        dispatch(
+          commissionsSlice.actions.setCommissionNextLink(
+            commissionsResult.nextLink,
+          ),
+        );
       }
-      dispatch(
-        commissionsSlice.actions.setCommissionNextLink(
-          commissionsResult.nextLink,
-        ),
-      );
       dispatch(
         commissionsSlice.actions.setCommissionsState(commissionsResult.result),
       );
@@ -187,13 +186,12 @@ export default function Commissions() {
     );
     const result = await getCommissions(nextLink, startDate, endDate, claimed);
     if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
+      result.result === loadingStateEnum.success
     ) {
       dispatch(commissionsSlice.actions.setCurrentCommissions(result.data));
+      dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink));
     }
     dispatch(commissionsSlice.actions.setCommissionsState(result.result));
-    dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink));
   }
 
   useEffect(() => {
@@ -298,7 +296,6 @@ export default function Commissions() {
                       </View>
                     </Pressable>
                   )}
-                  keyExtractor={item => `${item?.commissionId}_${createUUID()}`}
                   onEndReachedThreshold={1}
                   onEndReached={() => {
                     if (commissionNextLink !== undefined) {

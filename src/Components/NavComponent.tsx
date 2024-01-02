@@ -19,8 +19,8 @@ import {
   PersonIcon,
   StudentSearchIcon,
 } from './Icons';
-import { expandedModeSlice } from '../redux/reducers/expandedModeReducer';
-import { isShowingProfileBlockSlice } from '../redux/reducers/isShowingProfileBlockReducer';
+import { expandedModeSlice } from '@redux/reducers/expandedModeReducer';
+import { isShowingProfileBlockSlice } from '@redux/reducers/isShowingProfileBlockReducer';
 import { Colors } from '../constants';
 
 function NavBarBlock({

@@ -1,7 +1,7 @@
 import { EdgeInsets } from 'react-native-safe-area-context';
-import { dimentionsSlice } from '../../redux/reducers/dimentionsReducer';
-import store from '../../redux/store';
-import { breakPointMode } from '../../constants';
+import { dimentionsSlice } from '@redux/reducers/dimentionsReducer';
+import store from '@redux/store';
+import { breakPointMode } from '@constants';
 import getMainHeight from '../getMainHeight';
 
 export default function setDimentions(

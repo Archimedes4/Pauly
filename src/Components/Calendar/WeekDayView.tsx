@@ -2,11 +2,11 @@ import { calculateIfShowing, computeEventHeight, findTimeOffset, isTimeOnDay } f
 import { getClassEventsFromDay } from "@utils/classesFunctions";
 import { RootState } from "@redux/store";
 import { Colors, loadingStateEnum } from "@constants";
-import createUUID from "api/CommonFunctions/createUUID";
 import React, { useCallback } from "react";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, View, useColorScheme, Text } from "react-native";
 import { useSelector } from "react-redux";
+import createUUID from "@src/utils/ultility/createUUID";
 
 function EventBlock({
   event,

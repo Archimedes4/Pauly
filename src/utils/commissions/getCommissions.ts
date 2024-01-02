@@ -4,9 +4,9 @@
   November 9 2023
   getCommissions.ts
 */
-import { commissionsSlice } from '../../redux/reducers/commissionsReducer';
-import store from '../../redux/store';
-import { loadingStateEnum } from '../../constants';
+import { commissionsSlice } from '@redux/reducers/commissionsReducer';
+import store from '@redux/store';
+import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 function getFilter(
@@ -180,16 +180,21 @@ export default async function getCommissions(
   endDate?: { date: Date; filter: 'ge' | 'le' },
   claimed?: boolean,
 ): Promise<{
-  result: loadingStateEnum;
-  data?: commissionType[];
+  result: loadingStateEnum.success;
+  data: commissionType[];
   nextLink?: string;
+} | {
+  result: loadingStateEnum.failed
 }> {
   if (nextLink === undefined) {
     store.dispatch(commissionsSlice.actions.setCommissionNextLink(undefined));
   }
   if (claimed === true) {
     const result = await getUnclaimedCommissions();
-    return { result: result.result, data: result.data };
+    if (result.result === loadingStateEnum.success) {
+      return { result: result.result, data: result.data };
+    }   
+    return {result: loadingStateEnum.failed}
   }
   const filter = getFilter(startDate, endDate);
   const result = await callMsGraph(
@@ -339,8 +344,10 @@ async function getCommissionsBatch(
 }
 
 export async function getUnclaimedCommissions(): Promise<{
-  result: loadingStateEnum;
-  data?: commissionType[];
+  result: loadingStateEnum.success;
+  data: commissionType[];
+} | {
+  result: loadingStateEnum.failed
 }> {
   let nextUrl = `https://graph.microsoft.com/v1.0/sites/${
     store.getState().paulyList.siteId

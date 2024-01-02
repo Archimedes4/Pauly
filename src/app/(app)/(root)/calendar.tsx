@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Week from '@components/Calendar/Week';
 import AddEvent from '@components/Calendar/AddEvent';
 import CalendarTypePicker from '@components/CalendarTypePicker';
-import { AddIcon } from '@src/components/Icons';
+import { AddIcon } from '@components/Icons';
 import store, { RootState } from '@redux/store';
 import { Colors, calendarMode } from '@constants';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
@@ -20,7 +20,7 @@ import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { getClassesSchedule } from '@utils/classesFunctions';
 import getEvents from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
-import MonthViewMain from '@src/components/Calendar/MonthView';
+import MonthViewMain from '@components/Calendar/MonthView';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 
@@ -179,9 +179,6 @@ export default function Calendar() {
         {currentBreakPoint >= 1 ? null : (
           <BackButton to="/home" style={{ zIndex: 100 }} />
         )}
-        <Pressable onPress={() => deleteEvents()}>
-          <Text>DELETE</Text>
-        </Pressable>
         <TopView width={width} height={height * 0.1} />
       </View>
       <View style={{ height: height * 0.9 }}>

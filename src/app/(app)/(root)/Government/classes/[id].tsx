@@ -126,13 +126,12 @@ export default function GovernmentClassesEdit() {
   async function loadSchoolYears() {
     const result = await getSchoolYears(schoolYearNextLink);
     if (
-      result.result === loadingStateEnum.success &&
-      result.events !== undefined
+      result.result === loadingStateEnum.success
     ) {
       setSchoolYears(result.events);
+      setSchoolYearNextLink(result.nextLink);
     }
     setSchoolYearState(result.result);
-    setSchoolYearNextLink(result.nextLink);
   }
 
   async function loadTimetable() {

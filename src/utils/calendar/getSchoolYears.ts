@@ -9,9 +9,11 @@ import { Colors, loadingStateEnum } from '../../constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 export default async function getSchoolYears(nextLink?: string): Promise<{
-  result: loadingStateEnum;
-  events?: eventType[];
+  result: loadingStateEnum.success;
+  events: eventType[];
   nextLink?: string;
+} | {
+  result: loadingStateEnum.failed
 }> {
   const result = await callMsGraph(
     nextLink ||

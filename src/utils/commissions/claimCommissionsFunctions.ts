@@ -5,7 +5,7 @@
   claimCommissionsFunctions.ts
   Claim Commission function, this is mainly the part of formating call to commission api.
 */
-import { loadingStateEnum } from '../../constants';
+import { loadingStateEnum } from '@constants';
 import createUUID from '../ultility/createUUID';
 import callMsGraph from '../ultility/microsoftAssets';
 

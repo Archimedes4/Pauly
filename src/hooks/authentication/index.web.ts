@@ -5,12 +5,11 @@
   authentiation/index.web.ts
   authentication component web, using msal library.
 */
-// import { useMsal } from "@azure/msal-react";
 import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
 import store from '@redux/store';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { useMsal } from '@azure/msal-react';
-import { scopes } from '@constants';
+import { governmentScopes, scopes } from '@constants';
 
 export const refresh = () => {
   const { instance } = useMsal();
@@ -70,7 +69,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
       console.log('want red');
       await setWantGovernment(government);
     }
-    instance.loginRedirect({ scopes });
+    instance.loginRedirect({ scopes: (government === true) ? governmentScopes : scopes });
   }
 
   return loginFunction;

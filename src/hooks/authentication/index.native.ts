@@ -45,7 +45,7 @@ export function useSilentLogin(): () => Promise<void> {
 
 export function useInvokeLogin(): (government?: boolean) => Promise<void> {
   const discovery = useAutoDiscovery(
-    // @ts-ignore
+    // @ts-expect-error
     `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
 
@@ -56,7 +56,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
 
   const [authRequest, , promptAsync] = useAuthRequest(
     {
-      // @ts-ignore
+      // @ts-expect-error
       clientId: process.env.EXPO_PUBLIC_CLIENTID,
       redirectUri,
       scopes,

@@ -14,6 +14,9 @@ import { Colors, loadingStateEnum, styles } from '@constants';
 import { Link } from 'expo-router';
 import StyledButton from '@src/components/StyledButton';
 import { powerpointTypes } from '@src/components/Icons/MimeTypeIcon';
+import { getTextState } from '@src/utils/ultility/createUUID';
+import { createShareId, getDataWithShareID, getFileWithShareID } from '@src/utils/ultility/handleShareID';
+import ProgressView from '@src/components/ProgressView';
 
 export default function GovernmentHomePage() {
   const { paulyDataListId, siteId } = useSelector(
@@ -27,12 +30,12 @@ export default function GovernmentHomePage() {
   const [newMessageState, setNewMessageState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
+  const [powerpointState, setPowerpointState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
 
   // New Data
   const [newText, setNewText] = useState(
-    store.getState().paulyData.message,
-  );
-  const [serverText, setServerText] = useState(
     store.getState().paulyData.message,
   );
   const [newAnimationSpeed, setNewAnnimationSpeed] = useState(
@@ -41,30 +44,17 @@ export default function GovernmentHomePage() {
   const [selectedPowerpoint, setSelectedPowerpoint] = useState<
     microsoftFileType | undefined
   >(undefined);
+
+  //Settings
   const [isAutoUpdatingText, setIsAutoUpdatingText] = useState<boolean>(false);
 
   async function loadCurrentPaulyData() {
     await getCurrentPaulyData();
+    setNewText(store.getState().paulyData.message)
+    setSelectedPowerpoint(await getDataWithShareID(store.getState().paulyData.powerpointShare));
     setLoadContentLoadingState(loadingStateEnum.success);
   }
-  async function createShareId(
-    item: microsoftFileType,
-  ): Promise<string | undefined> {
-    const data = {
-      type: 'view',
-      scope: 'organization',
-    };
-    const result = await callMsGraph(
-      `${item.callPath}/createLink`,
-      'POST',
-      JSON.stringify(data),
-    );
-    if (result.ok) {
-      const data = await result.json();
-      return data.shareId;
-    }
-    return undefined;
-  }
+  
   async function updatePaulyData(key: string, data: string) {
     const dataOut: any = {};
     dataOut[key] = data;
@@ -92,6 +82,18 @@ export default function GovernmentHomePage() {
   useEffect(() => {
     loadCurrentPaulyData();
   }, []);
+
+  if (loadContentLoadingState === loadingStateEnum.loading) {
+    return (
+      <View style={{ width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+        <Link href="/government">
+          <Text>Back</Text>
+        </Link>
+        <ProgressView width={14} height={14} />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
@@ -152,7 +154,9 @@ export default function GovernmentHomePage() {
           }
         }}
         style={{marginLeft: 15, marginRight: 15}}
-        text='Save Changes'
+        text={
+          getTextState(newMessageState)
+        }
       />
     </View>
   );

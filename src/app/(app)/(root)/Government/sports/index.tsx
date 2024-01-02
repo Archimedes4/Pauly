@@ -11,7 +11,7 @@ import { RootState } from '@redux/store';
 import { getSports } from '@utils/sports/sportsFunctions';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
-import SecondStyledButton from "@src/components/StyledButton";
+import StyledButton from "@src/components/StyledButton";
 
 function GovernmentSportsBody() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -56,12 +56,12 @@ function GovernmentSportsBody() {
       <FlatList 
         data={currentSports}
         renderItem={item => (
-          <Link
-            href={`/government/sports/${item.item.id}`}
-            key={item.item.id}
-          >
-            <Text>{item.item.name}</Text>
-          </Link>
+          <StyledButton 
+            key={item.item.id}  
+            to={`/government/sports/${item.item.id}`}
+            text={item.item.name}
+            style={{marginLeft: 15, marginRight: 15, marginTop: 15}}
+          />
         )}
       />
     )
@@ -87,8 +87,8 @@ export default function GovernmentSports() {
         </Text>
       </View>
       <GovernmentSportsBody />
-      <SecondStyledButton style={{marginLeft: 10, marginRight: 10, marginBottom: 15}} to="/government/sports/create" text='Create Sport'/>
-      <SecondStyledButton style={{marginLeft: 10, marginRight: 10, marginBottom: 15}} to="/government/sports/posts" text='Posts'/>
+      <StyledButton second style={{marginLeft: 10, marginRight: 10, marginBottom: 15}} to="/government/sports/create" text='Create Sport'/>
+      <StyledButton second style={{marginLeft: 10, marginRight: 10, marginBottom: 15}} to="/government/sports/posts" text='Posts'/>
     </View>
   );
 }

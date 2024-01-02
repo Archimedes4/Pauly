@@ -108,7 +108,6 @@ export enum calendarMode {
 export enum resourceMode {
   home,
   sports,
-  advancement,
   schoolEvents,
   annoucments,
   fitness,
@@ -562,7 +561,6 @@ export const scopes = [
   'User.Read',
   'User.ReadBasic.All',
   'Sites.Read.All',
-  'Sites.Manage.All',
   'ChannelMessage.Read.All',
   'Chat.ReadWrite',
   'Calendars.ReadWrite',
@@ -570,9 +568,23 @@ export const scopes = [
   'Group.ReadWrite.All',
   'Tasks.ReadWrite',
   'Channel.ReadBasic.All',
+];
+
+export const governmentScopes = [
+  'User.Read',
+  'User.ReadBasic.All',
+  'Sites.Read.All',
+  'ChannelMessage.Read.All',
+  'Chat.ReadWrite',
+  'Calendars.ReadWrite',
+  'Team.ReadBasic.All',
+  'Group.ReadWrite.All',
+  'Tasks.ReadWrite',
+  'Channel.ReadBasic.All',
+  'Sites.Manage.All',
   'Application.ReadWrite.All',
   'TeamMember.Read.All',
-];
+]
 
 //styles
 export const styles = StyleSheet.create({

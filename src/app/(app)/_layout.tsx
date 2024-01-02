@@ -9,7 +9,7 @@ import React, { useCallback } from 'react';
 import useIsConnected from '@hooks/useIsConnected';
 import { Colors } from '@constants';
 import { OfflineIcon } from '@components/Icons';
-import { Stack } from 'expo-router';
+import { Slot, Stack } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +21,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
 function Loading() {
+  console.log("INit 12")
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
@@ -81,6 +82,7 @@ export default function Layout() {
   });
 
   const onLayoutRootView = useCallback(async () => {
+    console.log("fonts12")
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
@@ -89,6 +91,7 @@ export default function Layout() {
   if (!fontsLoaded) {
     return null;
   }
+  
 
   if (isLoading && isConnected) {
     return <Loading />;
@@ -97,20 +100,7 @@ export default function Layout() {
   if (isConnected) {
     return (
       <View onLayout={onLayoutRootView}>
-        <Stack>
-          <Stack.Screen
-            name="(root)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(auth)"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
+        <Slot />
       </View>
     );
   }

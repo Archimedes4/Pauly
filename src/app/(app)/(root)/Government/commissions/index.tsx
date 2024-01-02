@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import getCommissions from '@utils/commissions/getCommissions';
@@ -9,9 +9,9 @@ import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, submissionTypeEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
+import StyledButton from '@src/components/StyledButton';
 
-export default function GovernmentCommissions() {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+function GovernmentCommissionsBody() {
   const [commissions, setCommissions] = useState<commissionType[]>([]);
   const [commissionsState, setCommissionsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -31,49 +31,60 @@ export default function GovernmentCommissions() {
   useEffect(() => {
     loadData();
   }, []);
+
+  if (commissionsState === loadingStateEnum.loading) {
+    return (
+      <View style={{
+        flex:1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (commissionsState === loadingStateEnum.success) {
+    return (
+      <FlatList 
+        data={commissions}
+        renderItem={(commission) => (
+          <CommissionBlock
+            key={`Commission_${
+              commission.item.commissionId
+            }_${createUUID()}`}
+            commission={commission.item}
+          />
+        )}
+      />
+    )
+  }
+
+  return (
+    <View style={{
+      flex:1,
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <Text>Failed</Text>
+    </View>
+  )
+}
+
+export default function GovernmentCommissions() {
+  const { height, width } = useSelector((state: RootState) => state.dimentions);
+
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
-      <View style={{ height: height * 0.1 }}>
-        <Link href={'/government'}>
-          <Text>Back</Text>
-        </Link>
-        <View
-          style={{
-            width,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Text>Commissions</Text>
-        </View>
-      </View>
-      <View style={{ height: height * 0.85 }}>
-        {commissionsState === loadingStateEnum.loading ? (
-          <Text>Loading</Text>
-        ) : (
-          <>
-            {commissionsState === loadingStateEnum.success ? (
-              <ScrollView style={{ height: height * 0.85 }}>
-                {commissions.map(commission => (
-                  <CommissionBlock
-                    key={`Commission_${
-                      commission.commissionId
-                    }_${createUUID()}`}
-                    commission={commission}
-                  />
-                ))}
-              </ScrollView>
-            ) : (
-              <Text>Failed</Text>
-            )}
-          </>
-        )}
-      </View>
-      <View style={{ height: height * 0.05 }}>
-        <Link href={'/government/commissions/create'}>
-          Create New Commission
-        </Link>
-      </View>
+      <Link href={'/government'}>
+        <Text>Back</Text>
+      </Link>
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Commissions</Text>
+      <GovernmentCommissionsBody />
+      <StyledButton style={{marginLeft: 15, marginRight: 15, marginBottom: 15, marginTop: 5}} to='/government/commissions/create' second text='Create New Commission'/>  
     </View>
   );
 }

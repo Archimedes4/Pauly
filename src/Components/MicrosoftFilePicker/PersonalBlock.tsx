@@ -4,7 +4,7 @@ import React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
 import MimeTypeIcon from "../Icons/MimeTypeIcon";
-import createUUID from "api/CommonFunctions/createUUID";
+import createUUID from "@utils/ultility/createUUID";
 import ProgressView from "../ProgressView";
 
 function PersonalBlockBody({

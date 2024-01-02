@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
-import store from '../../redux/store';
-import { authenticationCallSlice } from '../../redux/reducers/authenticationCallReducer';
+import store from '@redux/store';
+import { authenticationCallSlice } from '@redux/reducers/authenticationCallReducer';
 
 export default async function callMsGraph(
   url: string,

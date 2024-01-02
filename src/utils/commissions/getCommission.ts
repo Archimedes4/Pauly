@@ -4,13 +4,15 @@
   November 10 2023
   getCommission.ts
 */
-import store from '../../redux/store';
-import { loadingStateEnum } from '../../constants';
+import store from '@redux/store';
+import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 export default async function getCommission(
   commissionId: string,
-): Promise<{ result: loadingStateEnum; data?: commissionType }> {
+): Promise<{ result: loadingStateEnum.success; data: commissionType } | {
+  result: loadingStateEnum.failed
+}> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId

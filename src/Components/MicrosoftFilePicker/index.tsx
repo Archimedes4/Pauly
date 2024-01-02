@@ -5,22 +5,20 @@
   MicrosoftFilePicker.tsx
   Can select file from one drive a share point link or a teams channel that the user is in.
 */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Pressable,
   View,
   Text,
   TextInput,
-  ScrollView,
   FlatList,
 } from 'react-native';
 import Picker from '../Pickers/Picker';
-import callMsGraph from '../../utils/ultility/microsoftAssets';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import {
-  getUserMicrosoftFiles,
   getUserTeams,
-} from '../../utils/microsoftFilePickerFunctions';
-import { Colors, loadingStateEnum } from '../../constants';
+} from '@utils/microsoftFilePickerFunctions';
+import { loadingStateEnum } from '@constants';
 import PersonalBlock from './PersonalBlock';
 
 enum MicrosoftUploadModeType {

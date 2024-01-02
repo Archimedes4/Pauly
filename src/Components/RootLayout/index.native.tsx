@@ -17,7 +17,7 @@ import {
 import store, { RootState } from '@redux/store';
 import { Colors, paperTheme } from '@constants';
 import setDimentions from '@utils/ultility/setDimentions';
-import { Slot } from 'expo-router';
+import { Slot, usePathname } from 'expo-router';
 import getMainHeight from '@utils/getMainHeight';
 
 const windowDimensions = Dimensions.get('window');
@@ -34,8 +34,10 @@ function AppCore() {
   );
   const [dimensions, setStateDimensions] = useState(windowDimensions);
   const insets = useSafeAreaInsets();
+  const path = usePathname();
 
   useEffect(() => {
+    console.log(path)
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       setStateDimensions(window);
       setDimentions(

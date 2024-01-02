@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  1 January 2024
+  !IMPORTANT! went updating pdfjs make sure to change imports marked !IMPORTANT! update import
+  Pdf web, converts a pdf to images. Used in the home view.
+*/
 import { Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -5,10 +12,9 @@ import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import store, { RootState } from '@redux/store';
 import { pdfDataSlice } from '@redux/reducers/pdfDataReducer';
+import Head from 'expo-router/head';
 
-// PDFJS.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${PDFJS.version}/legacy/build/pdf.worker.min.js`;
-
-export default function PDFView({ width }: { width: number }) {
+function PDFViewBody({ width }: { width: number }) {
   const { powerpointBlob } = useSelector((state: RootState) => state.paulyData);
   const { images, pageNumber } = useSelector(
     (state: RootState) => state.pdfData,
@@ -16,35 +22,41 @@ export default function PDFView({ width }: { width: number }) {
   const [imageHeight, setImageHeight] = useState<number>(0);
 
   async function convertPdfToImages(url: string) {
-    const imagesArray: string[] = [];
-    const dataResult = await fetch(url);
-    if (dataResult.ok) {
-      const blob = await dataResult.blob();
-      const file = new Blob([blob], { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      const docInitParams: DocumentInitParameters = { url: fileURL };
+    var { pdfjsLib } = globalThis;
+    if (pdfjsLib !== undefined) {
+      /* !IMPORTANT! update import */
+      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdfjs-4.0.379-dist/build/pdf.worker.mjs';
 
-      // const pdf = await pdfjsLib.getDocument(docInitParams).promise;
-      // const canvas = document.createElement('canvas'); // Fail
-      // for (let i = 0; i < pdf.numPages; i += 1) {
-      //   const page = await pdf.getPage(i + 1);
-      //   const viewport = page.getViewport({ scale: 1 });
-      //   const context = canvas.getContext('2d'); // Fail
-      //   canvas.height = viewport.height; // Fail
-      //   canvas.width = viewport.width; // Fail
-      //   if (context !== null) {
-      //     await page.render({ canvasContext: context, viewport }).promise;
-      //     imagesArray.push(canvas.toDataURL());
-      //   }
-      // }
-      // canvas.remove();
-      // store.dispatch(pdfDataSlice.actions.setImages(imagesArray));
+      const imagesArray: string[] = [];
+      const dataResult = await fetch(url);
+      if (dataResult.ok) {
+        const blob = await dataResult.blob();
+        const file = new Blob([blob], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        const docInitParams: DocumentInitParameters = { url: fileURL };
+
+        const pdf = await pdfjsLib.getDocument(docInitParams).promise;
+        const canvas = document.createElement('canvas'); // Fail
+        for (let i = 0; i < pdf.numPages; i += 1) {
+          const page = await pdf.getPage(i + 1);
+          const viewport = page.getViewport({ scale: 1 });
+          const context = canvas.getContext('2d'); // Fail
+          canvas.height = viewport.height; // Fail
+          canvas.width = viewport.width; // Fail
+          if (context !== null) {
+            await page.render({ canvasContext: context, viewport }).promise;
+            imagesArray.push(canvas.toDataURL());
+          }
+        }
+        canvas.remove();
+        store.dispatch(pdfDataSlice.actions.setImages(imagesArray));
+      }
     }
   }
 
   useEffect(() => {
     convertPdfToImages(powerpointBlob);
-  }, [powerpointBlob]);
+  }, [powerpointBlob, globalThis.pdfjsLib]);
 
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {
@@ -103,5 +115,17 @@ export default function PDFView({ width }: { width: number }) {
       </GestureDetector>
     );
   }
-  return null;
+  return null
+}
+
+export default function PDFView({ width }: { width: number }) {
+  return (
+    <>
+      <Head>
+        {/* !IMPORTANT! update import */}
+        <script src="/pdfjs-4.0.379-dist/build/pdf.mjs" type="module"></script>
+      </Head>
+      <PDFViewBody width={width}/>
+    </>
+  );
 }

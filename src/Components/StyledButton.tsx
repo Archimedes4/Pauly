@@ -72,7 +72,7 @@ export default function StyledButton({
       }}
       style={[
         {
-          backgroundColor: isAlt ? Colors.lightGray:Colors.darkGray,
+          backgroundColor: ((second === true) ? isAlt:!isAlt) ? Colors.lightGray:Colors.darkGray,
           shadowColor: Colors.black,
           shadowOffset: { width: 2, height: 2 },
           shadowOpacity: 0.8,
@@ -84,7 +84,7 @@ export default function StyledButton({
         style,
       ]}
     >
-      <Text style={{ fontSize: 16, color: isAlt ? Colors.black:Colors.white, fontFamily: 'Roboto' }}>{text}</Text>
+      <Text style={{ fontSize: 16, color: ((second === true) ? isAlt:!isAlt) ? Colors.black:Colors.white, fontFamily: 'Roboto' }}>{text}</Text>
       {caption !== undefined ? (
         <Text style={{ fontSize: 12 }}>{caption}</Text>
       ) : null}

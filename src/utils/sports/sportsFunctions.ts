@@ -7,7 +7,7 @@
 import store from '@redux/store';
 import { dataContentTypeOptions, loadingStateEnum, postType } from '@constants';
 import batchRequest from '@utils/ultility/batchRequest';
-import getFileWithShareID from '@utils/ultility/getFileWithShareID';
+import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 
 export async function getSports(): Promise<{

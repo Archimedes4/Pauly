@@ -22,7 +22,7 @@ import { getTeams } from '@utils/microsoftGroupsFunctions';
 import ProgressView from '@components/ProgressView';
 import MicrosoftFilePicker from '@src/components/MicrosoftFilePicker';
 import { CloseIcon } from '@src/components/Icons';
-import getFileWithShareID from '@utils/ultility/getFileWithShareID';
+import { getFileWithShareID } from '@src/utils/ultility/handleShareID';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import { getSport } from '@src/utils/sports/sportsFunctions';
 import SecondStyledButton from '@src/components/StyledButton';
