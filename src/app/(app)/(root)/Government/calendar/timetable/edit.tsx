@@ -7,7 +7,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   Pressable,
   ScrollView,
 } from 'react-native';
@@ -15,13 +14,14 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import createUUID from '@utils/ultility/createUUID';
+import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '@src/components/Icons';
 import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
 import ListItem from '@src/components/StyledButton';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
+import StyledButton from '@src/components/StyledButton';
 
 // TO DO longest amount of school days is 20 make sure this is enforced
 export default function GovernmentTimetableEdit() {
@@ -192,16 +192,10 @@ export default function GovernmentTimetableEdit() {
           </View>
         )}
       </View>
-      <Button
-        title={
-          createTimetableLoadingState === loadingStateEnum.notStarted
-            ? 'Create Timetable'
-            : createTimetableLoadingState === loadingStateEnum.loading
-              ? 'Loading'
-              : createTimetableLoadingState === loadingStateEnum.success
-                ? 'Success'
-                : 'Failed'
-        }
+      <StyledButton 
+        text={getTextState(createTimetableLoadingState, {
+          notStarted: 'Create Timetable'
+        })}
         onPress={() => {
           if (createTimetableLoadingState === loadingStateEnum.notStarted) {
             createTimetable();
@@ -234,8 +228,8 @@ function SchoolDays({
           />
         ))}
       </ScrollView>
-      <Button
-        title="Add"
+      <StyledButton 
+        text="Add"
         onPress={() => {
           setSchoolDays([
             ...schoolDays,

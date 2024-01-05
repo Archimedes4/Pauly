@@ -5,7 +5,6 @@ import { paulyListSlice } from '@redux/reducers/paulyListReducer';
 
 export default async function getPaulyLists() {
   const getRootSiteIdResult = await callMsGraph(
-    // @ts-expect-error
     `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/sites/root?$select=id`,
     'GET',
   );
@@ -40,8 +39,8 @@ export default async function getPaulyLists() {
         eventDataExtensionId:
           paulyListResultData.value[0].fields.eventDataExtensionId,
         classExtensionId: paulyListResultData.value[0].fields.classExtensionId,
-        resourceExtensionId:
-          paulyListResultData.value[0].fields.resourceExtensionId,
+        tagedResourceId:
+          paulyListResultData.value[0].fields.tagedResourceId,
         roomListId: paulyListResultData.value[0].fields.roomListId,
       };
       store.dispatch(paulyListSlice.actions.setPaulyList(paulyListData));

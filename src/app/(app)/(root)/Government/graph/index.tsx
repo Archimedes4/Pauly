@@ -1,12 +1,14 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, FlatList, SectionList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import PickerWrapper from '@components/Pickers/Picker';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, loadingStateEnum, styles } from '@constants';
 import { RootState } from '@redux/store';
 import { getTeams } from '@utils/microsoftGroupsFunctions';
 import { Link } from 'expo-router';
+import StyledButton from '@src/components/StyledButton';
+import ProgressView from '@src/components/ProgressView';
 
 type listType = {
   displayName: string;
@@ -23,6 +25,168 @@ enum graphMode {
   list,
   group,
   extension,
+}
+
+
+function GroupBody({groupState, groups}:{groupState: loadingStateEnum, groups: groupType[]}) {
+  if (groupState === loadingStateEnum.loading) {
+    return (
+      <View style={{
+        flex:1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (groupState === loadingStateEnum.success) {
+    return (
+      <FlatList 
+        data={groups}
+        renderItem={(group) => (
+          <StyledButton
+            to={`/government/graph/group/${group.item.id}`}
+            key={`group_${group.item.id}`}
+            text={group.item.name}
+            style={{marginLeft: 15, marginRight: 15, marginTop: 20, marginBottom: (group.index === (groups.length - 1)) ? 15:0}}
+          />
+        )}
+      />
+    )
+  }
+  return (
+    <View style={{
+      flex:1,
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <Text>Failed</Text>
+    </View>
+  )
+}
+
+function ListBody({listState, lists}:{listState: loadingStateEnum, lists: listType[]}) {
+  const ignoredLists = ['2b86ba89-0262-4906-9247-bfd1260fb68e', '1f4cd053-dd6b-4e40-bb9b-803cbc74e872']
+  if (listState === loadingStateEnum.loading) {
+    return (
+      <View style={{
+        flex:1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (listState === loadingStateEnum.success) {
+    return (
+      <>
+        <FlatList 
+          data={lists}
+          renderItem={(list) => {
+            if (!ignoredLists.includes(list.item.listId)){
+              return (
+                <StyledButton 
+                  key={`${list.item.listId}Link`}
+                  to={`/government/graph/list/${list.item.listId}`}
+                  text={list.item.displayName}
+                  caption={list.item.listId}
+                  style={{marginLeft: 15, marginRight: 15, marginTop: 20, marginBottom: (list.index === (lists.length - 1)) ? 15:0}}
+                />
+              )
+            } 
+            return null
+          }}
+        />
+        <StyledButton
+          second
+          to="/government/graph/list/create"
+          text='Create List'
+          style={{
+            marginLeft: 15,
+            marginRight: 15,
+            marginBottom: 20,
+            marginTop: 20
+          }}
+        />
+      </>
+    )
+  }
+  return (
+    <View style={{
+      flex:1,
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <Text>Failed</Text>
+    </View>
+  )
+}
+
+function ExtensionBody({extensionState, extensions, applicationExtensions}:{extensionState: loadingStateEnum, extensions: extensionType[], applicationExtensions: extensionType[]}) {
+  if (extensionState === loadingStateEnum.loading) {
+    return (
+      <View style={{
+        flex:1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (extensionState === loadingStateEnum.success) {
+    return (
+      <SectionList 
+        sections={[
+          {
+            title: "Pauly Extensions",
+            data: applicationExtensions
+          },
+          {
+            title: "Extensions",
+            data: extensions
+          }
+        ]}
+        renderItem={({item}) => {
+          return (
+            <StyledButton 
+              key={`${item.id}Link`}
+              to={`/government/graph/extension/${item.id}`}
+              text={item.description}
+              caption={item.id}
+              style={styles.listStyle}
+            />
+          )
+        }}
+        renderSectionHeader={({section: {title}}) => (
+          <Text>{title}</Text>
+        )}
+      />
+    )
+  }
+  return (
+    <View style={{
+      flex:1,
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <Text>Failed</Text>
+    </View>
+  )
 }
 
 export default function MicrosoftGraphOverview() {
@@ -93,7 +257,6 @@ export default function MicrosoftGraphOverview() {
   }
 
   async function getExtensions() {
-    // @ts-expect-error
     let schemaExtensionsUrl = `https://graph.microsoft.com/v1.0/schemaExtensions?$filter=owner%20eq%20'${process.env.EXPO_PUBLIC_CLIENTID}'`;
     const resultData: extensionType[] = [];
     while (schemaExtensionsUrl !== '') {
@@ -147,7 +310,7 @@ export default function MicrosoftGraphOverview() {
       <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text>Microsoft Graph Overview</Text>
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Microsoft Graph Overview</Text>
       <PickerWrapper
         selectedIndex={selectedGraphMode}
         onSetSelectedIndex={setSelectedGraphMode}
@@ -158,126 +321,15 @@ export default function MicrosoftGraphOverview() {
         <Text>Groups</Text>
         <Text>Extensions</Text>
       </PickerWrapper>
-      <ScrollView style={{ height: height * 0.6 }}>
-        {selectedGraphMode === graphMode.list ? (
-          <View>
-            {listLoadingState === loadingStateEnum.loading ? (
-              <Text>Loading</Text>
-            ) : (
-              <View>
-                {listLoadingState === loadingStateEnum.success ? (
-                  <View>
-                    {lists.map((item: listType) => (
-                      <Link
-                        key={`${item.listId}Link`}
-                        href={`/government/graph/list/edit/${item.listId}`}
-                      >
-                        <View key={item.listId}>
-                          {
-                            // TO DO PRODuction fix these ids
-                            item.listId !==
-                              '2b86ba89-0262-4906-9247-bfd1260fb68e' &&
-                            item.listId !==
-                              '1f4cd053-dd6b-4e40-bb9b-803cbc74e872' ? (
-                              <View
-                                style={{
-                                  marginBottom: 5,
-                                  borderColor: 'black',
-                                  borderWidth: 5,
-                                }}
-                              >
-                                <Text>{item.displayName}</Text>
-                                <Text>{item.listId}</Text>
-                              </View>
-                            ) : null
-                          }
-                        </View>
-                      </Link>
-                    ))}
-                  </View>
-                ) : (
-                  <Text>Failed</Text>
-                )}
-              </View>
-            )}
-          </View>
-        ) : null}
-        {selectedGraphMode === graphMode.group ? (
-          <View>
-            {groupLoadingState === loadingStateEnum.loading ? (
-              <Text>Loading</Text>
-            ) : (
-              <View>
-                {groupLoadingState === loadingStateEnum.success ? (
-                  <View>
-                    {groups.map(group => (
-                      <Link
-                        href={`/government/graph/group/${group.id}`}
-                        key={`group_${group.id}`}
-                      >
-                        <View>
-                          <Text>{group.name}</Text>
-                        </View>
-                      </Link>
-                    ))}
-                  </View>
-                ) : (
-                  <Text>Failed</Text>
-                )}
-              </View>
-            )}
-          </View>
-        ) : null}
-        {selectedGraphMode === graphMode.extension ? (
-          <View>
-            {schemaLoadingState === loadingStateEnum.loading ? (
-              <Text>Loading</Text>
-            ) : (
-              <View>
-                {schemaLoadingState === loadingStateEnum.success ? (
-                  <View>
-                    <View style={{ margin: 10 }}>
-                      <Text>Application Extensions</Text>
-                    </View>
-                    {applicationExtensions.map(extension => (
-                      <Link
-                        href={`/government/graph/extension/${extension.id}`}
-                        key={`extension_${extension.id}`}
-                        style={{ borderWidth: 2, borderColor: Colors.black }}
-                      >
-                        <View>
-                          <Text>{extension.id}</Text>
-                          <Text>{extension.description}</Text>
-                        </View>
-                      </Link>
-                    ))}
-                    <View style={{ margin: 10 }}>
-                      <Text>Tenant Extensions</Text>
-                    </View>
-                    {extensions.map(extension => (
-                      <Link
-                        href={`/government/graph/extension/${extension.id}`}
-                        key={`extension_${extension.id}`}
-                        style={{ borderWidth: 2, borderColor: Colors.black }}
-                      >
-                        <View>
-                          <Text>{extension.id}</Text>
-                          <Text>{extension.description}</Text>
-                        </View>
-                      </Link>
-                    ))}
-                  </View>
-                ) : (
-                  <Text>Failed</Text>
-                )}
-              </View>
-            )}
-          </View>
-        ) : null}
-      </ScrollView>
-      <Link href="/government/graph/list/create">
-        <Text>Create List</Text>
-      </Link>
+      {selectedGraphMode === graphMode.list ? (
+        <ListBody listState={listLoadingState} lists={lists}/>
+      ) : null}
+      {selectedGraphMode === graphMode.group ? (
+        <GroupBody groupState={groupLoadingState} groups={groups}/>
+      ) : null}
+      {selectedGraphMode === graphMode.extension ? (
+        <ExtensionBody extensionState={schemaLoadingState} extensions={extensions} applicationExtensions={applicationExtensions}/>
+      ) : null}
     </View>
   );
 }

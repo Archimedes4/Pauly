@@ -19,7 +19,6 @@ import CommissionsView from '@components/Commissions/CommissionsView';
 import { commissionsSlice } from '@redux/reducers/commissionsReducer';
 import { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
-import createUUID from '@utils/ultility/createUUID';
 import getPoints from '@utils/commissions/getPoints';
 import getCommissions from '@utils/commissions/getCommissions';
 import ProgressView from '@components/ProgressView';

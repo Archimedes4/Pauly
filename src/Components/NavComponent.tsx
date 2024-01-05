@@ -208,14 +208,15 @@ export default function NavBarComponent() {
               />
             </View>
             {expandedMode ? (
-              <Text
+              <>
+                <Text
                 style={{
                   fontFamily: 'Gochi-Hand',
                   color: Colors.white,
                   position: 'absolute',
                   top: blockLength * 0.3,
                   left: blockLength * 0.65,
-                  fontSize: blockLength * 0.7,
+                  fontSize: blockLength * 0.75,
                   textShadowColor: 'rgba(0, 0, 0, 1)',
                   textShadowOffset: { width: 4, height: 2 },
                   textShadowRadius: 0,
@@ -224,13 +225,26 @@ export default function NavBarComponent() {
               >
                 auly
               </Text>
+              <View style={{
+                backgroundColor: Colors.darkGray,
+                position: 'absolute',
+                top: blockLength * 0.9,
+                left: blockLength * 0.3,
+                borderRadius: 30,
+                zIndex: -10
+              }}>
+                <Text style={{fontSize: blockLength * 0.25, margin: 5, marginLeft: 15, marginRight: 15, color: Colors.white}}>Beta</Text>
+              </View>
+              </>
+              
             ) : null}
+            
           </View>
         </Pressable>
         <NavBarBlock
-          des="/notifications"
+          des="/"
           blockLength={blockLength}
-          text="Notifications"
+          text="Home"
         >
           <HomeIcon width={iconLength} height={iconLength} />
         </NavBarBlock>

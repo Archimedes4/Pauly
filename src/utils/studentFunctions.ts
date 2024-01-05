@@ -16,8 +16,7 @@ function checkIfStudent(role: string): {
 } {
   if (role !== null && role.length >= 20) {
     const reversed = role.split('').reverse().join('');
-    // @ts-expect-error
-    const domainName = process.env.EXPO_PUBLIC_DOMAINNAME
+    const domainName = process.env.EXPO_PUBLIC_DOMAINNAME ? process.env.EXPO_PUBLIC_DOMAINNAME:""
     const domainLength = domainName.length;
     const slice = reversed.slice(0, domainLength);
     if (slice === domainName.split('').reverse().join('')) {
@@ -91,7 +90,6 @@ export async function getUsers(url?: string, search?: string) {
     for (let index = 0; index < data.value.length; index += 1) {
       userIds.push(data.value[index].id);
     }
-    console.log('Mark One');
     // Getting selected user images from student files list in a batch request.
     const batchResult = await largeBatch(undefined, {
       firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
@@ -107,13 +105,11 @@ export async function getUsers(url?: string, search?: string) {
       batchResult.result === loadingStateEnum.success &&
       batchResult.data !== undefined
     ) {
-      console.log('Mark Two');
       for (
         let batchIndex = 0;
         batchIndex < batchResult.data.length;
         batchIndex += 1
       ) {
-        console.log('Mark Three');
         if (batchResult.data[batchIndex].status === 200) {
           // TO DO OK
           if (batchResult.data[batchIndex].body.value.length === 1) {

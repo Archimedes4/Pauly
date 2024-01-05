@@ -7,7 +7,7 @@
 */
 /* eslint-disable global-require */
 /* This is for the requires which is not possible to not use require and docs for relevant resources use requrire. */
-import { View, Text, Pressable, Image } from 'react-native';
+import { View, Text, Pressable, Image, Platform } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,9 +18,10 @@ import ProgressView from '@components/ProgressView';
 import { useInvokeLogin } from '@hooks/authentication';
 import { RootState } from '@redux/store';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
-import { router } from 'expo-router';
+import { SplashScreen, router } from 'expo-router';
 
-export default function SignIn() {
+SplashScreen.preventAutoHideAsync()
+export function SignInComponent({government}:{government: boolean}) {
   // visual
   const { height, totalWidth } = useSelector(
     (state: RootState) => state.dimentions,
@@ -28,7 +29,6 @@ export default function SignIn() {
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(0);
-  const insets = useSafeAreaInsets();
   const dispatch = useDispatch();
 
   const safeArea = useCallback(
@@ -39,6 +39,7 @@ export default function SignIn() {
           bottom: Colors.maroon,
           isTopTransparent: false,
           isBottomTransparent: false,
+          overflowHidden: true
         }),
       );
     },
@@ -65,9 +66,12 @@ export default function SignIn() {
   const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
     useState<boolean>(false);
   const isAuthenticated = useIsAuthenticated();
+  const currentBreakPoint = useSelector((state: RootState) => state.dimentions.currentBreakPoint);
 
   useEffect(() => {
-    if (isAuthenticated.authenticated) {
+    if (currentBreakPoint === 0 && isAuthenticated.authenticated) {  
+      router.push('/home');
+    } else if (isAuthenticated.authenticated) {
       router.push('/');
     }
   }, [isAuthenticated]);
@@ -140,7 +144,9 @@ export default function SignIn() {
         </Text>
         <Pressable
           onPress={() => {
-            login(false);
+            if (!authLoading) {
+              login(false);
+            }
           }}
           onHoverIn={() => {
             setIsButtonHover(true);
@@ -171,14 +177,14 @@ export default function SignIn() {
               style={{
                 textAlign: 'center',
                 color: isBottonHover ? Colors.white : Colors.black,
-                fontWeight: 'bold',
+                fontFamily: 'Roboto-Bold',
               }}
             >
               SIGN IN
             </Text>
           )}
         </Pressable>
-        {isShowingGovernmentLogin ? (
+        {isShowingGovernmentLogin || government ? (
           <Pressable
             onPress={() => {
               login(true);
@@ -199,7 +205,7 @@ export default function SignIn() {
               alignContent: 'center',
               alignItems: 'center',
               justifyContent: 'center',
-              shadowColor: isBottonHover ? Colors.white : Colors.black,
+              shadowColor: isGovernmentHover ? Colors.white : Colors.black,
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.8,
               shadowRadius: 10,
@@ -207,13 +213,13 @@ export default function SignIn() {
               flexDirection: 'row',
             }}
           >
-            <GearIcon width={18} height={18} />
+            <GearIcon width={18} height={18} color={isGovernmentHover ? Colors.white:Colors.black}/>
             <Text
               selectable={false}
               style={{
                 textAlign: 'center',
-                color: isBottonHover ? Colors.white : Colors.black,
-                fontWeight: 'bold',
+                color: isGovernmentHover ? Colors.white : Colors.black,
+                fontFamily: 'Roboto-Bold',
               }}
             >
               SIGN IN AS ADMIN
@@ -234,4 +240,9 @@ export default function SignIn() {
       </Text>
     </Pressable>
   );
+}
+
+
+export default function SignIn() {
+  return <SignInComponent government={false}/>
 }

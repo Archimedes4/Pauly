@@ -10,7 +10,6 @@ export async function validateGovernmentMode() {
   if (userResult.ok) {
     const userData = await userResult.json();
     const teamsResult = await callMsGraph(
-      // @ts-expect-error
       `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/owners?$filter=id%20eq%20'${userData.id}'`,
     );
     if (teamsResult.ok) {

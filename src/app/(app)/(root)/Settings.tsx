@@ -143,8 +143,41 @@ export default function Settings() {
       >
         <Text style={{ fontWeight: 'bold' }}>SIGN OUT</Text>
       </Pressable>
-      <Link href="/students">
-        <View
+      <Link 
+        href="/students" 
+        style={{
+          width: width * 0.8,
+          height: height * 0.08,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: height * 0.05,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 2, height: 4 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+        }}
+      >
+        <View 
+          style={{
+            width: width * 0.8,
+            height: height * 0.08,
+            borderRadius: 15,
+            flexDirection: 'row',
+            backgroundColor: Colors.white,
+            alignItems: 'center',
+            overflow: 'hidden'
+          }}
+        >
+          <StudentSearchIcon
+            width={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
+            height={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
+            style={{ marginLeft: width * 0.025 }}
+          />
+          <Text style={{marginTop: 'auto', marginBottom: 'auto'}}>Students</Text>
+        </View>
+      </Link>
+      {isGovernmentMode ? (
+        <Link
           style={{
             width: width * 0.8,
             height: height * 0.08,
@@ -160,41 +193,14 @@ export default function Settings() {
             alignItems: 'center',
             marginTop: height * 0.05,
           }}
+          href={'/government'}
         >
-          <StudentSearchIcon
+          <GovernmentIcon
             width={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
             height={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
             style={{ marginLeft: width * 0.025 }}
           />
-          <Text>Students</Text>
-        </View>
-      </Link>
-      {isGovernmentMode ? (
-        <Link href="/government">
-          <Pressable
-            style={{
-              width: width * 0.8,
-              height: height * 0.08,
-              borderRadius: 15,
-              shadowColor: Colors.black,
-              shadowOffset: { width: 2, height: 4 },
-              shadowOpacity: 0.8,
-              shadowRadius: 10,
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              flexDirection: 'row',
-              backgroundColor: Colors.white,
-              alignItems: 'center',
-              marginTop: height * 0.05,
-            }}
-          >
-            <GovernmentIcon
-              width={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
-              height={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
-              style={{ marginLeft: width * 0.025 }}
-            />
-            <Text>Government</Text>
-          </Pressable>
+          <Text>Government</Text>
         </Link>
       ) : null}
     </View>

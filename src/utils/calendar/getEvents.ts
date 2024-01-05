@@ -55,12 +55,10 @@ export default async function getEvents() {
 
   // OrgWideEvents
   // This code is pulled from add events School Years Select
-  // @ts-expect-error
   let url: string = `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$filter=start/dateTime%20ge%20'${startDate.toISOString()}'%20and%20end/dateTime%20le%20'${endDate.toISOString()}'`;
   while (url !== '') {
     const furtherResult = await getGraphEvents(
       url,
-      // @ts-expect-error
       `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
     );
     if (

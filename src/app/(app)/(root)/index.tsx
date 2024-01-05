@@ -181,7 +181,7 @@ function DeleteTask({ onDelete }: { onDelete: () => void }) {
   );
 }
 
-function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
+function TaskItem({ task, index }: { task: taskType, index: number }) {
   const { width } = useSelector((state: RootState) => state.dimentions);
   const { isShowingCompleteTasks } = useSelector(
     (state: RootState) => state.homepageData,
@@ -192,14 +192,13 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
   const checkUpdateText = useCallback(async () => {
     if (mounted) {
       const taskNameSave =
-        store.getState().homepageData.userTasks[task.index].name;
+        store.getState().homepageData.userTasks[index].name;
       setTimeout(() => {
         if (
-          store.getState().homepageData.userTasks[task.index].name ===
+          store.getState().homepageData.userTasks[index].name ===
           taskNameSave
         ) {
-          console.log('Running');
-          updateTaskText(task);
+          updateTaskText(task, index);
         }
       }, 1500);
     } else {
@@ -207,11 +206,11 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
     }
   }, [mounted, task]);
 
-  if (isShowingCompleteTasks || task.item.status !== taskStatusEnum.completed) {
+  if (isShowingCompleteTasks || task.status !== taskStatusEnum.completed) {
     return (
       <Swipeable
         renderRightActions={() => {
-          if (task.item.excess) {
+          if (task.excess) {
             return null;
           }
           return <DeleteTask onDelete={() => deleteTask(task)} />;
@@ -227,59 +226,59 @@ function TaskItem({ task }: { task: ListRenderItemInfo<taskType> }) {
         >
           <Pressable
             onPress={() => {
-              if (task.item.status !== taskStatusEnum.completed) {
+              if (task.status !== taskStatusEnum.completed) {
                 dispatch(
                   homepageDataSlice.actions.updateUserTask({
-                    task: { ...task.item, status: taskStatusEnum.completed },
-                    index: task.index,
+                    task: { ...task, status: taskStatusEnum.completed },
+                    index: index,
                   }),
                 );
               } else {
                 dispatch(
                   homepageDataSlice.actions.updateUserTask({
-                    task: { ...task.item, status: taskStatusEnum.notStarted },
-                    index: task.index,
+                    task: { ...task, status: taskStatusEnum.notStarted },
+                    index: index,
                   }),
                 );
               }
             }}
             style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: 2 }}
           >
-            {task.item.state === loadingStateEnum.loading && (
+            {task.state === loadingStateEnum.loading && (
               <ProgressView width={14} height={14} />
             )}
-            {task.item.state !== loadingStateEnum.loading &&
-              task.item.state !== loadingStateEnum.notStarted &&
-              task.item.state !== loadingStateEnum.success &&
-              !task.item.excess && (
+            {task.state !== loadingStateEnum.loading &&
+              task.state !== loadingStateEnum.notStarted &&
+              task.state !== loadingStateEnum.success &&
+              !task.excess && (
                 <WarningIcon
                   width={14}
                   height={14}
                   outlineColor={Colors.danger}
                 />
               )}
-            {(task.item.state === loadingStateEnum.notStarted ||
-              task.item.state === loadingStateEnum.success ||
-              task.item.excess) && (
+            {(task.state === loadingStateEnum.notStarted ||
+              task.state === loadingStateEnum.success ||
+              task.excess) && (
               <CustomCheckBox
-                checked={task.item.status === taskStatusEnum.completed}
+                checked={task.status === taskStatusEnum.completed}
                 checkMarkColor="blue"
-                strokeDasharray={task.item.excess ? 5 : undefined}
+                strokeDasharray={task.excess ? 5 : undefined}
                 height={20}
                 width={20}
               />
             )}
           </Pressable>
           <TextInput
-            value={task.item.name}
+            value={task.name}
             onChangeText={e => {
               dispatch(
                 homepageDataSlice.actions.updateUserTask({
                   task: {
-                    ...task.item,
+                    ...task,
                     name: e,
                   },
-                  index: task.index,
+                  index: index,
                 }),
               );
               checkUpdateText();
@@ -369,13 +368,11 @@ function TaskBlock() {
           </View>
         ) : null}
         {taskState === loadingStateEnum.success && (
-          <FlatList
-            data={userTasks}
-            id="Task Container"
-            renderItem={task => (
-              <TaskItem task={task} key={`User_Task_${task.item.id}`} />
-            )}
-          />
+          <ScrollView nestedScrollEnabled>
+            {userTasks.map((task, index) => (
+              <TaskItem task={task} index={index} key={`User_Task_${task.id}`} />
+            ))}
+          </ScrollView>
         )}
         {taskState !== loadingStateEnum.success &&
           taskState !== loadingStateEnum.failed && (
@@ -484,7 +481,7 @@ function PopularFiles({ width }: { width: number }) {
 
   if (trendingState === loadingStateEnum.success) {
     return (
-      <>
+      <View style={{overflow: 'scroll'}}>
         {trendingData.map(data => (
           <Pressable
             key={`User_Insight_${data.id}`}
@@ -499,7 +496,7 @@ function PopularFiles({ width }: { width: number }) {
             </View>
           </Pressable>
         ))}
-      </>
+      </View>
     );
   }
   return <Text>Failed To Load</Text>;
@@ -511,7 +508,7 @@ function TrendingFiles({ width }: { width: number }) {
     (state: RootState) => state.homepageData,
   );
   return (
-    <ScrollView style={{ height: height * 0.3, width }}>
+    <ScrollView nestedScrollEnabled style={{ height: height * 0.3, width }}>
       {userState === loadingStateEnum.loading ? (
         <Text>Loading</Text>
       ) : (
@@ -689,6 +686,7 @@ export default function Notifications() {
         bottom: Colors.white,
         isTopTransparent: true,
         isBottomTransparent: true,
+        overflowHidden: true,
       }),
     );
   }, [dispatch]);

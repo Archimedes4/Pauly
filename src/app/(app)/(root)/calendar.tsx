@@ -31,7 +31,6 @@ async function deleteEvents() {
     if (result.ok) {
       const data = await result.json();
       for (let index = 0; index < data['value'].length; index += 1) {
-        // @ts-ignore
         const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data['value'][index]["fields"]['eventId']}`, "DELETE")
         if (deleteResult.ok || deleteResult.status === 404) {
           const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${'95fc4c55-f178-447d-a77e-3d13d6430c1a'}/items/${data['value'][index]['id']}`, "DELETE")
@@ -44,7 +43,6 @@ async function deleteEvents() {
   }
   const currentEvents = store.getState().currentEvents;
   for (let index = 0; index < currentEvents.length; index += 1) {
-    // @ts-ignore
     callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${currentEvents[index]["id"]}`, "DELETE")
   } 
   store.dispatch(currentEventsSlice.actions.setCurrentEvents([]))

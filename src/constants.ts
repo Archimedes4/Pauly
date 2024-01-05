@@ -25,6 +25,7 @@ export enum loadingStateEnum {
   notStarted,
   cannotStart,
   offline,
+  notFound
 }
 
 export enum postType {
@@ -141,6 +142,11 @@ declare global {
     headers: object | undefined;
     body: any | undefined;
   };
+  type batchRequest = {
+    id: string;
+    method: 'GET' | 'POST';
+    url: string
+  }
   type calendarCourseType = {
     name: string;
     semester: number;
@@ -276,6 +282,7 @@ declare global {
     bottom: string;
     isTopTransparent: boolean;
     isBottomTransparent: boolean;
+    overflowHidden: boolean
   };
   type scholarship = {
     title: string;
@@ -393,6 +400,11 @@ declare global {
     endMinute: number;
     id: string;
   };
+  type taggedResource = {
+    importance: number,
+    category: resourceMode,
+    tagId: string
+  }
   type teamsGroupType = {
     teamName: string;
     teamId: string;
@@ -444,7 +456,7 @@ declare global {
     eventTypeExtensionId: string;
     eventDataExtensionId: string;
     classExtensionId: string;
-    resourceExtensionId: string;
+    tagedResourceId: string;
   };
   type sportPost = {
     caption: string;
@@ -514,6 +526,8 @@ export class Colors {
   static black = '#000000';
 
   static danger = 'red';
+
+  static blueGray = '#6699CC';
 }
 
 // constance
@@ -584,6 +598,7 @@ export const governmentScopes = [
   'Sites.Manage.All',
   'Application.ReadWrite.All',
   'TeamMember.Read.All',
+  'TeamSettings.ReadWrite.All'
 ]
 
 //styles
@@ -595,5 +610,10 @@ export const styles = StyleSheet.create({
     borderRadius: 30,
     borderColor: 'black',
     borderWidth: 1
+  },
+  listStyle: {
+    marginLeft: 15,
+    marginRight: 15,
+    marginTop: 20
   }
 })

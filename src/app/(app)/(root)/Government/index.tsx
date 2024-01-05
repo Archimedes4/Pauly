@@ -94,7 +94,7 @@ export default function Government() {
   );
   useEffect(() => {
     if (!isGovernmentMode) {
-      router.replace('/');
+      router.push('/');
     }
   }, []);
 

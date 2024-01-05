@@ -5,7 +5,9 @@ import {
   paulyListData,
   paulyDataData,
   addDataArray,
+  url,
 } from './initializePaulyData';
+import store from '@src/redux/store';
 
 export async function initializePaulyPartOne(
   secondUserId: string,
@@ -107,6 +109,43 @@ export async function initializePaulyPartThree(
             getPaulyListResultData.fields.paulyDataListId;
         }
       }
+      //Checking if to clear data
+      if (update?.includes("paulyList")) {
+        //delete old list
+        const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyList/items/1`, "DELETE");
+        if (!deleteResult.ok) {
+          return loadingStateEnum.failed;
+        }
+        //create the new list
+        const paulyListResult = await callMsGraph(
+          `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists`,
+          'POST',
+          JSON.stringify(paulyListData),
+        );
+        if (!paulyListResult.ok) {
+          return loadingStateEnum.failed;
+        }
+      }
+    }
+  }
+
+  if (!secondRun) {
+    //Add Team photo
+    const imageFetch = await fetch(url)
+    if (!imageFetch.ok) {
+      return loadingStateEnum.failed
+    }
+    const imageBlob = await imageFetch.blob()
+    const result = await fetch("https://graph.microsoft.com/v1.0/teams/451cc145-cc7b-433a-9e52-70e646a13d50/photo/$value", {
+      method: "PUT",
+      body: imageBlob,
+      headers: {
+        "Content-type":"image/jpeg",
+        "Authorization":`Bearer ${store.getState().authenticationToken}`
+      }
+    })
+    if (!result.ok) {
+      return loadingStateEnum.failed
     }
   }
 
@@ -145,12 +184,6 @@ export async function initializePaulyPartThree(
     } else {
       paulyListNewData.fields.eventDataExtensionId = `String {${createUUID()}} Name eventData`;
     }
-    if (getPaulyListResultData.fields.resourceExtensionId !== undefined) {
-      paulyListNewData.fields.resourceExtensionId =
-        getPaulyListResultData.fields.resourceExtensionId;
-    } else {
-      paulyListNewData.fields.resourceExtensionId = `String {${createUUID()}} Name resourceData`;
-    }
     if (getPaulyListResultData.fields.eventTypeExtensionId !== undefined) {
       paulyListNewData.fields.eventTypeExtensionId =
         getPaulyListResultData.fields.eventTypeExtensionId;
@@ -165,7 +198,6 @@ export async function initializePaulyPartThree(
     }
   } else {
     paulyListNewData.fields.eventDataExtensionId = `String {${createUUID()}} Name eventData`;
-    paulyListNewData.fields.resourceExtensionId = `String {${createUUID()}} Name resourceData`;
     paulyListNewData.fields.eventTypeExtensionId = `String {${createUUID()}} Name eventType`;
     paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventType`;
   }
@@ -218,7 +250,7 @@ export async function initializePaulyPartThree(
   } else {
     const addPaulyListResult = await callMsGraph(
       `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyList/items/1`,
-      'PATCH',
+      (update?.includes("paulyList")) ? 'POST':'PATCH',
       JSON.stringify(paulyListNewData),
     );
     const ourData = await addPaulyListResult.json();

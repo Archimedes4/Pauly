@@ -79,7 +79,7 @@ export async function getClassesSchedule(): Promise<{
   result: loadingStateEnum.failed
 }> {
   let classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`;
-  const batchDataRequests: { id: string; method: string; url: string }[][] = [
+  const batchDataRequests: batchRequest[][] = [
     [],
   ];
   while (classQuery !== undefined) {

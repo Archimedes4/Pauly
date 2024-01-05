@@ -1,12 +1,12 @@
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
-import ListItem from '@src/components/StyledButton';
+import ListItem from '@components/StyledButton';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { Link } from 'expo-router';
-import SecondStyledButton from '@src/components/StyledButton';
+import SecondStyledButton from '@components/StyledButton';
 
 function GovernmentDressCodeBody() {
   const { width } = useSelector((state: RootState) => state.dimentions);

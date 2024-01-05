@@ -5,7 +5,6 @@ export default function useSyncCalendar() {
   const { instance } = useMsal();
   async function main() {
     const apiResult = await instance.acquireTokenSilent({
-      // @ts-ignore
       scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
     });
     // TODO change to production url

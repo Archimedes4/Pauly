@@ -171,7 +171,6 @@ export default function Students() {
   }
 
   useEffect(() => {
-    console.log('Called EFFECT');
     loadUsers();
   }, []);
 
@@ -240,7 +239,6 @@ export default function Students() {
           numColumns={getNumberOfBlocks(width)}
           onEndReached={() => {
             if (nextLink !== undefined) {
-              console.log('Called Flat');
               getUsers(nextLink);
             }
           }}

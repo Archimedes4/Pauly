@@ -88,7 +88,7 @@ export default function MicrosoftGraphEditList() {
         backgroundColor: Colors.white,
       }}
     >
-      <Link href="/government/graph/list">Back</Link>
+      <Link href="/government/graph">Back</Link>
       <Text>Microsoft Graph Edit List</Text>
       <View style={{ flexDirection: 'row' }}>
         <Text>{id}</Text>

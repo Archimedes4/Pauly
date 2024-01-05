@@ -5,10 +5,11 @@
   ScrollingTextAnimation.tsx
   Used in Home view for current break point = 0
 */
-import { View, Text, Animated, Easing, Platform } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors } from '@constants';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 
 export default function ScrollingTextAnimation({
   text,
@@ -19,27 +20,34 @@ export default function ScrollingTextAnimation({
   width: number;
   height: number;
 }) {
-  const pan = useRef(new Animated.Value(0)).current;
+  const pan = useSharedValue(0);
   const [childWidth, setChildWidth] = useState<number>(0);
   const mainLoop = (childWidthLoop: number) => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pan, {
-          toValue: -childWidthLoop,
-          duration: 5000,
-          delay: 0,
-          easing: Easing.linear,
-          useNativeDriver: false,
-        }),
-        Animated.timing(pan, {
-          toValue: 0,
-          duration: 0,
-          delay: 0,
-          useNativeDriver: false,
-        }),
-      ]),
-    ).start();
+    pan.value = withRepeat(withTiming(childWidthLoop, {
+      duration: 1000,
+      easing: Easing.linear
+    }), -1)
+    // Animated.loop(
+    //   Animated.sequence([
+    //     Animated.timing(pan, {
+    //       toValue: -childWidthLoop,
+    //       duration: 5000,
+    //       delay: 0,
+    //       easing: Easing.linear,
+    //       useNativeDriver: false,
+    //     }),
+    //     Animated.timing(pan, {
+    //       toValue: 0,
+    //       duration: 0,
+    //       delay: 0,
+    //       useNativeDriver: false,
+    //     }),
+    //   ]),
+    // ).start();
   };
+  const textContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: -pan.value }]
+  }))
 
   useEffect(() => {
     if (childWidth !== 0) {
@@ -50,22 +58,25 @@ export default function ScrollingTextAnimation({
   return (
     <View style={{ width, height, overflow: 'hidden' }}>
       {childWidth !== 0 ? (
-        <Animated.View style={{ transform: [{ translateX: pan }] }}>
+        <Animated.View style={[textContainerStyle, {
+          width: childWidth,
+          height
+        }]}>
           <View
             style={{
-              width: childWidth + childWidth * 0.01,
+              width: childWidth,
               height,
-              overflow: 'hidden',
               position: 'absolute',
-              left: childWidth + childWidth * 0.01,
+              left: 0
             }}
           >
             <Text
               style={{
-                fontFamily: 'GochiHand',
+                fontFamily: 'Gochi-Hand',
                 color: Colors.white,
                 fontSize: height,
                 height,
+                position: 'absolute'
               }}
             >
               {text}
@@ -73,19 +84,19 @@ export default function ScrollingTextAnimation({
           </View>
           <View
             style={{
-              width: childWidth + childWidth * 0.01,
+              width: childWidth,
               height,
+              overflow: 'hidden',
               position: 'absolute',
-              left: 0,
+              left: childWidth
             }}
           >
             <Text
               style={{
-                fontFamily: 'GochiHand',
+                fontFamily: 'Gochi-Hand',
                 color: Colors.white,
                 fontSize: height,
-                height,
-                position: 'absolute',
+                height,                
               }}
             >
               {text}
@@ -97,11 +108,15 @@ export default function ScrollingTextAnimation({
           <Text
             numberOfLines={1}
             onLayout={e => {
-              setChildWidth(e.nativeEvent.layout.width);
+              if (e.nativeEvent.layout.width < width) {
+                setChildWidth(width);
+              } else {
+                setChildWidth(e.nativeEvent.layout.width + e.nativeEvent.layout.width * 0.2);
+              }
             }}
             adjustsFontSizeToFit={!(Platform.OS === 'ios')}
             style={{
-              fontFamily: 'GochiHand',
+              fontFamily: 'Gochi-Hand',
               color: Colors.white,
               fontSize: height,
               height,

@@ -8,6 +8,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
 import { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
+import StyledButton from '@src/components/StyledButton';
 
 export default function MicrosoftGraphEditGroup() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);
@@ -63,9 +64,9 @@ export default function MicrosoftGraphEditGroup() {
       <Link href="/government/graph">
         <Text>Back</Text>
       </Link>
-      <Text>MicrosoftGraphEditList</Text>
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Microsoft Graph Edit Group</Text>
       <View style={{ flexDirection: 'row' }}>
-        <Text>{id}</Text>
+        <Text style={{marginLeft: 15}}>{id}</Text>
         {id !== undefined && typeof id === 'string' ? (
           <>
             {isCoppiedToClipboard ? (
@@ -89,17 +90,16 @@ export default function MicrosoftGraphEditGroup() {
           </>
         ) : null}
       </View>
-      <Pressable
+      <StyledButton
+        text={getTextState(deleteGroupLoadingState, {
+          notStarted: 'Delete Group',
+        })}
         onPress={() => {
           deleteGroup();
         }}
-      >
-        <Text>
-          {getTextState(deleteGroupLoadingState, {
-            notStarted: 'Delete Group',
-          })}
-        </Text>
-      </Pressable>
+        second
+        style={{margin: 15}}
+      />
     </View>
   );
 }

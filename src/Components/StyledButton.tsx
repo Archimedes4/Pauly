@@ -2,7 +2,7 @@
   Pauly
   Andrew Mainella
 */
-import { Text, Pressable, ViewStyle } from 'react-native';
+import { Text, Pressable, ViewStyle, StyleProp, TextStyle } from 'react-native';
 import React, { useState } from 'react';
 import { Link } from 'expo-router';
 import { Colors } from '../constants';
@@ -14,6 +14,47 @@ interface StyledButtonProps {
   onPress?: (() => void);
   style?: ViewStyle | undefined;
   second?: boolean
+  selected?: boolean;
+  textStyle?: StyleProp<TextStyle>
+}
+
+
+function getBackgroundColor(isAlt: boolean, selected?: boolean, second?: boolean) {
+  if (second === true && isAlt && selected !== true) {
+    return Colors.lightGray
+  }
+  if (second === true && selected !== true) {
+    return Colors.darkGray
+  }
+  if (isAlt && selected !== true) {
+    return Colors.black
+  }
+  if (isAlt && selected === true) {
+    return Colors.black
+  }
+  if (selected === true) {
+    return Colors.blueGray
+  }
+  return Colors.lightGray
+}
+
+function getTextColor(isAlt: boolean, selected?: boolean, second?: boolean) {
+  if (second === true && isAlt && selected !== true) {
+    return Colors.black
+  }
+  if (second === true && selected !== true) {
+    return Colors.white
+  }
+  if (isAlt && selected !== true) {
+    return Colors.white
+  }
+  if (isAlt && selected === true) {
+    return Colors.white
+  }
+  if (selected === true) {
+    return Colors.white
+  }
+  return Colors.black
 }
 
 export default function StyledButton({
@@ -23,19 +64,22 @@ export default function StyledButton({
   onPress,
   style,
   second,
+  selected,
+  textStyle
 }: StyledButtonProps) {
   const [isAlt, setIsAlt] = useState<boolean>(false);
+
   if (typeof to === 'string') {
     return (
       <Link href={to} style={[
         {
-          backgroundColor: ((second === true) ? isAlt:!isAlt) ? Colors.lightGray:Colors.darkGray,
+          backgroundColor: getBackgroundColor(isAlt, selected, second),
           shadowColor: Colors.black,
           shadowOffset: { width: 2, height: 2 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
           borderRadius: 15,
-          height: 36
+          height: (caption !== undefined) ? 48:36
         },
         style,
       ]}>
@@ -51,9 +95,9 @@ export default function StyledButton({
           }}
           style={{ padding: 10, width: '100%'}}
         >
-          <Text style={{ fontSize: 16, color: ((second === true) ? isAlt:!isAlt) ? Colors.black:Colors.white, fontFamily: 'Roboto' }}>{text}</Text>
+          <Text style={[{ fontSize: 16, color: getTextColor(isAlt, selected, second), fontFamily: 'Roboto' }, textStyle]}>{text}</Text>
           {caption !== undefined ? (
-            <Text style={{ fontSize: 12 }}>{caption}</Text>
+            <Text style={{ fontSize: 12, color: getTextColor(isAlt, selected, second), fontFamily: 'Roboto' }}>{caption}</Text>
           ) : null}
         </Pressable>
       </Link>
@@ -72,21 +116,21 @@ export default function StyledButton({
       }}
       style={[
         {
-          backgroundColor: ((second === true) ? isAlt:!isAlt) ? Colors.lightGray:Colors.darkGray,
+          backgroundColor: getBackgroundColor(isAlt, selected, second),
           shadowColor: Colors.black,
           shadowOffset: { width: 2, height: 2 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
           borderRadius: 15,
           padding: 10,
-          height: 36
+          height: (caption !== undefined) ? 48:36
         },
         style,
       ]}
     >
-      <Text style={{ fontSize: 16, color: ((second === true) ? isAlt:!isAlt) ? Colors.black:Colors.white, fontFamily: 'Roboto' }}>{text}</Text>
+      <Text style={[{ fontSize: 16, color: getTextColor(isAlt, selected, second), fontFamily: 'Roboto' }, textStyle]}>{text}</Text>
       {caption !== undefined ? (
-        <Text style={{ fontSize: 12 }}>{caption}</Text>
+        <Text style={{ fontSize: 12, color: getTextColor(isAlt, selected, second), fontFamily: 'Roboto' }}>{caption}</Text>
       ) : null}
     </Pressable>
   );

@@ -15,7 +15,7 @@ const initalState: paulyListType = {
   eventTypeExtensionId: '',
   eventDataExtensionId: '',
   classExtensionId: '',
-  resourceExtensionId: '',
+  tagedResourceId: '',
   dressCodeListId: '',
   roomListId: '',
 };

@@ -9,8 +9,10 @@ import {
 import { RootState } from '@redux/store';
 import { addDataArray } from '@utils/ﻩgovernment/initializePauly/initializePaulyData';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, loadingStateEnum, styles } from '@constants';
 import { Link } from 'expo-router';
+import StyledButton from '@src/components/StyledButton';
+import { getTextState } from '@src/utils/ultility/createUUID';
 
 enum initStage {
   notStarted,
@@ -366,99 +368,72 @@ export default function GovernmentAdmin() {
             value={createdGroupId}
             onChangeText={setCreatedGroupId}
             placeholder="Group Id"
+            style={styles.textInputStyle}
           />
           <Text>Time Elapsed: {timeElapsed}</Text>
-          <Pressable
+          <StyledButton
+            text={getTextState(initResult, {
+              cannotStart: 'Please Pick a User',
+              notStarted: 'Initialize Pauly on New Tenant'
+            })
+
+            }
             onPress={() => {
               if (initResult === loadingStateEnum.notStarted) {
                 initializePauly();
               }
             }}
-          >
-            <Text>
-              {initResult === loadingStateEnum.cannotStart
-                ? 'Please Pick a User'
-                : initResult === loadingStateEnum.notStarted
-                  ? 'initialize Pauly on New Tenant'
-                  : initResult === loadingStateEnum.loading
-                    ? `Loading ${timeLeft}`
-                    : initResult === loadingStateEnum.success
-                      ? 'Success'
-                      : 'Failed'}
-            </Text>
-          </Pressable>
+            second
+          />
           {initTwoResult !== loadingStateEnum.cannotStart ? (
-            <Pressable
+            <StyledButton 
               onPress={() => {
                 initializePaulyFromPartTwo();
               }}
-            >
-              <Text>
-                {initTwoResult === loadingStateEnum.notStarted
-                  ? 'Start From Part Two'
-                  : initTwoResult === loadingStateEnum.loading
-                    ? 'Loading'
-                    : initTwoResult === loadingStateEnum.success
-                      ? 'Success'
-                      : 'Failed'}
-              </Text>
-            </Pressable>
+              text={getTextState(initTwoResult, {
+                notStarted: 'Start From Part Two'
+              })}
+            />
           ) : null}
           {initThreeResult !== loadingStateEnum.cannotStart ? (
-            <View>
-              {addDataArray.map(addData => (
-                <View key={`Add_Data_${addData.id}`}>
-                  {selectedUpdates.includes(addData.id) ? (
-                    <Pressable
-                      style={{
-                        width: width * 0.7,
-                        backgroundColor: Colors.lightGray,
-                      }}
-                      onPress={() => {
-                        const newSelectedUpdates = selectedUpdates;
-                        newSelectedUpdates.filter(e => {
-                          return e !== addData.id;
+            <>
+              <FlatList
+                data={[...addDataArray, {
+                  id: 'paulyList',
+                  urlOne: '',
+                  data: {}
+                }]}
+                renderItem={({item}) => (
+                  <StyledButton
+                    key={`Add_Data_${item.id}`}
+                    text={item.id}
+                    selected={selectedUpdates.includes(item.id)}
+                    style={styles.listStyle}
+                    onPress={() => {
+                      if (selectedUpdates.includes(item.id)) {
+                        let newSelectedUpdates = [...selectedUpdates];
+                        newSelectedUpdates = newSelectedUpdates.filter(e => {
+                          return e !== item.id;
                         });
                         setSelectedUpdates([...newSelectedUpdates]);
-                      }}
-                    >
-                      <View style={{ margin: 5 }}>
-                        <Text>{addData.id}</Text>
-                      </View>
-                    </Pressable>
-                  ) : (
-                    <Pressable
-                      style={{
-                        width: width * 0.7,
-                        backgroundColor: Colors.white,
-                      }}
-                      onPress={() => {
-                        setSelectedUpdates([...selectedUpdates, addData.id]);
-                      }}
-                    >
-                      <View style={{ margin: 5 }}>
-                        <Text>{addData.id}</Text>
-                      </View>
-                    </Pressable>
-                  )}
-                </View>
-              ))}
-              <Pressable
+                      } else {
+                        setSelectedUpdates([...selectedUpdates, item.id]);
+                      }
+                    }}
+                  />
+                )}
+                style={{height: height * 0.3, width: width - height * 0.1}}
+              />
+              <StyledButton
+                second
                 onPress={() => {
                   initializePaulyFromPartThree();
                 }}
-              >
-                <Text>
-                  {initThreeResult === loadingStateEnum.notStarted
-                    ? 'Start From Part Three'
-                    : initThreeResult === loadingStateEnum.loading
-                      ? 'Loading'
-                      : initThreeResult === loadingStateEnum.success
-                        ? 'Success'
-                        : 'Failed'}
-                </Text>
-              </Pressable>
-            </View>
+                text={getTextState(initThreeResult, {
+                  notStarted: 'Start From Part Three'
+                })}
+              />
+            </>
           ) : null}
         </View>
       </View>
@@ -479,7 +454,7 @@ function UserBlock({
     loadingStateEnum.loading,
   );
   const [nextLink, setNextLink] = useState<string | undefined>(undefined);
-  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimentions);
 
   async function getUserId() {
     const result = await callMsGraph('https://graph.microsoft.com/v1.0/me');
@@ -522,43 +497,42 @@ function UserBlock({
 
   if (loadUsersResult === loadingStateEnum.loading) {
     return (
-      <View style={{ height: height * 0.6 }}>
+      <View style={{ height: height * 0.4 }}>
         <Text>Loading</Text>
       </View>
     )
   }
   if (loadUsersResult === loadingStateEnum.success) {
     return (
-      <View style={{ height: height * 0.6 }}>
-        <FlatList
-          data={loadedUsers}
-          renderItem={user => (
-            <View key={`User_${user.item.id}`}>
-              {user.item.id !== currentUserId ? (
-                <Pressable
-                  onPress={() => {
-                    setSelectedUser(user.item);
-                    setInitResult(loadingStateEnum.notStarted);
-                  }}
-                >
-                  <View>
-                    <Text>{user.item.displayName}</Text>
-                  </View>
-                </Pressable>
-              ) : null}
-            </View>
-          )}
-          onEndReached={() => {
-            if (nextLink !== undefined) {
-              getUsers(nextLink);
-            }
-          }}
-        />
-      </View>
+      <FlatList
+        data={loadedUsers}
+        renderItem={user => {
+          if (user.item.id !== currentUserId){
+            return (
+              <StyledButton 
+                key={`User_${user.item.id}`}
+                text={user.item.displayName}
+                onPress={() => {
+                  setSelectedUser(user.item);
+                  setInitResult(loadingStateEnum.notStarted);
+                }}
+                style={styles.listStyle}
+              />
+            )
+          }
+          return null
+        }}
+        onEndReached={() => {
+          if (nextLink !== undefined) {
+            getUsers(nextLink);
+          }
+        }}
+        style={{height: height * 0.4, width: width - height * 0.1}}
+      />
     );
   }
   return (
-    <View style={{ height: height * 0.6 }}>
+    <View style={{ height: height * 0.4 }}>
       <Text>Failed</Text>
     </View>
   )

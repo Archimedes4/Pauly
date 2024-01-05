@@ -175,8 +175,6 @@ function WebViewInject() {
       onMessage={e => {
         if (e.nativeEvent.data.length >= 7) {
           dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data));
-        } else {
-          console.log('Error', e.nativeEvent.data);
         }
       }}
     />

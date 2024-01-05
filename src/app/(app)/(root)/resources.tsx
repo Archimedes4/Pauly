@@ -23,10 +23,12 @@ import { resourcesSlice } from '@redux/reducers/resourcesReducer';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import {
-  convertResourceModeString,
+  getCategoryResources,
   getResources,
   getResourcesSearch,
   getScholarships,
+  getTaggedResource,
+  tagResource,
 } from '@utils/getResources';
 import { CloseIcon } from '@components/Icons';
 import WebViewCross from '@components/WebViewCross';
@@ -37,6 +39,7 @@ import { Colors, loadingStateEnum, resourceMode } from '@constants';
 import ResourcesNews from '@components/ResourcesNews';
 import ResourceBar from '@components/ResourceBar';
 import SearchBar from '@components/SearchBar';
+import StyledButton from '@components/StyledButton';
 
 // Resources
 // -> Sports
@@ -76,63 +79,65 @@ function ResourceBlock({
     (state: RootState) => state.isGovernmentMode,
   );
   if (isGovernmentMode) {
-    <Pressable
-      onPress={() => {
-        setIsShowingCategoryView(true);
-        setSelectedPost({
-          teamId: resource.item.teamId,
-          conversationId: resource.item.conversationId,
-          messageId: resource.item.id,
-        });
-      }}
-      style={{
-        width: width * 0.8,
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        backgroundColor: Colors.white,
-        borderRadius: 15,
-        marginBottom: height * 0.01,
-      }}
-    >
-      {resource.item.body !== '' &&
-      checkIfResourceDataJustAttachment(resource.item.body) ? (
-        <WebViewCross
-          width={width * 0.8 - 20}
-          html={
-            resource.item.html
-              ? resource.item.body
-              : `<div><div>${resource.item.body}</div></div>`
-          }
-        />
-      ) : null}
-      {resource.item.attachments !== undefined ? (
-        <View
-          style={{
-            marginLeft: 10,
-            marginBottom: 10,
-            marginRight: 10,
-            marginTop:
-              resource.item.body === '' ||
-              !checkIfResourceDataJustAttachment(resource.item.body)
-                ? 10
-                : 0,
-            overflow: 'scroll',
-          }}
-        >
-          {resource.item.attachments?.map(attachment => (
-            <Pressable
-              style={{ flexDirection: 'row' }}
-              onPress={() => {
-                Linking.openURL(attachment.webUrl);
-              }}
-            >
-              <MimeTypeIcon width={14} height={14} mimeType={attachment.type} />
-              <Text>{attachment.title}</Text>
-            </Pressable>
-          ))}
-        </View>
-      ) : null}
-    </Pressable>;
+    return (
+      <Pressable
+        onPress={() => {
+          setIsShowingCategoryView(true);
+          setSelectedPost({
+            teamId: resource.item.teamId,
+            conversationId: resource.item.conversationId,
+            messageId: resource.item.id,
+          });
+        }}
+        style={{
+          width: width * 0.8,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          backgroundColor: Colors.white,
+          borderRadius: 15,
+          marginBottom: height * 0.01,
+        }}
+      >
+        {resource.item.body !== '' &&
+        checkIfResourceDataJustAttachment(resource.item.body) ? (
+          <WebViewCross
+            width={width * 0.8 - 20}
+            html={
+              resource.item.html
+                ? resource.item.body
+                : `<div><div>${resource.item.body}</div></div>`
+            }
+          />
+        ) : null}
+        {resource.item.attachments !== undefined ? (
+          <View
+            style={{
+              marginLeft: 10,
+              marginBottom: 10,
+              marginRight: 10,
+              marginTop:
+                resource.item.body === '' ||
+                !checkIfResourceDataJustAttachment(resource.item.body)
+                  ? 10
+                  : 0,
+              overflow: 'scroll',
+            }}
+          >
+            {resource.item.attachments?.map(attachment => (
+              <Pressable
+                style={{ flexDirection: 'row' }}
+                onPress={() => {
+                  Linking.openURL(attachment.webUrl);
+                }}
+              >
+                <MimeTypeIcon width={14} height={14} mimeType={attachment.type} />
+                <Text>{attachment.title}</Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
+      </Pressable>
+    )
   }
   return (
     <View
@@ -336,7 +341,11 @@ export default function Resources() {
   }, [dispatch]);
 
   useEffect(() => {
-    getResources(selectedResourceMode);
+    if (selectedResourceMode === resourceMode.home) {
+      getResources();
+    } else {
+      getCategoryResources(selectedResourceMode);
+    }
   }, [selectedResourceMode]);
 
   return (
@@ -456,204 +465,69 @@ function GovernmentCategoryView({
   const [selectedCategory, setSelectedCategory] = useState<resourceMode>(
     resourceMode.home,
   );
-  async function addCategory() {
+  const [tagResourceState, setTagResourceState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+  const [tagId, setTagId] = useState<string | undefined>(undefined)
+  async function updateTagResource() {
     setCategoryState(loadingStateEnum.loading);
-    const data = {
-      singleValueExtendedProperties: [
-        {
-          id: store.getState().paulyList.resourceExtensionId,
-          value: convertResourceModeString(selectedCategory),
-        },
-      ],
-    };
-    const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/messages/${messageId}`,
-      'PATCH',
-      JSON.stringify(data),
-    );
-    if (result.ok) {
-      setCategoryState(loadingStateEnum.success);
-    } else {
-      setCategoryState(loadingStateEnum.failed);
-    }
+    const result = await tagResource(teamId, channelId, messageId, selectedCategory, tagId)
+    setCategoryState(result);
   }
-  return (
-    <View
-      style={{
-        height: height * 0.9,
-        width: width * 0.8,
-        position: 'absolute',
-        top: height * 0.05,
-        left: width * 0.1,
-        backgroundColor: Colors.white,
-        shadowColor: Colors.black,
-        shadowOffset: { width: 1, height: 1 },
-        shadowOpacity: 1,
-        shadowRadius: 5,
-        borderRadius: 15,
-      }}
-    >
-      <Pressable
-        onPress={() => onClose()}
-        style={{ position: 'absolute', left: 20, top: 20 }}
-      >
-        <CloseIcon width={12} height={12} />
-      </Pressable>
+  async function loadTagResource() {
+    setTagResourceState(loadingStateEnum.loading);
+    const result = await getTaggedResource(teamId, channelId, messageId)
+    if (result.result === loadingStateEnum.success) {
+      setTagId(result.data.tagId)
+      setSelectedCategory(result.data.category)
+      setTagResourceState(loadingStateEnum.success)
+    }
+    setTagResourceState(result.result)
+  }
+
+  useEffect(() => {
+    loadTagResource()
+  }, [])
+
+  if (tagResourceState === loadingStateEnum.loading) {
+    return (
       <View
         style={{
+          height: height * 0.9,
           width: width * 0.8,
+          position: 'absolute',
+          top: height * 0.05,
+          left: width * 0.1,
+          backgroundColor: Colors.white,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 1, height: 1 },
+          shadowOpacity: 1,
+          shadowRadius: 5,
+          borderRadius: 15,
           alignContent: 'center',
           alignItems: 'center',
-          justifyContent: 'center',
-          marginTop: height * 0.05,
+          justifyContent: 'center'
         }}
       >
-        <Text>Categories</Text>
+        <Pressable
+          onPress={() => onClose()}
+          style={{ position: 'absolute', left: 20, top: 20 }}
+        >
+          <CloseIcon width={12} height={12} />
+        </Pressable>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
       </View>
-      <Pressable
-        onPress={() => setSelectedCategory(resourceMode.sports)}
+    )
+  }
+
+  if (tagResourceState === loadingStateEnum.notFound || tagResourceState === loadingStateEnum.success) {
+    return (
+      <View
         style={{
-          marginLeft: width * 0.05,
-          width: width * 0.7,
-          height: height * 0.05,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor:
-            selectedCategory === resourceMode.sports
-              ? Colors.lightGray
-              : Colors.white,
-        }}
-      >
-        <Text>Sports</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => setSelectedCategory(resourceMode.advancement)}
-        style={{
-          marginLeft: width * 0.05,
-          marginTop: height * 0.02,
-          width: width * 0.7,
-          height: height * 0.05,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor:
-            selectedCategory === resourceMode.advancement
-              ? Colors.lightGray
-              : Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          borderRadius: 15,
-        }}
-      >
-        <Text>Advancement</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => setSelectedCategory(resourceMode.schoolEvents)}
-        style={{
-          marginLeft: width * 0.05,
-          marginTop: height * 0.02,
-          width: width * 0.7,
-          height: height * 0.05,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor:
-            selectedCategory === resourceMode.schoolEvents
-              ? Colors.lightGray
-              : Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          borderRadius: 15,
-        }}
-      >
-        <Text>School Events</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => setSelectedCategory(resourceMode.annoucments)}
-        style={{
-          marginLeft: width * 0.05,
-          marginTop: height * 0.02,
-          width: width * 0.7,
-          height: height * 0.05,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor:
-            selectedCategory === resourceMode.annoucments
-              ? Colors.lightGray
-              : Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          borderRadius: 15,
-        }}
-      >
-        <Text>Annoucments</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => setSelectedCategory(resourceMode.fitness)}
-        style={{
-          marginLeft: width * 0.05,
-          marginTop: height * 0.02,
-          width: width * 0.7,
-          height: height * 0.05,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor:
-            selectedCategory === resourceMode.fitness
-              ? Colors.lightGray
-              : Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          borderRadius: 15,
-        }}
-      >
-        <Text>Fitness</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => setSelectedCategory(resourceMode.files)}
-        style={{
-          marginLeft: width * 0.05,
-          marginTop: height * 0.02,
-          width: width * 0.7,
-          height: height * 0.05,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor:
-            selectedCategory === resourceMode.files
-              ? Colors.lightGray
-              : Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          borderRadius: 15,
-        }}
-      >
-        <Text>Files</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => {
-          addCategory();
-        }}
-        style={{
-          marginLeft: width * 0.05,
-          marginTop: height * 0.02,
-          width: width * 0.7,
-          height: height * 0.05,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
+          height: height * 0.9,
+          width: width * 0.8,
+          position: 'absolute',
+          top: height * 0.05,
+          left: width * 0.1,
           backgroundColor: Colors.white,
           shadowColor: Colors.black,
           shadowOffset: { width: 1, height: 1 },
@@ -662,8 +536,87 @@ function GovernmentCategoryView({
           borderRadius: 15,
         }}
       >
-        <Text>{getTextState(categoryState, { notStarted: 'Confirm' })}</Text>
-      </Pressable>
+        <Pressable
+          onPress={() => onClose()}
+          style={{ position: 'absolute', left: 20, top: 20 }}
+        >
+          <CloseIcon width={12} height={12} />
+        </Pressable>
+        <View
+          style={{
+            width: width * 0.8,
+            alignContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: height * 0.05,
+          }}
+        >
+          <Text>Categories</Text>
+        </View>
+        <StyledButton
+          onPress={() => setSelectedCategory(resourceMode.sports)}
+          text='Sports'
+          selected={selectedCategory === resourceMode.sports}
+          style={{marginLeft: 15, marginRight: 15, marginTop: 15}}
+        />
+        <StyledButton
+          onPress={() => setSelectedCategory(resourceMode.schoolEvents)}
+          text='School Events'
+          selected={selectedCategory === resourceMode.schoolEvents}
+          style={{marginLeft: 15, marginRight: 15, marginTop: 20}}
+        />
+        <StyledButton
+          onPress={() => setSelectedCategory(resourceMode.annoucments)}
+          text='Annoucments'
+          selected={selectedCategory === resourceMode.annoucments}
+          style={{marginLeft: 15, marginRight: 15, marginTop: 20}}
+        />
+        <StyledButton
+          onPress={() => setSelectedCategory(resourceMode.fitness)}
+          text='Fitness'
+          selected={selectedCategory === resourceMode.fitness}
+          style={{marginLeft: 15, marginRight: 15, marginTop: 20}}
+        />
+        <StyledButton
+          onPress={() => setSelectedCategory(resourceMode.files)}
+          text='Files'
+          selected={selectedCategory === resourceMode.files}
+          style={{marginLeft: 15, marginRight: 15, marginTop: 20}}
+        />
+        <StyledButton
+          onPress={() => updateTagResource()}
+          text={getTextState(categoryState, { notStarted: 'Confirm' })}
+          second
+          style={{marginLeft: 15, marginRight: 15, marginTop: 25}}
+          textStyle={{marginLeft: 'auto', marginRight: 'auto'}}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <View
+        style={{
+          height: height * 0.9,
+          width: width * 0.8,
+          position: 'absolute',
+          top: height * 0.05,
+          left: width * 0.1,
+          backgroundColor: Colors.white,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 1, height: 1 },
+          shadowOpacity: 1,
+          shadowRadius: 5,
+          borderRadius: 15,
+        }}
+      >
+        <Pressable
+          onPress={() => onClose()}
+          style={{ position: 'absolute', left: 20, top: 20 }}
+        >
+          <CloseIcon width={12} height={12} />
+        </Pressable>
+        <Text>Something went wrong</Text>
     </View>
-  );
+  )
 }

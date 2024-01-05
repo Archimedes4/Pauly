@@ -64,7 +64,7 @@ function GovernmentSportsPostsBody() {
           <Pressable
             key={`Submission_${item.item.submissionId}_${createUUID()}`}
             onPress={() =>
-              router.replace(
+              router.push(
                 `/government/sports/post/review/${item.item.submissionId}`,
               )
             }

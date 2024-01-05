@@ -156,7 +156,6 @@ export async function claimCommissionPost(
   const bearer = `Bearer ${auth}`;
   try {
     const result = await fetch(
-      // @ts-expect-error
       `https://pauly-functions.azurewebsites.net/api/SubmitCommission?code=628ObqnRS5VxdYijTEz8sHucuLuihwin7ulwkUK6L5uCAzFuyFZ0Ng==&orgWideGroupId=${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}&commissionId=${commissionId}${outResult}`,
       {
         headers: {
@@ -165,7 +164,6 @@ export async function claimCommissionPost(
       },
     );
     const data = await result.json();
-    console.log(data);
     if (result.ok) {
       return loadingStateEnum.success;
     }

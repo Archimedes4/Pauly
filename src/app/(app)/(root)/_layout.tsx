@@ -17,16 +17,16 @@ import { Slot, useFocusEffect, useRouter } from 'expo-router';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
 
 function AuthenticatedView() {
-  const { height, currentBreakPoint, totalWidth, width } = useSelector(
+  const { currentBreakPoint, totalWidth, width } = useSelector(
     (state: RootState) => state.dimentions,
   );
   const isShowingProfileBlock = useSelector(
     (state: RootState) => state.isShowingProfileBlock,
   );
-  const insets = useSafeAreaInsets();
+  const overflowHidden = useSelector((state: RootState) => state.safeAreaColors.overflowHidden)
 
   return (
-    <View style={{ width: totalWidth, overflow: 'hidden' }}>
+    <View style={{ width: totalWidth, overflow: overflowHidden ? 'hidden':'visible' }}>
       <View style={{ flexDirection: 'row', width: totalWidth }}>
         {currentBreakPoint >= 1 ? (
           <NavBarComponent />
@@ -35,7 +35,7 @@ function AuthenticatedView() {
           style={{
             width,
             backgroundColor: Colors.maroon,
-            overflow: 'hidden'
+            overflow: overflowHidden ? 'hidden':'visible'
           }}
         >
           <Slot />

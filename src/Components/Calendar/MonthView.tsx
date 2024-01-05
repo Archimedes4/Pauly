@@ -310,7 +310,6 @@ function MonthView({ width, height }: { width: number; height: number }) {
               dispatch(
                 selectedDateSlice.actions.setSelectedDate(d.toISOString()),
               );
-              console.log("press")
             }}
             style={{ marginTop: 'auto', marginBottom: 'auto' }}
           >

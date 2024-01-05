@@ -37,7 +37,6 @@ export async function getGraphEvents(
 } | {
   result: loadingStateEnum.failed
 }> {
-  // @ts-expect-error
   const defaultUrl = `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`;
   const result = await callMsGraph(
     url !== undefined ? url : defaultUrl,
@@ -90,7 +89,7 @@ export async function getGraphEvents(
         microsoftReference:
           referenceUrl !== undefined
             ? referenceUrl + data.value[index].id
-            // @ts-expect-error
+
             : `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
       });
     }
@@ -108,7 +107,6 @@ export async function getEvent(
   id: string,
 ): Promise<{ result: loadingStateEnum; data?: eventType }> {
   const result = await callMsGraph(
-    // @ts-expect-error
     `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`,
@@ -131,7 +129,6 @@ export async function getEvent(
       allDay: data.isAllDay,
       eventColor: Colors.white,
       microsoftEvent: true,
-      // @ts-expect-error
       microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.id}`,
     };
     if (data.singleValueExtendedProperties !== undefined) {
@@ -324,7 +321,6 @@ export async function getSchoolDay(
     .toISOString()
     .slice(0, -1)}0000`;
   const result = await callMsGraph(
-    // @ts-expect-error
     `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${
@@ -365,7 +361,6 @@ export async function getSchoolDay(
               allDay: data.value[index].isAllDay,
               eventColor: Colors.white,
               microsoftEvent: true,
-              // @ts-expect-error
               microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
               paulyEventType:
                 eventData.find(e => {
@@ -407,7 +402,6 @@ export async function getSchoolDays(date: Date): Promise<{
       .split(/[T ]/i, 1)[0]
   }T00:00:00.0000000`;
   const result = await callMsGraph(
-    // @ts-expect-error
     `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${
@@ -562,7 +556,6 @@ async function getTimetablesFromSchoolYears(
 ): Promise<{ result: loadingStateEnum; data?: Map<string, timetableType> }> {
   // Get School Years
   const batchRequestResultSchoolYear = await batchRequest(undefined, {
-    // @ts-expect-error
     firstUrl: `/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
     secondUrl: `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
@@ -826,7 +819,6 @@ export function getMonthData(selectedDate: Date) {
   const firstDayWeek = findFirstDayinMonth(selectedDate);
   const monthDataResult: monthDataType[] = [];
   const currentEvents = store.getState().currentEvents;
-  console.log(currentEvents)
   for (let index = 0; index < 42; index += 1) {
     if (index >= firstDayWeek && index - firstDayWeek < lastDay.getDate()) {
       // In the current month

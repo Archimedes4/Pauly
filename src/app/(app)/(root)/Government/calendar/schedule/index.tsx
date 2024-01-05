@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
@@ -7,7 +7,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';
-import SecondStyledButton from '@src/components/StyledButton';
+import SecondStyledButton from '@components/StyledButton';
 
 function GovernmentScheduleBody() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

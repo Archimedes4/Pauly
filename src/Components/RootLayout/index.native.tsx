@@ -5,19 +5,18 @@
  * @format
  */
 import React, { useEffect, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, Linking, View } from 'react-native';
 import { PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider, useSelector } from 'react-redux';
 import {
   SafeAreaProvider,
-  SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import store, { RootState } from '@redux/store';
 import { Colors, paperTheme } from '@constants';
 import setDimentions from '@utils/ultility/setDimentions';
-import { Slot, usePathname } from 'expo-router';
+import { Slot, router } from 'expo-router';
 import getMainHeight from '@utils/getMainHeight';
 
 const windowDimensions = Dimensions.get('window');
@@ -34,10 +33,8 @@ function AppCore() {
   );
   const [dimensions, setStateDimensions] = useState(windowDimensions);
   const insets = useSafeAreaInsets();
-  const path = usePathname();
 
   useEffect(() => {
-    console.log(path)
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       setStateDimensions(window);
       setDimentions(

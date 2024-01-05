@@ -16,11 +16,11 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, styles } from '@constants';
-import { CloseIcon, WarningIcon } from '@src/components/Icons';
+import { CloseIcon, WarningIcon } from '@components/Icons';
 import ProgressView from '@components/ProgressView';
 import { getSchedule } from '@utils/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';
-import SecondStyledButton from '@src/components/StyledButton';
+import SecondStyledButton from '@components/StyledButton';
 
 function isValidHexaCode(input: string) {
   // Define the regular expression pattern for a valid hexadecimal color code

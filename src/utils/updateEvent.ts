@@ -163,7 +163,6 @@ export default async function createEvent(): Promise<undefined> {
     }
     // TODO Reocurring
     const result = await callMsGraph(
-      // @ts-ignore
       `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events`,
       'POST',
       JSON.stringify(data),
@@ -193,7 +192,6 @@ export default async function createEvent(): Promise<undefined> {
               ? store.getState().addEvent.selectedTimetable.id
               : undefined,
         microsoftEvent: true,
-        // @ts-ignore
         microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${dataOut.id}`,
         allDay: false,
       };

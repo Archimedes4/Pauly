@@ -5,7 +5,6 @@ import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataR
 
 export default function getUserProfile() {
   const discovery = useAutoDiscovery(
-    // @ts-ignore
     `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
   async function main() {
@@ -16,16 +15,7 @@ export default function getUserProfile() {
         },
         discovery,
       );
-      console.log(account);
     }
-    // if (account !== null && account.name !== undefined && account.localAccountId) {
-    //   store.dispatch(
-    //     microsoftProfileDataSlice.actions.setMicrosoftProfileInformation({
-    //       displayName: account.name,
-    //       id: account.localAccountId,
-    //     }),
-    //   );
-    // } else {
     const profileResult = await callMsGraph(
       'https://graph.microsoft.com/v1.0/me',
       'GET',

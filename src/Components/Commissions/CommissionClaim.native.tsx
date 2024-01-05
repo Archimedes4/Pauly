@@ -39,7 +39,6 @@ export default function CommissionClaim({
   const { width } = useSelector((state: RootState) => state.dimentions);
 
   const discovery = useAutoDiscovery(
-    // @ts-ignore
     `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
 
@@ -50,9 +49,7 @@ export default function CommissionClaim({
         const apiResult = await refreshAsync(
           {
             refreshToken: store.getState().authenticationRefreshToken,
-            // @ts-ignore
-            clientId: process.env.EXPO_PUBLIC_CLIENTID,
-            // @ts-ignore
+            clientId: (process.env.EXPO_PUBLIC_CLIENTID) ? process.env.EXPO_PUBLIC_CLIENTID:"",
             scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
           },
           discovery,

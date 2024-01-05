@@ -235,7 +235,7 @@ export async function getRoster(
   );
   if (result.ok) {
     const data = await result.json();
-    const batchData: { id: string; method: 'GET' | 'POST'; url: string }[][] =
+    const batchData: batchRequest[][] =
       [];
     let batchIndex = -1;
     for (let index = 0; index < data.value.length; index += 1) {

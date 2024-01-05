@@ -31,7 +31,6 @@ export default function CommissionClaim({
   async function claimCommission() {
     setClaimCommissionState(loadingStateEnum.loading);
     const apiResult = await instance.acquireTokenSilent({
-      // @ts-ignore
       scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
     });
     let outImageUrl: string = '';

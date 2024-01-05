@@ -9,7 +9,7 @@ import React, { useCallback } from 'react';
 import useIsConnected from '@hooks/useIsConnected';
 import { Colors } from '@constants';
 import { OfflineIcon } from '@components/Icons';
-import { Slot, Stack } from 'expo-router';
+import { Slot, SplashScreen, Stack } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,10 +18,10 @@ import { useSignOut } from '@hooks/authentication';
 import ProgressView from '@components/ProgressView';
 import { useIsShowingLogout } from '@hooks/useIsShowingLogout';
 import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 function Loading() {
-  console.log("INit 12")
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
@@ -78,11 +78,11 @@ export default function Layout() {
     BukhariScript: require('assets/fonts/BukhariScript.ttf'),
     'Gochi-Hand': require('assets/fonts/GochiHand-Regular.ttf'),
     Roboto: require('assets/fonts/Roboto-Regular.ttf'),
+    "Roboto-Bold": require('assets/fonts/Roboto-Bold.ttf'),
     'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf'),
   });
 
   const onLayoutRootView = useCallback(async () => {
-    console.log("fonts12")
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }

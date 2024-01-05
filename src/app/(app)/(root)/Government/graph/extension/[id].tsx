@@ -1,17 +1,18 @@
 import { View, Text, Pressable } from 'react-native';
-import React, { useState } from 'react';
-import { Link, useParams } from 'react-router-native';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
 import { getTextState } from '@utils/ultility/createUUID';
+import { Link, useGlobalSearchParams } from 'expo-router';
+import ProgressView from '@src/components/ProgressView';
 
 export default function MicrosoftGraphEditExtension() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);
-  const { mode, id } = useParams();
+  const { id } = useGlobalSearchParams();
 
-  const [extensionLoadingState, setExtensionLoadingState] =
+  const [extensionState, setExtensionState] =
     useState<loadingStateEnum>(loadingStateEnum.loading);
   const [deleteExtensionLoadingState, setDeleteExtensionLoadingState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
@@ -26,12 +27,12 @@ export default function MicrosoftGraphEditExtension() {
       const data = await result.json();
       if (data.value.length === 1) {
         setExtensionDescription(data.value[0].description);
-        setExtensionLoadingState(loadingStateEnum.success);
+        setExtensionState(loadingStateEnum.success);
       } else {
-        setExtensionLoadingState(loadingStateEnum.failed);
+        setExtensionState(loadingStateEnum.notFound);
       }
     } else {
-      setExtensionLoadingState(loadingStateEnum.failed);
+      setExtensionState(loadingStateEnum.failed);
     }
   }
   async function deleteExtension() {
@@ -51,33 +52,74 @@ export default function MicrosoftGraphEditExtension() {
       }
     }
   }
-  return (
-    <View
-      style={{
-        overflow: 'hidden',
-        height,
-        width,
-        backgroundColor: Colors.white,
-      }}
-    >
-      <Link to={`/government/graph/${mode}`}>
-        <Text>Back</Text>
-      </Link>
-      <Text>MicrosoftGraphEditExtension</Text>
-      <View />
-      <Pressable
-        onPress={() => {
-          deleteExtension();
+
+  useEffect(() => {
+    getExtension()
+  }, [])
+
+  if (extensionState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          overflow: 'hidden',
+          height,
+          width,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
-        <Text>
-          {getTextState(deleteExtensionLoadingState, {
-            notStarted: 'Delete Extension',
-            success: 'Successfully Deleted Extension',
-            failed: 'Failed To Delete Extension',
-          })}
-        </Text>
-      </Pressable>
+        <Link href={`/government/graph`} style={{position: 'absolute', left: 0, top: 0}}>
+          <Text>Back</Text>
+        </Link>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (extensionState === loadingStateEnum.success) {
+    return (
+      <View
+        style={{
+          overflow: 'hidden',
+          height,
+          width,
+          backgroundColor: Colors.white,
+        }}
+      >
+        <Link href={`/government/graph`}>
+          <Text>Back</Text>
+        </Link>
+        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Microsoft Graph Edit Extension</Text>
+        <Text>{extensionDescription}</Text>
+        <Pressable
+          onPress={() => {
+            deleteExtension();
+          }}
+        >
+          <Text>
+            {getTextState(deleteExtensionLoadingState, {
+              notStarted: 'Delete Extension',
+              success: 'Successfully Deleted Extension',
+              failed: 'Failed To Delete Extension',
+            })}
+          </Text>
+        </Pressable>
+      </View>
+    );
+  }
+  if (extensionState === loadingStateEnum.notFound) {
+    return (
+      <View>
+        <Text>Extension Not Found</Text>
+      </View>
+    )
+  }
+  return (
+    <View>
+      <Text>Failed</Text>
     </View>
-  );
+  )
 }

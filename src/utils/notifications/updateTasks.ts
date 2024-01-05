@@ -49,28 +49,28 @@ export async function updateTaskStatus(
   }
 }
 
-export async function updateTaskText(task: ListRenderItemInfo<taskType>) {
+export async function updateTaskText(task: taskType, index: number) {
   store.dispatch(
     homepageDataSlice.actions.updateUserTask({
-      index: task.index,
-      task: { ...task.item, state: loadingStateEnum.loading },
+      index: index,
+      task: { ...task, state: loadingStateEnum.loading },
     }),
   );
   const data = {
-    title: task.item.name,
+    title: task.name,
   };
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`,
-    task.item.excess ? 'POST' : 'PATCH',
+    `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`,
+    task.excess ? 'POST' : 'PATCH',
     JSON.stringify(data),
   );
   if (result.ok) {
-    if (task.item.excess) {
+    if (task.excess) {
       const newTaskData = await result.json();
       store.dispatch(
         homepageDataSlice.actions.updateUserTask({
           task: {
-            name: task.item.name,
+            name: task.name,
             id: newTaskData.id,
             importance:
               taskImportanceEnum[
@@ -81,7 +81,7 @@ export async function updateTaskText(task: ListRenderItemInfo<taskType>) {
             excess: false,
             state: loadingStateEnum.success,
           },
-          index: task.index,
+          index: index,
         }),
       );
       store.dispatch(
@@ -97,30 +97,30 @@ export async function updateTaskText(task: ListRenderItemInfo<taskType>) {
     } else {
       store.dispatch(
         homepageDataSlice.actions.updateUserTask({
-          task: { ...task.item, state: loadingStateEnum.success },
-          index: task.index,
+          task: { ...task, state: loadingStateEnum.success },
+          index: index,
         }),
       );
     }
   } else {
     store.dispatch(
       homepageDataSlice.actions.updateUserTask({
-        task: { ...task.item, state: loadingStateEnum.failed },
-        index: task.index,
+        task: { ...task, state: loadingStateEnum.failed },
+        index: index,
       }),
     );
   }
 }
 
-export async function deleteTask(task: ListRenderItemInfo<taskType>) {
+export async function deleteTask(task: taskType) {
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.item.id}`,
+    `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`,
     'DELETE',
   );
   if (result.ok) {
     const index = store
       .getState()
-      .homepageData.userTasks.findIndex(e => e.id === task.item.id);
+      .homepageData.userTasks.findIndex(e => e.id === task.id);
     if (index !== -1) {
       store.dispatch(homepageDataSlice.actions.popUserTask(index));
     }

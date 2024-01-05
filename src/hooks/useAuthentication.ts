@@ -28,12 +28,8 @@ export default function useAuthentication() {
         await getPaulyLists();
       }
       await getUserProfile();
-      console.log('at want');
       if (await getWantGovernment()) {
-        console.log('it Wanted');
         await validateGovernmentMode();
-      } else {
-        console.log('Not wanted');
       }
       setIsLoading(false);
     } else {

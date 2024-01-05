@@ -4,19 +4,19 @@
   October 18 2023
   AddEvent.tsx
 */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, View, Text, Switch, TextInput } from 'react-native';
 import { TimePickerModal, DatePickerModal } from 'react-native-paper-dates';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { currentEventsSlice } from '../../redux/reducers/currentEventReducer';
-import { addEventSlice } from '../../redux/reducers/addEventReducer';
-import callMsGraph from '../../utils/ultility/microsoftAssets';
+import { RootState } from '@redux/store';
+import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
+import { addEventSlice } from '@redux/reducers/addEventReducer';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import SelectTimetable from './SelectTimetable';
 import SelectSchoolDayData from './SelectSchoolDayData';
-import { Colors, loadingStateEnum, paulyEventType } from '../../constants';
-import updateEvent from '../../utils/updateEvent';
-import { getTextState } from '../../utils/ultility/createUUID';
+import { Colors, loadingStateEnum, paulyEventType, styles } from '@constants';
+import updateEvent from '@utils/updateEvent';
+import { getTextState } from '@utils/ultility/createUUID';
 import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons';
 import PickerWrapper from '../Pickers/Picker';
 import SecondStyledButton from '../StyledButton';
@@ -168,13 +168,7 @@ function DateAndTimeSection({
               dispatch(addEventSlice.actions.setEventName(e));
             }}
             placeholder="Event Name"
-            style={{
-              width: width * 0.8,
-              height: height * 0.05,
-              borderBottomColor: '#000000',
-              borderBottomWidth: 1,
-              marginLeft: width * 0.01,
-            }}
+            style={styles.textInputStyle}
           />
           {selectedEventType !== paulyEventType.schoolYear ? (
             <View
