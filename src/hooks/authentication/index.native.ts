@@ -46,10 +46,9 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
-  const currentBreakPoint = useSelector((state: RootState) => state.dimentions.currentBreakPoint);
   const redirectUri = makeRedirectUri({
     scheme: 'com.Archimedes4.Pauly',
-    path: (currentBreakPoint === 0) ? 'home':'index',
+    path: 'home',
   });
   const [authRequest, , promptAsync] = useAuthRequest(
     {
