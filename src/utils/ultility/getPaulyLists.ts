@@ -17,7 +17,7 @@ export default async function getPaulyLists() {
     if (paulyListResult.ok) {
       const paulyListResultData = await paulyListResult.json();
       // store.dispatch(paulyListSlice.actions.setPaulyList({siteId: getRootSiteIdResultData["id"], commissionListId: paulyListResultData["fields"]["commissionListId"], paulyDataListId: paulyListResultData["fields"]["paulyDataListId"], scheduleListId: paulyListResultData["fields"]["scheduleListId"], sportsListId: paulyListResultData["fields"]["sportsListId"], sportsApprovedSubmissionsListId: paulyListResultData["fields"]["sportsApprovedSubmissionsListId"], sportsSubmissionsListId: paulyListResultData["fields"]["sportsSubmissionsListId"], timetablesListId: paulyListResultData["fields"]["timetablesListId"]}))
-      const paulyListData = {
+      const paulyListData: paulyListType = {
         siteId: getRootSiteIdResultData.id,
         studentFilesListId:
           paulyListResultData.value[0].fields.studentFilesListId,
@@ -42,6 +42,7 @@ export default async function getPaulyLists() {
         tagedResourceId:
           paulyListResultData.value[0].fields.tagedResourceId,
         roomListId: paulyListResultData.value[0].fields.roomListId,
+        calendarSyncStateListId: paulyListResultData.value[0].fields.roomListId
       };
       store.dispatch(paulyListSlice.actions.setPaulyList(paulyListData));
       if (Platform.OS == 'web' && sessionStorage !== undefined) {

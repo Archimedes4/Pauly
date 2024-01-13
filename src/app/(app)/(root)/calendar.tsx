@@ -25,7 +25,7 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 
 async function deleteEvents() {
-  let nextUrl: string | undefined = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${'95fc4c55-f178-447d-a77e-3d13d6430c1a'}/items?expand=fields(select=eventId)&select=fields,id`
+  let nextUrl: string | undefined = `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${'dd8557a0-4b77-41c3-8e3c-fe23661113a3'}/items?expand=fields(select=eventId)&select=fields,id`
   while (nextUrl !== undefined) {
     const result = await callMsGraph(nextUrl)
     if (result.ok) {
@@ -33,7 +33,7 @@ async function deleteEvents() {
       for (let index = 0; index < data['value'].length; index += 1) {
         const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data['value'][index]["fields"]['eventId']}`, "DELETE")
         if (deleteResult.ok || deleteResult.status === 404) {
-          const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${'95fc4c55-f178-447d-a77e-3d13d6430c1a'}/items/${data['value'][index]['id']}`, "DELETE")
+          const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${'dd8557a0-4b77-41c3-8e3c-fe23661113a3'}/items/${data['value'][index]['id']}`, "DELETE")
         }
       } 
       nextUrl = data["@odata.nextLink"]
@@ -41,10 +41,19 @@ async function deleteEvents() {
       nextUrl = undefined
     }
   }
-  const currentEvents = store.getState().currentEvents;
-  for (let index = 0; index < currentEvents.length; index += 1) {
-    callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${currentEvents[index]["id"]}`, "DELETE")
-  } 
+  let fullDeleteUrl: string | undefined  = `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events`
+  while (fullDeleteUrl !== undefined) {
+    const result = await callMsGraph(fullDeleteUrl)
+    if (result.ok) {
+      const data = await result.json();
+      for (let index = 0; index < data['value'].length; index += 1) {
+        await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data['value'][index]['id']}`, "DELETE")
+      } 
+      fullDeleteUrl = data["@odata.nextLink"]
+    } else {
+      fullDeleteUrl = undefined
+    }
+  }
   store.dispatch(currentEventsSlice.actions.setCurrentEvents([]))
 }
 
@@ -102,6 +111,9 @@ function TopView({ width, height }: { width: number; height: number }) {
           Calendar
         </Text>
       </View>
+      <Pressable onPress={() => deleteEvents()}>
+        <Text>Delete</Text>
+      </Pressable>
       <View style={{ width: width * 0.55 }}>
         <View style={{ marginLeft: width * 0.05 }}>
           <CalendarTypePicker

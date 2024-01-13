@@ -457,6 +457,7 @@ declare global {
     eventDataExtensionId: string;
     classExtensionId: string;
     tagedResourceId: string;
+    calendarSyncStateListId: string;
   };
   type sportPost = {
     caption: string;
