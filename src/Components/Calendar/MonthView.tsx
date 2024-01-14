@@ -17,14 +17,14 @@ import { getMonthData } from '@utils/calendar/calendarFunctionsGraph';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { ChevronLeft, ChevronRight } from '../Icons';
 
-//Take the current date and selected date and converts to a date string then removes the day of week and day in month and conpares
-//example Date() -> Sun Jan 01 2023 -> Jan 2023
+// Take the current date and selected date and converts to a date string then removes the day of week and day in month and conpares
+// example Date() -> Sun Jan 01 2023 -> Jan 2023
 function isDateToday(selectedDate: string): boolean {
-  const selectDate = new Date(selectedDate).toDateString()
-  const newDate = new Date().toDateString()
-  const selectMonthYear = selectDate.slice(4, 7) + selectDate.slice(10, 15)
-  const newMonthYear = newDate.slice(4, 7) + newDate.slice(10, 15)
-  return selectMonthYear === newMonthYear
+  const selectDate = new Date(selectedDate).toDateString();
+  const newDate = new Date().toDateString();
+  const selectMonthYear = selectDate.slice(4, 7) + selectDate.slice(10, 15);
+  const newMonthYear = newDate.slice(4, 7) + newDate.slice(10, 15);
+  return selectMonthYear === newMonthYear;
 }
 
 function getBackgroundColor(selectedDate: string, dayData: number): string {
@@ -301,7 +301,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
           {/* This is left chevron */}
           <Pressable
             onPress={() => {
-              let d = new Date(selectedDate);
+              const d = new Date(selectedDate);
               const month = d.getMonth();
               d.setMonth(d.getMonth() - 1);
               while (d.getMonth() === month) {
@@ -318,8 +318,8 @@ function MonthView({ width, height }: { width: number; height: number }) {
           {/* This is right chevron */}
           <Pressable
             onPress={() => {
-              let d = new Date(selectedDate);
-              d.setMonth(d.getMonth() + 1)
+              const d = new Date(selectedDate);
+              d.setMonth(d.getMonth() + 1);
               dispatch(
                 selectedDateSlice.actions.setSelectedDate(d.toISOString()),
               );
@@ -402,7 +402,7 @@ export default function MonthViewMain({
           </>
         ) : null}
       </ScrollView>
-    )
+    );
   }
   return (
     <View

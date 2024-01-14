@@ -154,12 +154,18 @@ function ChannelBlock({
           )}
         </View>
       )}
-      <Text style={{marginLeft: 2}}>{channel.item.displayName}</Text>
+      <Text style={{ marginLeft: 2 }}>{channel.item.displayName}</Text>
     </View>
   );
 }
 
-function GroupBlockBody({groupId, selectedGroup}:{groupId: string, selectedGroup: string}) {
+function GroupBlockBody({
+  groupId,
+  selectedGroup,
+}: {
+  groupId: string;
+  selectedGroup: string;
+}) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [channels, setChannels] = useState<channelType[]>([]);
   const [channelState, setChannelState] = useState<loadingStateEnum>(
@@ -194,7 +200,7 @@ function GroupBlockBody({groupId, selectedGroup}:{groupId: string, selectedGroup
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
   if (channelState === loadingStateEnum.success) {
     return (
@@ -214,13 +220,13 @@ function GroupBlockBody({groupId, selectedGroup}:{groupId: string, selectedGroup
           />
         )}
       />
-    )
+    );
   }
   return (
     <View>
       <Text>Failed</Text>
     </View>
-  )
+  );
 }
 
 function GroupBlock({
@@ -233,7 +239,7 @@ function GroupBlock({
   setSelectedGroup: (item: string) => void;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-  
+
   return (
     <Pressable
       key={`Team_${group.id}`}
@@ -257,7 +263,7 @@ function GroupBlock({
         <View style={{ margin: 10 }}>
           <Text>{group.name}</Text>
           <Text>Channels</Text>
-          <GroupBlockBody groupId={group.id} selectedGroup={selectedGroup}/>
+          <GroupBlockBody groupId={group.id} selectedGroup={selectedGroup} />
         </View>
       </View>
     </Pressable>
@@ -297,21 +303,23 @@ function GovernmentResourcesBody() {
 
   if (teamsState === loadingStateEnum.loading) {
     return (
-      <View style={{
-        flex:1,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        <ProgressView width={14} height={14}/>
+      <View
+        style={{
+          flex: 1,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (teamsState === loadingStateEnum.success) {
     return (
-      <FlatList 
+      <FlatList
         data={groups}
         renderItem={group => (
           <GroupBlock
@@ -322,19 +330,21 @@ function GovernmentResourcesBody() {
           />
         )}
       />
-    )
+    );
   }
 
   return (
-    <View style={{
-      flex:1,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+    <View
+      style={{
+        flex: 1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Text>Failed</Text>
     </View>
-  )
+  );
 }
 
 export default function GovernmentResources() {
@@ -375,7 +385,17 @@ export default function GovernmentResources() {
         <Link href="/government">
           <Text>Back</Text>
         </Link>
-        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Government Resources</Text>
+        <Text
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontFamily: 'Comfortaa-Regular',
+            marginBottom: 5,
+            fontSize: 25,
+          }}
+        >
+          Government Resources
+        </Text>
       </View>
       <GovernmentResourcesBody />
     </View>

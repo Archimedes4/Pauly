@@ -58,38 +58,55 @@ async function getResourceFollows() {
   }
 }
 
+async function getAttachment(
+  teamId: string,
+  channelId: string,
+  attachmentId: string,
+): Promise<undefined | attachment> {
+  const attachmentResult = await callMsGraph(
+    `https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/filesFolder`,
+  );
+  if (attachmentResult.ok) {
+    const attachmentData = await attachmentResult.json();
+    const attachmentGetResult = await callMsGraph(
+      `https://graph.microsoft.com/v1.0/drives/${attachmentData.parentReference.driveId}/items/${attachmentId}`,
+    );
+    if (attachmentGetResult.ok) {
+      const attachmentGetResultData = await attachmentGetResult.json();
+      return {
+        webUrl: attachmentGetResultData.webUrl,
+        id: attachmentGetResultData.id,
+        title: attachmentGetResultData.name,
+        type: attachmentGetResultData.file.mimeType,
+      };
+    }
+  }
+}
+
 async function getAttachments(
   teamId: string,
   channelId: string,
   attachments: any[],
 ): Promise<attachment[]> {
   const attachmentsOut: attachment[] = [];
+  const requests = [];
   for (
     let attachmentIndex = 0;
     attachmentIndex < attachments.length;
     attachmentIndex += 1
   ) {
     if (attachments[attachmentIndex].contentType === 'reference') {
-      const attachmentResult = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/filesFolder`,
+      requests.push(
+        getAttachment(teamId, channelId, attachments[attachmentIndex].id),
       );
-      if (attachmentResult.ok) {
-        const attachmentData = await attachmentResult.json();
-        const attachmentGetResult = await callMsGraph(
-          `https://graph.microsoft.com/v1.0/drives/${attachmentData.parentReference.driveId}/items/${attachments[attachmentIndex].id}`,
-        );
-        if (attachmentGetResult.ok) {
-          const attachmentGetResultData = await attachmentGetResult.json();
-          attachments.push({
-            webUrl: attachmentGetResultData.webUrl,
-            id: attachmentGetResultData.id,
-            title: attachmentGetResultData.name,
-            type: attachmentGetResultData.file.mimeType,
-          });
-        }
-      }
     }
   }
+  const results = await Promise.all(requests);
+  results.forEach(e => {
+    if (e) {
+      attachmentsOut.push(e);
+    }
+  });
   return attachmentsOut;
 }
 
@@ -98,29 +115,25 @@ export async function getCategoryResources(category: resourceMode) {
     resourcesSlice.actions.setResourcesState(loadingStateEnum.loading),
   );
   const output: resourceDataType[] = [];
-  const paulyList = store.getState().paulyList
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${paulyList.siteId}/lists/${paulyList.tagedResourceId}/items?$expand=fields&$filter=fields/category%20eq%20'${category}'&$select=fields,id`)
+  const { paulyList } = store.getState();
+  const result = await callMsGraph(
+    `https://graph.microsoft.com/v1.0/sites/${paulyList.siteId}/lists/${paulyList.tagedResourceId}/items?$expand=fields&$filter=fields/category%20eq%20'${category}'&$select=fields,id`,
+  );
   if (!result.ok) {
     store.dispatch(
       resourcesSlice.actions.setResourcesState(loadingStateEnum.failed),
     );
-    return
+    return;
   }
   const data = await result.json();
-  let batchDataRequests: batchRequest[][] = [[]]
+  const batchDataRequests: batchRequest[][] = [[]];
   let batchCount = 0;
-  for (let index = 0; index < data["value"].length; index += 1) {
+  for (let index = 0; index < data.value.length; index += 1) {
     // adding data to get resource messages of the resources that are in the category.
     batchDataRequests[batchCount].push({
       id: (index + 1).toString(),
       method: 'GET',
-      url: `/teams/${
-        data["value"][index]["fields"]["teamId"]
-      }/channels/${
-        data["value"][index]["fields"]["channelId"]
-      }/messages/${
-        data["value"][index]["fields"]["postId"]
-      }`,
+      url: `/teams/${data.value[index].fields.teamId}/channels/${data.value[index].fields.channelId}/messages/${data.value[index].fields.postId}`,
     });
     if (store.getState().resources.resourceFollow.length % 20 === 0) {
       batchDataRequests.push([]);
@@ -150,13 +163,12 @@ export async function getCategoryResources(category: resourceMode) {
             const resourceResponceDataBody =
               resourceResponceData.responses[responceIndex].body;
             if (
-              resourceResponceData.responses[responceIndex].body.content !== '<systemEventMessage/>'
+              resourceResponceData.responses[responceIndex].body.content !==
+              '<systemEventMessage/>'
             ) {
               const attachments = await getAttachments(
-                resourceResponceDataBody.channelIdentity
-                  .teamId,
-                resourceResponceDataBody.channelIdentity
-                  .channelId,
+                resourceResponceDataBody.channelIdentity.teamId,
+                resourceResponceDataBody.channelIdentity.channelId,
                 resourceResponceDataBody.attachments,
               );
               const outputData: resourceDataType = {
@@ -164,20 +176,23 @@ export async function getCategoryResources(category: resourceMode) {
                   store.getState().resources.resourceFollow[
                     parseInt(
                       resourceResponceData.responses[responceIndex].id,
+                      10,
                     ) - 1
                   ].teamId,
                 conversationId:
                   store.getState().resources.resourceFollow[
                     parseInt(
                       resourceResponceData.responses[responceIndex].id,
+                      10,
                     ) - 1
                   ].channelId,
                 id: resourceResponceData.responses[responceIndex].body.id,
-                body: resourceResponceData.responses[responceIndex].body.body.content,
+                body: resourceResponceData.responses[responceIndex].body.body
+                  .content,
                 html:
-                  resourceResponceData.responses[responceIndex].body.contentType === 'html',
-                attachments:
-                  attachments.length >= 1 ? attachments : undefined,
+                  resourceResponceData.responses[responceIndex].body
+                    .contentType === 'html',
+                attachments: attachments.length >= 1 ? attachments : undefined,
               };
               output.push(outputData);
             }
@@ -205,9 +220,7 @@ export async function getResources() {
   );
   await getResourceFollows();
   const output: resourceDataType[] = [];
-  const batchDataRequests: batchRequest[][] = [
-    [],
-  ];
+  const batchDataRequests: batchRequest[][] = [[]];
   let batchCount = 0;
   for (
     let index = 0;
@@ -279,6 +292,7 @@ export async function getResources() {
                     store.getState().resources.resourceFollow[
                       parseInt(
                         resourceResponceData.responses[responceIndex].id,
+                        10,
                       ) - 1
                     ].channelId,
                   id: resourceResponceData.responses[responceIndex].body.value[
@@ -534,67 +548,84 @@ export async function getNewsPosts(nextLink?: string | undefined): Promise<
   return { result: loadingStateEnum.failed };
 }
 
-export async function getTaggedResource(teamId: string, channelId: string, postId: string): Promise<{
-  result: loadingStateEnum.success
-  data: taggedResource
-} | {
-  result: loadingStateEnum.notFound
-} | {
-  result: loadingStateEnum.failed
-}> {
-  const paulyList = store.getState().paulyList
+export async function getTaggedResource(
+  teamId: string,
+  channelId: string,
+  postId: string,
+): Promise<
+  | {
+      result: loadingStateEnum.success;
+      data: taggedResource;
+    }
+  | {
+      result: loadingStateEnum.notFound;
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
+  const { paulyList } = store.getState();
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/sites/${paulyList.siteId}/lists/${paulyList.tagedResourceId}/items?$expand=fields&$filter=fields/teamId%20eq%20'${teamId}'%20and%20fields/channelId%20eq%20'${channelId}'%20and%20fields/postId%20eq%20'${postId}'`
+    `https://graph.microsoft.com/v1.0/sites/${paulyList.siteId}/lists/${paulyList.tagedResourceId}/items?$expand=fields&$filter=fields/teamId%20eq%20'${teamId}'%20and%20fields/channelId%20eq%20'${channelId}'%20and%20fields/postId%20eq%20'${postId}'`,
   );
   if (result.ok) {
     const data = await result.json();
-    if (data["value"].length === 1) {
-      return { result: loadingStateEnum.success, data: {
-        importance: data["value"][0]["fields"]["importance"],
-        category: parseInt(data["value"][0]["fields"]["category"]) as resourceMode,
-        tagId: data["value"][0]["fields"]["id"]
-      }}
+    if (data.value.length === 1) {
+      return {
+        result: loadingStateEnum.success,
+        data: {
+          importance: data.value[0].fields.importance,
+          category: parseInt(data.value[0].fields.category, 10) as resourceMode,
+          tagId: data.value[0].fields.id,
+        },
+      };
     }
-    return { result: loadingStateEnum.notFound }
+    return { result: loadingStateEnum.notFound };
   }
-  return { result: loadingStateEnum.failed }
+  return { result: loadingStateEnum.failed };
 }
 
-export async function tagResource(teamId: string, channelId: string, postId: string, category: resourceMode, tagId?: string): Promise<loadingStateEnum> {
-  const paulyList = store.getState().paulyList
+export async function tagResource(
+  teamId: string,
+  channelId: string,
+  postId: string,
+  category: resourceMode,
+  tagId?: string,
+): Promise<loadingStateEnum> {
+  const { paulyList } = store.getState();
   if (tagId === undefined) {
-    let data = {
-      "fields": {
-        "category": category.toString(),
-        "importance": 0,
-        "teamId":teamId,
-        "channelId":channelId,
-        "postId":postId
-      }
+    const data = {
+      fields: {
+        category: category.toString(),
+        importance: 0,
+        teamId,
+        channelId,
+        postId,
+      },
     };
     const result = await callMsGraph(
       `https://graph.microsoft.com/v1.0/sites/${paulyList.siteId}/lists/${paulyList.tagedResourceId}/items`,
-      "POST",
-      JSON.stringify(data)
+      'POST',
+      JSON.stringify(data),
     );
     if (result.ok) {
-      return loadingStateEnum.success
+      return loadingStateEnum.success;
     }
-    return loadingStateEnum.failed
+    return loadingStateEnum.failed;
   }
-  let data = {
-    "fields": {
-      "category": category.toString(),
-      "importance": 0
-    }
+  const data = {
+    fields: {
+      category: category.toString(),
+      importance: 0,
+    },
   };
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${paulyList.siteId}/lists/${paulyList.tagedResourceId}/${tagId}`,
-    "PATCH",
-    JSON.stringify(data)
+    'PATCH',
+    JSON.stringify(data),
   );
   if (result.ok) {
-    return loadingStateEnum.success
+    return loadingStateEnum.success;
   }
-  return loadingStateEnum.failed
+  return loadingStateEnum.failed;
 }

@@ -7,16 +7,60 @@
 import { loadingStateEnum } from '@constants';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 
+async function makeBatch(
+  data: batchRequest[],
+): Promise<
+  | { result: loadingStateEnum.success; output: batchResponseType[] }
+  | { result: loadingStateEnum.failed }
+> {
+  const batchData = {
+    requests: data,
+  };
+  const result = await callMsGraph(
+    'https://graph.microsoft.com/v1.0/$batch',
+    'POST',
+    JSON.stringify(batchData),
+    [{ key: 'Accept', value: 'application/json' }],
+  );
+  if (result.ok) {
+    const output: batchResponseType[] = [];
+    const batchResultData = await result.json();
+    for (
+      let batchIndex = 0;
+      batchIndex < batchResultData.responses.length;
+      batchIndex += 1
+    ) {
+      output.push({
+        method: 'GET',
+        id: batchResultData.responses[batchIndex].id,
+        headers: batchResultData.responses[batchIndex].headers,
+        body: batchResultData.responses[batchIndex].body,
+        status: batchResultData.responses[batchIndex].status,
+      });
+    }
+    return {
+      result: loadingStateEnum.success,
+      output,
+    };
+  }
+  return { result: loadingStateEnum.failed };
+}
+
 export default async function largeBatch(
-  defaultBatchData?: { id: string; method: 'GET' | 'POST'; url: string }[][],
+  defaultBatchData?: batchRequest[][],
   createData?: {
     firstUrl: string;
     secondUrl: string;
     keys: { array?: string[]; map?: Map<string, unknown> };
     method: 'GET' | 'POST';
   },
-): Promise<{ result: loadingStateEnum; data?: batchResponseType[] }> {
-  let data: { id: string; method: 'GET' | 'POST'; url: string }[][] = [];
+): Promise<
+  | { result: loadingStateEnum.success; data: batchResponseType[] }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
+  let data: batchRequest[][] = [];
   if (defaultBatchData) {
     data = defaultBatchData;
   } else if (createData) {
@@ -61,34 +105,16 @@ export default async function largeBatch(
     return { result: loadingStateEnum.failed };
   }
 
-  const output: batchResponseType[] = [];
+  let output: batchResponseType[] = [];
+  const ongoingRequests = [];
   for (let index = 0; index < data.length; index += 1) {
-    const batchData = {
-      requests: data[index],
-    };
-    const result = await callMsGraph(
-      'https://graph.microsoft.com/v1.0/$batch',
-      'POST',
-      JSON.stringify(batchData),
-      [{ key: 'Accept', value: 'application/json' }],
-    );
-    if (result.ok) {
-      const batchResultData = await result.json();
-      for (
-        let batchIndex = 0;
-        batchIndex < batchResultData.responses.length;
-        batchIndex += 1
-      ) {
-        output.push({
-          method: 'GET',
-          id: batchResultData.responses[batchIndex].id,
-          headers: batchResultData.responses[batchIndex].headers,
-          body: batchResultData.responses[batchIndex].body,
-          status: batchResultData.responses[batchIndex].status,
-        });
-      }
-    } else {
-      return { result: loadingStateEnum.failed };
+    ongoingRequests.push(makeBatch(data[index]));
+  }
+  const finalRequests = await Promise.all(ongoingRequests);
+  for (let index = 0; index < data.length; index += 1) {
+    const finalRequest = finalRequests[index];
+    if (finalRequest.result === loadingStateEnum.success) {
+      output = [...output, ...finalRequest.output];
     }
   }
   return { result: loadingStateEnum.success, data: output };

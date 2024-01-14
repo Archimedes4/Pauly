@@ -6,19 +6,11 @@
   Can select file from one drive a share point link or a teams channel that the user is in.
 */
 import React, { useEffect, useState } from 'react';
-import {
-  Pressable,
-  View,
-  Text,
-  TextInput,
-  FlatList,
-} from 'react-native';
-import Picker from '../Pickers/Picker';
+import { Pressable, View, Text, TextInput, FlatList } from 'react-native';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import {
-  getUserTeams,
-} from '@utils/microsoftFilePickerFunctions';
+import { getUserTeams } from '@utils/microsoftFilePickerFunctions';
 import { loadingStateEnum } from '@constants';
+import Picker from '../Pickers/Picker';
 import PersonalBlock from './PersonalBlock';
 
 enum MicrosoftUploadModeType {
@@ -123,9 +115,15 @@ export default function MicrosoftFilePicker({
             width={width}
             height={30}
           >
-            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>Personal</Text>
-            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>Link</Text>
-            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>Teams</Text>
+            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>
+              Personal
+            </Text>
+            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>
+              Link
+            </Text>
+            <Text style={{ margin: 0, padding: 0, fontFamily: 'Roboto' }}>
+              Teams
+            </Text>
           </Picker>
         </View>
         {selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal ? (

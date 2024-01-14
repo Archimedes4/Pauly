@@ -64,9 +64,19 @@ export default function MicrosoftGraphEditGroup() {
       <Link href="/government/graph">
         <Text>Back</Text>
       </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Microsoft Graph Edit Group</Text>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Microsoft Graph Edit Group
+      </Text>
       <View style={{ flexDirection: 'row' }}>
-        <Text style={{marginLeft: 15}}>{id}</Text>
+        <Text style={{ marginLeft: 15 }}>{id}</Text>
         {id !== undefined && typeof id === 'string' ? (
           <>
             {isCoppiedToClipboard ? (
@@ -98,7 +108,7 @@ export default function MicrosoftGraphEditGroup() {
           deleteGroup();
         }}
         second
-        style={{margin: 15}}
+        style={{ margin: 15 }}
       />
     </View>
   );

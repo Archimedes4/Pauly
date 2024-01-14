@@ -8,16 +8,21 @@ import store from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
-export default async function getSchoolYears(nextLink?: string): Promise<{
-  result: loadingStateEnum.success;
-  events: eventType[];
-  nextLink?: string;
-} | {
-  result: loadingStateEnum.failed
-}> {
+export default async function getSchoolYears(nextLink?: string): Promise<
+  | {
+      result: loadingStateEnum.success;
+      events: eventType[];
+      nextLink?: string;
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const result = await callMsGraph(
     nextLink ||
-      `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+      `https://graph.microsoft.com/v1.0/groups/${
+        process.env.EXPO_PUBLIC_ORGWIDEGROUPID
+      }/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
         store.getState().paulyList.eventTypeExtensionId
       }'%20or%20id%20eq%20'${
         store.getState().paulyList.eventDataExtensionId

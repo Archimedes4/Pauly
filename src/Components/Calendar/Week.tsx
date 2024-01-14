@@ -7,38 +7,36 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import WeekDayView from './WeekDayView';
 import { RootState } from '@redux/store';
 import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
 import { Colors } from '@constants';
+import WeekDayView from './WeekDayView';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import DayView from './DayView';
 
-function WeekDayButton({width, day}:{width: number, day: Date}) {
-  const selectedDateRedux: string = useSelector((state: RootState) => state.selectedDate);
+function WeekDayButton({ width, day }: { width: number; day: Date }) {
+  const selectedDateRedux: string = useSelector(
+    (state: RootState) => state.selectedDate,
+  );
   const dispatch = useDispatch();
 
-  const [isHover, setIsHover] = useState<boolean>(false)
+  const [isHover, setIsHover] = useState<boolean>(false);
   return (
     <Pressable
       onPress={() => {
-        dispatch(
-          selectedDateSlice.actions.setSelectedDate(
-            day.toISOString(),
-          ),
-        );
+        dispatch(selectedDateSlice.actions.setSelectedDate(day.toISOString()));
       }}
       key={`${day.getDay()}`}
       onHoverIn={() => setIsHover(true)}
       onHoverOut={() => setIsHover(false)}
-      onPressIn={() =>  setIsHover(true)}
+      onPressIn={() => setIsHover(true)}
       onPressOut={() => setIsHover(false)}
       style={{
         width: width * 0.08888888888888889,
         height: width * 0.08888888888888889,
         margin: width * 0.01111111111111111,
         borderRadius: 50,
-        backgroundColor: (isHover) ? Colors.lightGray:Colors.darkGray,
+        backgroundColor: isHover ? Colors.lightGray : Colors.darkGray,
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
@@ -52,12 +50,17 @@ function WeekDayButton({width, day}:{width: number, day: Date}) {
             ? 5
             : 0,
         shadowRadius: 4,
-        shadowColor: Colors.black
+        shadowColor: Colors.black,
       }}
     >
-      <Text selectable={false} style={{ color: isHover ? Colors.black:Colors.white }}>{day.getDate()}</Text>
+      <Text
+        selectable={false}
+        style={{ color: isHover ? Colors.black : Colors.white }}
+      >
+        {day.getDate()}
+      </Text>
     </Pressable>
-  )
+  );
 }
 
 export default function Week({
@@ -92,26 +95,27 @@ export default function Week({
         {/* 768 TO DO get dimentiosn value */}
         {width >= 768 ? (
           <View>
-            <View style={{flexDirection: 'row', height: 40}}>
-              {daysOfWeek.map((dow) => (
-                <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
-                  <Text>{dow.toLocaleDateString("en-US", {weekday: 'long'})}</Text>
-                  <Text style={{marginLeft: 'auto', marginRight: 'auto'}}>{dow.toLocaleDateString("en-US", {day: "numeric"})}</Text>
+            <View style={{ flexDirection: 'row', height: 40 }}>
+              {daysOfWeek.map(dow => (
+                <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                  <Text>
+                    {dow.toLocaleDateString('en-US', { weekday: 'long' })}
+                  </Text>
+                  <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                    {dow.toLocaleDateString('en-US', { day: 'numeric' })}
+                  </Text>
                 </View>
               ))}
             </View>
-            <ScrollView style={{height}}>
-              <View style={{flexDirection: 'row'}}>
+            <ScrollView style={{ height }}>
+              <View style={{ flexDirection: 'row' }}>
                 {daysOfWeek.map((day, index) => (
-                  <View 
-                    key={day.getDate()}
-                    id={day.getDate().toString()}
-                  >
+                  <View key={day.getDate()} id={day.getDate().toString()}>
                     <WeekDayView
-                      width={width/7}
+                      width={width / 7}
                       height={false ? height * 0.757 : height}
-                      week={true}
-                      start={index === 0 ? true:false}
+                      week
+                      start={index === 0}
                       day={day}
                     />
                   </View>

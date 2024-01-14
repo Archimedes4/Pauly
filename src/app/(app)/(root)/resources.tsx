@@ -130,14 +130,18 @@ function ResourceBlock({
                   Linking.openURL(attachment.webUrl);
                 }}
               >
-                <MimeTypeIcon width={14} height={14} mimeType={attachment.type} />
+                <MimeTypeIcon
+                  width={14}
+                  height={14}
+                  mimeType={attachment.type}
+                />
                 <Text>{attachment.title}</Text>
               </Pressable>
             ))}
           </View>
         ) : null}
       </Pressable>
-    )
+    );
   }
   return (
     <View
@@ -321,9 +325,7 @@ export default function Resources() {
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
-  const {searchValue} = useSelector(
-    (state: RootState) => state.resources,
-  );
+  const { searchValue } = useSelector((state: RootState) => state.resources);
   const [isShowingCategoryView, setIsShowingCategoryView] =
     useState<boolean>(false);
   const [selectedPost, setSelectedPost] = useState<
@@ -366,7 +368,11 @@ export default function Resources() {
             Resources
           </Text>
         </View>
-        <SearchBar value={searchValue} onChangeText={(e) => dispatch(resourcesSlice.actions.setSearchValue(e))} onSearch={() => getResourcesSearch(searchValue)} />
+        <SearchBar
+          value={searchValue}
+          onChangeText={e => dispatch(resourcesSlice.actions.setSearchValue(e))}
+          onSearch={() => getResourcesSearch(searchValue)}
+        />
         <View
           style={{
             width,
@@ -374,15 +380,9 @@ export default function Resources() {
             backgroundColor: Colors.lightGray,
           }}
         />
-        {selectedResourceMode === resourceMode.news ? (
-          <>
-            <ResourcesNews />
-          </>
-        ) : null}
+        {selectedResourceMode === resourceMode.news ? <ResourcesNews /> : null}
         {selectedResourceMode === resourceMode.scholarships ? (
-          <>
-            <ResourceScholarships />
-          </>
+          <ResourceScholarships />
         ) : null}
         {selectedResourceMode !== resourceMode.scholarships &&
         selectedResourceMode !== resourceMode.news ? (
@@ -465,27 +465,35 @@ function GovernmentCategoryView({
   const [selectedCategory, setSelectedCategory] = useState<resourceMode>(
     resourceMode.home,
   );
-  const [tagResourceState, setTagResourceState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
-  const [tagId, setTagId] = useState<string | undefined>(undefined)
+  const [tagResourceState, setTagResourceState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
+  const [tagId, setTagId] = useState<string | undefined>(undefined);
   async function updateTagResource() {
     setCategoryState(loadingStateEnum.loading);
-    const result = await tagResource(teamId, channelId, messageId, selectedCategory, tagId)
+    const result = await tagResource(
+      teamId,
+      channelId,
+      messageId,
+      selectedCategory,
+      tagId,
+    );
     setCategoryState(result);
   }
   async function loadTagResource() {
     setTagResourceState(loadingStateEnum.loading);
-    const result = await getTaggedResource(teamId, channelId, messageId)
+    const result = await getTaggedResource(teamId, channelId, messageId);
     if (result.result === loadingStateEnum.success) {
-      setTagId(result.data.tagId)
-      setSelectedCategory(result.data.category)
-      setTagResourceState(loadingStateEnum.success)
+      setTagId(result.data.tagId);
+      setSelectedCategory(result.data.category);
+      setTagResourceState(loadingStateEnum.success);
     }
-    setTagResourceState(result.result)
+    setTagResourceState(result.result);
   }
 
   useEffect(() => {
-    loadTagResource()
-  }, [])
+    loadTagResource();
+  }, []);
 
   if (tagResourceState === loadingStateEnum.loading) {
     return (
@@ -504,7 +512,7 @@ function GovernmentCategoryView({
           borderRadius: 15,
           alignContent: 'center',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
         }}
       >
         <Pressable
@@ -513,13 +521,16 @@ function GovernmentCategoryView({
         >
           <CloseIcon width={12} height={12} />
         </Pressable>
-        <ProgressView width={14} height={14}/>
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
-  if (tagResourceState === loadingStateEnum.notFound || tagResourceState === loadingStateEnum.success) {
+  if (
+    tagResourceState === loadingStateEnum.notFound ||
+    tagResourceState === loadingStateEnum.success
+  ) {
     return (
       <View
         style={{
@@ -555,40 +566,40 @@ function GovernmentCategoryView({
         </View>
         <StyledButton
           onPress={() => setSelectedCategory(resourceMode.sports)}
-          text='Sports'
+          text="Sports"
           selected={selectedCategory === resourceMode.sports}
-          style={{marginLeft: 15, marginRight: 15, marginTop: 15}}
+          style={{ marginLeft: 15, marginRight: 15, marginTop: 15 }}
         />
         <StyledButton
           onPress={() => setSelectedCategory(resourceMode.schoolEvents)}
-          text='School Events'
+          text="School Events"
           selected={selectedCategory === resourceMode.schoolEvents}
-          style={{marginLeft: 15, marginRight: 15, marginTop: 20}}
+          style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
         />
         <StyledButton
           onPress={() => setSelectedCategory(resourceMode.annoucments)}
-          text='Annoucments'
+          text="Annoucments"
           selected={selectedCategory === resourceMode.annoucments}
-          style={{marginLeft: 15, marginRight: 15, marginTop: 20}}
+          style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
         />
         <StyledButton
           onPress={() => setSelectedCategory(resourceMode.fitness)}
-          text='Fitness'
+          text="Fitness"
           selected={selectedCategory === resourceMode.fitness}
-          style={{marginLeft: 15, marginRight: 15, marginTop: 20}}
+          style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
         />
         <StyledButton
           onPress={() => setSelectedCategory(resourceMode.files)}
-          text='Files'
+          text="Files"
           selected={selectedCategory === resourceMode.files}
-          style={{marginLeft: 15, marginRight: 15, marginTop: 20}}
+          style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
         />
         <StyledButton
           onPress={() => updateTagResource()}
           text={getTextState(categoryState, { notStarted: 'Confirm' })}
           second
-          style={{marginLeft: 15, marginRight: 15, marginTop: 25}}
-          textStyle={{marginLeft: 'auto', marginRight: 'auto'}}
+          style={{ marginLeft: 15, marginRight: 15, marginTop: 25 }}
+          textStyle={{ marginLeft: 'auto', marginRight: 'auto' }}
         />
       </View>
     );
@@ -596,27 +607,27 @@ function GovernmentCategoryView({
 
   return (
     <View
-        style={{
-          height: height * 0.9,
-          width: width * 0.8,
-          position: 'absolute',
-          top: height * 0.05,
-          left: width * 0.1,
-          backgroundColor: Colors.white,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 1, height: 1 },
-          shadowOpacity: 1,
-          shadowRadius: 5,
-          borderRadius: 15,
-        }}
+      style={{
+        height: height * 0.9,
+        width: width * 0.8,
+        position: 'absolute',
+        top: height * 0.05,
+        left: width * 0.1,
+        backgroundColor: Colors.white,
+        shadowColor: Colors.black,
+        shadowOffset: { width: 1, height: 1 },
+        shadowOpacity: 1,
+        shadowRadius: 5,
+        borderRadius: 15,
+      }}
+    >
+      <Pressable
+        onPress={() => onClose()}
+        style={{ position: 'absolute', left: 20, top: 20 }}
       >
-        <Pressable
-          onPress={() => onClose()}
-          style={{ position: 'absolute', left: 20, top: 20 }}
-        >
-          <CloseIcon width={12} height={12} />
-        </Pressable>
-        <Text>Something went wrong</Text>
+        <CloseIcon width={12} height={12} />
+      </Pressable>
+      <Text>Something went wrong</Text>
     </View>
-  )
+  );
 }

@@ -5,7 +5,13 @@
 import { Colors } from '@src/constants';
 import React, { ReactNode, useRef, useEffect, Children } from 'react';
 import { View, Pressable } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from 'react-native-reanimated';
 // import styles from './Picker.module.css'
 
 interface PickerWrapperProps {
@@ -30,7 +36,7 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
     pan.value = withTiming(compoentWidth * id, {
       duration: 250,
       easing: Easing.linear,
-    })
+    });
   }
 
   const animatedDefault = useAnimatedStyle(() => ({
@@ -57,9 +63,7 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
           </Pressable>
         </View>
       ))}
-      <Animated.View
-        style={animatedDefault}
-      >
+      <Animated.View style={animatedDefault}>
         <View
           style={{
             height: height * 0.2,

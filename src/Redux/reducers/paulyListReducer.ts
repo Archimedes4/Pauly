@@ -18,7 +18,7 @@ const initalState: paulyListType = {
   tagedResourceId: '',
   dressCodeListId: '',
   roomListId: '',
-  calendarSyncStateListId: ''
+  calendarSyncStateListId: '',
 };
 
 export const paulyListSlice = createSlice({

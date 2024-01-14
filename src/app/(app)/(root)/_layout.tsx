@@ -23,19 +23,24 @@ function AuthenticatedView() {
   const isShowingProfileBlock = useSelector(
     (state: RootState) => state.isShowingProfileBlock,
   );
-  const overflowHidden = useSelector((state: RootState) => state.safeAreaColors.overflowHidden)
+  const overflowHidden = useSelector(
+    (state: RootState) => state.safeAreaColors.overflowHidden,
+  );
 
   return (
-    <View style={{ width: totalWidth, overflow: overflowHidden ? 'hidden':'visible' }}>
+    <View
+      style={{
+        width: totalWidth,
+        overflow: overflowHidden ? 'hidden' : 'visible',
+      }}
+    >
       <View style={{ flexDirection: 'row', width: totalWidth }}>
-        {currentBreakPoint >= 1 ? (
-          <NavBarComponent />
-        ) : null}
+        {currentBreakPoint >= 1 ? <NavBarComponent /> : null}
         <View
           style={{
             width,
             backgroundColor: Colors.maroon,
-            overflow: overflowHidden ? 'hidden':'visible'
+            overflow: overflowHidden ? 'hidden' : 'visible',
           }}
         >
           <Slot />

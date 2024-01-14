@@ -19,11 +19,37 @@ export default function GovernmentCalendar() {
       <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25}}>Government Calendar</Text>
-      <StyledButton to={"/government/calendar/schedule"} text='Schedule' style={{marginLeft: 15, marginRight: 15, marginTop: 15}}/>
-      <StyledButton to={"/government/calendar/timetable"} text='Timetables' style={{marginLeft: 15, marginRight: 15, marginTop: 20}}/>
-      <StyledButton to={"/government/calendar/dresscode"} text='Dress Code' style={{marginLeft: 15, marginRight: 15, marginTop: 20}}/>
-      <StyledButton to={"/government/calendar/sync"} text='Calendar Sync' style={{marginLeft: 15, marginRight: 15, marginTop: 20}}/>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Government Calendar
+      </Text>
+      <StyledButton
+        to="/government/calendar/schedule"
+        text="Schedule"
+        style={{ marginLeft: 15, marginRight: 15, marginTop: 15 }}
+      />
+      <StyledButton
+        to="/government/calendar/timetable"
+        text="Timetables"
+        style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
+      />
+      <StyledButton
+        to="/government/calendar/dresscode"
+        text="Dress Code"
+        style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
+      />
+      <StyledButton
+        to="/government/calendar/sync"
+        text="Calendar Sync"
+        style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
+      />
     </View>
   );
 }

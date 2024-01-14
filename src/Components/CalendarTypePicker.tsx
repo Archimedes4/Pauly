@@ -6,7 +6,7 @@
   Top compoent in calendar picker
 */
 import { View, Text, Pressable } from 'react-native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { RootState } from '@redux/store';
@@ -34,13 +34,18 @@ export default function CalendarTypePicker({
     (state: RootState) => state.addEvent,
   );
   const dispatch = useDispatch();
-  const setPanValue = useCallback((selectedCalendarMode: calendarMode) => {
-    pan.value = withTiming(selectedCalendarMode * compoentWidth + compoentWidth * 0.005);
-  }, [compoentWidth, pan, selectedCalendarMode]);
+  const setPanValue = useCallback(
+    (newCalendarMode: calendarMode) => {
+      pan.value = withTiming(
+        newCalendarMode * compoentWidth + compoentWidth * 0.005,
+      );
+    },
+    [compoentWidth, pan],
+  );
 
   useEffect(() => {
     setComponentWidth(width / 3);
-    pan.value = selectedCalendarMode * (width/3) + (width/3) * 0.005;
+    pan.value = selectedCalendarMode * (width / 3) + (width / 3) * 0.005;
   }, [width]);
 
   return (
@@ -64,7 +69,7 @@ export default function CalendarTypePicker({
           );
           setPanValue(calendarMode.month);
         }}
-        key={'Month_Button'}
+        key="Month_Button"
         style={{
           position: 'absolute',
           width: compoentWidth,
@@ -90,7 +95,7 @@ export default function CalendarTypePicker({
           );
           setPanValue(calendarMode.week);
         }}
-        key={'Week_Button'}
+        key="Week_Button"
         style={{
           position: 'absolute',
           transform: [{ translateX: 1 * compoentWidth }],
@@ -117,7 +122,7 @@ export default function CalendarTypePicker({
           );
           setPanValue(calendarMode.day);
         }}
-        key={'Day_Button'}
+        key="Day_Button"
         style={{
           position: 'absolute',
           transform: [{ translateX: 2 * compoentWidth }],

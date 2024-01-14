@@ -7,7 +7,7 @@
 import { useFocusEffect, useRouter } from 'expo-router';
 import { Platform } from 'react-native';
 
-//takes the user back to the main page
+// takes the user back to the main page
 export default function Missing() {
   if (Platform.OS === 'web') {
     const router = useRouter();

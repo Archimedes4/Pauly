@@ -1,12 +1,16 @@
-import { calculateIfShowing, computeEventHeight, findTimeOffset, isTimeOnDay } from "@utils/calendar/calendarFunctions";
-import { getClassEventsFromDay } from "@utils/classesFunctions";
-import { RootState } from "@redux/store";
-import { Colors, loadingStateEnum } from "@constants";
-import React, { useCallback } from "react";
-import { useEffect, useRef, useState } from "react";
-import { ScrollView, View, useColorScheme, Text } from "react-native";
-import { useSelector } from "react-redux";
-import createUUID from "@src/utils/ultility/createUUID";
+import {
+  calculateIfShowing,
+  computeEventHeight,
+  findTimeOffset,
+  isTimeOnDay,
+} from '@utils/calendar/calendarFunctions';
+import { getClassEventsFromDay } from '@utils/classesFunctions';
+import { RootState } from '@redux/store';
+import { Colors, loadingStateEnum } from '@constants';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ScrollView, View, useColorScheme, Text } from 'react-native';
+import { useSelector } from 'react-redux';
+import createUUID from '@src/utils/ultility/createUUID';
 
 function EventBlock({
   event,
@@ -95,7 +99,7 @@ function EventBlock({
       eventPane[eventPane.length - 1].push(Offset);
       eventPane[eventPane.length - 1].push(Offset + EventHeight);
     }
-    //setHorizontalShift(width * horizontalCheck);
+    // setHorizontalShift(width * horizontalCheck);
   }
 
   useEffect(() => {
@@ -141,19 +145,18 @@ function EventBlock({
   );
 }
 
-
 export default function WeekDayView({
   width,
   height,
   week,
   start,
-  day
+  day,
 }: {
   width: number;
   height: number;
   week: true;
   start: boolean;
-  day: Date
+  day: Date;
 }) {
   const colorScheme = useColorScheme();
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
@@ -263,7 +266,13 @@ export default function WeekDayView({
   }, [selectedDate]);
 
   return (
-    <View style={{ height: week ? undefined:height, width, backgroundColor: Colors.white }}>
+    <View
+      style={{
+        height: week ? undefined : height,
+        width,
+        backgroundColor: Colors.white,
+      }}
+    >
       <>
         {isShowingTime ? (
           <>
@@ -272,7 +281,8 @@ export default function WeekDayView({
                 key={`${value}_${createUUID()}`}
                 style={{ flexDirection: 'row', height: hourLength }}
               >
-                {calculateIfShowing(value, new Date(selectedDate)) && (week === undefined || start === true) ? (
+                {calculateIfShowing(value, new Date(selectedDate)) &&
+                (week === undefined || start === true) ? (
                   <Text
                     selectable={false}
                     style={{
@@ -285,12 +295,12 @@ export default function WeekDayView({
                 <View
                   style={{
                     backgroundColor: 'black',
-                    width: start ? width * 0.8:width,
+                    width: start ? width * 0.8 : width,
                     height: 6,
                     position: 'absolute',
                     right: 0,
-                    borderEndStartRadius: start ? 25:0,
-                    borderStartStartRadius: start ? 25:0
+                    borderEndStartRadius: start ? 25 : 0,
+                    borderStartStartRadius: start ? 25 : 0,
                   }}
                 />
               </View>
@@ -329,7 +339,9 @@ export default function WeekDayView({
             alignItems: 'center',
           }}
         >
-          <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>{currentTime}</Text>
+          <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>
+            {currentTime}
+          </Text>
           <View
             style={{
               backgroundColor: 'red',

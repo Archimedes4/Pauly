@@ -7,10 +7,9 @@
 */
 /* eslint-disable global-require */
 /* This is for the requires which is not possible to not use require and docs for relevant resources use requrire. */
-import { View, Text, Pressable, Image, Platform } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import { GearIcon } from '@src/components/Icons';
 import { Colors } from '@constants';
@@ -20,8 +19,8 @@ import { RootState } from '@redux/store';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
 import { SplashScreen, router } from 'expo-router';
 
-SplashScreen.preventAutoHideAsync()
-export function SignInComponent({government}:{government: boolean}) {
+SplashScreen.preventAutoHideAsync();
+export function SignInComponent({ government }: { government: boolean }) {
   // visual
   const { height, totalWidth } = useSelector(
     (state: RootState) => state.dimentions,
@@ -39,7 +38,7 @@ export function SignInComponent({government}:{government: boolean}) {
           bottom: Colors.maroon,
           isTopTransparent: false,
           isBottomTransparent: false,
-          overflowHidden: true
+          overflowHidden: true,
         }),
       );
     },
@@ -66,10 +65,12 @@ export function SignInComponent({government}:{government: boolean}) {
   const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
     useState<boolean>(false);
   const isAuthenticated = useIsAuthenticated();
-  const currentBreakPoint = useSelector((state: RootState) => state.dimentions.currentBreakPoint);
+  const currentBreakPoint = useSelector(
+    (state: RootState) => state.dimentions.currentBreakPoint,
+  );
 
   useEffect(() => {
-    if (currentBreakPoint === 0 && isAuthenticated.authenticated) {  
+    if (currentBreakPoint === 0 && isAuthenticated.authenticated) {
       router.push('/home');
     } else if (isAuthenticated.authenticated) {
       router.push('/');
@@ -213,7 +214,11 @@ export function SignInComponent({government}:{government: boolean}) {
               flexDirection: 'row',
             }}
           >
-            <GearIcon width={18} height={18} color={isGovernmentHover ? Colors.white:Colors.black}/>
+            <GearIcon
+              width={18}
+              height={18}
+              color={isGovernmentHover ? Colors.white : Colors.black}
+            />
             <Text
               selectable={false}
               style={{
@@ -242,7 +247,6 @@ export function SignInComponent({government}:{government: boolean}) {
   );
 }
 
-
 export default function SignIn() {
-  return <SignInComponent government={false}/>
+  return <SignInComponent government={false} />;
 }

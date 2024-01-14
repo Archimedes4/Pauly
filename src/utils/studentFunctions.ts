@@ -16,7 +16,9 @@ function checkIfStudent(role: string): {
 } {
   if (role !== null && role.length >= 20) {
     const reversed = role.split('').reverse().join('');
-    const domainName = process.env.EXPO_PUBLIC_DOMAINNAME ? process.env.EXPO_PUBLIC_DOMAINNAME:""
+    const domainName = process.env.EXPO_PUBLIC_DOMAINNAME
+      ? process.env.EXPO_PUBLIC_DOMAINNAME
+      : '';
     const domainLength = domainName.length;
     const slice = reversed.slice(0, domainLength);
     if (slice === domainName.split('').reverse().join('')) {

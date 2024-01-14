@@ -27,9 +27,12 @@ import { Link, useGlobalSearchParams } from 'expo-router';
 import { getSport } from '@src/utils/sports/sportsFunctions';
 import SecondStyledButton from '@src/components/StyledButton';
 
-function SelectMicrosoftTeam({selectedMicrosoftTeam, setSelectedMicrosoftTeam}:{
-  selectedMicrosoftTeam: groupType | undefined
-  setSelectedMicrosoftTeam: (item: groupType) => void
+function SelectMicrosoftTeam({
+  selectedMicrosoftTeam,
+  setSelectedMicrosoftTeam,
+}: {
+  selectedMicrosoftTeam: groupType | undefined;
+  setSelectedMicrosoftTeam: (item: groupType) => void;
 }) {
   const [teamsState, setTeamsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -60,7 +63,7 @@ function SelectMicrosoftTeam({selectedMicrosoftTeam, setSelectedMicrosoftTeam}:{
   if (teamsState === loadingStateEnum.loading) {
     <View>
       <Text>Loading</Text>
-    </View>
+    </View>;
   }
 
   if (teamsState === loadingStateEnum.success) {
@@ -78,24 +81,22 @@ function SelectMicrosoftTeam({selectedMicrosoftTeam, setSelectedMicrosoftTeam}:{
               >
                 <Text>{team.item.name}</Text>
               </Pressable>
-            )
+            );
           }
-          return null
+          return null;
         }}
       />
-    )
+    );
   }
 
   return (
     <View>
       <Text>Something went wrong loading the teams.</Text>
     </View>
-  )
+  );
 }
 
-export function GovernmentTeam({create}:{
-  create: boolean
-}) {
+export function GovernmentTeam({ create }: { create: boolean }) {
   const { sportID, teamID } = useGlobalSearchParams();
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
@@ -107,7 +108,9 @@ export function GovernmentTeam({create}:{
   );
 
   const [sportName, setSportName] = useState<string | undefined>(undefined);
-  const [sportState, setSportState] = useState<loadingStateEnum>(loadingStateEnum.loading)
+  const [sportState, setSportState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
 
   // Team Data
   const [teamName, setTeamName] = useState<string>('');
@@ -269,10 +272,8 @@ export function GovernmentTeam({create}:{
     setTeamDataState(loadingStateEnum.loading);
     if (typeof sportID === 'string') {
       const sportResult = await getSport(sportID);
-      if (
-        sportResult.result === loadingStateEnum.success
-      ) {
-        setSportName(sportResult.data.name)
+      if (sportResult.result === loadingStateEnum.success) {
+        setSportName(sportResult.data.name);
         setSportState(loadingStateEnum.success);
         const result = await callMsGraph(
           `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${sportID}/items?expand=fields($select=teamId,teamName,season,microsoftTeamId)&$filter=fields/teamId%20eq%20'${teamID}'&$select=id`,
@@ -309,31 +310,42 @@ export function GovernmentTeam({create}:{
         setSportState(loadingStateEnum.failed);
       }
     } else {
-      setSportState(loadingStateEnum.failed)
+      setSportState(loadingStateEnum.failed);
     }
   }
 
   useEffect(() => {
     getTeamData();
-  }, [])
-  
+  }, []);
+
   if (sportState === loadingStateEnum.loading) {
     return (
-      <View style={{width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: "center", justifyContent: 'center'}}>
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
-  if (sportState !== loadingStateEnum.success || sportName === undefined || typeof sportID !== 'string') {
+  if (
+    sportState !== loadingStateEnum.success ||
+    sportName === undefined ||
+    typeof sportID !== 'string'
+  ) {
     return (
       <View>
-        <Link href={`/government/sports/${sportID}`}>
-          Back
-        </Link>
+        <Link href={`/government/sports/${sportID}`}>Back</Link>
         <Text>Something went wrong!</Text>
       </View>
-    )
+    );
   }
 
   if (isSelectingFile) {
@@ -342,7 +354,7 @@ export function GovernmentTeam({create}:{
         setIsSelectingFile={setIsSelectingFile}
         setSelectedFile={setSelectedFile}
       />
-    )
+    );
   }
 
   if (create || teamDataState === loadingStateEnum.success) {
@@ -354,10 +366,16 @@ export function GovernmentTeam({create}:{
           backgroundColor: Colors.white,
         }}
       >
-        <Link href={`/government/sports/${sportID}`}>
-          Back
-        </Link>
-        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>
+        <Link href={`/government/sports/${sportID}`}>Back</Link>
+        <Text
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontFamily: 'Comfortaa-Regular',
+            marginBottom: 5,
+            fontSize: 25,
+          }}
+        >
           {create
             ? `Create a new ${sportName} team`
             : `Edit the ${teamName} ${sportName} Team`}
@@ -439,7 +457,10 @@ export function GovernmentTeam({create}:{
             </View>
           </View>
           <View style={{ marginLeft: 5, marginRight: 5 }}>
-            <SelectMicrosoftTeam selectedMicrosoftTeam={selectedMicrosoftTeam} setSelectedMicrosoftTeam={setSelectedMicrosoftTeam}/>
+            <SelectMicrosoftTeam
+              selectedMicrosoftTeam={selectedMicrosoftTeam}
+              setSelectedMicrosoftTeam={setSelectedMicrosoftTeam}
+            />
           </View>
         </View>
         {selectedMicrosoftTeam === undefined ? (
@@ -448,7 +469,7 @@ export function GovernmentTeam({create}:{
           </View>
         ) : (
           <>
-            {create || typeof teamID !== "string" ? (
+            {create || typeof teamID !== 'string' ? (
               <View>
                 <Text>
                   Please Create the team and return later to finish the roster
@@ -483,9 +504,9 @@ export function GovernmentTeam({create}:{
           <Text style={{ margin: 10 }}>Delete Team</Text>
         </Pressable>
         <SecondStyledButton
-          style={{marginLeft: 15, marginRight: 15}}
+          style={{ marginLeft: 15, marginRight: 15 }}
           text={getTextState(createTeamLoadingState, {
-            notStarted: create ? 'CREATE TEAM':'UPDATE TEAM'
+            notStarted: create ? 'CREATE TEAM' : 'UPDATE TEAM',
           })}
           onPress={() => {
             if (createTeamLoadingState === loadingStateEnum.notStarted) {
@@ -496,7 +517,7 @@ export function GovernmentTeam({create}:{
           }}
         />
       </ScrollView>
-    )
+    );
   }
 
   if (teamDataState === loadingStateEnum.loading) {
@@ -514,14 +535,12 @@ export function GovernmentTeam({create}:{
         <ProgressView width={width * 0.1} height={height * 0.1} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   return (
     <View>
-      <Link href={`/government/sports/${sportID}`}>
-        Back
-      </Link>
+      <Link href={`/government/sports/${sportID}`}>Back</Link>
       <Text>Failed</Text>
     </View>
   );
@@ -947,5 +966,5 @@ function RosterSelectFile({
 }
 
 export default function GovernmentTeamID() {
-  return <GovernmentTeam create={true} />
+  return <GovernmentTeam create />;
 }

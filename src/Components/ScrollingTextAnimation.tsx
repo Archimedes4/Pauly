@@ -9,7 +9,14 @@ import { View, Text, Platform } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors } from '@constants';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
 export default function ScrollingTextAnimation({
   text,
@@ -23,10 +30,13 @@ export default function ScrollingTextAnimation({
   const pan = useSharedValue(0);
   const [childWidth, setChildWidth] = useState<number>(0);
   const mainLoop = (childWidthLoop: number) => {
-    pan.value = withRepeat(withTiming(childWidthLoop, {
-      duration: 1000,
-      easing: Easing.linear
-    }), -1)
+    pan.value = withRepeat(
+      withTiming(childWidthLoop, {
+        duration: 1000,
+        easing: Easing.linear,
+      }),
+      -1,
+    );
     // Animated.loop(
     //   Animated.sequence([
     //     Animated.timing(pan, {
@@ -46,8 +56,8 @@ export default function ScrollingTextAnimation({
     // ).start();
   };
   const textContainerStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: -pan.value }]
-  }))
+    transform: [{ translateX: -pan.value }],
+  }));
 
   useEffect(() => {
     if (childWidth !== 0) {
@@ -58,16 +68,21 @@ export default function ScrollingTextAnimation({
   return (
     <View style={{ width, height, overflow: 'hidden' }}>
       {childWidth !== 0 ? (
-        <Animated.View style={[textContainerStyle, {
-          width: childWidth,
-          height
-        }]}>
+        <Animated.View
+          style={[
+            textContainerStyle,
+            {
+              width: childWidth,
+              height,
+            },
+          ]}
+        >
           <View
             style={{
               width: childWidth,
               height,
               position: 'absolute',
-              left: 0
+              left: 0,
             }}
           >
             <Text
@@ -76,7 +91,7 @@ export default function ScrollingTextAnimation({
                 color: Colors.white,
                 fontSize: height,
                 height,
-                position: 'absolute'
+                position: 'absolute',
               }}
             >
               {text}
@@ -88,7 +103,7 @@ export default function ScrollingTextAnimation({
               height,
               overflow: 'hidden',
               position: 'absolute',
-              left: childWidth
+              left: childWidth,
             }}
           >
             <Text
@@ -96,7 +111,7 @@ export default function ScrollingTextAnimation({
                 fontFamily: 'Gochi-Hand',
                 color: Colors.white,
                 fontSize: height,
-                height,                
+                height,
               }}
             >
               {text}
@@ -111,7 +126,9 @@ export default function ScrollingTextAnimation({
               if (e.nativeEvent.layout.width < width) {
                 setChildWidth(width);
               } else {
-                setChildWidth(e.nativeEvent.layout.width + e.nativeEvent.layout.width * 0.2);
+                setChildWidth(
+                  e.nativeEvent.layout.width + e.nativeEvent.layout.width * 0.2,
+                );
               }
             }}
             adjustsFontSizeToFit={!(Platform.OS === 'ios')}

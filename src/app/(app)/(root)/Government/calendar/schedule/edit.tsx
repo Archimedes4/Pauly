@@ -1,4 +1,11 @@
-import { View, Text, TextInput, Pressable, Modal, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  Modal,
+  FlatList,
+} from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
@@ -32,11 +39,7 @@ function isValidHexaCode(input: string) {
 }
 
 // NOTE: period length cannot be longer than 20
-export function GovernmentSchedule({
-  create
-} : {
-  create: boolean
-}) {
+export function GovernmentSchedule({ create }: { create: boolean }) {
   const { id } = useParams();
   const { width, height } = useSelector((state: RootState) => state.dimentions);
 
@@ -170,10 +173,13 @@ export function GovernmentSchedule({
           backgroundColor: Colors.white,
           justifyContent: 'center',
           alignContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
       >
-        <Link href="/government/calendar/schedule" style={{position: 'absolute'}}>
+        <Link
+          href="/government/calendar/schedule"
+          style={{ position: 'absolute' }}
+        >
           <Text>Back</Text>
         </Link>
         <Text>Schedule Deleted</Text>
@@ -193,15 +199,29 @@ export function GovernmentSchedule({
         <Link href="/government/calendar/schedule">
           <Text>Back</Text>
         </Link>
-        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>{create ? 'Create' : 'Edit'} Schedule</Text>
-        <Text style={{fontFamily: 'Roboto', marginLeft: 25, marginBottom: 2}}>Proper Name</Text>
+        <Text
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontFamily: 'Comfortaa-Regular',
+            marginBottom: 5,
+            fontSize: 25,
+          }}
+        >
+          {create ? 'Create' : 'Edit'} Schedule
+        </Text>
+        <Text style={{ fontFamily: 'Roboto', marginLeft: 25, marginBottom: 2 }}>
+          Proper Name
+        </Text>
         <TextInput
           style={styles.textInputStyle}
           value={scheduleProperName}
           onChangeText={setScheduleProperName}
           placeholder="Proper Name ex. Schedule One"
         />
-        <Text style={{fontFamily: 'Roboto', marginLeft: 25, marginTop: 5}}>Descriptive Name</Text>
+        <Text style={{ fontFamily: 'Roboto', marginLeft: 25, marginTop: 5 }}>
+          Descriptive Name
+        </Text>
         <TextInput
           style={styles.textInputStyle}
           value={scheduleDescriptiveName}
@@ -209,7 +229,13 @@ export function GovernmentSchedule({
           placeholder="Descriptive Name ex. Regular Schedule"
         />
         <View
-          style={{ margin: 5, marginLeft: 15, marginRight: 15, borderRadius: 5, backgroundColor: '#FF6700' }}
+          style={{
+            margin: 5,
+            marginLeft: 15,
+            marginRight: 15,
+            borderRadius: 5,
+            backgroundColor: '#FF6700',
+          }}
         >
           <View style={{ margin: 10, flexDirection: 'row' }}>
             <WarningIcon width={14} height={14} />
@@ -219,8 +245,8 @@ export function GovernmentSchedule({
           </View>
         </View>
 
-        <Text style={{marginLeft: 15}}>New Periods</Text>
-        <FlatList 
+        <Text style={{ marginLeft: 15 }}>New Periods</Text>
+        <FlatList
           data={newPeriods}
           renderItem={period => (
             <PeriodBlock
@@ -231,22 +257,24 @@ export function GovernmentSchedule({
               }}
             />
           )}
-          style={{height: height * 0.5}}
+          style={{ height: height * 0.5 }}
         />
         {newPeriods.length < 20 ? (
-          <SecondStyledButton text='Add Period' onPress={() => {
-            setNewPeriods([
-              ...newPeriods,
-              {
-                startHour: new Date().getHours(),
-                startMinute: new Date().getMinutes(),
-                endHour: new Date().getHours(),
-                endMinute: new Date().getMinutes(),
-                id: createUUID(),
-              },
-            ]);
-          }}
-            style={{marginLeft: 15, marginRight: 15}}
+          <SecondStyledButton
+            text="Add Period"
+            onPress={() => {
+              setNewPeriods([
+                ...newPeriods,
+                {
+                  startHour: new Date().getHours(),
+                  startMinute: new Date().getMinutes(),
+                  endHour: new Date().getHours(),
+                  endMinute: new Date().getMinutes(),
+                  id: createUUID(),
+                },
+              ]);
+            }}
+            style={{ marginLeft: 15, marginRight: 15 }}
           />
         ) : null}
         <Pressable
@@ -369,11 +397,14 @@ export function GovernmentSchedule({
             </View>
           </View>
         </Pressable>
-        <SecondStyledButton 
-          text={!isValidHexaCode(color) ? 'Cannot Start' :
-            getTextState(createScheduleLoadingState, {
-              notStarted: `${create ? 'Create' : 'Save'} Schedule`
-          })}
+        <SecondStyledButton
+          text={
+            !isValidHexaCode(color)
+              ? 'Cannot Start'
+              : getTextState(createScheduleLoadingState, {
+                  notStarted: `${create ? 'Create' : 'Save'} Schedule`,
+                })
+          }
           onPress={() => {
             if (
               createScheduleLoadingState === loadingStateEnum.notStarted &&
@@ -382,7 +413,13 @@ export function GovernmentSchedule({
               submitSchedule();
             }
           }}
-          style={{padding: 15, height: 46.4, marginLeft: 15, marginRight: 15, marginBottom: 10}}
+          style={{
+            padding: 15,
+            height: 46.4,
+            marginLeft: 15,
+            marginRight: 15,
+            marginBottom: 10,
+          }}
         />
         {!create ? (
           <Pressable
@@ -395,7 +432,7 @@ export function GovernmentSchedule({
           >
             <Text style={{ margin: 10 }}>
               {getTextState(deleteState, {
-                notStarted: "DELETE"
+                notStarted: 'DELETE',
               })}
             </Text>
           </Pressable>
@@ -493,7 +530,10 @@ function PeriodBlock({
           <Text>
             {period.startHour}:{period.startMinute}
           </Text>
-          <Pressable style={{marginLeft: 'auto'}} onPress={() => setIsSelectingStartTime(true)}>
+          <Pressable
+            style={{ marginLeft: 'auto' }}
+            onPress={() => setIsSelectingStartTime(true)}
+          >
             <Text>Pick start time</Text>
           </Pressable>
         </View>
@@ -522,7 +562,10 @@ function PeriodBlock({
           <Text>
             {period.endHour}:{period.endMinute}
           </Text>
-          <Pressable style={{marginLeft: 'auto'}} onPress={() => setIsSelectingEndTime(true)}>
+          <Pressable
+            style={{ marginLeft: 'auto' }}
+            onPress={() => setIsSelectingEndTime(true)}
+          >
             <Text>Pick end time</Text>
           </Pressable>
         </View>
@@ -589,5 +632,5 @@ function CustomColorThumb({
 }
 
 export default function GovernmentScheduleMain() {
-  return <GovernmentSchedule create={false}/>
+  return <GovernmentSchedule create={false} />;
 }

@@ -95,7 +95,7 @@ export default function MicrosoftGraphEditList() {
         {isCoppiedToClipboard ? (
           <Pressable
             onPress={async () => {
-              if (typeof id === "string") {
+              if (typeof id === 'string') {
                 await Clipboard.setStringAsync(id);
               }
             }}
@@ -105,7 +105,7 @@ export default function MicrosoftGraphEditList() {
         ) : (
           <Pressable
             onPress={async () => {
-              if (typeof id === "string") {
+              if (typeof id === 'string') {
                 await Clipboard.setStringAsync(id);
                 setIsCoppiedToClipboard(true);
               }

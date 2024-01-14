@@ -54,7 +54,11 @@ enum datePickingMode {
   endDate,
 }
 
-export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
+export function GovernmentCommissionUpdate({
+  isCreate,
+}: {
+  isCreate: boolean;
+}) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const { commissionListId, siteId } = useSelector(
     (state: RootState) => state.paulyList,
@@ -151,10 +155,10 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
   }, []);
 
   async function loadUpdateCommission() {
-    //checking that their is a commission to update and an operation is not in progress.
+    // checking that their is a commission to update and an operation is not in progress.
     if (
-      (submitCommissionState === loadingStateEnum.failed ||
-        submitCommissionState === loadingStateEnum.notStarted)
+      submitCommissionState === loadingStateEnum.failed ||
+      submitCommissionState === loadingStateEnum.notStarted
     ) {
       setSubmitCommissionState(loadingStateEnum.loading);
       const result = await updateCommission(
@@ -171,7 +175,7 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
         selectedChannelId,
         startDate,
         endDate,
-        (typeof id === 'string') ? id : createUUID(),
+        typeof id === 'string' ? id : createUUID(),
         proximity,
         selectedPositionIn,
         commissionItemId,
@@ -182,16 +186,18 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
 
   if (typeof id !== 'string' && !isCreate) {
     return (
-      <View style={{
-        overflow: 'hidden',
-        width,
-        height,
-        backgroundColor: Colors.white,
-      }}>
+      <View
+        style={{
+          overflow: 'hidden',
+          width,
+          height,
+          backgroundColor: Colors.white,
+        }}
+      >
         <BackButton to="/government/commissions" />
         <Text>Something went wrong</Text>
       </View>
-    )
+    );
   }
 
   return (
@@ -212,7 +218,17 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25}}>{isCreate ? 'Create New' : 'Edit'} Commission</Text>
+          <Text
+            style={{
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              fontFamily: 'Comfortaa-Regular',
+              marginBottom: 5,
+              fontSize: 25,
+            }}
+          >
+            {isCreate ? 'Create New' : 'Edit'} Commission
+          </Text>
         </View>
         <View
           style={{
@@ -282,7 +298,7 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
               }}
             >
               <Slider
-                style={{width: width * 0.9, height: 50}}
+                style={{ width: width * 0.9, height: 50 }}
                 value={proximity / 1000}
                 onValueChange={value => {
                   setProximity(value * 1000);
@@ -292,17 +308,19 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
           </View>
         ) : null}
         {isTimed ? (
-          <View style={{
-            shadowColor: Colors.black,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.8,
-            shadowRadius: 10,
-            borderRadius: 15,
-            padding: 10,
-            margin: 15,
-            marginBottom: 20
-          }}>
-            <View style={{flexDirection: 'row'}}>
+          <View
+            style={{
+              shadowColor: Colors.black,
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.8,
+              shadowRadius: 10,
+              borderRadius: 15,
+              padding: 10,
+              margin: 15,
+              marginBottom: 20,
+            }}
+          >
+            <View style={{ flexDirection: 'row' }}>
               <Text>Timed: </Text>
               <Switch
                 trackColor={{ false: '#767577', true: '#81b0ff' }}
@@ -445,39 +463,45 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
               />
             </View>
           </View>
-        ) : <View style={{
-          flexDirection: 'row',
-          shadowColor: Colors.black,
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.8,
-          shadowRadius: 10,
-          borderRadius: 15,
-          padding: 10,
-          margin: 15,
-          marginBottom: 20
-        }}>
-          <Text>Timed: </Text>
-          <Switch
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={e => {
-              setIsTimed(e);
+        ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              shadowColor: Colors.black,
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.8,
+              shadowRadius: 10,
+              borderRadius: 15,
+              padding: 10,
+              margin: 15,
+              marginBottom: 20,
             }}
-            value={isTimed}
-          />
-        </View>}
-        <View style={{
-          marginLeft: 15,
-          marginRight: 15,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.8,
-          shadowRadius: 10,
-          borderRadius: 15,
-          padding: 10,
-          marginBottom: 20
-        }}>
+          >
+            <Text>Timed: </Text>
+            <Switch
+              trackColor={{ false: '#767577', true: '#81b0ff' }}
+              thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={e => {
+                setIsTimed(e);
+              }}
+              value={isTimed}
+            />
+          </View>
+        )}
+        <View
+          style={{
+            marginLeft: 15,
+            marginRight: 15,
+            shadowColor: Colors.black,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.8,
+            shadowRadius: 10,
+            borderRadius: 15,
+            padding: 10,
+            marginBottom: 20,
+          }}
+        >
           <View style={{ flexDirection: 'row' }}>
             <Text>Points: </Text>
             <TextInput
@@ -532,16 +556,18 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
             />
           </View>
         </View>
-        <View style={{
-          marginLeft: 15,
-          marginRight: 15,
-          shadowColor: Colors.black,
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.8,
-          shadowRadius: 10,
-          borderRadius: 15,
-          padding: 10
-        }}>
+        <View
+          style={{
+            marginLeft: 15,
+            marginRight: 15,
+            shadowColor: Colors.black,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.8,
+            shadowRadius: 10,
+            borderRadius: 15,
+            padding: 10,
+          }}
+        >
           <Text>Post</Text>
           <PostSelectionContainer
             width={width - 45}
@@ -554,7 +580,7 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
             setSelectedPostId={setSelectedPostId}
           />
         </View>
-        {!isCreate && typeof id === "string" ? (
+        {!isCreate && typeof id === 'string' ? (
           <View
             style={{
               marginTop: 20,
@@ -577,7 +603,8 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
           </View>
         ) : null}
         <StyledButton
-          text={submitCommissionState === loadingStateEnum.notStarted
+          text={
+            submitCommissionState === loadingStateEnum.notStarted
               ? isCreate
                 ? 'Create Commission'
                 : 'Save Changes'
@@ -585,12 +612,13 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
                 ? 'Loading'
                 : submitCommissionState === loadingStateEnum.success
                   ? 'Success'
-                  : 'Failed'} 
+                  : 'Failed'
+          }
           onPress={() => {
             loadUpdateCommission();
           }}
           second
-          style={{marginLeft: 15, marginRight: 15, marginBottom: 15}}
+          style={{ marginLeft: 15, marginRight: 15, marginBottom: 15 }}
         />
         {!isCreate ? (
           <StyledButton
@@ -603,7 +631,7 @@ export function GovernmentCommissionUpdate({isCreate}:{isCreate: boolean}) {
             onPress={() => {
               deleteCommission();
             }}
-            style={{marginLeft: 15, marginRight: 15, marginBottom: 15}}
+            style={{ marginLeft: 15, marginRight: 15, marginBottom: 15 }}
           />
         ) : null}
       </ScrollView>
@@ -745,17 +773,22 @@ function GroupSelection({
 
   if (groupsState === loadingStateEnum.success) {
     return (
-      <FlatList 
+      <FlatList
         data={groups}
-        style={{width, height}}
-        renderItem={(group) => (
+        style={{ width, height }}
+        renderItem={group => (
           <StyledButton
             text={group.item.name}
             key={`Group_${group.item.id}`}
             onPress={() => {
               onSelect(group.item.id);
             }}
-            style={{marginLeft: 15, marginRight: 15, marginBottom: 15, marginTop: (group.index === 0) ? 15:0}}
+            style={{
+              marginLeft: 15,
+              marginRight: 15,
+              marginBottom: 15,
+              marginTop: group.index === 0 ? 15 : 0,
+            }}
           />
         )}
       />
@@ -818,28 +851,33 @@ function ChannelSelection({
         />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (channelState === loadingStateEnum.success) {
     return (
       <View style={{ width, height }}>
-        <StyledButton text='Back' onPress={() => onBack()} second style={{marginLeft: 15, marginRight: 15, marginTop: 10}}/>
+        <StyledButton
+          text="Back"
+          onPress={() => onBack()}
+          second
+          style={{ marginLeft: 15, marginRight: 15, marginTop: 10 }}
+        />
         <FlatList
           data={channels}
           renderItem={channel => (
-            <StyledButton 
+            <StyledButton
               key={`Channel_${channel.item.id}`}
               onPress={() => {
                 onSelect(channel.item.id);
               }}
               text={channel.item.displayName}
-              style={{marginLeft: 15, marginRight: 15, marginTop: 15}}
+              style={{ marginLeft: 15, marginRight: 15, marginTop: 15 }}
             />
           )}
         />
       </View>
-    )
+    );
   }
 
   return (
@@ -1013,7 +1051,7 @@ function CommissionSubmissions({
       >
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (submissiosState === loadingStateEnum.success) {
@@ -1022,9 +1060,7 @@ function CommissionSubmissions({
         <View style={{ width, height }}>
           <View style={{ flexDirection: 'row' }}>
             <Pressable
-              onPress={() =>
-                setSelectedSubmissionMode(submissionTypeEnum.all)
-              }
+              onPress={() => setSelectedSubmissionMode(submissionTypeEnum.all)}
               style={{ marginLeft: 'auto', marginRight: 'auto' }}
             >
               <Text>All</Text>
@@ -1055,17 +1091,18 @@ function CommissionSubmissions({
               >
                 <Text>{submission.item.userName}</Text>
                 <Text>
-                  {new Date(
-                    submission.item.submissionTime,
-                  ).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    second: 'numeric',
-                  })}
+                  {new Date(submission.item.submissionTime).toLocaleDateString(
+                    'en-US',
+                    {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                      second: 'numeric',
+                    },
+                  )}
                 </Text>
               </Pressable>
             )}
@@ -1080,7 +1117,7 @@ function CommissionSubmissions({
           />
         ) : null}
       </>
-    )
+    );
   }
 
   return (
@@ -1262,9 +1299,7 @@ function SubmissionView({
       <Pressable onPress={() => changeSubmissionApproved()}>
         <Text>
           {getTextState(changeState, {
-            notStarted: submissionData.approved
-            ? 'REMOVE APPROVAL'
-            : 'APPROVE'
+            notStarted: submissionData.approved ? 'REMOVE APPROVAL' : 'APPROVE',
           })}
         </Text>
       </Pressable>
@@ -1273,5 +1308,5 @@ function SubmissionView({
 }
 
 export default function GovernmentEditCommission() {
-  return <GovernmentCommissionUpdate isCreate={false}/>
+  return <GovernmentCommissionUpdate isCreate={false} />;
 }

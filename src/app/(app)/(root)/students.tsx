@@ -5,12 +5,7 @@
   Students.tsx
   Holds the student section of Pauly. See README.md for more information.
 */
-import {
-  View,
-  Text,
-  ListRenderItemInfo,
-  Image,
-} from 'react-native';
+import { View, Text, ListRenderItemInfo, Image } from 'react-native';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
@@ -220,7 +215,9 @@ export default function Students() {
         </View>
         <SearchBar
           value={searchText}
-          onChangeText={(e) => dispatch(studentSearchSlice.actions.setStudentSearch(e))}
+          onChangeText={e =>
+            dispatch(studentSearchSlice.actions.setStudentSearch(e))
+          }
           onSearch={() => {
             if (searchText !== '') {
               getUsers(undefined, searchText);
@@ -229,7 +226,7 @@ export default function Students() {
               getUsers();
             }
           }}
-          top={height * 0.15-19}
+          top={height * 0.15 - 19}
         />
         <FlatList
           key={`Students_${createUUID()}`}

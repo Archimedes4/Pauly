@@ -35,7 +35,9 @@ function getRedirectUri() {
 // This is for the microsoft authentication on web.
 const pca = new PublicClientApplication({
   auth: {
-    clientId: (process.env.EXPO_PUBLIC_CLIENTID) ? process.env.EXPO_PUBLIC_CLIENTID:"",
+    clientId: process.env.EXPO_PUBLIC_CLIENTID
+      ? process.env.EXPO_PUBLIC_CLIENTID
+      : '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/`,
     redirectUri: getRedirectUri(), // to stop node js error
   },

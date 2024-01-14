@@ -11,7 +11,9 @@ export default async function getYoutubeVideos(
   | { result: loadingStateEnum.failed }
 > {
   const result = await fetch(
-    `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${process.env.EXPO_PUBLIC_YOUTUBEUPLOADSID}&part=contentDetails,id,snippet${
+    `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${
+      process.env.EXPO_PUBLIC_YOUTUBEUPLOADSID
+    }&part=contentDetails,id,snippet${
       pageToken ? `&pageToken=${pageToken}` : ''
     }&key=${process.env.EXPO_PUBLIC_YOUTUBEDATAKEY}`,
   );

@@ -8,10 +8,10 @@
 import { View, Text, FlatList, Pressable } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Colors, loadingStateEnum } from '../constants';
 import ProgressView from '@components/ProgressView';
 import WebViewCross from '@components/WebViewCross';
 import { RootState } from '@redux/store';
+import { Colors, loadingStateEnum } from '../constants';
 import { getNewsPosts } from '../utils/getResources';
 import ResourceNewsPage from './ResouceNewsPage/index.native';
 

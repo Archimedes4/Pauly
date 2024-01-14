@@ -27,166 +27,208 @@ enum graphMode {
   extension,
 }
 
-
-function GroupBody({groupState, groups}:{groupState: loadingStateEnum, groups: groupType[]}) {
+function GroupBody({
+  groupState,
+  groups,
+}: {
+  groupState: loadingStateEnum;
+  groups: groupType[];
+}) {
   if (groupState === loadingStateEnum.loading) {
     return (
-      <View style={{
-        flex:1,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        <ProgressView width={14} height={14}/>
+      <View
+        style={{
+          flex: 1,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (groupState === loadingStateEnum.success) {
     return (
-      <FlatList 
+      <FlatList
         data={groups}
-        renderItem={(group) => (
+        renderItem={group => (
           <StyledButton
             to={`/government/graph/group/${group.item.id}`}
             key={`group_${group.item.id}`}
             text={group.item.name}
-            style={{marginLeft: 15, marginRight: 15, marginTop: 20, marginBottom: (group.index === (groups.length - 1)) ? 15:0}}
+            style={{
+              marginLeft: 15,
+              marginRight: 15,
+              marginTop: 20,
+              marginBottom: group.index === groups.length - 1 ? 15 : 0,
+            }}
           />
         )}
       />
-    )
+    );
   }
   return (
-    <View style={{
-      flex:1,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <Text>Failed</Text>
-    </View>
-  )
-}
-
-function ListBody({listState, lists}:{listState: loadingStateEnum, lists: listType[]}) {
-  const ignoredLists = ['2b86ba89-0262-4906-9247-bfd1260fb68e', '1f4cd053-dd6b-4e40-bb9b-803cbc74e872']
-  if (listState === loadingStateEnum.loading) {
-    return (
-      <View style={{
-        flex:1,
+    <View
+      style={{
+        flex: 1,
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-      }}>
-        <ProgressView width={14} height={14}/>
+      }}
+    >
+      <Text>Failed</Text>
+    </View>
+  );
+}
+
+function ListBody({
+  listState,
+  lists,
+}: {
+  listState: loadingStateEnum;
+  lists: listType[];
+}) {
+  const ignoredLists = [
+    '2b86ba89-0262-4906-9247-bfd1260fb68e',
+    '1f4cd053-dd6b-4e40-bb9b-803cbc74e872',
+  ];
+  if (listState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (listState === loadingStateEnum.success) {
     return (
       <>
-        <FlatList 
+        <FlatList
           data={lists}
-          renderItem={(list) => {
-            if (!ignoredLists.includes(list.item.listId)){
+          renderItem={list => {
+            if (!ignoredLists.includes(list.item.listId)) {
               return (
-                <StyledButton 
+                <StyledButton
                   key={`${list.item.listId}Link`}
                   to={`/government/graph/list/${list.item.listId}`}
                   text={list.item.displayName}
                   caption={list.item.listId}
-                  style={{marginLeft: 15, marginRight: 15, marginTop: 20, marginBottom: (list.index === (lists.length - 1)) ? 15:0}}
+                  style={{
+                    marginLeft: 15,
+                    marginRight: 15,
+                    marginTop: 20,
+                    marginBottom: list.index === lists.length - 1 ? 15 : 0,
+                  }}
                 />
-              )
-            } 
-            return null
+              );
+            }
+            return null;
           }}
         />
         <StyledButton
           second
           to="/government/graph/list/create"
-          text='Create List'
+          text="Create List"
           style={{
             marginLeft: 15,
             marginRight: 15,
             marginBottom: 20,
-            marginTop: 20
+            marginTop: 20,
           }}
         />
       </>
-    )
+    );
   }
   return (
-    <View style={{
-      flex:1,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
-      <Text>Failed</Text>
-    </View>
-  )
-}
-
-function ExtensionBody({extensionState, extensions, applicationExtensions}:{extensionState: loadingStateEnum, extensions: extensionType[], applicationExtensions: extensionType[]}) {
-  if (extensionState === loadingStateEnum.loading) {
-    return (
-      <View style={{
-        flex:1,
+    <View
+      style={{
+        flex: 1,
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-      }}>
-        <ProgressView width={14} height={14}/>
+      }}
+    >
+      <Text>Failed</Text>
+    </View>
+  );
+}
+
+function ExtensionBody({
+  extensionState,
+  extensions,
+  applicationExtensions,
+}: {
+  extensionState: loadingStateEnum;
+  extensions: extensionType[];
+  applicationExtensions: extensionType[];
+}) {
+  if (extensionState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (extensionState === loadingStateEnum.success) {
     return (
-      <SectionList 
+      <SectionList
         sections={[
           {
-            title: "Pauly Extensions",
-            data: applicationExtensions
+            title: 'Pauly Extensions',
+            data: applicationExtensions,
           },
           {
-            title: "Extensions",
-            data: extensions
-          }
+            title: 'Extensions',
+            data: extensions,
+          },
         ]}
-        renderItem={({item}) => {
+        renderItem={({ item }) => {
           return (
-            <StyledButton 
+            <StyledButton
               key={`${item.id}Link`}
               to={`/government/graph/extension/${item.id}`}
               text={item.description}
               caption={item.id}
               style={styles.listStyle}
             />
-          )
+          );
         }}
-        renderSectionHeader={({section: {title}}) => (
-          <Text>{title}</Text>
-        )}
+        renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
       />
-    )
+    );
   }
   return (
-    <View style={{
-      flex:1,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+    <View
+      style={{
+        flex: 1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Text>Failed</Text>
     </View>
-  )
+  );
 }
 
 export default function MicrosoftGraphOverview() {
@@ -310,7 +352,17 @@ export default function MicrosoftGraphOverview() {
       <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Microsoft Graph Overview</Text>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Microsoft Graph Overview
+      </Text>
       <PickerWrapper
         selectedIndex={selectedGraphMode}
         onSetSelectedIndex={setSelectedGraphMode}
@@ -322,13 +374,17 @@ export default function MicrosoftGraphOverview() {
         <Text>Extensions</Text>
       </PickerWrapper>
       {selectedGraphMode === graphMode.list ? (
-        <ListBody listState={listLoadingState} lists={lists}/>
+        <ListBody listState={listLoadingState} lists={lists} />
       ) : null}
       {selectedGraphMode === graphMode.group ? (
-        <GroupBody groupState={groupLoadingState} groups={groups}/>
+        <GroupBody groupState={groupLoadingState} groups={groups} />
       ) : null}
       {selectedGraphMode === graphMode.extension ? (
-        <ExtensionBody extensionState={schemaLoadingState} extensions={extensions} applicationExtensions={applicationExtensions}/>
+        <ExtensionBody
+          extensionState={schemaLoadingState}
+          extensions={extensions}
+          applicationExtensions={applicationExtensions}
+        />
       ) : null}
     </View>
   );

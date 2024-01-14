@@ -128,11 +128,13 @@ export function computeEventHeight(
 
 export function isTimeOnDay(lhs: string, rhs: string): boolean {
   if (new Date(lhs).getFullYear() !== new Date(rhs).getFullYear()) {
-    return false
-  } else if (new Date(lhs).getMonth() !== new Date(rhs).getMonth()) {
-    return false
-  } else if (new Date(lhs).getDate() !== new Date(rhs).getDate()) {
-    return false
+    return false;
   }
-  return true
+  if (new Date(lhs).getMonth() !== new Date(rhs).getMonth()) {
+    return false;
+  }
+  if (new Date(lhs).getDate() !== new Date(rhs).getDate()) {
+    return false;
+  }
+  return true;
 }

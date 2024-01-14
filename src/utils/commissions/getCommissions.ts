@@ -179,13 +179,16 @@ export default async function getCommissions(
   startDate?: { date: Date; filter: 'ge' | 'le' },
   endDate?: { date: Date; filter: 'ge' | 'le' },
   claimed?: boolean,
-): Promise<{
-  result: loadingStateEnum.success;
-  data: commissionType[];
-  nextLink?: string;
-} | {
-  result: loadingStateEnum.failed
-}> {
+): Promise<
+  | {
+      result: loadingStateEnum.success;
+      data: commissionType[];
+      nextLink?: string;
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   if (nextLink === undefined) {
     store.dispatch(commissionsSlice.actions.setCommissionNextLink(undefined));
   }
@@ -193,8 +196,8 @@ export default async function getCommissions(
     const result = await getUnclaimedCommissions();
     if (result.result === loadingStateEnum.success) {
       return { result: result.result, data: result.data };
-    }   
-    return {result: loadingStateEnum.failed}
+    }
+    return { result: loadingStateEnum.failed };
   }
   const filter = getFilter(startDate, endDate);
   const result = await callMsGraph(
@@ -343,12 +346,15 @@ async function getCommissionsBatch(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getUnclaimedCommissions(): Promise<{
-  result: loadingStateEnum.success;
-  data: commissionType[];
-} | {
-  result: loadingStateEnum.failed
-}> {
+export async function getUnclaimedCommissions(): Promise<
+  | {
+      result: loadingStateEnum.success;
+      data: commissionType[];
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   let nextUrl = `https://graph.microsoft.com/v1.0/sites/${
     store.getState().paulyList.siteId
   }/lists/${

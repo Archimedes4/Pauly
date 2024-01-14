@@ -104,7 +104,9 @@ function MonthBlock({
                   <Text style={{ color: Colors.black }}>{textval}</Text>
                 </>
               ) : (
-                <Text style={{ color: Colors.black, zIndex: 2 }}>{textval}</Text>
+                <Text style={{ color: Colors.black, zIndex: 2 }}>
+                  {textval}
+                </Text>
               )}
             </>
           ) : (

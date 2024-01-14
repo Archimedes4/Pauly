@@ -1,11 +1,10 @@
-import { Colors, loadingStateEnum } from "@constants";
-import { getUserMicrosoftFiles } from "@src/utils/microsoftFilePickerFunctions";
-import React from "react";
-import { useCallback, useEffect, useState } from "react";
-import { FlatList, Pressable, ScrollView, Text, View } from "react-native";
-import MimeTypeIcon from "../Icons/MimeTypeIcon";
-import createUUID from "@utils/ultility/createUUID";
-import ProgressView from "../ProgressView";
+import { Colors, loadingStateEnum } from '@constants';
+import { getUserMicrosoftFiles } from '@src/utils/microsoftFilePickerFunctions';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
+import createUUID from '@utils/ultility/createUUID';
+import MimeTypeIcon from '../Icons/MimeTypeIcon';
+import ProgressView from '../ProgressView';
 
 function PersonalBlockBody({
   getFilesState,
@@ -16,8 +15,8 @@ function PersonalBlockBody({
   loadGetUserMicrosoftFiles,
   setFilesBackAvaliable,
   onSelectedFile,
-  allowedTypes
-}:{
+  allowedTypes,
+}: {
   getFilesState: loadingStateEnum;
   width: number;
   height: number;
@@ -42,8 +41,8 @@ function PersonalBlockBody({
       >
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
-      </View> 
-    )
+      </View>
+    );
   }
 
   if (getFilesState === loadingStateEnum.success) {
@@ -51,7 +50,11 @@ function PersonalBlockBody({
       <FlatList
         data={usersFiles}
         renderItem={file => {
-          if (allowedTypes === undefined || allowedTypes.includes(file.item.type) || file.item.folder) {
+          if (
+            allowedTypes === undefined ||
+            allowedTypes.includes(file.item.type) ||
+            file.item.folder
+          ) {
             return (
               <Pressable
                 onPress={() => {
@@ -75,43 +78,54 @@ function PersonalBlockBody({
                     height={20}
                     mimeType={file.item.type}
                   />
-                  <Text style={{ padding: 0, marginLeft: 2, marginTop: 'auto', marginBottom: 'auto', textAlignVertical: 'center', fontFamily: 'Roboto' }}>
+                  <Text
+                    style={{
+                      padding: 0,
+                      marginLeft: 2,
+                      marginTop: 'auto',
+                      marginBottom: 'auto',
+                      textAlignVertical: 'center',
+                      fontFamily: 'Roboto',
+                    }}
+                  >
                     {file.item.name}
                   </Text>
                 </View>
               </Pressable>
-            )
+            );
           }
-          return null
+          return null;
         }}
       />
-    )
+    );
   }
 
   return (
-    <View style={{
-      width,
-      height,
-      backgroundColor: Colors.white,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+    <View
+      style={{
+        width,
+        height,
+        backgroundColor: Colors.white,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Text>Failed to Load</Text>
     </View>
-  )
+  );
 }
 
 export default function PersonalBlock({
   height,
   width,
   onSelectedFile,
-  allowedTypes
+  allowedTypes,
 }: {
   height: number;
   width: number;
   onSelectedFile: (item: microsoftFileType) => void;
-  allowedTypes?: string[]
+  allowedTypes?: string[];
 }) {
   const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([]);
   const [microsoftPath, setMicrosoftPath] = useState<string>(

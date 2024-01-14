@@ -23,19 +23,20 @@ export default function DayView({
   width,
   height,
   week,
-  start
-}: {
-  width: number;
-  height: number;
-  week?: undefined;
-  start?: undefined;
-} | {
-  width: number;
-  height: number;
-  week: true;
-  start: boolean;
-
-}) {
+  start,
+}:
+  | {
+      width: number;
+      height: number;
+      week?: undefined;
+      start?: undefined;
+    }
+  | {
+      width: number;
+      height: number;
+      week: true;
+      start: boolean;
+    }) {
   const colorScheme = useColorScheme();
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
@@ -131,9 +132,7 @@ export default function DayView({
 
   async function getClassesEvents() {
     const result = await getClassEventsFromDay();
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setSchoolEvents(result.data);
     }
   }
@@ -144,9 +143,13 @@ export default function DayView({
 
   return (
     <ScrollView
-      style={{ height: week ? undefined:height, width, backgroundColor: Colors.white }}
+      style={{
+        height: week ? undefined : height,
+        width,
+        backgroundColor: Colors.white,
+      }}
       ref={mainScrollRef}
-      scrollEnabled={week == true ? false:true}
+      scrollEnabled={week != true}
     >
       <>
         {isShowingTime ? (
@@ -156,11 +159,13 @@ export default function DayView({
                 key={`${value}_${createUUID()}`}
                 style={{ flexDirection: 'row', height: hourLength }}
               >
-                {calculateIfShowing(value, new Date(selectedDate)) && (week === undefined || start === true) ? (
+                {calculateIfShowing(value, new Date(selectedDate)) &&
+                (week === undefined || start === true) ? (
                   <Text
                     selectable={false}
                     style={{
-                      color: colorScheme == 'dark' ? Colors.white : Colors.black,
+                      color:
+                        colorScheme == 'dark' ? Colors.white : Colors.black,
                     }}
                   >
                     {value}
@@ -207,7 +212,9 @@ export default function DayView({
           eventPane={eventsPane}
         />
       ))}
-      {(week === undefined && start === false) && new Date(selectedDate).getDate() === new Date().getDate() &&
+      {week === undefined &&
+      start === false &&
+      new Date(selectedDate).getDate() === new Date().getDate() &&
       new Date(selectedDate).getMonth() === new Date().getMonth() &&
       new Date(selectedDate).getFullYear() === new Date().getFullYear() ? (
         <View
@@ -220,7 +227,9 @@ export default function DayView({
             alignItems: 'center',
           }}
         >
-          <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>{currentTime}</Text>
+          <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>
+            {currentTime}
+          </Text>
           <View
             style={{
               backgroundColor: 'red',
@@ -323,7 +332,7 @@ function EventBlock({
       eventPane[eventPane.length - 1].push(Offset);
       eventPane[eventPane.length - 1].push(Offset + EventHeight);
     }
-    //setHorizontalShift(width * horizontalCheck);
+    // setHorizontalShift(width * horizontalCheck);
   }
 
   useEffect(() => {

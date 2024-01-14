@@ -37,7 +37,9 @@ function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
 
   async function getData() {
     const result = await getGraphEvents(
-      `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+      `https://graph.microsoft.com/v1.0/groups/${
+        process.env.EXPO_PUBLIC_ORGWIDEGROUPID
+      }/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
         store.getState().paulyList.eventTypeExtensionId
       }'%20or%20id%20eq%20'${
         store.getState().paulyList.eventDataExtensionId

@@ -98,15 +98,39 @@ function GovernmentSportsPostsBody() {
 export default function GovernmentSportsposts() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   return (
-    <View style={{width, height, backgroundColor: Colors.white}}>
-      <Link href={'/government/sports'}>
-        Back
-      </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Government Sports Posts</Text>
-      <View style={{flex:1,alignItems:'center',justifyContent:'center',margin:5}}>
+    <View style={{ width, height, backgroundColor: Colors.white }}>
+      <Link href="/government/sports">Back</Link>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Government Sports Posts
+      </Text>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: 5,
+        }}
+      >
         <GovernmentSportsPostsBody />
       </View>
-      <SecondStyledButton text='Create Post' style={{marginBottom: 10, marginTop: 5, marginLeft: 15, marginRight: 15}} to='/government/sports/posts/create'/>
+      <SecondStyledButton
+        text="Create Post"
+        style={{
+          marginBottom: 10,
+          marginTop: 5,
+          marginLeft: 15,
+          marginRight: 15,
+        }}
+        to="/government/sports/posts/create"
+      />
     </View>
-  )
+  );
 }

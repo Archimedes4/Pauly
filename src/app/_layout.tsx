@@ -14,7 +14,7 @@ export const unstable_settings = {
 };
 
 export default function App(): React.JSX.Element | null {
-  //Fixing hydration issues
+  // Fixing hydration issues
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);

@@ -11,6 +11,7 @@ import ProgressView from '@components/ProgressView';
 import { CloseIcon } from '@components/Icons';
 import WebViewCross from '@components/WebViewCross';
 import { Colors, commissionTypeEnum, loadingStateEnum } from '@constants';
+import { getTextState } from '@src/utils/ultility/createUUID';
 
 enum CameraResult {
   notStarted,
@@ -19,6 +20,35 @@ enum CameraResult {
   permissionDenied,
   goToSettings,
   failed,
+}
+
+function getTextPickImage(result: CameraResult) {
+  if (result === CameraResult.notStarted) {
+    return 'CHOOSE PHOTO';
+  }
+  if (result === CameraResult.permissionDenied) {
+    return 'Permission Denied';
+  }
+  if (result === CameraResult.success) {
+    return 'USE A DIFFERENT PHOTO';
+  }
+  return 'AN ERROR OCCURED';
+}
+
+function getTextTakeImage(result: CameraResult) {
+  if (result === CameraResult.notStarted) {
+    return 'TAKE PHOTO';
+  }
+  if (result === CameraResult.goToSettings) {
+    return 'Go To Settings And Give Camera Permissions';
+  }
+  if (result === CameraResult.permissionDenied) {
+    return 'Permission Denied';
+  }
+  if (result === CameraResult.success) {
+    return 'TAKE DIFFERENT PHOTO';
+  }
+  return 'AN ERROR OCCURED';
 }
 
 export default function CommissionsView({
@@ -313,15 +343,7 @@ export default function CommissionsView({
                       />
                     ) : (
                       <Text style={{ margin: 10, fontWeight: 'bold' }}>
-                        {takeImageState === CameraResult.notStarted
-                          ? 'TAKE PHOTO'
-                          : takeImageState === CameraResult.goToSettings
-                            ? 'Go To Settings And Give Camera Permissions'
-                            : takeImageState === CameraResult.permissionDenied
-                              ? 'Permission Denied'
-                              : takeImageState === CameraResult.success
-                                ? 'TAKE DIFFERENT PHOTO'
-                                : 'AN ERROR OCCURED'}
+                        {getTextTakeImage(takeImageState)}
                       </Text>
                     )}
                   </Pressable>
@@ -347,13 +369,7 @@ export default function CommissionsView({
                       />
                     ) : (
                       <Text style={{ margin: 10, fontWeight: 'bold' }}>
-                        {pickImageState === CameraResult.notStarted
-                          ? 'CHOOSE PHOTO'
-                          : pickImageState === CameraResult.permissionDenied
-                            ? 'Permission Denied'
-                            : pickImageState === CameraResult.success
-                              ? 'USE A DIFFERENT PHOTO'
-                              : 'AN ERROR OCCURED'}
+                        {getTextPickImage(pickImageState)}
                       </Text>
                     )}
                   </Pressable>

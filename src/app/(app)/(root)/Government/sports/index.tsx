@@ -11,7 +11,7 @@ import { RootState } from '@redux/store';
 import { getSports } from '@utils/sports/sportsFunctions';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
-import StyledButton from "@src/components/StyledButton";
+import StyledButton from '@src/components/StyledButton';
 
 function GovernmentSportsBody() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -35,7 +35,7 @@ function GovernmentSportsBody() {
     return (
       <View
         style={{
-          flex:1,
+          flex: 1,
           width,
           alignContent: 'center',
           alignItems: 'center',
@@ -48,31 +48,30 @@ function GovernmentSportsBody() {
         />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (sportsState === loadingStateEnum.success) {
     return (
-      <FlatList 
+      <FlatList
         data={currentSports}
         renderItem={item => (
-          <StyledButton 
-            key={item.item.id}  
+          <StyledButton
+            key={item.item.id}
             to={`/government/sports/${item.item.id}`}
             text={item.item.name}
-            style={{marginLeft: 15, marginRight: 15, marginTop: 15}}
+            style={{ marginLeft: 15, marginRight: 15, marginTop: 15 }}
           />
         )}
       />
-    )
+    );
   }
 
   return (
     <View>
       <Text>Error</Text>
     </View>
-  )
-
+  );
 }
 
 export default function GovernmentSports() {
@@ -82,13 +81,31 @@ export default function GovernmentSports() {
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>
         <Link href="/government/">Back</Link>
-        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>
+        <Text
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontFamily: 'Comfortaa-Regular',
+            marginBottom: 5,
+            fontSize: 25,
+          }}
+        >
           Government Sports
         </Text>
       </View>
       <GovernmentSportsBody />
-      <StyledButton second style={{marginLeft: 10, marginRight: 10, marginBottom: 15}} to="/government/sports/create" text='Create Sport'/>
-      <StyledButton second style={{marginLeft: 10, marginRight: 10, marginBottom: 15}} to="/government/sports/posts" text='Posts'/>
+      <StyledButton
+        second
+        style={{ marginLeft: 10, marginRight: 10, marginBottom: 15 }}
+        to="/government/sports/create"
+        text="Create Sport"
+      />
+      <StyledButton
+        second
+        style={{ marginLeft: 10, marginRight: 10, marginBottom: 15 }}
+        to="/government/sports/posts"
+        text="Posts"
+      />
     </View>
   );
 }

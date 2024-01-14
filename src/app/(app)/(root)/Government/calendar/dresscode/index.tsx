@@ -3,10 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
-import ListItem from '@components/StyledButton';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { Link } from 'expo-router';
-import SecondStyledButton from '@components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 function GovernmentDressCodeBody() {
   const { width } = useSelector((state: RootState) => state.dimentions);
@@ -30,28 +29,24 @@ function GovernmentDressCodeBody() {
     loadData();
   }, []);
   if (getDressCodeState === loadingStateEnum.loading) {
-    return (
-      <Text>Loading</Text>
-    )
+    return <Text>Loading</Text>;
   }
-  
+
   if (getDressCodeState === loadingStateEnum.success) {
     return (
-      <FlatList 
+      <FlatList
         data={dressCodes}
         renderItem={dressCode => (
-          <ListItem
+          <StyledButton
             key={dressCode.item.id}
             to={`/government/calendar/dresscode/${dressCode.item.id}`}
             text={dressCode.item.name}
           />
         )}
       />
-    )
+    );
   }
-  return (
-    <Text>Failed</Text>
-  )
+  return <Text>Failed</Text>;
 }
 
 export default function GovernmentDressCode() {
@@ -62,11 +57,29 @@ export default function GovernmentDressCode() {
       <Link href="/government/calendar">
         <Text>Back</Text>
       </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
         Dress Codes
       </Text>
       <GovernmentDressCodeBody />
-      <SecondStyledButton style={{marginBottom: 15, marginLeft: 15, marginRight: 15, marginTop: 5}} text='Create Dress Code' to='/government/calendar/dresscode/create'/>
+      <StyledButton
+        style={{
+          marginBottom: 15,
+          marginLeft: 15,
+          marginRight: 15,
+          marginTop: 5,
+        }}
+        second
+        text="Create Dress Code"
+        to="/government/calendar/dresscode/create"
+      />
     </View>
   );
 }

@@ -7,12 +7,12 @@
 */
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  FlatList,
   Pressable,
   ScrollView,
   Text,
   View,
   Image,
+  FlatList,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
@@ -126,15 +126,123 @@ function CommissionPoints() {
 }
 
 function CommissionsBody() {
+  const { currentCommissions, commissionsState, commissionNextLink } =
+    useSelector((state: RootState) => state.commissions);
 
+  const { height, width, currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
+
+  const dispatch = useDispatch();
+
+  if (commissionsState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height: height * 0.9,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView
+          width={width < height ? width * 0.1 : height * 0.1}
+          height={width < height ? width * 0.1 : height * 0.1}
+        />
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+  if (commissionsState === loadingStateEnum.success) {
+    function loadCommissionData(
+      undefined: undefined,
+      undefined1: undefined,
+      undefined2: undefined,
+      commissionNextLink: string,
+    ) {
+      throw new Error('Function not implemented.');
+    }
+
+    return (
+      <FlatList
+        style={{ height: height * 0.9 }}
+        data={currentCommissions}
+        renderItem={({ item }) => (
+          <Pressable
+            onPress={() => {
+              dispatch(
+                commissionsSlice.actions.setSelectedCommission(
+                  item.commissionId,
+                ),
+              );
+            }}
+            key={`Link_${item.commissionId}`}
+            style={{ backgroundColor: 'transparent' }}
+          >
+            <View
+              key={item.commissionId}
+              style={{
+                borderRadius: 15,
+                marginLeft: width * 0.025,
+                elevation: 2,
+                marginRight: width * 0.025,
+                marginTop: height * 0.02,
+                backgroundColor: Colors.white,
+                shadowColor: Colors.black,
+                shadowOffset: { width: 1, height: 1 },
+                shadowOpacity: 1,
+                shadowRadius: 5,
+              }}
+            >
+              <View style={{ margin: 10 }}>
+                <Text>{item.title}</Text>
+                {item.timed && item.startDate !== undefined ? (
+                  <Text>
+                    {new Date('en-US').toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      minute: 'numeric',
+                    })}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
+          </Pressable>
+        )}
+        onEndReachedThreshold={1}
+        onEndReached={() => {
+          if (commissionNextLink !== undefined) {
+            loadCommissionData(
+              undefined,
+              undefined,
+              undefined,
+              commissionNextLink,
+            );
+          }
+        }}
+        initialNumToRender={currentCommissions.length}
+        ListHeaderComponent={() => <CommissionPoints />}
+      />
+    );
+  }
+  return (
+    <View>
+      <Text>Failed</Text>
+    </View>
+  );
 }
 
 export default function Commissions() {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
   );
-  const { currentCommissions, selectedCommission, commissionsState, points, commissionNextLink } =
-    useSelector((state: RootState) => state.commissions);
+  const {
+    currentCommissions,
+    selectedCommission,
+    commissionsState,
+    commissionNextLink,
+  } = useSelector((state: RootState) => state.commissions);
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
 
@@ -144,14 +252,10 @@ export default function Commissions() {
 
   const loadData = useCallback(async () => {
     const pointResult = await getPoints();
-    if (
-      pointResult.result === loadingStateEnum.success
-    ) {
+    if (pointResult.result === loadingStateEnum.success) {
       dispatch(commissionsSlice.actions.setPoints(pointResult.data));
       const commissionsResult = await getCommissions();
-      if (
-        (commissionsResult.result === loadingStateEnum.success)
-      ) {
+      if (commissionsResult.result === loadingStateEnum.success) {
         dispatch(
           commissionsSlice.actions.setCurrentCommissions(
             commissionsResult.data,
@@ -184,9 +288,7 @@ export default function Commissions() {
       commissionsSlice.actions.setCommissionsState(loadingStateEnum.loading),
     );
     const result = await getCommissions(nextLink, startDate, endDate, claimed);
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       dispatch(commissionsSlice.actions.setCurrentCommissions(result.data));
       dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink));
     }
@@ -230,92 +332,10 @@ export default function Commissions() {
             Commissions
           </Text>
         </View>
-        <View style={{ height: isHoverPicker ? height * 0.8 : height * 0.85 }}>
-          {commissionsState === loadingStateEnum.loading ? (
-            <View
-              style={{
-                width,
-                height: height * 0.9,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <ProgressView
-                width={width < height ? width * 0.1 : height * 0.1}
-                height={width < height ? width * 0.1 : height * 0.1}
-              />
-              <Text>Loading</Text>
-            </View>
-          ) : (
-            <View>
-              {commissionsState === loadingStateEnum.success ? (
-                <FlatList
-                  style={{ height: height * 0.9 }}
-                  data={currentCommissions}
-                  renderItem={({ item }) => (
-                    <Pressable
-                      onPress={() => {
-                        dispatch(
-                          commissionsSlice.actions.setSelectedCommission(
-                            item.commissionId,
-                          ),
-                        );
-                      }}
-                      key={`Link_${item.commissionId}`}
-                      style={{ backgroundColor: 'transparent' }}
-                    >
-                      <View
-                        key={item.commissionId}
-                        style={{
-                          borderRadius: 15,
-                          marginLeft: width * 0.025,
-                          elevation: 2,
-                          marginRight: width * 0.025,
-                          marginTop: height * 0.02,
-                          backgroundColor: Colors.white,
-                          shadowColor: Colors.black,
-                          shadowOffset: { width: 1, height: 1 },
-                          shadowOpacity: 1,
-                          shadowRadius: 5,
-                        }}
-                      >
-                        <View style={{ margin: 10 }}>
-                          <Text>{item.title}</Text>
-                          {item.timed && item.startDate !== undefined ? (
-                            <Text>
-                              {new Date('en-US').toLocaleDateString('en-US', {
-                                month: 'long',
-                                day: 'numeric',
-                                minute: 'numeric',
-                              })}
-                            </Text>
-                          ) : null}
-                        </View>
-                      </View>
-                    </Pressable>
-                  )}
-                  onEndReachedThreshold={1}
-                  onEndReached={() => {
-                    if (commissionNextLink !== undefined) {
-                      loadCommissionData(
-                        undefined,
-                        undefined,
-                        undefined,
-                        commissionNextLink,
-                      );
-                    }
-                  }}
-                  initialNumToRender={currentCommissions.length}
-                  ListHeaderComponent={() => <CommissionPoints />}
-                />
-              ) : (
-                <View>
-                  <Text>Failed</Text>
-                </View>
-              )}
-            </View>
-          )}
+        <View
+          style={{ height: isHoverPicker ? height * 0.8 : height * 0.85 }}
+        >
+          <CommissionsBody />
         </View>
         <Pressable
           style={{ height: isHoverPicker ? height * 0.1 : height * 0.05 }}

@@ -6,10 +6,7 @@ import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, semesters } from '@constants';
 import getSchoolYears from '@utils/calendar/getSchoolYears';
 import SegmentedPicker from '@components/Pickers/SegmentedPicker';
-import {
-  getEvent,
-  getTimetable,
-} from '@utils/calendar/calendarFunctionsGraph';
+import { getEvent, getTimetable } from '@utils/calendar/calendarFunctionsGraph';
 import { CloseIcon, WarningIcon } from '@src/components/Icons';
 import Dropdown from '@components/Dropdown';
 import { getRoom, getRooms } from '@utils/classesFunctions';
@@ -125,9 +122,7 @@ export default function GovernmentClassesEdit() {
 
   async function loadSchoolYears() {
     const result = await getSchoolYears(schoolYearNextLink);
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setSchoolYears(result.events);
       setSchoolYearNextLink(result.nextLink);
     }
@@ -201,147 +196,178 @@ export default function GovernmentClassesEdit() {
 
   if (classState === loadingStateEnum.loading) {
     return (
-      <View style={{width, height, backgroundColor: Colors.white, alignContent: 'center', justifyContent: 'center', alignItems: "center"}}>
-        <Link style={{position: 'absolute', top: 0, left: 0}} href={'/government/classes'}>
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Link
+          style={{ position: 'absolute', top: 0, left: 0 }}
+          href="/government/classes"
+        >
           Back
         </Link>
-        <ProgressView width={14} height={14}/>
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   return (
     <>
       <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
-          <View>
-            {classState === loadingStateEnum.success ? (
-              <View
+        <View>
+          {classState === loadingStateEnum.success ? (
+            <View
+              style={{
+                width,
+                backgroundColor: Colors.white,
+              }}
+            >
+              <Link href="/government/classes">Back</Link>
+              <Text
                 style={{
-                  width,
-                  backgroundColor: Colors.white,
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  fontFamily: 'Comfortaa-Regular',
+                  marginBottom: 5,
+                  fontSize: 25,
                 }}
               >
-                <Link href={'/government/classes'}>
-                  Back
-                </Link>
-                <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Add Class Data</Text>
-                <View>
-                  <Text style={{marginLeft: 25}}>Name</Text>
-                  <TextInput value={className} onChangeText={setClassName} style={{padding: 10, borderWidth: 1, borderColor: Colors.black, borderRadius: 30, marginLeft: 15, marginRight: 15}}/>
-                </View>
-                <Text>School Years</Text>
-                <View style={{ height: height * 0.3 }}>
-                  {schoolYearState === loadingStateEnum.loading ? (
-                    <Text>Loading</Text>
-                  ) : (
-                    <View>
-                      {schoolYearState === loadingStateEnum.success ? (
-                        <ScrollView style={{ height: height * 0.3 }}>
-                          {schoolYears.map(year => (
-                            <Pressable
-                              onPress={() => {
-                                setSelectedSchoolYear(year);
-                              }}
-                            >
-                              <Text>{year.name}</Text>
-                            </Pressable>
-                          ))}
-                        </ScrollView>
-                      ) : (
-                        <Text>Failed</Text>
-                      )}
-                    </View>
-                  )}
-                </View>
-                <View
-                  style={{ height: height * 0.3, marginBottom: height * 0.1 }}
-                >
-                  <Text>Periods</Text>
-                  <Text>{periods.toString()}</Text>
-                  {timetableState === loadingStateEnum.notStarted ? (
-                    <Text>Please pick a school year</Text>
-                  ) : (
-                    <View>
-                      {timetableState === loadingStateEnum.loading ? (
-                        <Text>Loading</Text>
-                      ) : (
-                        <View style={{ zIndex: 100 }}>
-                          {timetableState === loadingStateEnum.success &&
-                          selectedTimetable?.days.length === periods.length ? (
-                            <ScrollView
-                              style={{ height: height * 0.3, zIndex: 100 }}
-                            >
-                              <>
-                                {selectedTimetable.days.map((day, dayIndex) => (
-                                  <DayBlock
-                                    day={day}
-                                    dayIndex={dayIndex}
-                                    periods={periods}
-                                    setPeriods={setPeriods}
-                                    selectedTimetable={selectedTimetable}
-                                  />
-                                ))}
-                              </>
-                            </ScrollView>
-                          ) : (
-                            <Text>Failed</Text>
-                          )}
-                        </View>
-                      )}
-                    </View>
-                  )}
-                </View>
-                <View style={{marginLeft: 'auto', marginRight: 'auto'}}>
-                  <SegmentedPicker
-                    selectedIndex={selectedSemester}
-                    setSelectedIndex={setSelectedSemester}
-                    options={['Semester One', 'Semester Two']}
-                    width={width * 0.85}
-                    height={height * 0.1}
-                  />
-                </View>
-                <View style={{ flexDirection: 'row' }}>
-                  {selectedRoom === undefined ? (
-                    <WarningIcon width={12} height={12} outlineColor="red" />
-                  ) : null}
-                  <Text>Select Room</Text>
-                </View>
-                <View style={{ height: height * 0.3 }}>
-                  {roomsState === loadingStateEnum.loading ? (
-                    <Text>Loading</Text>
-                  ) : (
-                    <View>
-                      {roomsState === loadingStateEnum.success ? (
-                        <ScrollView style={{ height: height * 0.3 }}>
-                          {rooms.map(room => (
-                            <Pressable
-                              onPress={() => {
-                                setSelectedRoom(room);
-                              }}
-                            >
-                              <Text>{room.name}</Text>
-                            </Pressable>
-                          ))}
-                        </ScrollView>
-                      ) : (
-                        <Text>Failed</Text>
-                      )}
-                    </View>
-                  )}
-                </View>
-                <SecondStyledButton
-                  text='Create Class'
-                  onPress={() => {
-                    setIsShowingClassConfirmMenu(true);
+                Add Class Data
+              </Text>
+              <View>
+                <Text style={{ marginLeft: 25 }}>Name</Text>
+                <TextInput
+                  value={className}
+                  onChangeText={setClassName}
+                  style={{
+                    padding: 10,
+                    borderWidth: 1,
+                    borderColor: Colors.black,
+                    borderRadius: 30,
+                    marginLeft: 15,
+                    marginRight: 15,
                   }}
-                  style={{marginBottom: 10, marginLeft: 15, marginRight: 15}}
                 />
               </View>
-            ) : (
-              <Text>Failed</Text>
-            )}
-          </View>
+              <Text>School Years</Text>
+              <View style={{ height: height * 0.3 }}>
+                {schoolYearState === loadingStateEnum.loading ? (
+                  <Text>Loading</Text>
+                ) : (
+                  <View>
+                    {schoolYearState === loadingStateEnum.success ? (
+                      <ScrollView style={{ height: height * 0.3 }}>
+                        {schoolYears.map(year => (
+                          <Pressable
+                            onPress={() => {
+                              setSelectedSchoolYear(year);
+                            }}
+                          >
+                            <Text>{year.name}</Text>
+                          </Pressable>
+                        ))}
+                      </ScrollView>
+                    ) : (
+                      <Text>Failed</Text>
+                    )}
+                  </View>
+                )}
+              </View>
+              <View
+                style={{ height: height * 0.3, marginBottom: height * 0.1 }}
+              >
+                <Text>Periods</Text>
+                <Text>{periods.toString()}</Text>
+                {timetableState === loadingStateEnum.notStarted ? (
+                  <Text>Please pick a school year</Text>
+                ) : (
+                  <View>
+                    {timetableState === loadingStateEnum.loading ? (
+                      <Text>Loading</Text>
+                    ) : (
+                      <View style={{ zIndex: 100 }}>
+                        {timetableState === loadingStateEnum.success &&
+                        selectedTimetable?.days.length === periods.length ? (
+                          <ScrollView
+                            style={{ height: height * 0.3, zIndex: 100 }}
+                          >
+                            <>
+                              {selectedTimetable.days.map((day, dayIndex) => (
+                                <DayBlock
+                                  day={day}
+                                  dayIndex={dayIndex}
+                                  periods={periods}
+                                  setPeriods={setPeriods}
+                                  selectedTimetable={selectedTimetable}
+                                />
+                              ))}
+                            </>
+                          </ScrollView>
+                        ) : (
+                          <Text>Failed</Text>
+                        )}
+                      </View>
+                    )}
+                  </View>
+                )}
+              </View>
+              <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                <SegmentedPicker
+                  selectedIndex={selectedSemester}
+                  setSelectedIndex={setSelectedSemester}
+                  options={['Semester One', 'Semester Two']}
+                  width={width * 0.85}
+                  height={height * 0.1}
+                />
+              </View>
+              <View style={{ flexDirection: 'row' }}>
+                {selectedRoom === undefined ? (
+                  <WarningIcon width={12} height={12} outlineColor="red" />
+                ) : null}
+                <Text>Select Room</Text>
+              </View>
+              <View style={{ height: height * 0.3 }}>
+                {roomsState === loadingStateEnum.loading ? (
+                  <Text>Loading</Text>
+                ) : (
+                  <View>
+                    {roomsState === loadingStateEnum.success ? (
+                      <ScrollView style={{ height: height * 0.3 }}>
+                        {rooms.map(room => (
+                          <Pressable
+                            onPress={() => {
+                              setSelectedRoom(room);
+                            }}
+                          >
+                            <Text>{room.name}</Text>
+                          </Pressable>
+                        ))}
+                      </ScrollView>
+                    ) : (
+                      <Text>Failed</Text>
+                    )}
+                  </View>
+                )}
+              </View>
+              <SecondStyledButton
+                text="Create Class"
+                onPress={() => {
+                  setIsShowingClassConfirmMenu(true);
+                }}
+                style={{ marginBottom: 10, marginLeft: 15, marginRight: 15 }}
+              />
+            </View>
+          ) : (
+            <Text>Failed</Text>
+          )}
+        </View>
       </ScrollView>
       {isShowingClassConfirmMenu ? (
         <View
@@ -384,7 +410,7 @@ export default function GovernmentClassesEdit() {
                 cannotStart: 'Cannot Update Class',
                 notStarted: 'Update Class',
                 success: 'Updated Class',
-                failed: 'Failed To Update Class'
+                failed: 'Failed To Update Class',
               })}
             </Text>
           </Pressable>

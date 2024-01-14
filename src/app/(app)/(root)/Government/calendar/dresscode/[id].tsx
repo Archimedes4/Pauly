@@ -87,63 +87,63 @@ export default function GovernmentDressCodeEdit() {
 
   if (isCreatingDressCode || getDressCodeState === loadingStateEnum.success) {
     return (
-<View
-          style={{
-            width,
-            height,
-            backgroundColor: Colors.white,
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+        }}
+      >
+        <Link href="/government/calendar/dresscode">
+          <Text>Back</Text>
+        </Link>
+        <Text>Create Dress Code</Text>
+        <Text>Dress Code Name:</Text>
+        <TextInput
+          value={dressCodeName}
+          onChangeText={setDressCodeName}
+          placeholder="Dress Code Name"
+        />
+        <ScrollView style={{ height: height * 0.7 }}>
+          {dressCodeData.map((dressCode, index) => (
+            <DressCodeBlock
+              dressCode={dressCode}
+              dressCodeData={dressCodeData}
+              index={index}
+              setDressCodeData={setDressCodeData}
+              selectedDressCodeId={selectedDressCodeId}
+              setSelectedDressCodeId={setSelectedDressCodeId}
+            />
+          ))}
+        </ScrollView>
+        <Pressable
+          onPress={() => {
+            setDressCodeData([
+              ...dressCodeData,
+              { name: '', description: '', id: createUUID() },
+            ]);
           }}
         >
-          <Link href="/government/calendar/dresscode">
-            <Text>Back</Text>
-          </Link>
-          <Text>Create Dress Code</Text>
-          <Text>Dress Code Name:</Text>
-          <TextInput
-            value={dressCodeName}
-            onChangeText={setDressCodeName}
-            placeholder="Dress Code Name"
-          />
-          <ScrollView style={{ height: height * 0.7 }}>
-            {dressCodeData.map((dressCode, index) => (
-              <DressCodeBlock
-                dressCode={dressCode}
-                dressCodeData={dressCodeData}
-                index={index}
-                setDressCodeData={setDressCodeData}
-                selectedDressCodeId={selectedDressCodeId}
-                setSelectedDressCodeId={setSelectedDressCodeId}
-              />
-            ))}
-          </ScrollView>
-          <Pressable
-            onPress={() => {
-              setDressCodeData([
-                ...dressCodeData,
-                { name: '', description: '', id: createUUID() },
-              ]);
-            }}
-          >
-            <Text>Add</Text>
-          </Pressable>
-          <Pressable onPress={() => loadCreateDressCode()}>
+          <Text>Add</Text>
+        </Pressable>
+        <Pressable onPress={() => loadCreateDressCode()}>
+          <Text>
+            {getTextState(deleteDressCodeState, {
+              notStarted: 'Create Dress Code',
+            })}
+          </Text>
+        </Pressable>
+        {!isCreatingDressCode ? (
+          <Pressable style={{ margin: 10 }} onPress={() => deleteDressCode()}>
             <Text>
               {getTextState(deleteDressCodeState, {
-                notStarted: 'Create Dress Code'
+                notStarted: 'Delete',
               })}
             </Text>
           </Pressable>
-          {!isCreatingDressCode ? (
-            <Pressable style={{ margin: 10 }} onPress={() => deleteDressCode()}>
-              <Text>
-                {getTextState(deleteDressCodeState, {
-                  notStarted: "Delete"
-                })}
-              </Text>
-            </Pressable>
-          ) : null}
-        </View>
-    )
+        ) : null}
+      </View>
+    );
   }
 
   if (getDressCodeState === loadingStateEnum.loading) {
@@ -164,7 +164,7 @@ export default function GovernmentDressCodeEdit() {
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   return (

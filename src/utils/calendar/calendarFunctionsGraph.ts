@@ -5,14 +5,14 @@
   calendarFunctionsGraph.ts
   calender function that use microsoft grap
 */
-import callMsGraph from '../ultility/microsoftAssets';
 import { Colors, loadingStateEnum, semesters } from '@constants';
 import store from '@redux/store';
+import { monthDataSlice } from '@redux/reducers/monthDataReducer';
+import callMsGraph from '../ultility/microsoftAssets';
 import batchRequest from '../ultility/batchRequest';
 import createUUID from '../ultility/createUUID';
 import getDressCode from '../notifications/getDressCode';
 import { findFirstDayinMonth } from './calendarFunctions';
-import { monthDataSlice } from '@redux/reducers/monthDataReducer';
 
 function eventTypeToPaulyEventType(
   eventType: string | undefined,
@@ -30,13 +30,16 @@ function eventTypeToPaulyEventType(
 export async function getGraphEvents(
   url?: string,
   referenceUrl?: string,
-): Promise<{
-  result: loadingStateEnum.success;
-  events: eventType[];
-  nextLink?: string;
-} | {
-  result: loadingStateEnum.failed
-}> {
+): Promise<
+  | {
+      result: loadingStateEnum.success;
+      events: eventType[];
+      nextLink?: string;
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const defaultUrl = `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`;
   const result = await callMsGraph(
     url !== undefined ? url : defaultUrl,
@@ -89,7 +92,6 @@ export async function getGraphEvents(
         microsoftReference:
           referenceUrl !== undefined
             ? referenceUrl + data.value[index].id
-
             : `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
       });
     }
@@ -107,7 +109,9 @@ export async function getEvent(
   id: string,
 ): Promise<{ result: loadingStateEnum; data?: eventType }> {
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    `https://graph.microsoft.com/v1.0/groups/${
+      process.env.EXPO_PUBLIC_ORGWIDEGROUPID
+    }/calendar/events/${id}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`,
     'GET',
@@ -147,13 +151,16 @@ export async function getEvent(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getSchedule(id: string): Promise<{
-  result: loadingStateEnum.success;
-  schedule: scheduleType;
-  listItemId: string;
-} | {
-  result: loadingStateEnum.failed;
-}> {
+export async function getSchedule(id: string): Promise<
+  | {
+      result: loadingStateEnum.success;
+      schedule: scheduleType;
+      listItemId: string;
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -184,7 +191,7 @@ export async function getSchedule(id: string): Promise<{
     }
     return { result: loadingStateEnum.failed };
   }
-  return { result: loadingStateEnum.failed};
+  return { result: loadingStateEnum.failed };
 }
 
 export async function getSchedules(): Promise<{
@@ -321,7 +328,9 @@ export async function getSchoolDay(
     .toISOString()
     .slice(0, -1)}0000`;
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    `https://graph.microsoft.com/v1.0/groups/${
+      process.env.EXPO_PUBLIC_ORGWIDEGROUPID
+    }/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${
       store.getState().paulyList.eventDataExtensionId
@@ -402,7 +411,9 @@ export async function getSchoolDays(date: Date): Promise<{
       .split(/[T ]/i, 1)[0]
   }T00:00:00.0000000`;
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    `https://graph.microsoft.com/v1.0/groups/${
+      process.env.EXPO_PUBLIC_ORGWIDEGROUPID
+    }/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${
       store.getState().paulyList.eventDataExtensionId
@@ -706,11 +717,12 @@ async function getTimetablesFromSchoolYears(
                 .fields.dressCodeId,
               dressCodeData: JSON.parse(
                 batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
-                  .fields.dressCodeData
+                  .fields.dressCodeData,
               ),
-              dressCodeIncentives: batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
-                .fields.dressCodeIncentivesData,
-              listId: ''
+              dressCodeIncentives:
+                batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
+                  .fields.dressCodeIncentivesData,
+              listId: '',
             },
           );
         } catch {
@@ -818,7 +830,7 @@ export function getMonthData(selectedDate: Date) {
   );
   const firstDayWeek = findFirstDayinMonth(selectedDate);
   const monthDataResult: monthDataType[] = [];
-  const currentEvents = store.getState().currentEvents;
+  const { currentEvents } = store.getState();
   for (let index = 0; index < 42; index += 1) {
     if (index >= firstDayWeek && index - firstDayWeek < lastDay.getDate()) {
       // In the current month
@@ -850,9 +862,15 @@ export function getMonthData(selectedDate: Date) {
         const endTimeDate = new Date(event.endTime); // String to date
 
         // First check if starts before date and ends after or on day
-        if (startTimeDate.getTime() <= checkStart.getTime() && endTimeDate.getTime() > checkStart.getTime()) {
+        if (
+          startTimeDate.getTime() <= checkStart.getTime() &&
+          endTimeDate.getTime() > checkStart.getTime()
+        ) {
           events.push(event);
-        } else if (startTimeDate.getTime() > checkStart.getTime() && startTimeDate.getTime() < checkEnd.getTime()) {
+        } else if (
+          startTimeDate.getTime() > checkStart.getTime() &&
+          startTimeDate.getTime() < checkEnd.getTime()
+        ) {
           // Second check if starts on day
           events.push(event);
         }

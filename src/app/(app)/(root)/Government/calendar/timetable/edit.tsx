@@ -3,13 +3,7 @@
   Andrew Mainella
   24 November 2023
 */
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
@@ -19,7 +13,6 @@ import { DownIcon, UpIcon, WarningIcon } from '@src/components/Icons';
 import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
-import ListItem from '@src/components/StyledButton';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
 import StyledButton from '@src/components/StyledButton';
 
@@ -29,8 +22,6 @@ export default function GovernmentTimetableEdit() {
     (state: RootState) => state.paulyList,
   );
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-
-  const [isEditing, setIsEditing] = useState<boolean>(false);
 
   // Loading States
   const [dressCodeState, setDressCodeState] = useState<loadingStateEnum>(
@@ -172,7 +163,7 @@ export default function GovernmentTimetableEdit() {
             {dressCodeState === loadingStateEnum.success ? (
               <View>
                 {dressCodes.map(dressCode => (
-                  <ListItem
+                  <StyledButton
                     text={dressCode.name}
                     onPress={() => {
                       setSelectedDressCode(dressCode);
@@ -192,9 +183,9 @@ export default function GovernmentTimetableEdit() {
           </View>
         )}
       </View>
-      <StyledButton 
+      <StyledButton
         text={getTextState(createTimetableLoadingState, {
-          notStarted: 'Create Timetable'
+          notStarted: 'Create Timetable',
         })}
         onPress={() => {
           if (createTimetableLoadingState === loadingStateEnum.notStarted) {
@@ -228,7 +219,7 @@ function SchoolDays({
           />
         ))}
       </ScrollView>
-      <StyledButton 
+      <StyledButton
         text="Add"
         onPress={() => {
           setSchoolDays([

@@ -4,8 +4,8 @@ import React from 'react';
 import Svg, { Circle } from 'react-native-svg';
 import { Easing, useDerivedValue, withTiming } from 'react-native-reanimated';
 import { View } from 'react-native';
-import AnimatedCheckMarkPath from './AnimatedCheckMarkPath';
 import { Colors } from '@src/constants';
+import AnimatedCheckMarkPath from './AnimatedCheckMarkPath';
 
 export default function CustomCheckBox({
   checked,

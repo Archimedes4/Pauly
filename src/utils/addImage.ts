@@ -42,6 +42,7 @@ export default async function addImage(
 
       while (notComplete) {
         if (copyData !== null) {
+          // eslint-disable-next-line no-await-in-loop This code checks the status of copying not meant to be ran in parallel.
           const copyFetch = await fetch(copyData);
           if (copyFetch.ok) {
             const copyFetchData = await copyFetch.json();

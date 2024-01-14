@@ -16,14 +16,12 @@ import {
 } from 'expo-auth-session';
 import { useRootNavigationState, useRouter } from 'expo-router';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
-import store, { RootState } from '@redux/store';
+import store from '@redux/store';
 import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
 import { authenticationRefreshTokenSlice } from '@redux/reducers/authenticationRefreshTokenReducer';
 import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
-import getUserProfile from '@utils/ultility/getPaulyLists';
 import getPaulyLists from '@utils/ultility/getPaulyLists';
 import { scopes } from '@constants';
-import { useSelector } from 'react-redux';
 
 // placeholder function
 export function useSilentLogin(): () => Promise<void> {
@@ -52,7 +50,9 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
   });
   const [authRequest, , promptAsync] = useAuthRequest(
     {
-      clientId: (process.env.EXPO_PUBLIC_CLIENTID) ? process.env.EXPO_PUBLIC_CLIENTID:"",
+      clientId: process.env.EXPO_PUBLIC_CLIENTID
+        ? process.env.EXPO_PUBLIC_CLIENTID
+        : '',
       redirectUri,
       scopes,
       prompt: Prompt.SelectAccount,
@@ -70,7 +70,9 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
       if (authRequest && res?.type === 'success' && discovery) {
         const exchangeRes = await exchangeCodeAsync(
           {
-            clientId: (process.env.EXPO_PUBLIC_CLIENTID) ? process.env.EXPO_PUBLIC_CLIENTID:"",
+            clientId: process.env.EXPO_PUBLIC_CLIENTID
+              ? process.env.EXPO_PUBLIC_CLIENTID
+              : '',
             code: res.params.code,
             extraParams: authRequest.codeVerifier
               ? { code_verifier: authRequest.codeVerifier }
@@ -93,7 +95,6 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
           ),
         );
         getPaulyLists();
-        getUserProfile();
         store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
       } else {
         store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
@@ -114,7 +115,9 @@ export function refresh(): () => Promise<void> {
         const result = await refreshAsync(
           {
             refreshToken: store.getState().authenticationRefreshToken,
-            clientId: process.env.EXPO_PUBLIC_CLIENTID ? process.env.EXPO_PUBLIC_CLIENTID:"",
+            clientId: process.env.EXPO_PUBLIC_CLIENTID
+              ? process.env.EXPO_PUBLIC_CLIENTID
+              : '',
             scopes,
           },
           discovery,

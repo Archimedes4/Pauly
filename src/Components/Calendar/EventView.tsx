@@ -13,7 +13,16 @@ import { Colors, loadingStateEnum } from '@constants';
 
 function EventBlock({ event }: { event: eventType }) {
   return (
-    <View style={{borderRadius: 15, backgroundColor: Colors.white, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 10}}>
+    <View
+      style={{
+        borderRadius: 15,
+        backgroundColor: Colors.white,
+        marginBottom: 10,
+        marginLeft: 10,
+        marginRight: 10,
+        padding: 10,
+      }}
+    >
       <Text>{event.name}</Text>
       <Text>
         {new Date(event.startTime).getDay()}{' '}
@@ -24,7 +33,13 @@ function EventBlock({ event }: { event: eventType }) {
   );
 }
 
-export default function EventView({width, height}:{width: number, height: number}) {
+export default function EventView({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
   const [schoolEvents, setSchoolEvents] = useState<eventType[]>([]);
@@ -42,10 +57,17 @@ export default function EventView({width, height}:{width: number, height: number
     getClassesEvents();
   }, [selectedDate]);
   return (
-    <ScrollView style={{width, height, backgroundColor: Colors.lightGray, paddingTop: 10}}>
+    <ScrollView
+      style={{
+        width,
+        height,
+        backgroundColor: Colors.lightGray,
+        paddingTop: 10,
+      }}
+    >
       {currentEvents.length === 0 && schoolEvents.length === 0 ? (
         <View>
-          <Text style={{margin: 'auto'}}>There are no events!</Text>
+          <Text style={{ margin: 'auto' }}>There are no events!</Text>
         </View>
       ) : (
         <>

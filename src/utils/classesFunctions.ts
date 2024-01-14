@@ -68,16 +68,17 @@ export async function getRoom(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getClassesSchedule(): Promise<{
-  result: loadingStateEnum.success;
-  data: classType[];
-} | {
-  result: loadingStateEnum.failed
-}> {
+export async function getClassesSchedule(): Promise<
+  | {
+      result: loadingStateEnum.success;
+      data: classType[];
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   let classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`;
-  const batchDataRequests: batchRequest[][] = [
-    [],
-  ];
+  const batchDataRequests: batchRequest[][] = [[]];
   while (classQuery !== undefined) {
     const classResult = await callMsGraph(classQuery);
     if (classResult.ok) {
@@ -208,7 +209,10 @@ export async function getClassEvents(
 
 export async function getClassEventsFromDay(
   date?: Date,
-): Promise<{ result: loadingStateEnum.success; data: eventType[] } | { result: loadingStateEnum.failed }> {
+): Promise<
+  | { result: loadingStateEnum.success; data: eventType[] }
+  | { result: loadingStateEnum.failed }
+> {
   const result = await getSchoolDay(date || new Date());
   if (
     result.result === loadingStateEnum.success &&

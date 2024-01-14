@@ -269,7 +269,9 @@ export default function GovernmentAdmin() {
                 height: height * 0.05,
                 width: height * 0.05,
                 backgroundColor:
-                  currentInitStage === initStage.partOne ? 'blue' : Colors.black,
+                  currentInitStage === initStage.partOne
+                    ? 'blue'
+                    : Colors.black,
                 borderRadius: 50,
               }}
             />
@@ -374,10 +376,8 @@ export default function GovernmentAdmin() {
           <StyledButton
             text={getTextState(initResult, {
               cannotStart: 'Please Pick a User',
-              notStarted: 'Initialize Pauly on New Tenant'
-            })
-
-            }
+              notStarted: 'Initialize Pauly on New Tenant',
+            })}
             onPress={() => {
               if (initResult === loadingStateEnum.notStarted) {
                 initializePauly();
@@ -386,24 +386,27 @@ export default function GovernmentAdmin() {
             second
           />
           {initTwoResult !== loadingStateEnum.cannotStart ? (
-            <StyledButton 
+            <StyledButton
               onPress={() => {
                 initializePaulyFromPartTwo();
               }}
               text={getTextState(initTwoResult, {
-                notStarted: 'Start From Part Two'
+                notStarted: 'Start From Part Two',
               })}
             />
           ) : null}
           {initThreeResult !== loadingStateEnum.cannotStart ? (
             <>
               <FlatList
-                data={[...addDataArray, {
-                  id: 'paulyList',
-                  urlOne: '',
-                  data: {}
-                }]}
-                renderItem={({item}) => (
+                data={[
+                  ...addDataArray,
+                  {
+                    id: 'paulyList',
+                    urlOne: '',
+                    data: {},
+                  },
+                ]}
+                renderItem={({ item }) => (
                   <StyledButton
                     key={`Add_Data_${item.id}`}
                     text={item.id}
@@ -422,7 +425,7 @@ export default function GovernmentAdmin() {
                     }}
                   />
                 )}
-                style={{height: height * 0.3, width: width - height * 0.1}}
+                style={{ height: height * 0.3, width: width - height * 0.1 }}
               />
               <StyledButton
                 second
@@ -430,7 +433,7 @@ export default function GovernmentAdmin() {
                   initializePaulyFromPartThree();
                 }}
                 text={getTextState(initThreeResult, {
-                  notStarted: 'Start From Part Three'
+                  notStarted: 'Start From Part Three',
                 })}
               />
             </>
@@ -500,16 +503,16 @@ function UserBlock({
       <View style={{ height: height * 0.4 }}>
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
   if (loadUsersResult === loadingStateEnum.success) {
     return (
       <FlatList
         data={loadedUsers}
         renderItem={user => {
-          if (user.item.id !== currentUserId){
+          if (user.item.id !== currentUserId) {
             return (
-              <StyledButton 
+              <StyledButton
                 key={`User_${user.item.id}`}
                 text={user.item.displayName}
                 onPress={() => {
@@ -518,16 +521,16 @@ function UserBlock({
                 }}
                 style={styles.listStyle}
               />
-            )
+            );
           }
-          return null
+          return null;
         }}
         onEndReached={() => {
           if (nextLink !== undefined) {
             getUsers(nextLink);
           }
         }}
-        style={{height: height * 0.4, width: width - height * 0.1}}
+        style={{ height: height * 0.4, width: width - height * 0.1 }}
       />
     );
   }
@@ -535,5 +538,5 @@ function UserBlock({
     <View style={{ height: height * 0.4 }}>
       <Text>Failed</Text>
     </View>
-  )
+  );
 }

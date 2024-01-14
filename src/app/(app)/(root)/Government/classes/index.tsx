@@ -57,7 +57,7 @@ export default function GovernmentClasses() {
         <Link href="/government/">
           <Text>Back</Text>
         </Link>
-        <Text style={{marginLeft: 'auto', marginRight: 'auto',}}>Classes</Text>
+        <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>Classes</Text>
       </View>
       <ScrollView style={{ height: height * 0.85 }}>
         <>
@@ -72,9 +72,7 @@ export default function GovernmentClasses() {
                 <FlatList
                   data={classes}
                   renderItem={classMap => (
-                    <Link
-                      href={`/government/classes/${classMap.item.id}`}
-                    >
+                    <Link href={`/government/classes/${classMap.item.id}`}>
                       <Pressable
                         key={`Class_${classMap.item.id}_${createUUID()}`}
                         style={{
@@ -101,7 +99,11 @@ export default function GovernmentClasses() {
           )}
         </>
       </ScrollView>
-      <StyledButton to="/government/classes/room" text='Rooms' style={{marginLeft: 10, marginRight: 10, marginBottom: 20}}/>
+      <StyledButton
+        to="/government/classes/room"
+        text="Rooms"
+        style={{ marginLeft: 10, marginRight: 10, marginBottom: 20 }}
+      />
     </View>
   );
 }

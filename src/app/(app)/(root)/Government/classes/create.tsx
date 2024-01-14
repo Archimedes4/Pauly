@@ -48,9 +48,7 @@ export default function GovermentRoomsCreate() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/government/classes/room'}>
-        Back
-      </Link>
+      <Link href="/government/classes/room">Back</Link>
       <View
         style={{
           justifyContent: 'center',

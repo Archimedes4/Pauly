@@ -49,8 +49,12 @@ export default function CommissionClaim({
         const apiResult = await refreshAsync(
           {
             refreshToken: store.getState().authenticationRefreshToken,
-            clientId: (process.env.EXPO_PUBLIC_CLIENTID) ? process.env.EXPO_PUBLIC_CLIENTID:"",
-            scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
+            clientId: process.env.EXPO_PUBLIC_CLIENTID
+              ? process.env.EXPO_PUBLIC_CLIENTID
+              : '',
+            scopes: [
+              `api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`,
+            ],
           },
           discovery,
         );

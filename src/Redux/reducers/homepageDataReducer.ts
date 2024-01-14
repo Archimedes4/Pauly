@@ -30,7 +30,7 @@ const initalState: homepageStatesType = {
       importance: taskImportanceEnum.normal,
       status: taskStatusEnum.notStarted,
       excess: true,
-      state: loadingStateEnum.notStarted
+      state: loadingStateEnum.notStarted,
     },
   ],
   schoolDayData: undefined,

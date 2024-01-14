@@ -1,13 +1,13 @@
 import { loadingStateEnum } from '@constants';
 import createUUID from '@utils/ultility/createUUID';
 import callMsGraph from '@utils/ultility/microsoftAssets';
+import store from '@src/redux/store';
 import {
   paulyListData,
   paulyDataData,
   addDataArray,
   url,
 } from './initializePaulyData';
-import store from '@src/redux/store';
 
 export async function initializePaulyPartOne(
   secondUserId: string,
@@ -69,6 +69,31 @@ export async function initializePaulyPartTwo(
   return loadingStateEnum.failed;
 }
 
+async function createData(
+  callData: addDataType,
+  rootSiteId: string,
+): Promise<
+  | { result: loadingStateEnum.failed }
+  | { result: loadingStateEnum.success; id: string; callId: string }
+> {
+  const result = await callMsGraph(
+    callData.urlTwo !== undefined
+      ? callData.urlOne + rootSiteId + callData.urlTwo
+      : callData.urlOne,
+    'POST',
+    JSON.stringify(callData.data),
+  );
+  if (!result.ok) {
+    return { result: loadingStateEnum.failed };
+  }
+  const data = await result.json();
+  return {
+    result: loadingStateEnum.success,
+    id: data.id as string,
+    callId: callData.id,
+  };
+}
+
 export async function initializePaulyPartThree(
   groupId: string,
   update?: string[],
@@ -109,14 +134,17 @@ export async function initializePaulyPartThree(
             getPaulyListResultData.fields.paulyDataListId;
         }
       }
-      //Checking if to clear data
-      if (update?.includes("paulyList")) {
-        //delete old list
-        const deleteResult = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyList/items/1`, "DELETE");
+      // Checking if to clear data
+      if (update?.includes('paulyList')) {
+        // delete old list
+        const deleteResult = await callMsGraph(
+          `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyList/items/1`,
+          'DELETE',
+        );
         if (!deleteResult.ok) {
           return loadingStateEnum.failed;
         }
-        //create the new list
+        // create the new list
         const paulyListResult = await callMsGraph(
           `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists`,
           'POST',
@@ -130,50 +158,56 @@ export async function initializePaulyPartThree(
   }
 
   if (!secondRun) {
-    //Add Team photo
-    const imageFetch = await fetch(url)
+    // Add Team photo
+    const imageFetch = await fetch(url);
     if (!imageFetch.ok) {
-      return loadingStateEnum.failed
+      return loadingStateEnum.failed;
     }
-    const imageBlob = await imageFetch.blob()
-    const result = await fetch("https://graph.microsoft.com/v1.0/teams/451cc145-cc7b-433a-9e52-70e646a13d50/photo/$value", {
-      method: "PUT",
-      body: imageBlob,
-      headers: {
-        "Content-type":"image/jpeg",
-        "Authorization":`Bearer ${store.getState().authenticationToken}`
-      }
-    })
+    const imageBlob = await imageFetch.blob();
+    const result = await fetch(
+      'https://graph.microsoft.com/v1.0/teams/451cc145-cc7b-433a-9e52-70e646a13d50/photo/$value',
+      {
+        method: 'PUT',
+        body: imageBlob,
+        headers: {
+          'Content-type': 'image/jpeg',
+          Authorization: `Bearer ${store.getState().authenticationToken}`,
+        },
+      },
+    );
     if (!result.ok) {
-      return loadingStateEnum.failed
+      return loadingStateEnum.failed;
     }
   }
 
   // TO DO think about 409 if only half  of list where created and then interuption
+  const ongoingRequests: Promise<
+    | { result: loadingStateEnum.failed }
+    | { result: loadingStateEnum.success; id: string; callId: string }
+  >[] = [];
   for (let index = 0; index < addDataArray.length; index += 1) {
     const callData = addDataArray[index];
-    if (getPaulyListResultData.fields !== undefined) {
-      if (getPaulyListResultData.fields[callData.id] !== undefined) {
-        paulyListNewData.fields[callData.id] =
-          getPaulyListResultData.fields[callData.id];
-      }
+    if (
+      getPaulyListResultData.fields !== undefined &&
+      getPaulyListResultData.fields[callData.id] !== undefined
+    ) {
+      paulyListNewData.fields[callData.id] =
+        getPaulyListResultData.fields[callData.id];
     }
     if (
       paulyListNewData.fields[callData.id] === undefined ||
       update?.includes(callData.id)
     ) {
-      const result = await callMsGraph(
-        callData.urlTwo !== undefined
-          ? callData.urlOne + getRootSiteIdResultData.id + callData.urlTwo
-          : callData.urlOne,
-        'POST',
-        JSON.stringify(callData.data),
-      );
-      if (!result.ok) {
-        return loadingStateEnum.failed;
-      }
-      const data = await result.json();
-      paulyListNewData.fields[callData.id] = data.id;
+      ongoingRequests.push(createData(callData, getRootSiteIdResultData.id));
+    }
+  }
+  const finalRequests = await Promise.all(ongoingRequests);
+  for (let index = 0; index < finalRequests.length; index += 1) {
+    const finalRequest = finalRequests[index];
+    if (finalRequest.result === loadingStateEnum.success) {
+      paulyListNewData.fields[finalRequest.callId] = finalRequest.id;
+    } else {
+      return loadingStateEnum.failed;
     }
   }
 
@@ -250,7 +284,7 @@ export async function initializePaulyPartThree(
   } else {
     const addPaulyListResult = await callMsGraph(
       `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyList/items/1`,
-      (update?.includes("paulyList")) ? 'POST':'PATCH',
+      update?.includes('paulyList') ? 'POST' : 'PATCH',
       JSON.stringify(paulyListNewData),
     );
     const ourData = await addPaulyListResult.json();

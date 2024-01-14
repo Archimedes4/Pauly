@@ -32,10 +32,7 @@ import BackButton from '@components/BackButton';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { TrashIcon, WarningIcon } from '@src/components/Icons';
-import {
-  deleteTask,
-  updateTaskText,
-} from '@utils/notifications/updateTasks';
+import { deleteTask, updateTaskText } from '@utils/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Get Messages
@@ -181,7 +178,7 @@ function DeleteTask({ onDelete }: { onDelete: () => void }) {
   );
 }
 
-function TaskItem({ task, index }: { task: taskType, index: number }) {
+function TaskItem({ task, index }: { task: taskType; index: number }) {
   const { width } = useSelector((state: RootState) => state.dimentions);
   const { isShowingCompleteTasks } = useSelector(
     (state: RootState) => state.homepageData,
@@ -191,12 +188,10 @@ function TaskItem({ task, index }: { task: taskType, index: number }) {
 
   const checkUpdateText = useCallback(async () => {
     if (mounted) {
-      const taskNameSave =
-        store.getState().homepageData.userTasks[index].name;
+      const taskNameSave = store.getState().homepageData.userTasks[index].name;
       setTimeout(() => {
         if (
-          store.getState().homepageData.userTasks[index].name ===
-          taskNameSave
+          store.getState().homepageData.userTasks[index].name === taskNameSave
         ) {
           updateTaskText(task, index);
         }
@@ -230,14 +225,14 @@ function TaskItem({ task, index }: { task: taskType, index: number }) {
                 dispatch(
                   homepageDataSlice.actions.updateUserTask({
                     task: { ...task, status: taskStatusEnum.completed },
-                    index: index,
+                    index,
                   }),
                 );
               } else {
                 dispatch(
                   homepageDataSlice.actions.updateUserTask({
                     task: { ...task, status: taskStatusEnum.notStarted },
-                    index: index,
+                    index,
                   }),
                 );
               }
@@ -278,7 +273,7 @@ function TaskItem({ task, index }: { task: taskType, index: number }) {
                     ...task,
                     name: e,
                   },
-                  index: index,
+                  index,
                 }),
               );
               checkUpdateText();
@@ -370,7 +365,11 @@ function TaskBlock() {
         {taskState === loadingStateEnum.success && (
           <ScrollView nestedScrollEnabled>
             {userTasks.map((task, index) => (
-              <TaskItem task={task} index={index} key={`User_Task_${task.id}`} />
+              <TaskItem
+                task={task}
+                index={index}
+                key={`User_Task_${task.id}`}
+              />
             ))}
           </ScrollView>
         )}
@@ -481,7 +480,7 @@ function PopularFiles({ width }: { width: number }) {
 
   if (trendingState === loadingStateEnum.success) {
     return (
-      <View style={{overflow: 'scroll'}}>
+      <View style={{ overflow: 'scroll' }}>
         {trendingData.map(data => (
           <Pressable
             key={`User_Insight_${data.id}`}

@@ -68,7 +68,9 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     if (government !== undefined) {
       await setWantGovernment(government);
     }
-    instance.loginRedirect({ scopes: (government === true) ? governmentScopes : scopes });
+    instance.loginRedirect({
+      scopes: government === true ? governmentScopes : scopes,
+    });
   }
 
   return loginFunction;

@@ -5,15 +5,15 @@ export async function getFileWithShareID(
   shareID: string,
   index: number,
 ): Promise<
-  {
-    result: loadingStateEnum.failed;
-   }
   | {
-    result: loadingStateEnum.success;
-    index: number;
-    url?: string;
-    contentType?: dataContentTypeOptions;
-  }
+      result: loadingStateEnum.failed;
+    }
+  | {
+      result: loadingStateEnum.success;
+      index: number;
+      url?: string;
+      contentType?: dataContentTypeOptions;
+    }
 > {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/shares/${shareID}/driveItem`,
@@ -80,22 +80,24 @@ export async function createShareId(
   return undefined;
 }
 
-export async function getDataWithShareID(id: string): Promise<undefined | microsoftFileType> {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/shares/${id}/driveItem`)
+export async function getDataWithShareID(
+  id: string,
+): Promise<undefined | microsoftFileType> {
+  const result = await callMsGraph(
+    `https://graph.microsoft.com/v1.0/shares/${id}/driveItem`,
+  );
   if (result.ok) {
     const data = await result.json();
     return {
-      name: data["name"],
-      id: data["id"],
-      lastModified: data["lastModifiedDateTime"],
-      folder: data["folder"] !== undefined,
-      parentDriveId: data["parentReference"]["driveId"],
-      parentPath: data["parentReference"]["path"],
-      itemGraphPath: `https://graph.microsoft.com/v1.0/${data["parentReference"]["path"]}`,
-      callPath: "share",
-      type: data["folder"] === undefined
-      ? data["file"]["mimeType"]
-      : 'folder'
-    }
+      name: data.name,
+      id: data.id,
+      lastModified: data.lastModifiedDateTime,
+      folder: data.folder !== undefined,
+      parentDriveId: data.parentReference.driveId,
+      parentPath: data.parentReference.path,
+      itemGraphPath: `https://graph.microsoft.com/v1.0/${data.parentReference.path}`,
+      callPath: 'share',
+      type: data.folder === undefined ? data.file.mimeType : 'folder',
+    };
   }
 }

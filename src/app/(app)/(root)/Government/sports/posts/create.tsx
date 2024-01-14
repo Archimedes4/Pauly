@@ -163,14 +163,29 @@ export default function GovernmentSportsTeamAddPost() {
   }
   return (
     <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/government/sports/posts'}>
-        Back
-      </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Add Sports Team Post</Text>
+      <Link href="/government/sports/posts">Back</Link>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Add Sports Team Post
+      </Text>
       <TextInput
         value={postName}
         onChangeText={setPostName}
-        style={{padding: 10, borderRadius: 20, borderWidth: 1, borderColor: Colors.black, marginLeft: 15, marginRight: 15}}
+        style={{
+          padding: 10,
+          borderRadius: 20,
+          borderWidth: 1,
+          borderColor: Colors.black,
+          marginLeft: 15,
+          marginRight: 15,
+        }}
       />
       <PickSportTeam
         height={400}

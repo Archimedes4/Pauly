@@ -12,11 +12,11 @@ import { RootState } from '@redux/store';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import SelectTimetable from './SelectTimetable';
-import SelectSchoolDayData from './SelectSchoolDayData';
 import { Colors, loadingStateEnum, paulyEventType, styles } from '@constants';
 import updateEvent from '@utils/updateEvent';
 import { getTextState } from '@utils/ultility/createUUID';
+import SelectSchoolDayData from './SelectSchoolDayData';
+import SelectTimetable from './SelectTimetable';
 import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons';
 import PickerWrapper from '../Pickers/Picker';
 import SecondStyledButton from '../StyledButton';
@@ -422,18 +422,19 @@ export default function AddEvent({
             );
             updateEvent();
           }}
-          text={
-            getTextState(createEventState, {
-              notStarted: isEditing ? 'Save' : 'Create',
-            })
-          }
-          style={{marginBottom: 15, marginTop: 15}}
+          text={getTextState(createEventState, {
+            notStarted: isEditing ? 'Save' : 'Create',
+          })}
+          style={{ marginBottom: 15, marginTop: 15 }}
         />
         {isEditing ? (
-          <SecondStyledButton onPress={() => {
-            dispatch(addEventSlice.actions.setIsShowingAddDate(false));
-            deleteEvent();
-          }} text='Delete' />
+          <SecondStyledButton
+            onPress={() => {
+              dispatch(addEventSlice.actions.setIsShowingAddDate(false));
+              deleteEvent();
+            }}
+            text="Delete"
+          />
         ) : null}
       </View>
     </View>

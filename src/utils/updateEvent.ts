@@ -6,7 +6,12 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 
 export default async function createEvent(): Promise<undefined> {
   if (store.getState().addEvent.selectedEventType === paulyEventType.personal) {
-    const data: any = {
+    const data: {
+      subject: string;
+      start: { dateTime: string; timeZone: string };
+      end: { dateTime: string; timeZone: string };
+      isAllDay?: boolean;
+    } = {
       subject: store.getState().addEvent.eventName,
       start: {
         dateTime: store.getState().addEvent.startDate.replace(/.\d+Z$/g, 'Z'),

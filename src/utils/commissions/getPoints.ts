@@ -61,12 +61,15 @@ async function getPointsBatch(
   return { result: loadingStateEnum.failed, points: 0 };
 }
 
-export default async function getPoints(): Promise<{
-  result: loadingStateEnum.success;
-  data: number;
-} | {
-  result: loadingStateEnum.failed
-}> {
+export default async function getPoints(): Promise<
+  | {
+      result: loadingStateEnum.success;
+      data: number;
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   let nextUrl = `https://graph.microsoft.com/v1.0/sites/${
     store.getState().paulyList.siteId
   }/lists/${

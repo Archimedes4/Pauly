@@ -4,6 +4,12 @@ import { Colors, resourceMode } from '@constants';
 import { resourcesSlice } from '@redux/reducers/resourcesReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {
   CalendarIcon,
   DocumentIcon,
@@ -16,7 +22,6 @@ import {
   SportsIcon,
   UpIcon,
 } from './Icons';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 function BarPiece({
   children,
@@ -166,7 +171,7 @@ export default function resourceBar() {
   const selectedResourceMode = useSelector(
     (state: RootState) => state.resources.selectedResourceMode,
   );
-  
+
   const pan = useSharedValue(selectedResourceMode * 45);
 
   const animatedDefault = useAnimatedStyle(() => ({
@@ -177,8 +182,8 @@ export default function resourceBar() {
     pan.value = withTiming(selectedResourceMode * 45, {
       duration: 150,
       easing: Easing.linear,
-    })
-  }, [selectedResourceMode])
+    });
+  }, [selectedResourceMode]);
 
   if (isOpen) {
     return <OpenBar onClose={() => setIsOpen(false)} barWidth={barWidth} />;
@@ -198,7 +203,18 @@ export default function resourceBar() {
         borderColor: Colors.black,
       }}
     >
-      <Animated.View style={[animatedDefault, {position: 'absolute', borderRadius: 30, width: 45, height: 45, backgroundColor: Colors.lightGray}]}/>
+      <Animated.View
+        style={[
+          animatedDefault,
+          {
+            position: 'absolute',
+            borderRadius: 30,
+            width: 45,
+            height: 45,
+            backgroundColor: Colors.lightGray,
+          },
+        ]}
+      />
       <BarPiece mode={resourceMode.home}>
         <HomeIcon width={25} height={25} />
       </BarPiece>

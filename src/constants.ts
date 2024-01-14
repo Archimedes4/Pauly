@@ -25,7 +25,7 @@ export enum loadingStateEnum {
   notStarted,
   cannotStart,
   offline,
-  notFound
+  notFound,
 }
 
 export enum postType {
@@ -145,8 +145,8 @@ declare global {
   type batchRequest = {
     id: string;
     method: 'GET' | 'POST';
-    url: string
-  }
+    url: string;
+  };
   type calendarCourseType = {
     name: string;
     semester: number;
@@ -282,7 +282,7 @@ declare global {
     bottom: string;
     isTopTransparent: boolean;
     isBottomTransparent: boolean;
-    overflowHidden: boolean
+    overflowHidden: boolean;
   };
   type scholarship = {
     title: string;
@@ -401,10 +401,10 @@ declare global {
     id: string;
   };
   type taggedResource = {
-    importance: number,
-    category: resourceMode,
-    tagId: string
-  }
+    importance: number;
+    category: resourceMode;
+    tagId: string;
+  };
   type teamsGroupType = {
     teamName: string;
     teamId: string;
@@ -599,10 +599,10 @@ export const governmentScopes = [
   'Sites.Manage.All',
   'Application.ReadWrite.All',
   'TeamMember.Read.All',
-  'TeamSettings.ReadWrite.All'
-]
+  'TeamSettings.ReadWrite.All',
+];
 
-//styles
+// styles
 export const styles = StyleSheet.create({
   textInputStyle: {
     marginLeft: 15,
@@ -610,11 +610,11 @@ export const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 30,
     borderColor: 'black',
-    borderWidth: 1
+    borderWidth: 1,
   },
   listStyle: {
     marginLeft: 15,
     marginRight: 15,
-    marginTop: 20
-  }
-})
+    marginTop: 20,
+  },
+});

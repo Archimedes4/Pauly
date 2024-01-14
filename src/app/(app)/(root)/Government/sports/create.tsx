@@ -87,12 +87,35 @@ export default function GovernmentCreateNewSport() {
   }
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/government/sports'}>
+      <Link href="/government/sports">
         <Text>Back</Text>
       </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Create New Sport</Text>
-      <Text style={{marginLeft: 28, fontSize: 18, marginBottom: 2}}>Sport Name</Text>
-      <TextInput value={sportName} onChangeText={setSportName} style={{borderWidth: 1, borderRadius: 30, borderColor: Colors.black, padding: 10, marginLeft: 15, marginRight: 15}}/>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Create New Sport
+      </Text>
+      <Text style={{ marginLeft: 28, fontSize: 18, marginBottom: 2 }}>
+        Sport Name
+      </Text>
+      <TextInput
+        value={sportName}
+        onChangeText={setSportName}
+        style={{
+          borderWidth: 1,
+          borderRadius: 30,
+          borderColor: Colors.black,
+          padding: 10,
+          marginLeft: 15,
+          marginRight: 15,
+        }}
+      />
       <TextInput
         value={svgData}
         onChangeText={e => {
@@ -100,12 +123,12 @@ export default function GovernmentCreateNewSport() {
         }}
         multiline
         numberOfLines={25}
-        style={{marginLeft: 15, marginRight: 15, marginTop: 5}}
+        style={{ marginLeft: 15, marginRight: 15, marginTop: 5 }}
       />
-      <View style={{marginLeft: 'auto', marginRight: 'auto', borderWidth: 1}}>
+      <View style={{ marginLeft: 'auto', marginRight: 'auto', borderWidth: 1 }}>
         <SVGXml xml={svgData} width={100} height={100} />
       </View>
-      <SecondStyledButton 
+      <SecondStyledButton
         text={getTextState(createSportLoadingState, {
           notStarted: 'Create',
           success: 'Sport Created!',
@@ -115,7 +138,12 @@ export default function GovernmentCreateNewSport() {
             createSport();
           }
         }}
-        style={{marginBottom: 10, marginLeft: 15, marginRight: 15, marginTop: 10}}
+        style={{
+          marginBottom: 10,
+          marginLeft: 15,
+          marginRight: 15,
+          marginTop: 10,
+        }}
       />
     </View>
   );

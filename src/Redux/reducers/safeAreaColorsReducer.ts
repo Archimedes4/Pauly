@@ -6,7 +6,7 @@ const initalState: safeAreaType = {
   bottom: Colors.maroon,
   isTopTransparent: false,
   isBottomTransparent: false,
-  overflowHidden: true
+  overflowHidden: true,
 };
 
 export const safeAreaColorsSlice = createSlice({
@@ -22,7 +22,7 @@ export const safeAreaColorsSlice = createSlice({
         isBottomTransparent: state.isBottomTransparent,
         top: action.payload.top,
         bottom: action.payload.bottom,
-        overflowHidden: true
+        overflowHidden: true,
       };
     },
     setSafeAreaColorTop: (state, action: PayloadAction<string>) => {

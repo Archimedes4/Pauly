@@ -12,8 +12,9 @@ export default function MicrosoftGraphEditExtension() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);
   const { id } = useGlobalSearchParams();
 
-  const [extensionState, setExtensionState] =
-    useState<loadingStateEnum>(loadingStateEnum.loading);
+  const [extensionState, setExtensionState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
   const [deleteExtensionLoadingState, setDeleteExtensionLoadingState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
@@ -54,8 +55,8 @@ export default function MicrosoftGraphEditExtension() {
   }
 
   useEffect(() => {
-    getExtension()
-  }, [])
+    getExtension();
+  }, []);
 
   if (extensionState === loadingStateEnum.loading) {
     return (
@@ -67,16 +68,19 @@ export default function MicrosoftGraphEditExtension() {
           backgroundColor: Colors.white,
           alignContent: 'center',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
         }}
       >
-        <Link href={`/government/graph`} style={{position: 'absolute', left: 0, top: 0}}>
+        <Link
+          href="/government/graph"
+          style={{ position: 'absolute', left: 0, top: 0 }}
+        >
           <Text>Back</Text>
         </Link>
-        <ProgressView width={14} height={14}/>
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (extensionState === loadingStateEnum.success) {
@@ -89,10 +93,20 @@ export default function MicrosoftGraphEditExtension() {
           backgroundColor: Colors.white,
         }}
       >
-        <Link href={`/government/graph`}>
+        <Link href="/government/graph">
           <Text>Back</Text>
         </Link>
-        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Microsoft Graph Edit Extension</Text>
+        <Text
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontFamily: 'Comfortaa-Regular',
+            marginBottom: 5,
+            fontSize: 25,
+          }}
+        >
+          Microsoft Graph Edit Extension
+        </Text>
         <Text>{extensionDescription}</Text>
         <Pressable
           onPress={() => {
@@ -115,11 +129,11 @@ export default function MicrosoftGraphEditExtension() {
       <View>
         <Text>Extension Not Found</Text>
       </View>
-    )
+    );
   }
   return (
     <View>
       <Text>Failed</Text>
     </View>
-  )
+  );
 }

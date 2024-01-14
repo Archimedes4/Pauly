@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export function useIsShowingLogout() {
+export default function useIsShowingLogout() {
   const [isShowingLogout, setIsShowingLogout] = useState<boolean>(false);
   useEffect(() => {
     setTimeout(() => {

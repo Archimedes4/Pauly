@@ -45,7 +45,7 @@ export default function HomePage() {
         bottom: Colors.maroon,
         isTopTransparent: false,
         isBottomTransparent: false,
-        overflowHidden: false
+        overflowHidden: false,
       }),
     );
   }, [dispatch]);
@@ -76,7 +76,10 @@ export default function HomePage() {
   return (
     <>
       <View style={{ backgroundColor: Colors.maroon, overflow: 'hidden' }}>
-        <Link href="/notifications" style={{padding: 0, height: height * 0.08}}>
+        <Link
+          href="/notifications"
+          style={{ padding: 0, height: height * 0.08 }}
+        >
           <Pressable style={{ width: width * 1.0, height: height * 0.08 }}>
             {paulyDataState === loadingStateEnum.loading ? (
               <View
@@ -112,7 +115,7 @@ export default function HomePage() {
             )}
           </Pressable>
         </Link>
-        <Link href="/calendar" style={{padding: 0, height: height * 0.42 }}>
+        <Link href="/calendar" style={{ padding: 0, height: height * 0.42 }}>
           <Pressable style={{ width: width * 0.999, height: height * 0.42 }}>
             <View>
               <View
@@ -128,7 +131,13 @@ export default function HomePage() {
                   borderBottomWidth: 2,
                 }}
               >
-                <Text style={{ margin: 'auto', color: Colors.white, fontFamily: 'Comfortaa-Regular' }}>
+                <Text
+                  style={{
+                    margin: 'auto',
+                    color: Colors.white,
+                    fontFamily: 'Comfortaa-Regular',
+                  }}
+                >
                   Calendar
                 </Text>
               </View>
@@ -143,7 +152,7 @@ export default function HomePage() {
             height: height * 0.25,
           }}
         >
-          <Link href="/commissions" style={{padding: 0}}>
+          <Link href="/commissions" style={{ padding: 0 }}>
             <View style={{ borderColor: Colors.black, borderWidth: 2 }}>
               <View
                 style={{
@@ -162,7 +171,7 @@ export default function HomePage() {
               />
             </View>
           </Link>
-          <Link href="/sports" style={{padding: 0}}>
+          <Link href="/sports" style={{ padding: 0 }}>
             <Pressable style={{ borderColor: Colors.black, borderWidth: 2 }}>
               <View
                 style={{
@@ -198,7 +207,7 @@ export default function HomePage() {
             height: height * 0.25,
           }}
         >
-          <Link href="/resources" style={{padding: 0}}>
+          <Link href="/resources" style={{ padding: 0 }}>
             <View style={{ borderColor: Colors.black, borderWidth: 2 }}>
               <View
                 style={{
@@ -245,7 +254,7 @@ export default function HomePage() {
           left: width / 2 + 2,
           bottom: -insets.bottom,
           height: insets.bottom + 10,
-          zIndex: 100
+          zIndex: 100,
         }}
       />
     </>

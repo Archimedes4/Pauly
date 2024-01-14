@@ -22,10 +22,11 @@ function PDFViewBody({ width }: { width: number }) {
   const [imageHeight, setImageHeight] = useState<number>(0);
 
   async function convertPdfToImages(url: string) {
-    var { pdfjsLib } = globalThis;
+    const { pdfjsLib } = globalThis;
     if (pdfjsLib !== undefined) {
       /* !IMPORTANT! update import */
-      pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdfjs-4.0.379-dist/build/pdf.worker.mjs';
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        '/pdfjs-4.0.379-dist/build/pdf.worker.mjs';
 
       const imagesArray: string[] = [];
       const dataResult = await fetch(url);
@@ -115,7 +116,7 @@ function PDFViewBody({ width }: { width: number }) {
       </GestureDetector>
     );
   }
-  return null
+  return null;
 }
 
 export default function PDFView({ width }: { width: number }) {
@@ -123,9 +124,9 @@ export default function PDFView({ width }: { width: number }) {
     <>
       <Head>
         {/* !IMPORTANT! update import */}
-        <script src="/pdfjs-4.0.379-dist/build/pdf.mjs" type="module"></script>
+        <script src="/pdfjs-4.0.379-dist/build/pdf.mjs" type="module" />
       </Head>
-      <PDFViewBody width={width}/>
+      <PDFViewBody width={width} />
     </>
   );
 }

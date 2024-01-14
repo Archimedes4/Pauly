@@ -34,44 +34,46 @@ function GovernmentCommissionsBody() {
 
   if (commissionsState === loadingStateEnum.loading) {
     return (
-      <View style={{
-        flex:1,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
-        <ProgressView width={14} height={14}/>
+      <View
+        style={{
+          flex: 1,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (commissionsState === loadingStateEnum.success) {
     return (
-      <FlatList 
+      <FlatList
         data={commissions}
-        renderItem={(commission) => (
+        renderItem={commission => (
           <CommissionBlock
-            key={`Commission_${
-              commission.item.commissionId
-            }_${createUUID()}`}
+            key={`Commission_${commission.item.commissionId}_${createUUID()}`}
             commission={commission.item}
           />
         )}
       />
-    )
+    );
   }
 
   return (
-    <View style={{
-      flex:1,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+    <View
+      style={{
+        flex: 1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Text>Failed</Text>
     </View>
-  )
+  );
 }
 
 export default function GovernmentCommissions() {
@@ -79,12 +81,32 @@ export default function GovernmentCommissions() {
 
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
-      <Link href={'/government'}>
+      <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Commissions</Text>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Commissions
+      </Text>
       <GovernmentCommissionsBody />
-      <StyledButton style={{marginLeft: 15, marginRight: 15, marginBottom: 15, marginTop: 5}} to='/government/commissions/create' second text='Create New Commission'/>  
+      <StyledButton
+        style={{
+          marginLeft: 15,
+          marginRight: 15,
+          marginBottom: 15,
+          marginTop: 5,
+        }}
+        to="/government/commissions/create"
+        second
+        text="Create New Commission"
+      />
     </View>
   );
 }

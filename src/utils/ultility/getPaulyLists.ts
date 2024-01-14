@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
-import callMsGraph from './microsoftAssets';
 import store from '@redux/store';
 import { paulyListSlice } from '@redux/reducers/paulyListReducer';
+import callMsGraph from './microsoftAssets';
 
 export default async function getPaulyLists() {
   const getRootSiteIdResult = await callMsGraph(
@@ -39,13 +39,12 @@ export default async function getPaulyLists() {
         eventDataExtensionId:
           paulyListResultData.value[0].fields.eventDataExtensionId,
         classExtensionId: paulyListResultData.value[0].fields.classExtensionId,
-        tagedResourceId:
-          paulyListResultData.value[0].fields.tagedResourceId,
+        tagedResourceId: paulyListResultData.value[0].fields.tagedResourceId,
         roomListId: paulyListResultData.value[0].fields.roomListId,
-        calendarSyncStateListId: paulyListResultData.value[0].fields.roomListId
+        calendarSyncStateListId: paulyListResultData.value[0].fields.roomListId,
       };
       store.dispatch(paulyListSlice.actions.setPaulyList(paulyListData));
-      if (Platform.OS == 'web' && sessionStorage !== undefined) {
+      if (Platform.OS === 'web' && sessionStorage !== undefined) {
         sessionStorage.setItem('listStore', JSON.stringify(paulyListData));
       }
     } else {

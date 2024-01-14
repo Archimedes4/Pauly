@@ -247,9 +247,7 @@ export default function GovernmentReviewFileSubmission() {
                 backgroundColor: Colors.white,
               }}
             >
-              <Link href={'/government/sports'}>
-                Back
-              </Link>
+              <Link href="/government/sports">Back</Link>
               <Text>GovernmentReviewFileSubmission</Text>
               {dataURL !== '' && (
                 <View>
@@ -301,9 +299,7 @@ export default function GovernmentReviewFileSubmission() {
                   approveSubmission();
                 }}
               >
-                <Text>
-                  {getTextState(approveSubmissionState)}
-                </Text>
+                <Text>{getTextState(approveSubmissionState)}</Text>
               </Pressable>
               <Pressable onPress={() => denySubmission()}>
                 <Text>
@@ -322,9 +318,7 @@ export default function GovernmentReviewFileSubmission() {
             </View>
           ) : (
             <View style={{ width, height }}>
-              <Link href={'/government/sports'}>
-                Back
-              </Link>
+              <Link href="/government/sports">Back</Link>
               <Text>Failed</Text>
             </View>
           )}

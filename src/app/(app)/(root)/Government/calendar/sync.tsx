@@ -9,16 +9,15 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import StyledButton from '@src/components/StyledButton';
 
 async function getPastCalendarSyncs() {
-  const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${
-    store.getState().paulyList.siteId
-  }/lists/${
-    store.getState().paulyList.calendarSyncStateListId
-  }/items`);
+  const result = await callMsGraph(
+    `https://graph.microsoft.com/v1.0/sites/${
+      store.getState().paulyList.siteId
+    }/lists/${store.getState().paulyList.calendarSyncStateListId}/items`,
+  );
   if (result.ok) {
-    const data = await result.json()
-    console.log(data)
+    const data = await result.json();
+    console.log(data);
   } else {
-
   }
 }
 
@@ -27,17 +26,27 @@ export default function calendarSync() {
   const syncCalendar = useSyncCalendar();
 
   useEffect(() => {
-    getPastCalendarSyncs()
-  }, [])
+    getPastCalendarSyncs();
+  }, []);
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <Link href="/government/calendar/">
         <Text>Back</Text>
       </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Calendar Sync</Text>
-      
-      <StyledButton text='Sync Calendar' onPress={() => syncCalendar()}/>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Calendar Sync
+      </Text>
+
+      <StyledButton text="Sync Calendar" onPress={() => syncCalendar()} />
     </View>
   );
 }

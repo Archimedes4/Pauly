@@ -90,5 +90,5 @@ export default function WebViewCross({
       </View>
     );
   }
-  return null
+  return null;
 }

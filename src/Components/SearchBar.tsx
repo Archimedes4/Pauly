@@ -4,30 +4,46 @@
   SearchBar.tsx
   A Search Bar component
 */
-import { RootState } from "@redux/store";
-import { Colors } from "@constants";
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { Platform, TextInput, View, Text, StyleProp, TextStyle } from "react-native";
-import { useSelector } from "react-redux";
-import { SearchIcon } from "./Icons";
+import { RootState } from '@redux/store';
+import { Colors } from '@constants';
+import React, { useEffect, useState } from 'react';
+import {
+  Platform,
+  TextInput,
+  View,
+  Text,
+  StyleProp,
+  TextStyle,
+} from 'react-native';
+import { useSelector } from 'react-redux';
+import { SearchIcon } from './Icons';
 
-export default function SearchBar({value, onChangeText, onSearch, top}:{value: string, onChangeText: (change: string) => void, onSearch: () => void, top?: number}) {
+export default function SearchBar({
+  value,
+  onChangeText,
+  onSearch,
+  top,
+}: {
+  value: string;
+  onChangeText: (change: string) => void;
+  onSearch: () => void;
+  top?: number;
+}) {
   // Dimensions
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [mounted, setMounted] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Boolean true if text overflowing. This is telling the search icon to show or not.
-  // @ts-expect-error
-  const style: StyleProp<TextStyle> = Platform.OS === 'web' ? { outlineStyle: 'none' } : undefined; // Style to remove ourline around textbox on web
+  const style: StyleProp<TextStyle> =
+    // @ts-expect-error: web platform has a needs a style not support in native
+    Platform.OS === 'web' ? { outlineStyle: 'none' } : undefined; // Style to remove ourline around textbox on web
 
   // Getting search results on value chage
   useEffect(() => {
     if (mounted) {
       const timeOutId = setTimeout(() => onSearch(), 500);
       return () => clearTimeout(timeOutId);
-    } else {
-      setMounted(true); // Setting that it has been called on start
     }
+    setMounted(true); // Setting that it has been called on start
   }, [value]);
 
   return (
@@ -39,7 +55,7 @@ export default function SearchBar({value, onChangeText, onSearch, top}:{value: s
         alignItems: 'center',
         justifyContent: 'center',
         position: 'absolute',
-        top: top ? top:height * 0.1 - 19,
+        top: top || height * 0.1 - 19,
         zIndex: 2,
       }}
     >

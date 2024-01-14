@@ -143,8 +143,8 @@ export default function Settings() {
       >
         <Text style={{ fontWeight: 'bold' }}>SIGN OUT</Text>
       </Pressable>
-      <Link 
-        href="/students" 
+      <Link
+        href="/students"
         style={{
           width: width * 0.8,
           height: height * 0.08,
@@ -157,7 +157,7 @@ export default function Settings() {
           shadowRadius: 10,
         }}
       >
-        <View 
+        <View
           style={{
             width: width * 0.8,
             height: height * 0.08,
@@ -165,7 +165,7 @@ export default function Settings() {
             flexDirection: 'row',
             backgroundColor: Colors.white,
             alignItems: 'center',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }}
         >
           <StudentSearchIcon
@@ -173,7 +173,9 @@ export default function Settings() {
             height={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
             style={{ marginLeft: width * 0.025 }}
           />
-          <Text style={{marginTop: 'auto', marginBottom: 'auto'}}>Students</Text>
+          <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+            Students
+          </Text>
         </View>
       </Link>
       {isGovernmentMode ? (
@@ -193,7 +195,7 @@ export default function Settings() {
             alignItems: 'center',
             marginTop: height * 0.05,
           }}
-          href={'/government'}
+          href="/government"
         >
           <GovernmentIcon
             width={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}

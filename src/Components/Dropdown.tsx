@@ -89,7 +89,7 @@ export default function Dropdown({
       >
         <Text>{options[selectedIndex]}</Text>
       </Pressable>
-    )
+    );
   }
   return (
     <Pressable
@@ -101,9 +101,7 @@ export default function Dropdown({
       }}
       style={style}
     >
-      {
-        React.Children.toArray(children)[selectedIndex]
-      }
+      {React.Children.toArray(children)[selectedIndex]}
     </Pressable>
   );
 }

@@ -45,17 +45,18 @@ function GovernmentScheduleBody() {
         <ProgressView width={15} height={15} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
-  if (loadingState === loadingStateEnum.success && loadedSchedules.length >= 1) {
+  if (
+    loadingState === loadingStateEnum.success &&
+    loadedSchedules.length >= 1
+  ) {
     return (
       <FlatList
         data={loadedSchedules}
         renderItem={schedule => (
-          <Link
-            href={`/government/calendar/schedule/${schedule.item.id}`}
-          >
+          <Link href={`/government/calendar/schedule/${schedule.item.id}`}>
             <View
               style={{
                 backgroundColor: Colors.white,
@@ -69,41 +70,43 @@ function GovernmentScheduleBody() {
               }}
               key={schedule.item.id}
             >
-              <Text style={{ margin: 10 }}>
-                {schedule.item.properName}
-              </Text>
+              <Text style={{ margin: 10 }}>{schedule.item.properName}</Text>
             </View>
           </Link>
         )}
       />
-    )
+    );
   }
 
   if (loadingState === loadingStateEnum.success) {
     return (
-      <View style={{
-        flex:1,
+      <View
+        style={{
+          flex: 1,
+          width,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Text>No Schedules</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View
+      style={{
+        flex: 1,
         width,
         alignContent: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-      }}>
-        <Text>No Schedules</Text>
-      </View>
-    )
-  }
-
-  return (
-    <View style={{
-      flex:1,
-      width,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+      }}
+    >
       <Text>Failure</Text>
     </View>
-  )
+  );
 }
 
 export default function GovernmentSchedule() {
@@ -114,10 +117,24 @@ export default function GovernmentSchedule() {
         <Link href="/government/calendar">
           <Text>Back</Text>
         </Link>
-        <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Schedules</Text>
+        <Text
+          style={{
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            fontFamily: 'Comfortaa-Regular',
+            marginBottom: 5,
+            fontSize: 25,
+          }}
+        >
+          Schedules
+        </Text>
       </View>
       <GovernmentScheduleBody />
-      <SecondStyledButton style={{ margin: 15 }} to='/government/calendar/schedule/create' text='Create New'/>
+      <SecondStyledButton
+        style={{ margin: 15 }}
+        to="/government/calendar/schedule/create"
+        text="Create New"
+      />
     </View>
   );
 }

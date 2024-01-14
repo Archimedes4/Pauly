@@ -52,7 +52,7 @@ export async function updateTaskStatus(
 export async function updateTaskText(task: taskType, index: number) {
   store.dispatch(
     homepageDataSlice.actions.updateUserTask({
-      index: index,
+      index,
       task: { ...task, state: loadingStateEnum.loading },
     }),
   );
@@ -81,7 +81,7 @@ export async function updateTaskText(task: taskType, index: number) {
             excess: false,
             state: loadingStateEnum.success,
           },
-          index: index,
+          index,
         }),
       );
       store.dispatch(
@@ -98,7 +98,7 @@ export async function updateTaskText(task: taskType, index: number) {
       store.dispatch(
         homepageDataSlice.actions.updateUserTask({
           task: { ...task, state: loadingStateEnum.success },
-          index: index,
+          index,
         }),
       );
     }
@@ -106,7 +106,7 @@ export async function updateTaskText(task: taskType, index: number) {
     store.dispatch(
       homepageDataSlice.actions.updateUserTask({
         task: { ...task, state: loadingStateEnum.failed },
-        index: index,
+        index,
       }),
     );
   }

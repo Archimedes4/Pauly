@@ -10,6 +10,8 @@ import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigation, useRouter } from 'expo-router';
 import store, { RootState } from '@redux/store';
+import { expandedModeSlice } from '@redux/reducers/expandedModeReducer';
+import { isShowingProfileBlockSlice } from '@redux/reducers/isShowingProfileBlockReducer';
 import {
   BookIcon,
   CalendarIcon,
@@ -19,8 +21,6 @@ import {
   PersonIcon,
   StudentSearchIcon,
 } from './Icons';
-import { expandedModeSlice } from '@redux/reducers/expandedModeReducer';
-import { isShowingProfileBlockSlice } from '@redux/reducers/isShowingProfileBlockReducer';
 import { Colors } from '../constants';
 
 function NavBarBlock({
@@ -34,13 +34,11 @@ function NavBarBlock({
   text: string;
   children: ReactNode;
 }) {
-  const { totalWidth } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
+  const { totalWidth } = useSelector((state: RootState) => state.dimentions);
   const [isHover, setIsHover] = useState<boolean>(false);
   const expandedMode = useSelector((state: RootState) => state.expandedMode);
   const dispatch = useDispatch();
-  const router = useRouter()
+  const router = useRouter();
   return (
     <Pressable
       style={{
@@ -49,7 +47,7 @@ function NavBarBlock({
         backgroundColor: isHover ? Colors.darkGray : 'transparent',
         alignItems: 'center',
         overflow: 'hidden',
-        margin: 0
+        margin: 0,
       }}
       onHoverIn={() => {
         setIsHover(true);
@@ -58,7 +56,9 @@ function NavBarBlock({
       onHoverOut={() => {
         setIsHover(false);
       }}
-      onPress={() => {router.push(des)}}
+      onPress={() => {
+        router.push(des);
+      }}
     >
       <View
         style={[
@@ -68,7 +68,9 @@ function NavBarBlock({
             width: expandedMode ? blockLength * 2.5 : blockLength,
             margin: 0,
             position: expandedMode ? 'absolute' : 'relative',
-            left: expandedMode ? ((totalWidth * 0.1) - blockLength) / 2 : undefined,
+            left: expandedMode
+              ? (totalWidth * 0.1 - blockLength) / 2
+              : undefined,
             alignItems: 'center',
           },
         ]}
@@ -191,7 +193,9 @@ export default function NavBarComponent() {
               width: expandedMode ? blockLength * 0.25 : blockLength,
               height: blockLength,
               position: expandedMode ? 'absolute' : 'relative',
-              left: expandedMode ? ((totalWidth * 0.1) - blockLength) / 2 : undefined,
+              left: expandedMode
+                ? (totalWidth * 0.1 - blockLength) / 2
+                : undefined,
             }}
             pointerEvents="none"
           >
@@ -210,42 +214,48 @@ export default function NavBarComponent() {
             {expandedMode ? (
               <>
                 <Text
-                style={{
-                  fontFamily: 'Gochi-Hand',
-                  color: Colors.white,
-                  position: 'absolute',
-                  top: blockLength * 0.3,
-                  left: blockLength * 0.65,
-                  fontSize: blockLength * 0.75,
-                  textShadowColor: 'rgba(0, 0, 0, 1)',
-                  textShadowOffset: { width: 4, height: 2 },
-                  textShadowRadius: 0,
-                }}
-                selectable={false}
-              >
-                auly
-              </Text>
-              <View style={{
-                backgroundColor: Colors.darkGray,
-                position: 'absolute',
-                top: blockLength * 0.9,
-                left: blockLength * 0.3,
-                borderRadius: 30,
-                zIndex: -10
-              }}>
-                <Text style={{fontSize: blockLength * 0.25, margin: 5, marginLeft: 15, marginRight: 15, color: Colors.white}}>Beta</Text>
-              </View>
+                  style={{
+                    fontFamily: 'Gochi-Hand',
+                    color: Colors.white,
+                    position: 'absolute',
+                    top: blockLength * 0.3,
+                    left: blockLength * 0.65,
+                    fontSize: blockLength * 0.75,
+                    textShadowColor: 'rgba(0, 0, 0, 1)',
+                    textShadowOffset: { width: 4, height: 2 },
+                    textShadowRadius: 0,
+                  }}
+                  selectable={false}
+                >
+                  auly
+                </Text>
+                <View
+                  style={{
+                    backgroundColor: Colors.darkGray,
+                    position: 'absolute',
+                    top: blockLength * 0.9,
+                    left: blockLength * 0.3,
+                    borderRadius: 30,
+                    zIndex: -10,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: blockLength * 0.25,
+                      margin: 5,
+                      marginLeft: 15,
+                      marginRight: 15,
+                      color: Colors.white,
+                    }}
+                  >
+                    Beta
+                  </Text>
+                </View>
               </>
-              
             ) : null}
-            
           </View>
         </Pressable>
-        <NavBarBlock
-          des="/"
-          blockLength={blockLength}
-          text="Home"
-        >
+        <NavBarBlock des="/" blockLength={blockLength} text="Home">
           <HomeIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         <NavBarBlock
@@ -262,29 +272,17 @@ export default function NavBarComponent() {
         >
           <MedalIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
-        <NavBarBlock
-          des="/calendar"
-          blockLength={blockLength}
-          text="Calendar"
-        >
+        <NavBarBlock des="/calendar" blockLength={blockLength} text="Calendar">
           <CalendarIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
-        <NavBarBlock
-          des="/sports"
-          blockLength={blockLength}
-          text="Sports"
-        >
+        <NavBarBlock des="/sports" blockLength={blockLength} text="Sports">
           <Image
             source={require('../../assets/images/Football.png')}
             resizeMode="contain"
             style={{ width: iconLength, height: iconLength }}
           />
         </NavBarBlock>
-        <NavBarBlock
-          des="/students"
-          blockLength={blockLength}
-          text="Students"
-        >
+        <NavBarBlock des="/students" blockLength={blockLength} text="Students">
           <StudentSearchIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         {isGovernmentMode ? (
@@ -314,7 +312,9 @@ export default function NavBarComponent() {
               width: expandedMode ? blockLength * 2.5 : blockLength,
               margin: 0,
               position: 'absolute',
-              left: expandedMode ? ((totalWidth * 0.1) - blockLength) / 2 : undefined,
+              left: expandedMode
+                ? (totalWidth * 0.1 - blockLength) / 2
+                : undefined,
               bottom: height * 0.05,
             },
           ]}

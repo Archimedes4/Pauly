@@ -10,12 +10,15 @@ import batchRequest from '@utils/ultility/batchRequest';
 import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 
-export async function getSports(): Promise<{
-  result: loadingStateEnum.success;
-  data: sportType[];
-}|{
-  result: loadingStateEnum.failed
-}> {
+export async function getSports(): Promise<
+  | {
+      result: loadingStateEnum.success;
+      data: sportType[];
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -67,11 +70,12 @@ export async function getSportsTeams(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getSport(
-  id: string,
-): Promise<{ result: loadingStateEnum.success; data: sportType; listId: string } | {
-  result: loadingStateEnum.failed
-}> {
+export async function getSport(id: string): Promise<
+  | { result: loadingStateEnum.success; data: sportType; listId: string }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -235,8 +239,7 @@ export async function getRoster(
   );
   if (result.ok) {
     const data = await result.json();
-    const batchData: batchRequest[][] =
-      [];
+    const batchData: batchRequest[][] = [];
     let batchIndex = -1;
     for (let index = 0; index < data.value.length; index += 1) {
       if (index % 20 === 0) {

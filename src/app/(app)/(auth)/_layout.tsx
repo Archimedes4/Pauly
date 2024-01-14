@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Slot } from 'expo-router';
 
 export default function PublicLayout() {

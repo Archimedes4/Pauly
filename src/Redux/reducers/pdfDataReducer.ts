@@ -12,8 +12,7 @@ export const pdfDataSlice = createSlice({
   initialState: initalState,
   reducers: {
     setInject: (state, action: PayloadAction<string>) => {
-      state.inject = action.payload;
-      return { ...state, commissionsState: action.payload };
+      return { ...state, inject: action.payload };
     },
     addImage: (state, action: PayloadAction<string>) => {
       state.images.push(action.payload);

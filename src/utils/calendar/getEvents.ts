@@ -14,17 +14,12 @@ export default async function getEvents() {
   // date the user picks
   const selectedDate = new Date(store.getState().selectedDate);
   // Start of month that the selected date is in
-  const startDate = new Date(Date.UTC(
-    selectedDate.getFullYear(),
-    selectedDate.getMonth(),
-    1)
+  const startDate = new Date(
+    Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
   );
   // End of month that the selected date is in
   const endDate = new Date(
-    Date.UTC(
-    selectedDate.getFullYear(),
-    selectedDate.getMonth() + 1,
-    1)
+    Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1),
   );
 
   // Personal Calendar
@@ -55,16 +50,16 @@ export default async function getEvents() {
 
   // OrgWideEvents
   // This code is pulled from add events School Years Select
-  let url: string = `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$filter=start/dateTime%20ge%20'${startDate.toISOString()}'%20and%20end/dateTime%20le%20'${endDate.toISOString()}'`;
+  let url: string = `https://graph.microsoft.com/v1.0/groups/${
+    process.env.EXPO_PUBLIC_ORGWIDEGROUPID
+  }/calendar/events?$filter=start/dateTime%20ge%20'${startDate.toISOString()}'%20and%20end/dateTime%20le%20'${endDate.toISOString()}'`;
   while (url !== '') {
     const furtherResult = await getGraphEvents(
       url,
       `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
     );
-    if (
-      furtherResult.result === loadingStateEnum.success
-    ) {
-      outputEvents = [... new Set([...outputEvents, ...furtherResult.events])];
+    if (furtherResult.result === loadingStateEnum.success) {
+      outputEvents = [...new Set([...outputEvents, ...furtherResult.events])];
       url = furtherResult.nextLink !== undefined ? furtherResult.nextLink : '';
     } else {
       url = '';

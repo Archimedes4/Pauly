@@ -52,7 +52,10 @@ export default function Map({
               lat: ev.latLng!.lat(),
               lng: ev.latLng!.lng(),
             });
-            setSelectedPosition({ lat: ev.latLng!.lat(), lng: ev.latLng!.lng() });
+            setSelectedPosition({
+              lat: ev.latLng!.lat(),
+              lng: ev.latLng!.lng(),
+            });
           }}
         >
           {/* Child components, such as markers, info windows, etc. */}
@@ -62,9 +65,7 @@ export default function Map({
           )}
         </GoogleMap>
       </div>
-    )
+    );
   }
-  return (
-    <Text>Loading</Text>
-  );
+  return <Text>Loading</Text>;
 }

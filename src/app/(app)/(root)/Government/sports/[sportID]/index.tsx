@@ -54,9 +54,7 @@ function SportsUpdateModel({
 
   async function loadSport() {
     const result = await getSport(id);
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setListId(result.listId);
       setSvgData(result.data.svgData);
       setGetSportState(loadingStateEnum.success);
@@ -121,7 +119,7 @@ function SportsUpdateModel({
   );
 }
 
-function GovernmentSportTeams({sportID}:{sportID: string}) {
+function GovernmentSportTeams({ sportID }: { sportID: string }) {
   const [teamState, setTeamState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -140,15 +138,22 @@ function GovernmentSportTeams({sportID}:{sportID: string}) {
 
   useEffect(() => {
     loadData();
-  }, [])
+  }, []);
 
   if (teamState === loadingStateEnum.loading) {
     return (
-      <View style={{flex:1, alignItems:'center', justifyContent:'center', alignContent: 'center'}}>
-        <ProgressView width={14} height={14}/>
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (teamState === loadingStateEnum.success) {
@@ -156,19 +161,23 @@ function GovernmentSportTeams({sportID}:{sportID: string}) {
       <FlatList
         data={currentTeams}
         renderItem={item => (
-          <Link href={`/government/sports/${sportID}/team/${item.item.teamId}`} key={`TeamBlock_${item.item.teamId}`} style={{padding: 10}}>
+          <Link
+            href={`/government/sports/${sportID}/team/${item.item.teamId}`}
+            key={`TeamBlock_${item.item.teamId}`}
+            style={{ padding: 10 }}
+          >
             {item.item.teamName}
           </Link>
         )}
       />
-    )
+    );
   }
 
   return (
     <View>
       <Text>Error</Text>
-    </View>  
-  )
+    </View>
+  );
 }
 
 export default function GovernmentSport() {
@@ -226,15 +235,12 @@ export default function GovernmentSport() {
     }
   }
 
-
   async function loadSport() {
-    setSportState(loadingStateEnum.loading)
+    setSportState(loadingStateEnum.loading);
     if (typeof sportID === 'string') {
       const result = await getSport(sportID);
-      if (
-        result.result === loadingStateEnum.success
-      ) {
-        setSportName(result.data.name)
+      if (result.result === loadingStateEnum.success) {
+        setSportName(result.data.name);
         setSportState(loadingStateEnum.success);
       } else {
         setSportState(loadingStateEnum.failed);
@@ -248,38 +254,66 @@ export default function GovernmentSport() {
 
   if (sportState === loadingStateEnum.loading) {
     return (
-      <View style={{ width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <Link href={'/government/sports'} style={{position: 'absolute', top: 0, left: 0}}>
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Link
+          href="/government/sports"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        >
           Back
         </Link>
-        <ProgressView width={14} height={14}/>
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
-  if (typeof sportName !== "string" || sportState !== loadingStateEnum.success || typeof sportID !== 'string') {
+  if (
+    typeof sportName !== 'string' ||
+    sportState !== loadingStateEnum.success ||
+    typeof sportID !== 'string'
+  ) {
     return (
       <View style={{ width, height, backgroundColor: Colors.white }}>
-        <Link href={'/government/sports'}>
-          Back
-        </Link>
+        <Link href="/government/sports">Back</Link>
         <Text>Failed</Text>
       </View>
-    )
+    );
   }
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href={'/government/sports'}>
-        Back
-      </Link>
-      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontSize: 25}}>{sportName} Teams</Text>
+      <Link href="/government/sports">Back</Link>
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontSize: 25 }}>
+        {sportName} Teams
+      </Text>
       <GovernmentSportTeams sportID={sportID} />
-      <SecondStyledButton style={{marginLeft: 15, marginRight: 15, marginBottom: 10}} text='Pick SVG' onPress={() => setIsPickingSvg(true)}/>
-      <SecondStyledButton style={{marginLeft: 15, marginRight: 15, marginBottom: 10}} text='Create New Team' to={`/government/sports/${sportID}/team/create`}/>
+      <SecondStyledButton
+        style={{ marginLeft: 15, marginRight: 15, marginBottom: 10 }}
+        text="Pick SVG"
+        onPress={() => setIsPickingSvg(true)}
+      />
+      <SecondStyledButton
+        style={{ marginLeft: 15, marginRight: 15, marginBottom: 10 }}
+        text="Create New Team"
+        to={`/government/sports/${sportID}/team/create`}
+      />
       <Pressable
-        style={{ borderRadius: 15, backgroundColor: 'red', marginLeft: 15, marginRight: 15, marginBottom: 10 }}
+        style={{
+          borderRadius: 15,
+          backgroundColor: 'red',
+          marginLeft: 15,
+          marginRight: 15,
+          marginBottom: 10,
+        }}
         onPress={() => {
           if (
             deleteSportState === loadingStateEnum.notStarted ||
@@ -290,12 +324,16 @@ export default function GovernmentSport() {
         }}
       >
         <View style={{ flexDirection: 'row', margin: 10 }}>
-          <WarningIcon width={14} height={14} style={{marginTop: 'auto', marginBottom: 'auto'}}/>
-          <Text style={{fontFamily: 'Roboto', fontSize: 16, marginLeft: 2}}>
+          <WarningIcon
+            width={14}
+            height={14}
+            style={{ marginTop: 'auto', marginBottom: 'auto' }}
+          />
+          <Text style={{ fontFamily: 'Roboto', fontSize: 16, marginLeft: 2 }}>
             {getTextState(deleteSportState, {
               notStarted: 'Delete Sport',
-              success: "Sport Deleted",
-              failed: "Failed To Delete Sport"
+              success: 'Sport Deleted',
+              failed: 'Failed To Delete Sport',
             })}
           </Text>
         </View>

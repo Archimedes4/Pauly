@@ -15,7 +15,11 @@ import { Link } from 'expo-router';
 import StyledButton from '@src/components/StyledButton';
 import { powerpointTypes } from '@src/components/Icons/MimeTypeIcon';
 import { getTextState } from '@src/utils/ultility/createUUID';
-import { createShareId, getDataWithShareID, getFileWithShareID } from '@src/utils/ultility/handleShareID';
+import {
+  createShareId,
+  getDataWithShareID,
+  getFileWithShareID,
+} from '@src/utils/ultility/handleShareID';
 import ProgressView from '@src/components/ProgressView';
 
 export default function GovernmentHomePage() {
@@ -35,9 +39,7 @@ export default function GovernmentHomePage() {
   );
 
   // New Data
-  const [newText, setNewText] = useState(
-    store.getState().paulyData.message,
-  );
+  const [newText, setNewText] = useState(store.getState().paulyData.message);
   const [newAnimationSpeed, setNewAnnimationSpeed] = useState(
     store.getState().paulyData.animationSpeed,
   );
@@ -45,16 +47,18 @@ export default function GovernmentHomePage() {
     microsoftFileType | undefined
   >(undefined);
 
-  //Settings
+  // Settings
   const [isAutoUpdatingText, setIsAutoUpdatingText] = useState<boolean>(false);
 
   async function loadCurrentPaulyData() {
     await getCurrentPaulyData();
-    setNewText(store.getState().paulyData.message)
-    setSelectedPowerpoint(await getDataWithShareID(store.getState().paulyData.powerpointShare));
+    setNewText(store.getState().paulyData.message);
+    setSelectedPowerpoint(
+      await getDataWithShareID(store.getState().paulyData.powerpointShare),
+    );
     setLoadContentLoadingState(loadingStateEnum.success);
   }
-  
+
   async function updatePaulyData(key: string, data: string) {
     const dataOut: any = {};
     dataOut[key] = data;
@@ -85,14 +89,23 @@ export default function GovernmentHomePage() {
 
   if (loadContentLoadingState === loadingStateEnum.loading) {
     return (
-      <View style={{ width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <Link href="/government">
           <Text>Back</Text>
         </Link>
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   return (
@@ -100,7 +113,17 @@ export default function GovernmentHomePage() {
       <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Comfortaa-Regular', marginBottom: 5, fontSize: 25 }}>Home Page</Text>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontFamily: 'Comfortaa-Regular',
+          marginBottom: 5,
+          fontSize: 25,
+        }}
+      >
+        Home Page
+      </Text>
       <View>
         <TextInput
           value={newText}
@@ -108,12 +131,22 @@ export default function GovernmentHomePage() {
             setNewText(e);
           }}
           style={styles.textInputStyle}
-          placeholder='Header Text'
+          placeholder="Header Text"
         />
-        {isAutoUpdatingText  ? (
+        {isAutoUpdatingText ? (
           <View style={{ height: 14 }} />
         ) : (
-          <StyledButton second={true} onPress={() => updatePaulyData('message', newText)} text={'Update Text'} style={{marginTop: 10, marginBottom: 10, marginLeft: 15, marginRight: 15}} />
+          <StyledButton
+            second
+            onPress={() => updatePaulyData('message', newText)}
+            text="Update Text"
+            style={{
+              marginTop: 10,
+              marginBottom: 10,
+              marginLeft: 15,
+              marginRight: 15,
+            }}
+          />
         )}
         <View style={{ flexDirection: 'row' }}>
           <Text>Is auto updating text: </Text>
@@ -153,10 +186,8 @@ export default function GovernmentHomePage() {
             }
           }
         }}
-        style={{marginLeft: 15, marginRight: 15}}
-        text={
-          getTextState(newMessageState)
-        }
+        style={{ marginLeft: 15, marginRight: 15 }}
+        text={getTextState(newMessageState)}
       />
     </View>
   );
