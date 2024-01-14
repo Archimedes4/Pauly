@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, TextInput, FlatList } from 'react-native';
+import { View, Text, TextInput, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
   initializePaulyPartOne,
@@ -11,7 +11,7 @@ import { addDataArray } from '@utils/ﻩgovernment/initializePauly/initializePau
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import { Link } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 import { getTextState } from '@src/utils/ultility/createUUID';
 
 enum initStage {

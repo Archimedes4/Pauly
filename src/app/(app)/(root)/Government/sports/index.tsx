@@ -11,7 +11,7 @@ import { RootState } from '@redux/store';
 import { getSports } from '@utils/sports/sportsFunctions';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 function GovernmentSportsBody() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

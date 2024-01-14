@@ -12,7 +12,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { Colors, loadingStateEnum } from '@constants';
 import store, { RootState } from '@redux/store';
 import ProgressView from '@components/ProgressView';
-import { PersonIcon } from '@src/components/Icons';
+import { PersonIcon } from '@components/Icons';
 import { studentSearchSlice } from '@redux/reducers/studentSearchReducer';
 import BackButton from '@components/BackButton';
 import { getNumberOfBlocks, getUsers } from '@utils/studentFunctions';

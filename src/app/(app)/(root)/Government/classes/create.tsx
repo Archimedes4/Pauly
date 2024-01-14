@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
-import { WarningIcon } from '@src/components/Icons';
+import { WarningIcon } from '@components/Icons';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { Link } from 'expo-router';

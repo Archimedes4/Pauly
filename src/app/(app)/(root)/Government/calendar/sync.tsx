@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from 'react-native';
+import { View, Text } from 'react-native';
 import React, { useEffect } from 'react';
 import { Link } from 'expo-router';
 import { useSelector } from 'react-redux';
@@ -6,7 +6,7 @@ import store, { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import useSyncCalendar from '@hooks/useSyncCalendar';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 async function getPastCalendarSyncs() {
   const result = await callMsGraph(

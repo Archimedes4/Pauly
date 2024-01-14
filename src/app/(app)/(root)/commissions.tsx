@@ -17,13 +17,30 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
 import { commissionsSlice } from '@redux/reducers/commissionsReducer';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import getPoints from '@utils/commissions/getPoints';
 import getCommissions from '@utils/commissions/getCommissions';
 import ProgressView from '@components/ProgressView';
 import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
+
+async function loadCommissionData(
+  startDate?: { date: Date; filter: 'ge' | 'le' },
+  endDate?: { date: Date; filter: 'ge' | 'le' },
+  claimed?: boolean,
+  nextLink?: string,
+) {
+  store.dispatch(
+    commissionsSlice.actions.setCommissionsState(loadingStateEnum.loading),
+  );
+  const result = await getCommissions(nextLink, startDate, endDate, claimed);
+  if (result.result === loadingStateEnum.success) {
+    store.dispatch(commissionsSlice.actions.setCurrentCommissions(result.data));
+    store.dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink));
+  }
+  store.dispatch(commissionsSlice.actions.setCommissionsState(result.result));
+}
 
 function PickerPiece({
   text,
@@ -129,7 +146,7 @@ function CommissionsBody() {
   const { currentCommissions, commissionsState, commissionNextLink } =
     useSelector((state: RootState) => state.commissions);
 
-  const { height, width, currentBreakPoint } = useSelector(
+  const { height, width } = useSelector(
     (state: RootState) => state.dimentions,
   );
 
@@ -155,15 +172,6 @@ function CommissionsBody() {
     );
   }
   if (commissionsState === loadingStateEnum.success) {
-    function loadCommissionData(
-      undefined: undefined,
-      undefined1: undefined,
-      undefined2: undefined,
-      commissionNextLink: string,
-    ) {
-      throw new Error('Function not implemented.');
-    }
-
     return (
       <FlatList
         style={{ height: height * 0.9 }}
@@ -278,23 +286,6 @@ export default function Commissions() {
     // TO DO pagination
   }, [dispatch]);
 
-  async function loadCommissionData(
-    startDate?: { date: Date; filter: 'ge' | 'le' },
-    endDate?: { date: Date; filter: 'ge' | 'le' },
-    claimed?: boolean,
-    nextLink?: string,
-  ) {
-    dispatch(
-      commissionsSlice.actions.setCommissionsState(loadingStateEnum.loading),
-    );
-    const result = await getCommissions(nextLink, startDate, endDate, claimed);
-    if (result.result === loadingStateEnum.success) {
-      dispatch(commissionsSlice.actions.setCurrentCommissions(result.data));
-      dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink));
-    }
-    dispatch(commissionsSlice.actions.setCommissionsState(result.result));
-  }
-
   useEffect(() => {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
@@ -332,9 +323,7 @@ export default function Commissions() {
             Commissions
           </Text>
         </View>
-        <View
-          style={{ height: isHoverPicker ? height * 0.8 : height * 0.85 }}
-        >
+        <View style={{ height: isHoverPicker ? height * 0.8 : height * 0.85 }}>
           <CommissionsBody />
         </View>
         <Pressable

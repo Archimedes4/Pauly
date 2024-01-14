@@ -4,7 +4,7 @@ import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { RootState } from '@redux/store';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 type MicrosoftGraphColumnDefinitions =
   | 'text'

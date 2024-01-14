@@ -12,7 +12,7 @@ import {
   DownIcon,
   UpIcon,
   WarningIcon,
-} from '@src/components/Icons';
+} from '@components/Icons';
 
 export default function DressCodeBlock({
   dressCode,

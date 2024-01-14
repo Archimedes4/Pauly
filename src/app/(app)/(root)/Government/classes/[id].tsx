@@ -7,12 +7,12 @@ import { Colors, loadingStateEnum, semesters } from '@constants';
 import getSchoolYears from '@utils/calendar/getSchoolYears';
 import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import { getEvent, getTimetable } from '@utils/calendar/calendarFunctionsGraph';
-import { CloseIcon, WarningIcon } from '@src/components/Icons';
+import { CloseIcon, WarningIcon } from '@components/Icons';
 import Dropdown from '@components/Dropdown';
 import { getRoom, getRooms } from '@utils/classesFunctions';
 import { Link, useGlobalSearchParams } from 'expo-router';
-import ProgressView from '@src/components/ProgressView';
-import SecondStyledButton from '@src/components/StyledButton';
+import ProgressView from '@components/ProgressView';
+import SecondStyledButton from '@components/StyledButton';
 import { getTextState } from '@src/utils/ultility/createUUID';
 
 export default function GovernmentClassesEdit() {

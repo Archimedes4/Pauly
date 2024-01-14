@@ -7,7 +7,7 @@ import createUUID from '@utils/ultility/createUUID';
 import { Colors, loadingStateEnum, semesters } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 export default function GovernmentClasses() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

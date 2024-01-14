@@ -6,7 +6,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
 import { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
-import ProgressView from '@src/components/ProgressView';
+import ProgressView from '@components/ProgressView';
 
 export default function MicrosoftGraphEditExtension() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);

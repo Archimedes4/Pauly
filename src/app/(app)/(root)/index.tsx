@@ -31,7 +31,7 @@ import PDFView from '@components/PDF';
 import BackButton from '@components/BackButton';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
-import { TrashIcon, WarningIcon } from '@src/components/Icons';
+import { TrashIcon, WarningIcon } from '@components/Icons';
 import { deleteTask, updateTaskText } from '@utils/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 

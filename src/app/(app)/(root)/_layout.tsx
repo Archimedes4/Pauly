@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NavBarComponent from '@components/NavComponent';
 import { RootState } from '@redux/store';
-import ProfileBlock from '@src/components/ProfileBlock';
+import ProfileBlock from '@components/ProfileBlock';
 import { Colors } from '@constants';
 import { Slot, useFocusEffect, useRouter } from 'expo-router';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';

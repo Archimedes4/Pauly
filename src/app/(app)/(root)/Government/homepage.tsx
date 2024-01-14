@@ -7,20 +7,20 @@ import { View, Text, TextInput, Switch } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import MicrosoftFilePicker from '@src/components/MicrosoftFilePicker';
+import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import store, { RootState } from '@redux/store';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import { Link } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
-import { powerpointTypes } from '@src/components/Icons/MimeTypeIcon';
+import StyledButton from '@components/StyledButton';
+import { powerpointTypes } from '@components/Icons/MimeTypeIcon';
 import { getTextState } from '@src/utils/ultility/createUUID';
 import {
   createShareId,
   getDataWithShareID,
   getFileWithShareID,
 } from '@src/utils/ultility/handleShareID';
-import ProgressView from '@src/components/ProgressView';
+import ProgressView from '@components/ProgressView';
 
 export default function GovernmentHomePage() {
   const { paulyDataListId, siteId } = useSelector(

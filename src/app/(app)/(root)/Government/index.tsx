@@ -20,7 +20,7 @@ import {
   HomeIcon,
   MedalIcon,
   StudentSearchIcon,
-} from '@src/components/Icons';
+} from '@components/Icons';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import { Link, useRouter } from 'expo-router';

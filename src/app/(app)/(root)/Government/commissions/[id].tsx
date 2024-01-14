@@ -44,7 +44,7 @@ import { getFileWithShareID } from '@src/utils/ultility/handleShareID';
 import { updateCommission } from '@src/utils/commissions/updateCommissionFunctions';
 import Slider from '@react-native-community/slider';
 import { useGlobalSearchParams } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 enum datePickingMode {
   none,

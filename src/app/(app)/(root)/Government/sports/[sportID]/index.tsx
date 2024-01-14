@@ -6,12 +6,12 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import { getSport, getSportsTeams } from '@utils/sports/sportsFunctions';
-import { WarningIcon } from '@src/components/Icons';
+import { WarningIcon } from '@components/Icons';
 import SVGXml from '@components/SVGXml';
 import { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
-import SecondStyledButton from '@src/components/StyledButton';
-import ProgressView from '@src/components/ProgressView';
+import SecondStyledButton from '@components/StyledButton';
+import ProgressView from '@components/ProgressView';
 
 function SportsUpdateModel({
   isPickingSvg,

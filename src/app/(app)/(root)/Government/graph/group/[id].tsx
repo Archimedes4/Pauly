@@ -8,7 +8,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
 import { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 export default function MicrosoftGraphEditGroup() {
   const { height, width } = useSelector((state: RootState) => state.dimentions);

@@ -20,12 +20,12 @@ import { Colors, dataContentTypeOptions, loadingStateEnum } from '@constants';
 import store, { RootState } from '@redux/store';
 import { getTeams } from '@utils/microsoftGroupsFunctions';
 import ProgressView from '@components/ProgressView';
-import MicrosoftFilePicker from '@src/components/MicrosoftFilePicker';
-import { CloseIcon } from '@src/components/Icons';
+import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
+import { CloseIcon } from '@components/Icons';
 import { getFileWithShareID } from '@src/utils/ultility/handleShareID';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import { getSport } from '@src/utils/sports/sportsFunctions';
-import SecondStyledButton from '@src/components/StyledButton';
+import SecondStyledButton from '@components/StyledButton';
 
 function SelectMicrosoftTeam({
   selectedMicrosoftTeam,

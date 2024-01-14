@@ -12,7 +12,7 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import { Colors, loadingStateEnum } from '@constants';
 import SVGXml from '@components/SVGXml';
 import { Link } from 'expo-router';
-import SecondStyledButton from '@src/components/StyledButton';
+import SecondStyledButton from '@components/StyledButton';
 
 export default function GovernmentCreateNewSport() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

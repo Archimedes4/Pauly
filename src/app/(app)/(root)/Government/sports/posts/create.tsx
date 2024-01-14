@@ -16,7 +16,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SegmentedButtons } from 'react-native-paper';
-import MicrosoftFilePicker from '@src/components/MicrosoftFilePicker';
+import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID from '@utils/ultility/createUUID';
 import store, { RootState } from '@redux/store';

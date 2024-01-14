@@ -9,12 +9,12 @@ import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
-import { DownIcon, UpIcon, WarningIcon } from '@src/components/Icons';
+import { DownIcon, UpIcon, WarningIcon } from '@components/Icons';
 import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 // TO DO longest amount of school days is 20 make sure this is enforced
 export default function GovernmentTimetableEdit() {

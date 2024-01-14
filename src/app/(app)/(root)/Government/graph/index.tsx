@@ -7,8 +7,8 @@ import { Colors, loadingStateEnum, styles } from '@constants';
 import { RootState } from '@redux/store';
 import { getTeams } from '@utils/microsoftGroupsFunctions';
 import { Link } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
-import ProgressView from '@src/components/ProgressView';
+import StyledButton from '@components/StyledButton';
+import ProgressView from '@components/ProgressView';
 
 type listType = {
   displayName: string;

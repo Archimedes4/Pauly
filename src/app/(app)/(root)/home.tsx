@@ -14,7 +14,7 @@ import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
 import ProgressView from '@components/ProgressView';
-import { BookIcon, MedalIcon, PersonIcon } from '@src/components/Icons';
+import { BookIcon, MedalIcon, PersonIcon } from '@components/Icons';
 import ScrollingTextAnimation from '@components/ScrollingTextAnimation';
 import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';

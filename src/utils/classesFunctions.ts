@@ -1,7 +1,7 @@
 import store from '@redux/store';
 import { homepageDataSlice } from '@redux/reducers/homepageDataReducer';
 import { Colors, loadingStateEnum, semesters } from '@constants';
-import callMsGraph from './ultility/microsoftAssets';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import {
   getEvent,
   getSchoolDay,

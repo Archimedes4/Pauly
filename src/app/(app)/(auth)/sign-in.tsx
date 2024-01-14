@@ -11,7 +11,7 @@ import { View, Text, Pressable, Image } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
-import { GearIcon } from '@src/components/Icons';
+import { GearIcon } from '@components/Icons';
 import { Colors } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { useInvokeLogin } from '@hooks/authentication';

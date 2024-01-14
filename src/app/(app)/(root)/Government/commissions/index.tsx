@@ -9,7 +9,7 @@ import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, submissionTypeEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 function GovernmentCommissionsBody() {
   const [commissions, setCommissions] = useState<commissionType[]>([]);
