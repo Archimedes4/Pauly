@@ -30,7 +30,7 @@ module.exports =  {
           "msauthv3"
         ]
       },
-      "buildNumber": "60",
+      "buildNumber": "63",
       "assoassociatedDomains": [
 
       ]

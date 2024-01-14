@@ -13,7 +13,7 @@ export const unstable_settings = {
   initialRouteName: '(app)/(root)/home',
 };
 
-export default function App() {
+export default function App(): React.JSX.Element | null {
   //Fixing hydration issues
   const [mounted, setMounted] = useState(false);
   useEffect(() => {

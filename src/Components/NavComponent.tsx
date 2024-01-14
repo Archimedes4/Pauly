@@ -8,7 +8,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'expo-router';
+import { Link, useNavigation, useRouter } from 'expo-router';
 import store, { RootState } from '@redux/store';
 import {
   BookIcon,
@@ -40,81 +40,81 @@ function NavBarBlock({
   const [isHover, setIsHover] = useState<boolean>(false);
   const expandedMode = useSelector((state: RootState) => state.expandedMode);
   const dispatch = useDispatch();
+  const router = useRouter()
   return (
-    <Link href={des} style={{padding: 0, margin: 0, height: blockLength}}>
-      <Pressable
-        style={{
-          height: blockLength,
-          width: expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
-          backgroundColor: isHover ? Colors.darkGray : 'transparent',
-          alignItems: 'center',
-          overflow: 'hidden',
-          margin: 0
-        }}
-        onHoverIn={() => {
-          setIsHover(true);
-          dispatch(expandedModeSlice.actions.setExpandedMode(true));
-        }}
-        onHoverOut={() => {
-          setIsHover(false);
-        }}
+    <Pressable
+      style={{
+        height: blockLength,
+        width: expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
+        backgroundColor: isHover ? Colors.darkGray : 'transparent',
+        alignItems: 'center',
+        overflow: 'hidden',
+        margin: 0
+      }}
+      onHoverIn={() => {
+        setIsHover(true);
+        dispatch(expandedModeSlice.actions.setExpandedMode(true));
+      }}
+      onHoverOut={() => {
+        setIsHover(false);
+      }}
+      onPress={() => {router.push(des)}}
+    >
+      <View
+        style={[
+          styles.LinkStyle,
+          {
+            height: blockLength,
+            width: expandedMode ? blockLength * 2.5 : blockLength,
+            margin: 0,
+            position: expandedMode ? 'absolute' : 'relative',
+            left: expandedMode ? ((totalWidth * 0.1) - blockLength) / 2 : undefined,
+            alignItems: 'center',
+          },
+        ]}
       >
         <View
-          style={[
-            styles.LinkStyle,
-            {
-              height: blockLength,
-              width: expandedMode ? blockLength * 2.5 : blockLength,
-              margin: 0,
-              position: expandedMode ? 'absolute' : 'relative',
-              left: expandedMode ? ((totalWidth * 0.1) - blockLength) / 2 : undefined,
-              alignItems: 'center',
-            },
-          ]}
+          id="ViewHigh"
+          style={{
+            width: expandedMode ? blockLength * 2.5 : blockLength,
+            flexDirection: 'row',
+            margin: 'auto',
+            padding: 0,
+            alignItems: 'center',
+            alignContent: 'center',
+            justifyContent: 'center',
+          }}
         >
           <View
-            id="ViewHigh"
-            style={{
-              width: expandedMode ? blockLength * 2.5 : blockLength,
-              flexDirection: 'row',
-              margin: 'auto',
-              padding: 0,
-              alignItems: 'center',
-              alignContent: 'center',
-              justifyContent: 'center',
-            }}
+            style={[
+              {
+                height: blockLength,
+                width: blockLength,
+                position: expandedMode ? 'absolute' : 'relative',
+                left: expandedMode ? 0 : undefined,
+                alignItems: 'center',
+                justifyContent: 'center',
+              },
+            ]}
           >
-            <View
-              style={[
-                {
-                  height: blockLength,
-                  width: blockLength,
-                  position: expandedMode ? 'absolute' : 'relative',
-                  left: expandedMode ? 0 : undefined,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                },
-              ]}
-            >
-              <>{children}</>
-            </View>
-            {expandedMode ? (
-              <Text
-                style={{
-                  position: 'absolute',
-                  left: blockLength,
-                  color: Colors.white,
-                  margin: 0,
-                  marginLeft: 8,
-                }}
-              >
-                {text}
-              </Text>
-            ) : null}
+            <>{children}</>
           </View>
+          {expandedMode ? (
+            <Text
+              style={{
+                position: 'absolute',
+                left: blockLength,
+                color: Colors.white,
+                margin: 0,
+                marginLeft: 8,
+              }}
+            >
+              {text}
+            </Text>
+          ) : null}
         </View>
-      </Pressable>
-    </Link>
+      </View>
+    </Pressable>
   );
 }
 
