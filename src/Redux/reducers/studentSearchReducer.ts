@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { loadingStateEnum } from '../../constants';
+import { loadingStateEnum } from '@constants';
 
 const initalState: {
   searchText: string;

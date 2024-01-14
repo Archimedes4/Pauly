@@ -1,11 +1,14 @@
 /*
   Pauly
   Andrew Mainella
+  13 January 2024
+  StyledButton.tsx
+  A default button for consistancy and eas of use.
 */
 import { Text, Pressable, ViewStyle, StyleProp, TextStyle } from 'react-native';
 import React, { useState } from 'react';
 import { Link } from 'expo-router';
-import { Colors } from '../constants';
+import { Colors } from '@constants';
 
 interface StyledButtonProps {
   text: string;

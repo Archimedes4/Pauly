@@ -1,19 +1,24 @@
+/*
+  Pauly
+  Andrew Mainella
+  SearchBar.tsx
+  A Search Bar component
+*/
 import { RootState } from "@redux/store";
 import { Colors } from "@constants";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { Platform, TextInput, View, Text, StyleProp, TextStyle } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { SearchIcon } from "./Icons";
 
 export default function SearchBar({value, onChangeText, onSearch, top}:{value: string, onChangeText: (change: string) => void, onSearch: () => void, top?: number}) {
-  // Dimentsions
+  // Dimensions
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [mounted, setMounted] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Boolean true if text overflowing. This is telling the search icon to show or not.
   // @ts-expect-error
   const style: StyleProp<TextStyle> = Platform.OS === 'web' ? { outlineStyle: 'none' } : undefined; // Style to remove ourline around textbox on web
-  const dispatch = useDispatch();
 
   // Getting search results on value chage
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { Colors } from '../../constants';
+import { Colors } from '@constants';
 
 const initalState: safeAreaType = {
   top: Colors.maroon,

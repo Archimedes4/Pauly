@@ -8,7 +8,6 @@ import { Path } from 'react-native-svg';
 export default function AnimatedCheckMarkPath({
   progress,
   checkMarkColor,
-  checked,
 }: {
   progress: SharedValue<number>;
   checkMarkColor: any;

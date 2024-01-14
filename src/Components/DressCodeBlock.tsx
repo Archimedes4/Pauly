@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  
+*/
 import { useSelector } from 'react-redux';
 import { Pressable, View, Text, TextInput } from 'react-native';
 import React from 'react';

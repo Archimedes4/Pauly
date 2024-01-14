@@ -1,7 +1,13 @@
+/*
+  Pauly
+  Andrew Mainella
+  TeamAvatar.tsx
+  
+*/
 import { View, Text, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import callMsGraph from '../utils/ultility/microsoftAssets';
-import { loadingStateEnum } from '../constants';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+import { loadingStateEnum } from '@constants';
 
 export default function TeamAvatar({ teamId }: { teamId: string }) {
   const [teamAvatarDataUrl, setTeamAvatarDataUrl] = useState('');
