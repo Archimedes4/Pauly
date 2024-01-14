@@ -10,6 +10,7 @@ import store from '@redux/store';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { useMsal } from '@azure/msal-react';
 import { governmentScopes, scopes } from '@constants';
+import { authLoadingSlice } from '@src/redux/reducers/authLoadingReducer';
 
 export const refresh = () => {
   const { instance } = useMsal();
@@ -57,6 +58,7 @@ export function useSilentLogin(): () => Promise<void> {
         );
       }
     }
+    store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
   }
   return main;
 }
@@ -68,6 +70,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     if (government !== undefined) {
       await setWantGovernment(government);
     }
+    store.dispatch(authLoadingSlice.actions.setAuthLoading(true));
     instance.loginRedirect({
       scopes: government === true ? governmentScopes : scopes,
     });
