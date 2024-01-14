@@ -4,8 +4,8 @@
   November 10 2023
   getSchoolYears.ts
 */
-import store from '../../redux/store';
-import { Colors, loadingStateEnum } from '../../constants';
+import store from '@redux/store';
+import { Colors, loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 export default async function getSchoolYears(nextLink?: string): Promise<{

@@ -8,10 +8,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import WeekDayView from './WeekDayView';
-import createUUID from '../../utils/ultility/createUUID';
-import { RootState } from '../../redux/store';
-import { selectedDateSlice } from '../../redux/reducers/selectedDateReducer';
-import { Colors } from '../../constants';
+import { RootState } from '@redux/store';
+import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
+import { Colors } from '@constants';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import DayView from './DayView';
 

@@ -379,41 +379,40 @@ export default function MonthViewMain({
   const selectedDate: string = useSelector(
     (state: RootState) => state.selectedDate,
   );
+  /* Chosing between large mode with each day having expanded calendars and reduced mode with list of events on each day. */
+  if (width <= 519) {
+    return (
+      <ScrollView
+        style={{
+          backgroundColor: Colors.white,
+          height,
+          width,
+        }}
+      >
+        <MonthView width={width} height={height * 0.8} />
+        {new Date(selectedDate).getDate() <= monthData.length ? (
+          <>
+            {monthData[new Date(selectedDate).getDate() - 1].events.map(
+              event => (
+                <View key={event.id}>
+                  <Text>{event.name}</Text>
+                </View>
+              ),
+            )}
+          </>
+        ) : null}
+      </ScrollView>
+    )
+  }
   return (
-    <>
-      {/* Chosing between large mode with each day having expanded calendars and reduced mode with list of events on each day. */}
-      {width <= 519 ? (
-        <ScrollView
-          style={{
-            backgroundColor: Colors.white,
-            height,
-            width,
-          }}
-        >
-          <MonthView width={width} height={height * 0.8} />
-          {new Date(selectedDate).getDate() <= monthData.length ? (
-            <>
-              {monthData[new Date(selectedDate).getDate() - 1].events.map(
-                event => (
-                  <View key={event.id}>
-                    <Text>{event.name}</Text>
-                  </View>
-                ),
-              )}
-            </>
-          ) : null}
-        </ScrollView>
-      ) : (
-        <View
-          style={{
-            backgroundColor: Colors.white,
-            height,
-            width,
-          }}
-        >
-          <MonthView width={width} height={height} />
-        </View>
-      )}
-    </>
+    <View
+      style={{
+        backgroundColor: Colors.white,
+        height,
+        width,
+      }}
+    >
+      <MonthView width={width} height={height} />
+    </View>
   );
 }

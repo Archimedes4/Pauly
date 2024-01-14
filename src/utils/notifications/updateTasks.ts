@@ -5,13 +5,13 @@
   updateTasks.ts
 */
 import { ListRenderItemInfo } from 'react-native';
-import { homepageDataSlice } from '../../redux/reducers/homepageDataReducer';
-import store from '../../redux/store';
+import { homepageDataSlice } from '@redux/reducers/homepageDataReducer';
+import store from '@redux/store';
 import {
   loadingStateEnum,
   taskImportanceEnum,
   taskStatusEnum,
-} from '../../constants';
+} from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 export async function updateTaskStatus(

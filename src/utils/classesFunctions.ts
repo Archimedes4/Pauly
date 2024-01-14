@@ -68,10 +68,6 @@ export async function getRoom(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getClasses() {
-  
-}
-
 export async function getClassesSchedule(): Promise<{
   result: loadingStateEnum.success;
   data: classType[];
@@ -212,7 +208,7 @@ export async function getClassEvents(
 
 export async function getClassEventsFromDay(
   date?: Date,
-): Promise<{ result: loadingStateEnum; data?: eventType[] }> {
+): Promise<{ result: loadingStateEnum.success; data: eventType[] } | { result: loadingStateEnum.failed }> {
   const result = await getSchoolDay(date || new Date());
   if (
     result.result === loadingStateEnum.success &&

@@ -4,8 +4,8 @@
   November 9 2023
   getPoints.ts
 */
-import store from '../../redux/store';
-import { loadingStateEnum } from '../../constants';
+import store from '@redux/store';
+import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 // Gets points when given an array of commission ids

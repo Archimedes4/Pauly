@@ -4,10 +4,10 @@
   November 9 2023
   getCurrentPaulyData.ts
 */
-import store from '../../redux/store';
+import store from '@redux/store';
 import callMsGraph from '../ultility/microsoftAssets';
-import { loadingStateEnum } from '../../constants';
-import { paulyDataSlice } from '../../redux/reducers/paulyDataReducer';
+import { loadingStateEnum } from '@constants';
+import { paulyDataSlice } from '@redux/reducers/paulyDataReducer';
 
 export default async function getCurrentPaulyData() {
   const result = await callMsGraph(

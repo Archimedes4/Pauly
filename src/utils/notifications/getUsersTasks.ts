@@ -4,13 +4,13 @@
   November 9 2023
   getUsersTasks.ts
 */
-import { taskDeltaSlice } from '../../redux/reducers/tasksReducers';
-import store from '../../redux/store';
+import { taskDeltaSlice } from '@redux/reducers/tasksReducers';
+import store from '@redux/store';
 import {
   loadingStateEnum,
   taskImportanceEnum,
   taskStatusEnum,
-} from '../../constants';
+} from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 // deltaRunAgain is send if the delta link has failed or the responce 410 meaning syncronization is needed.

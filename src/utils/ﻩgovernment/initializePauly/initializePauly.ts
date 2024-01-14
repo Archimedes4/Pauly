@@ -1,6 +1,6 @@
 import { loadingStateEnum } from '@constants';
-import createUUID from '../../ultility/createUUID';
-import callMsGraph from '../../ultility/microsoftAssets';
+import createUUID from '@utils/ultility/createUUID';
+import callMsGraph from '@utils/ultility/microsoftAssets';
 import {
   paulyListData,
   paulyDataData,

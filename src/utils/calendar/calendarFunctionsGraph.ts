@@ -6,13 +6,13 @@
   calender function that use microsoft grap
 */
 import callMsGraph from '../ultility/microsoftAssets';
-import { Colors, loadingStateEnum, semesters } from '../../constants';
-import store from '../../redux/store';
+import { Colors, loadingStateEnum, semesters } from '@constants';
+import store from '@redux/store';
 import batchRequest from '../ultility/batchRequest';
 import createUUID from '../ultility/createUUID';
 import getDressCode from '../notifications/getDressCode';
 import { findFirstDayinMonth } from './calendarFunctions';
-import { monthDataSlice } from '../../redux/reducers/monthDataReducer';
+import { monthDataSlice } from '@redux/reducers/monthDataReducer';
 
 function eventTypeToPaulyEventType(
   eventType: string | undefined,

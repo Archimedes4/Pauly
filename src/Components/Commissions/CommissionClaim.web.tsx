@@ -2,19 +2,19 @@ import { useMsal } from '@azure/msal-react';
 import React, { useState } from 'react';
 import { Pressable, View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import getUsersLocation from '../../utils/commissions/getLocation';
+import { RootState } from '@redux/store';
+import getUsersLocation from '@utils/commissions/getLocation';
 import {
   addImage,
   claimCommissionPost,
-} from '../../utils/commissions/claimCommissionsFunctions';
+} from '@utils/commissions/claimCommissionsFunctions';
 import {
   commissionTypeEnum,
   loadingStateEnum,
   locationStateEnum,
-} from '../../constants';
-import ProgressView from '../../components/ProgressView';
-import { getTextState } from '../../utils/ultility/createUUID';
+} from '@constants';
+import ProgressView from '@components/ProgressView';
+import { getTextState } from '@utils/ultility/createUUID';
 
 export default function CommissionClaim({
   commission,

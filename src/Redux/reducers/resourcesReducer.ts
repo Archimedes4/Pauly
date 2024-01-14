@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { loadingStateEnum, resourceMode } from '../../constants';
+import { loadingStateEnum, resourceMode } from '@constants';
 
 type resourceStoreState = {
   resources: resourceDataType[];

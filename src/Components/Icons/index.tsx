@@ -15,7 +15,7 @@ import Svg, {
   Stop,
   SvgProps,
 } from 'react-native-svg';
-import { Colors } from '../../constants';
+import { Colors } from '@constants';
 
 type iconProps = {
   width: number;

@@ -7,9 +7,9 @@
 import { View, Text, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { getClassEventsFromDay } from '../../utils/classesFunctions';
-import { Colors, loadingStateEnum } from '../../constants';
+import { RootState } from '@redux/store';
+import { getClassEventsFromDay } from '@utils/classesFunctions';
+import { Colors, loadingStateEnum } from '@constants';
 
 function EventBlock({ event }: { event: eventType }) {
   return (
@@ -45,7 +45,7 @@ export default function EventView({width, height}:{width: number, height: number
     <ScrollView style={{width, height, backgroundColor: Colors.lightGray, paddingTop: 10}}>
       {currentEvents.length === 0 && schoolEvents.length === 0 ? (
         <View>
-          <Text>There are no events</Text>
+          <Text style={{margin: 'auto'}}>There are no events!</Text>
         </View>
       ) : (
         <>

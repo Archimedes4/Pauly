@@ -6,7 +6,7 @@
 */
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
-import { locationStateEnum } from '../../constants';
+import { locationStateEnum } from '@constants';
 
 export default async function getUsersLocation(
   commission: commissionType,

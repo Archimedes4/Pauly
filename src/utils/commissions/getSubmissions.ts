@@ -4,8 +4,8 @@
   November 9 2023
   getSubmissions.ts
 */
-import store from '../../redux/store';
-import { loadingStateEnum, submissionTypeEnum } from '../../constants';
+import store from '@redux/store';
+import { loadingStateEnum, submissionTypeEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 function convertSubmissionTypeToFilter(

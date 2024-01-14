@@ -8,14 +8,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import createUUID from '../../utils/ultility/createUUID';
+import createUUID from '@utils/ultility/createUUID';
 import {
   getGraphEvents,
   getTimetable,
-} from '../../utils/calendar/calendarFunctionsGraph';
-import { addEventSlice } from '../../redux/reducers/addEventReducer';
-import store, { RootState } from '../../redux/store';
-import { loadingStateEnum, semesters } from '../../constants';
+} from '@utils/calendar/calendarFunctionsGraph';
+import { addEventSlice } from '@redux/reducers/addEventReducer';
+import store, { RootState } from '@redux/store';
+import { loadingStateEnum, semesters } from '@constants';
 
 enum pickSchoolDayMode {
   schoolYear,

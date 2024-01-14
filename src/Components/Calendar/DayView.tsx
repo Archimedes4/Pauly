@@ -13,11 +13,11 @@ import {
   calculateIfShowing,
   computeEventHeight,
   findTimeOffset,
-} from '../../utils/calendar/calendarFunctions';
-import { RootState } from '../../redux/store';
-import createUUID from '../../utils/ultility/createUUID';
-import { Colors, loadingStateEnum } from '../../constants';
-import { getClassEventsFromDay } from '../../utils/classesFunctions';
+} from '@utils/calendar/calendarFunctions';
+import { RootState } from '@redux/store';
+import createUUID from '@utils/ultility/createUUID';
+import { Colors, loadingStateEnum } from '@constants';
+import { getClassEventsFromDay } from '@utils/classesFunctions';
 
 export default function DayView({
   width,
@@ -132,8 +132,7 @@ export default function DayView({
   async function getClassesEvents() {
     const result = await getClassEventsFromDay();
     if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
+      result.result === loadingStateEnum.success
     ) {
       setSchoolEvents(result.data);
     }

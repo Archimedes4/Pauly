@@ -1,6 +1,6 @@
 import { View, Text, Animated, Pressable } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Colors } from '../../constants';
+import { Colors } from '@constants';
 
 type PickerWrapperProps = {
   selectedIndex: number;
