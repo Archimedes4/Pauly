@@ -10,7 +10,8 @@ import store from '@redux/store';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { useMsal } from '@azure/msal-react';
 import { governmentScopes, scopes } from '@constants';
-import { authLoadingSlice } from '@src/redux/reducers/authLoadingReducer';
+import { authActiveSlice } from '@src/redux/reducers/authActiveReducer';
+import { InteractionStatus, InteractionType } from '@azure/msal-browser';
 
 export const refresh = () => {
   const { instance } = useMsal();
@@ -28,11 +29,13 @@ export const refresh = () => {
 };
 
 export function useSilentLogin(): () => Promise<void> {
-  const { instance } = useMsal();
+  const { instance, inProgress } = useMsal();
   async function main() {
+    console.log("mark")
     // handle auth redired/do all initial setup for msal
     const redirectResult = await instance.handleRedirectPromise();
-    if (redirectResult !== null) {
+    if (redirectResult !== null && inProgress === InteractionStatus.HandleRedirect) {
+      console.log(redirectResult)
       instance.setActiveAccount(redirectResult.account);
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(
@@ -41,6 +44,7 @@ export function useSilentLogin(): () => Promise<void> {
       );
       return;
     }
+    console.log("mark one")
     // checking if an account exists
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
@@ -58,7 +62,8 @@ export function useSilentLogin(): () => Promise<void> {
         );
       }
     }
-    store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
+    console.log("mark two")
+    store.dispatch(authActiveSlice.actions.setAuthActive(false));
   }
   return main;
 }
@@ -70,9 +75,10 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     if (government !== undefined) {
       await setWantGovernment(government);
     }
-    store.dispatch(authLoadingSlice.actions.setAuthLoading(true));
+    store.dispatch(authActiveSlice.actions.setAuthActive(true));
     instance.loginRedirect({
       scopes: government === true ? governmentScopes : scopes,
+      redirectUri: `${window.location.protocol}//${window.location.host}/`
     });
   }
 

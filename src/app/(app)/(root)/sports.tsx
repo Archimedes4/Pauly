@@ -24,7 +24,7 @@ import {
   getSportsContent,
   getSportsTeams,
 } from '@utils/sports/sportsFunctions';
-import { getFileWithShareID } from '@src/utils/ultility/handleShareID';
+import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import SVGXml from '@components/SVGXml';
 import BackButton from '@components/BackButton';

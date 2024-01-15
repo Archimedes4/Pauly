@@ -6,22 +6,27 @@
 import getPaulyLists from '@utils/ultility/getPaulyLists';
 import useGetUserProfile from '@hooks/useGetUserProfile';
 import useWebSession from '@hooks/useWebSession';
-import store from '@redux/store';
+import store, { RootState } from '@redux/store';
 import {
   getWantGovernment,
   validateGovernmentMode,
 } from '@utils/handleGovernmentLogin';
 import { useEffect, useState } from 'react';
 import { useSilentLogin } from './authentication';
+import { useDispatch, useSelector } from 'react-redux';
+import { authLoadingSlice } from '@src/redux/reducers/authLoadingReducer';
 
 export default function useAuthentication() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const isLoading = useSelector((state: RootState) => state.authLoading);
   const silentLogin = useSilentLogin();
   const webSession = useWebSession();
   const getUserProfile = useGetUserProfile();
+  const dispatch = useDispatch()
   // main function
   async function loadContent() {
+    console.log("Start")
     await silentLogin();
+    console.log("End")
     if (store.getState().authenticationToken !== '') {
       const webResult = webSession();
       if (!webResult) {
@@ -31,9 +36,9 @@ export default function useAuthentication() {
       if (await getWantGovernment()) {
         await validateGovernmentMode();
       }
-      setIsLoading(false);
+      dispatch(authLoadingSlice.actions.setAuthLoading(false))
     } else {
-      setIsLoading(false);
+      dispatch(authLoadingSlice.actions.setAuthLoading(false))
     }
   }
 

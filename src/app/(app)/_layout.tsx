@@ -19,6 +19,12 @@ import ProgressView from '@components/ProgressView';
 import useIsShowingLogout from '@hooks/useIsShowingLogout';
 import { useFonts } from 'expo-font';
 
+
+export const unstable_settings = {
+  // Ensure any route can link back to `/`
+  initialRouteName: '',
+};
+
 SplashScreen.preventAutoHideAsync();
 
 function Loading() {
@@ -88,20 +94,16 @@ export default function Layout() {
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
-    return null;
-  }
-
-  if (isLoading && isConnected) {
-    return <Loading />;
-  }
-
-  if (isConnected) {
+  if (isConnected && !isLoading && fontsLoaded) {
     return (
       <View onLayout={onLayoutRootView}>
         <Slot />
       </View>
     );
+  }
+
+  if (isConnected) {
+    return <Loading />;
   }
 
   return (

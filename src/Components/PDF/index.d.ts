@@ -7,4 +7,4 @@
 */
 declare const PDFView: ({ width: number }) => React.JSX.Element;
 
-export = SVGXml;
+export = PDFView;

@@ -16,33 +16,34 @@ export default function useIsAuthenticated() {
     (state: RootState) => state.authenticationToken,
   );
   const isOveride = useSelector((state: RootState) => state.isOverride);
+  const isLoading = useSelector((state: RootState) => state.authLoading);
   async function checkAuthentication() {
     const wantGovernment = await getWantGovernment();
     if (wantGovernment) {
       if ((siteId !== '' || isOveride) && authenticationToken !== '') {
         setIsAuthenticated({
-          loading: false,
+          loading: isLoading,
           authenticated: true,
         });
       } else if (authenticationToken !== '') {
         setIsAuthenticated({
-          loading: true,
+          loading: isLoading,
           authenticated: true,
         });
       } else {
         setIsAuthenticated({
-          loading: false,
+          loading: isLoading,
           authenticated: false,
         });
       }
     } else if ((siteId !== '' || isOveride) && authenticationToken !== '') {
       setIsAuthenticated({
-        loading: false,
+        loading: isLoading,
         authenticated: true,
       });
     } else {
       setIsAuthenticated({
-        loading: false,
+        loading: isLoading,
         authenticated: false,
       });
     }

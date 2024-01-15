@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: boolean = false;
+const initalState: boolean = true;
 
 export const authLoadingSlice = createSlice({
   name: 'authLoading',

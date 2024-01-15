@@ -12,12 +12,10 @@ import {
   TextInput,
   Linking,
   ScrollView,
-  ListRenderItemInfo,
   Switch,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { FlatList } from 'react-native-gesture-handler';
 import store, { RootState } from '@redux/store';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
 import { Colors, loadingStateEnum, taskStatusEnum } from '@constants';

@@ -12,8 +12,10 @@ export default function Missing() {
   if (Platform.OS === 'web') {
     const router = useRouter();
     useFocusEffect(() => {
+      console.log("missing")
       try {
         router.push('/');
+        
       } catch (error) {
         console.error(error);
       }

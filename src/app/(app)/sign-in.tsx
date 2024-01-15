@@ -17,7 +17,7 @@ import ProgressView from '@components/ProgressView';
 import { useInvokeLogin } from '@hooks/authentication';
 import { RootState } from '@redux/store';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
-import { SplashScreen, router } from 'expo-router';
+import { SplashScreen } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 export function SignInComponent({ government }: { government: boolean }) {
@@ -57,11 +57,10 @@ export function SignInComponent({ government }: { government: boolean }) {
       setFontSize(height / 3);
     }
   }, [height, totalWidth]);
-  // Fon
 
   // authentication
   const login = useInvokeLogin();
-  const authLoading = useSelector((state: RootState) => state.authLoading);
+  const authActive = useSelector((state: RootState) => state.authActive);
   const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
     useState<boolean>(false);
   const isAuthenticated = useIsAuthenticated();
@@ -69,13 +68,13 @@ export function SignInComponent({ government }: { government: boolean }) {
     (state: RootState) => state.dimentions.currentBreakPoint,
   );
 
-  useEffect(() => {
-    if (currentBreakPoint === 0 && isAuthenticated.authenticated) {
-      router.push('/home');
-    } else if (isAuthenticated.authenticated) {
-      router.push('/');
-    }
-  }, [isAuthenticated]);
+  // useEffect(() => {
+  //   if (currentBreakPoint === 0 && isAuthenticated.authenticated) {
+  //     router.push('/home');
+  //   } else if (isAuthenticated.authenticated) {
+  //     router.push('/');
+  //   }
+  // }, [isAuthenticated]);
 
   return (
     <Pressable
@@ -145,7 +144,7 @@ export function SignInComponent({ government }: { government: boolean }) {
         </Text>
         <Pressable
           onPress={() => {
-            if (!authLoading) {
+            if (!authActive) {
               login(false);
             }
           }}
@@ -170,7 +169,7 @@ export function SignInComponent({ government }: { government: boolean }) {
             marginTop: totalWidth < height ? totalWidth * 0.05 : height * 0.05,
           }}
         >
-          {authLoading ? (
+          {authActive ? (
             <ProgressView width={14} height={14} />
           ) : (
             <Text
@@ -214,7 +213,7 @@ export function SignInComponent({ government }: { government: boolean }) {
               flexDirection: 'row',
             }}
           >
-            {authLoading ? (
+            {authActive ? (
             <ProgressView width={14} height={14} />
           ) : (
             <>

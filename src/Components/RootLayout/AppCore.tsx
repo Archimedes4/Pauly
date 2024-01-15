@@ -1,0 +1,124 @@
+import { Colors } from "@constants";
+import { RootState } from "@redux/store";
+import getMainHeight from "@utils/getMainHeight";
+import setDimentions from "@utils/ultility/setDimentions";
+import { Slot } from "expo-router";
+import React from "react";
+import { useEffect, useState } from "react";
+import { Dimensions, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
+
+
+const windowDimensions = Dimensions.get('window');
+
+// App core holds dimentions
+export default function AppCore() {
+  // Dimentions
+  const safeAreaColors = useSelector(
+    (state: RootState) => state.safeAreaColors,
+  );
+  const expandedMode = useSelector((state: RootState) => state.expandedMode);
+  const { currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimentions,
+  );
+  const [dimensions, setStateDimensions] = useState(windowDimensions);
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setStateDimensions(window);
+      setDimentions(
+        window.width,
+        window.height,
+        insets,
+        safeAreaColors.isTopTransparent,
+        safeAreaColors.isBottomTransparent,
+      );
+    });
+    return () => subscription?.remove();
+  });
+
+  useEffect(() => {
+    setDimentions(
+      dimensions.width,
+      dimensions.height,
+      insets,
+      safeAreaColors.isTopTransparent,
+      safeAreaColors.isBottomTransparent,
+    );
+  }, [
+    expandedMode,
+    safeAreaColors.isTopTransparent,
+    safeAreaColors.isBottomTransparent,
+  ]);
+
+  useEffect(() => {
+    const newDimensions = Dimensions.get('window');
+    setStateDimensions(newDimensions);
+    setDimentions(
+      newDimensions.width,
+      newDimensions.height,
+      insets,
+      safeAreaColors.isTopTransparent,
+      safeAreaColors.isBottomTransparent,
+    );
+  }, []);
+
+  return (
+    <>
+      {!safeAreaColors.isTopTransparent ? (
+        <View
+          style={{
+            width: dimensions.width,
+            height: insets.top,
+            backgroundColor: safeAreaColors.top,
+          }}
+        />
+      ) : null}
+      <View
+        style={{
+          backgroundColor: safeAreaColors.bottom,
+          width: dimensions.width,
+          height: getMainHeight(
+            dimensions.height,
+            insets.top,
+            insets.bottom,
+            safeAreaColors.isTopTransparent,
+            safeAreaColors.isBottomTransparent,
+          ),
+          zIndex: 10,
+          top: safeAreaColors.isTopTransparent ? 0 : insets.top,
+          position: 'absolute',
+        }}
+      >
+        <Slot />
+      </View>
+      {!safeAreaColors.isBottomTransparent ? (
+        <View
+          style={{
+            width: dimensions.width,
+            height: insets.bottom,
+            backgroundColor: safeAreaColors.bottom,
+            position: 'absolute',
+            bottom: 0,
+          }}
+        />
+      ) : null}
+      {currentBreakPoint >= 1 ? (
+        <View
+          style={{
+            height: dimensions.height,
+            width: expandedMode
+              ? dimensions.width * 0.25
+              : dimensions.width * 0.1,
+            backgroundColor: Colors.maroon,
+            position: 'absolute',
+            top: 0,
+            left: 0,
+          }}
+        />
+      ) : null}
+    </>
+  );
+}

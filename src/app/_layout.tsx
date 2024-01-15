@@ -8,11 +8,6 @@ import RootLayout from '@components/RootLayout';
 import React, { useEffect, useState } from 'react';
 import Head from 'expo-router/head';
 
-export const unstable_settings = {
-  // Ensure any route can link back to `/`
-  initialRouteName: '(app)/(root)/home',
-};
-
 export default function App(): React.JSX.Element | null {
   // Fixing hydration issues
   const [mounted, setMounted] = useState(false);

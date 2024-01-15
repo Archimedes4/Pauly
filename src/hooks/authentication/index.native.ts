@@ -17,7 +17,7 @@ import {
 import { useRootNavigationState, useRouter } from 'expo-router';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import store from '@redux/store';
-import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
+import { authActiveSlice } from '@redux/reducers/authActiveReducer';
 import { authenticationRefreshTokenSlice } from '@redux/reducers/authenticationRefreshTokenReducer';
 import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
 import getPaulyLists from '@utils/ultility/getPaulyLists';
@@ -62,7 +62,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
 
   async function main(government?: boolean) {
     if (discovery !== null) {
-      store.dispatch(authLoadingSlice.actions.setAuthLoading(true));
+      store.dispatch(authActiveSlice.actions.setAuthActive(true));
       if (government !== undefined) {
         await setWantGovernment(government);
       }
@@ -95,9 +95,9 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
           ),
         );
         getPaulyLists();
-        store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
+        store.dispatch(authActiveSlice.actions.setAuthActive(false));
       } else {
-        store.dispatch(authLoadingSlice.actions.setAuthLoading(false));
+        store.dispatch(authActiveSlice.actions.setAuthActive(false));
       }
     }
   }

@@ -6,9 +6,8 @@
   This holds the main router to Pauly once authenticated.
 */
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import NavBarComponent from '@components/NavComponent';
 import { RootState } from '@redux/store';
 import ProfileBlock from '@components/ProfileBlock';
@@ -56,8 +55,9 @@ function AuthenticatedView() {
 function PushToAuth() {
   const router = useRouter();
   useFocusEffect(() => {
+    console.log("push")
     try {
-      router.push('(auth)/sign-in');
+      //router.push('/sign-in');
     } catch (error) {
       console.error(error);
     }
@@ -74,5 +74,5 @@ export default function Main() {
   if (!isAuthenticated.loading) {
     return <PushToAuth />;
   }
-  return null;
+  return <Text>Loading</Text>;
 }
