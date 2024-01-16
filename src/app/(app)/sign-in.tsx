@@ -17,7 +17,7 @@ import ProgressView from '@components/ProgressView';
 import { useInvokeLogin } from '@hooks/authentication';
 import { RootState } from '@redux/store';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
-import { SplashScreen } from 'expo-router';
+import { SplashScreen, router } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
 export function SignInComponent({ government }: { government: boolean }) {
@@ -68,13 +68,13 @@ export function SignInComponent({ government }: { government: boolean }) {
     (state: RootState) => state.dimentions.currentBreakPoint,
   );
 
-  // useEffect(() => {
-  //   if (currentBreakPoint === 0 && isAuthenticated.authenticated) {
-  //     router.push('/home');
-  //   } else if (isAuthenticated.authenticated) {
-  //     router.push('/');
-  //   }
-  // }, [isAuthenticated]);
+  useEffect(() => {
+    if (currentBreakPoint === 0 && isAuthenticated.authenticated) {
+      router.push('/home');
+    } else if (isAuthenticated.authenticated) {
+      router.push('/');
+    }
+  }, [isAuthenticated]);
 
   return (
     <Pressable

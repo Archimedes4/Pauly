@@ -208,3 +208,21 @@ All permissions are Delegated permissions
 | TeamMember.Read.All       | YES                    | Read the members of teams, on behalf of the signed-in user. |
 
 ## General Reference
+
+### File Structure
+
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
+- \__tests\__: Holds tests
+- assets: Holds images and fonts
+- public: Holds manifest, well-known and pdfjs to remove a need for a cdn.
+- src: holds apps code
+  - app: file structure for expo router
+  - components: rendered functions that aren;t a page.
+  - hooks: hooks
+  - redux: storage reducers and actions
+  - utils: functions that aren't rendered
+  - constants: holds types, colors, and some constants
+- rest: config files env files readme
+

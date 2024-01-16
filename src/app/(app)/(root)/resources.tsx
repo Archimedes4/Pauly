@@ -17,11 +17,10 @@ import {
   Image,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import store, { RootState } from '@redux/store';
+import { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import { resourcesSlice } from '@redux/reducers/resourcesReducer';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
-import callMsGraph from '@utils/ultility/microsoftAssets';
 import {
   getCategoryResources,
   getResources,

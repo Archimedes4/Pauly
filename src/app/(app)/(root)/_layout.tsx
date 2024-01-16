@@ -6,7 +6,7 @@
   This holds the main router to Pauly once authenticated.
 */
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
 import NavBarComponent from '@components/NavComponent';
 import { RootState } from '@redux/store';
@@ -14,6 +14,7 @@ import ProfileBlock from '@components/ProfileBlock';
 import { Colors } from '@constants';
 import { Slot, useFocusEffect, useRouter } from 'expo-router';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
+import { SignInComponent } from '../sign-in';
 
 function AuthenticatedView() {
   const { currentBreakPoint, totalWidth, width } = useSelector(
@@ -57,7 +58,7 @@ function PushToAuth() {
   useFocusEffect(() => {
     console.log("push")
     try {
-      //router.push('/sign-in');
+      router.push('/sign-in');
     } catch (error) {
       console.error(error);
     }
@@ -71,8 +72,13 @@ export default function Main() {
     return <AuthenticatedView />;
   }
 
-  if (!isAuthenticated.loading) {
+  if (!isAuthenticated.loading && Platform.OS !== 'web') {
     return <PushToAuth />;
   }
+
+  if (!isAuthenticated.loading) {
+    return <SignInComponent government={false} />;
+  }
+
   return <Text>Loading</Text>;
 }
