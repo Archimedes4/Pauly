@@ -11,7 +11,7 @@ import ProgressView from '@components/ProgressView';
 import { CloseIcon } from '@components/Icons';
 import WebViewCross from '@components/WebViewCross';
 import { Colors, commissionTypeEnum, loadingStateEnum } from '@constants';
-import { getTextState } from '@src/utils/ultility/createUUID';
+import { getTextState } from '@utils/ultility/createUUID';
 
 enum CameraResult {
   notStarted,

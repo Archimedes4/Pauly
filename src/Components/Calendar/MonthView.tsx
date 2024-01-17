@@ -150,7 +150,7 @@ function CalendarCardView({
           const endDate = new Date(selectedDate);
           endDate.setDate(value.item.dayData);
           endDate.setHours(endDate.getHours() + 1);
-          dispatch(addEventSlice.actions.setStartDate(startDate));
+          dispatch(addEventSlice.actions.setStartDate(startDate.toISOString()));
           dispatch(addEventSlice.actions.setEndDate(endDate));
         }}
       >

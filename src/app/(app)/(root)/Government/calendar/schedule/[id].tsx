@@ -6,7 +6,7 @@ import {
   Modal,
   FlatList,
 } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { TimePickerModal } from 'react-native-paper-dates';
@@ -63,6 +63,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
   const [deleteState, setDeleteState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
+  const textRef: React.LegacyRef<TextInput> = useRef(null)
 
   async function submitSchedule() {
     setCreateScheduleLoadingState(loadingStateEnum.loading);
@@ -143,8 +144,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
     if (id !== undefined) {
       const result = await getSchedule(id);
       if (
-        result.result === loadingStateEnum.success &&
-        result.schedule !== undefined
+        result.result === loadingStateEnum.success
       ) {
         setScheduleProperName(result.schedule.properName);
         setScheduleDescriptiveName(result.schedule.descriptiveName);
@@ -162,7 +162,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
     if (!create) {
       loadFunction();
     }
-  }, [id, loadFunction]);
+  }, [id]);
 
   if (deleteState === loadingStateEnum.success) {
     return (
@@ -216,8 +216,9 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
         <TextInput
           style={styles.textInputStyle}
           value={scheduleProperName}
-          onChangeText={setScheduleProperName}
+          onChangeText={(e) => setScheduleProperName(e)}
           placeholder="Proper Name ex. Schedule One"
+          ref={textRef}
         />
         <Text style={{ fontFamily: 'Roboto', marginLeft: 25, marginTop: 5 }}>
           Descriptive Name
@@ -225,7 +226,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
         <TextInput
           style={styles.textInputStyle}
           value={scheduleDescriptiveName}
-          onChangeText={setScheduleDescriptiveName}
+          onChangeText={(e) => setScheduleDescriptiveName(e)}
           placeholder="Descriptive Name ex. Regular Schedule"
         />
         <View
@@ -244,7 +245,6 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
             </Text>
           </View>
         </View>
-
         <Text style={{ marginLeft: 15 }}>New Periods</Text>
         <FlatList
           data={newPeriods}
@@ -512,7 +512,7 @@ function PeriodBlock({
   }
   return (
     <View
-      key={`Period_${period.id}_${createUUID()}`}
+      key={`Period_${period.id}`}
       style={{
         margin: 10,
         backgroundColor: Colors.white,
@@ -532,7 +532,7 @@ function PeriodBlock({
           </Text>
           <Pressable
             style={{ marginLeft: 'auto' }}
-            onPress={() => setIsSelectingStartTime(true)}
+            onPress={() => {setIsSelectingStartTime(true)}}
           >
             <Text>Pick start time</Text>
           </Pressable>

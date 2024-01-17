@@ -31,7 +31,7 @@ export const refresh = () => {
 export function useSilentLogin(): () => Promise<void> {
   const { instance, inProgress } = useMsal();
   async function main() {
-    console.log("mark")
+
     // handle auth redired/do all initial setup for msal
     const redirectResult = await instance.handleRedirectPromise();
     if (redirectResult !== null && inProgress === InteractionStatus.HandleRedirect) {
@@ -44,7 +44,6 @@ export function useSilentLogin(): () => Promise<void> {
       );
       return;
     }
-    console.log("mark one")
     // checking if an account exists
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
@@ -62,7 +61,6 @@ export function useSilentLogin(): () => Promise<void> {
         );
       }
     }
-    console.log("mark two")
     store.dispatch(authActiveSlice.actions.setAuthActive(false));
   }
   return main;
@@ -78,7 +76,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     store.dispatch(authActiveSlice.actions.setAuthActive(true));
     instance.loginRedirect({
       scopes: government === true ? governmentScopes : scopes,
-      redirectUri: `${window.location.protocol}//${window.location.host}/`
+      redirectUri: `${window.location.protocol}//${window.location.host}/`,
     });
   }
 

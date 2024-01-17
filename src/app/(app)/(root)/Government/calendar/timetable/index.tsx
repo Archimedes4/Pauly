@@ -13,6 +13,7 @@ import SelectTimetable from '@components/Calendar/SelectTimetable';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import { Link } from 'expo-router';
+import StyledButton from '@src/components/StyledButton';
 
 export default function GovernmentTimetable() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -24,12 +25,12 @@ export default function GovernmentTimetable() {
         </Link>
         <Text>Timetables</Text>
       </View>
-      <View style={{ height: height * 0.85 }}>
+      <View style={{
+        flex: 1
+      }}>
         <SelectTimetable governmentMode />
       </View>
-      <Link href="/government/calendar/timetable/create">
-        <Text>Create New</Text>
-      </Link>
+      <StyledButton to='/government/calendar/timetable/create' text='Create New' style={{margin: 15, marginTop: 0}}/>
     </View>
   );
 }

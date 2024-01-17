@@ -14,12 +14,11 @@ import { Colors, loadingStateEnum, styles } from '@constants';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 import { powerpointTypes } from '@components/Icons/MimeTypeIcon';
-import { getTextState } from '@src/utils/ultility/createUUID';
+import { getTextState } from '@utils/ultility/createUUID';
 import {
   createShareId,
   getDataWithShareID,
-  getFileWithShareID,
-} from '@src/utils/ultility/handleShareID';
+} from '@utils/ultility/handleShareID';
 import ProgressView from '@components/ProgressView';
 
 export default function GovernmentHomePage() {

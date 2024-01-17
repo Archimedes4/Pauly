@@ -24,7 +24,7 @@ function PDFViewBody({ width }: { width: number }) {
   async function convertPdfToImages(url: string) {
     const { pdfjsLib } = globalThis;
     if (pdfjsLib !== undefined) {
-      /* !IMPORTANT! update import */
+/* !IMPORTANT! update import */
       pdfjsLib.GlobalWorkerOptions.workerSrc =
         '/pdfjs-4.0.379-dist/build/pdf.worker.mjs';
 
@@ -37,13 +37,13 @@ function PDFViewBody({ width }: { width: number }) {
         const docInitParams: DocumentInitParameters = { url: fileURL };
 
         const pdf = await pdfjsLib.getDocument(docInitParams).promise;
-        const canvas = document.createElement('canvas'); // Fail
+        const canvas = document.createElement('canvas'); 
         for (let i = 0; i < pdf.numPages; i += 1) {
           const page = await pdf.getPage(i + 1);
           const viewport = page.getViewport({ scale: 1 });
-          const context = canvas.getContext('2d'); // Fail
-          canvas.height = viewport.height; // Fail
-          canvas.width = viewport.width; // Fail
+          const context = canvas.getContext('2d'); 
+          canvas.height = viewport.height; 
+          canvas.width = viewport.width;
           if (context !== null) {
             await page.render({ canvasContext: context, viewport }).promise;
             imagesArray.push(canvas.toDataURL());
@@ -123,7 +123,7 @@ export default function PDFView({ width }: { width: number }) {
   return (
     <>
       <Head>
-        {/* !IMPORTANT! update import */}
+{/* !IMPORTANT! update import */}
         <script src="/pdfjs-4.0.379-dist/build/pdf.mjs" type="module" />
       </Head>
       <PDFViewBody width={width} />

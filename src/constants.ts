@@ -7,7 +7,9 @@
 */
 
 import { DefaultTheme } from 'react-native-paper';
-import { StyleSheet } from 'react-native';
+import { ColorValue, StyleSheet } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { ThemeProp } from 'react-native-paper/lib/typescript/types';
 
 // From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 export enum breakPointMode {
@@ -118,6 +120,7 @@ export enum resourceMode {
 }
 
 declare global {
+  type animatedCheckMarkColor = ColorValue | Animated.SharedValue<ColorValue | undefined> | undefined
   type addDataType = {
     data: object;
     urlOne: string;
@@ -532,8 +535,70 @@ export class Colors {
 }
 
 // constance
-export const paperTheme = {
+export const paperTheme: ThemeProp = {
   ...DefaultTheme,
+  fonts: {
+    'displayLarge': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'displayMedium': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'displaySmall': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'headlineLarge': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'headlineMedium': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'headlineSmall': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'titleLarge': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'titleMedium': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'titleSmall': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'labelLarge': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'labelMedium': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'labelSmall': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'bodyLarge': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'bodyMedium': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+    'bodySmall': {
+      fontFamily: 'raleway-regular',
+      fontWeight: 'normal',
+    },
+  },
   roundness: 2,
   colors: {
     // Primary

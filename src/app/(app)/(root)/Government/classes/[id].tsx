@@ -13,7 +13,7 @@ import { getRoom, getRooms } from '@utils/classesFunctions';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import ProgressView from '@components/ProgressView';
 import SecondStyledButton from '@components/StyledButton';
-import { getTextState } from '@src/utils/ultility/createUUID';
+import { getTextState } from '@utils/ultility/createUUID';
 
 export default function GovernmentClassesEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

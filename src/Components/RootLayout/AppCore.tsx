@@ -9,7 +9,7 @@ import { Dimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 
-
+//used to get inital dimension
 const windowDimensions = Dimensions.get('window');
 
 // App core holds dimentions

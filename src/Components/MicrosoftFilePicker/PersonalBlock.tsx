@@ -1,5 +1,5 @@
 import { Colors, loadingStateEnum } from '@constants';
-import { getUserMicrosoftFiles } from '@src/utils/microsoftFilePickerFunctions';
+import { getUserMicrosoftFiles } from '@utils/microsoftFilePickerFunctions';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
 import createUUID from '@utils/ultility/createUUID';

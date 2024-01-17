@@ -8,10 +8,8 @@ import {
   Text,
   Pressable,
   Switch,
-  ScrollView,
   FlatList,
   ListRenderItemInfo,
-  Modal,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -20,7 +18,6 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import { Colors, loadingStateEnum, resourceResponce } from '@constants';
 import ProgressView from '@components/ProgressView';
 import getResource from '@utils/getResources';
-import GovernmentResourcesPost from '@components/GovernmentResourcePost';
 import { getResourceChannels } from '@utils/microsoftGroupsFunctions';
 import { Link } from 'expo-router';
 

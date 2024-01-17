@@ -34,7 +34,7 @@ const pca = new PublicClientApplication({
       : '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/`,
     redirectUri: getRedirectUri(), // to stop node js error
-    navigateToLoginRequestUrl: false
+    navigateToLoginRequestUrl: true
   },
 });
 

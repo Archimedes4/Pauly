@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  16 January 2024
+*/
 import React from 'react';
 import Animated, {
   SharedValue,
@@ -10,9 +15,10 @@ export default function AnimatedCheckMarkPath({
   checkMarkColor,
 }: {
   progress: SharedValue<number>;
-  checkMarkColor: any;
+  checkMarkColor: animatedCheckMarkColor;
   checked: boolean;
 }) {
+  //creating path and progress value
   const AnimatedPath = Animated.createAnimatedComponent(Path);
   const checkMarkAnimation = useAnimatedProps(() => {
     const strokeDashoffset = 1000 * progress.value;

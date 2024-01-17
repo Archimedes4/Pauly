@@ -212,7 +212,7 @@ All permissions are Delegated permissions
 ### File Structure
 
 > [!IMPORTANT]
-> Key information users need to know to achieve their goal.
+> The public folder needs pdfjs to run and the code in components -> pdf -> index.web needs to be updated.
 
 - \__tests\__: Holds tests
 - assets: Holds images and fonts

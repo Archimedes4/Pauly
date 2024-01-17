@@ -9,7 +9,7 @@ import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ResizeMode, Video } from 'expo-av';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import { getFileWithShareID } from '@src/utils/ultility/handleShareID';
+import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import store, { RootState } from '@redux/store';
 import {
   Colors,

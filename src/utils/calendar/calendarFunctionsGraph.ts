@@ -195,14 +195,16 @@ export async function getSchedule(id: string): Promise<
 }
 
 export async function getSchedules(): Promise<{
-  result: loadingStateEnum;
-  data?: scheduleType[];
+  result: loadingStateEnum.success;
+  data: scheduleType[];
   nextLink?: string;
+} | {
+  result: loadingStateEnum.failed
 }> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
-    }/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields`,
+    }/lists/${store.getState().paulyList.scheduleListId}/items?expand=fields&$select=id,fields`,
   );
   if (result.ok) {
     const dataResult = await result.json();
@@ -578,7 +580,6 @@ async function getTimetablesFromSchoolYears(
   });
 
   if (
-    batchRequestResultSchoolYear.data === undefined ||
     batchRequestResultSchoolYear.result !== loadingStateEnum.success
   ) {
     return { result: loadingStateEnum.failed };
@@ -685,7 +686,6 @@ async function getTimetablesFromSchoolYears(
   });
 
   if (
-    batchRequestResultDressCode.data === undefined ||
     batchRequestResultDressCode.result !== loadingStateEnum.success
   ) {
     return { result: loadingStateEnum.failed };

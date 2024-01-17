@@ -9,8 +9,10 @@ import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 export default async function getDressCodeData(): Promise<{
-  result: loadingStateEnum;
-  data?: dressCodeType[];
+  result: loadingStateEnum.success;
+  data: dressCodeType[];
+} | {
+  result: loadingStateEnum.failed
 }> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${

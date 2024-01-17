@@ -22,9 +22,9 @@ import { getTeams } from '@utils/microsoftGroupsFunctions';
 import ProgressView from '@components/ProgressView';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import { CloseIcon } from '@components/Icons';
-import { getFileWithShareID } from '@src/utils/ultility/handleShareID';
+import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import { Link, useGlobalSearchParams } from 'expo-router';
-import { getSport } from '@src/utils/sports/sportsFunctions';
+import { getSport } from '@utils/sports/sportsFunctions';
 import SecondStyledButton from '@components/StyledButton';
 
 function SelectMicrosoftTeam({

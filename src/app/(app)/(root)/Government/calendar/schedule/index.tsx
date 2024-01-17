@@ -8,6 +8,7 @@ import ProgressView from '@components/ProgressView';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';
 import SecondStyledButton from '@components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 function GovernmentScheduleBody() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -19,8 +20,7 @@ function GovernmentScheduleBody() {
   async function loadSchedules() {
     const result = await getSchedules();
     if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
+      result.result === loadingStateEnum.success
     ) {
       setLoadedSchedules(result.data);
     }
@@ -56,23 +56,7 @@ function GovernmentScheduleBody() {
       <FlatList
         data={loadedSchedules}
         renderItem={schedule => (
-          <Link href={`/government/calendar/schedule/${schedule.item.id}`}>
-            <View
-              style={{
-                backgroundColor: Colors.white,
-                shadowColor: Colors.black,
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 1,
-                shadowRadius: 5,
-                margin: 10,
-                marginBottom: 0,
-                borderRadius: 15,
-              }}
-              key={schedule.item.id}
-            >
-              <Text style={{ margin: 10 }}>{schedule.item.properName}</Text>
-            </View>
-          </Link>
+          <StyledButton to={`/government/calendar/schedule/${schedule.item.id}`} text={schedule.item.properName} style={{margin: 15, marginBottom: 0}}/>
         )}
       />
     );
@@ -134,6 +118,7 @@ export default function GovernmentSchedule() {
         style={{ margin: 15 }}
         to="/government/calendar/schedule/create"
         text="Create New"
+        second
       />
     </View>
   );

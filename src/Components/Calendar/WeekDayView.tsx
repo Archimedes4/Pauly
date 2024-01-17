@@ -10,7 +10,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useColorScheme, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import createUUID from '@src/utils/ultility/createUUID';
+import createUUID from '@utils/ultility/createUUID';
 
 function EventBlock({
   event,

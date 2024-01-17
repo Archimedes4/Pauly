@@ -1,22 +1,19 @@
-/**
- * Pauly React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-import React, { useEffect, useState } from 'react';
-import { Dimensions, Linking, View } from 'react-native';
+/*
+  Pauly
+  Andrew Mainella
+  16 January 2024
+  RootLayout/index.native
+  Native code for main Root app which holds providers
+*/
+import React from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
-import {
-  SafeAreaProvider,
-} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import store from '@redux/store';
 import { paperTheme } from '@constants';
 import AppCore from './AppCore';
 
-// Main Root app holds providers
 export default function RootLayout() {
   return (
     <Provider store={store}>

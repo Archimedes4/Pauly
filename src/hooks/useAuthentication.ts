@@ -24,9 +24,7 @@ export default function useAuthentication() {
   const dispatch = useDispatch()
   // main function
   async function loadContent() {
-    console.log("Start")
     await silentLogin();
-    console.log("End")
     if (store.getState().authenticationToken !== '') {
       const webResult = webSession();
       if (!webResult) {

@@ -5,9 +5,7 @@
 */
 import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '@components/Icons';
 import { Colors, loadingStateEnum } from '@constants';
@@ -15,18 +13,19 @@ import { RootState } from '@redux/store';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
 import StyledButton from '@components/StyledButton';
+import { createTimetable } from '@utils/calendar/timetableFunctions';
+import ProgressView from '@components/ProgressView';
+import { Link } from 'expo-router';
 
 // TO DO longest amount of school days is 20 make sure this is enforced
-export default function GovernmentTimetableEdit() {
-  const { timetablesListId, siteId } = useSelector(
-    (state: RootState) => state.paulyList,
-  );
+export function GovernmentTimetableEdit({
+  creating
+}:{
+  creating: boolean
+}) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
 
   // Loading States
-  const [dressCodeState, setDressCodeState] = useState<loadingStateEnum>(
-    loadingStateEnum.loading,
-  );
   const [createTimetableLoadingState, setCreateTimetableLoadingState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
@@ -35,7 +34,6 @@ export default function GovernmentTimetableEdit() {
   const [selectedSchedules, setSelectedSchedules] = useState<scheduleType[]>(
     [],
   );
-  const [dressCodes, setDressCodes] = useState<dressCodeType[]>([]);
   const [selectedDressCode, setSelectedDressCode] = useState<
     dressCodeType | undefined
   >(undefined);
@@ -44,66 +42,6 @@ export default function GovernmentTimetableEdit() {
     scheduleType | undefined
   >(undefined);
 
-  async function createTimetable() {
-    if (
-      selectedDefaultSchedule !== undefined &&
-      selectedDressCode !== undefined
-    ) {
-      // Check to make sure all have the same number of periods
-      for (let index = 0; index < selectedSchedules.length; index += 1) {
-        if (
-          selectedSchedules[index].periods.length !==
-          selectedDefaultSchedule.periods.length
-        ) {
-          setCreateTimetableLoadingState(loadingStateEnum.failed);
-          return;
-        }
-      }
-
-      // Create Timetable
-      setCreateTimetableLoadingState(loadingStateEnum.loading);
-      const scheduals = [];
-      for (let index = 0; index < selectedSchedules.length; index += 1) {
-        scheduals.push(selectedSchedules[index].id);
-      }
-      const data = {
-        fields: {
-          Title: timetableName,
-          timetableName,
-          timetableId: createUUID(),
-          timetableDataSchedules: JSON.stringify(scheduals),
-          timetableDataDays: JSON.stringify(schoolDays),
-          timetableDefaultScheduleId: selectedDefaultSchedule.id,
-          timetableDressCodeId: selectedDressCode.id,
-        },
-      };
-      const result = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${timetablesListId}/items?expand=fields`,
-        'POST',
-        JSON.stringify(data),
-      ); // TO DO fix site id
-      if (result.ok) {
-        setCreateTimetableLoadingState(loadingStateEnum.success);
-      } else {
-        setCreateTimetableLoadingState(loadingStateEnum.failed);
-      }
-    }
-  }
-
-  async function getDressCodes() {
-    const result = await getDressCodeData();
-    setDressCodeState(result.result);
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
-    ) {
-      setDressCodes(result.data);
-    }
-  }
-
-  useEffect(() => {
-    getDressCodes();
-  }, []);
   return (
     <View
       style={{
@@ -113,7 +51,7 @@ export default function GovernmentTimetableEdit() {
         backgroundColor: Colors.white,
       }}
     >
-      <Link to="/government/calendar/timetable/">
+      <Link href="/government/calendar/timetable/">
         <Text>Back</Text>
       </Link>
       <Text>Create Timetable</Text>
@@ -154,47 +92,89 @@ export default function GovernmentTimetableEdit() {
         schoolDays={schoolDays}
         setSchoolDays={setSchoolDays}
       />
-      <Text>Dress Codes</Text>
-      <View>
-        {dressCodeState === loadingStateEnum.loading ? (
-          <Text>Loading</Text>
-        ) : (
-          <View>
-            {dressCodeState === loadingStateEnum.success ? (
-              <View>
-                {dressCodes.map(dressCode => (
-                  <StyledButton
-                    text={dressCode.name}
-                    onPress={() => {
-                      setSelectedDressCode(dressCode);
-                    }}
-                    style={{
-                      backgroundColor:
-                        selectedDressCode?.id === dressCode.id
-                          ? 'blue'
-                          : Colors.white,
-                    }}
-                  />
-                ))}
-              </View>
-            ) : (
-              <Text>Failed</Text>
-            )}
-          </View>
-        )}
-      </View>
+      <DressCodeBlock selectedDressCode={selectedDressCode} setSelectedDressCode={setSelectedDressCode}/>
       <StyledButton
         text={getTextState(createTimetableLoadingState, {
           notStarted: 'Create Timetable',
         })}
         onPress={() => {
-          if (createTimetableLoadingState === loadingStateEnum.notStarted) {
-            createTimetable();
+          if (createTimetableLoadingState === loadingStateEnum.notStarted && selectedDefaultSchedule !== undefined && selectedDressCode !== undefined) {
+            createTimetable(selectedDefaultSchedule, selectedSchedules, selectedDressCode, schoolDays, timetableName);
           }
         }}
       />
     </View>
   );
+}
+
+function DressCodeBlock({
+  selectedDressCode,
+  setSelectedDressCode
+}: {
+  selectedDressCode: dressCodeType | undefined,
+  setSelectedDressCode: (item: dressCodeType | undefined) => void
+}) {
+  const { height } = useSelector((state: RootState) => state.dimentions);
+  const [dressCodeState, setDressCodeState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [dressCodes, setDressCodes] = useState<dressCodeType[]>([]);
+
+  async function getDressCodes() {
+    const result = await getDressCodeData();
+    setDressCodeState(result.result);
+    if (
+      result.result === loadingStateEnum.success
+    ) {
+      setDressCodes(result.data);
+    }
+  }
+
+  useEffect(() => {
+    getDressCodes();
+  }, []);
+  if (dressCodeState === loadingStateEnum.loading) {
+    return (
+      <View>
+        <Text>Dress Codes</Text>
+        <View style={{height: height * 0.2, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+          <ProgressView width={14} height={14}/>
+          <Text>Loading</Text>
+        </View>
+      </View>
+    )
+  }
+
+  if (dressCodeState === loadingStateEnum.success) {
+    return (
+      <View style={{height: height * 0.2}}>
+        <Text>Dress Codes</Text>
+        {dressCodes.map(dressCode => (
+          <StyledButton
+            text={dressCode.name}
+            onPress={() => {
+              setSelectedDressCode(dressCode);
+            }}
+            style={{
+              backgroundColor:
+                selectedDressCode?.id === dressCode.id
+                  ? 'blue'
+                  : Colors.white,
+            }}
+          />
+        ))}
+      </View>
+    )
+  }
+  //Failed
+  return (
+    <View>
+      <Text>Dress Codes</Text>
+      <View style={{height: height * 0.2, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+        <Text>Failed</Text>
+      </View>
+    </View>
+  )
 }
 
 function SchoolDays({
@@ -463,3 +443,6 @@ function ScheduleBlock({
     </View>
   );
 }
+
+
+export default <GovernmentTimetableEdit creating={false}/>
