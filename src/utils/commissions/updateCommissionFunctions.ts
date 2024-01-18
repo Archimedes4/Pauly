@@ -1,3 +1,4 @@
+import { commissionsData } from './../ﻩgovernment/initializePauly/initializePaulyData';
 /*
   Pauly
   Andrew Mainella
@@ -7,57 +8,43 @@
 import store from '@redux/store';
 import { commissionTypeEnum, loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
+import createUUID from '../ultility/createUUID';
 
 export async function updateCommission(
   isCreating: boolean,
-  commissionName: string,
-  isTimed: boolean,
-  points: number,
-  isHidden: boolean,
-  maxNumberOfClaims: number,
-  allowMultipleSubmissions: boolean,
-  selectedCommissionType: number,
-  selectedPostId: string,
-  selectedTeamId: string,
-  selectedChannelId: string,
-  startDate: Date,
-  endDate: Date,
-  commissionId: string,
-  proximity: number,
-  selectedPositionIn: { lat: number; lng: number },
-  commissionItemId: string,
+  commissionsData: commissionType
 ): Promise<loadingStateEnum> {
   const data: any = {
     fields: {
       // All Commissions
-      Title: commissionName,
-      timed: isTimed,
-      points,
-      hidden: isHidden,
-      maxNumberOfClaims,
-      allowMultipleSubmissions,
-      commissionID: commissionId,
-      value: selectedCommissionType + 1,
+      Title: commissionsData.title,
+      timed: commissionsData.timed,
+      points: commissionsData.points,
+      hidden: commissionsData.hidden,
+      maxNumberOfClaims: commissionsData.maxNumberOfClaims,
+      allowMultipleSubmissions: commissionsData.allowMultipleSubmissions,
+      commissionID: commissionsData.commissionId,
+      value: commissionsData.value,
     },
   };
-  if (selectedPostId !== '') {
-    data.fields.postTeamId = selectedTeamId;
-    data.fields.postChannelId = selectedChannelId;
-    data.fields.postId = selectedPostId;
+  if (commissionsData.postData !== undefined) {
+    data.fields.postTeamId = commissionsData.postData.teamId;
+    data.fields.postChannelId = commissionsData.postData.channelId;
+    data.fields.postId = commissionsData.postData.postId;
   }
-  if (isTimed) {
-    data.fields.startDate = startDate.toISOString().replace(/.\d+Z$/g, 'Z');
-    data.fields.endDate = endDate.toISOString().replace(/.\d+Z$/g, 'Z');
+  if (commissionsData.timed) {
+    data.fields.startDate = commissionsData.startDate;
+    data.fields.endDate = commissionsData.endDate;
   }
   if (
-    selectedCommissionType === commissionTypeEnum.Location ||
-    selectedCommissionType === commissionTypeEnum.ImageLocation
+    commissionsData.value === commissionTypeEnum.Location ||
+    commissionsData.value === commissionTypeEnum.ImageLocation
   ) {
-    data.fields.proximity = proximity;
-    data.fields.coordinateLat = selectedPositionIn.lat;
-    data.fields.coordinateLng = selectedPositionIn.lng;
+    data.fields.proximity = commissionsData.proximity;
+    data.fields.coordinateLat = commissionsData.coordinateLat;
+    data.fields.coordinateLng = commissionsData.coordinateLng;
   }
-  if (selectedCommissionType === commissionTypeEnum.QRCode) {
+  if (commissionsData.value === commissionTypeEnum.QRCode) {
     data.fields.qrCodeData = '[]';
   }
 
@@ -65,7 +52,7 @@ export async function updateCommission(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
     }/lists/${store.getState().paulyList.commissionListId}/items${
-      !isCreating ? `/${commissionItemId}` : ''
+      !isCreating ? `/${commissionsData.itemId}` : ''
     }`,
     isCreating ? 'POST' : 'PATCH',
     JSON.stringify(data),
@@ -74,4 +61,28 @@ export async function updateCommission(
     return loadingStateEnum.success;
   }
   return loadingStateEnum.failed;
+}
+
+export async function createCommissionSubmission(userId: string, commissionId: string, submissionApproved: boolean, submissionReviewed: boolean): Promise<loadingStateEnum.success | loadingStateEnum.failed> {
+  const submissionId = createUUID()
+  const submissionData = {
+    Title: submissionId,
+    submittedTime: new Date().toISOString(),
+    userId: userId,
+    submissionId,
+    submissionApproved,
+    submissionReviewed,
+    commissionId: commissionId,
+    submissionData: JSON.stringify({}),
+  }
+  const submitResult = await callMsGraph(
+    `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items`,
+    'POST',
+    JSON.stringify(submissionData),
+  );
+  if (submitResult.ok) {
+    return loadingStateEnum.success
+  } else {
+    return loadingStateEnum.failed
+  }
 }

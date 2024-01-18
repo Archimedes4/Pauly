@@ -76,7 +76,7 @@ function checkIfStudent(role: string): {
   return { result: false };
 }
 
-export async function getUsers(url?: string, search?: string) {
+export async function getUsersAndPhotos(url?: string, search?: string) {
   const filter = search ? `&$search="displayName:${search}"` : '';
   const result = await callMsGraph(
     url ||
@@ -238,7 +238,7 @@ export async function getUsers(url?: string, search?: string) {
 
 export async function getStudentData(
   userId: string,
-): Promise<{ result: loadingStateEnum; data?: studentInformationType[] }> {
+): Promise<{ result: loadingStateEnum.success; data: studentInformationType[] } | {result: loadingStateEnum.failed}> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -368,4 +368,36 @@ export function getNumberOfBlocks(width: number) {
   return Math.floor(width / 190) !== 0
     ? Math.floor(width % 190 >= 0.75 ? width / 190 : (width + 190) / 190)
     : 1;
+}
+
+export async function getUsers(nextLink?: string): Promise<{
+  result: loadingStateEnum.success,
+  data: microsoftUserType[]
+  nextLink?: string
+} | {
+  result: loadingStateEnum.failed
+}> {
+  const result = await callMsGraph(
+    nextLink ||
+      'https://graph.microsoft.com/v1.0/users?$top=10&$select,id,displayName',
+  );
+  if (result.ok) {
+    const data = await result.json();
+    const newUsers: microsoftUserType[] = [];
+    for (let index = 0; index < data.value.length; index += 1) {
+      newUsers.push({
+        id: data.value[index].id,
+        displayName: data.value[index].displayName,
+      });
+    }
+    return {
+      result: loadingStateEnum.success,
+      data: data['@odata.nextLink'],
+      nextLink: data['@odata.nextLink']
+    }
+  } else {
+    return {
+      result: loadingStateEnum.failed
+    }
+  }
 }

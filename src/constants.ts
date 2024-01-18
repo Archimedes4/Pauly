@@ -177,10 +177,9 @@ declare global {
     semester: semesters;
     periods: number[];
   };
-  type commissionType = {
+  type commissionTypeDefault = {
     itemId: string;
     title: string;
-    timed: boolean;
     points: number;
     hidden: boolean;
     maxNumberOfClaims: number;
@@ -189,18 +188,34 @@ declare global {
     claimCount: number;
     reviewedCount: number;
     commissionId: string;
-    value: commissionTypeEnum;
-    startDate?: string;
-    endDate?: string;
-    proximity?: number;
-    coordinateLat?: number;
-    coordinateLng?: number;
+  }
+  type commissionTypeTimed = {
+    timed: true;
+    startDate: string;
+    endDate: string;
+  } | {
+    timed: false;
+    startDate: undefined;
+    endDate: undefined;
+  }
+  type commissionTypeValue = {
+    value: commissionTypeEnum.ImageLocation | commissionTypeEnum.Location
+    proximity: number;
+    coordinateLat: number;
+    coordinateLng: number;
+  } | {
+    value: commissionTypeEnum.Issued | commissionTypeEnum.Image | commissionTypeEnum.QRCode;
+    proximity: undefined;
+    coordinateLat: undefined;
+    coordinateLng: undefined;
+  }
+  type commissionType = commissionTypeDefault & commissionTypeTimed & commissionTypeValue & {
     postData?: {
       teamId: string;
       channelId: string;
       postId: string;
     };
-  };
+  }
   type dressCodeIncentiveType = {
     name: string;
     description: string;

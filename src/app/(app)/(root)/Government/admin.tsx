@@ -13,6 +13,7 @@ import { Colors, loadingStateEnum, styles } from '@constants';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 import { getTextState } from '@utils/ultility/createUUID';
+import { getUsers } from '@utils/studentFunctions';
 
 enum initStage {
   notStarted,
@@ -467,35 +468,24 @@ function UserBlock({
     }
   }
 
-  async function getUsers(nextLink?: string) {
-    const result = await callMsGraph(
-      nextLink ||
-        'https://graph.microsoft.com/v1.0/users?$top=10&$select,id,displayName',
-    );
-    if (result.ok) {
-      const data = await result.json();
-      const newUsers: microsoftUserType[] = [];
-      for (let index = 0; index < data.value.length; index += 1) {
-        newUsers.push({
-          id: data.value[index].id,
-          displayName: data.value[index].displayName,
-        });
-      }
-      setNextLink(data['@odata.nextLink']);
+  async function loadUsers(nextLink?: string) {
+    const userResult = await getUsers(nextLink);
+    if (userResult.result === loadingStateEnum.success) {
+      setNextLink(userResult.nextLink)
       if (nextLink) {
-        setLoadedUsers([...loadedUsers, ...newUsers]);
+        setLoadedUsers([...loadedUsers, ...userResult.data]);
       } else {
-        setLoadedUsers(newUsers);
+        setLoadedUsers(userResult.data);
       }
-      setLoadUsersResult(loadingStateEnum.success);
+      setLoadUsersResult(loadingStateEnum.success)
     } else {
-      setLoadUsersResult(loadingStateEnum.failed);
+      setLoadUsersResult(loadingStateEnum.failed)
     }
   }
 
   useEffect(() => {
     getUserId();
-    getUsers();
+    loadUsers();
   }, []);
 
   if (loadUsersResult === loadingStateEnum.loading) {
@@ -527,7 +517,7 @@ function UserBlock({
         }}
         onEndReached={() => {
           if (nextLink !== undefined) {
-            getUsers(nextLink);
+            loadUsers(nextLink);
           }
         }}
         style={{ height: height * 0.4, width: width - height * 0.1 }}

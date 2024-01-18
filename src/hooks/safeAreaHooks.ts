@@ -5,7 +5,7 @@
   safeAreaHooks.ts
 */
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
-import store, { RootState } from '@redux/store';
+import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

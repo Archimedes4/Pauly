@@ -19,7 +19,7 @@ import store, { RootState } from '@redux/store';
 import {
   changeStudentSelection,
   getStudentData,
-  getUsers,
+  getUsersAndPhotos,
   removeStudentSelection,
 } from '@utils/studentFunctions';
 import { CloseIcon } from '@components/Icons';
@@ -48,8 +48,7 @@ function SelectMainFile({
   async function loadData() {
     const result = await getStudentData(userId);
     if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
+      result.result === loadingStateEnum.success
     ) {
       setFileState(loadingStateEnum.success);
       setFileData(result.data);
@@ -251,7 +250,7 @@ export default function GovernmentStudents() {
   const dispatch = useDispatch();
 
   async function loadUsers() {
-    getUsers();
+    getUsersAndPhotos();
   }
 
   useEffect(() => {

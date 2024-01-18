@@ -13,6 +13,7 @@ import {
   Pressable,
   Switch,
   Image,
+  Modal,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
@@ -41,10 +42,11 @@ import getSubmissions from '@utils/commissions/getSubmissions';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { getFileWithShareID } from '@utils/ultility/handleShareID';
-import { updateCommission } from '@utils/commissions/updateCommissionFunctions';
+import { createCommissionSubmission, updateCommission } from '@utils/commissions/updateCommissionFunctions';
 import Slider from '@react-native-community/slider';
 import { useGlobalSearchParams } from 'expo-router';
 import StyledButton from '@components/StyledButton';
+import { getUsers } from '@utils/studentFunctions';
 
 enum datePickingMode {
   none,
@@ -67,38 +69,19 @@ export function GovernmentCommissionUpdate({
   const [submitCommissionState, setSubmitCommissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
-  const [selectedCommissionType, setSelectedCommissionType] =
-    useState<commissionTypeEnum>(commissionTypeEnum.Issued);
-
-  const [commissionName, setCommissionName] = useState<string>('');
-  const [proximity, setProximity] = useState<number>(0);
-  const [points, setPoints] = useState<number>(0);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-
-  const [isHidden, setIsHidden] = useState<boolean>(false);
+  const [commissionData, setCommissionData] = useState<commissionType | undefined>(undefined)
+  
 
   const [currentDatePickingMode, setCurrentDatePickingMode] =
     useState<datePickingMode>(datePickingMode.none);
 
-  const [selectedPositionIn, setSelectedPositionIn] = useState<{
-    lat: number;
-    lng: number;
-  }>({ lat: 49.85663823299096, lng: -97.22659526509193 });
-  const [maxNumberOfClaims, setMaxNumberOfClaims] = useState<number>(1);
-  const [allowMultipleSubmissions, setAllowMultipleSubmissions] =
-    useState<boolean>(false);
-  const [isTimed, setIsTimed] = useState<boolean>(true);
-
-  const [commissionItemId, setCommissionItemId] = useState<string>('');
 
   const [getCommissionResult, setGetCommissionResult] =
     useState<loadingStateEnum>(loadingStateEnum.loading);
   const [deleteCommissionResult, setDeleteCommissionResult] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
-  const [selectedTeamId, setSelectedTeamId] = useState<string>('');
-  const [selectedChannelId, setSelectedChannelId] = useState<string>('');
-  const [selectedPostId, setSelectedPostId] = useState<string>('');
+
+  const [isAddingCommissionSubmission, setIsAddingCommissionSubmission] = useState<boolean>(false);
 
   const { id } = useGlobalSearchParams();
 
@@ -106,24 +89,16 @@ export function GovernmentCommissionUpdate({
     if (typeof id === 'string') {
       const result = await getCommission(id);
       if (
-        result.result === loadingStateEnum.success &&
-        result.data !== undefined
+        result.result === loadingStateEnum.success
       ) {
-        // TO DO add all values
-        setCommissionItemId(result.data.itemId);
-        setCommissionName(result.data.title);
-        setAllowMultipleSubmissions(result.data.allowMultipleSubmissions);
-        setIsHidden(result.data.hidden);
-        setMaxNumberOfClaims(result.data.maxNumberOfClaims);
-        setIsTimed(result.data.timed);
-        setPoints(result.data.points);
+        setCommissionData(result.data)
       }
       setGetCommissionResult(result.result);
     }
   }
   async function deleteCommission() {
     if (
-      commissionItemId === '' ||
+      commissionData?.commissionId === '' ||
       deleteCommissionResult === loadingStateEnum.loading ||
       deleteCommissionResult === loadingStateEnum.success
     ) {
@@ -131,7 +106,7 @@ export function GovernmentCommissionUpdate({
     }
     setDeleteCommissionResult(loadingStateEnum.loading);
     const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${commissionListId}/items/${commissionItemId}`,
+      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${commissionListId}/items/${commissionData?.commissionId}`,
       'DELETE',
     );
     if (result.ok) {
@@ -161,30 +136,17 @@ export function GovernmentCommissionUpdate({
       submitCommissionState === loadingStateEnum.notStarted
     ) {
       setSubmitCommissionState(loadingStateEnum.loading);
-      const result = await updateCommission(
-        isCreate,
-        commissionName,
-        isTimed,
-        points,
-        isHidden,
-        maxNumberOfClaims,
-        allowMultipleSubmissions,
-        selectedCommissionType,
-        selectedPostId,
-        selectedTeamId,
-        selectedChannelId,
-        startDate,
-        endDate,
-        typeof id === 'string' ? id : createUUID(),
-        proximity,
-        selectedPositionIn,
-        commissionItemId,
-      );
-      setSubmitCommissionState(result);
+      if (commissionData !== undefined && commissionData.title && commissionData.timed && commissionData.points && commissionData.hidden && commissionData.maxNumberOfClaims && commissionData.allowMultipleSubmissions && commissionData.postData && commissionData.itemId ) {
+        const result = await updateCommission(
+          isCreate,
+          commissionData
+        );
+        setSubmitCommissionState(result);
+      }
     }
   }
 
-  if (typeof id !== 'string' && !isCreate) {
+  if ((typeof id !== 'string' && !isCreate) || commissionData === undefined) {
     return (
       <View
         style={{
@@ -230,38 +192,45 @@ export function GovernmentCommissionUpdate({
             {isCreate ? 'Create New' : 'Edit'} Commission
           </Text>
         </View>
-        <View
-          style={{
-            width,
-            height: height * 0.15,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <SegmentedPicker
-            selectedIndex={selectedCommissionType}
-            setSelectedIndex={setSelectedCommissionType}
-            options={[
-              'Issued',
-              'Location',
-              'Image',
-              'Image and Location',
-              'QRCode',
-            ]}
-            width={width * 0.8}
-            height={height * 0.1}
-          />
-        </View>
-        <Text>Commission Name</Text>
+        { isCreate ?
+          <View
+            style={{
+              width,
+              height: height * 0.15,
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <SegmentedPicker
+              selectedIndex={commissionData.value}
+              setSelectedIndex={(e) => {
+                setCommissionData({
+                  ...commissionData,
+                  value: e + 1
+                })
+              }}
+              options={[
+                'Issued',
+                'Location',
+                'Image',
+                'Image and Location',
+                'QRCode',
+              ]}
+              width={width * 0.8}
+              height={height * 0.1}
+            />
+          </View>:null
+        }
+        <Text style={{marginLeft: 25, marginBottom: 2}}>Commission Name</Text>
         <TextInput
-          value={commissionName}
-          onChangeText={text => setCommissionName(text)}
+          value={commissionData.title}
+          onChangeText={text => setCommissionData({...commissionData, title: text})}
           placeholder="Commission Name"
           style={styles.textInputStyle}
         />
-        {selectedCommissionType === commissionTypeEnum.ImageLocation ||
-        selectedCommissionType === commissionTypeEnum.Location ? (
+        {(commissionData.value === commissionTypeEnum.ImageLocation ||
+        commissionData.value === commissionTypeEnum.Location) && commissionData.proximity !== undefined ? (
           <View>
             <View
               style={{
@@ -273,9 +242,14 @@ export function GovernmentCommissionUpdate({
               }}
             >
               <Map
-                proximity={proximity}
-                // selectedPositionIn={selectedPositionIn}
-                onSetSelectedPositionIn={setSelectedPositionIn}
+                proximity={commissionData.proximity}
+                onSetSelectedPositionIn={(e) => {
+                  setCommissionData({
+                    ...commissionData,
+                    coordinateLat: e.lat,
+                    coordinateLng: e.lng
+                  })
+                }}
                 width={width * 0.8}
                 height={height * 0.3}
               />
@@ -284,8 +258,12 @@ export function GovernmentCommissionUpdate({
               <Text>Proximity</Text>
               <TextInput
                 keyboardType="numeric"
-                onChangeText={text => setProximity(parseFloat(text))}
-                value={proximity.toString()}
+                onChangeText={text => {
+                  setCommissionData({
+                    ...commissionData,
+                    proximity: parseFloat(text)
+                  })}}
+                value={commissionData.proximity.toString()}
                 maxLength={10} // setting limit of input
               />
             </View>
@@ -299,15 +277,18 @@ export function GovernmentCommissionUpdate({
             >
               <Slider
                 style={{ width: width * 0.9, height: 50 }}
-                value={proximity / 1000}
+                value={commissionData?.proximity ? commissionData.proximity / 1000:0}
                 onValueChange={value => {
-                  setProximity(value * 1000);
+                  setCommissionData({
+                    ...commissionData,
+                    proximity: value * 1000
+                  })
                 }}
               />
             </View>
           </View>
         ) : null}
-        {isTimed ? (
+        {commissionData.timed ? (
           <View
             style={{
               shadowColor: Colors.black,
@@ -324,12 +305,19 @@ export function GovernmentCommissionUpdate({
               <Text>Timed: </Text>
               <Switch
                 trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
+                thumbColor={commissionData.timed ? '#f5dd4b' : '#f4f3f4'}
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={e => {
-                  setIsTimed(e);
+                  if (e) {
+                    setCommissionData({
+                      ...commissionData,
+                      timed: true,
+                      startDate:  new Date().toISOString().replace(/.\d+Z$/g, 'Z'),
+                      endDate: new Date().toISOString().replace(/.\d+Z$/g, 'Z')
+                    })
+                  }
                 }}
-                value={isTimed}
+                value={commissionData.timed}
               />
             </View>
             <View
@@ -350,17 +338,20 @@ export function GovernmentCommissionUpdate({
                 <Text>Pick Start Time</Text>
               </Pressable>
               <TimePickerModal
-                hours={new Date(startDate).getHours()}
-                minutes={new Date(startDate).getMinutes()}
+                hours={new Date(commissionData.startDate).getHours()}
+                minutes={new Date(commissionData.startDate).getMinutes()}
                 visible={currentDatePickingMode === datePickingMode.startDate}
                 onDismiss={() =>
                   setCurrentDatePickingMode(datePickingMode.none)
                 }
                 onConfirm={e => {
-                  const newDate = new Date(startDate);
+                  const newDate = new Date(commissionData.startDate);
                   newDate.setHours(e.hours);
                   newDate.setMinutes(e.minutes);
-                  setStartDate(newDate);
+                  setCommissionData({
+                    ...commissionData,
+                    startDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z')
+                  })
                   setCurrentDatePickingMode(datePickingMode.none);
                 }}
               />
@@ -380,10 +371,10 @@ export function GovernmentCommissionUpdate({
                 onDismiss={() =>
                   setCurrentDatePickingMode(datePickingMode.none)
                 }
-                date={new Date(endDate)}
+                date={new Date(commissionData.startDate)}
                 onConfirm={e => {
                   if (e.date !== undefined) {
-                    const oldDate = new Date(endDate);
+                    const oldDate = new Date(commissionData.startDate);
                     const newDate = new Date(
                       e.date.getFullYear(),
                       e.date.getMonth(),
@@ -391,7 +382,11 @@ export function GovernmentCommissionUpdate({
                       oldDate.getHours(),
                       oldDate.getMinutes(),
                     );
-                    setStartDate(newDate);
+                    setCommissionData({
+                      ...commissionData,
+                      startDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z')
+                    })
+            
                   }
                   setCurrentDatePickingMode(datePickingMode.none);
                 }}
@@ -415,17 +410,20 @@ export function GovernmentCommissionUpdate({
                 <Text>Pick End Time</Text>
               </Pressable>
               <TimePickerModal
-                hours={new Date(endDate).getHours()}
-                minutes={new Date(endDate).getMinutes()}
+                hours={new Date(commissionData.endDate).getHours()}
+                minutes={new Date(commissionData.endDate).getMinutes()}
                 visible={currentDatePickingMode === datePickingMode.endTime}
                 onDismiss={() =>
                   setCurrentDatePickingMode(datePickingMode.none)
                 }
                 onConfirm={e => {
-                  const newDate = new Date(startDate);
+                  const newDate = new Date(commissionData.endDate);
                   newDate.setHours(e.hours);
                   newDate.setMinutes(e.minutes);
-                  setEndDate(newDate);
+                  setCommissionData({
+                    ...commissionData,
+                    endDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z')
+                  })
                   setCurrentDatePickingMode(datePickingMode.none);
                 }}
               />
@@ -445,10 +443,10 @@ export function GovernmentCommissionUpdate({
                 onDismiss={() =>
                   setCurrentDatePickingMode(datePickingMode.none)
                 }
-                date={new Date(endDate)}
+                date={new Date(commissionData.endDate)}
                 onConfirm={e => {
                   if (e.date !== undefined) {
-                    const oldDate = new Date(endDate);
+                    const oldDate = new Date(commissionData.endDate);
                     const newDate = new Date(
                       e.date.getFullYear(),
                       e.date.getMonth(),
@@ -456,7 +454,10 @@ export function GovernmentCommissionUpdate({
                       oldDate.getHours(),
                       oldDate.getMinutes(),
                     );
-                    setEndDate(newDate);
+                    setCommissionData({
+                      ...commissionData,
+                      endDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z')
+                    })
                   }
                   setCurrentDatePickingMode(datePickingMode.none);
                 }}
@@ -480,12 +481,24 @@ export function GovernmentCommissionUpdate({
             <Text>Timed: </Text>
             <Switch
               trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={isTimed ? '#f5dd4b' : '#f4f3f4'}
+              thumbColor={commissionData.timed ? '#f5dd4b' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={e => {
-                setIsTimed(e);
+                if (e) {
+                  setCommissionData({
+                    ...commissionData,
+                    timed: true,
+                    startDate:  new Date().toISOString().replace(/.\d+Z$/g, 'Z'),
+                    endDate: new Date().toISOString().replace(/.\d+Z$/g, 'Z')
+                  })
+                } else {
+                  setCommissionData({
+                    ...commissionData,
+                    timed: false
+                  })
+                }
               }}
-              value={isTimed}
+              value={commissionData.timed}
             />
           </View>
         )}
@@ -508,12 +521,18 @@ export function GovernmentCommissionUpdate({
               keyboardType="numeric"
               onChangeText={text => {
                 if (text === '') {
-                  setPoints(0);
+                  setCommissionData({
+                    ...commissionData,
+                    points: 0
+                  })
                 } else {
-                  setPoints(parseFloat(text));
+                  setCommissionData({
+                    ...commissionData,
+                    points: parseFloat(text)
+                  })
                 }
               }}
-              value={points.toString()}
+              value={commissionData.points.toString()}
               maxLength={10} // setting limit of input
             />
           </View>
@@ -521,35 +540,47 @@ export function GovernmentCommissionUpdate({
             <Text>Allow Multiple Submissions: </Text>
             <Switch
               trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={allowMultipleSubmissions ? '#f5dd4b' : '#f4f3f4'}
+              thumbColor={commissionData.allowMultipleSubmissions ? '#f5dd4b' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={e => {
-                setAllowMultipleSubmissions(e);
+                setCommissionData({
+                  ...commissionData,
+                  allowMultipleSubmissions: e
+                })
               }}
-              value={allowMultipleSubmissions}
+              value={commissionData.allowMultipleSubmissions}
             />
           </View>
           <View style={{ flexDirection: 'row' }}>
             <Text>Is Hidden: </Text>
             <Switch
               trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={isHidden ? '#f5dd4b' : '#f4f3f4'}
+              thumbColor={commissionData.hidden ? '#f5dd4b' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
               onValueChange={e => {
-                setIsHidden(e);
+                setCommissionData({
+                  ...commissionData,
+                  hidden: e
+                })
               }}
-              value={isHidden}
+              value={commissionData.hidden}
             />
           </View>
           <View style={{ flexDirection: 'row' }}>
             <Text>Max number of claims: </Text>
             <TextInput
-              value={maxNumberOfClaims.toString()}
+              value={commissionData.maxNumberOfClaims.toString()}
               onChangeText={e => {
                 if (e !== '') {
-                  setMaxNumberOfClaims(parseFloat(e));
+                  setCommissionData({
+                    ...commissionData,
+                    maxNumberOfClaims: parseFloat(e)
+                  })
                 } else {
-                  setMaxNumberOfClaims(0);
+                  setCommissionData({
+                    ...commissionData,
+                    maxNumberOfClaims: 0
+                  })
                 }
               }}
               inputMode="numeric"
@@ -570,14 +601,15 @@ export function GovernmentCommissionUpdate({
         >
           <Text>Post</Text>
           <PostSelectionContainer
-            width={width - 45}
+            width={width - 50}
             height={height * 0.4}
-            selectedTeamId={selectedTeamId}
-            selectedPostId={selectedPostId}
-            setSelectedTeamId={setSelectedTeamId}
-            selectedChannelId={selectedChannelId}
-            setSelectedChannelId={setSelectedChannelId}
-            setSelectedPostId={setSelectedPostId}
+            selectedPost={commissionData.postData}
+            setSelectedPost={(e) => {
+              setCommissionData({
+                ...commissionData,
+                postData: e
+              })
+            }}
           />
         </View>
         {!isCreate && typeof id === 'string' ? (
@@ -618,7 +650,7 @@ export function GovernmentCommissionUpdate({
             loadUpdateCommission();
           }}
           second
-          style={{ marginLeft: 15, marginRight: 15, marginBottom: 15 }}
+          style={{ margin: 15 }}
         />
         {!isCreate ? (
           <StyledButton
@@ -631,20 +663,13 @@ export function GovernmentCommissionUpdate({
             onPress={() => {
               deleteCommission();
             }}
-            style={{ marginLeft: 15, marginRight: 15, marginBottom: 15 }}
+            style={{ margin: 15 }}
           />
         ) : null}
       </ScrollView>
-
-      {/* <View style={{height: height * 0.8, width: width * 0.8, position: "absolute", left: width * 0.1, top: height * 0.1, zIndex: 2, backgroundColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? Colors.white:"transparent", borderRadius: 15, shadowColor: (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? "black":"transparent", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 10, alignItems: "center", justifyContent: "center", alignContent: "center"}} pointerEvents={(currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ? 'auto':'none'}>
-        { (currentDatePickingMode === datePickingMode.start || currentDatePickingMode === datePickingMode.end) ?
-          <DatePicker 
-            selectedDate={(currentDatePickingMode === datePickingMode.start) ? startDate:endDate} 
-            onSetSelectedDate={(date) => {if (currentDatePickingMode === datePickingMode.end) {setEndDate(date)} else if (currentDatePickingMode === datePickingMode.start) {setStartDate(date)}}}
-            width={width * 0.7} height={height * 0.7} onCancel={() => {setCurrentDatePickingMode(datePickingMode.none)}}
-          />:null
-        }
-      </View> */}
+      <Modal>
+        <AddCommissionSubmission commissionId={''} />
+      </Modal>
     </View>
   );
 }
@@ -658,24 +683,41 @@ enum postPickingMode {
 function PostSelectionContainer({
   width,
   height,
-  selectedChannelId,
-  selectedTeamId,
-  selectedPostId,
-  setSelectedChannelId,
-  setSelectedPostId,
-  setSelectedTeamId,
+  selectedPost,
+  setSelectedPost
 }: {
   width: number;
   height: number;
-  selectedTeamId: string;
-  selectedPostId: string;
-  setSelectedTeamId: (item: string) => void;
-  selectedChannelId: string;
-  setSelectedChannelId: (item: string) => void;
-  setSelectedPostId: (item: string) => void;
+  selectedPost?: {
+    teamId: string;
+    channelId: string;
+    postId: string;
+  }
+  setSelectedPost: (item: {
+    teamId: string;
+    channelId: string;
+    postId: string;
+  } | undefined) => void
 }) {
+  const [selectedTeamId, setSelectedTeamId] = useState<string>("");
+  const [selectedChannelId, setSelectedChannelId] = useState<string>("");
+  const [selectedPostId, setSelectedPostId] = useState<string>("");
   const [currentPostPickingMode, setCurrentPostPickingMode] =
     useState<postPickingMode>(postPickingMode.team);
+
+  useEffect(() => {
+    if (selectedPost) {
+      setSelectedTeamId(selectedPost.teamId)
+      setSelectedChannelId(selectedPost.channelId)
+      setSelectedPostId(selectedPost.postId)
+    } else {
+      setSelectedPostId('');
+      setSelectedChannelId('');
+      setSelectedTeamId('');
+    }
+   
+  }, [selectedPost])
+
   return (
     <>
       {currentPostPickingMode === postPickingMode.team ? (
@@ -683,6 +725,7 @@ function PostSelectionContainer({
           width={width}
           height={height}
           onSelect={e => {
+            setSelectedPost(undefined)
             setSelectedTeamId(e);
             setCurrentPostPickingMode(postPickingMode.channel);
           }}
@@ -700,6 +743,7 @@ function PostSelectionContainer({
           onBack={() => {
             setSelectedChannelId('');
             setSelectedTeamId('');
+            setSelectedPost(undefined)
             setCurrentPostPickingMode(postPickingMode.team);
           }}
         />
@@ -711,7 +755,14 @@ function PostSelectionContainer({
           teamId={selectedTeamId}
           channelId={selectedChannelId}
           selectedPostId={selectedPostId}
-          onSelect={setSelectedPostId}
+          onSelect={(e) => {
+            setSelectedPostId(e)
+            setSelectedPost({
+              teamId: selectedTeamId,
+              channelId: selectedChannelId,
+              postId: e
+            })
+          }}
           onBack={() => {
             setSelectedPostId('');
             setSelectedChannelId('');
@@ -946,33 +997,30 @@ function PostSelection({
   if (postsState === loadingStateEnum.success) {
     return (
       <ScrollView style={{ width, height }}>
-        <Pressable onPress={() => onBack()}>
-          <Text>Back</Text>
-        </Pressable>
+        <StyledButton text='Back' onPress={() => onBack()} second  style={{ marginLeft: 15, marginRight: 15, marginTop: 10, marginBottom: 10 }}/>
         <FlatList
           data={posts}
-          renderItem={post => (
-            <>
-              {post.item.body !== '<systemEventMessage/>' ? (
-                <Pressable
+          renderItem={post => {
+            if (post.item.body !== '<systemEventMessage/>') {
+              return (
+                <StyledButton
                   key={`Post_${post.item.id}`}
                   onPress={() => {
                     onSelect(post.item.id);
                   }}
                   style={{
                     padding: 5,
-                    margin: 5,
-                    backgroundColor:
-                      selectedPostId === post.item.id
-                        ? Colors.lightGray
-                        : Colors.white,
+                    margin: 15,
                   }}
+                  selected={selectedPostId === post.item.id}
+                  altColor='white'
                 >
                   <WebViewCross html={post.item.body} width={width * 0.9} />
-                </Pressable>
-              ) : null}
-            </>
-          )}
+                </StyledButton>
+              )
+            }
+            return null
+          }}
         />
       </ScrollView>
     );
@@ -983,6 +1031,146 @@ function PostSelection({
       <Text>Failed To Get Posts</Text>
     </View>
   );
+}
+
+function PickUser({
+  setSelectedUser,
+  onBack,
+  selectedUser
+}: {
+  setSelectedUser: (item: microsoftUserType) => void,
+  onBack: () => void,
+  selectedUser: undefined | microsoftUserType
+}) {
+  const [currentUserId, setCurrentUserId] = useState<string>('');
+  const [loadedUsers, setLoadedUsers] = useState<microsoftUserType[]>([]);
+  const [loadUsersResult, setLoadUsersResult] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [nextLink, setNextLink] = useState<string | undefined>(undefined);
+  const { height, width } = useSelector((state: RootState) => state.dimentions);
+
+  async function getUserId() {
+    const result = await callMsGraph('https://graph.microsoft.com/v1.0/me');
+    if (result.ok) {
+      const data = await result.json();
+      setCurrentUserId(data.id);
+    }
+  }
+
+  async function loadUsers(nextLink?: string) {
+    const userResult = await getUsers(nextLink);
+    if (userResult.result === loadingStateEnum.success) {
+      setNextLink(userResult.nextLink)
+      if (nextLink) {
+        setLoadedUsers([...loadedUsers, ...userResult.data]);
+      } else {
+        setLoadedUsers(userResult.data);
+      }
+      setLoadUsersResult(loadingStateEnum.success)
+    } else {
+      setLoadUsersResult(loadingStateEnum.failed)
+    }
+  }
+
+  useEffect(() => {
+    getUserId();
+    loadUsers();
+  }, []);
+
+  if (loadUsersResult === loadingStateEnum.loading) {
+    return (
+      <View style={{ height: height * 0.4 }}>
+        <StyledButton text='Back' onPress={() => onBack()}/>
+        <Text>Loading</Text>
+      </View>
+    );
+  }
+  if (loadUsersResult === loadingStateEnum.success) {
+    return (
+      <>
+        <StyledButton text='Back' onPress={() => onBack()}/>
+        <FlatList
+          data={loadedUsers}
+          renderItem={user => {
+            if (user.item.id !== currentUserId) {
+              return (
+                <StyledButton
+                  key={`User_${user.item.id}`}
+                  text={user.item.displayName}
+                  onPress={() => {
+                    setSelectedUser(user.item);
+                  }}
+                  selected={user.item.id === selectedUser?.id}
+                  style={styles.listStyle}
+                />
+              );
+            }
+            return null;
+          }}
+          onEndReached={() => {
+            if (nextLink !== undefined) {
+              loadUsers(nextLink);
+            }
+          }}
+          style={{ height: height * 0.4, width: width - height * 0.1 }}
+        />
+      </>
+    );
+  }
+  return (
+    <View style={{ height: height * 0.4 }}>
+      <StyledButton text='Back' onPress={() => onBack()}/>
+      <Text>Failed</Text>
+    </View>
+  );
+}
+
+function AddCommissionSubmission({
+  commissionId
+}:{
+  commissionId: string
+}) {
+  const [isPickingUser, setIsPickingUser] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<undefined | microsoftUserType>(undefined)
+  const [addSubmissionState, setAddSubmissionState] = useState<loadingStateEnum>(loadingStateEnum.cannotStart)
+  const [submissionApproved, setSubmissionApproved] = useState<boolean>(false)
+  const [submissionReviewed, setSubmissionReview] = useState<boolean>(false)
+
+  async function loadCreateCommissionSubmission() {
+    if (selectedUser !== undefined) {
+      setAddSubmissionState(loadingStateEnum.loading)
+      const result = await createCommissionSubmission(selectedUser.id, commissionId, submissionApproved, submissionReviewed)
+      setAddSubmissionState(result)
+    } else {
+      setAddSubmissionState(loadingStateEnum.cannotStart)
+    }
+  }
+
+  useEffect(() => {
+    if (selectedUser !== undefined) {
+      setAddSubmissionState(loadingStateEnum.notStarted)
+    } else {
+      setAddSubmissionState(loadingStateEnum.cannotStart)
+    }
+  }, [selectedUser])
+
+  if (isPickingUser) {
+    return <PickUser selectedUser={selectedUser} onBack={() => setIsPickingUser(false)} setSelectedUser={setSelectedUser}/>
+  }
+
+  return (
+    <View>
+      <StyledButton text='Select User' onPress={() => setIsPickingUser(true)}/>
+      <StyledButton text={getTextState(addSubmissionState, {
+        cannotStart: 'Please Pick a User',
+        notStarted: 'Start',
+        loading: 'Loading',
+        success: 'Submission Created',
+        failed: 'Failed to Create Submission'
+      })} onPress={() => loadCreateCommissionSubmission()}/>
+    </View>
+  )
 }
 
 function CommissionSubmissions({

@@ -66,6 +66,7 @@ export default function SegmentedPicker({
             justifyContent: 'center',
             transform: [{ translateX: index * compoentWidth }],
           }}
+          key={option}
         >
           <Text
             adjustsFontSizeToFit

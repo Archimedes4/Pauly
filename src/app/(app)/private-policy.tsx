@@ -9,7 +9,7 @@ import React from 'react';
 export default function PrivatePolicy() {
   return (
     <View>
-      <Text>private-policy</Text>
+      <Text>Private Policy</Text>
     </View>
   );
 }

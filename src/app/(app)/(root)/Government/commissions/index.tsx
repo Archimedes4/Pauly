@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
-import { ScrollView } from 'react-native-gesture-handler';
 import getCommissions from '@utils/commissions/getCommissions';
 import getSubmissions from '@utils/commissions/getSubmissions';
 import createUUID from '@utils/ultility/createUUID';
