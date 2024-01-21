@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import StyledButton from '@components/StyledButton';
-import BackButton from '@src/components/BackButton';
+import BackButton from '@components/BackButton';
 
 export default function GovernmentCalendar() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

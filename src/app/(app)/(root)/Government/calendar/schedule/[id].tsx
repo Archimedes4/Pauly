@@ -305,9 +305,9 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
                   borderColor: Colors.black,
                 }}
               />
-              <Pressable style={{ marginLeft: 5 }}>
+              <Pressable style={{ marginLeft: 5, width: width - 92.4, height: 16.5 }}>
                 <ColorPicker
-                  style={{ width: width - 87.4, height: 16.5 }}
+                  style={{ width: width - 100, height: 16.5 }}
                   value={color}
                   onComplete={e => setColor(e.hex)}
                 >

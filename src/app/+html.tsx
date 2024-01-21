@@ -19,6 +19,12 @@ export default function Root({ children }: PropsWithChildren) {
         />
         <meta name="apple-itunes-app" content="app-id=6445966725" />
         <link rel="manifest" href="/manifest.json" />
+        <style type="text/css">{`
+          body {
+            overflow: hidden; /* Hide scrollbars */
+          }
+        `}
+        </style>
       </head>
       <body>{children}</body>
     </html>

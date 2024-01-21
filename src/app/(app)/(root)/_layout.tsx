@@ -34,7 +34,7 @@ function AuthenticatedView() {
         overflow: overflowHidden ? 'hidden' : 'visible',
       }}
     >
-      <View style={{ flexDirection: 'row', width: totalWidth }}>
+      <View style={{ flexDirection: 'row', width: totalWidth,  overflow: overflowHidden ? 'hidden' : 'visible' }}>
         {currentBreakPoint >= 1 ? <NavBarComponent /> : null}
         <View
           style={{

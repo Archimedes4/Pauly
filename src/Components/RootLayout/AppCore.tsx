@@ -3,14 +3,30 @@ import { RootState } from "@redux/store";
 import getMainHeight from "@utils/getMainHeight";
 import setDimentions from "@utils/ultility/setDimentions";
 import { Slot } from "expo-router";
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { useEffect, useState } from "react";
-import { Dimensions, View } from "react-native";
+import { Dimensions, Platform, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 
-//used to get inital dimension
-const windowDimensions = Dimensions.get('window');
+
+function useWindowSize() {
+  if (Platform.OS === 'web') {
+    const [size, setSize] = useState([0, 0]);
+    useLayoutEffect(() => {
+      function updateSize() {
+        setSize([window.innerWidth, window.innerHeight]);
+      }
+      window.addEventListener('resize', updateSize);
+      updateSize();
+      return () => window.removeEventListener('resize', updateSize);
+    }, []);
+    return size;
+  } else {
+    const dimentions = useWindowDimensions()
+    return [dimentions.width, dimentions.height]
+  }
+}
 
 // App core holds dimentions
 export default function AppCore() {
@@ -22,27 +38,27 @@ export default function AppCore() {
   const { currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
   );
-  const [dimensions, setStateDimensions] = useState(windowDimensions);
+  const windowWidth = useWindowSize()[0];
+  const windowHeight = useWindowSize()[1];
+  
   const insets = useSafeAreaInsets();
 
+
   useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', ({ window }) => {
-      setStateDimensions(window);
-      setDimentions(
-        window.width,
-        window.height,
-        insets,
-        safeAreaColors.isTopTransparent,
-        safeAreaColors.isBottomTransparent,
-      );
-    });
-    return () => subscription?.remove();
-  });
+    console.log(windowWidth, windowHeight)
+    setDimentions(
+      windowWidth,
+      windowHeight,
+      insets,
+      safeAreaColors.isTopTransparent,
+      safeAreaColors.isBottomTransparent,
+    ); 
+  }, [windowHeight, windowWidth])
 
   useEffect(() => {
     setDimentions(
-      dimensions.width,
-      dimensions.height,
+      windowWidth,
+      windowHeight,
       insets,
       safeAreaColors.isTopTransparent,
       safeAreaColors.isBottomTransparent,
@@ -55,7 +71,6 @@ export default function AppCore() {
 
   useEffect(() => {
     const newDimensions = Dimensions.get('window');
-    setStateDimensions(newDimensions);
     setDimentions(
       newDimensions.width,
       newDimensions.height,
@@ -70,7 +85,7 @@ export default function AppCore() {
       {!safeAreaColors.isTopTransparent ? (
         <View
           style={{
-            width: dimensions.width,
+            width: windowWidth,
             height: insets.top,
             backgroundColor: safeAreaColors.top,
           }}
@@ -79,17 +94,19 @@ export default function AppCore() {
       <View
         style={{
           backgroundColor: safeAreaColors.bottom,
-          width: dimensions.width,
+          width: windowWidth,
           height: getMainHeight(
-            dimensions.height,
+            windowHeight,
             insets.top,
             insets.bottom,
             safeAreaColors.isTopTransparent,
             safeAreaColors.isBottomTransparent,
           ),
           zIndex: 10,
-          top: safeAreaColors.isTopTransparent ? 0 : insets.top,
           position: 'absolute',
+          top: safeAreaColors.isTopTransparent ? 0 : insets.top,
+          left:0,
+          overflow: Platform.OS === 'web' ? 'hidden':undefined
         }}
       >
         <Slot />
@@ -97,7 +114,7 @@ export default function AppCore() {
       {!safeAreaColors.isBottomTransparent ? (
         <View
           style={{
-            width: dimensions.width,
+            width: windowWidth,
             height: insets.bottom,
             backgroundColor: safeAreaColors.bottom,
             position: 'absolute',
@@ -108,10 +125,10 @@ export default function AppCore() {
       {currentBreakPoint >= 1 ? (
         <View
           style={{
-            height: dimensions.height,
+            height: windowHeight,
             width: expandedMode
-              ? dimensions.width * 0.25
-              : dimensions.width * 0.1,
+              ? windowWidth * 0.25
+              : windowWidth * 0.1,
             backgroundColor: Colors.maroon,
             position: 'absolute',
             top: 0,
