@@ -86,6 +86,7 @@ export default function Layout() {
     Roboto: require('assets/fonts/Roboto-Regular.ttf'),
     'Roboto-Bold': require('assets/fonts/Roboto-Bold.ttf'),
     'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf'),
+    //'MaterialCommunityIcons':require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')
   });
 
   const onLayoutRootView = useCallback(async () => {

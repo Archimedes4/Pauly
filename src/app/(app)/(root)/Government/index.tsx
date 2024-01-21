@@ -1,6 +1,9 @@
 /*
   Pauly
   Andrew Mainella
+  20 January 2024
+  government/index.tsx
+  Government Homepage. Shows navigation to government pages.
 */
 import {
   View,
@@ -108,7 +111,7 @@ export default function Government() {
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
       {currentBreakPoint <= 0 ? (
-        <Link href="/profile/">
+        <Link href={currentBreakPoint === 0 ? "/home":"/"}>
           <Text>Back</Text>
         </Link>
       ) : null}

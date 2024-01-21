@@ -7,7 +7,6 @@ import {
   FlatList,
 } from 'react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { TimePickerModal } from 'react-native-paper-dates';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -26,8 +25,9 @@ import { Colors, loadingStateEnum, styles } from '@constants';
 import { CloseIcon, WarningIcon } from '@components/Icons';
 import ProgressView from '@components/ProgressView';
 import { getSchedule } from '@utils/calendar/calendarFunctionsGraph';
-import { Link } from 'expo-router';
+import { Link, SplashScreen, useGlobalSearchParams } from 'expo-router';
 import SecondStyledButton from '@components/StyledButton';
+import { useFonts } from 'expo-font';
 
 function isValidHexaCode(input: string) {
   // Define the regular expression pattern for a valid hexadecimal color code
@@ -38,9 +38,11 @@ function isValidHexaCode(input: string) {
   return hexaPattern.test(input);
 }
 
+SplashScreen.preventAutoHideAsync();
+
 // NOTE: period length cannot be longer than 20
 export function GovernmentSchedule({ create }: { create: boolean }) {
-  const { id } = useParams();
+  const { id } = useGlobalSearchParams()
   const { width, height } = useSelector((state: RootState) => state.dimentions);
 
   const [scheduleListId, setScheduleListId] = useState<string | undefined>(
@@ -141,7 +143,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
   }
 
   const loadFunction = useCallback(async () => {
-    if (id !== undefined) {
+    if (typeof id === 'string') {
       const result = await getSchedule(id);
       if (
         result.result === loadingStateEnum.success
@@ -253,6 +255,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
               period={period.item}
               periods={newPeriods}
               onSetNewPeriods={out => {
+                console.log(out)
                 setNewPeriods([...out]);
               }}
             />
@@ -496,20 +499,14 @@ function PeriodBlock({
   function deleteItem(deletePeriod: periodType) {
     const newNewPeriodsArray: periodType[] = periods;
     if (newNewPeriodsArray.length === 1) {
-      newNewPeriodsArray.pop();
-      onSetNewPeriods(newNewPeriodsArray);
+      onSetNewPeriods([]);
     } else {
-      const indexToRemove = newNewPeriodsArray.findIndex(e => {
-        return e.id === deletePeriod.id;
-      });
-      if (indexToRemove !== -1) {
-        newNewPeriodsArray.splice(indexToRemove, indexToRemove);
-      } else {
-        // TODO something went wrong this should not be possible though
-      }
-      onSetNewPeriods(newNewPeriodsArray);
+      onSetNewPeriods(newNewPeriodsArray.filter((e => {
+        return e.id !== deletePeriod.id
+      })));
     }
   }
+
   return (
     <View
       key={`Period_${period.id}`}

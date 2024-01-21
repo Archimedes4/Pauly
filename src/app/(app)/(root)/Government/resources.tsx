@@ -15,7 +15,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import { Colors, loadingStateEnum, resourceResponce } from '@constants';
+import { Colors, loadingStateEnum, resourceResponce, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
 import getResource from '@utils/getResources';
 import { getResourceChannels } from '@utils/microsoftGroupsFunctions';
@@ -383,13 +383,7 @@ export default function GovernmentResources() {
           <Text>Back</Text>
         </Link>
         <Text
-          style={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            fontFamily: 'Comfortaa-Regular',
-            marginBottom: 5,
-            fontSize: 25,
-          }}
+          style={styles.headerText}
         >
           Government Resources
         </Text>

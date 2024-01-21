@@ -6,7 +6,7 @@
 */
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
-import { locationStateEnum } from '@constants';
+import { commissionTypeEnum, locationStateEnum } from '@constants';
 
 export default async function getUsersLocation(
   commission: commissionType,
@@ -19,6 +19,7 @@ export default async function getUsersLocation(
   const location = await Location.getCurrentPositionAsync();
   if (!location.mocked) {
     if (
+      (commission.value === commissionTypeEnum.Location || commission.value === commissionTypeEnum.ImageLocation) &&
       commission.coordinateLat !== undefined &&
       commission.coordinateLng !== undefined &&
       commission.proximity !== undefined

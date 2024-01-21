@@ -111,13 +111,12 @@ export default function GovernmentClassesEdit() {
       roomSearchText !== '' ? roomSearchText : undefined,
     );
     if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
+      result.result === loadingStateEnum.success
     ) {
       setRooms(result.data);
+      setRoomsNextLink(result.nextLink);
     }
     setRoomsState(result.result);
-    setRoomsNextLink(result.nextLink);
   }
 
   async function loadSchoolYears() {

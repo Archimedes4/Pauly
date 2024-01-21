@@ -196,7 +196,7 @@ export default function resourceBar() {
         flexDirection: 'row',
         backgroundColor: Colors.white,
         position: 'absolute',
-        bottom: 0,
+        bottom: 10,
         left: (width - barWidth) / 2,
         borderRadius: 30,
         borderWidth: 1,

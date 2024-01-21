@@ -12,7 +12,9 @@ import {
 export async function getRooms(
   nextLink?: string,
   search?: string,
-): Promise<{ result: loadingStateEnum; data?: roomType[]; nextLink?: string }> {
+): Promise<{ result: loadingStateEnum.success; data: roomType[]; nextLink?: string } | {
+  result: loadingStateEnum.failed
+}> {
   const searchFilter = search
     ? `&$filter=fields/roomName%20eq%20${search}`
     : ''; // TODO deal with search filter

@@ -3,8 +3,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
-import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
+import BackButton from '@src/components/BackButton';
 
 export default function GovernmentCalendar() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
@@ -16,9 +16,7 @@ export default function GovernmentCalendar() {
         backgroundColor: Colors.white,
       }}
     >
-      <Link href="/government">
-        <Text>Back</Text>
-      </Link>
+      <BackButton to="/government"/>
       <Text
         style={{
           marginLeft: 'auto',
@@ -26,6 +24,7 @@ export default function GovernmentCalendar() {
           fontFamily: 'Comfortaa-Regular',
           marginBottom: 5,
           fontSize: 25,
+          marginTop: 15
         }}
       >
         Government Calendar

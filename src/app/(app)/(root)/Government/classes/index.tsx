@@ -4,13 +4,14 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID from '@utils/ultility/createUUID';
-import { Colors, loadingStateEnum, semesters } from '@constants';
+import { Colors, loadingStateEnum, semesters, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
+import BackButton from '@src/components/BackButton';
 
-export default function GovernmentClasses() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+
+function GovernmentClassesBody() {
   const [classState, setClassState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -51,58 +52,59 @@ export default function GovernmentClasses() {
     getClasses();
   }, []);
 
+  if (classState === loadingStateEnum.loading) {
+    return (
+      <View style={{
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1
+      }}>
+        <ProgressView width={14} height={14} />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (classState === loadingStateEnum.success) {
+    return (
+      <FlatList
+        data={classes}
+        renderItem={classMap => (
+          <StyledButton to={`/government/classes/${classMap.item.id}`} key={`Class_${classMap.item.id}`} text={classMap.item.name} style={{margin: 15}}/>
+        )}
+      />
+    )
+  }
+
+  return (
+    <View style={{
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flex: 1
+    }}>
+      <Text>Failed</Text>
+    </View>
+  )
+}
+
+export default function GovernmentClasses() {
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View>
-        <Link href="/government/">
+        <Link href="/government">
           <Text>Back</Text>
         </Link>
-        <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>Classes</Text>
+        <Text style={styles.headerText}>Classes</Text>
       </View>
-      <ScrollView style={{ height: height * 0.85 }}>
-        <>
-          {classState === loadingStateEnum.loading ? (
-            <View>
-              <ProgressView width={14} height={14} />
-              <Text>Loading</Text>
-            </View>
-          ) : (
-            <>
-              {classState === loadingStateEnum.success ? (
-                <FlatList
-                  data={classes}
-                  renderItem={classMap => (
-                    <Link href={`/government/classes/${classMap.item.id}`}>
-                      <Pressable
-                        key={`Class_${classMap.item.id}_${createUUID()}`}
-                        style={{
-                          backgroundColor: Colors.white,
-                          shadowColor: Colors.black,
-                          shadowOffset: { width: 1, height: 1 },
-                          shadowOpacity: 1,
-                          shadowRadius: 5,
-                          borderRadius: 15,
-                          margin: 10,
-                        }}
-                      >
-                        <Text style={{ margin: 10 }}>{classMap.item.name}</Text>
-                      </Pressable>
-                    </Link>
-                  )}
-                />
-              ) : (
-                <View>
-                  <Text>Failed</Text>
-                </View>
-              )}
-            </>
-          )}
-        </>
-      </ScrollView>
+      <GovernmentClassesBody />
       <StyledButton
-        to="/government/classes/room"
+        to="/government/classes/rooms"
         text="Rooms"
         style={{ marginLeft: 10, marginRight: 10, marginBottom: 20 }}
+        second
       />
     </View>
   );

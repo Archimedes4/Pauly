@@ -113,13 +113,7 @@ export default function GovernmentHomePage() {
         <Text>Back</Text>
       </Link>
       <Text
-        style={{
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          fontFamily: 'Comfortaa-Regular',
-          marginBottom: 5,
-          fontSize: 25,
-        }}
+        style={styles.headerText}
       >
         Home Page
       </Text>

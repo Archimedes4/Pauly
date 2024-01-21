@@ -86,7 +86,22 @@ export function GovernmentCommissionUpdate({
   const { id } = useGlobalSearchParams();
 
   async function loadData() {
-    if (typeof id === 'string') {
+    if (isCreate) {
+      setCommissionData({
+        itemId: 'create',
+        title: '',
+        points: 0,
+        hidden: true,
+        maxNumberOfClaims: 0,
+        allowMultipleSubmissions: false,
+        submissionsCount: 0,
+        claimCount: 0,
+        reviewedCount: 0,
+        commissionId: createUUID(),
+        timed: false,
+        value: commissionTypeEnum.Issued
+      })
+    } else if (typeof id === 'string') {
       const result = await getCommission(id);
       if (
         result.result === loadingStateEnum.success
@@ -124,9 +139,7 @@ export function GovernmentCommissionUpdate({
     }
   }
   useEffect(() => {
-    if (!isCreate) {
-      loadData();
-    }
+    loadData();  
   }, []);
 
   async function loadUpdateCommission() {
@@ -715,7 +728,6 @@ function PostSelectionContainer({
       setSelectedChannelId('');
       setSelectedTeamId('');
     }
-   
   }, [selectedPost])
 
   return (

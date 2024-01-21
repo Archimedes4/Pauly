@@ -6,10 +6,10 @@
   Stores all of paulys types
 */
 
-import { DefaultTheme } from 'react-native-paper';
-import { ColorValue, StyleSheet } from 'react-native';
+import { DefaultTheme, configureFonts } from 'react-native-paper';
+import { ColorValue, Platform, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { ThemeProp } from 'react-native-paper/lib/typescript/types';
+import { MD3Type, ThemeProp } from 'react-native-paper/lib/typescript/types';
 
 // From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 export enum breakPointMode {
@@ -195,8 +195,6 @@ declare global {
     endDate: string;
   } | {
     timed: false;
-    startDate: undefined;
-    endDate: undefined;
   }
   type commissionTypeValue = {
     value: commissionTypeEnum.ImageLocation | commissionTypeEnum.Location
@@ -205,9 +203,6 @@ declare global {
     coordinateLng: number;
   } | {
     value: commissionTypeEnum.Issued | commissionTypeEnum.Image | commissionTypeEnum.QRCode;
-    proximity: undefined;
-    coordinateLat: undefined;
-    coordinateLng: undefined;
   }
   type commissionType = commissionTypeDefault & commissionTypeTimed & commissionTypeValue & {
     postData?: {
@@ -549,71 +544,46 @@ export class Colors {
   static blueGray = '#6699CC';
 }
 
+const paperFonts: Record<string, MD3Type> = {
+  customVariant: {
+    fontFamily: Platform.select({
+      web: 'Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif',
+      ios: 'System',
+      default: 'sans-serif',
+    }),
+    fontWeight: "normal",
+    letterSpacing: 0.5,
+    lineHeight: 22,
+    fontSize: 20,
+  },
+  labelMedium: {
+    fontFamily: Platform.select({
+      web: 'Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif',
+      ios: 'System',
+      default: 'sans-serif',
+    }),
+    fontWeight: "normal",
+    letterSpacing: 0.5,
+    lineHeight: 22,
+    fontSize: 20,
+  },
+  labelLarge: {
+    fontFamily: Platform.select({
+      web: 'Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif',
+      ios: 'System',
+      default: 'sans-serif',
+    }),
+    fontWeight: "normal",
+    letterSpacing: 0.5,
+    lineHeight: 22,
+    fontSize: 20,
+  },
+}
+
 // constance
 export const paperTheme: ThemeProp = {
   ...DefaultTheme,
-  fonts: {
-    'displayLarge': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'displayMedium': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'displaySmall': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'headlineLarge': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'headlineMedium': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'headlineSmall': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'titleLarge': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'titleMedium': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'titleSmall': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'labelLarge': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'labelMedium': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'labelSmall': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'bodyLarge': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'bodyMedium': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-    'bodySmall': {
-      fontFamily: 'raleway-regular',
-      fontWeight: 'normal',
-    },
-  },
+  fonts: configureFonts({config: paperFonts}),
   roundness: 2,
   colors: {
     // Primary
@@ -696,5 +666,12 @@ export const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
     marginTop: 20,
+  },
+  headerText: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    fontFamily: 'Comfortaa-Regular',
+    marginBottom: 5,
+    fontSize: 25,
   },
 });

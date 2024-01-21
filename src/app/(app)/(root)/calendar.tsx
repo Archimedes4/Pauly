@@ -127,9 +127,6 @@ function TopView({ width, height }: { width: number; height: number }) {
           Calendar
         </Text>
       </View>
-      <Pressable onPress={() => deleteEvents()}>
-        <Text>Delete</Text>
-      </Pressable>
       <View style={{ width: width * 0.55 }}>
         <View style={{ marginLeft: width * 0.05 }}>
           <CalendarTypePicker

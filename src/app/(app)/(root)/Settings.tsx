@@ -154,6 +154,8 @@ export default function Settings() {
           shadowColor: Colors.black,
           shadowOffset: { width: 2, height: 4 },
           shadowOpacity: 0.8,
+          borderRadius: 15,
+          overflow: 'hidden',
           shadowRadius: 10,
         }}
       >
@@ -161,7 +163,6 @@ export default function Settings() {
           style={{
             width: width * 0.8,
             height: height * 0.08,
-            borderRadius: 15,
             flexDirection: 'row',
             backgroundColor: Colors.white,
             alignItems: 'center',
@@ -180,29 +181,42 @@ export default function Settings() {
       </Link>
       {isGovernmentMode ? (
         <Link
+          href="/government"
           style={{
             width: width * 0.8,
             height: height * 0.08,
-            borderRadius: 15,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: height * 0.05,
             shadowColor: Colors.black,
             shadowOffset: { width: 2, height: 4 },
             shadowOpacity: 0.8,
+            borderRadius: 15,
+            overflow: 'hidden',
+            marginBottom: 15,
             shadowRadius: 10,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            flexDirection: 'row',
-            backgroundColor: Colors.white,
-            alignItems: 'center',
-            marginTop: height * 0.05,
           }}
-          href="/government"
         >
-          <GovernmentIcon
-            width={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
-            height={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
-            style={{ marginLeft: width * 0.025 }}
-          />
-          <Text>Government</Text>
+          <View
+            style={{
+              width: width * 0.8,
+              height: height * 0.08,
+            
+              flexDirection: 'row',
+              backgroundColor: Colors.white,
+              alignItems: 'center',
+              overflow: 'hidden',
+            }}
+          >
+            <GovernmentIcon
+              width={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
+              height={width * 0.8 < height * 0.08 ? width * 0.2 : height * 0.06}
+              style={{ marginLeft: width * 0.025 }}
+            />
+            <Text style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              Government
+            </Text>
+          </View>
         </Link>
       ) : null}
     </View>

@@ -24,7 +24,7 @@ import {
 } from '@utils/studentFunctions';
 import { CloseIcon } from '@components/Icons';
 import { studentSearchSlice } from '@redux/reducers/studentSearchReducer';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, loadingStateEnum, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
 import addImage from '@utils/addImage';
 import { getTextState } from '@utils/ultility/createUUID';
@@ -262,14 +262,7 @@ export default function GovernmentStudents() {
       <View style={{ height: height * 0.15, backgroundColor: Colors.darkGray }}>
         <BackButton to="/government/" />
         <Text
-          style={{
-            marginTop: 8 + 14,
-            fontSize: 35,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            fontFamily: 'Comfortaa-Regular',
-            color: Colors.white,
-          }}
+          style={styles.headerText}
         >
           Government Students
         </Text>

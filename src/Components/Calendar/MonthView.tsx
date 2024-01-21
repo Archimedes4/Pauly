@@ -275,7 +275,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
               {new Date(selectedDate).getFullYear()}
             </Text>
           </View>
-          {isDateToday(selectedDate) ? (
+          {!isDateToday(selectedDate) ? (
             <Pressable
               style={{
                 width: width * 0.9 * 0.2,

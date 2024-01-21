@@ -16,6 +16,8 @@ import { paperTheme } from '@constants';
 import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
 import AppCore from './AppCore';
+import { Platform } from 'react-native';
+import Head from 'expo-router/head';
 
 // stop redirect error
 function getRedirectUri() {
@@ -54,16 +56,26 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <Provider store={store}>
-      <PaperProvider theme={paperTheme}>
-        <SafeAreaProvider>
-          <GestureHandlerRootView style={{ flex: 1 }}>
-            <MsalProvider instance={pca}>
-              <AppCore />
-            </MsalProvider>
-          </GestureHandlerRootView>
-        </SafeAreaProvider>
-      </PaperProvider>
-    </Provider>
+    <>
+      <Head>
+        <style type="text/css">{`
+            @font-face {
+              font-family: 'MaterialCommunityIcons';
+              src: url(${require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')}) format('truetype');
+            }
+          `}</style>
+      </Head>
+      <Provider store={store}>
+        <PaperProvider theme={paperTheme} >
+          <SafeAreaProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <MsalProvider instance={pca}>
+                <AppCore />
+              </MsalProvider>
+            </GestureHandlerRootView>
+          </SafeAreaProvider>
+        </PaperProvider>
+      </Provider>
+    </>
   );
 }

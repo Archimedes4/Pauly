@@ -15,7 +15,7 @@ import ProgressView from '@components/ProgressView';
 import { PersonIcon } from '@components/Icons';
 import { studentSearchSlice } from '@redux/reducers/studentSearchReducer';
 import BackButton from '@components/BackButton';
-import { getNumberOfBlocks, getUsers } from '@utils/studentFunctions';
+import { getNumberOfBlocks, getUsersAndPhotos } from '@utils/studentFunctions';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID from '@utils/ultility/createUUID';
 import { Link } from 'expo-router';
@@ -162,7 +162,7 @@ export default function Students() {
   const dispatch = useDispatch();
 
   async function loadUsers() {
-    getUsers();
+    getUsersAndPhotos()
   }
 
   useEffect(() => {
@@ -220,10 +220,10 @@ export default function Students() {
           }
           onSearch={() => {
             if (searchText !== '') {
-              getUsers(undefined, searchText);
+              getUsersAndPhotos(undefined, searchText);
               dispatch(studentSearchSlice.actions.setNextLink(undefined));
             } else {
-              getUsers();
+              getUsersAndPhotos();
             }
           }}
           top={height * 0.15 - 19}
@@ -236,7 +236,7 @@ export default function Students() {
           numColumns={getNumberOfBlocks(width)}
           onEndReached={() => {
             if (nextLink !== undefined) {
-              getUsers(nextLink);
+              getUsersAndPhotos(nextLink);
             }
           }}
           style={{ height: height * 0.825 }}

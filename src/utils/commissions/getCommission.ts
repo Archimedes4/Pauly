@@ -24,7 +24,7 @@ export default async function getCommission(commissionId: string): Promise<
   if (result.ok) {
     const data = await result.json();
     if (data.value.length !== 1) {
-      // Not found
+      // Not found or error. Error shouldn't be possible as it would involve having duplicate ids.
       return { result: loadingStateEnum.failed };
     }
     const dataResult: commissionType = {
@@ -43,9 +43,9 @@ export default async function getCommission(commissionId: string): Promise<
         channelId: data.value[0].fields.postChannelId,
         postId: data.value[0].fields.postId,
       },
-      timed: false,
-      maxNumberOfClaims: 0,
-      allowMultipleSubmissions: false,
+      timed:  data.value[0].fields.timed,
+      maxNumberOfClaims: data.value[0].fields.maxNumberOfClaims,
+      allowMultipleSubmissions: data.value[0].fields.allowMultipleSubmissions,
       value: data.value[0].fields.value - 1,
       submissionsCount: 0,
       claimCount: 0,
