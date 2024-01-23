@@ -41,7 +41,7 @@ export default async function getPaulyLists() {
         classExtensionId: paulyListResultData.value[0].fields.classExtensionId,
         tagedResourceId: paulyListResultData.value[0].fields.tagedResourceId,
         roomListId: paulyListResultData.value[0].fields.roomListId,
-        calendarSyncStateListId: paulyListResultData.value[0].fields.roomListId,
+        calendarSyncStateListId: paulyListResultData.value[0].fields.calendarSyncStateListId,
       };
       store.dispatch(paulyListSlice.actions.setPaulyList(paulyListData));
       if (Platform.OS === 'web' && sessionStorage !== undefined) {

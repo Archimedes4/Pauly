@@ -49,6 +49,11 @@ export default function GovernmentCalendar() {
         text="Calendar Sync"
         style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
       />
+       <StyledButton
+        to="/government/calendar/utility"
+        text="Calendar Utility"
+        style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
+      />
     </View>
   );
 }

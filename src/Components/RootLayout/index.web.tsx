@@ -5,7 +5,7 @@
  * @format
  */
 import React, { useEffect, useState } from 'react';
-import { PaperProvider } from 'react-native-paper';
+import { Icon, IconButton, PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
 import {
@@ -18,6 +18,7 @@ import { PublicClientApplication } from '@azure/msal-browser';
 import AppCore from './AppCore';
 import { Platform } from 'react-native';
 import Head from 'expo-router/head';
+import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 // stop redirect error
 function getRedirectUri() {
@@ -56,26 +57,16 @@ export default function RootLayout() {
     return null;
   }
   return (
-    <>
-      <Head>
-        <style type="text/css">{`
-            @font-face {
-              font-family: 'MaterialCommunityIcons';
-              src: url(${require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')}) format('truetype');
-            }
-          `}</style>
-      </Head>
-      <Provider store={store}>
-        <PaperProvider theme={paperTheme} >
-          <SafeAreaProvider>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-              <MsalProvider instance={pca}>
-                <AppCore />
-              </MsalProvider>
-            </GestureHandlerRootView>
-          </SafeAreaProvider>
-        </PaperProvider>
-      </Provider>
-    </>
+    <Provider store={store}>
+      <PaperProvider theme={paperTheme} >
+        <SafeAreaProvider>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <MsalProvider instance={pca}>
+              <AppCore />
+            </MsalProvider>
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </PaperProvider>
+    </Provider>
   );
 }

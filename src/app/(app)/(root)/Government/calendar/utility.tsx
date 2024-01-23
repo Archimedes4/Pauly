@@ -8,7 +8,7 @@ import React from 'react'
 import { Link } from 'expo-router';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
-import { Colors } from '@constants';
+import { Colors, styles } from '@constants';
 import StyledButton from '@components/StyledButton';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
@@ -70,18 +70,11 @@ export default function GovernmentClaendarUtility() {
         <Text>Back</Text>
       </Link>
       <Text
-        style={{
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          fontFamily: 'Comfortaa-Regular',
-          marginBottom: 5,
-          fontSize: 25,
-        }}
+        style={styles.headerText}
       >
-        Calendar Sync
+        Calendar Ultility
       </Text>
-
-      <StyledButton text="Sync Calendar" onPress={() => deleteEvents()} />
+      <StyledButton text="Delete Calendar" onPress={() => deleteEvents()} />
     </View>
   )
 }

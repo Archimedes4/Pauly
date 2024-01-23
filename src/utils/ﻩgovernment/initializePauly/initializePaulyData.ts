@@ -88,11 +88,6 @@ export const paulyListData = {
       required: true,
     },
     {
-      name: 'userExtensionId',
-      text: {},
-      required: true,
-    },
-    {
       name: 'noClassListId',
       text: {},
       required: true,

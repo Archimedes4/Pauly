@@ -5,17 +5,43 @@
   _layout.tsx
 */
 import RootLayout from '@components/RootLayout';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Head from 'expo-router/head';
+import { isLoaded, loadAsync, useFonts } from 'expo-font';
+import { View } from 'react-native';
+import { SplashScreen } from 'expo-router';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App(): React.JSX.Element | null {
   // Fixing hydration issues
   const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [fontsLoaded, setFontsLoaded] = useState<boolean>(false)
 
-  if (!mounted) {
+  useEffect(() => {
+    if (!mounted) {
+      loadAsync({
+        BukhariScript: require('assets/fonts/BukhariScript.ttf'),
+        'Gochi-Hand': require('assets/fonts/GochiHand-Regular.ttf'),
+        Roboto: require('assets/fonts/Roboto-Regular.ttf'),
+        'Roboto-Bold': require('assets/fonts/Roboto-Bold.ttf'),
+        'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf'),
+        // 'material-community': require('assets/fonts/MaterialCommunityIcons.ttf'),
+       // 'material-community': require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')
+      })
+        .then(() => setFontsLoaded(true))
+        .catch(() => {});
+    }
+    setMounted(true);
+  }, [])
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!mounted && ! isLoaded) {
     return null;
   }
 
@@ -23,8 +49,11 @@ export default function App(): React.JSX.Element | null {
     <>
       <Head>
         <title>Pauly</title>
+        
       </Head>
-      <RootLayout />
+      <View onLayout={onLayoutRootView}>
+       <RootLayout />
+      </View>
     </>
   );
 }

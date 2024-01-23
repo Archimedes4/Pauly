@@ -5,7 +5,7 @@
   Authenticated layout
 */
 import { View, Text, Pressable } from 'react-native';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import useIsConnected from '@hooks/useIsConnected';
 import { Colors } from '@constants';
 import { OfflineIcon } from '@components/Icons';
@@ -17,7 +17,7 @@ import useAuthentication from '@hooks/useAuthentication';
 import { useSignOut } from '@hooks/authentication';
 import ProgressView from '@components/ProgressView';
 import useIsShowingLogout from '@hooks/useIsShowingLogout';
-import { useFonts } from 'expo-font';
+import { loadAsync, useFonts } from 'expo-font';
 
 
 export const unstable_settings = {
@@ -80,26 +80,9 @@ export default function Layout() {
   const insets = useSafeAreaInsets();
   const isLoading = useAuthentication();
 
-  const [fontsLoaded] = useFonts({
-    BukhariScript: require('assets/fonts/BukhariScript.ttf'),
-    'Gochi-Hand': require('assets/fonts/GochiHand-Regular.ttf'),
-    Roboto: require('assets/fonts/Roboto-Regular.ttf'),
-    'Roboto-Bold': require('assets/fonts/Roboto-Bold.ttf'),
-    'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf'),
-    //'MaterialCommunityIcons':require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
-
-  if (isConnected && !isLoading && fontsLoaded) {
+  if (isConnected && !isLoading) {
     return (
-      <View onLayout={onLayoutRootView}>
-        <Slot />
-      </View>
+      <Slot />
     );
   }
 

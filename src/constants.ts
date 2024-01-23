@@ -138,6 +138,12 @@ declare global {
     selectedDay?: number;
     dueDate?: Date;
   };
+  type attachment = {
+    webUrl: string;
+    id: string;
+    title: string;
+    type: string;
+  };
   type batchResponseType = {
     method: 'GET' | 'POST';
     id: string;
@@ -235,6 +241,12 @@ declare global {
     SchoolDay?: string;
     Value?: number;
   };
+  type calendarSyncState = {
+    "startTime":string;
+    "endTime":string;
+    "invocationId":string;
+    "state":string;
+  }
   type groupType = {
     name: string;
     id: string;
@@ -484,12 +496,6 @@ declare global {
           fileId: string;
           postType: postType.youtubeVideo;
         };
-  };
-  type attachment = {
-    webUrl: string;
-    id: string;
-    title: string;
-    type: string;
   };
   type insightResult = {
     userState: loadingStateEnum;

@@ -226,3 +226,20 @@ All permissions are Delegated permissions
   - constants: holds types, colors, and some constants
 - rest: config files env files readme
 
+# Oddities
+Some things were needed in order to get things working without errors. Here is a list of them please check that these patches are actually needed.
+
+1. React Native Reanimated (fixed in react native reanimated 3.5)
+Expo is compatable with React Native Reanimated 3.3. 
+
+Error: requestAnimationFrame is not defined
+
+Issue: https://github.com/expo/router/issues/718
+Patch: https://gist.github.com/javascripter/4e4e20e9024a33592437648b718c763d
+
+2. Expo Fonts
+Expo fonts and React Native Paper aren't playing nice. Taking over the 3 second threshold to load.
+
+
+Issue: https://github.com/expo/expo/issues/12382
+Patch: Inside Issue very simple chaning the timout
