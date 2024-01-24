@@ -23,13 +23,8 @@ export default function Root({ children }: PropsWithChildren) {
           body {
             overflow: hidden; /* Hide scrollbars */
           }
-          @font-face {
-            font-family: MaterialCommunityIcons;
-            src: url(assets/assets/fonts/MaterialCommunityIcons.ttf);
-          }
         `}
         </style>
-        <link rel="preload" href="/assets/assets/fonts/MaterialCommunityIcons.ttf?platform=web&hash=b62641afc9ab487008e996a5c5865e56" as="font" type="font/ttf" />
       </head>
       <body>{children}</body>
     </html>

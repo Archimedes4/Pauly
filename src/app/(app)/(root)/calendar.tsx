@@ -192,12 +192,12 @@ export default function Calendar() {
           style={{
             zIndex: 2,
             position: 'absolute',
-            left: width * 0.05 + (width >= 576 ? width * 0.3 : 0) / 2,
+            left: width * 0.05 + (currentBreakPoint === 0 ? 0 : width * 0.3) / 2,
             top: height * 0.1,
           }}
         >
           <AddEvent
-            width={width * 0.9 - (width >= 576 ? width * 0.3 : 0)}
+            width={width * 0.9 - (currentBreakPoint === 0 ? width * 0.1 : width * 0.3)}
             height={height * 0.8}
           />
         </View>

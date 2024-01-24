@@ -3,12 +3,12 @@
   Andrew Mainella
   24 November 2023
 */
-import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '@components/Icons';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, loadingStateEnum, styles } from '@constants';
 import { RootState } from '@redux/store';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
@@ -54,7 +54,7 @@ export function GovernmentTimetableEdit({
       <Link href="/government/calendar/timetable/">
         <Text>Back</Text>
       </Link>
-      <Text>Create Timetable</Text>
+      <Text style={styles.headerText}>{creating ? "Create":"Edit"} Timetable</Text>
       <View style={{ backgroundColor: '#FF6700', borderRadius: 15, margin: 5 }}>
         <View style={{ margin: 10 }}>
           <Text>
@@ -102,6 +102,7 @@ export function GovernmentTimetableEdit({
             createTimetable(selectedDefaultSchedule, selectedSchedules, selectedDressCode, schoolDays, timetableName);
           }
         }}
+        second
       />
     </View>
   );
@@ -349,8 +350,7 @@ function ScheduleBlock({
   async function loadSchedules() {
     const result = await getSchedules();
     if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
+      result.result === loadingStateEnum.success
     ) {
       setLoadedSchedules(result.data);
     }
@@ -359,89 +359,77 @@ function ScheduleBlock({
   useEffect(() => {
     loadSchedules();
   }, []);
+
+  if (scheduleState === loadingStateEnum.loading) {
+    return (
+      <View>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (scheduleState === loadingStateEnum.success) {
+    return (
+      <View>
+        <Text>Schedules</Text>
+        <Text>Selected Schedules</Text>
+        <FlatList 
+          data={selectedSchedules}
+          renderItem={(item) => (
+            <StyledButton style={{ height: height * 0.03 + 16, margin: 15, marginBottom: 0 }} key={`SelectedSchedule_${item.item.id}`}>
+              <Text>{item.item.properName}</Text>
+              {selectedDefaultSchedule?.id !== item.item.id ? (
+                <Pressable
+                  onPress={() => {
+                    setSelectedDefaultSchedule(item.item);
+                  }}
+                  style={{ backgroundColor: 'blue', height: 26.4, borderRadius: 15 }}
+                >
+                  <Text style={{margin: 5}}>Select As Default</Text>
+                </Pressable>
+              ) : null}
+            </StyledButton>
+          )}
+          style={{ height: height * 0.4 }}
+        />
+        <View style={{ alignItems: 'center' }}>
+          <Text>Other Schedules</Text>
+        </View>
+        <FlatList 
+          data={loadedSchedules}
+          renderItem={(item) => {
+            if (selectedSchedules.length < 1 || selectedSchedules[0].periods.length === item.item.periods.length) {
+              return (
+                <StyledButton
+                  key={`Timetable_${item.item.id}_${createUUID()}`}
+                  onPress={() => {
+                    setSelectedSchedules([...selectedSchedules, item.item]);
+                    const newLoadedSchedules = loadedSchedules.filter(e => {
+                      return e.id !== item.item.id;
+                    });
+                    setLoadedSchedules([...newLoadedSchedules]);
+                    if (selectedDefaultSchedule === undefined) {
+                      setSelectedDefaultSchedule(item.item);
+                    }
+                  }}
+                  text={item.item.properName}
+                  style={{margin: 15, marginBottom: 0}}
+                />
+              )
+            }
+            return null
+          }}
+          style={{ height: height * 0.4 }}
+        />
+      </View>
+    );
+  }
+
   return (
     <View>
-      <Text>Scheduals</Text>
-      <Text>Selected Schedules</Text>
-      <ScrollView style={{ height: height * 0.4 }}>
-        {selectedSchedules.map(item => (
-          <View
-            style={{ height: height * 0.03 + 16 }}
-            key={`SelectedSchedule_${item.id}`}
-          >
-            <Text>{item.properName}</Text>
-            {selectedDefaultSchedule?.id !== item.id ? (
-              <Pressable
-                onPress={() => {
-                  setSelectedDefaultSchedule(item);
-                }}
-                style={{ backgroundColor: 'blue', height: 16 }}
-              >
-                <Text>Select As Default</Text>
-              </Pressable>
-            ) : null}
-          </View>
-        ))}
-      </ScrollView>
-      <View style={{ alignItems: 'center' }}>
-        <Text>Other Schedules</Text>
-      </View>
-      <ScrollView style={{ height: height * 0.4 }}>
-        {scheduleState === loadingStateEnum.loading ? (
-          <Text>Loading</Text>
-        ) : null}
-        {scheduleState === loadingStateEnum.failed ? <Text>Failed</Text> : null}
-        {scheduleState === loadingStateEnum.success ? (
-          <>
-            {loadedSchedules.map((item, index) => (
-              <>
-                {selectedSchedules.length <= 0 ? (
-                  <Pressable
-                    key={`Timetable_${item.id}_${createUUID()}`}
-                    onPress={() => {
-                      setSelectedSchedules([...selectedSchedules, item]);
-                      const newLoadedSchedules = loadedSchedules.filter(e => {
-                        return e.id !== item.id;
-                      });
-                      setLoadedSchedules([...newLoadedSchedules]);
-                      if (selectedDefaultSchedule === undefined) {
-                        setSelectedDefaultSchedule(item);
-                      }
-                    }}
-                  >
-                    <Text>{item.properName}</Text>
-                  </Pressable>
-                ) : (
-                  <>
-                    {selectedSchedules[0].periods.length ===
-                    item.periods.length ? (
-                      <Pressable
-                        key={`Timetable_${item.id}_${createUUID()}`}
-                        onPress={() => {
-                          setSelectedSchedules([...selectedSchedules, item]);
-                          const newLoadedSchedules = loadedSchedules.filter(
-                            e => {
-                              return e.id !== item.id;
-                            },
-                          );
-                          setLoadedSchedules([...newLoadedSchedules]);
-                          if (selectedDefaultSchedule === undefined) {
-                            setSelectedDefaultSchedule(item);
-                          }
-                        }}
-                      >
-                        <Text>{item.properName}</Text>
-                      </Pressable>
-                    ) : null}
-                  </>
-                )}
-              </>
-            ))}
-          </>
-        ) : null}
-      </ScrollView>
+      Failed
     </View>
-  );
+  )
 }
 
 

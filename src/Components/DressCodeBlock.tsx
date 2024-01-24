@@ -1,7 +1,9 @@
 /*
   Pauly
   Andrew Mainella
-  
+  23 January 2024
+  DressCodeBlock.tsx
+  A component used in government dress code edit/create. This allows the user to enter the name and description of the dress code. Used in a flat list.
 */
 import { useSelector } from 'react-redux';
 import { Pressable, View, Text, TextInput } from 'react-native';

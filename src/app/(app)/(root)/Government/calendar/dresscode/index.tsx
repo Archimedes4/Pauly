@@ -6,6 +6,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
+import ProgressView from '@src/components/ProgressView';
 
 function GovernmentDressCodeBody() {
   const { width } = useSelector((state: RootState) => state.dimentions);
@@ -29,7 +30,17 @@ function GovernmentDressCodeBody() {
     loadData();
   }, []);
   if (getDressCodeState === loadingStateEnum.loading) {
-    return <Text>Loading</Text>;
+    return (
+      <View style={{
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1
+      }}>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    );
   }
 
   if (getDressCodeState === loadingStateEnum.success) {

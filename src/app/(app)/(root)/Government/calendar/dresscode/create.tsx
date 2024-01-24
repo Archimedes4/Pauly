@@ -1,6 +1,7 @@
 import React from 'react';
-import Main from './[id]';
+import { GovernmentDressCodeEdit } from './[id]';
+
 
 export default function Create() {
-  return <Main />;
+  return <GovernmentDressCodeEdit isCreating/>
 }

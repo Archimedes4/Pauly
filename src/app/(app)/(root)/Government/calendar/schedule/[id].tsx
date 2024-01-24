@@ -180,7 +180,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
       >
         <Link
           href="/government/calendar/schedule"
-          style={{ position: 'absolute' }}
+          style={{ position: 'absolute', left: 0, top: 0 }}
         >
           <Text>Back</Text>
         </Link>
@@ -416,6 +416,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
               submitSchedule();
             }
           }}
+          second
           style={{
             padding: 15,
             height: 46.4,
@@ -518,8 +519,8 @@ function PeriodBlock({
         shadowOpacity: 1,
         shadowRadius: 5,
         borderRadius: 15,
-        marginLeft: 5,
-        marginRight: 5,
+        marginLeft: 15,
+        marginRight: 15,
       }}
     >
       <View style={{ margin: 10 }}>

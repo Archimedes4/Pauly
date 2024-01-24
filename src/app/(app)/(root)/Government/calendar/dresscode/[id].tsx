@@ -3,21 +3,27 @@
   Andrew Mainella
   21 Decemeber 2023
 */
-import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-native';
 import store, { RootState } from '@redux/store';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, loadingStateEnum, styles } from '@constants';
 import { createDressCode } from '@utils/calendar/calendarFunctionsGraph';
 import getDressCode from '@utils/notifications/getDressCode';
 import ProgressView from '@components/ProgressView';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { Link } from 'expo-router';
 import DressCodeBlock from '@components/DressCodeBlock';
+import BackButton from '@components/BackButton';
+import StyledButton from '@src/components/StyledButton';
 
-export default function GovernmentDressCodeEdit() {
+export function GovernmentDressCodeEdit({
+  isCreating
+} : {
+  isCreating: boolean
+}) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [dressCodeName, setDressCodeName] = useState<string>('');
   const [dressCodeData, setDressCodeData] = useState<dressCodeDataType[]>([
@@ -39,8 +45,6 @@ export default function GovernmentDressCodeEdit() {
   const [getDressCodeState, setDressCodeState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
-  const [isCreatingDressCode, setIsCreatingDressCode] =
-    useState<boolean>(false);
   const [deleteDressCodeState, setDeleteDressCodeState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
@@ -62,7 +66,7 @@ export default function GovernmentDressCodeEdit() {
   }
 
   async function loadData() {
-    if (id !== undefined && id !== 'create') {
+    if (id !== undefined && !isCreating) {
       const result = await getDressCode(id);
       if (
         result.result === loadingStateEnum.success &&
@@ -71,13 +75,10 @@ export default function GovernmentDressCodeEdit() {
         setDressCodeListId(result.data.listId);
         setDressCodeName(result.data.name);
         setDressCodeData(result.data.dressCodeData);
-        setIsCreatingDressCode(false);
         setDressCodeState(loadingStateEnum.success);
       } else {
         setDressCodeState(loadingStateEnum.failed);
       }
-    } else if (id === 'create') {
-      setIsCreatingDressCode(true);
     }
   }
 
@@ -85,7 +86,7 @@ export default function GovernmentDressCodeEdit() {
     loadData();
   }, [id]);
 
-  if (isCreatingDressCode || getDressCodeState === loadingStateEnum.success) {
+  if (isCreating || getDressCodeState === loadingStateEnum.success) {
     return (
       <View
         style={{
@@ -97,43 +98,47 @@ export default function GovernmentDressCodeEdit() {
         <Link href="/government/calendar/dresscode">
           <Text>Back</Text>
         </Link>
-        <Text>Create Dress Code</Text>
-        <Text>Dress Code Name:</Text>
+        <Text style={styles.headerText}>Create Dress Code</Text>
+        <Text style={{marginLeft: 25}}>Dress Code Name:</Text>
         <TextInput
           value={dressCodeName}
           onChangeText={setDressCodeName}
           placeholder="Dress Code Name"
+          style={styles.textInputStyle}
         />
-        <ScrollView style={{ height: height * 0.7 }}>
-          {dressCodeData.map((dressCode, index) => (
+        <FlatList 
+          style={{ height: height * 0.7 }}
+          data={dressCodeData}
+          renderItem={(item) => (
             <DressCodeBlock
-              dressCode={dressCode}
+              dressCode={item.item}
               dressCodeData={dressCodeData}
-              index={index}
+              index={item.index}
               setDressCodeData={setDressCodeData}
               selectedDressCodeId={selectedDressCodeId}
               setSelectedDressCodeId={setSelectedDressCodeId}
             />
-          ))}
-        </ScrollView>
-        <Pressable
+          )}
+        />
+        <StyledButton 
+          style={{margin: 15, marginBottom: 0}}
           onPress={() => {
             setDressCodeData([
               ...dressCodeData,
               { name: '', description: '', id: createUUID() },
             ]);
           }}
-        >
-          <Text>Add</Text>
-        </Pressable>
-        <Pressable onPress={() => loadCreateDressCode()}>
-          <Text>
-            {getTextState(deleteDressCodeState, {
-              notStarted: 'Create Dress Code',
-            })}
-          </Text>
-        </Pressable>
-        {!isCreatingDressCode ? (
+          text='Add'
+        />
+        <StyledButton
+          second
+          style={{margin: 15}}
+          onPress={() => loadCreateDressCode()}
+          text={getTextState(deleteDressCodeState, {
+            notStarted: 'Create Dress Code',
+          })}
+        />
+        {!isCreating ? (
           <Pressable style={{ margin: 10 }} onPress={() => deleteDressCode()}>
             <Text>
               {getTextState(deleteDressCodeState, {
@@ -158,9 +163,7 @@ export default function GovernmentDressCodeEdit() {
           justifyContent: 'center',
         }}
       >
-        <Link href="/government/calendar/dresscode">
-          <Text>Back</Text>
-        </Link>
+        <BackButton to="/government/calendar/dresscode"/>
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
@@ -175,4 +178,8 @@ export default function GovernmentDressCodeEdit() {
       <Text>Failed</Text>
     </View>
   );
+}
+
+export default function GovernmentDressCodeEditMain() {
+  return <GovernmentDressCodeEdit isCreating={false}/>
 }

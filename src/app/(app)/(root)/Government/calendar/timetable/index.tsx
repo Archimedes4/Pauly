@@ -11,7 +11,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import SelectTimetable from '@components/Calendar/SelectTimetable';
 import { RootState } from '@redux/store';
-import { Colors } from '@constants';
+import { Colors, styles } from '@constants';
 import { Link } from 'expo-router';
 import StyledButton from '@src/components/StyledButton';
 
@@ -23,7 +23,7 @@ export default function GovernmentTimetable() {
         <Link href="/government/calendar/">
           <Text>Back</Text>
         </Link>
-        <Text>Timetables</Text>
+        <Text style={styles.headerText}>Timetables</Text>
       </View>
       <View style={{
         flex: 1
