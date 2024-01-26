@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  23 January 2024
+  ResourceBar.tsx
+  Selection bar in resource menu.
+*/
 import { View, Text, Pressable } from 'react-native';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Colors, resourceMode } from '@constants';
