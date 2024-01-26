@@ -12,17 +12,15 @@ import Week from '@components/Calendar/Week';
 import AddEvent from '@components/Calendar/AddEvent';
 import CalendarTypePicker from '@components/CalendarTypePicker';
 import { AddIcon } from '@components/Icons';
-import store, { RootState } from '@redux/store';
+import { RootState } from '@redux/store';
 import { Colors, calendarMode } from '@constants';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import BackButton from '@components/BackButton';
-import { addEventSlice } from '@redux/reducers/addEventReducer';
+import { addEventSlice } from '@src/redux/reducers/addEventReducer';
 import { getClassesSchedule } from '@utils/classesFunctions';
 import getEvents from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@components/Calendar/MonthView';
-import callMsGraph from '@utils/ultility/microsoftAssets';
-import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 
 function getCalendarFontSize(breakPoint: number, height: number) {
   if (breakPoint === 0) {

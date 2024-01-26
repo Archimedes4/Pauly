@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMonthData } from '@utils/calendar/calendarFunctionsGraph';
-import { addEventSlice } from '@redux/reducers/addEventReducer';
+import { addEventSlice } from '@src/redux/reducers/addEventReducer';
 import { ChevronLeft, ChevronRight } from '../Icons';
 
 // Take the current date and selected date and converts to a date string then removes the day of week and day in month and conpares

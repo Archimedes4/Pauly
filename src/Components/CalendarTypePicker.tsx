@@ -8,7 +8,7 @@
 import { View, Text, Pressable } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addEventSlice } from '@redux/reducers/addEventReducer';
+import { addEventSlice } from '@src/redux/reducers/addEventReducer';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';

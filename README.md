@@ -3,6 +3,10 @@ READ ME Last updated December 26 2023 \
 Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
 Saint Paul's High School Student Council 2023-2024
+
+> [!IMPORTANT]
+> Functions repo can be found at https://github.com/Archimedes4/Pauly-Functions
+
 # Technologies
 Power by expo using expo router at its core. Application also uses redux for storage.
 # Backend

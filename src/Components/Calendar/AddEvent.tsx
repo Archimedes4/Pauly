@@ -10,7 +10,7 @@ import { TimePickerModal, DatePickerModal } from 'react-native-paper-dates';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
-import { addEventSlice } from '@redux/reducers/addEventReducer';
+import { addEventSlice } from '@src/redux/reducers/addEventReducer';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { Colors, loadingStateEnum, paulyEventType, styles } from '@constants';
 import updateEvent from '@utils/updateEvent';

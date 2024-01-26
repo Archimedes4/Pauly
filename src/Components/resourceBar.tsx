@@ -171,7 +171,7 @@ function OpenBar({
   );
 }
 
-export default function resourceBar() {
+export default function ResourceBar() {
   const [barWidth, setBarWidth] = useState(0);
   const { width } = useSelector((state: RootState) => state.dimentions);
   const [isOpen, setIsOpen] = useState(false);

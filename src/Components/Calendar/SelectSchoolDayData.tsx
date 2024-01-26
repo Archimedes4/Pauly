@@ -13,7 +13,7 @@ import {
   getGraphEvents,
   getTimetable,
 } from '@utils/calendar/calendarFunctionsGraph';
-import { addEventSlice } from '@redux/reducers/addEventReducer';
+import { addEventSlice } from '@src/redux/reducers/addEventReducer';
 import store, { RootState } from '@redux/store';
 import { loadingStateEnum, semesters } from '@constants';
 
