@@ -22,7 +22,6 @@ async function getPointsBatch(
       }/items?$expand=fields&$filter=fields/commissionID%20eq%20'${
         commissions[index]
       }' `,
-      // ?$expand=fields&$filter=fields/commissionID%20eq%20'${commissions[index]}'
     });
   }
   const batchData = {

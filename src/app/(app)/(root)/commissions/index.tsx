@@ -246,10 +246,7 @@ export default function Commissions() {
     (state: RootState) => state.dimentions,
   );
   const {
-    currentCommissions,
     selectedCommission,
-    commissionsState,
-    commissionNextLink,
   } = useSelector((state: RootState) => state.commissions);
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);

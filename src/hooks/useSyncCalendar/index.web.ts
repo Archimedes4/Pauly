@@ -9,7 +9,7 @@ export default function useSyncCalendar() {
     });
     // TODO change to production url
     const result = await fetch(
-      'http://localhost:8500/api/orchestrators/snycCalendarOrchOrchestrator',
+      `${process.env.EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT}/api/orchestrators/snycCalendarOrchOrchestrator?code=${process.env.EXPO_PUBLIC_PAULY_FUNCTION_KEY}`,
       {
         method: 'GET',
         headers: {

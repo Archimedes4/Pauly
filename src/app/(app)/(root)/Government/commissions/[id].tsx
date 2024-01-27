@@ -56,6 +56,10 @@ enum datePickingMode {
   endDate,
 }
 
+function QRCode() {
+  
+}
+
 export function GovernmentCommissionUpdate({
   isCreate,
 }: {
@@ -301,6 +305,11 @@ export function GovernmentCommissionUpdate({
             </View>
           </View>
         ) : null}
+        { commissionData.value === commissionTypeEnum.QRCode ? 
+          <View>
+
+          </View>:null
+        }
         {commissionData.timed ? (
           <View
             style={{
@@ -648,17 +657,9 @@ export function GovernmentCommissionUpdate({
           </View>
         ) : null}
         <StyledButton
-          text={
-            submitCommissionState === loadingStateEnum.notStarted
-              ? isCreate
-                ? 'Create Commission'
-                : 'Save Changes'
-              : submitCommissionState === loadingStateEnum.loading
-                ? 'Loading'
-                : submitCommissionState === loadingStateEnum.success
-                  ? 'Success'
-                  : 'Failed'
-          }
+          text={getTextState(submitCommissionState, {
+            notStarted: isCreate ? 'Create Commission' : 'Save Changes'
+          })}
           onPress={() => {
             loadUpdateCommission();
           }}

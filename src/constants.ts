@@ -183,6 +183,19 @@ declare global {
     semester: semesters;
     periods: number[];
   };
+  type commissionQRCodeTimed = {
+    timed: true;
+    startDate: string;
+    endDate: string;
+  } | {
+    timed: false
+  }
+  type commissionQRCode = commissionQRCodeTimed & {
+    code: string;
+    maxNumberOfClaims: number;
+    timeOut: number; // Stored in seconds
+    active: boolean;
+  }
   type commissionTypeDefault = {
     itemId: string;
     title: string;
@@ -208,7 +221,10 @@ declare global {
     coordinateLat: number;
     coordinateLng: number;
   } | {
-    value: commissionTypeEnum.Issued | commissionTypeEnum.Image | commissionTypeEnum.QRCode;
+    value: commissionTypeEnum.Issued | commissionTypeEnum.Image;
+  } | {
+    value: commissionTypeEnum.QRCode,
+    QRCodeData: commissionQRCode[]
   }
   type commissionType = commissionTypeDefault & commissionTypeTimed & commissionTypeValue & {
     postData?: {

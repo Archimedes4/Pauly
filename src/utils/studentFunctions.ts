@@ -392,7 +392,7 @@ export async function getUsers(nextLink?: string): Promise<{
     }
     return {
       result: loadingStateEnum.success,
-      data: data['@odata.nextLink'],
+      data: newUsers,
       nextLink: data['@odata.nextLink']
     }
   } else {

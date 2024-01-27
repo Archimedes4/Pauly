@@ -475,7 +475,7 @@ function UserBlock({
       if (nextLink) {
         setLoadedUsers([...loadedUsers, ...userResult.data]);
       } else {
-        setLoadedUsers(userResult.data);
+        setLoadedUsers([...userResult.data]);
       }
       setLoadUsersResult(loadingStateEnum.success)
     } else {
@@ -509,7 +509,7 @@ function UserBlock({
                   setSelectedUser(user.item);
                   setInitResult(loadingStateEnum.notStarted);
                 }}
-                style={styles.listStyle}
+                style={{margin: 15, marginBottom: 0}}
               />
             );
           }
@@ -520,7 +520,7 @@ function UserBlock({
             loadUsers(nextLink);
           }
         }}
-        style={{ height: height * 0.4, width: width - height * 0.1 }}
+        style={{width: width - height * 0.1, height: height * 0.4 }}
       />
     );
   }

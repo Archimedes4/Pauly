@@ -156,7 +156,7 @@ export async function claimCommissionPost(
   const bearer = `Bearer ${auth}`;
   try {
     const result = await fetch(
-      `https://pauly-functions.azurewebsites.net/api/SubmitCommission?code=628ObqnRS5VxdYijTEz8sHucuLuihwin7ulwkUK6L5uCAzFuyFZ0Ng==&orgWideGroupId=${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}&commissionId=${commissionId}${outResult}`,
+      `${process.env.EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT}/api/SubmitCommission?orgWideGroupId=${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}&commissionId=${commissionId}${outResult}`,
       {
         headers: {
           Authorization: bearer,
