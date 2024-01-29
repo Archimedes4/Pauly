@@ -25,8 +25,6 @@ export const unstable_settings = {
   initialRouteName: '',
 };
 
-SplashScreen.preventAutoHideAsync();
-
 function Loading() {
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
@@ -69,8 +67,6 @@ function Loading() {
     </View>
   );
 }
-
-SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
   const isConnected = useIsConnected();

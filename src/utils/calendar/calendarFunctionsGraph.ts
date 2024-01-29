@@ -831,26 +831,27 @@ export function getMonthData(selectedDate: Date) {
   const firstDayWeek = findFirstDayinMonth(selectedDate);
   const monthDataResult: monthDataType[] = [];
   const { currentEvents } = store.getState();
+  console.log(currentEvents)
   for (let index = 0; index < 42; index += 1) {
     if (index >= firstDayWeek && index - firstDayWeek < lastDay.getDate()) {
       // In the current month
       const events: eventType[] = []; // The result events of that day
 
       // Check is the current date
-      const checkStart: Date = new Date(
+      const checkStart: number = new Date(
         selectedDate.getFullYear(),
         selectedDate.getMonth(),
         index - firstDayWeek + 1,
         0,
         0,
-      );
-      const checkEnd: Date = new Date(
+      ).getTime();
+      const checkEnd: number = new Date(
         selectedDate.getFullYear(),
         selectedDate.getMonth(),
         index - firstDayWeek + 2,
         0,
         0,
-      );
+      ).getTime();
       for (
         let indexEvent = 0;
         indexEvent < currentEvents.length;
@@ -858,21 +859,15 @@ export function getMonthData(selectedDate: Date) {
       ) {
         const event: eventType = currentEvents[indexEvent]; // Event to be checked
 
-        const startTimeDate = new Date(event.startTime); // String to date
-        const endTimeDate = new Date(event.endTime); // String to date
+        const startTimeDate = new Date(event.startTime).getTime(); // String to date
+        const endTimeDate = new Date(event.endTime).getTime(); // String to date
 
-        // First check if starts before date and ends after or on day
-        if (
-          startTimeDate.getTime() <= checkStart.getTime() &&
-          endTimeDate.getTime() > checkStart.getTime()
-        ) {
-          events.push(event);
-        } else if (
-          startTimeDate.getTime() > checkStart.getTime() &&
-          startTimeDate.getTime() < checkEnd.getTime()
-        ) {
-          // Second check if starts on day
-          events.push(event);
+        // Start time starts before and end time ends after or on day
+        if (startTimeDate < checkStart && endTimeDate >= checkEnd) {
+          events.push(event)
+        // Start time is on day
+        } else if (startTimeDate >= checkStart && startTimeDate < checkEnd) {
+          events.push(event)
         }
       }
       monthDataResult.push({

@@ -123,11 +123,12 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
         marginLeft: calculateMarginEnds(width, 'L'),
         marginRight: calculateMarginEnds(width, 'R'),
         backgroundColor: Colors.white,
-        shadowColor: Colors.black,
+        shadowColor: "#000",
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 1,
         shadowRadius: 5,
         borderRadius: 15,
+        elevation: 1,
         overflow: 'hidden',
       }}
     >

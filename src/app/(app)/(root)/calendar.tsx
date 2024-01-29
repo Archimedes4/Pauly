@@ -5,7 +5,7 @@
   Calendar.tsx
   Main Calendar for Pauly see README.md for more info.
 */
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Platform } from 'react-native';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Week from '@components/Calendar/Week';
@@ -27,6 +27,9 @@ function getCalendarFontSize(breakPoint: number, height: number) {
     return height * 0.35;
   }
   if (breakPoint === 1) {
+    if (height >= 1000) {
+      return height * 0.1;
+    }
     return height * 0.6;
   }
   return height * 0.7;
@@ -62,15 +65,12 @@ function TopView({ width, height }: { width: number; height: number }) {
           numberOfLines={1}
           style={{
             fontFamily: 'BukhariScript',
-            fontSize: getCalendarFontSize(currentBreakPoint, height),
-            width: width * 0.4,
-            height: currentBreakPoint === 0 ? height * 0.5 : height * 0.9,
+            fontSize: getCalendarFontSize(currentBreakPoint, height),//getCalendarFontSize(currentBreakPoint, height),
+            width: width * 0.45 -
+            (width * 0.1 < height ? width * 0.15 : height + width * 0.025),
+            height: getCalendarFontSize(currentBreakPoint, height),
             color: Colors.white,
-            textAlign: 'center',
-            verticalAlign: 'middle',
-            alignContent: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
+            textAlign: 'center'
           }}
         >
           Calendar
@@ -79,7 +79,7 @@ function TopView({ width, height }: { width: number; height: number }) {
       <View style={{ width: width * 0.55 }}>
         <View style={{ marginLeft: width * 0.05 }}>
           <CalendarTypePicker
-            width={width * 0.5}
+            width={(currentBreakPoint === 1) ? width * 0.4 : width * 0.5}
             height={width * 0.1 < height * 0.6 ? width * 0.1 : height * 0.6}
           />
         </View>

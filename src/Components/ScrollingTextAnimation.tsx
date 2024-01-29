@@ -32,28 +32,11 @@ export default function ScrollingTextAnimation({
   const mainLoop = (childWidthLoop: number) => {
     pan.value = withRepeat(
       withTiming(childWidthLoop, {
-        duration: 1000,
+        duration: 5000,
         easing: Easing.linear,
       }),
       -1,
     );
-    // Animated.loop(
-    //   Animated.sequence([
-    //     Animated.timing(pan, {
-    //       toValue: -childWidthLoop,
-    //       duration: 5000,
-    //       delay: 0,
-    //       easing: Easing.linear,
-    //       useNativeDriver: false,
-    //     }),
-    //     Animated.timing(pan, {
-    //       toValue: 0,
-    //       duration: 0,
-    //       delay: 0,
-    //       useNativeDriver: false,
-    //     }),
-    //   ]),
-    // ).start();
   };
   const textContainerStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: -pan.value }],
@@ -63,6 +46,7 @@ export default function ScrollingTextAnimation({
     if (childWidth !== 0) {
       mainLoop(childWidth);
     }
+
   }, [childWidth, mainLoop]);
 
   return (

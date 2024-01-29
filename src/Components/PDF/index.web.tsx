@@ -57,7 +57,7 @@ function PDFViewBody({ width }: { width: number }) {
 
   useEffect(() => {
     convertPdfToImages(powerpointBlob);
-  }, [powerpointBlob, globalThis.pdfjsLib]);
+  }, [powerpointBlob, globalThis]);
 
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {

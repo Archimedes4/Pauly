@@ -12,6 +12,8 @@ declare global {
     onSetSelectedPositionIn: (item: { lat: number; lng: number }) => void;
     width: number;
     height: number;
+    coordinateLat: number;
+    coordinateLng: number;
   }
 }
 

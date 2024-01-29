@@ -235,7 +235,11 @@ function MonthView({ width, height }: { width: number; height: number }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    return getMonthData(new Date(selectedDate));
+    console.log(monthData)
+  }, [monthData])
+
+  useEffect(() => {
+    return getMonthData(new Date(selectedDate))
   }, [selectedDate, currentEvents]);
 
   return (

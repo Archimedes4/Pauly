@@ -25,7 +25,7 @@ module.exports = {
         ],
         LSApplicationQueriesSchemes: ['msauthv2', 'msauthv3'],
       },
-      buildNumber: '63',
+      buildNumber: '64',
       assoassociatedDomains: [],
     },
     android: {

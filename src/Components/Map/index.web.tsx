@@ -7,11 +7,6 @@ import {
 } from '@react-google-maps/api';
 import { Text } from 'react-native';
 
-const center = {
-  lat: 49.85663823299096,
-  lng: -97.22659526509193,
-};
-
 type LatLngLiteral = google.maps.LatLngLiteral;
 
 export default function Map({
@@ -19,12 +14,17 @@ export default function Map({
   onSetSelectedPositionIn,
   width,
   height,
+  coordinateLat,
+  coordinateLng
 }: MapProps) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: 'AIzaSyAO7Ee-EXgNl4Karxfg1q9RY68XmCich_k', // TO DO put this into a loval env
   });
-  const [selectedPosition, setSelectedPosition] = useState<LatLngLiteral>();
+  const [selectedPosition, setSelectedPosition] = useState<LatLngLiteral>({
+    lat: coordinateLat,
+    lng: coordinateLng
+  });
   const [containerStyle, setContainerStyle] = useState<{
     width: string;
     height: string;
@@ -32,6 +32,13 @@ export default function Map({
     width: '400px',
     height: '400px',
   });
+
+  useEffect(() => {
+    setSelectedPosition({
+      lat: coordinateLat,
+      lng: coordinateLng
+    })
+  }, [coordinateLat, coordinateLng])
 
   useEffect(() => {
     setContainerStyle({
@@ -45,7 +52,10 @@ export default function Map({
       <div style={{ width, height }}>
         <GoogleMap
           mapContainerStyle={containerStyle}
-          center={center}
+          center={{
+            lat: coordinateLat,
+            lng: coordinateLng
+          }}
           zoom={15}
           onClick={ev => {
             onSetSelectedPositionIn({

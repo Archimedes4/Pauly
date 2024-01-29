@@ -25,9 +25,15 @@ function EventBlock({ event }: { event: eventType }) {
     >
       <Text>{event.name}</Text>
       <Text>
-        {new Date(event.startTime).getDay()}{' '}
-        {new Date(event.startTime).getHours()}{' '}
-        {new Date(event.startTime).getMinutes()}
+        {new Date(event.startTime).toLocaleString('en-us', {
+          weekday: 'long',
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric'
+        })}
       </Text>
     </View>
   );

@@ -7,7 +7,7 @@
 import RootLayout from '@components/RootLayout';
 import React, { useCallback, useEffect, useState } from 'react';
 import Head from 'expo-router/head';
-import { isLoaded, loadAsync, useFonts } from 'expo-font';
+import { loadAsync } from 'expo-font';
 import { View } from 'react-native';
 import { SplashScreen } from 'expo-router';
 
@@ -26,8 +26,6 @@ export default function App(): React.JSX.Element | null {
         Roboto: require('assets/fonts/Roboto-Regular.ttf'),
         'Roboto-Bold': require('assets/fonts/Roboto-Bold.ttf'),
         'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf'),
-        // 'material-community': require('assets/fonts/MaterialCommunityIcons.ttf'),
-       // 'material-community': require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')
       })
         .then(() => setFontsLoaded(true))
         .catch(() => {});
@@ -41,7 +39,7 @@ export default function App(): React.JSX.Element | null {
     }
   }, [fontsLoaded]);
 
-  if (!mounted && ! isLoaded) {
+  if (!mounted && !fontsLoaded) {
     return null;
   }
 
@@ -49,7 +47,6 @@ export default function App(): React.JSX.Element | null {
     <>
       <Head>
         <title>Pauly</title>
-        
       </Head>
       <View onLayout={onLayoutRootView}>
        <RootLayout />
