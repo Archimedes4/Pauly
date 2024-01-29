@@ -6,7 +6,7 @@
   Main Calendar for Pauly see README.md for more info.
 */
 import { View, Text, Pressable, Platform } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Week from '@components/Calendar/Week';
 import AddEvent from '@components/Calendar/AddEvent';
@@ -129,14 +129,18 @@ export default function Calendar() {
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  const updateColors = useCallback(() => {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
         bottom: Colors.white,
       }),
     );
-  }, [dispatch]);
+  }, [dispatch])
+
+  useEffect(() => {
+    updateColors()
+  }, []);
 
   // This is the main (only) process that updates the events
   // In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.

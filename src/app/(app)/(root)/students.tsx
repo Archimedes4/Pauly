@@ -122,14 +122,14 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
         marginBottom: 25,
         marginLeft: calculateMarginEnds(width, 'L'),
         marginRight: calculateMarginEnds(width, 'R'),
-        backgroundColor: Colors.white,
+        
         shadowColor: "#000",
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 1,
         shadowRadius: 5,
         borderRadius: 15,
         elevation: 1,
-        overflow: 'hidden',
+        backgroundColor: Colors.white
       }}
     >
       <View
@@ -139,6 +139,9 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
+          borderTopRightRadius: 15,
+          borderTopLeftRadius: 15,
+          overflow: 'hidden'
         }}
       >
         <StudentImage user={user} />

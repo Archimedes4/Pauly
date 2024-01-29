@@ -116,7 +116,7 @@ export default function HomePage() {
           </Pressable>
         </Link>
         <Link href="/calendar" style={{ padding: 0, height: height * 0.42 }}>
-          <Pressable style={{ width: width * 0.999, height: height * 0.42 }}>
+          <View style={{ width: width * 0.999, height: height * 0.42 }}>
             <View>
               <View
                 style={{
@@ -143,7 +143,7 @@ export default function HomePage() {
               </View>
               <MonthView width={width * 1.0} height={height * 0.37} />
             </View>
-          </Pressable>
+          </View>
         </Link>
         <View
           style={{
@@ -172,7 +172,7 @@ export default function HomePage() {
             </View>
           </Link>
           <Link href="/sports" style={{ padding: 0 }}>
-            <Pressable style={{ borderColor: Colors.black, borderWidth: 2 }}>
+            <View style={{ borderColor: Colors.black, borderWidth: 2 }}>
               <View
                 style={{
                   backgroundColor: Colors.maroon,
@@ -197,7 +197,7 @@ export default function HomePage() {
                   aspectRatio: '1/1',
                 }}
               />
-            </Pressable>
+            </View>
           </Link>
         </View>
         <View
