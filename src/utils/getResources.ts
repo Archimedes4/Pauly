@@ -7,6 +7,7 @@ import { loadingStateEnum, resourceMode, resourceResponce } from '@constants';
 import store from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { resourcesSlice } from '@redux/reducers/resourcesReducer';
+import createUUID from './ultility/createUUID';
 
 export function convertResourceModeString(convert?: resourceMode): string {
   if (convert === resourceMode.sports) {
@@ -507,6 +508,7 @@ export async function getScholarships(): Promise<
           note: data.items[index].note,
           link: data.items[index].link,
           cover: data.items[index].cover,
+          id: createUUID()
         });
       }
     }
@@ -537,6 +539,7 @@ export async function getNewsPosts(nextLink?: string | undefined): Promise<
         excerpt: data.posts[index].excerpt,
         content: data.posts[index].content,
         id: data.posts[index].id,
+        url: data.posts[index].URL
       });
     }
     return {

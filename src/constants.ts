@@ -330,6 +330,7 @@ declare global {
     note: string;
     link: string;
     cover: string;
+    id: string
   };
   type schoolDayDataCompressedType = {
     schoolDayId: string;
@@ -421,6 +422,7 @@ declare global {
     excerpt: string;
     content: string;
     id: number;
+    url: string
   };
   type noClassType = {
     day: number;

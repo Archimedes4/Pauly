@@ -91,7 +91,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
 
   useEffect(() => {
     getImage();
-  }, [getImage]);
+  }, []);
 
   function calculateMarginEnds(widthIn: number, side: 'L' | 'R'): number {
     const numberOfBlocks = getNumberOfBlocks(width);
@@ -148,7 +148,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
       </View>
       <View style={{ flexDirection: 'row', marginLeft: 5, marginTop: 2 }}>
         <Text>{user.item.name}</Text>
-        {user.item.student ? <Text>{user.item.grade}</Text> : null}
+        {user.item.student ? <Text style={{marginLeft: 'auto', marginRight: 5}}>{user.item.grade}</Text> : null}
       </View>
     </View>
   );
@@ -235,8 +235,7 @@ export default function Students() {
         <FlatList
           key={`Students_${createUUID()}`}
           data={users}
-          renderItem={user => <StudentBlock user={user} />}
-          keyExtractor={item => item.id}
+          renderItem={user => <StudentBlock user={user} key={user.item.id}/>}
           numColumns={getNumberOfBlocks(width)}
           onEndReached={() => {
             if (nextLink !== undefined) {

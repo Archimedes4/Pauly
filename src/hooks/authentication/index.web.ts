@@ -13,19 +13,22 @@ import { governmentScopes, scopes } from '@constants';
 import { authActiveSlice } from '@src/redux/reducers/authActiveReducer';
 import { InteractionStatus, InteractionType } from '@azure/msal-browser';
 
-export const refresh = () => {
+export const useRefresh = () => {
   const { instance } = useMsal();
-  const result = instance.acquireTokenSilent({
-    scopes,
-    prompt: 'select_account',
-  });
-  result.then(result => {
-    store.dispatch(
-      authenticationTokenSlice.actions.setAuthenticationToken(
-        result.accessToken,
-      ),
-    );
-  });
+  async function main() {
+    const result = instance.acquireTokenSilent({
+      scopes,
+      prompt: 'select_account',
+    });
+    result.then(result => {
+      store.dispatch(
+        authenticationTokenSlice.actions.setAuthenticationToken(
+          result.accessToken,
+        ),
+      );
+    });
+  }
+  return main
 };
 
 export function useSilentLogin(): () => Promise<void> {

@@ -105,7 +105,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
 }
 
 // Refresh block to take a refresh token and get a new access token.
-export function refresh(): () => Promise<void> {
+export function useRefresh(): () => Promise<void> {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );

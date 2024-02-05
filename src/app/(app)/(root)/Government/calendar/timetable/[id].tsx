@@ -2,6 +2,8 @@
   Pauly
   Andrew Mainella
   24 November 2023
+  government/calendar/timetable/[id].tsx
+  Page that allows editing government timetables. Also holds main componet for creating and editing timetables.
 */
 import { View, Text, TextInput, Pressable, ScrollView, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';

@@ -62,26 +62,148 @@ enum datePickingMode {
   endDate,
 }
 
-function QRCodeBlock({
-  QRCodeItem
-}: {
+function QRCodeBlockWebPrint({
+  QRCodeItem,
+  onClose
+}:{
   QRCodeItem: commissionQRCode
+  onClose: () => void
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const [isEditing, setIsEditing] = useState<boolean>()
+  const [mounted, setMounted] = useState<boolean>(false)
+
   async function print() {
-    if (Platform.OS === 'ios') {
+    Print.printAsync({})
+    onClose()
+  }
+
+  useEffect(() => {
+    if (mounted) {
+      print()
+    } else {
+      setMounted(true)
+    }
+  }, [mounted])
+
+  return (
+    <View style={{alignItems: 'center'}}>
+      <QRCode
+        value={`https://www.paulysphs.ca/commissions/${QRCodeItem.code}`}
+        // @ts-expect-error
+        logo={paulyLogo}
+        logoSize={width * 0.3}
+        logoBackgroundColor='transparent'
+        size={width}
+      />
+    </View>
+  )
+}
+
+function QRCodeBlockModal({
+  QRCodeItem,
+  setQRCodeItem,
+  setIsEditing
+} : {
+  QRCodeItem: commissionQRCode,
+  setQRCodeItem: (e: commissionQRCode) => void,
+  setIsEditing: (item: boolean) => void
+}) {
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const [showingWebPrint, setShowingWebPrint] = useState<boolean>()
+  async function print() {
+    if (Platform.OS === 'web') {
+      setShowingWebPrint(true)
+    } if (Platform.OS === 'ios') {
       // Print.printAsync({
       //   printerUrl
       // })
     } else {
-      Print.printAsync({
-        html: `
-        
-        `
-      })
+      // Print.printAsync({
+      //   uri: "https://www.africau.edu/images/default/sample.pdf"
+      // })
     }
   }
+
+  if (showingWebPrint) {
+    return (
+      <QRCodeBlockWebPrint onClose={() => setShowingWebPrint(false)} QRCodeItem={QRCodeItem}/>
+    )
+  }
+
+  return (
+    <View style={{padding: height * 0.05 + 20}}>
+      <Pressable
+        onPress={() => setIsEditing(false)}
+        style={{
+          position: 'absolute',
+          top: height * 0.05,
+          left: height * 0.05,
+        }}
+      >
+        <CloseIcon width={20} height={20} />
+      </Pressable>
+      <QRCode
+        value={`https://www.paulysphs.ca/commissions/${QRCodeItem.code}`}
+         // @ts-expect-error
+        logo={paulyLogo}
+        logoSize={30}
+        logoBackgroundColor='transparent'
+      />
+      <Text>Timed</Text>
+      <Switch
+        trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
+        thumbColor={
+          QRCodeItem.timed ? Colors.maroon : Colors.darkGray
+        }
+        ios_backgroundColor={Colors.lightGray}
+        onValueChange={e => {
+          if (e) {
+            setQRCodeItem({
+              ...QRCodeItem,
+              timed: true,
+              startDate: new Date().toISOString(),
+              endDate: new Date().toISOString()
+            })
+          } else {
+            setQRCodeItem({
+              ...QRCodeItem,
+              timed: e
+            })
+          }
+        }}
+        value={QRCodeItem.timed}
+        style={{ marginLeft: 5 }}
+      />
+      <Text>Active</Text>
+      <Switch
+        trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
+        thumbColor={
+          QRCodeItem.active ? Colors.maroon : Colors.darkGray
+        }
+        ios_backgroundColor={Colors.lightGray}
+        onValueChange={e => {
+          setQRCodeItem({
+            ...QRCodeItem,
+            active: e
+          })
+        }}
+        value={QRCodeItem.active}
+        style={{ marginLeft: 5 }}
+      />
+      <StyledButton text='Print' onPress={() => print()} second style={{margin: 15}}/>
+      <StyledButton text='Update' second style={{margin: 15}}/>
+    </View>
+  )
+}
+
+function QRCodeBlock({
+  QRCodeItem,
+  setQRCodeItem
+}: {
+  QRCodeItem: commissionQRCode,
+  setQRCodeItem: (e: commissionQRCode) => void
+}) {
+  const [isEditing, setIsEditing] = useState<boolean>()
 
   return (
     <>
@@ -89,26 +211,7 @@ function QRCodeBlock({
         <Text>{QRCodeItem.code}</Text>
       </StyledButton>
       <Modal visible={isEditing}>
-        <View style={{padding: height * 0.05 + 20}}>
-          <Pressable
-            onPress={() => setIsEditing(false)}
-            style={{
-              position: 'absolute',
-              top: height * 0.05,
-              left: height * 0.05,
-            }}
-          >
-            <CloseIcon width={20} height={20} />
-          </Pressable>
-          {/* <QRCode
-            value={`https://www.paulysphs.ca/commissions/${QRCodeItem.code}`}
-            logo={paulyLogo}
-            logoSize={30}
-            logoBackgroundColor='transparent'
-          /> */}
-          <StyledButton text='Print' onPress={() => print()}/>
-          <StyledButton text='Update' />
-        </View>
+        <QRCodeBlockModal QRCodeItem={QRCodeItem} setIsEditing={setIsEditing} setQRCodeItem={setQRCodeItem}/>
       </Modal>
     </>
   )
@@ -126,7 +229,11 @@ function QRCodeMenu({
       <FlatList
         data={QRCodes}
         renderItem={(item) => (
-          <QRCodeBlock QRCodeItem={item.item}/>
+          <QRCodeBlock QRCodeItem={item.item} setQRCodeItem={(e) => {
+            let newQRCodes = [...QRCodes]
+            newQRCodes[item.index] = e
+            setQRCodes(newQRCodes)
+          }}/>
         )}
       />
       <StyledButton text='Add New QR Code' onPress={() => {
@@ -163,7 +270,7 @@ export function GovernmentCommissionUpdate({
 
 
   const [getCommissionResult, setGetCommissionResult] =
-    useState<loadingStateEnum>(loadingStateEnum.loading);
+    useState<loadingStateEnum>(loadingStateEnum.notStarted);
   const [deleteCommissionResult, setDeleteCommissionResult] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
@@ -188,6 +295,7 @@ export function GovernmentCommissionUpdate({
         value: commissionTypeEnum.Issued
       })
     } else if (typeof id === 'string') {
+      setGetCommissionResult(loadingStateEnum.loading);
       const result = await getCommission(id);
       if (
         result.result === loadingStateEnum.success
@@ -245,7 +353,27 @@ export function GovernmentCommissionUpdate({
     }
   }
 
-  if ((typeof id !== 'string' && !isCreate) || commissionData === undefined) {
+  if (getCommissionResult === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          overflow: 'hidden',
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <BackButton to="/government/commissions" />
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if ((typeof id !== 'string' && !isCreate) || commissionData === undefined ) {
     return (
       <View
         style={{

@@ -55,7 +55,7 @@ export default async function largeBatch(
     method: 'GET' | 'POST';
   },
 ): Promise<
-  | { result: loadingStateEnum.success; data: batchResponseType[] }
+  { result: loadingStateEnum.success; data: batchResponseType[] }
   | {
       result: loadingStateEnum.failed;
     }
@@ -79,7 +79,7 @@ export default async function largeBatch(
           method: createData.method,
           url: `${createData.firstUrl}${createData.keys.array[createDataIndex]}${createData.secondUrl}`,
         });
-        if (createDataIndex % 19 === 0) {
+        if (createDataIndex % 19 === 0 && createDataIndex !== 0) {
           batchIndex += 1;
         }
       }

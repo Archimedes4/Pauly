@@ -13,7 +13,7 @@ import WebViewCross from '@components/WebViewCross';
 import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '../constants';
 import { getNewsPosts } from '../utils/getResources';
-import ResourceNewsPage from './ResouceNewsPage/index.native';
+import ResourceNewsPage from './ResouceNewsPage';
 
 export default function ResourcesNews() {
   const [posts, setPosts] = useState<newsPost[]>([]);
@@ -39,7 +39,7 @@ export default function ResourcesNews() {
 
   useEffect(() => {
     loadArticles();
-  }, [loadArticles]);
+  }, []);
 
   if (selectedPost !== undefined) {
     return (

@@ -19,7 +19,7 @@ export default async function getCommission(commissionId: string): Promise<
       store.getState().paulyList.siteId
     }/lists/${
       store.getState().paulyList.commissionListId
-    }/items?expand=fields&$filter=fields/commissionID%20eq%20'${commissionId}'`,
+    }/items?expand=fields($select=Title,timed,points,hidden,maxNumberOfClaims,allowMultipleSubmissions,commissionID,value,postTeamId,postChannelId,postId,id)&$filter=fields/commissionID%20eq%20'${commissionId}'&$select=fields,id`,
   );
   if (result.ok) {
     const data = await result.json();

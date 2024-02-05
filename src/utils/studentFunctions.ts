@@ -16,15 +16,14 @@ function checkIfStudent(role: string): {
 } {
   if (role !== null && role.length >= 20) {
     const reversed = role.split('').reverse().join('');
-    const domainName = process.env.EXPO_PUBLIC_DOMAINNAME
-      ? process.env.EXPO_PUBLIC_DOMAINNAME
-      : '';
+    const domainName = process.env.EXPO_PUBLIC_DOMAINNAME;
     const domainLength = domainName.length;
     const slice = reversed.slice(0, domainLength);
     if (slice === domainName.split('').reverse().join('')) {
       const getMonth = new Date().getMonth();
       let schoolYear = new Date().getFullYear();
       if (schoolYear.toString().length >= 4) {
+        // Month greater than july goes to next year
         if (getMonth > 6) {
           schoolYear += 1;
         }
@@ -55,16 +54,16 @@ function checkIfStudent(role: string): {
           .split('')
           .reverse()
           .join('');
-        if (reversed.slice(16, 17) === reverseYearTwelve) {
+        if (reversed.slice(domainLength, domainLength + 2) === reverseYearTwelve) {
           return { result: true, grade: '12' };
         }
-        if (reversed.slice(16, 17) === reverseYearEleven) {
+        if (reversed.slice(domainLength, domainLength + 2) === reverseYearEleven) {
           return { result: true, grade: '11' };
         }
-        if (reversed.slice(16, 17) === reverseYearTen) {
+        if (reversed.slice(domainLength, domainLength + 2) === reverseYearTen) {
           return { result: true, grade: '10' };
         }
-        if (reversed.slice(16, 17) === reverseYearNine) {
+        if (reversed.slice(domainName, domainLength + 2) === reverseYearNine) {
           return { result: true, grade: '9' };
         }
         return { result: false };
@@ -96,16 +95,15 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
     const batchResult = await largeBatch(undefined, {
       firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
         store.getState().paulyList.studentFilesListId
-      }/items?$expand=fields&$filter=fields/userId%20eq%20'`,
-      secondUrl: "'%20and%20fields/selected%20eq%20true",
+      }/items?$expand=fields($select=userId,selected,itemId)&$select=fields,id&$filter=fields/userId%20eq%20'`,
+      secondUrl: "'%20and%20fields/selected%20eq%201",
       method: 'GET',
       keys: { array: userIds },
     });
     const imagesIdsMap = new Map<string, string>(); // Key is userId, value is image data id
     const imageIdsArray: string[] = [];
     if (
-      batchResult.result === loadingStateEnum.success &&
-      batchResult.data !== undefined
+      batchResult.result === loadingStateEnum.success
     ) {
       for (
         let batchIndex = 0;
@@ -113,6 +111,7 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
         batchIndex += 1
       ) {
         if (batchResult.data[batchIndex].status === 200) {
+          console.log(batchResult.data[batchIndex].body)
           // TO DO OK
           if (batchResult.data[batchIndex].body.value.length === 1) {
             // Checking to make suare only one item is selected
@@ -149,8 +148,7 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
     });
     const imagesDownloadUrls = new Map<string, string>(); // Key is the item id on the sharepoint and value is the downlad url
     if (
-      batchResultDownloadUrls.result === loadingStateEnum.success &&
-      batchResultDownloadUrls.data !== undefined
+      batchResultDownloadUrls.result === loadingStateEnum.success
     ) {
       for (
         let batchIndex = 0;

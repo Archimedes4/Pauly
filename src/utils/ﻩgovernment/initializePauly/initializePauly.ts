@@ -165,7 +165,7 @@ export async function initializePaulyPartThree(
     }
     const imageBlob = await imageFetch.blob();
     const result = await fetch(
-      'https://graph.microsoft.com/v1.0/teams/451cc145-cc7b-433a-9e52-70e646a13d50/photo/$value',
+      `https://graph.microsoft.com/v1.0/teams/${groupId}/photo/$value`,
       {
         method: 'PUT',
         body: imageBlob,
@@ -228,12 +228,18 @@ export async function initializePaulyPartThree(
       paulyListNewData.fields.eventSyncIdExtensionId =
         getPaulyListResultData.fields.eventSyncIdExtensionId;
     } else {
-      paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventType`;
+      paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventSyncId`;
+    }
+    if (getPaulyListResultData.fields.eventSyncModeExtensionId !== undefined) {
+      paulyListNewData.fields.eventSyncModeExtensionId = getPaulyListResultData.fields.eventSyncModeExtensionId
+    } else {
+      paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventSyncMode`;
     }
   } else {
     paulyListNewData.fields.eventDataExtensionId = `String {${createUUID()}} Name eventData`;
     paulyListNewData.fields.eventTypeExtensionId = `String {${createUUID()}} Name eventType`;
-    paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventType`;
+    paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventSyncId`;
+    paulyListNewData.fields.eventSyncModeExtensionId = `String {${createUUID()}} Name eventSyncMode`;
   }
 
   if (paulyListNewData.fields.paulyDataListId === undefined) {

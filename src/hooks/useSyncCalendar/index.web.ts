@@ -7,7 +7,6 @@ export default function useSyncCalendar() {
     const apiResult = await instance.acquireTokenSilent({
       scopes: [`api://${process.env.EXPO_PUBLIC_CLIENTID}/api/commissions`],
     });
-    // TODO change to production url
     const result = await fetch(
       `${process.env.EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT}/api/orchestrators/snycCalendarOrchOrchestrator?code=${process.env.EXPO_PUBLIC_PAULY_FUNCTION_KEY}`,
       {

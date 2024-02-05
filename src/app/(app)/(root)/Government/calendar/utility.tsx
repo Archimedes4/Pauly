@@ -1,6 +1,7 @@
 
 /*
-
+  Pauly
+  Andrew Mainella
 */
 // TODO make sure this page has aduquare warnings
 import { View, Text } from 'react-native'

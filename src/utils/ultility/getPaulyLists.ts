@@ -48,6 +48,7 @@ export default async function getPaulyLists() {
         sessionStorage.setItem('listStore', JSON.stringify(paulyListData));
       }
     } else {
+      await paulyListResult.json()
       // TO DO THIS IS A BIG PROBLEM SHUT DOWN APP BC most of it don't work lost connection to server
     }
   } else {
