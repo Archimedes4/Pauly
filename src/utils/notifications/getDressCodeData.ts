@@ -8,12 +8,15 @@ import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
-export default async function getDressCodeData(): Promise<{
-  result: loadingStateEnum.success;
-  data: dressCodeType[];
-} | {
-  result: loadingStateEnum.failed
-}> {
+export default async function getDressCodeData(): Promise<
+  | {
+      result: loadingStateEnum.success;
+      data: dressCodeType[];
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId

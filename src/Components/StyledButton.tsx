@@ -20,8 +20,8 @@ interface StyledTextButtonProps {
   selected?: boolean;
   textStyle?: StyleProp<TextStyle>;
   children?: undefined;
-  mainColor?: string,
-  altColor?: string
+  mainColor?: string;
+  altColor?: string;
 }
 
 interface StyledChildButtonProps {
@@ -43,24 +43,24 @@ function getBackgroundColor(
   selected?: boolean,
   second?: boolean,
   mainColor?: string,
-  altColor?: string
+  altColor?: string,
 ) {
   if (second === true && isAlt && selected !== true) {
-    return altColor ? altColor:Colors.lightGray;
+    return altColor || Colors.lightGray;
   }
   if (second === true && selected !== true) {
-    return mainColor ? mainColor:Colors.darkGray;
+    return mainColor || Colors.darkGray;
   }
   if (isAlt && selected !== true) {
-    return altColor ? altColor:Colors.black;
+    return altColor || Colors.black;
   }
   if (isAlt && selected === true) {
-    return altColor ? altColor:Colors.black;
+    return altColor || Colors.black;
   }
   if (selected === true) {
     return Colors.blueGray;
   }
-  return mainColor ? mainColor:Colors.lightGray;
+  return mainColor || Colors.lightGray;
 }
 
 function getTextColor(isAlt: boolean, selected?: boolean, second?: boolean) {
@@ -102,14 +102,25 @@ export default function StyledButton({
         href={to}
         style={[
           {
-            backgroundColor: getBackgroundColor(isAlt, selected, second, mainColor, altColor),
+            backgroundColor: getBackgroundColor(
+              isAlt,
+              selected,
+              second,
+              mainColor,
+              altColor,
+            ),
             shadowColor: Colors.black,
             shadowOffset: { width: 2, height: 2 },
             shadowOpacity: 0.8,
             shadowRadius: 10,
             borderRadius: 15,
-            height: (text !== undefined) ? ((caption !== undefined) ? 48 : 36):undefined,
-            flex: (text !== undefined) ? undefined : 1
+            height:
+              text !== undefined
+                ? caption !== undefined
+                  ? 48
+                  : 36
+                : undefined,
+            flex: text !== undefined ? undefined : 1,
           },
           style,
         ]}
@@ -126,10 +137,9 @@ export default function StyledButton({
           }}
           style={{ padding: 10, width: '100%' }}
         >
-          {children ?
-            <>
-              {children}
-            </>:
+          {children ? (
+            <>{children}</>
+          ) : (
             <>
               <Text
                 style={[
@@ -155,7 +165,7 @@ export default function StyledButton({
                 </Text>
               ) : null}
             </>
-          }
+          )}
         </Pressable>
       </Link>
     );
@@ -173,23 +183,29 @@ export default function StyledButton({
       }}
       style={[
         {
-          backgroundColor: getBackgroundColor(isAlt, selected, second, mainColor, altColor),
+          backgroundColor: getBackgroundColor(
+            isAlt,
+            selected,
+            second,
+            mainColor,
+            altColor,
+          ),
           shadowColor: Colors.black,
           shadowOffset: { width: 2, height: 2 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
           borderRadius: 15,
           padding: 10,
-          height: (text !== undefined) ? ((caption !== undefined) ? 48 : 36):undefined,
-          flex: (text !== undefined) ? undefined : 1
+          height:
+            text !== undefined ? (caption !== undefined ? 48 : 36) : undefined,
+          flex: text !== undefined ? undefined : 1,
         },
         style,
       ]}
     >
-      {children ?
-        <>
-          {children}
-        </>:
+      {children ? (
+        <>{children}</>
+      ) : (
         <>
           <Text
             style={[
@@ -215,7 +231,7 @@ export default function StyledButton({
             </Text>
           ) : null}
         </>
-      }
+      )}
     </Pressable>
   );
 }

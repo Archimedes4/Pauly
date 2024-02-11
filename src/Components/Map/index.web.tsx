@@ -15,7 +15,7 @@ export default function Map({
   width,
   height,
   coordinateLat,
-  coordinateLng
+  coordinateLng,
 }: MapProps) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
@@ -23,7 +23,7 @@ export default function Map({
   });
   const [selectedPosition, setSelectedPosition] = useState<LatLngLiteral>({
     lat: coordinateLat,
-    lng: coordinateLng
+    lng: coordinateLng,
   });
   const [containerStyle, setContainerStyle] = useState<{
     width: string;
@@ -36,9 +36,9 @@ export default function Map({
   useEffect(() => {
     setSelectedPosition({
       lat: coordinateLat,
-      lng: coordinateLng
-    })
-  }, [coordinateLat, coordinateLng])
+      lng: coordinateLng,
+    });
+  }, [coordinateLat, coordinateLng]);
 
   useEffect(() => {
     setContainerStyle({
@@ -54,7 +54,7 @@ export default function Map({
           mapContainerStyle={containerStyle}
           center={{
             lat: coordinateLat,
-            lng: coordinateLng
+            lng: coordinateLng,
           }}
           zoom={15}
           onClick={ev => {

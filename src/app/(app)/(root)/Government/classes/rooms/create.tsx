@@ -18,7 +18,7 @@ import StyledButton from '@components/StyledButton';
 import BackButton from '@src/components/BackButton';
 import ProgressView from '@src/components/ProgressView';
 
-export function GovermentRoomsUpdate({isCreate}:{isCreate: boolean}) {
+export function GovermentRoomsUpdate({ isCreate }: { isCreate: boolean }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [createRoomState, setCreateRoomState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
@@ -26,7 +26,7 @@ export function GovermentRoomsUpdate({isCreate}:{isCreate: boolean}) {
   const [roomState, setRoomState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
-  
+
   const { id } = useGlobalSearchParams();
 
   const [roomName, setRoomName] = useState<string>('');
@@ -96,37 +96,50 @@ export function GovermentRoomsUpdate({isCreate}:{isCreate: boolean}) {
 
   async function loadRoom() {
     if (typeof id === 'string') {
-      const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${
-        store.getState().paulyList.siteId
-      }/lists/${store.getState().paulyList.roomListId}/items?expand=fields($select=roomName,roomId)&$filter=fields/roomId%20eq%20'${id}'&$select=id,fields`)
+      const result = await callMsGraph(
+        `https://graph.microsoft.com/v1.0/sites/${
+          store.getState().paulyList.siteId
+        }/lists/${
+          store.getState().paulyList.roomListId
+        }/items?expand=fields($select=roomName,roomId)&$filter=fields/roomId%20eq%20'${id}'&$select=id,fields`,
+      );
       if (result.ok) {
-        const data = await result.json()
-        if (data["value"].length === 1) {
-          setRoomListId(data["value"][0]["id"])
-          setRoomName(data["value"][0]["fields"]["roomName"])
-          setRoomState(loadingStateEnum.success)
+        const data = await result.json();
+        if (data.value.length === 1) {
+          setRoomListId(data.value[0].id);
+          setRoomName(data.value[0].fields.roomName);
+          setRoomState(loadingStateEnum.success);
         } else {
-          //Not found or dup ids which is a really critical error and should not be possible.
-          setRoomState(loadingStateEnum.notFound)
+          // Not found or dup ids which is a really critical error and should not be possible.
+          setRoomState(loadingStateEnum.notFound);
         }
       } else {
-        setRoomState(loadingStateEnum.failed)
+        setRoomState(loadingStateEnum.failed);
       }
     }
   }
 
   useEffect(() => {
-    loadRoom()
-  }, [])
+    loadRoom();
+  }, []);
 
   if (!isCreate && roomState === loadingStateEnum.loading) {
     return (
-      <View style={{ width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <BackButton to="/government/classes/rooms"/>
-        <ProgressView width={14} height={14}/>
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <BackButton to="/government/classes/rooms" />
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (isCreate || roomState === loadingStateEnum.success) {
@@ -140,7 +153,9 @@ export function GovermentRoomsUpdate({isCreate}:{isCreate: boolean}) {
             alignItems: 'center',
           }}
         >
-          <Text style={styles.headerText}>{isCreate ? "Create":"Edit"} Room</Text>
+          <Text style={styles.headerText}>
+            {isCreate ? 'Create' : 'Edit'} Room
+          </Text>
         </View>
         <View style={{ flexDirection: 'row', width }}>
           {roomName === '' ? (
@@ -160,16 +175,16 @@ export function GovermentRoomsUpdate({isCreate}:{isCreate: boolean}) {
             if (isCreate) {
               createRoom();
             } else {
-              updateRoom()
+              updateRoom();
             }
           }}
           second
           text={getTextState(createRoomState, {
-            notStarted: isCreate ? 'Create Room':'Update Room',
-            success: isCreate ? 'Room Created':'Room Updated',
+            notStarted: isCreate ? 'Create Room' : 'Update Room',
+            success: isCreate ? 'Room Created' : 'Room Updated',
           })}
           style={{
-            margin: 15
+            margin: 15,
           }}
         />
       </View>
@@ -178,21 +193,39 @@ export function GovermentRoomsUpdate({isCreate}:{isCreate: boolean}) {
 
   if (roomState === loadingStateEnum.notFound) {
     return (
-      <View style={{ width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <BackButton to="/government/classes/rooms"/>
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <BackButton to="/government/classes/rooms" />
         <Text>Room not found!</Text>
       </View>
-    )
+    );
   }
 
   return (
-    <View style={{ width, height, backgroundColor: Colors.white, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-      <BackButton to="/government/classes/rooms"/>
+    <View
+      style={{
+        width,
+        height,
+        backgroundColor: Colors.white,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <BackButton to="/government/classes/rooms" />
       <Text>Failed something went wrong!</Text>
     </View>
-  )
+  );
 }
 
 export default function GovernmentRoomsCreate() {
-  return <GovermentRoomsUpdate isCreate/>
+  return <GovermentRoomsUpdate isCreate />;
 }

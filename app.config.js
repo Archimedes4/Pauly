@@ -71,6 +71,6 @@ module.exports = {
     ],
     experiments: {
       tsconfigPaths: true,
-    }
+    },
   },
 };

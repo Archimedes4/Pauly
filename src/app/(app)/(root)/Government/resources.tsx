@@ -344,6 +344,14 @@ function GovernmentResourcesBody() {
   );
 }
 
+function GovernmentResourceLayout() {
+  return (
+    <View>
+      
+    </View>
+  )
+}
+
 export default function GovernmentResources() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [groups, setGroups] = useState<resourceGroupType[]>([]);
@@ -382,11 +390,7 @@ export default function GovernmentResources() {
         <Link href="/government">
           <Text>Back</Text>
         </Link>
-        <Text
-          style={styles.headerText}
-        >
-          Government Resources
-        </Text>
+        <Text style={styles.headerText}>Government Resources</Text>
       </View>
       <GovernmentResourcesBody />
     </View>

@@ -1,0 +1,202 @@
+import { addEventSlice } from '@redux/reducers/addEventReducer';
+import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
+import store from '@redux/store';
+import { Colors, loadingStateEnum, paulyEventType } from '@constants';
+import callMsGraph from '@utils/ultility/microsoftAssets';
+
+// function getPaulyEventData() {
+//   if (store.getState().addEvent.selectedEvent.paulyEventType === 'schoolDay') {
+//     return JSON.stringify(store.getState().addEvent.selectedEvent.selectedSchoolDayData)
+//   } else if (store.getState().addEvent.selectedEventType === paulyEventType.schoolYear) {
+//     return store.getState().addEvent.selectedTimetable.id
+//   }
+//   return undefined
+// }
+
+export default async function createEvent(): Promise<void> {
+  if (store.getState().addEvent.selectedEvent.paulyEventType === 'personal') {
+    const data: {
+      subject: string;
+      start: { dateTime: string; timeZone: string };
+      end: { dateTime: string; timeZone: string };
+      isAllDay?: boolean;
+    } = {
+      subject: store.getState().addEvent.selectedEvent.name,
+      start: {
+        dateTime: store.getState().addEvent.selectedEvent.startTime.replace(/.\d+Z$/g, 'Z'),
+        timeZone: 'Central America Standard Time',
+      },
+      end: {
+        dateTime: store.getState().addEvent.selectedEvent.endTime.replace(/.\d+Z$/g, 'Z'),
+        timeZone: 'Central America Standard Time',
+      },
+    };
+    if (store.getState().addEvent.selectedEvent.allDay) {
+      data.start.dateTime = `${
+        store
+          .getState()
+          .addEvent.selectedEvent.startTime.replace(/.\d+Z$/g, 'Z')
+          .split(/[T ]/i, 1)[0]
+      }T00:00:00.0000000`;
+      data.end.dateTime = `${
+        store
+          .getState()
+          .addEvent.selectedEvent.endTime.replace(/.\d+Z$/g, 'Z')
+          .split(/[T ]/i, 1)[0]
+      }T00:00:00.0000000`;
+      data.isAllDay = true;
+    }
+    const result = await callMsGraph(
+      `https://graph.microsoft.com/v1.0/me/events`,
+      'POST',
+      JSON.stringify(data),
+    );
+    if (result.ok) {
+      const dataOut = await result.json();
+      const resultEvent: eventType = {
+        id: dataOut.id,
+        name: dataOut.subject,
+        startTime: dataOut.start.dateTime,
+        endTime: dataOut.end.dateTime,
+        eventColor: Colors.white,
+        microsoftEvent: true,
+        microsoftReference: `https://graph.microsoft.com/v1.0/me/events/${dataOut.id}`,
+        allDay: false,
+        paulyEventType: "personal"
+      };
+      store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent));
+      store.dispatch(
+        addEventSlice.actions.setCreateEventState(loadingStateEnum.success),
+      );
+    } else {
+      store.dispatch(
+        addEventSlice.actions.setCreateEventState(loadingStateEnum.failed),
+      );
+    }
+  } else {
+    const selectedEvent = store.getState().addEvent.selectedEvent
+    const data: any = {
+      subject: selectedEvent.name,
+      start: {
+        dateTime: selectedEvent.startTime.replace(/.\d+Z$/g, 'Z'),
+        timeZone: 'Central America Standard Time',
+      },
+      end: {
+        dateTime: selectedEvent.startTime.replace(/.\d+Z$/g, 'Z'),
+        timeZone: 'Central America Standard Time',
+      },
+    };
+    const schoolYearId = store.getState().addEvent.selectedSchoolYear?.id;
+    if (
+      selectedEvent.paulyEventType === 'schoolDay'
+    ) {
+      data.start.dateTime = `${
+        selectedEvent.startTime.replace(/.\d+Z$/g, 'Z')
+          .split(/[T ]/i, 1)[0]
+      }T00:00:00.0000000`;
+      const newEndDate = new Date(selectedEvent.startTime);
+      newEndDate.setDate(
+        new Date(selectedEvent.startTime).getDate() + 1,
+      );
+      data.end.dateTime = `${
+        newEndDate
+          .toISOString()
+          .replace(/.\d+Z$/g, 'Z')
+          .split(/[T ]/i, 1)[0]
+      }T00:00:00.0000000`;
+      data.isAllDay = true;
+      if (selectedEvent.id === 'create') {
+        data.subject = `${selectedEvent.schoolDayData.schoolDay.name} ${selectedEvent.schoolDayData.schedule.properName}`;
+      }
+    } else if (store.getState().addEvent.selectedEvent.allDay) {
+      data.start.dateTime = `${
+        store
+          .getState()
+          .addEvent.selectedEvent.startTime.replace(/.\d+Z$/g, 'Z')
+          .split(/[T ]/i, 1)[0]
+      }T00:00:00.0000000`;
+      data.end.dateTime = `${
+        store
+          .getState()
+          .addEvent.selectedEvent.startTime.replace(/.\d+Z$/g, 'Z')
+          .split(/[T ]/i, 1)[0]
+      }T00:00:00.0000000`;
+      data.isAllDay = true;
+    }
+    if (
+      selectedEvent.paulyEventType === 'schoolYear'
+    ) {
+      data.singleValueExtendedProperties = [
+        {
+          id: store.getState().paulyList.eventTypeExtensionId,
+          value: 'schoolYear',
+        },
+        {
+          id: store.getState().paulyList.eventDataExtensionId,
+          value: selectedEvent.timetableId,
+        },
+      ];
+    } else if (
+      selectedEvent.paulyEventType ===
+        'schoolDay' &&
+      schoolYearId !== undefined
+    ) {
+      const selectedSchoolDayDataCompressed: schoolDayDataCompressedType = {
+        schoolDayId: selectedEvent.schoolDayData.schoolDay.id,
+        scheduleId: selectedEvent.schoolDayData.schedule.id,
+        dressCodeId: selectedEvent.schoolDayData.dressCode.id,
+        semester: selectedEvent.schoolDayData.semester,
+        dressCodeIncentiveId:
+        selectedEvent.schoolDayData.dressCodeIncentive?.id === undefined
+            ? ''
+            : selectedEvent.schoolDayData.dressCodeIncentive?.id,
+        schoolYearEventId: schoolYearId,
+      };
+      data.singleValueExtendedProperties = [
+        {
+          id: store.getState().paulyList.eventTypeExtensionId,
+          value: 'schoolDay',
+        },
+        {
+          id: store.getState().paulyList.eventDataExtensionId,
+          value: JSON.stringify(selectedSchoolDayDataCompressed),
+        },
+      ];
+    }
+    // TODO Reocurring
+    const result = await callMsGraph(
+      `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events`,
+      (selectedEvent.id === 'create') ? 'POST':'PATCH',
+      JSON.stringify(data),
+    );
+    if (result.ok) {
+      const dataOut = await result.json();
+      let resultEvent: eventType = {
+        id: dataOut.id,
+        name: dataOut.subject,
+        startTime: dataOut.start.dateTime,
+        endTime: dataOut.end.dateTime,
+        eventColor: Colors.white,
+        paulyEventType: 'regular',
+        microsoftEvent: true,
+        microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${dataOut.id}`,
+        allDay: false,
+      };
+      if (selectedEvent.id === 'create') {
+        resultEvent = {
+          ...resultEvent,
+          id: dataOut.id
+        }
+      }
+      store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent));
+      store.dispatch(addEventSlice.actions.setSelectedSchoolDayData(undefined));
+      store.dispatch(
+        addEventSlice.actions.setCreateEventState(loadingStateEnum.success),
+      );
+    } else {
+      store.dispatch(
+        addEventSlice.actions.setCreateEventState(loadingStateEnum.failed),
+      );
+    }
+  }
+}

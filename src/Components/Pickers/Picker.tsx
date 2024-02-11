@@ -3,7 +3,7 @@
 // Picker with animated black line
 
 import { Colors } from '@src/constants';
-import React, { ReactNode, useRef, useEffect, Children } from 'react';
+import React, { ReactNode, useRef, useEffect, Children, useState } from 'react';
 import { View, Pressable } from 'react-native';
 import Animated, {
   Easing,
@@ -29,11 +29,12 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
   width,
   height,
 }) => {
-  const compoentWidth = width / Children.count(children);
-  const pan = useSharedValue(selectedIndex * compoentWidth);
+  const [componentWidth, setCompoentWidth] = useState<number>(0);
+  const [newChildren, setNewChildren] = useState<Array<Exclude<ReactNode, boolean | null | undefined>>>([])
+  const pan = useSharedValue(0);
   function fadeIn(id: number) {
     // Will change fadeAnim value to 1 in 5 seconds
-    pan.value = withTiming(compoentWidth * id, {
+    pan.value = withTiming(componentWidth * id, {
       duration: 250,
       easing: Easing.linear,
     });
@@ -43,14 +44,28 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
     transform: [{ translateX: pan.value }],
   }));
 
+  //count compoents and set componet width
+  useEffect(() => {
+    let count = 0
+    let oldChildren = Children.toArray(children)
+    let newChildren = [...oldChildren.filter((e) => {
+      count += 1
+      return e !== null
+    })]
+    setNewChildren(newChildren)
+    setCompoentWidth(width/count)
+    console.log(count)
+    pan.value = selectedIndex * (width/count)
+  }, [])
+
   return (
     <View style={{ flexDirection: 'row', height: height * 0.8, width }}>
-      {React.Children.map(children, (child, index) => (
+      {newChildren.map((child, index) => (
         <View
           style={{
             position: 'absolute',
-            transform: [{ translateX: index * compoentWidth }],
-            width: compoentWidth,
+            transform: [{ translateX: index * componentWidth }],
+            width: componentWidth,
           }}
         >
           <Pressable
@@ -61,13 +76,13 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
           >
             {child}
           </Pressable>
-        </View>
+        </View> 
       ))}
       <Animated.View style={animatedDefault}>
         <View
           style={{
             height: height * 0.2,
-            width: compoentWidth,
+            width: componentWidth,
             backgroundColor: Colors.black,
             top: height * 0.6,
             borderRadius: 5,

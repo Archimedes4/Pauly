@@ -47,9 +47,7 @@ function SelectMainFile({
 
   async function loadData() {
     const result = await getStudentData(userId);
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setFileState(loadingStateEnum.success);
       setFileData(result.data);
       const selectedFileList = result.data.find(e => {
@@ -261,11 +259,7 @@ export default function GovernmentStudents() {
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.15, backgroundColor: Colors.darkGray }}>
         <BackButton to="/government/" />
-        <Text
-          style={styles.headerText}
-        >
-          Government Students
-        </Text>
+        <Text style={styles.headerText}>Government Students</Text>
       </View>
       <SearchBar
         value={store.getState().studentSearch.searchText}

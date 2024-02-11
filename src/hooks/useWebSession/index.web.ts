@@ -20,9 +20,10 @@ export default function useWebSession() {
         return true;
       } catch {
         return false;
-        // return nothing just don't fail
+        // return nothing, don't fail, something is incorrect with the way the items were stored
       }
     } else {
+      // nothing stored
       return false;
     }
   }

@@ -1,4 +1,3 @@
-import { commissionsData } from './../ﻩgovernment/initializePauly/initializePaulyData';
 /*
   Pauly
   Andrew Mainella
@@ -12,7 +11,7 @@ import createUUID from '../ultility/createUUID';
 
 export async function updateCommission(
   isCreating: boolean,
-  commissionsData: commissionType
+  commissionsData: commissionType,
 ): Promise<loadingStateEnum> {
   const data: any = {
     fields: {
@@ -63,26 +62,32 @@ export async function updateCommission(
   return loadingStateEnum.failed;
 }
 
-export async function createCommissionSubmission(userId: string, commissionId: string, submissionApproved: boolean, submissionReviewed: boolean): Promise<loadingStateEnum.success | loadingStateEnum.failed> {
-  const submissionId = createUUID()
+export async function createCommissionSubmission(
+  userId: string,
+  commissionId: string,
+  submissionApproved: boolean,
+  submissionReviewed: boolean,
+): Promise<loadingStateEnum.success | loadingStateEnum.failed> {
+  const submissionId = createUUID();
   const submissionData = {
     Title: submissionId,
     submittedTime: new Date().toISOString(),
-    userId: userId,
+    userId,
     submissionId,
     submissionApproved,
     submissionReviewed,
-    commissionId: commissionId,
+    commissionId,
     submissionData: JSON.stringify({}),
-  }
+  };
   const submitResult = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionSubmissionsListId}/items`,
+    `https://graph.microsoft.com/v1.0/sites/${
+      store.getState().paulyList.siteId
+    }/lists/${store.getState().paulyList.commissionSubmissionsListId}/items`,
     'POST',
     JSON.stringify(submissionData),
   );
   if (submitResult.ok) {
-    return loadingStateEnum.success
-  } else {
-    return loadingStateEnum.failed
+    return loadingStateEnum.success;
   }
+  return loadingStateEnum.failed;
 }

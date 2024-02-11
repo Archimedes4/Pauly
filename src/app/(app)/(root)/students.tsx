@@ -122,14 +122,14 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
         marginBottom: 25,
         marginLeft: calculateMarginEnds(width, 'L'),
         marginRight: calculateMarginEnds(width, 'R'),
-        
-        shadowColor: "#000",
+
+        shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 1,
         shadowRadius: 5,
         borderRadius: 15,
         elevation: 1,
-        backgroundColor: Colors.white
+        backgroundColor: Colors.white,
       }}
     >
       <View
@@ -141,14 +141,18 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
           justifyContent: 'center',
           borderTopRightRadius: 15,
           borderTopLeftRadius: 15,
-          overflow: 'hidden'
+          overflow: 'hidden',
         }}
       >
         <StudentImage user={user} />
       </View>
       <View style={{ flexDirection: 'row', marginLeft: 5, marginTop: 2 }}>
         <Text>{user.item.name}</Text>
-        {user.item.student ? <Text style={{marginLeft: 'auto', marginRight: 5}}>{user.item.grade}</Text> : null}
+        {user.item.student ? (
+          <Text style={{ marginLeft: 'auto', marginRight: 5 }}>
+            {user.item.grade}
+          </Text>
+        ) : null}
       </View>
     </View>
   );
@@ -166,7 +170,7 @@ export default function Students() {
   const dispatch = useDispatch();
 
   async function loadUsers() {
-    getUsersAndPhotos()
+    getUsersAndPhotos();
   }
 
   useEffect(() => {
@@ -235,7 +239,7 @@ export default function Students() {
         <FlatList
           key={`Students_${createUUID()}`}
           data={users}
-          renderItem={user => <StudentBlock user={user} key={user.item.id}/>}
+          renderItem={user => <StudentBlock user={user} key={user.item.id} />}
           numColumns={getNumberOfBlocks(width)}
           onEndReached={() => {
             if (nextLink !== undefined) {

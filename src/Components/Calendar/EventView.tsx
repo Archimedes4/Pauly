@@ -32,7 +32,7 @@ function EventBlock({ event }: { event: eventType }) {
           year: 'numeric',
           hour: 'numeric',
           minute: 'numeric',
-          second: 'numeric'
+          second: 'numeric',
         })}
       </Text>
     </View>

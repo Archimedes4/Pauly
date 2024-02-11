@@ -120,7 +120,10 @@ export enum resourceMode {
 }
 
 declare global {
-  type animatedCheckMarkColor = ColorValue | Animated.SharedValue<ColorValue | undefined> | undefined
+  type animatedCheckMarkColor =
+    | ColorValue
+    | Animated.SharedValue<ColorValue | undefined>
+    | undefined;
   type addDataType = {
     data: object;
     urlOne: string;
@@ -167,6 +170,14 @@ declare global {
     year: number;
     assignments: assignmentTypeQuiz[];
   };
+  type calendarSyncState = {
+    startTime: string;
+    endTime: string;
+    invocationId: string;
+    state: string;
+    stage: string;
+    nextPoll: string;
+  };
   type channelType = {
     id: string;
     displayName: string;
@@ -183,19 +194,21 @@ declare global {
     semester: semesters;
     periods: number[];
   };
-  type commissionQRCodeTimed = {
-    timed: true;
-    startDate: string;
-    endDate: string;
-  } | {
-    timed: false
-  }
+  type commissionQRCodeTimed =
+    | {
+        timed: true;
+        startDate: string;
+        endDate: string;
+      }
+    | {
+        timed: false;
+      };
   type commissionQRCode = commissionQRCodeTimed & {
     code: string;
     maxNumberOfClaims: number;
     timeOut: number; // Stored in seconds
     active: boolean;
-  }
+  };
   type commissionTypeDefault = {
     itemId: string;
     title: string;
@@ -207,32 +220,39 @@ declare global {
     claimCount: number;
     reviewedCount: number;
     commissionId: string;
-  }
-  type commissionTypeTimed = {
-    timed: true;
-    startDate: string;
-    endDate: string;
-  } | {
-    timed: false;
-  }
-  type commissionTypeValue = {
-    value: commissionTypeEnum.ImageLocation | commissionTypeEnum.Location
-    proximity: number;
-    coordinateLat: number;
-    coordinateLng: number;
-  } | {
-    value: commissionTypeEnum.Issued | commissionTypeEnum.Image;
-  } | {
-    value: commissionTypeEnum.QRCode,
-    QRCodeData: commissionQRCode[]
-  }
-  type commissionType = commissionTypeDefault & commissionTypeTimed & commissionTypeValue & {
-    postData?: {
-      teamId: string;
-      channelId: string;
-      postId: string;
+  };
+  type commissionTypeTimed =
+    | {
+        timed: true;
+        startDate: string;
+        endDate: string;
+      }
+    | {
+        timed: false;
+      };
+  type commissionTypeValue =
+    | {
+        value: commissionTypeEnum.ImageLocation | commissionTypeEnum.Location;
+        proximity: number;
+        coordinateLat: number;
+        coordinateLng: number;
+      }
+    | {
+        value: commissionTypeEnum.Issued | commissionTypeEnum.Image;
+      }
+    | {
+        value: commissionTypeEnum.QRCode;
+        QRCodeData: commissionQRCode[];
+      };
+  type commissionType = commissionTypeDefault &
+    commissionTypeTimed &
+    commissionTypeValue & {
+      postData?: {
+        teamId: string;
+        channelId: string;
+        postId: string;
+      };
     };
-  }
   type dressCodeIncentiveType = {
     name: string;
     description: string;
@@ -243,6 +263,10 @@ declare global {
     name: string;
     description: string;
     id: string;
+  };
+  type dayEvent = {
+    event: eventType[];
+    offset: number;
   };
   type dressCodeType = {
     name: string;
@@ -257,12 +281,40 @@ declare global {
     SchoolDay?: string;
     Value?: number;
   };
-  type calendarSyncState = {
-    "startTime":string;
-    "endTime":string;
-    "invocationId":string;
-    "state":string;
+  type eventTypeBase = {
+    id: string;
+    name: string;
+    startTime: string;
+    endTime: string; // This is held in iso format
+    eventColor: string; // This is held in iso format
+    allDay: boolean;
+    microsoftReference?: string;
   }
+  type eventTypePauly = {
+    paulyEventType: 'schoolDay';    
+    schoolDayData: schoolDayDataType;
+    microsoftEvent: true;
+  } | {
+    paulyEventType: 'schoolYear';
+    timetableId: string;
+    microsoftEvent: true;
+  } | {
+    paulyEventType: 'personal';
+    paulyEventData?: string;
+    microsoftEvent: true;
+  } | {
+    paulyEventType: 'regular';
+    paulyEventData?: string;
+    microsoftEvent: true;
+  } | {
+    paulyEventType: 'studentCouncil';
+    paulyEventData?: string;
+    microsoftEvent: true;
+  } | {
+    microsoftEvent: false;
+    paulyEventType: 'studentSchedule';
+  };
+  type eventType = eventTypeBase & eventTypePauly;
   type groupType = {
     name: string;
     id: string;
@@ -330,7 +382,7 @@ declare global {
     note: string;
     link: string;
     cover: string;
-    id: string
+    id: string;
   };
   type schoolDayDataCompressedType = {
     schoolDayId: string;
@@ -345,6 +397,7 @@ declare global {
     schedule: scheduleType;
     dressCode: dressCodeDataType;
     semester: semesters;
+    schoolYearEventId: string;
     dressCodeIncentive?: dressCodeIncentiveType;
   };
   type schoolDayType = {
@@ -397,32 +450,13 @@ declare global {
     excess: boolean;
     state: loadingStateEnum;
   };
-  type paulyEventTypes = 'schoolDay' | 'schoolYear';
-  type eventType = {
-    id: string;
-    name: string;
-    startTime: string;
-    endTime: string; // This is held in iso format
-    eventColor: string; // This is held in iso format
-    microsoftEvent: boolean;
-    allDay: boolean;
-    paulyEventType?: paulyEventTypes;
-    paulyEventData?: string;
-    microsoftReference?: string;
-    schoolDayData?: {
-      schoolDayData: schoolDayType;
-      schedule: scheduleType;
-      dressCode: dressCodeDataType;
-      semester: semesters;
-      dressCodeIncentiveId?: string;
-    };
-  };
+  type paulyEventTypes = 'schoolDay' | 'schoolYear' | 'personal' | 'studentCouncil' | 'regular';
   type newsPost = {
     title: string;
     excerpt: string;
     content: string;
     id: number;
-    url: string
+    url: string;
   };
   type noClassType = {
     day: number;
@@ -475,6 +509,18 @@ declare global {
     callPath: string;
     type: string;
   };
+  type mediaSubmissionType = {
+    Title: string;
+    user: string;
+    submissionId: string;
+    accepted: boolean;
+    reviewed: boolean;
+    selectedSportId: string;
+    selectedTeamId: string;
+    fileId: string;
+    fileType: postType;
+    itemID: string;
+  };
   type paulyDataType = {
     message: string;
     animationSpeed: number;
@@ -502,19 +548,6 @@ declare global {
     tagedResourceId: string;
     calendarSyncStateListId: string;
   };
-  type sportPost = {
-    caption: string;
-    data:
-      | {
-          fileId: string;
-          postType: postType.microsoftFile;
-          fileType: dataContentTypeOptions;
-        }
-      | {
-          fileId: string;
-          postType: postType.youtubeVideo;
-        };
-  };
   type insightResult = {
     userState: loadingStateEnum;
     trendingState: loadingStateEnum;
@@ -533,17 +566,18 @@ declare global {
     readOnly: boolean;
     required: boolean;
   };
-  type mediaSubmissionType = {
-    Title: string;
-    user: string;
-    submissionId: string;
-    accepted: boolean;
-    reviewed: boolean;
-    selectedSportId: string;
-    selectedTeamId: string;
-    fileId: string;
-    fileType: postType;
-    itemID: string;
+  type sportPost = {
+    caption: string;
+    data:
+      | {
+          fileId: string;
+          postType: postType.microsoftFile;
+          fileType: dataContentTypeOptions;
+        }
+      | {
+          fileId: string;
+          postType: postType.youtubeVideo;
+        };
   };
   type youtubeVideoType = {
     thumbnail: string;
@@ -575,7 +609,7 @@ const paperFonts: Record<string, MD3Type> = {
       ios: 'System',
       default: 'sans-serif',
     }),
-    fontWeight: "normal",
+    fontWeight: 'normal',
     letterSpacing: 0.5,
     lineHeight: 22,
     fontSize: 20,
@@ -586,7 +620,7 @@ const paperFonts: Record<string, MD3Type> = {
       ios: 'System',
       default: 'sans-serif',
     }),
-    fontWeight: "normal",
+    fontWeight: 'normal',
     letterSpacing: 0.5,
     lineHeight: 22,
     fontSize: 20,
@@ -597,17 +631,17 @@ const paperFonts: Record<string, MD3Type> = {
       ios: 'System',
       default: 'sans-serif',
     }),
-    fontWeight: "normal",
+    fontWeight: 'normal',
     letterSpacing: 0.5,
     lineHeight: 22,
     fontSize: 20,
   },
-}
+};
 
 // constance
 export const paperTheme: ThemeProp = {
   ...DefaultTheme,
-  fonts: configureFonts({config: paperFonts}),
+  fonts: configureFonts({ config: paperFonts }),
   roundness: 2,
   colors: {
     // Primary

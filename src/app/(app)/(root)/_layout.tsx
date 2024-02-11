@@ -34,7 +34,13 @@ function AuthenticatedView() {
         overflow: overflowHidden ? 'hidden' : 'visible',
       }}
     >
-      <View style={{ flexDirection: 'row', width: totalWidth,  overflow: overflowHidden ? 'hidden' : 'visible' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          width: totalWidth,
+          overflow: overflowHidden ? 'hidden' : 'visible',
+        }}
+      >
         {currentBreakPoint >= 1 ? <NavBarComponent /> : null}
         <View
           style={{
@@ -56,7 +62,7 @@ function AuthenticatedView() {
 function PushToAuth() {
   const router = useRouter();
   useFocusEffect(() => {
-    console.log("push")
+    console.log('push');
     try {
       router.push('/sign-in');
     } catch (error) {

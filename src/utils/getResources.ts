@@ -1,7 +1,9 @@
 /*
   Pauly
   Andrew Mainella
-
+  8 February 2024
+  getResources.ts
+  Functions for resources page
 */
 import { loadingStateEnum, resourceMode, resourceResponce } from '@constants';
 import store from '@redux/store';
@@ -508,7 +510,7 @@ export async function getScholarships(): Promise<
           note: data.items[index].note,
           link: data.items[index].link,
           cover: data.items[index].cover,
-          id: createUUID()
+          id: createUUID(),
         });
       }
     }
@@ -539,7 +541,7 @@ export async function getNewsPosts(nextLink?: string | undefined): Promise<
         excerpt: data.posts[index].excerpt,
         content: data.posts[index].content,
         id: data.posts[index].id,
-        url: data.posts[index].URL
+        url: data.posts[index].URL,
       });
     }
     return {

@@ -16,7 +16,7 @@ SplashScreen.preventAutoHideAsync();
 export default function App(): React.JSX.Element | null {
   // Fixing hydration issues
   const [mounted, setMounted] = useState(false);
-  const [fontsLoaded, setFontsLoaded] = useState<boolean>(false)
+  const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     if (!mounted) {
@@ -31,7 +31,7 @@ export default function App(): React.JSX.Element | null {
         .catch(() => {});
     }
     setMounted(true);
-  }, [])
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -49,7 +49,7 @@ export default function App(): React.JSX.Element | null {
         <title>Pauly</title>
       </Head>
       <View onLayout={onLayoutRootView}>
-       <RootLayout />
+        <RootLayout />
       </View>
     </>
   );

@@ -1,11 +1,10 @@
-
 /*
   Pauly
   Andrew Mainella
 */
 // TODO make sure this page has aduquare warnings
-import { View, Text } from 'react-native'
-import React from 'react'
+import { View, Text } from 'react-native';
+import React from 'react';
 import { Link } from 'expo-router';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
@@ -49,13 +48,13 @@ async function deleteEvents() {
     const result = await callMsGraph(fullDeleteUrl);
     if (result.ok) {
       const data = await result.json();
+      fullDeleteUrl = data['@odata.nextLink'];
       for (let index = 0; index < data.value.length; index += 1) {
         await callMsGraph(
           `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
           'DELETE',
         );
       }
-      fullDeleteUrl = data['@odata.nextLink'];
     } else {
       fullDeleteUrl = undefined;
     }
@@ -70,12 +69,8 @@ export default function GovernmentClaendarUtility() {
       <Link href="/government/calendar/">
         <Text>Back</Text>
       </Link>
-      <Text
-        style={styles.headerText}
-      >
-        Calendar Ultility
-      </Text>
+      <Text style={styles.headerText}>Calendar Ultility</Text>
       <StyledButton text="Delete Calendar" onPress={() => deleteEvents()} />
     </View>
-  )
+  );
 }

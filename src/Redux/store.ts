@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  10 February 2023
+  store.ts
+  Redux store https://redux.js.org/
+*/
 import { configureStore } from '@reduxjs/toolkit';
 import isOverrideReducer from './reducers/isOverrideReducer';
 import monthDataReducer from './reducers/monthDataReducer';

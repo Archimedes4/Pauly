@@ -13,22 +13,27 @@ export default function ResourceNewsPage({
   setSelectedPost: (item: undefined) => void;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const [headers, setHeaders] = useState<string>("");
+  const [headers, setHeaders] = useState<string>('');
   async function getHeaders() {
-    console.log(selectedPost.url)
-    const result = await fetch("https://thecrusadernews.ca/2023/12/20/throne-speech-marks-time-of-optimism-in-manitoba/", {
-      headers: {
-        "Access-Control-Allow-Origin":'*'
-      }
-    })
-    const data = await result.text()
-    console.log("Result" + data)
-    result.headers.forEach(function(val: string, key: string) { console.log(key + ' -> ' + val); });
+    console.log(selectedPost.url);
+    const result = await fetch(
+      'https://thecrusadernews.ca/2023/12/20/throne-speech-marks-time-of-optimism-in-manitoba/',
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+      },
+    );
+    const data = await result.text();
+    console.log(`Result${data}`);
+    result.headers.forEach(function (val: string, key: string) {
+      console.log(`${key} -> ${val}`);
+    });
   }
   useEffect(() => {
-    console.log("headers")
+    console.log('headers');
     getHeaders();
-  }, [])
+  }, []);
   return (
     <View
       style={{
@@ -46,7 +51,6 @@ export default function ResourceNewsPage({
       </Pressable>
       <Text>{selectedPost.title}</Text>
       <iframe
-
         srcDoc={`
         <!DOCTYPE html>
         <html>
@@ -78,7 +82,12 @@ export default function ResourceNewsPage({
         </html>`}
         width={width * 0.9}
         height={height * 0.85}
-        style={{marginLeft: 'auto', marginRight: 'auto', padding: 0, border: 0}}
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          padding: 0,
+          border: 0,
+        }}
       />
     </View>
   );

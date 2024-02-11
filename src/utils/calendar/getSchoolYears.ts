@@ -7,6 +7,7 @@
 import store from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
+import { getSingleValueProperties } from './calendarFunctionsGraph';
 
 export default async function getSchoolYears(nextLink?: string): Promise<
   | {
@@ -42,38 +43,20 @@ export default async function getSchoolYears(nextLink?: string): Promise<
     const data = await result.json();
     const newEvents: eventType[] = [];
     for (let index = 0; index < data.value.length; index += 1) {
-      const eventTypeExtensionID =
-        store.getState().paulyList.eventTypeExtensionId;
-      const eventDataExtensionID =
-        store.getState().paulyList.eventDataExtensionId;
-      if (data.value[index].singleValueExtendedProperties !== undefined) {
-        const eventData: { id: string; value: string }[] =
-          data.value[index].singleValueExtendedProperties;
-        if (
-          eventData.find(e => {
-            return e.id === eventTypeExtensionID;
-          })?.value === 'schoolYear'
-        ) {
-          newEvents.push({
-            id: data.value[index].id,
-            name: data.value[index].subject,
-            startTime: data.value[index].start.dateTime,
-            endTime: data.value[index].end.dateTime,
-            allDay: data.value[index].isAllDay,
-            eventColor: Colors.white,
-            paulyEventType:
-              eventData.find(e => {
-                return e.id === eventTypeExtensionID;
-              })?.value === 'schoolYear'
-                ? 'schoolYear'
-                : undefined,
-            paulyEventData: eventData.find(e => {
-              return e.id === eventDataExtensionID;
-            })?.value,
-            microsoftEvent: true,
-            microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
-          });
-        }
+      const singleValue = getSingleValueProperties(data.value[index])
+      if (singleValue !== undefined && singleValue.eventType === 'schoolYear') {
+        newEvents.push({
+          id: data.value[index].id,
+          name: data.value[index].subject,
+          startTime: data.value[index].start.dateTime,
+          endTime: data.value[index].end.dateTime,
+          allDay: data.value[index].isAllDay,
+          eventColor: Colors.white,
+          paulyEventType: 'schoolYear',
+          timetableId: singleValue.eventData,
+          microsoftEvent: true,
+          microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
+        });
       }
     }
     return {

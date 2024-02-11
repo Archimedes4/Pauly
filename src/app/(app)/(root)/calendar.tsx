@@ -5,7 +5,7 @@
   Calendar.tsx
   Main Calendar for Pauly see README.md for more info.
 */
-import { View, Text, Pressable, Platform } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Week from '@components/Calendar/Week';
@@ -16,7 +16,7 @@ import { RootState } from '@redux/store';
 import { Colors, calendarMode } from '@constants';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import BackButton from '@components/BackButton';
-import { addEventSlice } from '@src/redux/reducers/addEventReducer';
+import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { getClassesSchedule } from '@utils/classesFunctions';
 import getEvents from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
@@ -65,12 +65,13 @@ function TopView({ width, height }: { width: number; height: number }) {
           numberOfLines={1}
           style={{
             fontFamily: 'BukhariScript',
-            fontSize: getCalendarFontSize(currentBreakPoint, height),//getCalendarFontSize(currentBreakPoint, height),
-            width: width * 0.45 -
-            (width * 0.1 < height ? width * 0.15 : height + width * 0.025),
+            fontSize: getCalendarFontSize(currentBreakPoint, height), // getCalendarFontSize(currentBreakPoint, height),
+            width:
+              width * 0.45 -
+              (width * 0.1 < height ? width * 0.15 : height + width * 0.025),
             height: getCalendarFontSize(currentBreakPoint, height),
             color: Colors.white,
-            textAlign: 'center'
+            textAlign: 'center',
           }}
         >
           Calendar
@@ -79,7 +80,7 @@ function TopView({ width, height }: { width: number; height: number }) {
       <View style={{ width: width * 0.55 }}>
         <View style={{ marginLeft: width * 0.05 }}>
           <CalendarTypePicker
-            width={(currentBreakPoint === 1) ? width * 0.4 : width * 0.5}
+            width={currentBreakPoint === 1 ? width * 0.4 : width * 0.5}
             height={width * 0.1 < height * 0.6 ? width * 0.1 : height * 0.6}
           />
         </View>
@@ -90,8 +91,16 @@ function TopView({ width, height }: { width: number; height: number }) {
         <Pressable
           onPress={() => {
             dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-            dispatch(addEventSlice.actions.setIsEditing(false));
-            dispatch(addEventSlice.actions.setSelectedEvent(undefined));
+            dispatch(addEventSlice.actions.setSelectedEvent({
+              id: 'create',
+              name: '',
+              startTime: new Date().toISOString(),
+              endTime: new Date().toISOString(),
+              eventColor: Colors.white,
+              microsoftEvent: true,
+              allDay: false,
+              paulyEventType: 'personal'
+            }));
           }}
           style={{
             height: width * 0.1 < height * 0.6 ? width * 0.1 : height * 0.6,
@@ -136,10 +145,10 @@ export default function Calendar() {
         bottom: Colors.white,
       }),
     );
-  }, [dispatch])
+  }, [dispatch]);
 
   useEffect(() => {
-    updateColors()
+    updateColors();
   }, []);
 
   // This is the main (only) process that updates the events
@@ -194,12 +203,16 @@ export default function Calendar() {
           style={{
             zIndex: 2,
             position: 'absolute',
-            left: width * 0.05 + (currentBreakPoint === 0 ? 0 : width * 0.3) / 2,
+            left:
+              width * 0.05 + (currentBreakPoint === 0 ? 0 : width * 0.3) / 2,
             top: height * 0.1,
           }}
         >
           <AddEvent
-            width={width * 0.9 - (currentBreakPoint === 0 ? width * 0.1 : width * 0.3)}
+            width={
+              width * 0.9 -
+              (currentBreakPoint === 0 ? width * 0.1 : width * 0.3)
+            }
             height={height * 0.8}
           />
         </View>

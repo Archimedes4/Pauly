@@ -109,9 +109,16 @@ export default function Government() {
   }, [width]);
 
   return (
-    <View style={{ height, width, backgroundColor: Colors.white, overflow: 'hidden' }}>
+    <View
+      style={{
+        height,
+        width,
+        backgroundColor: Colors.white,
+        overflow: 'hidden',
+      }}
+    >
       {currentBreakPoint <= 0 ? (
-        <Link href={currentBreakPoint === 0 ? "/home":"/"}>
+        <Link href={currentBreakPoint === 0 ? '/home' : '/'}>
           <Text>Back</Text>
         </Link>
       ) : null}

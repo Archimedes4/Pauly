@@ -43,7 +43,7 @@ export default async function getCommission(commissionId: string): Promise<
         channelId: data.value[0].fields.postChannelId,
         postId: data.value[0].fields.postId,
       },
-      timed:  data.value[0].fields.timed,
+      timed: data.value[0].fields.timed,
       maxNumberOfClaims: data.value[0].fields.maxNumberOfClaims,
       allowMultipleSubmissions: data.value[0].fields.allowMultipleSubmissions,
       value: data.value[0].fields.value - 1,

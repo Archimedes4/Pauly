@@ -62,38 +62,43 @@ function checkIfResourceDataJustAttachment(body: string): boolean {
   return true;
 }
 
-function AttachmentComponent({attachment, width}:{attachment: attachment, width: number}) {
-  const [height, setHeight] = useState(200)
+function AttachmentComponent({
+  attachment,
+  width,
+}: {
+  attachment: attachment;
+  width: number;
+}) {
+  const [height, setHeight] = useState(200);
   if (attachment.type.split('/')[0] === 'video') {
     return (
       <Video
         useNativeControls
         source={{ uri: attachment.webUrl }}
         resizeMode={ResizeMode.COVER}
-        onReadyForDisplay={(e) => {
+        onReadyForDisplay={e => {
           if (Platform.OS === 'web') {
             // TODO make this think work well
-            width * 16/9
+            (width * 16) / 9;
           } else {
-            const aspectRatio = e.naturalSize.width / e.naturalSize.height
-            setHeight(width * aspectRatio)
+            const aspectRatio = e.naturalSize.width / e.naturalSize.height;
+            setHeight(width * aspectRatio);
           }
         }}
-        
         isLooping
         style={{
-          width: width,
-          height: height,
+          width,
+          height,
           alignSelf: 'stretch',
           borderRadius: 15,
         }}
         videoStyle={{
-          width: width,
-          height: height,
+          width,
+          height,
           borderRadius: 15,
         }}
       />
-    )
+    );
   }
   return (
     <Pressable
@@ -102,14 +107,10 @@ function AttachmentComponent({attachment, width}:{attachment: attachment, width:
         Linking.openURL(attachment.webUrl);
       }}
     >
-      <MimeTypeIcon
-        width={14}
-        height={14}
-        mimeType={attachment.type}
-      />
+      <MimeTypeIcon width={14} height={14} mimeType={attachment.type} />
       <Text>{attachment.title}</Text>
     </Pressable>
-  )
+  );
 }
 
 function ResourceBlock({
@@ -175,7 +176,11 @@ function ResourceBlock({
             }}
           >
             {resource.item.attachments?.map(attachment => (
-              <AttachmentComponent key={attachment.id} attachment={attachment} width={width * 0.8 - 20}/>
+              <AttachmentComponent
+                key={attachment.id}
+                attachment={attachment}
+                width={width * 0.8 - 20}
+              />
             ))}
           </View>
         ) : null}
@@ -243,7 +248,7 @@ function ScholarshipBlock({
   item: ListRenderItemInfo<scholarship>;
   width: number;
 }) {
-  console.log(item)
+  console.log(item);
   const [height, setHeight] = useState<number>(0);
   useEffect(() => {
     Image.getSize(item.item.cover, (imgWidth, imgHeight) => {
@@ -252,7 +257,7 @@ function ScholarshipBlock({
     });
   }, [item.item.cover, width]);
   if (item === undefined) {
-    return null
+    return null;
   }
   return (
     <Pressable
@@ -282,9 +287,9 @@ function ScholarshipBlock({
 }
 
 function numberScholarBlock(width: number): number {
-  const newValue = Math.floor(width / 400)
+  const newValue = Math.floor(width / 400);
   if (newValue === 0) {
-    return 1
+    return 1;
   }
   return newValue;
 }
@@ -337,7 +342,7 @@ function ResourceScholarships() {
               item={item}
               width={width / numberScholarBlock(width)}
             />
-          )
+          );
         }}
         numColumns={numberScholarBlock(width)}
         style={{
@@ -345,9 +350,7 @@ function ResourceScholarships() {
           width,
           backgroundColor: Colors.lightGray,
         }}
-        ListFooterComponent={() => (
-          <View style={{height: 100}}/>
-        )}
+        ListFooterComponent={() => <View style={{ height: 100 }} />}
       />
     );
   }
@@ -472,9 +475,7 @@ export default function Resources() {
                         setSelectedPost={setSelectedPost}
                       />
                     )}
-                    ListFooterComponent={() => (
-                      <View style={{height: 100}}/>
-                    )}
+                    ListFooterComponent={() => <View style={{ height: 100 }} />}
                   />
                 ) : (
                   <Text>Failed</Text>

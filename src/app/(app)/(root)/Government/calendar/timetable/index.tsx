@@ -25,12 +25,18 @@ export default function GovernmentTimetable() {
         </Link>
         <Text style={styles.headerText}>Timetables</Text>
       </View>
-      <View style={{
-        flex: 1
-      }}>
+      <View
+        style={{
+          flex: 1,
+        }}
+      >
         <SelectTimetable governmentMode />
       </View>
-      <StyledButton to='/government/calendar/timetable/create' text='Create New' style={{margin: 15, marginTop: 0}}/>
+      <StyledButton
+        to="/government/calendar/timetable/create"
+        text="Create New"
+        style={{ margin: 15, marginTop: 0 }}
+      />
     </View>
   );
 }

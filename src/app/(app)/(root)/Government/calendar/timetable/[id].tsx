@@ -5,7 +5,14 @@
   government/calendar/timetable/[id].tsx
   Page that allows editing government timetables. Also holds main componet for creating and editing timetables.
 */
-import { View, Text, TextInput, Pressable, ScrollView, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
@@ -20,11 +27,7 @@ import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 
 // TO DO longest amount of school days is 20 make sure this is enforced
-export function GovernmentTimetableEdit({
-  creating
-}:{
-  creating: boolean
-}) {
+export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
 
   // Loading States
@@ -56,7 +59,9 @@ export function GovernmentTimetableEdit({
       <Link href="/government/calendar/timetable/">
         <Text>Back</Text>
       </Link>
-      <Text style={styles.headerText}>{creating ? "Create":"Edit"} Timetable</Text>
+      <Text style={styles.headerText}>
+        {creating ? 'Create' : 'Edit'} Timetable
+      </Text>
       <View style={{ backgroundColor: '#FF6700', borderRadius: 15, margin: 5 }}>
         <View style={{ margin: 10 }}>
           <Text>
@@ -94,14 +99,27 @@ export function GovernmentTimetableEdit({
         schoolDays={schoolDays}
         setSchoolDays={setSchoolDays}
       />
-      <DressCodeBlock selectedDressCode={selectedDressCode} setSelectedDressCode={setSelectedDressCode}/>
+      <DressCodeBlock
+        selectedDressCode={selectedDressCode}
+        setSelectedDressCode={setSelectedDressCode}
+      />
       <StyledButton
         text={getTextState(createTimetableLoadingState, {
           notStarted: 'Create Timetable',
         })}
         onPress={() => {
-          if (createTimetableLoadingState === loadingStateEnum.notStarted && selectedDefaultSchedule !== undefined && selectedDressCode !== undefined) {
-            createTimetable(selectedDefaultSchedule, selectedSchedules, selectedDressCode, schoolDays, timetableName);
+          if (
+            createTimetableLoadingState === loadingStateEnum.notStarted &&
+            selectedDefaultSchedule !== undefined &&
+            selectedDressCode !== undefined
+          ) {
+            createTimetable(
+              selectedDefaultSchedule,
+              selectedSchedules,
+              selectedDressCode,
+              schoolDays,
+              timetableName,
+            );
           }
         }}
         second
@@ -112,10 +130,10 @@ export function GovernmentTimetableEdit({
 
 function DressCodeBlock({
   selectedDressCode,
-  setSelectedDressCode
+  setSelectedDressCode,
 }: {
-  selectedDressCode: dressCodeType | undefined,
-  setSelectedDressCode: (item: dressCodeType | undefined) => void
+  selectedDressCode: dressCodeType | undefined;
+  setSelectedDressCode: (item: dressCodeType | undefined) => void;
 }) {
   const { height } = useSelector((state: RootState) => state.dimentions);
   const [dressCodeState, setDressCodeState] = useState<loadingStateEnum>(
@@ -126,9 +144,7 @@ function DressCodeBlock({
   async function getDressCodes() {
     const result = await getDressCodeData();
     setDressCodeState(result.result);
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setDressCodes(result.data);
     }
   }
@@ -140,17 +156,24 @@ function DressCodeBlock({
     return (
       <View>
         <Text>Dress Codes</Text>
-        <View style={{height: height * 0.2, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
-          <ProgressView width={14} height={14}/>
+        <View
+          style={{
+            height: height * 0.2,
+            alignContent: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ProgressView width={14} height={14} />
           <Text>Loading</Text>
         </View>
       </View>
-    )
+    );
   }
 
   if (dressCodeState === loadingStateEnum.success) {
     return (
-      <View style={{height: height * 0.2}}>
+      <View style={{ height: height * 0.2 }}>
         <Text>Dress Codes</Text>
         {dressCodes.map(dressCode => (
           <StyledButton
@@ -160,24 +183,29 @@ function DressCodeBlock({
             }}
             style={{
               backgroundColor:
-                selectedDressCode?.id === dressCode.id
-                  ? 'blue'
-                  : Colors.white,
+                selectedDressCode?.id === dressCode.id ? 'blue' : Colors.white,
             }}
           />
         ))}
       </View>
-    )
+    );
   }
-  //Failed
+  // Failed
   return (
     <View>
       <Text>Dress Codes</Text>
-      <View style={{height: height * 0.2, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+      <View
+        style={{
+          height: height * 0.2,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <Text>Failed</Text>
       </View>
     </View>
-  )
+  );
 }
 
 function SchoolDays({
@@ -351,9 +379,7 @@ function ScheduleBlock({
   );
   async function loadSchedules() {
     const result = await getSchedules();
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setLoadedSchedules(result.data);
     }
     setScheduleState(result.result);
@@ -367,7 +393,7 @@ function ScheduleBlock({
       <View>
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (scheduleState === loadingStateEnum.success) {
@@ -375,19 +401,30 @@ function ScheduleBlock({
       <View>
         <Text>Schedules</Text>
         <Text>Selected Schedules</Text>
-        <FlatList 
+        <FlatList
           data={selectedSchedules}
-          renderItem={(item) => (
-            <StyledButton style={{ height: height * 0.03 + 16, margin: 15, marginBottom: 0 }} key={`SelectedSchedule_${item.item.id}`}>
+          renderItem={item => (
+            <StyledButton
+              style={{
+                height: height * 0.03 + 16,
+                margin: 15,
+                marginBottom: 0,
+              }}
+              key={`SelectedSchedule_${item.item.id}`}
+            >
               <Text>{item.item.properName}</Text>
               {selectedDefaultSchedule?.id !== item.item.id ? (
                 <Pressable
                   onPress={() => {
                     setSelectedDefaultSchedule(item.item);
                   }}
-                  style={{ backgroundColor: 'blue', height: 26.4, borderRadius: 15 }}
+                  style={{
+                    backgroundColor: 'blue',
+                    height: 26.4,
+                    borderRadius: 15,
+                  }}
                 >
-                  <Text style={{margin: 5}}>Select As Default</Text>
+                  <Text style={{ margin: 5 }}>Select As Default</Text>
                 </Pressable>
               ) : null}
             </StyledButton>
@@ -397,10 +434,13 @@ function ScheduleBlock({
         <View style={{ alignItems: 'center' }}>
           <Text>Other Schedules</Text>
         </View>
-        <FlatList 
+        <FlatList
           data={loadedSchedules}
-          renderItem={(item) => {
-            if (selectedSchedules.length < 1 || selectedSchedules[0].periods.length === item.item.periods.length) {
+          renderItem={item => {
+            if (
+              selectedSchedules.length < 1 ||
+              selectedSchedules[0].periods.length === item.item.periods.length
+            ) {
               return (
                 <StyledButton
                   key={`Timetable_${item.item.id}_${createUUID()}`}
@@ -415,11 +455,11 @@ function ScheduleBlock({
                     }
                   }}
                   text={item.item.properName}
-                  style={{margin: 15, marginBottom: 0}}
+                  style={{ margin: 15, marginBottom: 0 }}
                 />
-              )
+              );
             }
-            return null
+            return null;
           }}
           style={{ height: height * 0.4 }}
         />
@@ -427,12 +467,7 @@ function ScheduleBlock({
     );
   }
 
-  return (
-    <View>
-      Failed
-    </View>
-  )
+  return <View>Failed</View>;
 }
 
-
-export default <GovernmentTimetableEdit creating={false}/>
+export default <GovernmentTimetableEdit creating={false} />;

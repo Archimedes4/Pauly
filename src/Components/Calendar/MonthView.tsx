@@ -2,7 +2,7 @@ import createUUID from '@utils/ultility/createUUID';
 import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   FlatList,
   ListRenderItemInfo,
@@ -143,7 +143,6 @@ function CalendarCardView({
         }}
         onPress={() => {
           pressCalendar();
-          dispatch(addEventSlice.actions.setIsEditing(false));
           dispatch(addEventSlice.actions.setIsShowingAddDate(true));
           const startDate = new Date(selectedDate);
           startDate.setDate(value.item.dayData);
@@ -188,7 +187,6 @@ function CalendarCardView({
             <Pressable
               key={`Calendar_Event_${event.id}`}
               onPress={() => {
-                dispatch(addEventSlice.actions.setIsEditing(true));
                 dispatch(addEventSlice.actions.setIsShowingAddDate(true));
                 dispatch(addEventSlice.actions.setSelectedEvent(event));
                 dispatch(addEventSlice.actions.setStartDate(event.startTime));
@@ -235,11 +233,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(monthData)
-  }, [monthData])
-
-  useEffect(() => {
-    return getMonthData(new Date(selectedDate))
+    return getMonthData(new Date(selectedDate));
   }, [selectedDate, currentEvents]);
 
   return (

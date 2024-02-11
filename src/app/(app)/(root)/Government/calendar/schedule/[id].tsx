@@ -42,7 +42,7 @@ SplashScreen.preventAutoHideAsync();
 
 // NOTE: period length cannot be longer than 20
 export function GovernmentSchedule({ create }: { create: boolean }) {
-  const { id } = useGlobalSearchParams()
+  const { id } = useGlobalSearchParams();
   const { width, height } = useSelector((state: RootState) => state.dimentions);
 
   const [scheduleListId, setScheduleListId] = useState<string | undefined>(
@@ -65,7 +65,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
   const [deleteState, setDeleteState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
-  const textRef: React.LegacyRef<TextInput> = useRef(null)
+  const textRef: React.LegacyRef<TextInput> = useRef(null);
 
   async function submitSchedule() {
     setCreateScheduleLoadingState(loadingStateEnum.loading);
@@ -145,9 +145,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
   const loadFunction = useCallback(async () => {
     if (typeof id === 'string') {
       const result = await getSchedule(id);
-      if (
-        result.result === loadingStateEnum.success
-      ) {
+      if (result.result === loadingStateEnum.success) {
         setScheduleProperName(result.schedule.properName);
         setScheduleDescriptiveName(result.schedule.descriptiveName);
         setColor(result.schedule.color);
@@ -218,7 +216,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
         <TextInput
           style={styles.textInputStyle}
           value={scheduleProperName}
-          onChangeText={(e) => setScheduleProperName(e)}
+          onChangeText={e => setScheduleProperName(e)}
           placeholder="Proper Name ex. Schedule One"
           ref={textRef}
         />
@@ -228,7 +226,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
         <TextInput
           style={styles.textInputStyle}
           value={scheduleDescriptiveName}
-          onChangeText={(e) => setScheduleDescriptiveName(e)}
+          onChangeText={e => setScheduleDescriptiveName(e)}
           placeholder="Descriptive Name ex. Regular Schedule"
         />
         <View
@@ -255,7 +253,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
               period={period.item}
               periods={newPeriods}
               onSetNewPeriods={out => {
-                console.log(out)
+                console.log(out);
                 setNewPeriods([...out]);
               }}
             />
@@ -305,7 +303,9 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
                   borderColor: Colors.black,
                 }}
               />
-              <Pressable style={{ marginLeft: 5, width: width - 92.4, height: 16.5 }}>
+              <Pressable
+                style={{ marginLeft: 5, width: width - 92.4, height: 16.5 }}
+              >
                 <ColorPicker
                   style={{ width: width - 100, height: 16.5 }}
                   value={color}
@@ -502,9 +502,11 @@ function PeriodBlock({
     if (newNewPeriodsArray.length === 1) {
       onSetNewPeriods([]);
     } else {
-      onSetNewPeriods(newNewPeriodsArray.filter((e => {
-        return e.id !== deletePeriod.id
-      })));
+      onSetNewPeriods(
+        newNewPeriodsArray.filter(e => {
+          return e.id !== deletePeriod.id;
+        }),
+      );
     }
   }
 
@@ -530,7 +532,9 @@ function PeriodBlock({
           </Text>
           <Pressable
             style={{ marginLeft: 'auto' }}
-            onPress={() => {setIsSelectingStartTime(true)}}
+            onPress={() => {
+              setIsSelectingStartTime(true);
+            }}
           >
             <Text>Pick start time</Text>
           </Pressable>

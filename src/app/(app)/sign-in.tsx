@@ -214,26 +214,26 @@ export function SignInComponent({ government }: { government: boolean }) {
             }}
           >
             {authActive ? (
-            <ProgressView width={14} height={14} />
-          ) : (
-            <>
-              <GearIcon
-                width={18}
-                height={18}
-                color={isGovernmentHover ? Colors.white : Colors.black}
-              />
-              <Text
-                selectable={false}
-                style={{
-                  textAlign: 'center',
-                  color: isGovernmentHover ? Colors.white : Colors.black,
-                  fontFamily: 'Roboto-Bold',
-                }}
-              >
-                SIGN IN AS ADMIN
-              </Text>
-            </>
-          )}
+              <ProgressView width={14} height={14} />
+            ) : (
+              <>
+                <GearIcon
+                  width={18}
+                  height={18}
+                  color={isGovernmentHover ? Colors.white : Colors.black}
+                />
+                <Text
+                  selectable={false}
+                  style={{
+                    textAlign: 'center',
+                    color: isGovernmentHover ? Colors.white : Colors.black,
+                    fontFamily: 'Roboto-Bold',
+                  }}
+                >
+                  SIGN IN AS ADMIN
+                </Text>
+              </>
+            )}
           </Pressable>
         ) : null}
       </View>

@@ -18,7 +18,7 @@ export default function AnimatedCheckMarkPath({
   checkMarkColor: animatedCheckMarkColor;
   checked: boolean;
 }) {
-  //creating path and progress value
+  // creating path and progress value
   const AnimatedPath = Animated.createAnimatedComponent(Path);
   const checkMarkAnimation = useAnimatedProps(() => {
     const strokeDashoffset = 1000 * progress.value;

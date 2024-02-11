@@ -9,34 +9,22 @@ import { useSelector } from 'react-redux';
 import { Pressable, View, Text, TextInput } from 'react-native';
 import React from 'react';
 import { RootState } from '@redux/store';
-import {
-  CloseIcon,
-  DownIcon,
-  UpIcon,
-  WarningIcon,
-} from '@components/Icons';
+import { CloseIcon, DownIcon, UpIcon, WarningIcon } from '@components/Icons';
 
 export default function DressCodeBlock({
   dressCode,
   index,
   dressCodeData,
   setDressCodeData,
-  selectedDressCodeId,
-  setSelectedDressCodeId,
 }: {
   dressCode: dressCodeDataType;
   index: number;
   dressCodeData: dressCodeDataType[];
   setDressCodeData: (item: dressCodeDataType[]) => void;
-  selectedDressCodeId: string;
-  setSelectedDressCodeId: (item: string) => void;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   return (
     <Pressable
-      onPress={() => {
-        setSelectedDressCodeId(dressCode.id);
-      }}
       style={{
         shadowColor: 'black',
         shadowOffset: { width: 0, height: 1 },
@@ -53,50 +41,49 @@ export default function DressCodeBlock({
         <View>
           <View style={{ flexDirection: 'row' }}>
             {dressCode.name === '' ? (
-              <WarningIcon width={14} height={14} outlineColor="red" />
+              <WarningIcon width={14} height={14} outlineColor="red" style={{marginTop: 'auto', marginBottom: 'auto'}}/>
             ) : null}
             <Text>
-              Name: {selectedDressCodeId === dressCode.id ? '' : dressCode.name}
+              Name: 
             </Text>
-            {selectedDressCodeId === dressCode.id ? (
-              <TextInput
-                placeholder="Dress Code Name"
-                value={dressCode.name}
-                onChangeText={e => {
-                  const newDressCodeData = dressCodeData;
-                  newDressCodeData[index].name = e;
-                  setDressCodeData([...newDressCodeData]);
-                }}
-              />
-            ) : null}
+            <TextInput
+              placeholder="Dress Code Name"
+              value={dressCode.name}
+              onChangeText={e => {
+                const newDressCodeData = dressCodeData;
+                newDressCodeData[index].name = e;
+                setDressCodeData([...newDressCodeData]);
+              }}
+            />
+
           </View>
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', width: width - width * 0.06 - 80 }}>
             {dressCode.description === '' ? (
-              <WarningIcon width={14} height={14} outlineColor="red" />
+              <WarningIcon width={14} height={14} outlineColor="red" style={{marginTop: 'auto', marginBottom: 'auto'}}/>
             ) : null}
             <Text>
-              Description:{' '}
-              {selectedDressCodeId === dressCode.id
-                ? ''
-                : dressCode.description}
+              Description: 
             </Text>
-            {selectedDressCodeId === dressCode.id ? (
-              <TextInput
-                placeholder="Dress Code Description"
-                value={dressCode.description}
-                onChangeText={e => {
-                  const newDressCodeData = dressCodeData;
-                  newDressCodeData[index].description = e;
-                  setDressCodeData([...newDressCodeData]);
-                }}
-              />
-            ) : null}
+            <TextInput
+              placeholder="Dress Code Description"
+              value={dressCode.description}
+              onChangeText={e => {
+                const newDressCodeData = dressCodeData;
+                newDressCodeData[index].description = e;
+                setDressCodeData([...newDressCodeData]);
+              }}
+              multiline
+              numberOfLines={4}
+              style={{ width: '100%' }}
+            />
           </View>
         </View>
         <View>
           <UpIcon width={14} height={14} />
           <DownIcon width={14} height={14} />
-          <CloseIcon width={14} height={14} />
+          <Pressable>
+            <CloseIcon width={14} height={14} />
+          </Pressable>
         </View>
       </View>
     </Pressable>

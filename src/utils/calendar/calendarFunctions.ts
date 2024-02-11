@@ -3,7 +3,7 @@
   Andrew Mainella
   21 July 2023
   calendarFunctions.ts
-  Basic calendar functions non api not async
+  Basic calendar functions non api, non async
 */
 
 export function getDaysInMonth(input: Date): number {
@@ -41,14 +41,8 @@ export function isDateToday(dateToCheck: Date) {
   // Get today's date
   const today = new Date();
 
-  // Compare the components of the dateToCheck with today's date
-  const isSameDate =
-    dateToCheck.getDate() === today.getDate() &&
-    dateToCheck.getMonth() === today.getMonth() &&
-    dateToCheck.getFullYear() === today.getFullYear();
-
   // Return true if the dateToCheck is today, otherwise return false
-  return isSameDate;
+  return isTimeOnDay(dateToCheck.toISOString(), today.toISOString());
 }
 
 // July 17 2023
@@ -127,14 +121,56 @@ export function computeEventHeight(
 }
 
 export function isTimeOnDay(lhs: string, rhs: string): boolean {
+  // compare year
   if (new Date(lhs).getFullYear() !== new Date(rhs).getFullYear()) {
     return false;
   }
+  // compare month
   if (new Date(lhs).getMonth() !== new Date(rhs).getMonth()) {
     return false;
   }
+  // compare date
   if (new Date(lhs).getDate() !== new Date(rhs).getDate()) {
     return false;
   }
   return true;
+}
+
+export function isEventDuringInterval(
+  selectedDate: Date | string,
+  event: eventType,
+  checkDayStart?: number,
+  checkDayEnd?: number,
+) {
+  const startTimeDate = new Date(event.startTime).getTime(); // String to date
+  const endTimeDate = new Date(event.endTime).getTime(); // String to date
+
+  const checkDate =
+    typeof selectedDate === 'string' ? new Date(selectedDate) : selectedDate;
+
+  // Check is the current date
+  const checkStart: number = new Date(
+    checkDate.getFullYear(),
+    checkDate.getMonth(),
+    checkDayStart !== undefined ? checkDayStart : checkDate.getDate(),
+    0,
+    0,
+  ).getTime();
+  const checkEnd: number = new Date(
+    checkDate.getFullYear(),
+    checkDate.getMonth(),
+    checkDayEnd !== undefined ? checkDayEnd : checkDate.getDate() + 1,
+    0,
+    0,
+  ).getTime();
+
+  // Start time starts before and end time ends after or on day
+  if (startTimeDate < checkStart && endTimeDate >= checkEnd) {
+    return true;
+    // Start time is on day
+  }
+  if (startTimeDate >= checkStart && startTimeDate < checkEnd) {
+    return true;
+  }
+  return false;
 }

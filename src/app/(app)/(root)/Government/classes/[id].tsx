@@ -110,9 +110,7 @@ export default function GovernmentClassesEdit() {
       roomsNextLink,
       roomSearchText !== '' ? roomSearchText : undefined,
     );
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setRooms(result.data);
       setRoomsNextLink(result.nextLink);
     }
@@ -130,11 +128,10 @@ export default function GovernmentClassesEdit() {
 
   async function loadTimetable() {
     if (
-      selectedSchoolYear !== undefined &&
-      selectedSchoolYear.paulyEventData !== undefined
+      selectedSchoolYear !== undefined && selectedSchoolYear.paulyEventType === 'schoolYear'
     ) {
       setTimetableState(loadingStateEnum.loading);
-      const result = await getTimetable(selectedSchoolYear.paulyEventData);
+      const result = await getTimetable(selectedSchoolYear.timetableId);
       if (
         result.result === loadingStateEnum.success &&
         result.timetable !== undefined

@@ -1,9 +1,15 @@
-import store from "@redux/store";
-import createUUID from "../ultility/createUUID";
-import callMsGraph from "../ultility/microsoftAssets";
-import { loadingStateEnum } from "@constants";
+import store from '@redux/store';
+import { loadingStateEnum } from '@constants';
+import createUUID from '../ultility/createUUID';
+import callMsGraph from '../ultility/microsoftAssets';
 
-export async function createTimetable(selectedDefaultSchedule: scheduleType, selectedSchedules: scheduleType[], selectedDressCode: dressCodeType, schoolDays: schoolDayType[], timetableName: string) {
+export async function createTimetable(
+  selectedDefaultSchedule: scheduleType,
+  selectedSchedules: scheduleType[],
+  selectedDressCode: dressCodeType,
+  schoolDays: schoolDayType[],
+  timetableName: string,
+) {
   // Check to make sure all have the same number of periods
   for (let index = 0; index < selectedSchedules.length; index += 1) {
     if (
@@ -31,18 +37,27 @@ export async function createTimetable(selectedDefaultSchedule: scheduleType, sel
     },
   };
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items`,
+    `https://graph.microsoft.com/v1.0/sites/${
+      store.getState().paulyList.siteId
+    }/lists/${store.getState().paulyList.timetablesListId}/items`,
     'POST',
     JSON.stringify(data),
   );
   if (result.ok) {
-    return loadingStateEnum.success
-  } else {
-    return loadingStateEnum.failed
+    return loadingStateEnum.success;
   }
+  return loadingStateEnum.failed;
 }
 
-export async function updateTimetable(selectedDefaultSchedule: scheduleType, selectedSchedules: scheduleType[], selectedDressCode: dressCodeType, schoolDays: schoolDayType[], timetableName: string, timetableListId: string, timetableId: string) {
+export async function updateTimetable(
+  selectedDefaultSchedule: scheduleType,
+  selectedSchedules: scheduleType[],
+  selectedDressCode: dressCodeType,
+  schoolDays: schoolDayType[],
+  timetableName: string,
+  timetableListId: string,
+  timetableId: string,
+) {
   // Check to make sure all have the same number of periods
   for (let index = 0; index < selectedSchedules.length; index += 1) {
     if (
@@ -54,7 +69,7 @@ export async function updateTimetable(selectedDefaultSchedule: scheduleType, sel
   }
 
   // Update Timetable
-  const scheduals: string[] = []; //list of ids for the schedules
+  const scheduals: string[] = []; // list of ids for the schedules
   for (let index = 0; index < selectedSchedules.length; index += 1) {
     scheduals.push(selectedSchedules[index].id);
   }
@@ -62,7 +77,7 @@ export async function updateTimetable(selectedDefaultSchedule: scheduleType, sel
     fields: {
       Title: timetableName,
       timetableName,
-      timetableId: timetableId,
+      timetableId,
       timetableDataSchedules: JSON.stringify(scheduals),
       timetableDataDays: JSON.stringify(schoolDays),
       timetableDefaultScheduleId: selectedDefaultSchedule.id,
@@ -70,13 +85,16 @@ export async function updateTimetable(selectedDefaultSchedule: scheduleType, sel
     },
   };
   const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.timetablesListId}/items/${timetableListId}`,
+    `https://graph.microsoft.com/v1.0/sites/${
+      store.getState().paulyList.siteId
+    }/lists/${
+      store.getState().paulyList.timetablesListId
+    }/items/${timetableListId}`,
     'PATCH',
     JSON.stringify(data),
   );
   if (result.ok) {
-    return loadingStateEnum.success
-  } else {
-    return loadingStateEnum.failed
+    return loadingStateEnum.success;
   }
+  return loadingStateEnum.failed;
 }

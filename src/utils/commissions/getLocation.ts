@@ -19,7 +19,8 @@ export default async function getUsersLocation(
   const location = await Location.getCurrentPositionAsync();
   if (!location.mocked) {
     if (
-      (commission.value === commissionTypeEnum.Location || commission.value === commissionTypeEnum.ImageLocation) &&
+      (commission.value === commissionTypeEnum.Location ||
+        commission.value === commissionTypeEnum.ImageLocation) &&
       commission.coordinateLat !== undefined &&
       commission.coordinateLng !== undefined &&
       commission.proximity !== undefined

@@ -1,54 +1,69 @@
+/*
+  Pauly
+  Andrew Mainella
+  10 February 2023
+  addEventReducer.ts
+*/
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import {
   calendarMode,
-  paulyEventType,
   recurringType,
   loadingStateEnum,
+  Colors,
 } from '@constants';
 
 type addEventStatesType = {
-  eventName: string;
+  //eventName: string;
   createEventState: loadingStateEnum;
   isPickingStartDate: boolean;
   isPickingEndDate: boolean;
-  allDay: boolean;
+  //allDay: boolean;
   isGovernmentEvent: boolean;
   selectedTimetable: timetableStringType;
-  selectedSchoolDayData: schoolDayDataType | undefined;
+  //selectedSchoolDayData: schoolDayDataType | undefined;
   selectedSchoolYear: eventType | undefined;
-  selectedEventType: paulyEventType;
+  //selectedEventType: paulyEventType;
   recurringEvent: boolean;
   selectedRecurringType: recurringType;
-  startDate: string;
-  endDate: string;
+  //startDate: string;
+  //endDate: string;
   isShowingAddDate: boolean;
-  isEditing: boolean;
+  //isEditing: boolean;
   selectedCalendarMode: calendarMode;
-  selectedEvent: eventType | undefined;
+  selectedEvent: eventType //| undefined;
 };
 
 const initalState: addEventStatesType = {
-  eventName: '',
+  //eventName: '',
   createEventState: loadingStateEnum.notStarted,
   isPickingStartDate: false,
   isPickingEndDate: false,
-  allDay: false,
+  //allDay: false,
   isGovernmentEvent: false,
   selectedTimetable: {
-    name: '',
-    id: '',
+   name: '',
+   id: '',
   },
-  selectedSchoolDayData: undefined,
+  //selectedSchoolDayData: undefined,
   selectedSchoolYear: undefined,
-  selectedEventType: paulyEventType.personal,
+ // selectedEventType: paulyEventType.personal,
   recurringEvent: false,
   selectedRecurringType: recurringType.daily,
-  startDate: new Date().toISOString(),
-  endDate: new Date().toISOString(),
+  //startDate: new Date().toISOString(),
+ // endDate: new Date().toISOString(),
   isShowingAddDate: false,
-  isEditing: false,
+  //isEditing: false,
   selectedCalendarMode: calendarMode.month,
-  selectedEvent: undefined,
+  selectedEvent: {
+    id: 'create',
+    name: '',
+    startTime: new Date().toISOString(),
+    endTime: new Date().toISOString(),
+    eventColor: Colors.white,
+    microsoftEvent: true,
+    allDay: false,
+    paulyEventType: 'personal'
+  },
 };
 
 export const addEventSlice = createSlice({
@@ -56,7 +71,13 @@ export const addEventSlice = createSlice({
   initialState: initalState,
   reducers: {
     setEventName: (state, action: PayloadAction<string>) => {
-      return { ...state, eventName: action.payload };
+      return {
+        ...state,
+        selectedEvent: {
+          ...state.selectedEvent,
+          name: action.payload
+        }
+      }
     },
     setCreateEventState: (state, action: PayloadAction<loadingStateEnum>) => {
       return { ...state, createEventState: action.payload };
@@ -68,7 +89,13 @@ export const addEventSlice = createSlice({
       state.isPickingEndDate = action.payload;
     },
     setAllDay: (state, action: PayloadAction<boolean>) => {
-      return { ...state, allDay: action.payload };
+      return {
+        ...state,
+        selectedEvent: {
+          ...state.selectedEvent,
+          allDay: action.payload
+        }
+      }
     },
     setIsGovernmentEvent: (state, action: PayloadAction<boolean>) => {
       return { ...state, isGovernmentEvent: action.payload };
@@ -88,9 +115,6 @@ export const addEventSlice = createSlice({
     setSelectedSchoolYear: (state, action: PayloadAction<eventType>) => {
       return { ...state, selectedSchoolYear: action.payload };
     },
-    setSelectedEventType: (state, action: PayloadAction<number>) => {
-      return { ...state, selectedEventType: action.payload };
-    },
     setRecurringEvent: (state, action: PayloadAction<boolean>) => {
       return { ...state, recurringEvent: action.payload };
     },
@@ -99,26 +123,38 @@ export const addEventSlice = createSlice({
     },
     setStartDate: (state, action: PayloadAction<string | Date>) => {
       if (typeof action.payload === 'string') {
-        return { ...state, startDate: action.payload };
+        return { ...state, selectedEvent: {
+          ...state.selectedEvent,
+          startTime: action.payload
+        }};
       }
-      return { ...state, startDate: action.payload.toISOString() };
+      return { ...state, selectedEvent: {
+        ...state.selectedEvent,
+        startTime: action.payload.toISOString()
+      }};
     },
     setEndDate: (state, action: PayloadAction<string | Date>) => {
       if (typeof action.payload === 'string') {
-        return { ...state, endDate: action.payload };
+        return { ...state, selectedEvent: {
+          ...state.selectedEvent,
+          endTime: action.payload
+        }};
       }
-      return { ...state, endDate: action.payload.toISOString() };
+      return { ...state, selectedEvent: {
+        ...state.selectedEvent,
+        endTime: action.payload.toISOString()
+      }};
     },
     setIsShowingAddDate: (state, action: PayloadAction<boolean>) => {
       state.isShowingAddDate = action.payload;
     },
-    setIsEditing: (state, action: PayloadAction<boolean>) => {
-      state.isEditing = action.payload;
-    },
+    // setIsEditing: (state, action: PayloadAction<boolean>) => {
+    //   state.isEditing = action.payload;
+    // },
     setSelectedCalendarMode: (state, action: PayloadAction<calendarMode>) => {
       state.selectedCalendarMode = action.payload;
     },
-    setSelectedEvent: (state, action: PayloadAction<eventType | undefined>) => {
+    setSelectedEvent: (state, action: PayloadAction<eventType>) => {
       state.selectedEvent = action.payload;
     },
   },

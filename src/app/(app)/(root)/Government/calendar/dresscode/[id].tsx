@@ -3,7 +3,13 @@
   Andrew Mainella
   21 Decemeber 2023
 */
-import { View, Text, TextInput, Pressable, ScrollView, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  FlatList,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-native';
@@ -20,16 +26,15 @@ import BackButton from '@components/BackButton';
 import StyledButton from '@src/components/StyledButton';
 
 export function GovernmentDressCodeEdit({
-  isCreating
-} : {
-  isCreating: boolean
+  isCreating,
+}: {
+  isCreating: boolean;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const [dressCodeName, setDressCodeName] = useState<string>('');
   const [dressCodeData, setDressCodeData] = useState<dressCodeDataType[]>([
     { name: '', description: '', id: createUUID() },
   ]);
-  const [selectedDressCodeId, setSelectedDressCodeId] = useState<string>('');
   const [dressCodeListId, setDressCodeListId] = useState<string>('');
 
   const [createDressCodeState, setCreateDressCodeState] =
@@ -99,40 +104,38 @@ export function GovernmentDressCodeEdit({
           <Text>Back</Text>
         </Link>
         <Text style={styles.headerText}>Create Dress Code</Text>
-        <Text style={{marginLeft: 25}}>Dress Code Name:</Text>
+        <Text style={{ marginLeft: 25 }}>Dress Code Name:</Text>
         <TextInput
           value={dressCodeName}
           onChangeText={setDressCodeName}
           placeholder="Dress Code Name"
           style={styles.textInputStyle}
         />
-        <FlatList 
+        <FlatList
           style={{ height: height * 0.7 }}
           data={dressCodeData}
-          renderItem={(item) => (
+          renderItem={item => (
             <DressCodeBlock
               dressCode={item.item}
               dressCodeData={dressCodeData}
               index={item.index}
               setDressCodeData={setDressCodeData}
-              selectedDressCodeId={selectedDressCodeId}
-              setSelectedDressCodeId={setSelectedDressCodeId}
             />
           )}
         />
-        <StyledButton 
-          style={{margin: 15, marginBottom: 0}}
+        <StyledButton
+          style={{ margin: 15, marginBottom: 0 }}
           onPress={() => {
             setDressCodeData([
               ...dressCodeData,
               { name: '', description: '', id: createUUID() },
             ]);
           }}
-          text='Add'
+          text="Add"
         />
         <StyledButton
           second
-          style={{margin: 15}}
+          style={{ margin: 15 }}
           onPress={() => loadCreateDressCode()}
           text={getTextState(deleteDressCodeState, {
             notStarted: 'Create Dress Code',
@@ -163,7 +166,7 @@ export function GovernmentDressCodeEdit({
           justifyContent: 'center',
         }}
       >
-        <BackButton to="/government/calendar/dresscode"/>
+        <BackButton to="/government/calendar/dresscode" />
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
@@ -181,5 +184,5 @@ export function GovernmentDressCodeEdit({
 }
 
 export default function GovernmentDressCodeEditMain() {
-  return <GovernmentDressCodeEdit isCreating={false}/>
+  return <GovernmentDressCodeEdit isCreating={false} />;
 }

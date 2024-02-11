@@ -10,7 +10,7 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 
 export default async function getDressCode(
   dressCodeId: string,
-): Promise<{ result: loadingStateEnum; data?: dressCodeType }> {
+): Promise<{ result: loadingStateEnum.success; data: dressCodeType } | { result: loadingStateEnum.failed }> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId

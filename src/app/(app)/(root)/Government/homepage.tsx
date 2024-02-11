@@ -112,11 +112,7 @@ export default function GovernmentHomePage() {
       <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text
-        style={styles.headerText}
-      >
-        Home Page
-      </Text>
+      <Text style={styles.headerText}>Home Page</Text>
       <View>
         <TextInput
           value={newText}

@@ -231,7 +231,8 @@ export async function initializePaulyPartThree(
       paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventSyncId`;
     }
     if (getPaulyListResultData.fields.eventSyncModeExtensionId !== undefined) {
-      paulyListNewData.fields.eventSyncModeExtensionId = getPaulyListResultData.fields.eventSyncModeExtensionId
+      paulyListNewData.fields.eventSyncModeExtensionId =
+        getPaulyListResultData.fields.eventSyncModeExtensionId;
     } else {
       paulyListNewData.fields.eventSyncIdExtensionId = `String {${createUUID()}} Name eventSyncMode`;
     }

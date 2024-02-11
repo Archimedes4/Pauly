@@ -46,7 +46,6 @@ export default function ScrollingTextAnimation({
     if (childWidth !== 0) {
       mainLoop(childWidth);
     }
-
   }, [childWidth, mainLoop]);
 
   return (

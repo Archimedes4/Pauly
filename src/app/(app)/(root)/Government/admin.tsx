@@ -471,15 +471,15 @@ function UserBlock({
   async function loadUsers(nextLink?: string) {
     const userResult = await getUsers(nextLink);
     if (userResult.result === loadingStateEnum.success) {
-      setNextLink(userResult.nextLink)
+      setNextLink(userResult.nextLink);
       if (nextLink) {
         setLoadedUsers([...loadedUsers, ...userResult.data]);
       } else {
         setLoadedUsers([...userResult.data]);
       }
-      setLoadUsersResult(loadingStateEnum.success)
+      setLoadUsersResult(loadingStateEnum.success);
     } else {
-      setLoadUsersResult(loadingStateEnum.failed)
+      setLoadUsersResult(loadingStateEnum.failed);
     }
   }
 
@@ -509,7 +509,7 @@ function UserBlock({
                   setSelectedUser(user.item);
                   setInitResult(loadingStateEnum.notStarted);
                 }}
-                style={{margin: 15, marginBottom: 0}}
+                style={{ margin: 15, marginBottom: 0 }}
               />
             );
           }
@@ -520,7 +520,7 @@ function UserBlock({
             loadUsers(nextLink);
           }
         }}
-        style={{width: width - height * 0.1, height: height * 0.4 }}
+        style={{ width: width - height * 0.1, height: height * 0.4 }}
       />
     );
   }

@@ -46,7 +46,10 @@ export async function getSports(): Promise<
 
 export async function getSportsTeams(
   sportId: string,
-): Promise<{ result: loadingStateEnum; data?: sportTeamType[] }> {
+): Promise<
+  | { result: loadingStateEnum.success; data: sportTeamType[] }
+  | { result: loadingStateEnum.failed }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId

@@ -55,7 +55,7 @@ export default async function largeBatch(
     method: 'GET' | 'POST';
   },
 ): Promise<
-  { result: loadingStateEnum.success; data: batchResponseType[] }
+  | { result: loadingStateEnum.success; data: batchResponseType[] }
   | {
       result: loadingStateEnum.failed;
     }

@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, ScrollView, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import createUUID from '@utils/ultility/createUUID';
 import { Colors, loadingStateEnum, semesters, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
-import BackButton from '@src/components/BackButton';
-
 
 function GovernmentClassesBody() {
   const [classState, setClassState] = useState<loadingStateEnum>(
@@ -54,16 +51,18 @@ function GovernmentClassesBody() {
 
   if (classState === loadingStateEnum.loading) {
     return (
-      <View style={{
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1
-      }}>
+      <View
+        style={{
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+        }}
+      >
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (classState === loadingStateEnum.success) {
@@ -71,22 +70,29 @@ function GovernmentClassesBody() {
       <FlatList
         data={classes}
         renderItem={classMap => (
-          <StyledButton to={`/government/classes/${classMap.item.id}`} key={`Class_${classMap.item.id}`} text={classMap.item.name} style={{margin: 15}}/>
+          <StyledButton
+            to={`/government/classes/${classMap.item.id}`}
+            key={`Class_${classMap.item.id}`}
+            text={classMap.item.name}
+            style={{ margin: 15 }}
+          />
         )}
       />
-    )
+    );
   }
 
   return (
-    <View style={{
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: 1
-    }}>
+    <View
+      style={{
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+      }}
+    >
       <Text>Failed</Text>
     </View>
-  )
+  );
 }
 
 export default function GovernmentClasses() {

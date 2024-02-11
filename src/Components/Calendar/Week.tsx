@@ -91,84 +91,80 @@ export default function Week({
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <View>
-        {/* 768 TO DO get dimentiosn value */}
-        {width >= 768 ? (
-          <View>
-            <View style={{ flexDirection: 'row', height: 40 }}>
-              {daysOfWeek.map(dow => (
-                <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
-                  <Text>
-                    {dow.toLocaleDateString('en-US', { weekday: 'long' })}
-                  </Text>
-                  <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>
-                    {dow.toLocaleDateString('en-US', { day: 'numeric' })}
-                  </Text>
+      {/* 768 TO DO get dimentiosn value */}
+      {width >= 768 ? (
+        <>
+          <View style={{ flexDirection: 'row', height: 40 }}>
+            {daysOfWeek.map(dow => (
+              <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                <Text>
+                  {dow.toLocaleDateString('en-US', { weekday: 'long' })}
+                </Text>
+                <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                  {dow.toLocaleDateString('en-US', { day: 'numeric' })}
+                </Text>
+              </View>
+            ))}
+          </View>
+          <ScrollView style={{ height }}>
+            <View style={{ flexDirection: 'row' }}>
+              {daysOfWeek.map((day, index) => (
+                <View key={day.getDate()} id={day.getDate().toString()}>
+                  <WeekDayView
+                    width={width / 7}
+                    height={false ? height * 0.757 : height}
+                    week
+                    start={index === 0}
+                    day={day}
+                  />
                 </View>
               ))}
             </View>
-            <ScrollView style={{ height }}>
-              <View style={{ flexDirection: 'row' }}>
-                {daysOfWeek.map((day, index) => (
-                  <View key={day.getDate()} id={day.getDate().toString()}>
-                    <WeekDayView
-                      width={width / 7}
-                      height={false ? height * 0.757 : height}
-                      week
-                      start={index === 0}
-                      day={day}
-                    />
-                  </View>
-                ))}
-              </View>
-            </ScrollView>
-          </View>
-        ) : (
-          <View>
-            <View
-              style={{
-                flexDirection: 'row',
-                height: width * 0.142857142857143,
-                width,
-              }}
-            >
-              <Pressable
-                style={{ margin: width * 0.01111111111111111 }}
-                onPress={() => {
-                  const d = new Date(selectedDateRedux);
-                  d.setDate(d.getDate() - 7);
-                  dispatch(
-                    selectedDateSlice.actions.setSelectedDate(d.toISOString()),
-                  );
-                }}
-              >
-                <ChevronLeft
-                  width={width * 0.08888888888888889}
-                  height={width * 0.08888888888888889}
-                />
-              </Pressable>
-              {daysOfWeek.map(day => (
-                <WeekDayButton width={width} day={day} />
-              ))}
-              <Pressable
-                style={{ margin: width * 0.01111111111111111 }}
-                onPress={() => {
-                  const d = new Date(selectedDateRedux);
-                  d.setDate(d.getDate() + 7);
-                  dispatch(
-                    selectedDateSlice.actions.setSelectedDate(d.toISOString()),
-                  );
-                }}
-              >
-                <ChevronRight
-                  width={width * 0.08888888888888889}
-                  height={width * 0.08888888888888889}
-                />
-              </Pressable>
-            </View>
-          </View>
-        )}
-      </View>
+          </ScrollView>
+        </>
+      ) : (
+        <View
+          style={{
+            flexDirection: 'row',
+            height: width * 0.142857142857143,
+            width,
+          }}
+        >
+          <Pressable
+            style={{ margin: width * 0.01111111111111111 }}
+            onPress={() => {
+              const d = new Date(selectedDateRedux);
+              d.setDate(d.getDate() - 7);
+              dispatch(
+                selectedDateSlice.actions.setSelectedDate(d.toISOString()),
+              );
+            }}
+          >
+            <ChevronLeft
+              width={width * 0.08888888888888889}
+              height={width * 0.08888888888888889}
+            />
+          </Pressable>
+          {daysOfWeek.map(day => (
+            <WeekDayButton width={width} day={day} />
+          ))}
+          <Pressable
+            style={{ margin: width * 0.01111111111111111 }}
+            onPress={() => {
+              const d = new Date(selectedDateRedux);
+              d.setDate(d.getDate() + 7);
+              dispatch(
+                selectedDateSlice.actions.setSelectedDate(d.toISOString()),
+              );
+            }}
+          >
+            <ChevronRight
+              width={width * 0.08888888888888889}
+              height={width * 0.08888888888888889}
+            />
+          </Pressable>
+        </View>
+      )}
       <View
         style={{
           height: false ? height : height - width * 0.179,

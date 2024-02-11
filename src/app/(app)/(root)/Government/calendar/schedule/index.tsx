@@ -19,9 +19,7 @@ function GovernmentScheduleBody() {
 
   async function loadSchedules() {
     const result = await getSchedules();
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setLoadedSchedules(result.data);
     }
     setLoadingState(result.result);
@@ -56,7 +54,11 @@ function GovernmentScheduleBody() {
       <FlatList
         data={loadedSchedules}
         renderItem={schedule => (
-          <StyledButton to={`/government/calendar/schedule/${schedule.item.id}`} text={schedule.item.properName} style={{margin: 15, marginBottom: 0}}/>
+          <StyledButton
+            to={`/government/calendar/schedule/${schedule.item.id}`}
+            text={schedule.item.properName}
+            style={{ margin: 15, marginBottom: 0 }}
+          />
         )}
       />
     );

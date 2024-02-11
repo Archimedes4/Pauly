@@ -12,8 +12,8 @@ import { DocumentInitParameters } from 'pdfjs-dist/types/src/display/api';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import store, { RootState } from '@redux/store';
 import { pdfDataSlice } from '@redux/reducers/pdfDataReducer';
-import ProgressView from '../ProgressView';
 import Head from 'expo-router/head';
+import ProgressView from '../ProgressView';
 
 function PDFViewBody({ width }: { width: number }) {
   const { powerpointBlob } = useSelector((state: RootState) => state.paulyData);
@@ -23,16 +23,16 @@ function PDFViewBody({ width }: { width: number }) {
   const [imageHeight, setImageHeight] = useState<number>(0);
 
   async function convertPdfToImages(url: string) {
-    let { pdfjsLib } = globalThis
+    let { pdfjsLib } = globalThis;
     while (pdfjsLib === undefined) {
-      pdfjsLib = globalThis.pdfjsLib
-      await new Promise((resolve) => {
+      pdfjsLib = globalThis.pdfjsLib;
+      await new Promise(resolve => {
         setTimeout(() => {
           resolve('');
         }, 1000);
       });
     }
-/* !IMPORTANT! update import */
+    /* !IMPORTANT! update import */
     pdfjsLib.GlobalWorkerOptions.workerSrc =
       '/pdfjs-4.0.379-dist/build/pdf.worker.mjs';
 
@@ -45,12 +45,12 @@ function PDFViewBody({ width }: { width: number }) {
       const docInitParams: DocumentInitParameters = { url: fileURL };
 
       const pdf = await pdfjsLib.getDocument(docInitParams).promise;
-      const canvas = document.createElement('canvas'); 
+      const canvas = document.createElement('canvas');
       for (let i = 0; i < pdf.numPages; i += 1) {
         const page = await pdf.getPage(i + 1);
         const viewport = page.getViewport({ scale: 1 });
-        const context = canvas.getContext('2d'); 
-        canvas.height = viewport.height; 
+        const context = canvas.getContext('2d');
+        canvas.height = viewport.height;
         canvas.width = viewport.width;
         if (context !== null) {
           await page.render({ canvasContext: context, viewport }).promise;
@@ -124,12 +124,14 @@ function PDFViewBody({ width }: { width: number }) {
     );
   }
   return (
-    <View style={{
-      flex: 1,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
+    <View
+      style={{
+        flex: 1,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <ProgressView width={100} height={100} />
       <Text>Loading</Text>
     </View>
@@ -140,7 +142,7 @@ export default function PDFView({ width }: { width: number }) {
   return (
     <>
       <Head>
-{/* !IMPORTANT! update import */}
+        {/* !IMPORTANT! update import */}
         <script src="/pdfjs-4.0.379-dist/build/pdf.mjs" type="module" />
       </Head>
       <PDFViewBody width={width} />

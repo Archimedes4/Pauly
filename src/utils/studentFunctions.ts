@@ -16,7 +16,7 @@ function checkIfStudent(role: string): {
 } {
   if (role !== null && role.length >= 20) {
     const reversed = role.split('').reverse().join('');
-    const domainName = process.env.EXPO_PUBLIC_DOMAINNAME;
+    const domainName: string = process.env.EXPO_PUBLIC_DOMAINNAME ?? "";
     const domainLength = domainName.length;
     const slice = reversed.slice(0, domainLength);
     if (slice === domainName.split('').reverse().join('')) {
@@ -54,16 +54,20 @@ function checkIfStudent(role: string): {
           .split('')
           .reverse()
           .join('');
-        if (reversed.slice(domainLength, domainLength + 2) === reverseYearTwelve) {
+        if (
+          reversed.slice(domainLength, domainLength + 2) === reverseYearTwelve
+        ) {
           return { result: true, grade: '12' };
         }
-        if (reversed.slice(domainLength, domainLength + 2) === reverseYearEleven) {
+        if (
+          reversed.slice(domainLength, domainLength + 2) === reverseYearEleven
+        ) {
           return { result: true, grade: '11' };
         }
         if (reversed.slice(domainLength, domainLength + 2) === reverseYearTen) {
           return { result: true, grade: '10' };
         }
-        if (reversed.slice(domainName, domainLength + 2) === reverseYearNine) {
+        if (reversed.slice(domainLength, domainLength + 2) === reverseYearNine) {
           return { result: true, grade: '9' };
         }
         return { result: false };
@@ -102,16 +106,14 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
     });
     const imagesIdsMap = new Map<string, string>(); // Key is userId, value is image data id
     const imageIdsArray: string[] = [];
-    if (
-      batchResult.result === loadingStateEnum.success
-    ) {
+    if (batchResult.result === loadingStateEnum.success) {
       for (
         let batchIndex = 0;
         batchIndex < batchResult.data.length;
         batchIndex += 1
       ) {
         if (batchResult.data[batchIndex].status === 200) {
-          console.log(batchResult.data[batchIndex].body)
+          console.log(batchResult.data[batchIndex].body);
           // TO DO OK
           if (batchResult.data[batchIndex].body.value.length === 1) {
             // Checking to make suare only one item is selected
@@ -147,9 +149,7 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
       keys: { array: imageIdsArray },
     });
     const imagesDownloadUrls = new Map<string, string>(); // Key is the item id on the sharepoint and value is the downlad url
-    if (
-      batchResultDownloadUrls.result === loadingStateEnum.success
-    ) {
+    if (batchResultDownloadUrls.result === loadingStateEnum.success) {
       for (
         let batchIndex = 0;
         batchIndex < batchResultDownloadUrls.data.length;
@@ -236,7 +236,10 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
 
 export async function getStudentData(
   userId: string,
-): Promise<{ result: loadingStateEnum.success; data: studentInformationType[] } | {result: loadingStateEnum.failed}> {
+): Promise<
+  | { result: loadingStateEnum.success; data: studentInformationType[] }
+  | { result: loadingStateEnum.failed }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -368,13 +371,16 @@ export function getNumberOfBlocks(width: number) {
     : 1;
 }
 
-export async function getUsers(nextLink?: string): Promise<{
-  result: loadingStateEnum.success,
-  data: microsoftUserType[]
-  nextLink?: string
-} | {
-  result: loadingStateEnum.failed
-}> {
+export async function getUsers(nextLink?: string): Promise<
+  | {
+      result: loadingStateEnum.success;
+      data: microsoftUserType[];
+      nextLink?: string;
+    }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const result = await callMsGraph(
     nextLink ||
       'https://graph.microsoft.com/v1.0/users?$top=10&$select,id,displayName',
@@ -391,11 +397,10 @@ export async function getUsers(nextLink?: string): Promise<{
     return {
       result: loadingStateEnum.success,
       data: newUsers,
-      nextLink: data['@odata.nextLink']
-    }
-  } else {
-    return {
-      result: loadingStateEnum.failed
-    }
+      nextLink: data['@odata.nextLink'],
+    };
   }
+  return {
+    result: loadingStateEnum.failed,
+  };
 }

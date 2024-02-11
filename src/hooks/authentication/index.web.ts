@@ -28,17 +28,19 @@ export const useRefresh = () => {
       );
     });
   }
-  return main
+  return main;
 };
 
 export function useSilentLogin(): () => Promise<void> {
   const { instance, inProgress } = useMsal();
   async function main() {
-
     // handle auth redired/do all initial setup for msal
     const redirectResult = await instance.handleRedirectPromise();
-    if (redirectResult !== null && inProgress === InteractionStatus.HandleRedirect) {
-      console.log(redirectResult)
+    if (
+      redirectResult !== null &&
+      inProgress === InteractionStatus.HandleRedirect
+    ) {
+      console.log(redirectResult);
       instance.setActiveAccount(redirectResult.account);
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(

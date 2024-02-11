@@ -16,7 +16,7 @@ export default function GovernmentCalendar() {
         backgroundColor: Colors.white,
       }}
     >
-      <BackButton to="/government"/>
+      <BackButton to="/government" />
       <Text
         style={{
           marginLeft: 'auto',
@@ -24,7 +24,7 @@ export default function GovernmentCalendar() {
           fontFamily: 'Comfortaa-Regular',
           marginBottom: 5,
           fontSize: 25,
-          marginTop: 15
+          marginTop: 15,
         }}
       >
         Government Calendar
@@ -49,7 +49,7 @@ export default function GovernmentCalendar() {
         text="Calendar Sync"
         style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}
       />
-       <StyledButton
+      <StyledButton
         to="/government/calendar/utility"
         text="Calendar Utility"
         style={{ marginLeft: 15, marginRight: 15, marginTop: 20 }}

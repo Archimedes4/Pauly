@@ -37,7 +37,9 @@ async function loadCommissionData(
   const result = await getCommissions(nextLink, startDate, endDate, claimed);
   if (result.result === loadingStateEnum.success) {
     store.dispatch(commissionsSlice.actions.setCurrentCommissions(result.data));
-    store.dispatch(commissionsSlice.actions.setCommissionNextLink(result.nextLink));
+    store.dispatch(
+      commissionsSlice.actions.setCommissionNextLink(result.nextLink),
+    );
   }
   store.dispatch(commissionsSlice.actions.setCommissionsState(result.result));
 }
@@ -146,9 +148,7 @@ function CommissionsBody() {
   const { currentCommissions, commissionsState, commissionNextLink } =
     useSelector((state: RootState) => state.commissions);
 
-  const { height, width } = useSelector(
-    (state: RootState) => state.dimentions,
-  );
+  const { height, width } = useSelector((state: RootState) => state.dimentions);
 
   const dispatch = useDispatch();
 
@@ -245,9 +245,9 @@ export default function Commissions() {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
   );
-  const {
-    selectedCommission,
-  } = useSelector((state: RootState) => state.commissions);
+  const { selectedCommission } = useSelector(
+    (state: RootState) => state.commissions,
+  );
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
 

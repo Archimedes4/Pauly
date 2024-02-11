@@ -13,6 +13,9 @@ import {
   calculateIfShowing,
   computeEventHeight,
   findTimeOffset,
+  isDateToday,
+  isEventDuringInterval,
+  isTimeOnDay,
 } from '@utils/calendar/calendarFunctions';
 import { RootState } from '@redux/store';
 import createUUID from '@utils/ultility/createUUID';
@@ -72,8 +75,8 @@ export default function DayView({
     '11PM',
   ];
   const mainScrollRef = useRef<ScrollView>(null);
-  const [eventsPane, setEventsPane] = useState<number[][]>([[]]); // This is a sorted 2d array for calculating the horizintal shift of an event
   const [schoolEvents, setSchoolEvents] = useState<eventType[]>();
+  const [dayEvents, setDayEvents] = useState<dayEvent[]>([]);
 
   function setCurrentTimeFunction(hour: number, minuite: number) {
     if (minuite.toString().length === 1) {
@@ -87,6 +90,27 @@ export default function DayView({
     } else {
       setCurrentTime(`${(hour % 12).toString()}:${minuite.toString()}`);
     }
+  }
+
+  async function getDayEvents() {
+    let dayEvents = [];
+    for (let index = 0; index < currentEvents.length; index += 1) {
+      if (isEventDuringInterval(selectedDate, currentEvents[index])) {
+        dayEvents.push(currentEvents[index]);
+      }
+    }
+    dayEvents = dayEvents.sort((a, b) => {
+      return a.startTime.localeCompare(b.startTime);
+    });
+    console.log(dayEvents);
+    const result: dayEvent[] = [];
+    for (let index = 0; index < dayEvents.length; index += 1) {
+      result.push({
+        event: [dayEvents[index]],
+        offset: findTimeOffset(new Date(dayEvents[index].startTime), height),
+      });
+    }
+    setDayEvents(result);
   }
 
   const loadCalendarContent = useCallback(() => {
@@ -138,6 +162,10 @@ export default function DayView({
   }
 
   useEffect(() => {
+    getDayEvents();
+  }, [currentEvents, selectedDate]);
+
+  useEffect(() => {
     getClassesEvents();
   }, [selectedDate]);
 
@@ -186,37 +214,29 @@ export default function DayView({
           </>
         ) : null}
       </>
-      {currentEvents.map(event => (
+      {dayEvents.map(block => (
         <>
-          {event.allDay ||
-          new Date(event.endTime).getFullYear() !==
-            new Date(selectedDate).getFullYear() ||
-          new Date(event.endTime).getMonth() !==
-            new Date(selectedDate).getMonth() ||
-          new Date(event.endTime).getDate() !==
-            new Date(selectedDate).getDate() ? null : (
-            <EventBlock
-              event={event}
-              width={width}
-              height={height}
-              eventPane={eventsPane}
-            />
-          )}
+          {block.event.map(event => {
+            if (!event.allDay) {
+              return (
+                <EventBlock
+                  key={event.id}
+                  event={event}
+                  width={width}
+                  height={height}
+                />
+              );
+            }
+            return null;
+          })}
         </>
       ))}
       {schoolEvents?.map(event => (
-        <EventBlock
-          event={event}
-          width={width}
-          height={height}
-          eventPane={eventsPane}
-        />
+        <EventBlock event={event} width={width} height={height} />
       ))}
       {week === undefined &&
       start === false &&
-      new Date(selectedDate).getDate() === new Date().getDate() &&
-      new Date(selectedDate).getMonth() === new Date().getMonth() &&
-      new Date(selectedDate).getFullYear() === new Date().getFullYear() ? (
+      isTimeOnDay(selectedDate, new Date().toISOString()) ? (
         <View
           style={{
             position: 'absolute',
@@ -249,12 +269,10 @@ function EventBlock({
   event,
   width,
   height,
-  eventPane,
 }: {
   event: eventType;
   width: number;
   height: number;
-  eventPane: number[][];
 }) {
   const EventHeight = computeEventHeight(
     new Date(event.startTime),
@@ -262,82 +280,6 @@ function EventBlock({
     height,
   );
   const Offset = findTimeOffset(new Date(event.startTime), height);
-  const [horizontalShift, setHorizontalShift] = useState<number>(0);
-  function calculateHorizontalShift() {
-    let handeled = false;
-    for (
-      let horizontalCheck = 0;
-      horizontalCheck < eventPane.length;
-      horizontalCheck += 1
-    ) {
-      const beforeIndex = eventPane[horizontalCheck].findIndex(
-        e => e >= Offset,
-      );
-      if (beforeIndex !== -1) {
-        if (beforeIndex - 1 < eventPane[horizontalCheck].length) {
-          if (eventPane[horizontalCheck][beforeIndex - 1] <= Offset) {
-            // Fail Check Next Hoizontal Array
-            continue;
-          } else {
-            // Everything Checks Out
-            const afterIndex = eventPane[horizontalCheck].findIndex(
-              e => e >= Offset + EventHeight,
-            );
-            if (afterIndex !== -1) {
-              if (afterIndex - 1 < eventPane[horizontalCheck].length) {
-                if (
-                  eventPane[horizontalCheck][afterIndex - 1] <=
-                  Offset + EventHeight
-                ) {
-                  // Fails check next horizontal array
-                  continue;
-                } else {
-                  // All Good
-                  eventPane[horizontalCheck].push(Offset);
-                  eventPane[horizontalCheck].push(Offset + EventHeight);
-                  eventPane[horizontalCheck].sort();
-                  handeled = true;
-                  break;
-                }
-              } else {
-                // Error
-                continue;
-              }
-            } else {
-              // All Good
-              const newEvents: number[][] = eventPane;
-              newEvents[horizontalCheck].push(Offset);
-              newEvents[horizontalCheck].push(Offset + EventHeight);
-              // [...eventPane[horizontalCheck], Offset, Offset + EventHeight])
-              eventPane[horizontalCheck].sort();
-              handeled = true;
-              break;
-            }
-          }
-        } else {
-          // Error
-          continue;
-        }
-      } else {
-        eventPane[horizontalCheck].push(Offset);
-        eventPane[horizontalCheck].push(Offset + EventHeight);
-        eventPane[horizontalCheck].sort();
-        handeled = true;
-        break;
-      }
-    }
-
-    if (!handeled) {
-      eventPane.push([]);
-      eventPane[eventPane.length - 1].push(Offset);
-      eventPane[eventPane.length - 1].push(Offset + EventHeight);
-    }
-    // setHorizontalShift(width * horizontalCheck);
-  }
-
-  useEffect(() => {
-    calculateHorizontalShift();
-  }, []);
 
   return (
     <View

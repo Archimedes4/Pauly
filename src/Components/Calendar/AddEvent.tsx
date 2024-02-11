@@ -8,18 +8,130 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, View, Text, Switch, TextInput } from 'react-native';
 import { TimePickerModal, DatePickerModal } from 'react-native-paper-dates';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import { addEventSlice } from '@src/redux/reducers/addEventReducer';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import { Colors, loadingStateEnum, paulyEventType, styles } from '@constants';
-import updateEvent from '@utils/updateEvent';
+import { Colors, loadingStateEnum, paulyEventType, semesters, styles } from '@constants';
+import updateEvent from '@src/utils/calendar/updateEvent';
 import { getTextState } from '@utils/ultility/createUUID';
 import SelectSchoolDayData from './SelectSchoolDayData';
 import SelectTimetable from './SelectTimetable';
 import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons';
 import PickerWrapper from '../Pickers/Picker';
 import SecondStyledButton from '../StyledButton';
+
+function setSelectedEventType(e: number) {
+  const selectedEvent = store.getState().addEvent.selectedEvent
+  if (selectedEvent.id === 'create' && selectedEvent.microsoftEvent === true) {
+    switch (e) {
+      case 0:
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'personal'
+        }))
+        break;
+      case 1:
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'regular'
+        }))
+        break;
+      case 2:
+        console.log("This")
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'schoolDay',
+          schoolDayData: {
+            schoolDay: {
+              name: '',
+              shorthand: '',
+              id: '',
+              order: 0
+            },
+            schedule: {
+              properName: '',
+              descriptiveName: '',
+              periods: [],
+              id: '',
+              color: ''
+            },
+            dressCode: {
+              name: '',
+              description: '',
+              id: ''
+            },
+            semester: semesters.semesterOne,
+            schoolYearEventId: ''
+          }
+        }))
+        break;
+      case 3:
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'schoolYear',
+          timetableId: ''
+        }))
+        break;
+      case 4:
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'studentCouncil'
+        }))
+        break;
+    }
+  } else if (selectedEvent.microsoftEvent === true) {
+    switch (e) {
+      case 0:
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'regular'
+        }))
+        break;
+      case 1:
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'schoolDay',
+          schoolDayData: {
+            schoolDay: {
+              name: '',
+              shorthand: '',
+              id: '',
+              order: 0
+            },
+            schedule: {
+              properName: '',
+              descriptiveName: '',
+              periods: [],
+              id: '',
+              color: ''
+            },
+            dressCode: {
+              name: '',
+              description: '',
+              id: ''
+            },
+            semester: semesters.semesterOne,
+            schoolYearEventId: ''
+          }
+        }))
+        break;
+      case 2:
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'schoolYear',
+          timetableId: ''
+        }))
+        break;
+      case 3:
+        store.dispatch(addEventSlice.actions.setSelectedEvent({
+          ...selectedEvent,
+          paulyEventType: 'studentCouncil'
+        }))
+        break;
+    }
+  }
+}
 
 function GovernmentCalendarOptions({
   width,
@@ -28,23 +140,26 @@ function GovernmentCalendarOptions({
   width: number;
   height: number;
 }) {
-  const { selectedEventType, selectedTimetable, selectedSchoolYear } =
+  const { selectedEvent, selectedTimetable, selectedSchoolYear } =
     useSelector((state: RootState) => state.addEvent);
   const dispatch = useDispatch();
+
   return (
     <>
-      <View>
+      { ((selectedEvent.id === 'create' || selectedEvent.paulyEventType !== 'personal') && selectedEvent.microsoftEvent === true) ?
         <PickerWrapper
-          selectedIndex={selectedEventType}
+          selectedIndex={(selectedEvent.id === 'create') ? ["personal", "regular", "schoolDay", "schoolYear", "studentCouncil"].indexOf(selectedEvent.paulyEventType):["regular", "schoolDay", "schoolYear", "studentCouncil"].indexOf(selectedEvent.paulyEventType)}
           onSetSelectedIndex={e => {
-            dispatch(addEventSlice.actions.setSelectedEventType(e));
+            setSelectedEventType(e)
           }}
           width={width}
           height={height * 0.05}
         >
-          <Text numberOfLines={1} style={{ fontSize: 8 }} key="Personal">
-            Personal
-          </Text>
+          { selectedEvent.id === 'create' ?
+            <Text numberOfLines={1} style={{ fontSize: 8 }} key="Personal">
+              Personal
+            </Text>:null
+          }
           <Text numberOfLines={1} style={{ fontSize: 8 }} key="Regular">
             Regular
           </Text>
@@ -57,9 +172,9 @@ function GovernmentCalendarOptions({
           <Text numberOfLines={1} style={{ fontSize: 8 }} key="Council">
             Student Council
           </Text>
-        </PickerWrapper>
-      </View>
-      {selectedEventType === paulyEventType.schoolDay ? (
+        </PickerWrapper>:null
+      }
+      {selectedEvent.paulyEventType === 'schoolDay' ? (
         <View style={{ width, height: 100 }}>
           <Text>
             Selected School Year:{' '}
@@ -68,7 +183,7 @@ function GovernmentCalendarOptions({
           <SelectSchoolDayData width={width} height={100} />
         </View>
       ) : null}
-      {selectedEventType === paulyEventType.schoolYear ? (
+      {selectedEvent.paulyEventType === 'schoolYear' ? (
         <View>
           <Text>
             Selected Timetable:{' '}
@@ -94,11 +209,7 @@ function DateAndTimeSection({
   height: number;
 }) {
   const {
-    selectedEventType,
-    eventName,
-    allDay,
-    startDate,
-    endDate,
+    selectedEvent,
     isPickingStartDate,
     isPickingEndDate,
   } = useSelector((state: RootState) => state.addEvent);
@@ -117,10 +228,10 @@ function DateAndTimeSection({
         onDismiss={() =>
           dispatch(addEventSlice.actions.setIsPickingStartDate(false))
         }
-        date={new Date(startDate)}
+        date={new Date(selectedEvent.startTime)}
         onConfirm={e => {
           if (e.date !== undefined) {
-            const oldDate = new Date(startDate);
+            const oldDate = new Date(selectedEvent.startTime);
             dispatch(
               addEventSlice.actions.setStartDate(
                 new Date(
@@ -144,10 +255,10 @@ function DateAndTimeSection({
         onDismiss={() =>
           dispatch(addEventSlice.actions.setIsPickingEndDate(false))
         }
-        date={new Date(endDate)}
+        date={new Date(selectedEvent.endTime)}
         onConfirm={e => {
           if (e.date !== undefined) {
-            const oldDate = new Date(endDate);
+            const oldDate = new Date(selectedEvent.endTime);
             const newDate = new Date(
               e.date.getFullYear(),
               e.date.getMonth(),
@@ -160,29 +271,29 @@ function DateAndTimeSection({
           dispatch(addEventSlice.actions.setIsPickingEndDate(false));
         }}
       />
-      {selectedEventType === paulyEventType.schoolDay ? null : (
+      {selectedEvent.paulyEventType === "schoolDay" ? null : (
         <View>
           <TextInput
-            value={eventName}
+            value={selectedEvent.name}
             onChangeText={e => {
               dispatch(addEventSlice.actions.setEventName(e));
             }}
             placeholder="Event Name"
             style={styles.textInputStyle}
           />
-          {selectedEventType !== paulyEventType.schoolYear ? (
+          {selectedEvent.paulyEventType !== 'schoolYear' ? (
             <View
               style={{ flexDirection: 'row', marginTop: 7, marginBottom: 7 }}
             >
               <Text>All Day</Text>
               <Switch
                 trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={allDay ? '#f5dd4b' : '#f4f3f4'}
+                thumbColor={selectedEvent.allDay ? '#f5dd4b' : '#f4f3f4'}
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={e => {
                   dispatch(addEventSlice.actions.setAllDay(e));
                 }}
-                value={allDay}
+                value={selectedEvent.allDay}
                 style={{ marginLeft: 10 }}
               />
             </View>
@@ -190,7 +301,7 @@ function DateAndTimeSection({
         </View>
       )}
       <Text>
-        {selectedEventType === paulyEventType.schoolDay ? '' : 'Start '}Date
+        {selectedEvent.paulyEventType === 'schoolDay' ? '' : 'Start '}Date
       </Text>
       <View style={{ flexDirection: 'row' }}>
         <View style={{ flexDirection: 'row', margin: 10 }}>
@@ -200,23 +311,23 @@ function DateAndTimeSection({
             }}
           >
             <Text>
-              {new Date(startDate).toLocaleString('en-us', { month: 'long' })}{' '}
-              {new Date(startDate).getDate()}{' '}
-              {new Date(startDate).getFullYear()}{' '}
+              {new Date(selectedEvent.startTime).toLocaleString('en-us', { month: 'long' })}{' '}
+              {new Date(selectedEvent.startTime).getDate()}{' '}
+              {new Date(selectedEvent.startTime).getFullYear()}{' '}
             </Text>
           </Pressable>
-          {!allDay ? (
+          {!selectedEvent.allDay ? (
             <Pressable
               onPress={() => {
                 setStartDatePickerVisable(true);
               }}
             >
               <Text>
-                {new Date(startDate).getHours() % 12 || 12}:
-                {new Date(startDate).getMinutes().toString().length === 1
-                  ? `0${new Date(startDate).getMinutes()}`
-                  : new Date(startDate).getMinutes()}{' '}
-                {new Date(startDate).getHours() >= 12 ? 'pm' : 'am'}
+                {new Date(selectedEvent.startTime).getHours() % 12 || 12}:
+                {new Date(selectedEvent.startTime).getMinutes().toString().length === 1
+                  ? `0${new Date(selectedEvent.startTime).getMinutes()}`
+                  : new Date(selectedEvent.startTime).getMinutes()}{' '}
+                {new Date(selectedEvent.startTime).getHours() >= 12 ? 'pm' : 'am'}
               </Text>
             </Pressable>
           ) : null}
@@ -228,7 +339,7 @@ function DateAndTimeSection({
             <CalendarIcon width={24} height={15} />
           </Pressable>
         </View>
-        {allDay ? null : (
+        {selectedEvent.allDay ? null : (
           <View style={{ margin: 5 }}>
             <Pressable
               onPress={() => {
@@ -244,12 +355,12 @@ function DateAndTimeSection({
               <TimeIcon width={15} height={15} />
             </Pressable>
             <TimePickerModal
-              hours={new Date(startDate).getHours()}
-              minutes={new Date(startDate).getMinutes()}
+              hours={new Date(selectedEvent.startTime).getHours()}
+              minutes={new Date(selectedEvent.startTime).getMinutes()}
               visible={startDatePickerVisable}
               onDismiss={() => setStartDatePickerVisable(false)}
               onConfirm={e => {
-                const newDate = new Date(startDate);
+                const newDate = new Date(selectedEvent.startTime);
                 newDate.setHours(e.hours);
                 newDate.setMinutes(e.minutes);
                 dispatch(
@@ -261,7 +372,7 @@ function DateAndTimeSection({
           </View>
         )}
       </View>
-      {selectedEventType === paulyEventType.schoolDay ? null : (
+      {selectedEvent.paulyEventType === 'schoolDay' ? null : (
         <View>
           <Text>End Date</Text>
           <View style={{ flexDirection: 'row' }}>
@@ -272,23 +383,23 @@ function DateAndTimeSection({
                 }}
               >
                 <Text>
-                  {new Date(endDate).toLocaleString('en-us', { month: 'long' })}{' '}
-                  {new Date(endDate).getDate()}{' '}
-                  {new Date(endDate).getFullYear()}{' '}
+                  {new Date(selectedEvent.endTime).toLocaleString('en-us', { month: 'long' })}{' '}
+                  {new Date(selectedEvent.endTime).getDate()}{' '}
+                  {new Date(selectedEvent.endTime).getFullYear()}{' '}
                 </Text>
               </Pressable>
-              {!allDay ? (
+              {!selectedEvent.allDay ? (
                 <Pressable
                   onPress={() => {
                     setEndDatePickerVisable(true);
                   }}
                 >
                   <Text>
-                    {new Date(endDate).getHours() % 12 || 12}:
-                    {new Date(endDate).getMinutes().toString().length === 1
-                      ? `0${new Date(endDate).getMinutes()}`
-                      : new Date(endDate).getMinutes()}{' '}
-                    {new Date(endDate).getHours() >= 12 ? 'pm' : 'am'}
+                    {new Date(selectedEvent.endTime).getHours() % 12 || 12}:
+                    {new Date(selectedEvent.endTime).getMinutes().toString().length === 1
+                      ? `0${new Date(selectedEvent.endTime).getMinutes()}`
+                      : new Date(selectedEvent.endTime).getMinutes()}{' '}
+                    {new Date(selectedEvent.endTime).getHours() >= 12 ? 'pm' : 'am'}
                   </Text>
                 </Pressable>
               ) : null}
@@ -300,7 +411,7 @@ function DateAndTimeSection({
                 <CalendarIcon width={24} height={15} />
               </Pressable>
             </View>
-            {allDay ? null : (
+            {selectedEvent.allDay ? null : (
               <View style={{ margin: 5 }}>
                 <Pressable
                   onPress={() => {
@@ -316,12 +427,12 @@ function DateAndTimeSection({
                   <TimeIcon width={15} height={15} />
                 </Pressable>
                 <TimePickerModal
-                  hours={new Date(endDate).getHours()}
-                  minutes={new Date(endDate).getMinutes()}
+                  hours={new Date(selectedEvent.endTime).getHours()}
+                  minutes={new Date(selectedEvent.endTime).getMinutes()}
                   visible={endDatePickerVisable}
                   onDismiss={() => setEndDatePickerVisable(false)}
                   onConfirm={e => {
-                    const newDate = new Date(endDate);
+                    const newDate = new Date(selectedEvent.endTime);
                     newDate.setHours(e.hours);
                     newDate.setMinutes(e.minutes);
                     dispatch(
@@ -350,18 +461,18 @@ export default function AddEvent({
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
-  const { selectedEventType, isEditing, selectedEvent, createEventState } =
+  const { selectedEvent, createEventState } =
     useSelector((state: RootState) => state.addEvent);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (
-      selectedEventType === paulyEventType.schoolDay ||
-      selectedEventType === paulyEventType.schoolYear
+      selectedEvent.paulyEventType === 'schoolDay' ||
+      selectedEvent.paulyEventType === 'schoolYear'
     ) {
       dispatch(addEventSlice.actions.setAllDay(true));
     }
-  }, [dispatch, selectedEventType]);
+  }, [dispatch, selectedEvent.paulyEventType]);
 
   async function deleteEvent() {
     if (
@@ -408,7 +519,9 @@ export default function AddEvent({
         >
           <CloseIcon width={10} height={10} />
         </Pressable>
-        <Text style={{ fontFamily: 'BukhariScript' }}>Add Event</Text>
+        <Text style={{ fontFamily: 'BukhariScript' }}>
+          {(selectedEvent.id !== 'create') ? 'Edit' : 'Add'} Event
+        </Text>
         <DateAndTimeSection width={width} height={height} />
         {isGovernmentMode ? (
           <GovernmentCalendarOptions width={width} height={height} />
@@ -423,11 +536,11 @@ export default function AddEvent({
             updateEvent();
           }}
           text={getTextState(createEventState, {
-            notStarted: isEditing ? 'Save' : 'Create',
+            notStarted: (selectedEvent.id !== 'create') ? 'Save' : 'Create',
           })}
           style={{ marginBottom: 15, marginTop: 15 }}
         />
-        {isEditing ? (
+        {(selectedEvent.id !== 'create') ? (
           <SecondStyledButton
             onPress={() => {
               dispatch(addEventSlice.actions.setIsShowingAddDate(false));

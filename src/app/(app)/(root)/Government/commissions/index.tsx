@@ -5,7 +5,12 @@ import getCommissions from '@utils/commissions/getCommissions';
 import getSubmissions from '@utils/commissions/getSubmissions';
 import createUUID from '@utils/ultility/createUUID';
 import { RootState } from '@redux/store';
-import { Colors, loadingStateEnum, styles, submissionTypeEnum } from '@constants';
+import {
+  Colors,
+  loadingStateEnum,
+  styles,
+  submissionTypeEnum,
+} from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
@@ -83,11 +88,7 @@ export default function GovernmentCommissions() {
       <Link href="/government">
         <Text>Back</Text>
       </Link>
-      <Text
-        style={styles.headerText}
-      >
-        Commissions
-      </Text>
+      <Text style={styles.headerText}>Commissions</Text>
       <GovernmentCommissionsBody />
       <StyledButton
         style={{

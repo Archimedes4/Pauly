@@ -65,10 +65,7 @@ export default function Sports() {
 
   async function loadSports() {
     const result = await getSports();
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setSports(result.data);
     }
     setSportsState(result.result);
@@ -76,10 +73,7 @@ export default function Sports() {
 
   async function loadTeams(sport: sportType) {
     const result = await getSportsTeams(sport.id);
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setSportsTeams(result.data);
     }
     setTeamsState(result.result);

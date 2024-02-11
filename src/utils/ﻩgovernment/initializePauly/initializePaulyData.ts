@@ -624,6 +624,16 @@ export const calendarSyncStateData = {
       text: {},
       required: true,
     },
+    {
+      name: 'stage',
+      text: {},
+      required: true,
+    },
+    {
+      name: 'nextPoll',
+      text: {},
+      required: true,
+    },
   ],
   list: {
     template: 'genericList',

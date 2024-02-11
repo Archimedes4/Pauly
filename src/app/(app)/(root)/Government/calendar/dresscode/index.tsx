@@ -31,13 +31,15 @@ function GovernmentDressCodeBody() {
   }, []);
   if (getDressCodeState === loadingStateEnum.loading) {
     return (
-      <View style={{
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1
-      }}>
-        <ProgressView width={14} height={14}/>
+      <View
+        style={{
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+        }}
+      >
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
     );

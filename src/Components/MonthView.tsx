@@ -87,7 +87,7 @@ function MonthBlock({
         >
           {monthViewData !== undefined ? (
             <>
-              {monthViewData.schoolDayData !== undefined ? (
+              {monthViewData.paulyEventType === 'schoolDay' ? (
                 <>
                   <Text
                     style={{
@@ -99,7 +99,7 @@ function MonthBlock({
                       right: 3,
                     }}
                   >
-                    {monthViewData.schoolDayData.schoolDayData.shorthand}
+                    {monthViewData.schoolDayData.schoolDay.shorthand}
                   </Text>
                   <Text style={{ color: Colors.black }}>{textval}</Text>
                 </>

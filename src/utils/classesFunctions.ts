@@ -12,9 +12,12 @@ import {
 export async function getRooms(
   nextLink?: string,
   search?: string,
-): Promise<{ result: loadingStateEnum.success; data: roomType[]; nextLink?: string } | {
-  result: loadingStateEnum.failed
-}> {
+): Promise<
+  | { result: loadingStateEnum.success; data: roomType[]; nextLink?: string }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const searchFilter = search
     ? `&$filter=fields/roomName%20eq%20${search}`
     : ''; // TODO deal with search filter
@@ -157,16 +160,14 @@ export async function getClassesSchedule(): Promise<
 }
 
 export async function getClassEvents(
-  scheduleId: string,
+  schedule: scheduleType,
   semester: semesters,
   schoolYearEventId: string,
   schoolDay: schoolDayType,
   date: Date,
 ): Promise<{ result: loadingStateEnum; data?: eventType[] }> {
-  const scheduleResult = await getSchedule(scheduleId);
   const classResult = await getClassesSchedule();
   if (
-    scheduleResult.result === loadingStateEnum.success &&
     classResult.result === loadingStateEnum.success
   ) {
     const outputEvents: eventType[] = [];
@@ -180,7 +181,7 @@ export async function getClassEvents(
           // Find Time
           const period: number =
             classResult.data[index].periods[schoolDay.order];
-          const periodData = scheduleResult.schedule.periods[period];
+          const periodData = schedule.periods[period];
           const startDate: Date = new Date(date.toISOString());
           startDate.setHours(periodData.startHour);
           startDate.setMinutes(periodData.startMinute);
@@ -197,6 +198,7 @@ export async function getClassEvents(
             eventColor: Colors.white,
             microsoftEvent: false,
             allDay: false,
+            paulyEventType: 'studentSchedule'
           });
         }
       }
@@ -218,103 +220,45 @@ export async function getClassEventsFromDay(
   const result = await getSchoolDay(date || new Date());
   if (
     result.result === loadingStateEnum.success &&
-    result.event !== undefined &&
-    result.event.paulyEventData !== undefined
+    result.event.paulyEventType === 'schoolDay'
   ) {
-    const outputIds: schoolDayDataCompressedType = JSON.parse(
-      result.event.paulyEventData,
+    store.dispatch(
+      homepageDataSlice.actions.setSchoolDayData(result.event.schoolDayData),
     );
-    const eventResult = await getEvent(outputIds.schoolYearEventId);
+    const classResult = await getClassEvents(
+      result.event.schoolDayData.schedule,
+      result.event.schoolDayData.semester,
+      result.event.schoolDayData.schoolYearEventId,
+      result.event.schoolDayData.schoolDay,
+      new Date(result.event.startTime),
+    );
     if (
-      eventResult.result === loadingStateEnum.success &&
-      eventResult.data !== undefined &&
-      eventResult.data?.paulyEventData !== undefined
+      classResult.result === loadingStateEnum.success &&
+      classResult.data !== undefined
     ) {
-      const timetableResult = await getTimetable(
-        eventResult.data.paulyEventData,
-      );
-      if (
-        timetableResult.result === loadingStateEnum.success &&
-        timetableResult.timetable !== undefined
-      ) {
-        const schoolDay = timetableResult.timetable.days.find(
-          (e: { id: string }) => {
-            return e.id === outputIds.schoolDayId;
-          },
+      if (classResult.data.length >= 1) {
+        const startTimeDate = new Date(classResult.data[0].startTime);
+        const hourTime =
+          (startTimeDate.getHours() % 12) + 1 <= 9
+            ? `0${(startTimeDate.getHours() % 12) + 1}`
+            : (startTimeDate.getHours() % 12) + 1;
+        const monthTime =
+          startTimeDate.getMinutes() <= 9
+            ? `0${startTimeDate.getMinutes()}`
+            : startTimeDate.getMinutes().toString();
+        store.dispatch(
+          homepageDataSlice.actions.setStartTime(
+            `${hourTime}:${monthTime}`,
+          ),
         );
-        const schedule = timetableResult.timetable.schedules.find(
-          (e: { id: string }) => {
-            return e.id === outputIds.scheduleId;
-          },
-        );
-        const dressCode =
-          timetableResult.timetable.dressCode.dressCodeData.find(
-            (e: { id: string }) => {
-              return e.id === outputIds.dressCodeId;
-            },
-          );
-        const dressCodeIncentive =
-          timetableResult.timetable.dressCode.dressCodeIncentives.find(
-            (e: { id: string }) => {
-              return e.id === outputIds?.dressCodeIncentiveId;
-            },
-          );
-        if (
-          schoolDay !== undefined &&
-          schedule !== undefined &&
-          dressCode !== undefined
-        ) {
-          store.dispatch(
-            homepageDataSlice.actions.setSchoolDayData({
-              schoolDay,
-              schedule,
-              dressCode,
-              semester: outputIds.semester,
-              dressCodeIncentive,
-            }),
-          );
-          if (schedule !== undefined) {
-            const classResult = await getClassEvents(
-              schedule.id,
-              outputIds.semester,
-              outputIds.schoolYearEventId,
-              schoolDay,
-              new Date(result.event.startTime),
-            );
-            if (
-              classResult.result === loadingStateEnum.success &&
-              classResult.data !== undefined
-            ) {
-              if (classResult.data.length >= 1) {
-                const startTimeDate = new Date(classResult.data[0].startTime);
-                const hourTime =
-                  (startTimeDate.getHours() % 12) + 1 <= 9
-                    ? `0${(startTimeDate.getHours() % 12) + 1}`
-                    : (startTimeDate.getHours() % 12) + 1;
-                const monthTime =
-                  startTimeDate.getMinutes() <= 9
-                    ? `0${startTimeDate.getMinutes()}`
-                    : startTimeDate.getMinutes().toString();
-                store.dispatch(
-                  homepageDataSlice.actions.setStartTime(
-                    `${hourTime}:${monthTime}`,
-                  ),
-                );
-              }
-              return {
-                result: loadingStateEnum.success,
-                data: classResult.data,
-              };
-            }
-            return { result: loadingStateEnum.failed };
-          }
-          return { result: loadingStateEnum.failed };
-        }
-        return { result: loadingStateEnum.failed };
       }
-      return { result: loadingStateEnum.failed };
+      return {
+        result: loadingStateEnum.success,
+        data: classResult.data,
+      };
     }
     return { result: loadingStateEnum.failed };
+        
   }
   return { result: loadingStateEnum.failed };
 }

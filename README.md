@@ -247,3 +247,12 @@ Expo fonts and React Native Paper aren't playing nice. Taking over the 3 second 
 
 Issue: https://github.com/expo/expo/issues/12382
 Patch: Inside Issue very simple chaning the timout
+
+# Functions
+SubmitCommission - Used to generate a valid commission submission. Because users cannot write to Pauly the function firsts validates the commissions submission and adds data like the date. Doing all this with the users credentials. Then users an application adds the submission.
+
+SyncCalendarOrchestator - A durable function composed of activities that sync a iCalendar with Paulys Calendar. The function is mostly idempotent and uses apis that have the same output no matter when called.
+
+Known limitations:
+-For loops, find and some are used throught the code. Therefore, if many thousands of events were to be tracked the function would fail.
+-As for being idempotent, if the function was called many times at once and had to create events, the function would create multiple events. This is because the function looks for events that exist and then creates them, but all the orchestrates would have calculated that an event needs to be created and therefore would create events. As long as the orcestrator is not spammed and called many times while other orcestrations are running it will work. It also does not matter when azure decideds to run the function, if the function is run well after it is called it still works. The only limitation in that regard is the token expiering and therefore, the function would fail and could be run again without issue.

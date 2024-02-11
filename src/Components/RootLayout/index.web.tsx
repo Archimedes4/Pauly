@@ -8,17 +8,15 @@ import React, { useEffect, useState } from 'react';
 import { Icon, IconButton, PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider } from 'react-redux';
-import {
-  SafeAreaProvider,
-} from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import store from '@redux/store';
 import { paperTheme } from '@constants';
 import { MsalProvider } from '@azure/msal-react';
 import { PublicClientApplication } from '@azure/msal-browser';
-import AppCore from './AppCore';
 import { Platform } from 'react-native';
 import Head from 'expo-router/head';
 import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import AppCore from './AppCore';
 
 // stop redirect error
 function getRedirectUri() {
@@ -37,7 +35,7 @@ const pca = new PublicClientApplication({
       : '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/`,
     redirectUri: getRedirectUri(), // to stop node js error
-    navigateToLoginRequestUrl: true
+    navigateToLoginRequestUrl: true,
   },
 });
 
@@ -58,7 +56,7 @@ export default function RootLayout() {
   }
   return (
     <Provider store={store}>
-      <PaperProvider theme={paperTheme} >
+      <PaperProvider theme={paperTheme}>
         <SafeAreaProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <MsalProvider instance={pca}>

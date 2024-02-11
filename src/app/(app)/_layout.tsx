@@ -5,11 +5,11 @@
   Authenticated layout
 */
 import { View, Text, Pressable } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
+import React from 'react';
 import useIsConnected from '@hooks/useIsConnected';
 import { Colors } from '@constants';
 import { OfflineIcon } from '@components/Icons';
-import { Slot, SplashScreen } from 'expo-router';
+import { Slot } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,8 +17,6 @@ import useAuthentication from '@hooks/useAuthentication';
 import { useSignOut } from '@hooks/authentication';
 import ProgressView from '@components/ProgressView';
 import useIsShowingLogout from '@hooks/useIsShowingLogout';
-import { loadAsync, useFonts } from 'expo-font';
-
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
@@ -77,9 +75,7 @@ export default function Layout() {
   const isLoading = useAuthentication();
 
   if (isConnected && !isLoading) {
-    return (
-      <Slot />
-    );
+    return <Slot />;
   }
 
   if (isConnected) {

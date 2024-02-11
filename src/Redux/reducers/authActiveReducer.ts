@@ -1,4 +1,3 @@
-
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 const initalState: boolean = false;
