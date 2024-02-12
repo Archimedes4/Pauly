@@ -38,7 +38,7 @@ function setSelectedEventType(e: number) {
         }))
         break;
       case 2:
-        console.log("This")
+        console.log("")
         store.dispatch(addEventSlice.actions.setSelectedEvent({
           ...selectedEvent,
           paulyEventType: 'schoolDay',
@@ -128,7 +128,7 @@ function setSelectedEventType(e: number) {
           ...selectedEvent,
           paulyEventType: 'studentCouncil'
         }))
-        break;
+        
     }
   }
 }
@@ -180,7 +180,7 @@ function GovernmentCalendarOptions({
             Selected School Year:{' '}
             {selectedSchoolYear ? selectedSchoolYear.name : 'None selected'}
           </Text>
-          <SelectSchoolDayData width={width} height={100} />
+          <SelectSchoolDayData />
         </View>
       ) : null}
       {selectedEvent.paulyEventType === 'schoolYear' ? (
@@ -192,7 +192,10 @@ function GovernmentCalendarOptions({
           <SelectTimetable
             governmentMode={false}
             onSelect={e => {
-              dispatch(addEventSlice.actions.setSelectedTimetable(e));
+              dispatch(addEventSlice.actions.setSelectedEvent({
+                ...selectedEvent,
+                timetableId: e.id
+              }));
             }}
           />
         </View>
@@ -248,7 +251,7 @@ function DateAndTimeSection({
         }}
       />
       <DatePickerModal
-        locale=""
+        locale="en"
         mode="single"
         label="Select Date"
         visible={isPickingEndDate}
@@ -271,33 +274,21 @@ function DateAndTimeSection({
           dispatch(addEventSlice.actions.setIsPickingEndDate(false));
         }}
       />
-      {selectedEvent.paulyEventType === "schoolDay" ? null : (
-        <View>
-          <TextInput
-            value={selectedEvent.name}
-            onChangeText={e => {
-              dispatch(addEventSlice.actions.setEventName(e));
+      {selectedEvent.paulyEventType === "schoolDay" || selectedEvent.paulyEventType === 'schoolYear' ? null : (
+        <View
+          style={{ flexDirection: 'row', marginTop: 7, marginBottom: 7 }}
+        >
+          <Text>All Day</Text>
+          <Switch
+            trackColor={{ false: '#767577', true: '#81b0ff' }}
+            thumbColor={selectedEvent.allDay ? '#f5dd4b' : '#f4f3f4'}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={e => {
+              dispatch(addEventSlice.actions.setAllDay(e));
             }}
-            placeholder="Event Name"
-            style={styles.textInputStyle}
+            value={selectedEvent.allDay}
+            style={{ marginLeft: 10 }}
           />
-          {selectedEvent.paulyEventType !== 'schoolYear' ? (
-            <View
-              style={{ flexDirection: 'row', marginTop: 7, marginBottom: 7 }}
-            >
-              <Text>All Day</Text>
-              <Switch
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={selectedEvent.allDay ? '#f5dd4b' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={e => {
-                  dispatch(addEventSlice.actions.setAllDay(e));
-                }}
-                value={selectedEvent.allDay}
-                style={{ marginLeft: 10 }}
-              />
-            </View>
-          ) : null}
         </View>
       )}
       <Text>
@@ -522,6 +513,14 @@ export default function AddEvent({
         <Text style={{ fontFamily: 'BukhariScript' }}>
           {(selectedEvent.id !== 'create') ? 'Edit' : 'Add'} Event
         </Text>
+        <TextInput
+          value={selectedEvent.name}
+          onChangeText={e => {
+            dispatch(addEventSlice.actions.setEventName(e));
+          }}
+          placeholder="Event Name"
+          style={styles.textInputStyle}
+        />
         <DateAndTimeSection width={width} height={height} />
         {isGovernmentMode ? (
           <GovernmentCalendarOptions width={width} height={height} />

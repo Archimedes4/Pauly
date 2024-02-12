@@ -71,7 +71,6 @@ export default function SegmentedPicker({
           <Text
             adjustsFontSizeToFit
             style={{
-              textAlignVertical: 'center',
               textAlign: 'center',
               width: compoentWidth,
             }}

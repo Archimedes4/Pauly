@@ -84,7 +84,6 @@ function PersonalBlockBody({
                       marginLeft: 2,
                       marginTop: 'auto',
                       marginBottom: 'auto',
-                      textAlignVertical: 'center',
                       fontFamily: 'Roboto',
                     }}
                   >

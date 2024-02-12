@@ -4,7 +4,7 @@
   November 9 2023
   EventView.tsx
 */
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
@@ -12,6 +12,40 @@ import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { Colors, loadingStateEnum } from '@constants';
 
 function EventBlock({ event }: { event: eventType }) {
+  function getStart() {
+    if (event.allDay) {
+      return new Date(event.startTime).toLocaleString('en-us', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    }
+    return new Date(event.startTime).toLocaleString('en-us', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    })
+  }
+  function getText() {
+    const start = getStart()
+    if (new Date(event.startTime).getDate() === new Date(event.endTime).getDate()) {
+      return new Date().toLocaleString('en-us', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+      })
+    }
+    return start
+  }
   return (
     <View
       style={{
@@ -25,15 +59,7 @@ function EventBlock({ event }: { event: eventType }) {
     >
       <Text>{event.name}</Text>
       <Text>
-        {new Date(event.startTime).toLocaleString('en-us', {
-          weekday: 'long',
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
-        })}
+        {getText()}
       </Text>
     </View>
   );
@@ -63,28 +89,19 @@ export default function EventView({
     getClassesEvents();
   }, [selectedDate]);
   return (
-    <ScrollView
-      style={{
-        width,
-        height,
-        backgroundColor: Colors.lightGray,
-        paddingTop: 10,
-      }}
-    >
-      {currentEvents.length === 0 && schoolEvents.length === 0 ? (
+    <FlatList 
+      data={[...schoolEvents, ...currentEvents].sort(function (a, b) {
+        return ('' + a.startTime).localeCompare(b.endTime);
+      })}
+      renderItem={(event) => (
+        <EventBlock key={event.item.id} event={event.item} />
+      )}
+      style={{backgroundColor: Colors.lightGray, width: width, paddingTop: 10}}
+      ListEmptyComponent={() => (
         <View>
           <Text style={{ margin: 'auto' }}>There are no events!</Text>
         </View>
-      ) : (
-        <>
-          {schoolEvents.map(event => (
-            <EventBlock event={event} />
-          ))}
-          {currentEvents.map(event => {
-            return <EventBlock event={event} />;
-          })}
-        </>
       )}
-    </ScrollView>
+    />
   );
 }

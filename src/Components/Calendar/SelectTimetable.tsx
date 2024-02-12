@@ -5,12 +5,13 @@
   SelectTimetable.tsx
 */
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { RootState } from '@redux/store';
 import { loadingStateEnum } from '@constants';
+import StyledButton from '../StyledButton';
 
 export default function SelectTimetable({
   governmentMode,
@@ -63,32 +64,41 @@ export default function SelectTimetable({
     getTimetables();
   }, [getTimetables]);
 
+  if (loadingState === loadingStateEnum.loading) {
+    return (
+      <View style={{flex: 1, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (loadingState === loadingStateEnum.success) {
+    return  (
+      <FlatList 
+        data={loadedTimetables}
+        renderItem={(timetable) => (
+          <StyledButton
+            key={`Timetable_${timetable.item.id}`}
+            onPress={() => {
+              if (governmentMode) {
+                router.replace(
+                  `/government/calendar/timetable/${timetable.item.id}`,
+                );
+              } else if (onSelect !== undefined) {
+                onSelect(timetable.item);
+              }
+            }}
+            text={timetable.item.name}
+            style={{margin: 15}}
+          />
+        )}
+      />
+    )
+  }
+
   return (
     <View>
-      {loadingState === loadingStateEnum.loading ? <Text>Loading</Text> : null}
-      {loadingState === loadingStateEnum.success ? (
-        <View>
-          {loadedTimetables.map(timetable => (
-            <Pressable
-              key={`Timetable_${timetable.id}`}
-              onPress={() => {
-                if (governmentMode) {
-                  router.replace(
-                    `/government/calendar/timetable/${timetable.id}`,
-                  );
-                } else if (onSelect !== undefined) {
-                  onSelect(timetable);
-                }
-              }}
-            >
-              <View>
-                <Text>{timetable.name}</Text>
-              </View>
-            </Pressable>
-          ))}
-        </View>
-      ) : null}
-      {loadingState === loadingStateEnum.failed ? <Text>Failure</Text> : null}
+      <Text>Failure</Text>
     </View>
   );
 }

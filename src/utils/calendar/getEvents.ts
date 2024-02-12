@@ -52,7 +52,11 @@ export default async function getEvents() {
   // This code is pulled from add events School Years Select
   let url: string = `https://graph.microsoft.com/v1.0/groups/${
     process.env.EXPO_PUBLIC_ORGWIDEGROUPID
-  }/calendar/events?$filter=start/dateTime%20ge%20'${startDate.toISOString()}'%20and%20end/dateTime%20le%20'${endDate.toISOString()}'`;
+  }/calendar/events?$filter=start/dateTime%20le%20'${endDate.toISOString()}'%20and%20end/dateTime%20ge%20'${startDate.toISOString()}'&$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    store.getState().paulyList.eventTypeExtensionId
+  }'%20or%20id%20eq%20'${
+    store.getState().paulyList.eventDataExtensionId
+  }')`;
   while (url !== '') {
     const furtherResult = await getGraphEvents(
       url,

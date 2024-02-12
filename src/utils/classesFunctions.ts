@@ -49,7 +49,9 @@ export async function getRooms(
 
 export async function getRoom(
   roomId: string,
-): Promise<{ result: loadingStateEnum; data?: roomType }> {
+): Promise<{ result: loadingStateEnum.success; data: roomType } | {
+  result: loadingStateEnum.failed
+}> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -59,7 +61,8 @@ export async function getRoom(
   );
   if (result.ok) {
     const data = await result.json();
-    if (data.value.length === 0) {
+    console.log(data)
+    if (data.value.length === 1) {
       return {
         result: loadingStateEnum.success,
         data: {

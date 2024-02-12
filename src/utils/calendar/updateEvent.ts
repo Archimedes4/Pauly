@@ -14,24 +14,25 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 // }
 
 export default async function createEvent(): Promise<void> {
-  if (store.getState().addEvent.selectedEvent.paulyEventType === 'personal') {
+  const selectedEvent = store.getState().addEvent.selectedEvent
+  if (selectedEvent.paulyEventType === 'personal') {
     const data: {
       subject: string;
       start: { dateTime: string; timeZone: string };
       end: { dateTime: string; timeZone: string };
       isAllDay?: boolean;
     } = {
-      subject: store.getState().addEvent.selectedEvent.name,
+      subject: selectedEvent.name,
       start: {
-        dateTime: store.getState().addEvent.selectedEvent.startTime.replace(/.\d+Z$/g, 'Z'),
+        dateTime: selectedEvent.startTime.replace(/.\d+Z$/g, 'Z'),
         timeZone: 'Central America Standard Time',
       },
       end: {
-        dateTime: store.getState().addEvent.selectedEvent.endTime.replace(/.\d+Z$/g, 'Z'),
+        dateTime:selectedEvent.endTime.replace(/.\d+Z$/g, 'Z'),
         timeZone: 'Central America Standard Time',
       },
     };
-    if (store.getState().addEvent.selectedEvent.allDay) {
+    if (selectedEvent.allDay) {
       data.start.dateTime = `${
         store
           .getState()
@@ -47,8 +48,8 @@ export default async function createEvent(): Promise<void> {
       data.isAllDay = true;
     }
     const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/me/events`,
-      'POST',
+      `https://graph.microsoft.com/v1.0/me/events${(selectedEvent.id === 'create') ? '':'/' + selectedEvent.id}`,
+      (selectedEvent.id === 'create') ? 'PATCH':'POST',
       JSON.stringify(data),
     );
     if (result.ok) {
@@ -74,7 +75,6 @@ export default async function createEvent(): Promise<void> {
       );
     }
   } else {
-    const selectedEvent = store.getState().addEvent.selectedEvent
     const data: any = {
       subject: selectedEvent.name,
       start: {
@@ -82,7 +82,7 @@ export default async function createEvent(): Promise<void> {
         timeZone: 'Central America Standard Time',
       },
       end: {
-        dateTime: selectedEvent.startTime.replace(/.\d+Z$/g, 'Z'),
+        dateTime: selectedEvent.endTime.replace(/.\d+Z$/g, 'Z'),
         timeZone: 'Central America Standard Time',
       },
     };
@@ -118,7 +118,7 @@ export default async function createEvent(): Promise<void> {
       data.end.dateTime = `${
         store
           .getState()
-          .addEvent.selectedEvent.startTime.replace(/.\d+Z$/g, 'Z')
+          .addEvent.selectedEvent.endTime.replace(/.\d+Z$/g, 'Z')
           .split(/[T ]/i, 1)[0]
       }T00:00:00.0000000`;
       data.isAllDay = true;
@@ -165,20 +165,19 @@ export default async function createEvent(): Promise<void> {
     }
     // TODO Reocurring
     const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events`,
+      (selectedEvent.id === 'create') ? `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events`:`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${selectedEvent.id}`,
       (selectedEvent.id === 'create') ? 'POST':'PATCH',
       JSON.stringify(data),
     );
     if (result.ok) {
       const dataOut = await result.json();
       let resultEvent: eventType = {
+        ...selectedEvent,
         id: dataOut.id,
         name: dataOut.subject,
         startTime: dataOut.start.dateTime,
         endTime: dataOut.end.dateTime,
         eventColor: Colors.white,
-        paulyEventType: 'regular',
-        microsoftEvent: true,
         microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${dataOut.id}`,
         allDay: false,
       };
@@ -187,8 +186,16 @@ export default async function createEvent(): Promise<void> {
           ...resultEvent,
           id: dataOut.id
         }
+        store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent));
+      } else {
+
+        store.dispatch(currentEventsSlice.actions.setCurrentEvents([...store.getState().currentEvents.map((e) => {
+          if (e.id === selectedEvent.id) {
+            return resultEvent
+          }
+          return e
+        })]))
       }
-      store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent));
       store.dispatch(addEventSlice.actions.setSelectedSchoolDayData(undefined));
       store.dispatch(
         addEventSlice.actions.setCreateEventState(loadingStateEnum.success),

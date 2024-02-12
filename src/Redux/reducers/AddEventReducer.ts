@@ -58,7 +58,7 @@ const initalState: addEventStatesType = {
     id: 'create',
     name: '',
     startTime: new Date().toISOString(),
-    endTime: new Date().toISOString(),
+    endTime: new Date(Date.now() + 3600000).toISOString(),
     eventColor: Colors.white,
     microsoftEvent: true,
     allDay: false,

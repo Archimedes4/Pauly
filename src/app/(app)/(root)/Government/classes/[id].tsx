@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssets';
@@ -14,118 +14,24 @@ import { Link, useGlobalSearchParams } from 'expo-router';
 import ProgressView from '@components/ProgressView';
 import SecondStyledButton from '@components/StyledButton';
 import { getTextState } from '@utils/ultility/createUUID';
+import StyledButton from '@components/StyledButton';
 
-export default function GovernmentClassesEdit() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const { id } = useGlobalSearchParams();
-  const [selectedSemester, setSelectedSemester] = useState<semesters>(
-    semesters.semesterOne,
-  );
-
-  const [className, setClassName] = useState<string>('');
-
-  // Rooms States
-  const [roomSearchText, setRoomSearchText] = useState<string>('');
-  const [roomsNextLink, setRoomsNextLink] = useState<string | undefined>(
-    undefined,
-  );
-  const [rooms, setRooms] = useState<roomType[]>([]);
-  const [roomsState, setRoomsState] = useState<loadingStateEnum>(
-    loadingStateEnum.loading,
-  );
-  const [selectedRoom, setSelectedRoom] = useState<roomType | undefined>(
-    undefined,
-  );
-
-  // School Years State
-  const [schoolYearState, setSchoolYearState] = useState<loadingStateEnum>(
-    loadingStateEnum.loading,
-  );
-  const [schoolYearNextLink, setSchoolYearNextLink] = useState<
-    string | undefined
-  >(undefined);
-  const [schoolYears, setSchoolYears] = useState<eventType[]>([]);
-  const [selectedSchoolYear, setSelectedSchoolYear] = useState<
-    eventType | undefined
-  >(undefined);
-
+function PeriodBlock({
+  selectedSchoolYear,
+  periods,
+  setPeriods
+}:{
+  selectedSchoolYear: eventType | undefined,
+  periods: number[],
+  setPeriods: (item: number[]) => void
+}) { 
+  const { height } = useSelector((state: RootState) => state.dimentions);
   const [timetableState, setTimetableState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
   const [selectedTimetable, setSelectedTimetable] = useState<
     timetableType | undefined
   >(undefined);
-
-  const [classState, setClassState] = useState<loadingStateEnum>(
-    loadingStateEnum.notStarted,
-  );
-
-  const [updateClassState, setUpdateClassState] = useState<loadingStateEnum>(
-    loadingStateEnum.notStarted,
-  );
-  const [isShowingClassConfirmMenu, setIsShowingClassConfirmMenu] =
-    useState<boolean>(false);
-
-  const [periods, setPeriods] = useState<number[]>([]);
-
-  async function getClass() {
-    setClassState(loadingStateEnum.loading);
-    const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/groups/${id}?$select=${
-        store.getState().paulyList.classExtensionId
-      },displayName`,
-    ); // TO DO change to class
-    if (result.ok) {
-      const data = await result.json();
-      const extensionData = data[store.getState().paulyList.classExtensionId];
-      if (extensionData !== undefined) {
-        setClassName(extensionData.className);
-        setSelectedSemester(parseInt(extensionData.semesterId));
-        setPeriods(JSON.parse(extensionData.periodData));
-        const eventResult = await getEvent(extensionData.schoolYearEventId);
-        const roomResult = await getRoom(extensionData.roomId);
-        if (
-          eventResult.result === loadingStateEnum.success &&
-          roomResult.result === loadingStateEnum.success &&
-          eventResult.data !== undefined &&
-          roomResult.data !== undefined
-        ) {
-          setSelectedRoom(roomResult.data);
-          setSelectedSchoolYear(eventResult.data);
-        } else {
-          setClassState(loadingStateEnum.failed);
-        }
-      } else {
-        setClassName(data.displayName);
-      }
-      setClassState(loadingStateEnum.success);
-    } else {
-      setClassState(loadingStateEnum.failed);
-    }
-  }
-
-  async function loadRooms() {
-    // TO DO figure out if there will be performance issuses in continually getting next page
-    const result = await getRooms(
-      roomsNextLink,
-      roomSearchText !== '' ? roomSearchText : undefined,
-    );
-    if (result.result === loadingStateEnum.success) {
-      setRooms(result.data);
-      setRoomsNextLink(result.nextLink);
-    }
-    setRoomsState(result.result);
-  }
-
-  async function loadSchoolYears() {
-    const result = await getSchoolYears(schoolYearNextLink);
-    if (result.result === loadingStateEnum.success) {
-      setSchoolYears(result.events);
-      setSchoolYearNextLink(result.nextLink);
-    }
-    setSchoolYearState(result.result);
-  }
-
   async function loadTimetable() {
     if (
       selectedSchoolYear !== undefined && selectedSchoolYear.paulyEventType === 'schoolYear'
@@ -146,28 +52,282 @@ export default function GovernmentClassesEdit() {
       setTimetableState(result.result);
     }
   }
-
   useEffect(() => {
     loadTimetable();
   }, [selectedSchoolYear]);
 
+  if (timetableState === loadingStateEnum.notStarted) {
+    return (
+      <View style={{ height: height * 0.3, marginBottom: height * 0.1 }}>
+        <Text>Please pick a school year</Text>
+      </View>
+    )
+  }
+
+  if (timetableState === loadingStateEnum.loading) {
+    return (
+      <View style={{ height: height * 0.3, marginBottom: height * 0.1 }}>
+        <Text>Periods</Text>
+        <Text>{periods.toString()}</Text>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (timetableState === loadingStateEnum.success && selectedTimetable?.days.length === periods.length) {
+    return (
+      <View style={{ height: height * 0.3, marginBottom: height * 0.1 }}>
+        <Text>Periods</Text>
+        <Text>{periods.toString()}</Text>
+        <ScrollView
+          style={{ height: height * 0.3, zIndex: 100 }}
+        >
+          <>
+            {selectedTimetable.days.map((day, dayIndex) => (
+              <DayBlock
+                day={day}
+                dayIndex={dayIndex}
+                periods={periods}
+                setPeriods={setPeriods}
+                selectedTimetable={selectedTimetable}
+              />
+            ))}
+          </>
+        </ScrollView>
+      </View>
+    )
+  }
+  
+  return (
+    <View>
+      <Text>Failed</Text>
+    </View>
+  )
+}
+
+function RoomsBlock({
+  selectedRoom,
+  setSelectedRoom
+}:{
+  selectedRoom: roomType | undefined,
+  setSelectedRoom: (item: roomType) => void
+}) {
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  // Rooms States
+  const [roomSearchText, setRoomSearchText] = useState<string>('');
+  const [roomsNextLink, setRoomsNextLink] = useState<string | undefined>(
+    undefined,
+  );
+  const [rooms, setRooms] = useState<roomType[]>([]);
+  const [roomsState, setRoomsState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  
+  async function loadRooms() {
+    // TO DO figure out if there will be performance issuses in continually getting next page
+    const result = await getRooms(
+      roomsNextLink,
+      roomSearchText !== '' ? roomSearchText : undefined,
+    );
+    if (result.result === loadingStateEnum.success) {
+      setRooms(result.data);
+      setRoomsNextLink(result.nextLink);
+    }
+    setRoomsState(result.result);
+  }
+
   useEffect(() => {
-    getClass();
-  }, []);
+    loadRooms();
+  }, [roomSearchText]);
+
+  if (roomsState === loadingStateEnum.loading) {
+    return (
+      <View style={{flex: 1}}>
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (roomsState === loadingStateEnum.success) {
+    return (
+      <View>
+        <View style={{ flexDirection: 'row' }}>
+          {selectedRoom === undefined ? (
+            <WarningIcon width={12} height={12} outlineColor="red" />
+          ) : null}
+          <Text>Select Room</Text>
+        </View>
+        <FlatList
+          data={rooms}
+          renderItem={(room) => (
+            <StyledButton
+              text={room.item.name}
+              onPress={() => {
+                setSelectedRoom(room.item);
+              }}
+              style={{margin: 15, marginBottom: 5}}
+              selected={room.item.id === selectedRoom?.id}
+            />
+          )}
+          style={{ height: height * 0.3 }}
+        />
+      </View>
+    )
+  }
+
+  return (
+    <View>
+      <Text>Failed</Text>
+    </View>
+  )
+}
+
+function SchoolYearBlock({
+  selectedSchoolYear,
+  setSelectedSchoolYear
+}:{
+  selectedSchoolYear: eventType | undefined
+  setSelectedSchoolYear: (e: eventType) => void
+}) {
+  const { height } = useSelector((state: RootState) => state.dimentions);
+  const [schoolYearState, setSchoolYearState] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [schoolYearNextLink, setSchoolYearNextLink] = useState<
+    string | undefined
+  >(undefined);
+  const [schoolYears, setSchoolYears] = useState<eventType[]>([]);
+
+  async function loadSchoolYears() {
+    const result = await getSchoolYears(schoolYearNextLink);
+    if (result.result === loadingStateEnum.success) {
+      setSchoolYears(result.events);
+      setSchoolYearNextLink(result.nextLink);
+    }
+    setSchoolYearState(result.result);
+  }
+
+  useEffect(() => {
+    loadSchoolYears()
+  }, [])
+
+  if (schoolYearState === loadingStateEnum.loading) {
+    return (
+      <View style={{height: height * 0.3}}>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (schoolYearState === loadingStateEnum.success) {
+    return (
+      <FlatList 
+        data={schoolYears}
+        renderItem={(e) => (
+          <StyledButton 
+            key={e.item.id}
+            text={e.item.name}
+            onPress={() => {
+              setSelectedSchoolYear(e.item);
+            }}
+            style={{margin: 15, marginBottom: 5}}
+            selected={e.item.id === selectedSchoolYear?.id}
+          />
+        )}
+        style={{height: height * 0.3}}
+      />
+    )
+  }
+
+  return (
+    <View>
+      <Text>Failed</Text>
+    </View>
+  )
+}
+
+export default function GovernmentClassesEdit() {
+  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { id } = useGlobalSearchParams();
+  const [selectedSemester, setSelectedSemester] = useState<semesters>(
+    semesters.semesterOne,
+  );
+
+  const [className, setClassName] = useState<string>('');
+  const [selectedRoom, setSelectedRoom] = useState<roomType | undefined>(
+    undefined,
+  );
+
+  // School Years State
+  const [selectedSchoolYear, setSelectedSchoolYear] = useState<
+    eventType | undefined
+  >(undefined);
+
+  const [classState, setClassState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
+
+  const [updateClassState, setUpdateClassState] = useState<loadingStateEnum>(
+    loadingStateEnum.notStarted,
+  );
+  const [isShowingClassConfirmMenu, setIsShowingClassConfirmMenu] =
+    useState<boolean>(false);
+
+  const [periods, setPeriods] = useState<number[]>([]);
+  const [isCreating, setIsCreating] = useState<boolean>(true);
+
+  async function getClass() {
+    setClassState(loadingStateEnum.loading);
+    const result = await callMsGraph(
+      `https://graph.microsoft.com/v1.0/groups/${id}?$select=${
+        store.getState().paulyList.classExtensionId
+      },displayName,${store.getState().paulyList.classExtensionId}`,
+    ); // TO DO change to class
+    if (result.ok) {
+      const data = await result.json();
+      const extensionData = data[store.getState().paulyList.classExtensionId];
+      if (extensionData !== undefined) {
+        setIsCreating(false)
+        console.log(extensionData)
+        setClassName(extensionData.className);
+        setSelectedSemester(parseInt(extensionData.semesterId));
+        setPeriods(JSON.parse(extensionData.periodData));
+        const eventResult = await getEvent(extensionData.schoolYearEventId);
+        const roomResult = await getRoom(extensionData.roomId);
+        console.log(eventResult, roomResult)
+        if (
+          eventResult.result === loadingStateEnum.success &&
+          roomResult.result === loadingStateEnum.success
+        ) {
+          setSelectedRoom(roomResult.data);
+          setSelectedSchoolYear(eventResult.data);
+        } else {
+          setClassState(loadingStateEnum.failed);
+        }
+      } else {
+        setIsCreating(true)
+        setClassName(data.displayName);
+      }
+      setClassState(loadingStateEnum.success);
+    } else {
+      setClassState(loadingStateEnum.failed);
+    }
+  }
 
   async function updateClass() {
     if (selectedRoom !== undefined && selectedSchoolYear !== undefined) {
       setUpdateClassState(loadingStateEnum.loading);
-      const data = {};
-      Object.defineProperty(data, store.getState().paulyList.classExtensionId, {
-        value: {
-          className,
-          schoolYearEventId: selectedSchoolYear.id,
-          semesterId: selectedSemester.toString(),
-          roomId: selectedRoom.id,
-          periodData: JSON.stringify(periods),
-        },
-      });
+      let data: any = {};
+      data[store.getState().paulyList.classExtensionId] = {
+        className,
+        schoolYearEventId: selectedSchoolYear.id,
+        semesterId: selectedSemester.toString(),
+        roomId: selectedRoom.id,
+        periodData: JSON.stringify(periods),
+        
+      }
 
       const result = await callMsGraph(
         `https://graph.microsoft.com/v1.0/groups/${id}`,
@@ -183,11 +343,7 @@ export default function GovernmentClassesEdit() {
   }
 
   useEffect(() => {
-    loadRooms();
-  }, [roomSearchText]);
-
-  useEffect(() => {
-    loadSchoolYears();
+    getClass();
   }, []);
 
   if (classState === loadingStateEnum.loading) {
@@ -253,67 +409,8 @@ export default function GovernmentClassesEdit() {
                 />
               </View>
               <Text>School Years</Text>
-              <View style={{ height: height * 0.3 }}>
-                {schoolYearState === loadingStateEnum.loading ? (
-                  <Text>Loading</Text>
-                ) : (
-                  <View>
-                    {schoolYearState === loadingStateEnum.success ? (
-                      <ScrollView style={{ height: height * 0.3 }}>
-                        {schoolYears.map(year => (
-                          <Pressable
-                            onPress={() => {
-                              setSelectedSchoolYear(year);
-                            }}
-                          >
-                            <Text>{year.name}</Text>
-                          </Pressable>
-                        ))}
-                      </ScrollView>
-                    ) : (
-                      <Text>Failed</Text>
-                    )}
-                  </View>
-                )}
-              </View>
-              <View
-                style={{ height: height * 0.3, marginBottom: height * 0.1 }}
-              >
-                <Text>Periods</Text>
-                <Text>{periods.toString()}</Text>
-                {timetableState === loadingStateEnum.notStarted ? (
-                  <Text>Please pick a school year</Text>
-                ) : (
-                  <View>
-                    {timetableState === loadingStateEnum.loading ? (
-                      <Text>Loading</Text>
-                    ) : (
-                      <View style={{ zIndex: 100 }}>
-                        {timetableState === loadingStateEnum.success &&
-                        selectedTimetable?.days.length === periods.length ? (
-                          <ScrollView
-                            style={{ height: height * 0.3, zIndex: 100 }}
-                          >
-                            <>
-                              {selectedTimetable.days.map((day, dayIndex) => (
-                                <DayBlock
-                                  day={day}
-                                  dayIndex={dayIndex}
-                                  periods={periods}
-                                  setPeriods={setPeriods}
-                                  selectedTimetable={selectedTimetable}
-                                />
-                              ))}
-                            </>
-                          </ScrollView>
-                        ) : (
-                          <Text>Failed</Text>
-                        )}
-                      </View>
-                    )}
-                  </View>
-                )}
-              </View>
+              <SchoolYearBlock selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={setSelectedSchoolYear}/>
+              <PeriodBlock selectedSchoolYear={selectedSchoolYear} periods={periods} setPeriods={setPeriods} />
               <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
                 <SegmentedPicker
                   selectedIndex={selectedSemester}
@@ -323,37 +420,9 @@ export default function GovernmentClassesEdit() {
                   height={height * 0.1}
                 />
               </View>
-              <View style={{ flexDirection: 'row' }}>
-                {selectedRoom === undefined ? (
-                  <WarningIcon width={12} height={12} outlineColor="red" />
-                ) : null}
-                <Text>Select Room</Text>
-              </View>
-              <View style={{ height: height * 0.3 }}>
-                {roomsState === loadingStateEnum.loading ? (
-                  <Text>Loading</Text>
-                ) : (
-                  <View>
-                    {roomsState === loadingStateEnum.success ? (
-                      <ScrollView style={{ height: height * 0.3 }}>
-                        {rooms.map(room => (
-                          <Pressable
-                            onPress={() => {
-                              setSelectedRoom(room);
-                            }}
-                          >
-                            <Text>{room.name}</Text>
-                          </Pressable>
-                        ))}
-                      </ScrollView>
-                    ) : (
-                      <Text>Failed</Text>
-                    )}
-                  </View>
-                )}
-              </View>
+              <RoomsBlock selectedRoom={selectedRoom} setSelectedRoom={setSelectedRoom}/>
               <SecondStyledButton
-                text="Create Class"
+                text={`${isCreating ? 'Create':'Update'} Class`}
                 onPress={() => {
                   setIsShowingClassConfirmMenu(true);
                 }}
@@ -385,10 +454,11 @@ export default function GovernmentClassesEdit() {
             onPress={() => {
               setIsShowingClassConfirmMenu(false);
             }}
+            style={{margin: 15}}
           >
             <CloseIcon width={14} height={14} />
           </Pressable>
-          <Text>Create Class</Text>
+          <Text>{isCreating ? "Create":"Update"} Class</Text>
           <Text>Name: {className}</Text>
           <Text>Room: {selectedRoom?.name}</Text>
           <Text>School Year: {selectedSchoolYear?.name}</Text>
@@ -396,20 +466,18 @@ export default function GovernmentClassesEdit() {
             Semester:{' '}
             {selectedSemester === semesters.semesterOne ? 'One' : 'Two'}
           </Text>
-          <Pressable
+          <StyledButton 
+            text={getTextState(updateClassState, {
+              cannotStart: 'Cannot Update Class',
+              notStarted: 'Update Class',
+              success: 'Updated Class',
+              failed: 'Failed To Update Class',
+            })}
             onPress={() => {
               updateClass();
             }}
-          >
-            <Text style={{ margin: 10 }}>
-              {getTextState(updateClassState, {
-                cannotStart: 'Cannot Update Class',
-                notStarted: 'Update Class',
-                success: 'Updated Class',
-                failed: 'Failed To Update Class',
-              })}
-            </Text>
-          </Pressable>
+            style={{margin: 15}}
+          />
         </View>
       ) : null}
     </>
@@ -454,7 +522,7 @@ function DayBlock({
             }}
             style={{ backgroundColor: Colors.white, zIndex: -2 }}
             expandedStyle={{
-              backgroundColor: 'blue',
+              backgroundColor: 'white',
               zIndex: 101,
               position: 'absolute',
             }}

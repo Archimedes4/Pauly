@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
-import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
-import ProgressView from '@src/components/ProgressView';
+import ProgressView from '@components/ProgressView';
+import getDressCodeData from '@utils/calendar/dressCodeFunctions';
 
 function GovernmentDressCodeBody() {
   const { width } = useSelector((state: RootState) => state.dimentions);
@@ -54,6 +54,7 @@ function GovernmentDressCodeBody() {
             key={dressCode.item.id}
             to={`/government/calendar/dresscode/${dressCode.item.id}`}
             text={dressCode.item.name}
+            style={{margin: 15, marginBottom: 5}}
           />
         )}
       />

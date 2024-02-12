@@ -18,7 +18,6 @@ export const useRefresh = () => {
   async function main() {
     const result = instance.acquireTokenSilent({
       scopes,
-      prompt: 'select_account',
     });
     result.then(result => {
       store.dispatch(

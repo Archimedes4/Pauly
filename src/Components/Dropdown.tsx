@@ -7,6 +7,7 @@
 /* eslint-disable react/require-default-props */
 import { View, Text, Pressable, StyleProp, ViewStyle } from 'react-native';
 import React, { ReactNode, useEffect, useState } from 'react';
+import { Colors } from '@constants';
 
 // On set selected index returns 0 for the first child that is passed down
 
@@ -50,6 +51,7 @@ export default function Dropdown({
                     setExpanded(false);
                   }
                 }}
+                style={{borderWidth: 2, borderColor: Colors.black}}
               >
                 <Text>{option}</Text>
               </Pressable>

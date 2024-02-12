@@ -19,12 +19,12 @@ import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { DownIcon, UpIcon, WarningIcon } from '@components/Icons';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import { RootState } from '@redux/store';
-import getDressCodeData from '@utils/notifications/getDressCodeData';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
 import StyledButton from '@components/StyledButton';
 import { createTimetable } from '@utils/calendar/timetableFunctions';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
+import getDressCodeData from '@utils/calendar/dressCodeFunctions';
 
 // TO DO longest amount of school days is 20 make sure this is enforced
 export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {

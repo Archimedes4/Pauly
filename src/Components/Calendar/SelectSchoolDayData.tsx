@@ -47,6 +47,7 @@ function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
         store.getState().paulyList.eventTypeExtensionId
       }'%20and%20ep/value%20eq%20'schoolYear')`,
     );
+    console.log(result)
     if (
       result.result === loadingStateEnum.success &&
       result.events !== undefined
@@ -115,15 +116,11 @@ function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
 }
 
 function SchoolDaySelect({
-  width,
-  height,
   timetable,
   loadingState,
   onSelect,
   onBack,
 }: {
-  width: number;
-  height: number;
   timetable: timetableType | undefined;
   loadingState: loadingStateEnum;
   onSelect: () => void;
@@ -155,7 +152,7 @@ function SchoolDaySelect({
         <Text>Failed</Text>
       ) : null}
       {loadingState === loadingStateEnum.success && timetable !== undefined ? (
-        <ScrollView style={{ width, height }}>
+        <ScrollView style={{ flex: 1 }}>
           {timetable.days.map(day => (
             <Pressable
               key={`Day_${day.id}`}
@@ -273,13 +270,7 @@ function DressCodeIncentivesSelect({
   );
 }
 
-export default function SelectSchoolDayData({
-  width,
-  height,
-}: {
-  width: number;
-  height: number;
-}) {
+export default function SelectSchoolDayData() {
   const [schoolDayMode, setSchoolDayMode] = useState<pickSchoolDayMode>(
     pickSchoolDayMode.schoolYear,
   );
@@ -335,8 +326,6 @@ export default function SelectSchoolDayData({
   if (schoolDayMode === pickSchoolDayMode.schoolDay) {
     return (
       <SchoolDaySelect
-        width={width}
-        height={height}
         timetable={timetable}
         loadingState={timetableState}
         onSelect={() => {

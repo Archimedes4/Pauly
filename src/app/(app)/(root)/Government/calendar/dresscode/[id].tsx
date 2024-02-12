@@ -12,18 +12,15 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-native';
-import store, { RootState } from '@redux/store';
+import { RootState } from '@redux/store';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { Colors, loadingStateEnum, styles } from '@constants';
-import { createDressCode } from '@utils/calendar/calendarFunctionsGraph';
-import getDressCode from '@utils/notifications/getDressCode';
 import ProgressView from '@components/ProgressView';
-import callMsGraph from '@utils/ultility/microsoftAssets';
-import { Link } from 'expo-router';
+import { Link, useGlobalSearchParams } from 'expo-router';
 import DressCodeBlock from '@components/DressCodeBlock';
 import BackButton from '@components/BackButton';
 import StyledButton from '@src/components/StyledButton';
+import { createDressCode, deleteDressCode, getDressCode, updateDressCode } from '@src/utils/calendar/dressCodeFunctions';
 
 export function GovernmentDressCodeEdit({
   isCreating,
@@ -31,21 +28,29 @@ export function GovernmentDressCodeEdit({
   isCreating: boolean;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
-  const [dressCodeName, setDressCodeName] = useState<string>('');
-  const [dressCodeData, setDressCodeData] = useState<dressCodeDataType[]>([
-    { name: '', description: '', id: createUUID() },
-  ]);
-  const [dressCodeListId, setDressCodeListId] = useState<string>('');
+  const [dressCode, setDressCode] = useState<dressCodeType>({
+    name: '',
+    id: 'create',
+    dressCodeData: [],
+    itemId: 'create',
+    dressCodeIncentives: []
+  })
 
   const [createDressCodeState, setCreateDressCodeState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
   async function loadCreateDressCode() {
-    const result = await createDressCode(dressCodeName, dressCodeData);
-    setCreateDressCodeState(result);
+    setCreateDressCodeState(loadingStateEnum.loading)
+    if (isCreating) {
+      const result = await createDressCode(dressCode);
+      setCreateDressCodeState(result);
+    } else {
+      const result = await updateDressCode(dressCode);
+      setCreateDressCodeState(result);
+    }
   }
 
-  const { id } = useParams();
+  const { id } = useGlobalSearchParams();
 
   const [getDressCodeState, setDressCodeState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -53,17 +58,10 @@ export function GovernmentDressCodeEdit({
   const [deleteDressCodeState, setDeleteDressCodeState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
-  async function deleteDressCode() {
+  async function onPressDeleteDressCode() {
     setDeleteDressCodeState(loadingStateEnum.loading);
-    const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/sites/${
-        store.getState().paulyList.siteId
-      }/lists/${
-        store.getState().paulyList.dressCodeListId
-      }/items/${dressCodeListId}`,
-      'DELETE',
-    );
-    if (result.ok) {
+    const result = await deleteDressCode(dressCode.itemId)
+    if (result === loadingStateEnum.success) {
       setDeleteDressCodeState(loadingStateEnum.success);
     } else {
       setDeleteDressCodeState(loadingStateEnum.failed);
@@ -71,19 +69,18 @@ export function GovernmentDressCodeEdit({
   }
 
   async function loadData() {
-    if (id !== undefined && !isCreating) {
+    if (typeof id === 'string' && !isCreating) {
       const result = await getDressCode(id);
       if (
-        result.result === loadingStateEnum.success &&
-        result.data !== undefined
+        result.result === loadingStateEnum.success
       ) {
-        setDressCodeListId(result.data.listId);
-        setDressCodeName(result.data.name);
-        setDressCodeData(result.data.dressCodeData);
+        setDressCode(result.data)
         setDressCodeState(loadingStateEnum.success);
       } else {
         setDressCodeState(loadingStateEnum.failed);
       }
+    } else {
+      setDressCodeState(loadingStateEnum.failed);
     }
   }
 
@@ -106,30 +103,43 @@ export function GovernmentDressCodeEdit({
         <Text style={styles.headerText}>Create Dress Code</Text>
         <Text style={{ marginLeft: 25 }}>Dress Code Name:</Text>
         <TextInput
-          value={dressCodeName}
-          onChangeText={setDressCodeName}
+          value={dressCode.name}
+          onChangeText={(e) => {
+            setDressCode({
+              ...dressCode,
+              name: e
+            })
+          }}
           placeholder="Dress Code Name"
           style={styles.textInputStyle}
         />
         <FlatList
           style={{ height: height * 0.7 }}
-          data={dressCodeData}
+          data={dressCode.dressCodeData}
           renderItem={item => (
             <DressCodeBlock
               dressCode={item.item}
-              dressCodeData={dressCodeData}
+              dressCodeData={dressCode.dressCodeData}
               index={item.index}
-              setDressCodeData={setDressCodeData}
+              setDressCodeData={(e) => {
+                setDressCode({
+                  ...dressCode,
+                  dressCodeData: e
+                })
+              }}
             />
           )}
         />
         <StyledButton
           style={{ margin: 15, marginBottom: 0 }}
           onPress={() => {
-            setDressCodeData([
-              ...dressCodeData,
-              { name: '', description: '', id: createUUID() },
-            ]);
+            setDressCode({
+              ...dressCode,
+              dressCodeData: [
+                ...dressCode.dressCodeData,
+                { name: '', description: '', id: createUUID() },
+              ]
+            })
           }}
           text="Add"
         />
@@ -137,18 +147,18 @@ export function GovernmentDressCodeEdit({
           second
           style={{ margin: 15 }}
           onPress={() => loadCreateDressCode()}
-          text={getTextState(deleteDressCodeState, {
-            notStarted: 'Create Dress Code',
+          text={getTextState(createDressCodeState, {
+            notStarted: (isCreating) ? 'Create Dress Code':'Save Dress Code',
           })}
         />
         {!isCreating ? (
-          <Pressable style={{ margin: 10 }} onPress={() => deleteDressCode()}>
-            <Text>
-              {getTextState(deleteDressCodeState, {
-                notStarted: 'Delete',
-              })}
-            </Text>
-          </Pressable>
+          <StyledButton 
+            text={getTextState(deleteDressCodeState, {
+              notStarted: 'Delete',
+            })}
+            style={{ margin: 10 }}
+            onPress={() => onPressDeleteDressCode()}
+          />
         ) : null}
       </View>
     );

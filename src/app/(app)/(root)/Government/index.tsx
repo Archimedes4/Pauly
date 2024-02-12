@@ -140,7 +140,6 @@ export default function Government() {
             height: height * 0.13,
             width: width * 0.8,
             textAlign: 'center',
-            textAlignVertical: 'center',
             verticalAlign: 'middle',
           }}
         >

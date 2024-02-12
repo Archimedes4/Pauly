@@ -221,9 +221,10 @@ export default function NavBarComponent() {
                     top: blockLength * 0.3,
                     left: blockLength * 0.65,
                     fontSize: blockLength * 0.75,
+                    
                     textShadowColor: 'rgba(0, 0, 0, 1)',
                     textShadowOffset: { width: 4, height: 2 },
-                    textShadowRadius: 0,
+                    textShadowRadius: 0
                   }}
                   selectable={false}
                 >

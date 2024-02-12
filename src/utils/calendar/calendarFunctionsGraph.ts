@@ -11,11 +11,11 @@ import { monthDataSlice } from '@redux/reducers/monthDataReducer';
 import callMsGraph from '../ultility/microsoftAssets';
 import batchRequest from '../ultility/batchRequest';
 import createUUID from '../ultility/createUUID';
-import getDressCode from '../notifications/getDressCode';
 import {
   findFirstDayinMonth,
   isEventDuringInterval,
 } from './calendarFunctions';
+import { getDressCode } from './dressCodeFunctions';
 
 export function getSingleValueProperties(data: any): undefined | {
   eventType: paulyEventTypes,
@@ -26,28 +26,32 @@ export function getSingleValueProperties(data: any): undefined | {
   const eventTypeExtensionID = paulyList.eventTypeExtensionId;
   const eventDataExtensionID = paulyList.eventDataExtensionId;
   // event data
-  const { singleValueExtendedProperties } = data;
-  if (singleValueExtendedProperties !== undefined) {
-    const eventType = singleValueExtendedProperties.find(
-      (e: { id: string; value: string }) => {
-        return e.id === eventTypeExtensionID;
-      },
-    )?.value
-    const eventData = singleValueExtendedProperties.find(
-      (e: { id: string; value: string }) => {
-        return e.id === eventDataExtensionID;
-      },
-    )?.value
-    if (eventType === undefined || eventData == undefined || !["personal", "regular", "schoolDay", "schoolYear", "studentCouncil"].includes(eventType)) {
-      return
-    } else {
-      return {
-        eventType,
-        eventData
+  try {
+    const singleValueExtendedProperties = data["singleValueExtendedProperties"];
+    if (singleValueExtendedProperties !== undefined) {
+      const eventType = singleValueExtendedProperties.find(
+        (e: { id: string; value: string }) => {
+          return e.id === eventTypeExtensionID;
+        },
+      )?.value
+      const eventData = singleValueExtendedProperties.find(
+        (e: { id: string; value: string }) => {
+          return e.id === eventDataExtensionID;
+        },
+      )?.value
+      if (eventType === undefined || eventData == undefined || !["personal", "regular", "schoolDay", "schoolYear", "studentCouncil"].includes(eventType)) {
+        return
+      } else {
+        return {
+          eventType,
+          eventData
+        }
       }
     }
+    return
+  } catch {
+    return
   }
-  return
 }
 
 // Defaults to org wide events
@@ -801,7 +805,7 @@ async function getTimetablesFromSchoolYears(
               dressCodeIncentives:
                 batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
                   .fields.dressCodeIncentivesData,
-              listId: '',
+              itemId: '',
             },
           );
         } catch {
@@ -873,33 +877,6 @@ async function getTimetablesFromSchoolYears(
   return { result: loadingStateEnum.success, data: outputTimetables };
 }
 
-export async function createDressCode(
-  dressCodeName: string,
-  dressCodeData: dressCodeDataType[],
-): Promise<loadingStateEnum> {
-  const dressCodeId = createUUID();
-  const data = {
-    fields: {
-      Title: dressCodeId,
-      dressCodeId,
-      dressCodeName,
-      dressCodeData: JSON.stringify(dressCodeData),
-      dressCodeIncentivesData: '[]',
-    },
-  };
-  const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/sites/${
-      store.getState().paulyList.siteId
-    }/lists/${store.getState().paulyList.dressCodeListId}/items`,
-    'POST',
-    JSON.stringify(data),
-  );
-  if (result.ok) {
-    return loadingStateEnum.success;
-  }
-  return loadingStateEnum.failed;
-}
-
 export function getMonthData(selectedDate: Date) {
   // Check if this month
   const lastDay = new Date(
@@ -927,9 +904,14 @@ export function getMonthData(selectedDate: Date) {
             event,
             index - firstDayWeek + 1,
             index - firstDayWeek + 2,
-          )
+          ) && (event.paulyEventType !== 'schoolYear' || store.getState().isGovernmentMode)
         ) {
+          if (event.paulyEventType === 'schoolYear') {
+            console.log("added")
+          }
           events.push(event);
+        } else if (event.paulyEventType === 'schoolYear') {
+          console.log("not added", store.getState().isGovernmentMode)
         }
       }
       monthDataResult.push({

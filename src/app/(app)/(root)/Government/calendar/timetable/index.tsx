@@ -36,6 +36,7 @@ export default function GovernmentTimetable() {
         to="/government/calendar/timetable/create"
         text="Create New"
         style={{ margin: 15, marginTop: 0 }}
+        second
       />
     </View>
   );

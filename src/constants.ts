@@ -271,7 +271,7 @@ declare global {
   type dressCodeType = {
     name: string;
     id: string;
-    listId: string;
+    itemId: string;
     dressCodeData: dressCodeDataType[];
     dressCodeIncentives: dressCodeIncentiveType[];
   };

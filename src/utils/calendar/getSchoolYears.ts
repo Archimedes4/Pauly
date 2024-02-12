@@ -29,7 +29,7 @@ export default async function getSchoolYears(nextLink?: string): Promise<
         store.getState().paulyList.eventDataExtensionId
       }')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${
         store.getState().paulyList.eventTypeExtensionId
-      }'%20and%20ep/value%20eq%20'schoolDay')`,
+      }'%20and%20ep/value%20eq%20'schoolYear')`,
     'GET',
     undefined,
     [

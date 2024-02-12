@@ -189,8 +189,6 @@ function CalendarCardView({
               onPress={() => {
                 dispatch(addEventSlice.actions.setIsShowingAddDate(true));
                 dispatch(addEventSlice.actions.setSelectedEvent(event));
-                dispatch(addEventSlice.actions.setStartDate(event.startTime));
-                dispatch(addEventSlice.actions.setEndDate(event.endTime));
               }}
             >
               <Text style={{ fontSize: 10 }}>{event.name}</Text>
