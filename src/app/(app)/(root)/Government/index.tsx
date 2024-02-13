@@ -24,9 +24,10 @@ import {
   MedalIcon,
   StudentSearchIcon,
 } from '@components/Icons';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import { Link, useRouter } from 'expo-router';
+import { safeAreaColorsSlice } from '@src/redux/reducers/safeAreaColorsReducer';
 
 function Block({
   height,
@@ -95,13 +96,23 @@ export default function Government() {
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
+  const [mainWidth, setMainWidth] = useState<number>(0);
+
   useEffect(() => {
     if (!isGovernmentMode) {
       router.push('/');
     }
+    store.dispatch(
+      safeAreaColorsSlice.actions.setSafeArea({
+        top: Colors.white,
+        bottom: Colors.white,
+        isTopTransparent: true,
+        isBottomTransparent: true,
+        overflowHidden: true,
+      }),
+    );
   }, []);
 
-  const [mainWidth, setMainWidth] = useState<number>(0);
   useEffect(() => {
     const fivePercent = width * 0.05;
     const remainder = (width * 0.8) % (100 + fivePercent);
