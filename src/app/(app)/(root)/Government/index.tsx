@@ -11,6 +11,7 @@ import {
   Image,
   ImageSourcePropType,
   Pressable,
+  ScrollView
 } from 'react-native';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -28,6 +29,7 @@ import store, { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import { Link, useRouter } from 'expo-router';
 import { safeAreaColorsSlice } from '@src/redux/reducers/safeAreaColorsReducer';
+import BackButton from '@src/components/BackButton';
 
 function Block({
   height,
@@ -106,7 +108,7 @@ export default function Government() {
       safeAreaColorsSlice.actions.setSafeArea({
         top: Colors.white,
         bottom: Colors.white,
-        isTopTransparent: true,
+        isTopTransparent: false,
         isBottomTransparent: true,
         overflowHidden: true,
       }),
@@ -114,24 +116,23 @@ export default function Government() {
   }, []);
 
   useEffect(() => {
+    const setWidth = (currentBreakPoint === 0) ? width * 0.95:width * 0.8
     const fivePercent = width * 0.05;
-    const remainder = (width * 0.8) % (100 + fivePercent);
-    setMainWidth(width * 0.8 - remainder - fivePercent);
-  }, [width]);
+    const remainder = setWidth % (100 + fivePercent);
+    setMainWidth(setWidth - remainder - fivePercent + 1);
+  }, [width, currentBreakPoint]);
 
   return (
-    <View
+    <ScrollView
       style={{
-        height,
+        height: height * 5,
         width,
         backgroundColor: Colors.white,
         overflow: 'hidden',
       }}
     >
       {currentBreakPoint <= 0 ? (
-        <Link href={currentBreakPoint === 0 ? '/home' : '/'}>
-          <Text>Back</Text>
-        </Link>
+        <BackButton to={'/settings'}/>
       ) : null}
       <View
         style={{
@@ -147,7 +148,7 @@ export default function Government() {
           numberOfLines={1}
           style={{
             fontFamily: 'BukhariScript',
-            fontSize: height * 0.09,
+            fontSize: height * 0.09 - 20,
             height: height * 0.13,
             width: width * 0.8,
             textAlign: 'center',
@@ -161,9 +162,6 @@ export default function Government() {
         style={{
           height: height * 0.75,
           width,
-          alignContent: 'center',
-          justifyContent: 'center',
-          alignItems: 'center',
           marginTop: height * 0.05,
         }}
       >
@@ -176,6 +174,7 @@ export default function Government() {
             flexWrap: 'wrap',
             rowGap: height * 0.05,
             columnGap: width * 0.05,
+            marginLeft: (width - mainWidth)/2
           }}
         >
           <Block href="/government/graph" width={100} height={100} text="Graph">
@@ -241,6 +240,6 @@ export default function Government() {
           </Block>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
