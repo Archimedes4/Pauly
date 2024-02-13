@@ -166,7 +166,7 @@ export default function DayView({
   }, [currentEvents, selectedDate]);
 
   useEffect(() => {
-    getClassesEvents();
+    //getClassesEvents();
   }, [selectedDate]);
 
   return (
@@ -184,7 +184,7 @@ export default function DayView({
           <>
             {hoursText.map(value => (
               <View
-                key={`${value}_${createUUID()}`}
+                key={`${value}`}
                 style={{ flexDirection: 'row', height: hourLength }}
               >
                 {calculateIfShowing(value, new Date(selectedDate)) &&
@@ -214,9 +214,9 @@ export default function DayView({
           </>
         ) : null}
       </>
-      {dayEvents.map(block => (
-        <>
-          {block.event.map(event => {
+      {dayEvents.map(block => {
+        return (
+          block.event.map(event => {
             if (!event.allDay) {
               return (
                 <EventBlock
@@ -228,11 +228,10 @@ export default function DayView({
               );
             }
             return null;
-          })}
-        </>
-      ))}
+          })
+        )})}
       {schoolEvents?.map(event => (
-        <EventBlock event={event} width={width} height={height} />
+        <EventBlock key={event.id} event={event} width={width} height={height} />
       ))}
       {week === undefined &&
       start === false &&

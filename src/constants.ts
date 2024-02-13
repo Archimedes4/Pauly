@@ -191,7 +191,7 @@ declare global {
     id: string;
     room: roomType;
     schoolYearId: string;
-    semester: semesters;
+    semester: semesters[];
     periods: number[];
   };
   type commissionQRCodeTimed =

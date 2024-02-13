@@ -155,7 +155,7 @@ export default function Calendar() {
   // In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
   useEffect(() => {
     getEvents();
-    getClassesSchedule();
+    //getClassesSchedule();
   }, [selectedDate]);
 
   return (

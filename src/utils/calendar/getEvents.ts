@@ -70,5 +70,6 @@ export default async function getEvents() {
     }
   }
 
+  console.log(outputEvents)
   store.dispatch(currentEventsSlice.actions.setCurrentEvents(outputEvents));
 }

@@ -32,7 +32,7 @@ function GovernmentClassesBody() {
               id: '',
             },
             schoolYearId: '',
-            semester: semesters.semesterOne,
+            semester: [semesters.semesterOne],
           });
         }
         setClasses(outputData);

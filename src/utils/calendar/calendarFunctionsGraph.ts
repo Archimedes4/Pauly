@@ -49,7 +49,8 @@ export function getSingleValueProperties(data: any): undefined | {
       }
     }
     return
-  } catch {
+  } catch (e) {
+    console.log(e)
     return
   }
 }
@@ -76,7 +77,7 @@ export async function getGraphEvents(
     [
       {
         key: 'Prefer',
-        value: 'outlook.timezone="Central America Standard Time"',
+        value: 'America/Winnipeg',
       },
     ],
   );

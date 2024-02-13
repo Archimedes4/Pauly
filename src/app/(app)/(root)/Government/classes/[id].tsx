@@ -82,18 +82,17 @@ function PeriodBlock({
         <Text>{periods.toString()}</Text>
         <ScrollView
           style={{ height: height * 0.3, zIndex: 100 }}
-        >
-          <>
-            {selectedTimetable.days.map((day, dayIndex) => (
-              <DayBlock
-                day={day}
-                dayIndex={dayIndex}
-                periods={periods}
-                setPeriods={setPeriods}
-                selectedTimetable={selectedTimetable}
-              />
-            ))}
-          </>
+        > 
+          {selectedTimetable.days.map((day, dayIndex) => (
+            <DayBlock
+              key={day.id}
+              day={day}
+              dayIndex={dayIndex}
+              periods={periods}
+              setPeriods={setPeriods}
+              selectedTimetable={selectedTimetable}
+            />
+          ))}
         </ScrollView>
       </View>
     )
@@ -251,8 +250,8 @@ function SchoolYearBlock({
 export default function GovernmentClassesEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);
   const { id } = useGlobalSearchParams();
-  const [selectedSemester, setSelectedSemester] = useState<semesters>(
-    semesters.semesterOne,
+  const [selectedSemester, setSelectedSemester] = useState<semesters[]>(
+    [],
   );
 
   const [className, setClassName] = useState<string>('');
@@ -292,7 +291,7 @@ export default function GovernmentClassesEdit() {
         setIsCreating(false)
         console.log(extensionData)
         setClassName(extensionData.className);
-        setSelectedSemester(parseInt(extensionData.semesterId));
+        setSelectedSemester(JSON.parse(extensionData.semesterId));
         setPeriods(JSON.parse(extensionData.periodData));
         const eventResult = await getEvent(extensionData.schoolYearEventId);
         const roomResult = await getRoom(extensionData.roomId);
@@ -323,10 +322,9 @@ export default function GovernmentClassesEdit() {
       data[store.getState().paulyList.classExtensionId] = {
         className,
         schoolYearEventId: selectedSchoolYear.id,
-        semesterId: selectedSemester.toString(),
+        semesterId: JSON.stringify(selectedSemester),
         roomId: selectedRoom.id,
         periodData: JSON.stringify(periods),
-        
       }
 
       const result = await callMsGraph(
@@ -411,13 +409,30 @@ export default function GovernmentClassesEdit() {
               <Text>School Years</Text>
               <SchoolYearBlock selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={setSelectedSchoolYear}/>
               <PeriodBlock selectedSchoolYear={selectedSchoolYear} periods={periods} setPeriods={setPeriods} />
-              <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
-                <SegmentedPicker
-                  selectedIndex={selectedSemester}
-                  setSelectedIndex={setSelectedSemester}
-                  options={['Semester One', 'Semester Two']}
-                  width={width * 0.85}
-                  height={height * 0.1}
+              <View style={{ marginLeft: 'auto', marginRight: 'auto', flexDirection: 'row' }}>
+                <StyledButton
+                  text='Semester One' 
+                  selected={selectedSemester.includes(semesters.semesterOne)}
+                  onPress={() => {
+                    if (selectedSemester.includes(semesters.semesterOne)) {
+                      setSelectedSemester([...selectedSemester.filter((e) => {return e !== semesters.semesterOne})])
+                    } else {
+                      setSelectedSemester([...selectedSemester, semesters.semesterOne])
+                    }
+                  }}
+                  style={{marginRight: 5}}
+                />
+                <StyledButton
+                  text='Semester Two'
+                  selected={selectedSemester.includes(semesters.semesterTwo)}
+                  onPress={() => {
+                    if (selectedSemester.includes(semesters.semesterTwo)) {
+                      setSelectedSemester([...selectedSemester.filter((e) => {return e !== semesters.semesterTwo})])
+                    } else {
+                      setSelectedSemester([...selectedSemester, semesters.semesterTwo])
+                    }
+                  }}
+                  style={{marginLeft: 5}}
                 />
               </View>
               <RoomsBlock selectedRoom={selectedRoom} setSelectedRoom={setSelectedRoom}/>
@@ -463,8 +478,7 @@ export default function GovernmentClassesEdit() {
           <Text>Room: {selectedRoom?.name}</Text>
           <Text>School Year: {selectedSchoolYear?.name}</Text>
           <Text>
-            Semester:{' '}
-            {selectedSemester === semesters.semesterOne ? 'One' : 'Two'}
+            Semester:{' '} {selectedSemester.toString()}
           </Text>
           <StyledButton 
             text={getTextState(updateClassState, {

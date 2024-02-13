@@ -146,7 +146,7 @@ export default function Week({
             />
           </Pressable>
           {daysOfWeek.map(day => (
-            <WeekDayButton width={width} day={day} />
+            <WeekDayButton key={day.toISOString()} width={width} day={day} />
           ))}
           <Pressable
             style={{ margin: width * 0.01111111111111111 }}
