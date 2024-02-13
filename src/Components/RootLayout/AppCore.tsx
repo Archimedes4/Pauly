@@ -1,10 +1,9 @@
 import { Colors } from '@constants';
 import { RootState } from '@redux/store';
-import getMainHeight from '@utils/getMainHeight';
 import setDimentions from '@utils/ultility/setDimentions';
 import { Slot } from 'expo-router';
 import React, { useLayoutEffect, useEffect, useState } from 'react';
-import { Dimensions, Platform, View, useWindowDimensions } from 'react-native';
+import { Dimensions, Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
@@ -32,7 +31,7 @@ function useWindowSize() {
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
       'change',
-      ({window, screen}) => {
+      ({window}) => {
         setDimensions(window);
       },
     );
@@ -75,7 +74,7 @@ export default function AppCore() {
         safeAreaColors.isTopTransparent,
         safeAreaColors.isBottomTransparent,
       );
-    });
+    }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets]);
   }
 
   return (

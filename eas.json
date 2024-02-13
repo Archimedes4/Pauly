@@ -27,9 +27,6 @@
       "distribution": "internal"
     },
     "production": {
-      "ios": {
-        "image": "latest"
-      },
       "env": {
         "EXPO_PUBLIC_ORGWIDEGROUPID":"451cc145-cc7b-433a-9e52-70e646a13d50",
         "EXPO_PUBLIC_TENANTID":"551df04d-543a-4d61-955e-e4294c4cf950",

@@ -4,7 +4,7 @@ module.exports = {
     name: 'Pauly',
     slug: 'Pauly',
     scheme: 'com.Archimedes4.Pauly',
-    version: '1.1.0',
+    version: '1.1.1',
     orientation: 'portrait',
     jsEngine: 'hermes',
     icon: './assets/images/icon.png',
@@ -24,9 +24,9 @@ module.exports = {
           'com.microsoft.adalcache',
         ],
         LSApplicationQueriesSchemes: ['msauthv2', 'msauthv3'],
+        LSMinimumSystemVersion: 17.0
       },
-      buildNumber: '65',
-      assoassociatedDomains: [],
+      buildNumber: '68',
     },
     android: {
       adaptiveIcon: {
@@ -65,8 +65,16 @@ module.exports = {
           headOrigin:
             process.env.NODE_ENV === 'development'
               ? `https://something.com`
-              : 'https://my-website-example.com',
+              : process.env.EXPO_PUBLIC_PAULYHOST,
         },
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "17.0"
+          }
+        }
       ],
     ],
     experiments: {
