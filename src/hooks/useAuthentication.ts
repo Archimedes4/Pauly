@@ -15,9 +15,11 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLoadingSlice } from '@src/redux/reducers/authLoadingReducer';
 import { useRefresh, useSilentLogin } from './authentication';
+import { Platform } from 'react-native';
 
 export default function useAuthentication() {
   const isLoading = useSelector((state: RootState) => state.authLoading);
+  const authToken = useSelector((state: RootState) => state.authenticationToken);
   const authenticationCall = useSelector(
     (state: RootState) => state.authenticationCall,
   );
@@ -29,13 +31,16 @@ export default function useAuthentication() {
   const [mounted, setMounted] = useState(false);
   // main function
   async function loadContent() {
-    await silentLogin();
+    if (Platform.OS === 'web') {
+      await silentLogin();
+    }
     if (store.getState().authenticationToken !== '') {
       const webResult = webSession();
       if (!webResult) {
         await getPaulyLists();
       }
       await getUserProfile();
+      console.log(await getWantGovernment())
       if (await getWantGovernment()) {
         await validateGovernmentMode();
       }
@@ -55,7 +60,7 @@ export default function useAuthentication() {
 
   useEffect(() => {
     loadContent();
-  }, []);
+  }, [authToken]);
 
   return isLoading;
 }

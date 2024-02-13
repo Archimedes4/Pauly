@@ -7,6 +7,7 @@ export async function validateGovernmentMode() {
   const userResult = await callMsGraph(
     'https://graph.microsoft.com/v1.0/me?$select=id',
   );
+  console.log('validate')
   if (userResult.ok) {
     const userData = await userResult.json();
     const teamsResult = await callMsGraph(
@@ -25,6 +26,7 @@ export async function validateGovernmentMode() {
               isGovernmentModeSlice.actions.setIsGovernmentMode(true),
             );
           } catch (e) {
+            console.log(e)
             store.dispatch(
               isGovernmentModeSlice.actions.setIsGovernmentMode(false),
             );

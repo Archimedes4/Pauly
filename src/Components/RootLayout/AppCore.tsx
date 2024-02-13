@@ -8,6 +8,8 @@ import { Dimensions, Platform, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
+const windowDimensions = Dimensions.get('window');
+
 function useWindowSize() {
   if (Platform.OS === 'web') {
     const [size, setSize] = useState([0, 0]);
@@ -21,8 +23,22 @@ function useWindowSize() {
     }, []);
     return size;
   }
-  const dimentions = useWindowDimensions();
-  return [dimentions.width, dimentions.height];
+  
+
+  const [dimensions, setDimensions] = useState(
+    windowDimensions
+  );
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener(
+      'change',
+      ({window, screen}) => {
+        setDimensions(window);
+      },
+    );
+    return () => subscription?.remove();
+  });
+  return [dimensions.width, dimensions.height];
 }
 
 // App core holds dimentions
@@ -32,7 +48,7 @@ export default function AppCore() {
     (state: RootState) => state.safeAreaColors,
   );
   const expandedMode = useSelector((state: RootState) => state.expandedMode);
-  const { currentBreakPoint } = useSelector(
+  const { currentBreakPoint, width, height } = useSelector(
     (state: RootState) => state.dimentions,
   );
   const windowWidth = useWindowSize()[0];
@@ -40,41 +56,27 @@ export default function AppCore() {
 
   const insets = useSafeAreaInsets();
 
-  useEffect(() => {
-    console.log(windowWidth, windowHeight);
-    setDimentions(
-      windowWidth,
-      windowHeight,
-      insets,
-      safeAreaColors.isTopTransparent,
-      safeAreaColors.isBottomTransparent,
-    );
-  }, [windowHeight, windowWidth]);
-
-  useEffect(() => {
-    setDimentions(
-      windowWidth,
-      windowHeight,
-      insets,
-      safeAreaColors.isTopTransparent,
-      safeAreaColors.isBottomTransparent,
-    );
-  }, [
-    expandedMode,
-    safeAreaColors.isTopTransparent,
-    safeAreaColors.isBottomTransparent,
-  ]);
-
-  useEffect(() => {
-    const newDimensions = Dimensions.get('window');
-    setDimentions(
-      newDimensions.width,
-      newDimensions.height,
-      insets,
-      safeAreaColors.isTopTransparent,
-      safeAreaColors.isBottomTransparent,
-    );
-  }, []);
+  if (Platform.OS === 'web') {
+    useEffect(() => {
+      setDimentions(
+        windowWidth,
+        windowHeight,
+        insets,
+        safeAreaColors.isTopTransparent,
+        safeAreaColors.isBottomTransparent,
+      );
+    }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets]);
+  } else {
+    useEffect(() => {
+      setDimentions(
+        windowWidth,
+        windowHeight,
+        insets,
+        safeAreaColors.isTopTransparent,
+        safeAreaColors.isBottomTransparent,
+      );
+    });
+  }
 
   return (
     <>
@@ -91,13 +93,7 @@ export default function AppCore() {
         style={{
           backgroundColor: safeAreaColors.bottom,
           width: windowWidth,
-          height: getMainHeight(
-            windowHeight,
-            insets.top,
-            insets.bottom,
-            safeAreaColors.isTopTransparent,
-            safeAreaColors.isBottomTransparent,
-          ),
+          height: height,
           zIndex: 10,
           position: 'absolute',
           top: safeAreaColors.isTopTransparent ? 0 : insets.top,

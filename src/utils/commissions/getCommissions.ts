@@ -18,12 +18,12 @@ function getFilter(
   if (startDate || endDate) {
     let filter = '&$filter=';
     if (startDate) {
-      filter += `fields/startDate%20${startDate.filter}%20${startDateString}`;
+      filter += `fields/startDate%20${startDate.filter}%20'${startDateString}'`;
       if (endDate) {
-        filter += `&fields/endDate%20le%20${endDateString}`;
+        filter += `&fields/endDate%20le%20'${endDateString}'`;
       }
     } else if (endDate) {
-      filter += `fields/endDate%20${endDate.filter}%20${endDateString}`;
+      filter += `fields/endDate%20${endDate.filter}%20'${endDateString}'`;
     }
     return filter;
   }
@@ -256,6 +256,8 @@ export default async function getCommissions(
     }
     return { result: loadingStateEnum.failed };
   }
+  const data = await result.json();
+  console.error(data)
   return { result: loadingStateEnum.failed };
 }
 
@@ -282,6 +284,10 @@ async function getCommissionsBatch(
       }' `,
     });
   }
+  if (outputRequests.length === 0) {
+    return { result: loadingStateEnum.success, data: [] };
+  }
+
   const batchData = {
     requests: outputRequests,
   };

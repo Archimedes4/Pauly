@@ -146,10 +146,12 @@ export const commissionsData = {
     {
       name: 'startDate',
       text: {},
+      indexed: true,
     },
     {
       name: 'endDate',
       text: {},
+      indexed: true,
     },
     {
       name: 'timed',

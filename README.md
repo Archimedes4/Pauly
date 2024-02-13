@@ -1,5 +1,5 @@
 # <img src="./assets/images/PaulyLogo.png" height="28px" alt="logo"/> Pauly
-READ ME Last updated December 26 2023 \
+READ ME Last updated February 13 2023 \
 Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
 Saint Paul's High School Student Council 2023-2024
@@ -131,33 +131,33 @@ Note: The resource group that you use will be tied to the web app. Some other re
     --login-with-github
 ```
 
-### Create Azure Functions App and deploy functions
-#### Create Function app and storage account
+#### Create Azure Functions App and deploy functions
+##### Create Function app and storage account
 https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-create
 ```
   az storage account create --name paulystorage --resource-group Pauly-SWA
 ```
 
-#### Create function app
+##### Create function app
 https://learn.microsoft.com/en-us/cli/azure/functionapp?view=azure-cli-latest#az-functionapp-create
 ```
   az functionapp create --name Pauly-Functions --resource-group Pauly-SWA --storage-account paulystorage  --consumption-plan-location eastus2 --runtime node --functions-version 4
 ```
-#### Allow cors for function app
+##### Allow cors for function app
 https://learn.microsoft.com/en-us/cli/azure/functionapp/cors?view=azure-cli-latest \
 Note: http://localhost:19006 is for development purposes and can be removed.
 ```
   az functionapp cors add -g Pauly-SWA -n Pauly-Functions --allowed-origins https://www.paulysphs.ca https://paulysphs.ca http://localhost:19006
 ```
 
-#### Set Environment Variables
+##### Set Environment Variables
 https://learn.microsoft.com/en-us/cli/azure/functionapp/config/appsettings?view=azure-cli-latest#az-functionapp-config-appsettings-set \
 Replace the values in the command. To get the tenant id, client id and client secret go to portal.azure.com. \
 -Microsoft Entra Id -> App Registrations -> Pauly \
 Then copy the client Id and Tenant Id
-![portal image](./READMEImages/PortalOverview.png)
+![portal image](./documentation/READMEImages/PortalOverview.png)
 Then navigate to Certificates & Secrets. Click "New Client Secret" the set the description to "Pauly Functions" or whatever. Press add and copy the newly created client secret and add it to this function.
-![client secret](./READMEImages/PortalCert.png)
+![client secret](./documentation/READMEImages/PortalCert.png)
 ```
   az functionapp config appsettings set --name Pauly-Functions --resource-group Pauly-SWA --settings "CLIENTID={ClientId goes here (remove brakets)} TENANTID={TenantId goes here} CLIENTSECRET={client secret goes here}"
 ```

@@ -28,12 +28,14 @@ export function useSilentLogin(): () => Promise<void> {
   const router = useRouter();
   const rootNavigationState = useRootNavigationState();
   async function main() {
-    setInterval(() => {
+    const interval = setInterval(() => {
+      console.log('here int')
       if (rootNavigationState?.key != null) {
         if (store.getState().authenticationToken === '') {
           // checking if auth token exists
           router.push('/sign-in');
         }
+        clearInterval(interval)
       }
     }, 1000);
   }
