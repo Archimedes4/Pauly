@@ -5,16 +5,14 @@
   GovernmentHandleFileSubmissions.tsx
 */
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import createUUID from '@utils/ultility/createUUID';
+import { View, Text, Pressable, FlatList} from 'react-native';
 import { Colors, loadingStateEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import getSubmissions from '@utils/sports/sportsFunctions';
 import { Link, useRouter } from 'expo-router';
 import { useSelector } from 'react-redux';
-import { RootState } from '@src/redux/store';
-import SecondStyledButton from '@components/StyledButton';
+import { RootState } from '@redux/store';
+import StyledButton from '@components/StyledButton';
 
 function GovernmentSportsPostsBody() {
   const router = useRouter();
@@ -41,28 +39,29 @@ function GovernmentSportsPostsBody() {
   }, []);
 
   if (loadingSubmissionsState === loadingStateEnum.loading) {
-    <View
-      style={{
-        width: '100%',
-        height: '100%',
-        alignContent: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <ProgressView width={14} height={14} />
-      <Text>loading</Text>
-    </View>;
+    return (
+      <View
+        style={{
+          width: '100%',
+          height: '100%',
+          alignContent: 'center',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
+        <Text>loading</Text>
+      </View>
+    )
   }
 
   if (loadingSubmissionsState === loadingStateEnum.success) {
-    <View style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
-      <Text>HandleFileSubmissions</Text>
+    return (
       <FlatList
         data={currentMediaSubmissions}
         renderItem={item => (
           <Pressable
-            key={`Submission_${item.item.submissionId}_${createUUID()}`}
+            key={`Submission_${item.item.submissionId}`}
             onPress={() =>
               router.push(
                 `/government/sports/post/review/${item.item.submissionId}`,
@@ -77,7 +76,7 @@ function GovernmentSportsPostsBody() {
           </Pressable>
         )}
       />
-    </View>;
+    )
   }
 
   return (
@@ -121,7 +120,7 @@ export default function GovernmentSportsposts() {
       >
         <GovernmentSportsPostsBody />
       </View>
-      <SecondStyledButton
+      <StyledButton
         text="Create Post"
         style={{
           marginBottom: 10,
@@ -130,6 +129,7 @@ export default function GovernmentSportsposts() {
           marginRight: 15,
         }}
         to="/government/sports/posts/create"
+        second
       />
     </View>
   );

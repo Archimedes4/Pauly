@@ -41,6 +41,7 @@ import ResourceBar from '@src/components/ResourceBar';
 import SearchBar from '@components/SearchBar';
 import StyledButton from '@components/StyledButton';
 import { ResizeMode, Video } from 'expo-av';
+import callMsGraph from '@src/utils/ultility/microsoftAssets';
 
 // Resources
 // -> Sports
@@ -70,6 +71,24 @@ function AttachmentComponent({
   width: number;
 }) {
   const [height, setHeight] = useState(200);
+  if (attachment.type.split('/')[0] === 'image') {
+    return (
+      <Image width={width} style={{width, height, borderRadius: 15}} onLoad={(e) => {
+        if (Platform.OS === 'web') {
+          Image.getSize(attachment.webUrl, (srcWidth, srcHeight) => {
+            const aspectRatio = srcWidth / srcHeight;
+            setHeight(width / aspectRatio)
+          }, error => {
+            //Fallback height
+            setHeight((width * 9) / 16);
+          });
+        } else {
+          const aspectRatio = e.nativeEvent.source.width / e.nativeEvent.source.height;
+          setHeight(width * aspectRatio);
+        }
+      }} source={{uri: attachment.webUrl}}/>
+    )
+  }
   if (attachment.type.split('/')[0] === 'video') {
     return (
       <Video
@@ -79,7 +98,8 @@ function AttachmentComponent({
         onReadyForDisplay={e => {
           if (Platform.OS === 'web') {
             // TODO make this think work well
-            (width * 16) / 9;
+            console.log(e)
+            setHeight((width * 9) / 16);
           } else {
             const aspectRatio = e.naturalSize.width / e.naturalSize.height;
             setHeight(width * aspectRatio);

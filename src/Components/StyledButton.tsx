@@ -5,7 +5,7 @@
   StyledButton.tsx
   A default button for consistancy and eas of use.
 */
-import { Text, Pressable, ViewStyle, StyleProp, TextStyle } from 'react-native';
+import { Text, Pressable, ViewStyle, StyleProp, TextStyle, View } from 'react-native';
 import React, { useState } from 'react';
 import { Link } from 'expo-router';
 import { Colors } from '@constants';
@@ -22,6 +22,7 @@ interface StyledTextButtonProps {
   children?: undefined;
   mainColor?: string;
   altColor?: string;
+  icon?: (alt: boolean) => React.ReactNode;
 }
 
 interface StyledChildButtonProps {
@@ -36,6 +37,7 @@ interface StyledChildButtonProps {
   text?: undefined;
   mainColor?: string;
   altColor?: string;
+  icon?: undefined
 }
 
 function getBackgroundColor(
@@ -94,6 +96,7 @@ export default function StyledButton({
   textStyle,
   mainColor,
   altColor,
+  icon
 }: StyledTextButtonProps | StyledChildButtonProps) {
   const [isAlt, setIsAlt] = useState<boolean>(false);
   if (typeof to === 'string') {
@@ -207,18 +210,23 @@ export default function StyledButton({
         <>{children}</>
       ) : (
         <>
-          <Text
-            style={[
-              {
-                fontSize: 16,
-                color: getTextColor(isAlt, selected, second),
-                fontFamily: 'Roboto',
-              },
-              textStyle,
-            ]}
-          >
-            {text}
-          </Text>
+          <View style={{flexDirection: 'row'}}>
+            {icon !== undefined ?
+              icon(isAlt):null
+            }
+            <Text
+              style={[
+                {
+                  fontSize: 16,
+                  color: getTextColor(isAlt, selected, second),
+                  fontFamily: 'Roboto',
+                },
+                textStyle,
+              ]}
+            >
+              {text}
+            </Text>
+          </View>
           {caption !== undefined ? (
             <Text
               style={{

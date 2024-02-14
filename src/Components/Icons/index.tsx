@@ -452,10 +452,10 @@ export function WarningIcon({
       viewBox="0 0 24 24"
       fill="none"
     >
-      <Circle cx="12" cy="17" r="1" fill="#000000" />
+      <Circle cx="12" cy="17" r="1" fill={outlineColor || '#000000'} />
       <Path
         d="M12 10L12 14"
-        stroke="#000000"
+        stroke={outlineColor || '#000000'}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

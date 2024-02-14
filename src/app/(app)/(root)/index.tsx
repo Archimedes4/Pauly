@@ -372,7 +372,7 @@ function TaskBlock() {
           </ScrollView>
         )}
         {taskState !== loadingStateEnum.success &&
-          taskState !== loadingStateEnum.failed && (
+          taskState !== loadingStateEnum.loading && (
             <View>
               <Text>Failed</Text>
             </View>

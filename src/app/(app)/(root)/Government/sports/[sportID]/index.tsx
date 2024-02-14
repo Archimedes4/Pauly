@@ -10,7 +10,7 @@ import { WarningIcon } from '@components/Icons';
 import SVGXml from '@components/SVGXml';
 import { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
-import SecondStyledButton from '@components/StyledButton';
+import StyledButton from '@components/StyledButton';
 import ProgressView from '@components/ProgressView';
 
 function SportsUpdateModel({
@@ -161,13 +161,12 @@ function GovernmentSportTeams({ sportID }: { sportID: string }) {
       <FlatList
         data={currentTeams}
         renderItem={item => (
-          <Link
-            href={`/government/sports/${sportID}/team/${item.item.teamId}`}
+          <StyledButton
+            to={`/government/sports/${sportID}/team/${item.item.teamId}`}
             key={`TeamBlock_${item.item.teamId}`}
-            style={{ padding: 10 }}
-          >
-            {item.item.teamName}
-          </Link>
+            style={{ margin: 15, marginBottom: 5 }}
+            text={item.item.teamName}
+          />
         )}
       />
     );
@@ -296,24 +295,19 @@ export default function GovernmentSport() {
         {sportName} Teams
       </Text>
       <GovernmentSportTeams sportID={sportID} />
-      <SecondStyledButton
+      <StyledButton
         style={{ marginLeft: 15, marginRight: 15, marginBottom: 10 }}
         text="Pick SVG"
         onPress={() => setIsPickingSvg(true)}
       />
-      <SecondStyledButton
+      <StyledButton
         style={{ marginLeft: 15, marginRight: 15, marginBottom: 10 }}
         text="Create New Team"
         to={`/government/sports/${sportID}/team/create`}
       />
-      <Pressable
-        style={{
-          borderRadius: 15,
-          backgroundColor: 'red',
-          marginLeft: 15,
-          marginRight: 15,
-          marginBottom: 10,
-        }}
+      <StyledButton
+        style={{ marginLeft: 15, marginRight: 15, marginBottom: 10, flexDirection: 'row', height: 36, overflow: 'hidden' }}
+        mainColor='red'
         onPress={() => {
           if (
             deleteSportState === loadingStateEnum.notStarted ||
@@ -322,22 +316,20 @@ export default function GovernmentSport() {
             deleteSport();
           }
         }}
-      >
-        <View style={{ flexDirection: 'row', margin: 10 }}>
+        text={getTextState(deleteSportState, {
+          notStarted: 'Delete Sport',
+          success: 'Sport Deleted',
+          failed: 'Failed To Delete Sport',
+        })}
+        icon={(alt) => (
           <WarningIcon
             width={14}
             height={14}
             style={{ marginTop: 'auto', marginBottom: 'auto' }}
+            outlineColor={alt ? Colors.white:Colors.black}
           />
-          <Text style={{ fontFamily: 'Roboto', fontSize: 16, marginLeft: 2 }}>
-            {getTextState(deleteSportState, {
-              notStarted: 'Delete Sport',
-              success: 'Sport Deleted',
-              failed: 'Failed To Delete Sport',
-            })}
-          </Text>
-        </View>
-      </Pressable>
+        )}
+      />
       <SportsUpdateModel
         isPickingSvg={isPickingSvg}
         setIsPickingSvg={setIsPickingSvg}

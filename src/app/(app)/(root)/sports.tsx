@@ -233,30 +233,16 @@ export default function Sports() {
                               sport.id === selectedSport?.id &&
                               selectedTeam !== undefined &&
                               !isShowingTeams
-                                ? 0
+                                ? 10
                                 : isShowingTeams
                                   ? 5
                                   : 10,
                           }}
                         >
-                          {sport.name}
-                        </Text>
-                        {sport.id === selectedSport?.id &&
+                          {(sport.id === selectedSport?.id &&
                         selectedTeam !== undefined &&
-                        !isShowingTeams ? (
-                          <View>
-                            <Text
-                              style={{
-                                color: Colors.white,
-                                marginBottom: 5,
-                                marginLeft: 2,
-                                marginRight: 10,
-                              }}
-                            >
-                              {selectedTeam?.teamName}
-                            </Text>
-                          </View>
-                        ) : null}
+                        !isShowingTeams) ? selectedTeam?.teamName:""} {sport.name}
+                        </Text>
                       </View>
                     </Pressable>
                   ))}

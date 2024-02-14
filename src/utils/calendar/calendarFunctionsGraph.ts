@@ -71,13 +71,14 @@ export async function getGraphEvents(
 > {
   const defaultUrl = `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events?$expand=singleValueExtendedProperties&$select=id,subject,start,end,isAllDay,singleValueExtendedProperties`;
   const result = await callMsGraph(
-    url !== undefined ? url : defaultUrl,
+    (url !== undefined) ? url : defaultUrl,
     'GET',
     undefined,
     [
       {
+        //America/Winnipeg
         key: 'Prefer',
-        value: 'America/Winnipeg',
+        value: 'outlook.timezone="UTC"',
       },
     ],
   );
@@ -87,6 +88,7 @@ export async function getGraphEvents(
     for (let index = 0; index < data.value.length; index += 1) {
       const singleValueResult = getSingleValueProperties(data.value[index]);
       if (singleValueResult !== undefined && singleValueResult.eventType === 'schoolDay') {
+        console.log(JSON.parse(singleValueResult.eventData))
         const schoolDayResult = await getSchoolDayData(JSON.parse(singleValueResult.eventData))
         if (schoolDayResult.result === loadingStateEnum.success) {
           newEvents.push({

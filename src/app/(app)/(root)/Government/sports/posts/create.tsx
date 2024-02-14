@@ -25,6 +25,7 @@ import { getSports, getSportsTeams } from '@utils/sports/sportsFunctions';
 import ProgressView from '@components/ProgressView';
 import getYoutubeVideos from '@utils/youtubeFunctions';
 import { Link } from 'expo-router';
+import StyledButton from '@components/StyledButton';
 
 function YoutubeVideosSelector({
   onSelect,
@@ -311,110 +312,93 @@ function PickSportTeam({
     loadTeams();
   }, [selectedSport]);
 
-  return (
-    <View style={{ width, height }}>
-      <>
-        {sportsTeams === undefined ||
-        sportTeamState === loadingStateEnum.notStarted ? (
-          <>
-            {dataResult === loadingStateEnum.loading ? (
-              <View
-                style={{
-                  width,
-                  height,
-                  alignContent: 'center',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <ProgressView
-                  width={width < height ? width * 0.1 : height * 0.1}
-                  height={width < height ? width * 0.1 : height * 0.1}
-                />
-                <Text>Loading</Text>
-              </View>
-            ) : (
-              <>
-                {dataResult === loadingStateEnum.success ? (
-                  <>
-                    {currentSports.map((item, id) => (
-                      <Pressable
-                        key={id}
-                        onPress={() => setSelectedSport(item)}
-                      >
-                        <View>
-                          <Text>{item.name}</Text>
-                        </View>
-                      </Pressable>
-                    ))}
-                  </>
-                ) : (
-                  <View>
-                    <Text>Error</Text>
-                  </View>
-                )}
-              </>
-            )}
-          </>
-        ) : (
-          <>
-            {sportTeamState === loadingStateEnum.loading ? (
-              <View
-                style={{
-                  width,
-                  height,
-                  alignContent: 'center',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <ProgressView
-                  width={width < height ? width * 0.1 : height * 0.1}
-                  height={width < height ? width * 0.1 : height * 0.1}
-                />
-                <Text>Loading</Text>
-              </View>
-            ) : (
-              <>
-                {sportTeamState === loadingStateEnum.success &&
-                selectedSport !== undefined ? (
-                  <View>
-                    <Pressable
-                      onPress={() => {
-                        setSelectedSport(undefined);
-                        setSportTeamState(loadingStateEnum.notStarted);
-                        setSportTeams([]);
-                        onBack();
-                      }}
-                    >
-                      <Text>Back</Text>
-                    </Pressable>
-                    {sportsTeams.map((item, id) => (
-                      <Pressable
-                        key={id}
-                        onPress={() =>
-                          onSelect({
-                            sportId: selectedSport.id,
-                            teamId: item.teamId,
-                          })
-                        }
-                      >
-                        <View>
-                          <Text>{item.teamName}</Text>
-                        </View>
-                      </Pressable>
-                    ))}
-                  </View>
-                ) : (
-                  <View>
-                    <Text>Error</Text>
-                  </View>
-                )}
-              </>
-            )}
-          </>
+  // pick team
+  if (sportTeamState === loadingStateEnum.success && selectedSport !== undefined) {
+    return (
+      <View>
+        <Pressable
+          onPress={() => {
+            setSelectedSport(undefined);
+            setSportTeamState(loadingStateEnum.notStarted);
+            setSportTeams([]);
+            onBack();
+          }}
+        >
+          <Text>Back</Text>
+        </Pressable>
+        <FlatList
+          data={sportsTeams}
+          renderItem={(item) => (
+            <StyledButton
+              key={item.item.teamId}
+              onPress={() =>
+                onSelect({
+                  sportId: selectedSport.id,
+                  teamId: item.item.teamId,
+                })
+              }
+              text={item.item.teamName}
+              style={{margin: 15, marginBottom: 5}}
+            />
+          )}
+        />
+      </View>
+    )
+  }
+
+  // pick sport
+  if (sportsTeams !== undefined) {
+    return (
+      <FlatList
+        data={currentSports}
+        renderItem={(item) => (
+          <StyledButton
+            text={item.item.name}
+            key={item.item.id}
+            onPress={() => setSelectedSport(item.item)}
+            style={{margin: 15}}
+          />
         )}
-      </>
+        ListEmptyComponent={() => (
+          <View>
+            <Text>This sport has no teams. Please go back and add a team before creating a post.</Text>
+          </View>
+        )}
+      />
+    )
+  }
+
+  if (sportTeamState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView
+          width={width < height ? width * 0.1 : height * 0.1}
+          height={width < height ? width * 0.1 : height * 0.1}
+        />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  
+
+  return (
+    <View style={{
+      width,
+      height,
+      alignContent: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}>
+      <Text>Error</Text>
     </View>
-  );
+  )
 }

@@ -109,6 +109,7 @@ function NavBarBlock({
                 color: Colors.white,
                 margin: 0,
                 marginLeft: 8,
+                fontFamily: 'Roboto',
               }}
             >
               {text}
