@@ -40,7 +40,6 @@ export default function useAuthentication() {
         await getPaulyLists();
       }
       await getUserProfile();
-      console.log(await getWantGovernment())
       if (await getWantGovernment()) {
         await validateGovernmentMode();
       }

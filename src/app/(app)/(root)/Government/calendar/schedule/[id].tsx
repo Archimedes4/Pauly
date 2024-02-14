@@ -25,9 +25,8 @@ import { Colors, loadingStateEnum, styles } from '@constants';
 import { CloseIcon, WarningIcon } from '@components/Icons';
 import ProgressView from '@components/ProgressView';
 import { getSchedule } from '@utils/calendar/calendarFunctionsGraph';
-import { Link, SplashScreen, useGlobalSearchParams } from 'expo-router';
+import { Link, useGlobalSearchParams } from 'expo-router';
 import SecondStyledButton from '@components/StyledButton';
-import { useFonts } from 'expo-font';
 
 function isValidHexaCode(input: string) {
   // Define the regular expression pattern for a valid hexadecimal color code
@@ -37,8 +36,6 @@ function isValidHexaCode(input: string) {
   // Test the input against the pattern using the test() method
   return hexaPattern.test(input);
 }
-
-SplashScreen.preventAutoHideAsync();
 
 // NOTE: period length cannot be longer than 20
 export function GovernmentSchedule({ create }: { create: boolean }) {

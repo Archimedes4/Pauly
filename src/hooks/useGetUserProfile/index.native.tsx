@@ -2,20 +2,11 @@ import store from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import { fetchUserInfoAsync, useAutoDiscovery } from 'expo-auth-session';
 import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
+import getUserImage from './getUserImage';
 
 export default function getUserProfile() {
-  const discovery = useAutoDiscovery(
-    `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
-  );
   async function main() {
-    if (discovery !== null) {
-      const account = await fetchUserInfoAsync(
-        {
-          accessToken: store.getState().authenticationToken,
-        },
-        discovery,
-      );
-    }
+    getUserImage();
     const profileResult = await callMsGraph(
       'https://graph.microsoft.com/v1.0/me',
       'GET',
@@ -30,7 +21,7 @@ export default function getUserProfile() {
       );
     }
     // No need to fail they will have no name. If something like this where to fail they would most likly be redirected for having some other problem.
-    // }
+    // It is not worth shuting down app.
   }
   return main;
 }

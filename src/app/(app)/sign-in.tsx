@@ -17,9 +17,8 @@ import ProgressView from '@components/ProgressView';
 import { useInvokeLogin } from '@hooks/authentication';
 import { RootState } from '@redux/store';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
-import { SplashScreen, router } from 'expo-router';
+import { router } from 'expo-router';
 
-SplashScreen.preventAutoHideAsync();
 export function SignInComponent({ government }: { government: boolean }) {
   // visual
   const { height, totalWidth } = useSelector(

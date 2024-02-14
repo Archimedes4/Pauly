@@ -18,7 +18,7 @@ module.exports = function (api) {
             '@components': './src/components',
             assets: './assets',
           },
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+          extensions: ['.js', '.jsx', '.ts', '.tsx', '.native.tsx', '.web.tsx', '.native.ts', '.web.ts'],
         },
       ],
     ],

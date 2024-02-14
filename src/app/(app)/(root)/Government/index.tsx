@@ -27,9 +27,9 @@ import {
 } from '@components/Icons';
 import store, { RootState } from '@redux/store';
 import { Colors } from '@constants';
-import { Link, useRouter } from 'expo-router';
-import { safeAreaColorsSlice } from '@src/redux/reducers/safeAreaColorsReducer';
-import BackButton from '@src/components/BackButton';
+import { router, useRouter } from 'expo-router';
+import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
+import BackButton from '@components/BackButton';
 
 function Block({
   height,
@@ -48,45 +48,46 @@ function Block({
 }) {
   const [isSelected, setIsSelected] = useState<boolean>(false);
   return (
-    <Link href={href}>
-      <Pressable
-        style={{
-          height,
-          width,
-          alignContent: 'center',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: isSelected ? Colors.lightGray : Colors.darkGray,
-          borderRadius: 5,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.8,
-          shadowRadius: 5,
-        }}
-        onHoverIn={() => {
-          setIsSelected(true);
-        }}
-        onHoverOut={() => {
-          setIsSelected(false);
-        }}
-      >
-        {imageSource !== undefined && (
-          <Image
-            source={imageSource}
-            style={{ width: width * 0.5, height: height * 0.5 }}
-            resizeMode="center"
-          />
-        )}
-        {imageSource === undefined && children !== undefined && (
-          <View style={{ width: width * 0.5, height: height * 0.5 }}>
-            <>{children}</>
-          </View>
-        )}
-        <Text style={{ color: isSelected ? Colors.black : Colors.white }}>
-          {text}
-        </Text>
-      </Pressable>
-    </Link>
+    <Pressable
+      style={{
+        height,
+        width,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: isSelected ? Colors.lightGray : Colors.darkGray,
+        borderRadius: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 5,
+      }}
+      onHoverIn={() => {
+        setIsSelected(true);
+      }}
+      onHoverOut={() => {
+        setIsSelected(false);
+      }}
+      onPress={() => {
+        router.push(href)
+      }}
+    >
+      {imageSource !== undefined && (
+        <Image
+          source={imageSource}
+          style={{ width: width * 0.5, height: height * 0.5 }}
+          resizeMode="center"
+        />
+      )}
+      {imageSource === undefined && children !== undefined && (
+        <View style={{ width: width * 0.5, height: height * 0.5 }}>
+          <>{children}</>
+        </View>
+      )}
+      <Text style={{ color: isSelected ? Colors.black : Colors.white }}>
+        {text}
+      </Text>
+    </Pressable>
   );
 }
 

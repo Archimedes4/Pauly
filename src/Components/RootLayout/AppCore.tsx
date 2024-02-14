@@ -74,7 +74,7 @@ export default function AppCore() {
         safeAreaColors.isTopTransparent,
         safeAreaColors.isBottomTransparent,
       );
-    }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets]);
+    });
   }
 
   return (

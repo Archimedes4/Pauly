@@ -23,10 +23,9 @@ module.exports = {
           'com.microsoft.identity.universalstorage',
           'com.microsoft.adalcache',
         ],
-        LSApplicationQueriesSchemes: ['msauthv2', 'msauthv3'],
-        LSMinimumSystemVersion: 17.0
+        LSApplicationQueriesSchemes: ['msauthv2', 'msauthv3']
       },
-      buildNumber: '68',
+      buildNumber: '69'
     },
     android: {
       adaptiveIcon: {
@@ -67,14 +66,6 @@ module.exports = {
               ? `https://something.com`
               : process.env.EXPO_PUBLIC_PAULYHOST,
         },
-      ],
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "deploymentTarget": "17.0"
-          }
-        }
       ],
     ],
     experiments: {
