@@ -7,7 +7,6 @@ import {
   View,
   Text,
   TextInput,
-  Pressable,
   FlatList,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
@@ -19,7 +18,7 @@ import ProgressView from '@components/ProgressView';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import DressCodeBlock from '@components/DressCodeBlock';
 import BackButton from '@components/BackButton';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 import { createDressCode, deleteDressCode, getDressCode, updateDressCode } from '@src/utils/calendar/dressCodeFunctions';
 
 export function GovernmentDressCodeEdit({

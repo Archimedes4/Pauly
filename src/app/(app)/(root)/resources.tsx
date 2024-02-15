@@ -37,11 +37,10 @@ import ProgressView from '@components/ProgressView';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { Colors, loadingStateEnum, resourceMode } from '@constants';
 import ResourcesNews from '@components/ResourcesNews';
-import ResourceBar from '@src/components/ResourceBar';
+import ResourceBar from '@components/ResourceBar';
 import SearchBar from '@components/SearchBar';
 import StyledButton from '@components/StyledButton';
 import { ResizeMode, Video } from 'expo-av';
-import callMsGraph from '@src/utils/ultility/microsoftAssets';
 
 // Resources
 // -> Sports

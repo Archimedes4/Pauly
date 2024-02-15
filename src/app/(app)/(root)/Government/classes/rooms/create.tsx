@@ -5,7 +5,7 @@
   rooms/[id].tsx
   Screen for creating room data. Apart of Pauly classes.
 */
-import { View, Text, Pressable, TextInput } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
@@ -15,8 +15,8 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import StyledButton from '@components/StyledButton';
-import BackButton from '@src/components/BackButton';
-import ProgressView from '@src/components/ProgressView';
+import BackButton from '@components/BackButton';
+import ProgressView from '@components/ProgressView';
 
 export function GovermentRoomsUpdate({ isCreate }: { isCreate: boolean }) {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

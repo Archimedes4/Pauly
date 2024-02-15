@@ -5,7 +5,7 @@
   SelectTimetable.tsx
 */
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Pressable, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 import callMsGraph from '@utils/ultility/microsoftAssets';
@@ -16,9 +16,11 @@ import StyledButton from '../StyledButton';
 export default function SelectTimetable({
   governmentMode,
   onSelect,
+  selectedTimetableId
 }: {
   governmentMode: boolean;
   onSelect?: (item: timetableStringType) => void;
+  selectedTimetableId?: string
 }) {
   const router = useRouter();
   const { timetablesListId, siteId } = useSelector(
@@ -90,6 +92,7 @@ export default function SelectTimetable({
             }}
             text={timetable.item.name}
             style={{margin: 15}}
+            selected={selectedTimetableId === timetable.item.id}
           />
         )}
       />

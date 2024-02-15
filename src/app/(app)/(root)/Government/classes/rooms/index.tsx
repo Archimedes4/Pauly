@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella 
+  14 February 2024
+*/
 import { View, Text, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -5,9 +10,9 @@ import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import { getRooms } from '@utils/classesFunctions';
 import { Link } from 'expo-router';
-import ProgressView from '@src/components/ProgressView';
-import StyledButton from '@src/components/StyledButton';
-import BackButton from '@src/components/BackButton';
+import ProgressView from '@components/ProgressView';
+import StyledButton from '@components/StyledButton';
+import BackButton from '@components/BackButton';
 
 function GovernmentRoomsBody() {
   const [roomState, setRoomState] = useState<loadingStateEnum>(

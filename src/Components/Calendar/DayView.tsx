@@ -13,7 +13,6 @@ import {
   calculateIfShowing,
   computeEventHeight,
   findTimeOffset,
-  isDateToday,
   isEventDuringInterval,
   isTimeOnDay,
 } from '@utils/calendar/calendarFunctions';

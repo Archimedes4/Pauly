@@ -2,17 +2,16 @@
 // June 19 2023
 // Picker with animated black line
 
-import { Colors } from '@src/constants';
-import React, { ReactNode, useRef, useEffect, Children, useState } from 'react';
+import { Colors } from '@constants';
+import createUUID from '@src/utils/ultility/createUUID';
+import React, { ReactNode, useEffect, Children, useState } from 'react';
 import { View, Pressable } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
   useSharedValue,
-  withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-// import styles from './Picker.module.css'
 
 interface PickerWrapperProps {
   selectedIndex: number;
@@ -30,7 +29,10 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
   height,
 }) => {
   const [componentWidth, setCompoentWidth] = useState<number>(0);
-  const [newChildren, setNewChildren] = useState<Array<Exclude<ReactNode, boolean | null | undefined>>>([])
+  const [newChildren, setNewChildren] = useState<{
+    child: Exclude<ReactNode, boolean | null | undefined>
+    id: string
+  }[]>([])
   const pan = useSharedValue(0);
   function fadeIn(id: number) {
     // Will change fadeAnim value to 1 in 5 seconds
@@ -51,10 +53,14 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
     let newChildren = [...oldChildren.filter((e) => {
       count += 1
       return e !== null
+    }).map((e) => {
+      return {
+        child: e,
+        id: createUUID() 
+      }
     })]
     setNewChildren(newChildren)
     setCompoentWidth(width/count)
-    console.log(count)
     pan.value = selectedIndex * (width/count)
   }, [])
 
@@ -62,6 +68,7 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
     <View style={{ flexDirection: 'row', height: height * 0.8, width }}>
       {newChildren.map((child, index) => (
         <View
+          key={child.id}
           style={{
             position: 'absolute',
             transform: [{ translateX: index * componentWidth }],
@@ -74,7 +81,7 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
               fadeIn(index);
             }}
           >
-            {child}
+            {child.child}
           </Pressable>
         </View> 
       ))}

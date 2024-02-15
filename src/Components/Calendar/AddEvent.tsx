@@ -197,6 +197,7 @@ function GovernmentCalendarOptions({
                 timetableId: e.id
               }));
             }}
+            selectedTimetableId={selectedEvent.timetableId}
           />
         </View>
       ) : null}

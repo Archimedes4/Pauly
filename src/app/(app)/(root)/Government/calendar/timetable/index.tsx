@@ -1,11 +1,14 @@
-// Andrew Mainella
-// October 14 2023
-// Pauly
-// GovernmentTimetable.tsx
-//
-// An timetable selector that direcets to creating a new timetable or editing one.
-//
 
+
+/*
+  Pauly
+  Andrew Mainella
+  14 October 2023
+  GovernmentTimetable.tsx
+
+  An timetable selector that direcets to creating a new timetable or editing one.
+  
+*/
 import { View, Text } from 'react-native';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -13,7 +16,7 @@ import SelectTimetable from '@components/Calendar/SelectTimetable';
 import { RootState } from '@redux/store';
 import { Colors, styles } from '@constants';
 import { Link } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 export default function GovernmentTimetable() {
   const { width, height } = useSelector((state: RootState) => state.dimentions);

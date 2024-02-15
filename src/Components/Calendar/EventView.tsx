@@ -4,7 +4,7 @@
   November 9 2023
   EventView.tsx
 */
-import { View, Text, ScrollView, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';

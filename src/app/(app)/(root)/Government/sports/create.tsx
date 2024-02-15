@@ -4,7 +4,7 @@
   23 November 2023
 */
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
