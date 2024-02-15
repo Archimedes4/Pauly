@@ -309,7 +309,7 @@ export default function WeekDayView({
         ) : null}
       </>
       {currentEvents.map(event => {
-        if (event.allDay || !isTimeOnDay(event.endTime, selectedDate)) {
+        if (event.allDay || !isTimeOnDay(event.endTime, day.toISOString())) {
           return null
         }
         
@@ -322,14 +322,20 @@ export default function WeekDayView({
           />
         )
       })}
-      {schoolEvents?.map(event => (
-        <EventBlock
-          event={event}
-          width={width}
-          height={height}
-          eventPane={eventsPane}
-        />
-      ))}
+      {schoolEvents?.map(event => {
+        if (event.allDay || !isTimeOnDay(event.endTime, day.toISOString())) {
+          return null
+        }
+        
+        return (
+          <EventBlock
+            event={event}
+            width={width}
+            height={height}
+            eventPane={eventsPane}
+          />
+        )
+      })}
       {isTimeOnDay(selectedDate, day.toISOString()) ? (
         <View
           style={{
