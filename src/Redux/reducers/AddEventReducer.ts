@@ -108,9 +108,16 @@ export const addEventSlice = createSlice({
     },
     setSelectedSchoolDayData: (
       state,
-      action: PayloadAction<schoolDayDataType | undefined>,
+      action: PayloadAction<schoolDayDataType>,
     ) => {
-      return { ...state, selectedSchoolDayData: action.payload };
+      if (state.selectedEvent.paulyEventType === 'schoolDay' ) {
+        return { ...state, 
+          selectedEvent: {
+            ...state.selectedEvent,
+            schoolDayData: action.payload
+          } 
+        };
+      }
     },
     setSelectedSchoolYear: (state, action: PayloadAction<eventType>) => {
       return { ...state, selectedSchoolYear: action.payload };

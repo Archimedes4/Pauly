@@ -7,7 +7,7 @@
 */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, ScrollView, useColorScheme, Text } from 'react-native';
+import { View, ScrollView, useColorScheme, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
   calculateIfShowing,
@@ -101,7 +101,6 @@ export default function DayView({
     dayEvents = dayEvents.sort((a, b) => {
       return a.startTime.localeCompare(b.startTime);
     });
-    console.log(dayEvents);
     const result: dayEvent[] = [];
     for (let index = 0; index < dayEvents.length; index += 1) {
       result.push({
@@ -165,101 +164,112 @@ export default function DayView({
   }, [currentEvents, selectedDate]);
 
   useEffect(() => {
-    //getClassesEvents();
+    getClassesEvents();
   }, [selectedDate]);
 
   return (
-    <ScrollView
-      style={{
-        height: week ? undefined : height,
-        width,
-        backgroundColor: Colors.white,
-      }}
-      ref={mainScrollRef}
-      scrollEnabled={week != true}
-    >
-      <>
-        {isShowingTime ? (
-          <>
-            {hoursText.map(value => (
-              <View
-                key={`${value}`}
-                style={{ flexDirection: 'row', height: hourLength }}
-              >
-                {calculateIfShowing(value, new Date(selectedDate)) &&
-                (week === undefined || start === true) ? (
-                  <Text
-                    selectable={false}
-                    style={{
-                      color:
-                        colorScheme == 'dark' ? Colors.white : Colors.black,
-                    }}
-                  >
-                    {value}
-                  </Text>
-                ) : null}
+    <>
+      <FlatList
+        data={dayEvents}
+        renderItem={(e) => {
+          if (e.item.event[0].allDay) {
+            return null
+          }
+          return null
+        }}
+      />
+      <ScrollView
+        style={{
+          height: week ? undefined : height,
+          width,
+          backgroundColor: Colors.white,
+        }}
+        ref={mainScrollRef}
+        scrollEnabled={week != true}
+      >
+        <>
+          {isShowingTime ? (
+            <>
+              {hoursText.map(value => (
                 <View
-                  style={{
-                    backgroundColor: Colors.black,
-                    width: width * 0.9,
-                    height: 6,
-                    position: 'absolute',
-                    right: 0,
-                    borderRadius: 25,
-                  }}
-                />
-              </View>
-            ))}
-          </>
-        ) : null}
-      </>
-      {dayEvents.map(block => {
-        return (
-          block.event.map(event => {
-            if (!event.allDay) {
-              return (
-                <EventBlock
-                  key={event.id}
-                  event={event}
-                  width={width}
-                  height={height}
-                />
-              );
-            }
-            return null;
-          })
-        )})}
-      {schoolEvents?.map(event => (
-        <EventBlock key={event.id} event={event} width={width} height={height} />
-      ))}
-      {week === undefined &&
-      start === false &&
-      isTimeOnDay(selectedDate, new Date().toISOString()) ? (
-        <View
-          style={{
-            position: 'absolute',
-            top: heightOffsetTop,
-            height: height * 0.005,
-            width,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>
-            {currentTime}
-          </Text>
+                  key={`${value}`}
+                  style={{ flexDirection: 'row', height: hourLength }}
+                >
+                  {calculateIfShowing(value, new Date(selectedDate)) &&
+                  (week === undefined || start === true) ? (
+                    <Text
+                      selectable={false}
+                      style={{
+                        color:
+                          colorScheme == 'dark' ? Colors.white : Colors.black,
+                      }}
+                    >
+                      {value}
+                    </Text>
+                  ) : null}
+                  <View
+                    style={{
+                      backgroundColor: Colors.black,
+                      width: width * 0.9,
+                      height: 6,
+                      position: 'absolute',
+                      right: 0,
+                      borderRadius: 25,
+                    }}
+                  />
+                </View>
+              ))}
+            </>
+          ) : null}
+        </>
+        {dayEvents.map(block => {
+          return (
+            block.event.map(event => {
+              if (!event.allDay) {
+                return (
+                  <EventBlock
+                    key={event.id}
+                    event={event}
+                    width={width}
+                    height={height}
+                  />
+                );
+              }
+              return null;
+            })
+          )})}
+        {schoolEvents?.map(event => (
+          <EventBlock key={event.id} event={event} width={width} height={height} />
+        ))}
+        {week === undefined &&
+        start === false &&
+        isTimeOnDay(selectedDate, new Date().toISOString()) ? (
           <View
             style={{
-              backgroundColor: 'red',
-              width: width * 0.914,
-              height: 6,
               position: 'absolute',
-              right: 0,
+              top: heightOffsetTop,
+              height: height * 0.005,
+              width,
+              flexDirection: 'row',
+              alignItems: 'center',
             }}
-          />
-        </View>
-      ) : null}
-    </ScrollView>
+          >
+            <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>
+              {currentTime}
+            </Text>
+            <View
+              style={{
+                backgroundColor: 'red',
+                width: width * 0.914,
+                height: 6,
+                position: 'absolute',
+                right: 0,
+              }}
+            />
+          </View>
+        ) : null}
+      </ScrollView>
+    </>
   );
 }
 

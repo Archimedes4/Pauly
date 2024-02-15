@@ -88,7 +88,6 @@ export async function getGraphEvents(
     for (let index = 0; index < data.value.length; index += 1) {
       const singleValueResult = getSingleValueProperties(data.value[index]);
       if (singleValueResult !== undefined && singleValueResult.eventType === 'schoolDay') {
-        console.log(JSON.parse(singleValueResult.eventData))
         const schoolDayResult = await getSchoolDayData(JSON.parse(singleValueResult.eventData))
         if (schoolDayResult.result === loadingStateEnum.success) {
           newEvents.push({
@@ -909,12 +908,7 @@ export function getMonthData(selectedDate: Date) {
             index - firstDayWeek + 2,
           ) && (event.paulyEventType !== 'schoolYear' || store.getState().isGovernmentMode)
         ) {
-          if (event.paulyEventType === 'schoolYear') {
-            console.log("added")
-          }
           events.push(event);
-        } else if (event.paulyEventType === 'schoolYear') {
-          console.log("not added", store.getState().isGovernmentMode)
         }
       }
       monthDataResult.push({
@@ -936,7 +930,7 @@ export function getMonthData(selectedDate: Date) {
 }
 
 async function getSchoolDayData(data: schoolDayDataCompressedType): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: schoolDayDataType}> {
-  const schoolYearResult = await callMsGraph(`/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.schoolYearEventId}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+  const schoolYearResult = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.schoolYearEventId}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
     store.getState().paulyList.eventTypeExtensionId
   }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`)
   if (!schoolYearResult.ok) {

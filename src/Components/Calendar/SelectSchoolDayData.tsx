@@ -16,6 +16,7 @@ import {
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import store, { RootState } from '@redux/store';
 import { loadingStateEnum, semesters } from '@constants';
+import { FlatList } from 'react-native';
 
 enum pickSchoolDayMode {
   schoolYear,
@@ -234,15 +235,19 @@ function DressCodeSelect({
       >
         <Text>Back</Text>
       </Pressable>
-      {dressCodeData.map(data => (
-        <Pressable
-          onPress={() => {
-            onSelect(data);
-          }}
-        >
-          <Text>{data.name}</Text>
-        </Pressable>
-      ))}
+      <FlatList
+        data={dressCodeData}
+        renderItem={(item) => (
+          <Pressable
+            key={item.item.id}
+            onPress={() => {
+              onSelect(item.item);
+            }}
+          >
+            <Text>{item.item.name}</Text>
+          </Pressable>
+        )}
+      />
     </View>
   );
 }
@@ -306,6 +311,10 @@ export default function SelectSchoolDayData() {
       loadData(selectedSchoolYear.timetableId);
     }
   }, [loadData, schoolDayMode, selectedSchoolYear, timetable]);
+
+  useEffect(() => {
+    console.log(selectedEvent)
+  }, [selectedEvent])
 
   if (selectedEvent.paulyEventType !== 'schoolDay') {
     return (

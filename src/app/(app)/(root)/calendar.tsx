@@ -12,15 +12,16 @@ import Week from '@components/Calendar/Week';
 import AddEvent from '@components/Calendar/AddEvent';
 import CalendarTypePicker from '@components/CalendarTypePicker';
 import { AddIcon } from '@components/Icons';
-import { RootState } from '@redux/store';
-import { Colors, calendarMode } from '@constants';
+import store, { RootState } from '@redux/store';
+import { Colors, calendarMode, loadingStateEnum } from '@constants';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import BackButton from '@components/BackButton';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
-import { getClassesSchedule } from '@utils/classesFunctions';
 import getEvents from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@components/Calendar/MonthView';
+import { getClassEventsFromDay } from '@src/utils/classesFunctions';
+import { currentEventsSlice } from '@src/redux/reducers/currentEventReducer';
 
 function getCalendarFontSize(breakPoint: number, height: number) {
   if (breakPoint === 0) {
@@ -72,6 +73,7 @@ function TopView({ width, height }: { width: number; height: number }) {
             height: getCalendarFontSize(currentBreakPoint, height),
             color: Colors.white,
             textAlign: 'center',
+            overflow: 'visible'
           }}
         >
           Calendar
@@ -147,6 +149,14 @@ export default function Calendar() {
     );
   }, [dispatch]);
 
+  async function loadClassEvents() {
+    const result = await getClassEventsFromDay(new Date(selectedDate))
+    if (result.result === loadingStateEnum.success) {
+      console.log(result.data)
+      store.dispatch(currentEventsSlice.actions.setCurrentEvents([...store.getState().currentEvents, ...result.data]))
+    }
+  }
+
   useEffect(() => {
     updateColors();
   }, []);
@@ -155,7 +165,7 @@ export default function Calendar() {
   // In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
   useEffect(() => {
     getEvents();
-    //getClassesSchedule();
+    loadClassEvents()
   }, [selectedDate]);
 
   return (

@@ -75,7 +75,7 @@ export async function getRoom(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getClassesSchedule(): Promise<
+export async function getClasses(): Promise<
   | {
       result: loadingStateEnum.success;
       data: classType[];
@@ -146,10 +146,12 @@ export async function getClassesSchedule(): Promise<
                 name: '',
                 id: '',
               },
-              schoolYearId: '',
-              semester: []//JSON.parse(batchResultData.responses[batchIndex].body[
-              //  store.getState().paulyList.classExtensionId
-              //].semesterId),
+              schoolYearId: batchResultData.responses[batchIndex].body[
+                store.getState().paulyList.classExtensionId
+              ].schoolYearEventId,
+              semester: JSON.parse(batchResultData.responses[batchIndex].body[
+                store.getState().paulyList.classExtensionId
+              ].semesterId),
             });
           }
         } else {
@@ -169,13 +171,14 @@ export async function getClassEvents(
   schoolYearEventId: string,
   schoolDay: schoolDayType,
   date: Date,
-): Promise<{ result: loadingStateEnum; data?: eventType[] }> {
-  const classResult = await getClassesSchedule();
+): Promise<{ result: loadingStateEnum.success; data: eventType[] } | { result: loadingStateEnum.failed }> {
+  const classResult = await getClasses();
   if (
     classResult.result === loadingStateEnum.success
   ) {
-    const outputEvents: eventType[] = [];
+    let outputEvents: eventType[] = [];
     for (let index = 0; index < classResult.data.length; index += 1) {
+      console.log(`One ${classResult.data[index].schoolYearId === schoolYearEventId}\nTwo ${classResult.data[index].semester.includes(semester)}\nClass ${JSON.stringify(classResult.data[index])}\nSem ${semester}\n School year event id${schoolYearEventId}`)
       if (
         classResult.data[index].schoolYearId === schoolYearEventId &&
         classResult.data[index].semester.includes(semester)
@@ -207,9 +210,10 @@ export async function getClassEvents(
         }
       }
     }
-    outputEvents.sort((a, b) => {
+    outputEvents = outputEvents.sort((a, b) => {
       return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
     });
+    console.log("MARK", outputEvents)
     return { result: loadingStateEnum.success, data: outputEvents };
   }
   return { result: loadingStateEnum.failed };
@@ -237,8 +241,7 @@ export async function getClassEventsFromDay(
       new Date(result.event.startTime),
     );
     if (
-      classResult.result === loadingStateEnum.success &&
-      classResult.data !== undefined
+      classResult.result === loadingStateEnum.success
     ) {
       if (classResult.data.length >= 1) {
         const startTimeDate = new Date(classResult.data[0].startTime);
