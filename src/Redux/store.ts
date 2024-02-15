@@ -12,7 +12,6 @@ import resourcesLastCallReducer from './reducers/resourcesLastCallReducer';
 import safeAreaColorsReducer from './reducers/safeAreaColorsReducer';
 import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
 import currentEventsReducer from './reducers/currentEventReducer';
-import currentEventsLastCalledReducer from './reducers/currentEventLastCalledReducer';
 import selectedDateReducer from './reducers/selectedDateReducer';
 import paulyListReducer from './reducers/paulyListReducer';
 import authenticationTokenReducer from './reducers/authenticationTokenReducer';
@@ -35,6 +34,7 @@ import studentSearchReducer from './reducers/studentSearchReducer';
 import authLoadingReducer from './reducers/authLoadingReducer';
 import paulyLoadingReducer from './reducers/paulyLoadingReducer';
 import authActiveReducer from './reducers/authActiveReducer';
+import lastCalledSelectedDateReducer from './reducers/lastCalledSelectedDateReducer';
 
 const store = configureStore({
   reducer: {
@@ -45,12 +45,12 @@ const store = configureStore({
     authenticationCall: authenticationCallReducer,
     commissions: commissionsReducer,
     currentEvents: currentEventsReducer,
-    currentEventsLastCalled: currentEventsLastCalledReducer,
     dimentions: dimentionsReducer,
     expandedMode: expandedModeReducer,
     homepageData: homepageDataReducer,
     isGovernmentMode: isGovernmentModeReducer,
     isShowingProfileBlock: isShowingProfileBlockReducer,
+    lastCalledSelectedDate: lastCalledSelectedDateReducer,
     microsoftProfileData: microsoftProfileDataReducer,
     monthData: monthDataReducer,
     monthView: monthViewReducer,

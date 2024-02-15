@@ -104,19 +104,22 @@ export function computeEventHeight(
   toDate: Date,
   height: number,
 ): number {
+  // get the length of event in miliseconds
   let delta = toDate.getTime() - fromDate.getTime();
   if (delta >= 86400000) {
     delta = 86400000;
   }
 
+  // devide by one hour in miliseconds
   const deltaHours = delta / 3600000;
   const deltaRemaining = delta % 3600000;
-  const deltaMinutes = deltaRemaining / 60;
+  // devide by one minute in miliseoncds
+  const deltaMinutes = deltaRemaining / 60000;
 
   const HourHeight = height * 0.1;
   const MinuteHeight = (height * 0.1) / 60;
 
-  const ReturnOffset = HourHeight * deltaHours + MinuteHeight * deltaMinutes;
+  const ReturnOffset = HourHeight * Math.floor(deltaHours) + MinuteHeight * deltaMinutes;
   return ReturnOffset;
 }
 

@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { stat } from 'fs';
 
 const initalCalendarState: eventType[] = [];
 
@@ -12,9 +13,15 @@ export const currentEventsSlice = createSlice({
     pushEvent: (state, action: PayloadAction<eventType>) => {
       return [...state, action.payload];
     },
+    addCurrentEvents: (state, action: PayloadAction<eventType[]>) => {
+      return [...state, ...action.payload];
+    },
     removeCurrentEvent: (state, action: PayloadAction<number>) => {
       state.slice(action.payload, 1);
     },
+    removeClassEvents: (state, action?: PayloadAction<undefined>) => {
+      return [...state.filter((e) => {return e.paulyEventType !== 'studentSchedule'})]
+    }
   },
 });
 

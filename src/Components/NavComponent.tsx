@@ -337,6 +337,7 @@ export default function NavBarComponent() {
                   width: iconLength,
                   height: iconLength,
                   borderRadius: iconLength / 2,
+                  overflow: 'hidden'
                 }}
               />
             ) : (

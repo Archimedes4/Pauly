@@ -20,8 +20,9 @@ import { addEventSlice } from '@redux/reducers/addEventReducer';
 import getEvents from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@components/Calendar/MonthView';
-import { getClassEventsFromDay } from '@src/utils/classesFunctions';
-import { currentEventsSlice } from '@src/redux/reducers/currentEventReducer';
+import { getClassEventsFromDay } from '@utils/classesFunctions';
+import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
+import { lastCalledSelectedDateSlice } from '@src/redux/reducers/lastCalledSelectedDateReducer';
 
 function getCalendarFontSize(breakPoint: number, height: number) {
   if (breakPoint === 0) {
@@ -130,6 +131,18 @@ function TopView({ width, height }: { width: number; height: number }) {
   );
 }
 
+function isLastSelectedDateValid() {
+  if (store.getState().lastCalledSelectedDate === "") {
+    return true
+  }
+  const lastDate = new Date(store.getState().lastCalledSelectedDate)
+  const selectedDate = new Date(store.getState().selectedDate)
+  if (lastDate.getMonth() !== selectedDate.getMonth() || lastDate.getFullYear() !== selectedDate.getFullYear()) {
+    return true
+  }
+  return false
+}
+
 export default function Calendar() {
   const { width, height, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimentions,
@@ -152,8 +165,7 @@ export default function Calendar() {
   async function loadClassEvents() {
     const result = await getClassEventsFromDay(new Date(selectedDate))
     if (result.result === loadingStateEnum.success) {
-      console.log(result.data)
-      store.dispatch(currentEventsSlice.actions.setCurrentEvents([...store.getState().currentEvents, ...result.data]))
+      store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data))
     }
   }
 
@@ -161,11 +173,18 @@ export default function Calendar() {
     updateColors();
   }, []);
 
-  // This is the main (only) process that updates the events
-  // In the month view month data is calculate but the events come from this hook and the month view is a decendant of this view.
+  // This is the main (only) process that updates the events when the selected dates.
+  // In the month view month data is calculated but the events come from this hook and the month view is a decendant of this view.
+  // In day view things work similary as month view.
   useEffect(() => {
-    getEvents();
-    loadClassEvents()
+    if (isLastSelectedDateValid()){
+      dispatch(currentEventsSlice.actions.setCurrentEvents([]))
+      getEvents()
+      loadClassEvents()
+      dispatch(lastCalledSelectedDateSlice.actions.setLastCalledSelectedDate(selectedDate))
+    } else {
+      dispatch(currentEventsSlice.actions.removeClassEvents())
+    }
   }, [selectedDate]);
 
   return (

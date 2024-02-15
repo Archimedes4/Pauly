@@ -183,17 +183,22 @@ function CalendarCardView({
           </Text>
         </View>
         <ScrollView style={{ width, height: height * 0.8 }}>
-          {value.item.events.map((event: eventType) => (
-            <Pressable
-              key={`Calendar_Event_${event.id}`}
-              onPress={() => {
-                dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-                dispatch(addEventSlice.actions.setSelectedEvent(event));
-              }}
-            >
-              <Text style={{ fontSize: 10 }}>{event.name}</Text>
-            </Pressable>
-          ))}
+          {value.item.events.map((event: eventType) => {
+           if (event.paulyEventType !== "studentSchedule") {
+            return (
+              <Pressable
+                key={`Calendar_Event_${event.id}`}
+                onPress={() => {
+                  dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+                  dispatch(addEventSlice.actions.setSelectedEvent(event));
+                }}
+              >
+                <Text style={{ fontSize: 10 }}>{event.name}</Text>
+              </Pressable>
+            )
+           } 
+           return null
+          })}
         </ScrollView>
       </Pressable>
     );

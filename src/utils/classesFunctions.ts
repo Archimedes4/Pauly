@@ -178,7 +178,6 @@ export async function getClassEvents(
   ) {
     let outputEvents: eventType[] = [];
     for (let index = 0; index < classResult.data.length; index += 1) {
-      console.log(`One ${classResult.data[index].schoolYearId === schoolYearEventId}\nTwo ${classResult.data[index].semester.includes(semester)}\nClass ${JSON.stringify(classResult.data[index])}\nSem ${semester}\n School year event id${schoolYearEventId}`)
       if (
         classResult.data[index].schoolYearId === schoolYearEventId &&
         classResult.data[index].semester.includes(semester)
@@ -188,7 +187,7 @@ export async function getClassEvents(
           // Find Time
           const period: number =
             classResult.data[index].periods[schoolDay.order];
-          const periodData = schedule.periods[period];
+          const periodData = schedule.periods[period - 1];
           const startDate: Date = new Date(date.toISOString());
           startDate.setHours(periodData.startHour);
           startDate.setMinutes(periodData.startMinute);
@@ -213,7 +212,6 @@ export async function getClassEvents(
     outputEvents = outputEvents.sort((a, b) => {
       return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
     });
-    console.log("MARK", outputEvents)
     return { result: loadingStateEnum.success, data: outputEvents };
   }
   return { result: loadingStateEnum.failed };
@@ -259,6 +257,7 @@ export async function getClassEventsFromDay(
           ),
         );
       }
+      console.log(classResult.data)
       return {
         result: loadingStateEnum.success,
         data: classResult.data,
