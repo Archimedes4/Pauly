@@ -13,31 +13,60 @@ import {
   calculateIfShowing,
   computeEventHeight,
   findTimeOffset,
+  isDateToday,
   isEventDuringInterval,
-  isTimeOnDay,
 } from '@utils/calendar/calendarFunctions';
 import { RootState } from '@redux/store';
 import createUUID from '@utils/ultility/createUUID';
 import { Colors, loadingStateEnum } from '@constants';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
+import dayCurrentTimeLine from '@src/hooks/dayCurrentTimeLine';
+
+
+function CurrentTimeLine({day, width, height, highestHorizontalOffset}:{day: Date, width: number, height: number, highestHorizontalOffset: number}) {
+  const [timeWidth, setTimeWidth] = useState<number>(0)
+  const dayData = dayCurrentTimeLine(height)
+
+  if (isDateToday(day)) {
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          top: dayData.heightOffsetTop,
+          height: height * 0.005,
+          width: width * highestHorizontalOffset,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}
+      >
+        <Text onLayout={(e) => {
+          setTimeWidth(e.nativeEvent.layout.width)
+        }} selectable={false} style={{ color: 'red', zIndex: 2 }}>
+          {dayData.currentTime}
+        </Text>
+        <View
+          style={{
+            backgroundColor: 'red',
+            width: (width * highestHorizontalOffset) - timeWidth - 2,
+            height: 6,
+            position: 'absolute',
+            right: 0,
+            borderRadius: 15
+          }}
+        />
+      </View>
+    )
+  }
+  return null
+}
 
 export default function DayView({
   width,
-  height,
-  week,
-  start,
+  height
 }:
   | {
       width: number;
       height: number;
-      week?: undefined;
-      start?: undefined;
-    }
-  | {
-      width: number;
-      height: number;
-      week: true;
-      start: boolean;
     }) {
   const colorScheme = useColorScheme();
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
@@ -76,40 +105,83 @@ export default function DayView({
   const mainScrollRef = useRef<ScrollView>(null);
   const [schoolEvents, setSchoolEvents] = useState<eventType[]>();
   const [dayEvents, setDayEvents] = useState<dayEvent[]>([]);
+  const [highestHorizontalOffset, setHighestHorizontalOffset] = useState<number>(1);
+  const [textWidth, setTextWidth] = useState<number>(0);
 
   function setCurrentTimeFunction(hour: number, minuite: number) {
-    if (minuite.toString().length === 1) {
-      if (hour === 12) {
-        setCurrentTime(`12:0${minuite.toString()}`);
-      } else {
-        setCurrentTime(`${(hour % 12).toString()}:0${minuite.toString()}`);
-      }
-    } else if (hour === 12) {
-      setCurrentTime(`12:${minuite}`);
+    if (hour === 12) {
+      setCurrentTime(`12:${minuite.toString().padStart(2, "0")}`);
     } else {
-      setCurrentTime(`${(hour % 12).toString()}:${minuite.toString()}`);
+      setCurrentTime(`${(hour % 12).toString()}:${minuite.toString().padStart(2, "0")}`);
     }
   }
 
-  async function getDayEvents() {
+  const getDayEvents = useCallback(() => {
+    let allEvents = (schoolEvents !== undefined) ? [...currentEvents, ...schoolEvents]:[...currentEvents]
     let dayEvents = [];
-    for (let index = 0; index < currentEvents.length; index += 1) {
-      if (isEventDuringInterval(selectedDate, currentEvents[index])) {
-        dayEvents.push(currentEvents[index]);
+    for (let index = 0; index < allEvents.length; index += 1) {
+      if (isEventDuringInterval(selectedDate, allEvents[index]) && !allEvents[index].allDay) {
+        dayEvents.push(allEvents[index]);
       }
     }
     dayEvents = dayEvents.sort((a, b) => {
       return a.startTime.localeCompare(b.startTime);
     });
+    console.log("\nStart\n\n\nDay Events:", dayEvents)
     const result: dayEvent[] = [];
+    let busy: {
+      start: string,
+      end: string 
+    }[][] = []
+    let highestHorizontalOffsetTemp = 0;
     for (let index = 0; index < dayEvents.length; index += 1) {
-      result.push({
-        event: [dayEvents[index]],
-        offset: findTimeOffset(new Date(dayEvents[index].startTime), height),
-      });
+      console.log(`\n Busy: ${JSON.stringify(busy)} \nEvent: ${dayEvents[index].name}`)
+      if (busy.length == 0) {
+        busy = [[]]
+        busy[0].push({
+          start: dayEvents[index].startTime,
+          end: dayEvents[index].endTime
+        })
+        result.push({
+          event: dayEvents[index],
+          horizontalOffset: 0,
+        });
+      } else {
+        let numberOfOffsets = 0
+        for (let busyIndex = 0, len = busy[numberOfOffsets].length;busyIndex < len; busyIndex += 1) {
+          if (new Date(dayEvents[index].startTime) < new Date(busy[numberOfOffsets][busyIndex].start) && new Date(dayEvents[index].endTime) >= new Date(busy[numberOfOffsets][busyIndex].end)) {
+            // Starts before and ends after check
+            // it is busy duing this time
+            numberOfOffsets += 1;
+            busyIndex = -1
+          } else if (new Date(dayEvents[index].startTime) >= new Date(busy[numberOfOffsets][busyIndex].start) && new Date(dayEvents[index].startTime) <= new Date(busy[numberOfOffsets][busyIndex].end)) {
+            // Starts after check and ends before or on check
+            // it is busy duing this time
+            numberOfOffsets += 1;
+            busyIndex = -1
+          }
+          if (busy.length <= numberOfOffsets) {
+            busy.push([])
+            break
+          }
+        }
+        if (numberOfOffsets > highestHorizontalOffsetTemp) {
+          highestHorizontalOffsetTemp = numberOfOffsets
+        }
+        busy[numberOfOffsets].push({
+          start: dayEvents[index].startTime,
+          end: dayEvents[index].endTime
+        })
+        result.push({
+          event: dayEvents[index],
+          horizontalOffset: numberOfOffsets,
+        });
+      }
     }
+    console.log(`result: `, result, `\nHighest: ${highestHorizontalOffsetTemp}`)
+    setHighestHorizontalOffset(highestHorizontalOffsetTemp + 1)
     setDayEvents(result);
-  }
+  }, [selectedDate, currentEvents, schoolEvents])
 
   const loadCalendarContent = useCallback(() => {
     const currentDate = new Date();
@@ -126,27 +198,6 @@ export default function DayView({
     });
   }, [height]);
 
-  // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
-  // Upadtes every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const minuiteInt = new Date().getMinutes();
-      if (currentMinuteInt !== minuiteInt!) {
-        setCurrentMinuteInt(minuiteInt);
-
-        const hourInt = new Date().getHours();
-        if (minuiteInt.toString().length === 1) {
-          setCurrentTimeFunction(hourInt, minuiteInt);
-        } else {
-          setCurrentTimeFunction(hourInt, minuiteInt);
-        }
-        setHeightOffsetTop(findTimeOffset(new Date(), height));
-      }
-    }, 1000);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [currentMinuteInt, height]);
-
   useEffect(() => {
     setHourLength(height * 0.1);
     loadCalendarContent();
@@ -157,119 +208,91 @@ export default function DayView({
     if (result.result === loadingStateEnum.success) {
       setSchoolEvents(result.data);
     }
+    if (currentEvents.length > 0) {
+      getDayEvents();
+    } else {
+      setDayEvents([])
+    }
   }
 
   useEffect(() => {
-    getDayEvents();
-  }, [currentEvents, selectedDate]);
-
-  useEffect(() => {
     getClassesEvents();
-  }, [selectedDate]);
+  }, [selectedDate, currentEvents]);
 
   return (
-    <>
-      <FlatList
-        data={dayEvents}
-        renderItem={(e) => {
-          if (e.item.event[0].allDay) {
-            return null
-          }
-          return null
-        }}
-      />
+    <ScrollView
+      ref={mainScrollRef}
+      contentContainerStyle={{
+        height:hourLength * 24,
+      }}
+    >
       <ScrollView
-        style={{
-          height: week ? undefined : height,
-          width,
-          backgroundColor: Colors.white,
+        contentContainerStyle={{
+          width: width * highestHorizontalOffset,
         }}
-        ref={mainScrollRef}
-        scrollEnabled={week != true}
+        style={{
+          width: width
+        }}
+        horizontal
       >
-        <>
-          {isShowingTime ? (
-            <>
-              {hoursText.map(value => (
-                <View
-                  key={`${value}`}
-                  style={{ flexDirection: 'row', height: hourLength }}
-                >
-                  {calculateIfShowing(value, new Date(selectedDate)) &&
-                  (week === undefined || start === true) ? (
-                    <Text
-                      selectable={false}
-                      style={{
-                        color:
-                          colorScheme == 'dark' ? Colors.white : Colors.black,
-                      }}
-                    >
-                      {value}
-                    </Text>
-                  ) : null}
+        <View>
+          <>
+            {isShowingTime ? (
+              <>
+                {hoursText.map(value => (
                   <View
-                    style={{
-                      backgroundColor: Colors.black,
-                      width: width * 0.9,
-                      height: 6,
-                      position: 'absolute',
-                      right: 0,
-                      borderRadius: 25,
-                    }}
-                  />
-                </View>
-              ))}
-            </>
-          ) : null}
-        </>
-        {dayEvents.map(block => {
-          return (
-            block.event.map(event => {
-              if (!event.allDay) {
-                return (
-                  <EventBlock
-                    key={event.id}
-                    event={event}
-                    width={width}
-                    height={height}
-                  />
-                );
-              }
-              return null;
-            })
-          )})}
-        {schoolEvents?.map(event => (
-          <EventBlock key={event.id} event={event} width={width} height={height} />
-        ))}
-        {week === undefined &&
-        start === false &&
-        isTimeOnDay(selectedDate, new Date().toISOString()) ? (
-          <View
-            style={{
-              position: 'absolute',
-              top: heightOffsetTop,
-              height: height * 0.005,
-              width,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>
-              {currentTime}
-            </Text>
-            <View
-              style={{
-                backgroundColor: 'red',
-                width: width * 0.914,
-                height: 6,
-                position: 'absolute',
-                right: 0,
-              }}
-            />
-          </View>
-        ) : null}
+                    key={`${value}`}
+                    style={{ flexDirection: 'row', height: hourLength }}
+                  >
+                    {calculateIfShowing(value, new Date(selectedDate)) ? (
+                      <Text
+                        selectable={false}
+                        style={{
+                          color:
+                            colorScheme == 'dark' ? Colors.white : Colors.black,
+                        }}
+                        onLayout={(e) => {
+                          if (e.nativeEvent.layout.width >= textWidth) {
+                            setTextWidth(e.nativeEvent.layout.width)
+                          }
+                        }}
+                      >
+                        {value}
+                      </Text>
+                    ) : null}
+                    <View
+                      style={{
+                        backgroundColor: Colors.black,
+                        width: width * 0.9 + (highestHorizontalOffset * width),
+                        height: 6,
+                        position: 'absolute',
+                        left: textWidth,
+                        borderRadius: 25,
+                      }}
+                    />
+                  </View>
+                ))}
+              </>
+            ) : null}
+          </>
+          {dayEvents.map(event => {
+            if (!event.event.allDay) {
+              return (
+                <EventBlock
+                  key={event.event.id}
+                  event={event.event}
+                  width={width}
+                  height={height}
+                  horizontalShift={event.horizontalOffset}
+                />
+              );
+            }
+            return null;
+          })}
+          <CurrentTimeLine day={new Date(selectedDate)} width={width} height={height} highestHorizontalOffset={highestHorizontalOffset} />
+        </View>
       </ScrollView>
-    </>
+    </ScrollView>
   );
 }
 
@@ -277,10 +300,12 @@ function EventBlock({
   event,
   width,
   height,
+  horizontalShift
 }: {
   event: eventType;
   width: number;
   height: number;
+  horizontalShift: number;
 }) {
   const EventHeight = computeEventHeight(
     new Date(event.startTime),
@@ -296,6 +321,7 @@ function EventBlock({
         width: width * 0.9,
         height: EventHeight,
         top: Offset,
+        left: horizontalShift * width,
         position: 'absolute',
         right: 0,
         borderColor: Colors.maroon,

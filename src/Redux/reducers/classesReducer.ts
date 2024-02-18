@@ -1,12 +1,21 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: string[] = [];
+const initalState: {
+  classes: classType[],
+  lastCalled: string,
+} = {
+  classes: [],
+  lastCalled: ""
+}
 
 export const classesSlice = createSlice({
   name: 'classes',
   initialState: initalState,
   reducers: {
-    setClasses: (state, action) => {
+    setClasses: (state, action: PayloadAction<{
+      classes: classType[],
+      lastCalled: string,
+    }>) => {
       return action.payload;
     },
   },

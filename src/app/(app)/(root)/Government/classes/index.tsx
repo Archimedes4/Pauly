@@ -14,7 +14,7 @@ function GovernmentClassesBody() {
   );
   const [classes, setClasses] = useState<classType[]>([]);
 
-  async function getClasses() {
+  async function loadTeamClasses() {
     const groupResult = await callMsGraph(
       'https://graph.microsoft.com/v1.0/groups',
     );
@@ -46,7 +46,7 @@ function GovernmentClassesBody() {
   }
 
   useEffect(() => {
-    getClasses();
+    loadTeamClasses();
   }, []);
 
   if (classState === loadingStateEnum.loading) {

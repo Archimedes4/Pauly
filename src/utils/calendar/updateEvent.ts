@@ -49,7 +49,7 @@ export default async function createEvent(): Promise<void> {
     }
     const result = await callMsGraph(
       `https://graph.microsoft.com/v1.0/me/events${(selectedEvent.id === 'create') ? '':'/' + selectedEvent.id}`,
-      (selectedEvent.id === 'create') ? 'PATCH':'POST',
+      (selectedEvent.id === 'create') ? 'POST':'PATCH',
       JSON.stringify(data),
     );
     if (result.ok) {
@@ -196,7 +196,6 @@ export default async function createEvent(): Promise<void> {
           return e
         })]))
       }
-      store.dispatch(addEventSlice.actions.setSelectedSchoolDayData(undefined));
       store.dispatch(
         addEventSlice.actions.setCreateEventState(loadingStateEnum.success),
       );

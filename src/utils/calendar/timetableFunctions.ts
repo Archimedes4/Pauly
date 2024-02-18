@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  
+*/
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import createUUID from '../ultility/createUUID';

@@ -6,7 +6,7 @@
 */
 import React, { useEffect, useState } from 'react';
 import { Pressable, View, Text, Switch, TextInput } from 'react-native';
-import { TimePickerModal, DatePickerModal } from 'react-native-paper-dates';
+import { TimePickerModal, DatePickerModal, he } from 'react-native-paper-dates';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
@@ -486,6 +486,67 @@ export default function AddEvent({
         // TO DO throw error
       }
     }
+  }
+
+  function calculateFontSize(srcWidth: number, srcHeight: number) {
+    if (srcWidth/selectedEvent.name.length < srcHeight) {
+      console.log("width")
+      //width limiting factor
+      const widthPerChar = srcWidth/selectedEvent.name.length
+      return widthPerChar * 1.7
+    } else {
+      // height limiting factor
+      return srcHeight
+    }
+  }
+
+  if (!isGovernmentMode && ["schoolDay", "schoolYear", "regular", "studentCouncil"].includes(selectedEvent.paulyEventType)) {
+    return (
+      <View
+        style={{
+          backgroundColor: Colors.white,
+          width: width + 30,
+          height,
+          borderRadius: 5,
+          borderWidth: 5,
+        }}
+      >
+        <Pressable
+          onPress={() => {
+            dispatch(addEventSlice.actions.setIsShowingAddDate(false));
+            dispatch(
+              addEventSlice.actions.setCreateEventState(
+                loadingStateEnum.notStarted,
+              ),
+            );
+          }}
+          style={{marginLeft: 5, marginTop: 5}}
+        >
+          <CloseIcon width={20} height={20} />
+        </Pressable>
+        <Text style={{marginLeft: 15, marginRight: 'auto', height: calculateFontSize(width, height * 0.1) + 10, width, fontSize: calculateFontSize(width, height * 0.1), fontFamily: 'Comfortaa-Regular'}} adjustsFontSizeToFit numberOfLines={1}>{selectedEvent.name}</Text>
+        <Text style={{margin: 15, fontSize: height * 0.025, fontFamily: 'Roboto-Bold'}}>
+          {new Date(selectedEvent.startTime).toLocaleString('en-us', { month: 'long' })}{' '}
+          {new Date(selectedEvent.startTime).getDate()}{' '}
+          {new Date(selectedEvent.startTime).getFullYear()}{' '}
+          {new Date(selectedEvent.startTime).getHours() % 12 || 12}:
+          {new Date(selectedEvent.startTime).getMinutes().toString().length === 1
+            ? `0${new Date(selectedEvent.startTime).getMinutes()}`
+            : new Date(selectedEvent.startTime).getMinutes()}{' '}
+          {new Date(selectedEvent.startTime).getHours() >= 12 ? 'pm' : 'am'}
+        </Text>
+        <Text style={{margin: 15, fontSize: height * 0.025, fontFamily: 'Roboto-Bold'}}>
+          {new Date(selectedEvent.endTime).toLocaleString('en-us', { month: 'long' })}{' '}
+          {new Date(selectedEvent.endTime).getDate()}{' '}
+          {new Date(selectedEvent.endTime).getFullYear()}{' '}
+          {new Date(selectedEvent.endTime).getHours() % 12 || 12}:
+          {new Date(selectedEvent.endTime).getMinutes().toString().length === 1
+            ? `0${new Date(selectedEvent.endTime).getMinutes()}`
+            : new Date(selectedEvent.endTime).getMinutes()}{' '}
+          {new Date(selectedEvent.endTime).getHours() >= 12 ? 'pm' : 'am'}
+        </Text>
+      </View>
+    )
   }
 
   return (

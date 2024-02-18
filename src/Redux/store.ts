@@ -35,6 +35,7 @@ import authLoadingReducer from './reducers/authLoadingReducer';
 import paulyLoadingReducer from './reducers/paulyLoadingReducer';
 import authActiveReducer from './reducers/authActiveReducer';
 import lastCalledSelectedDateReducer from './reducers/lastCalledSelectedDateReducer';
+import classesReducer from './reducers/classesReducer';
 
 const store = configureStore({
   reducer: {
@@ -43,6 +44,7 @@ const store = configureStore({
     authenticationApiToken: authenticationApiTokenReducer,
     authenticationRefreshToken: authenticationRefreshTokenReducer,
     authenticationCall: authenticationCallReducer,
+    classes: classesReducer,
     commissions: commissionsReducer,
     currentEvents: currentEventsReducer,
     dimentions: dimentionsReducer,

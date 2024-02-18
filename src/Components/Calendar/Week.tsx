@@ -13,6 +13,7 @@ import { Colors } from '@constants';
 import WeekDayView from './WeekDayView';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import DayView from './DayView';
+import { isDateToday } from '@src/utils/calendar/calendarFunctions';
 
 function WeekDayButton({ width, day }: { width: number; day: Date }) {
   const selectedDateRedux: string = useSelector(
@@ -74,6 +75,7 @@ export default function Week({
     (state: RootState) => state.selectedDate,
   );
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([]);
+  const [topPadding, setTopPadding] = useState<number>(0);
   const dispatch = useDispatch();
   function getDOW(selectedDate: Date) {
     const week: Date[] = [];
@@ -92,10 +94,22 @@ export default function Week({
   if (width >= 768) {
     return (
       <View style={{ width, height, backgroundColor: Colors.white }}>
-        <View style={{ flexDirection: 'row', height: 40 }}>
+        <View style={{ flexDirection: 'row', height: 40, position: 'absolute', zIndex: 2, width, backgroundColor: Colors.white + "50" }}>
+          <Pressable
+            onPress={() => {
+              const d = new Date(selectedDateRedux);
+              d.setDate(d.getDate() - 7);
+              dispatch(
+                selectedDateSlice.actions.setSelectedDate(d.toISOString()),
+              );
+            }}
+            style={{marginTop: 'auto', marginBottom: 'auto', marginLeft: 2}}
+          >
+            <ChevronLeft width={16} height={16}/>
+          </Pressable>
           {daysOfWeek.map(dow => (
-            <View style={{ marginLeft: 'auto', marginRight: 'auto' }}>
-              <Text>
+            <View key={dow.toISOString()} onLayout={(e) => {setTopPadding(e.nativeEvent.layout.height)}} style={{ width: ((width - 36)/7), backgroundColor: isDateToday(dow) ? Colors.darkGray + "60":Colors.white + "50", padding: 'auto' }}>
+              <Text style={{opacity: 1, marginLeft: 'auto', marginRight: 'auto'}}>
                 {dow.toLocaleDateString('en-US', { weekday: 'long' })}
               </Text>
               <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>
@@ -103,6 +117,18 @@ export default function Week({
               </Text>
             </View>
           ))}
+          <Pressable
+            onPress={() => {
+              const d = new Date(selectedDateRedux);
+              d.setDate(d.getDate() + 7);
+              dispatch(
+                selectedDateSlice.actions.setSelectedDate(d.toISOString()),
+              );
+            }}
+            style={{marginTop: 'auto', marginBottom: 'auto', marginRight: 2}}
+          >
+            <ChevronRight width={16} height={16}/>
+          </Pressable>
         </View>
         <ScrollView style={{ height }}>
           <View style={{ flexDirection: 'row' }}>
@@ -111,9 +137,9 @@ export default function Week({
                 <WeekDayView
                   width={width / 7}
                   height={false ? height * 0.757 : height}
-                  week
                   start={index === 0}
                   day={day}
+                  topPadding={topPadding}
                 />
               </View>
             ))}
@@ -168,7 +194,7 @@ export default function Week({
       </View>
       <View
         style={{
-          height: false ? height : height - width * 0.179,
+          height: false ? height : height - width * 0.142857142857143,
           width,
           alignContent: 'center',
           alignItems: 'center',
@@ -177,7 +203,7 @@ export default function Week({
       >
         <DayView
           width={width * 0.95}
-          height={false ? height * 0.757 : height}
+          height={height}
         />
       </View>
     </View>

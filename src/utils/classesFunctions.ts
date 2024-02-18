@@ -8,6 +8,7 @@ import {
   getTimetable,
   getSchedule,
 } from './calendar/calendarFunctionsGraph';
+import { classesSlice } from '@src/redux/reducers/classesReducer';
 
 export async function getRooms(
   nextLink?: string,
@@ -172,49 +173,57 @@ export async function getClassEvents(
   schoolDay: schoolDayType,
   date: Date,
 ): Promise<{ result: loadingStateEnum.success; data: eventType[] } | { result: loadingStateEnum.failed }> {
-  const classResult = await getClasses();
-  if (
-    classResult.result === loadingStateEnum.success
-  ) {
-    let outputEvents: eventType[] = [];
-    for (let index = 0; index < classResult.data.length; index += 1) {
-      if (
-        classResult.data[index].schoolYearId === schoolYearEventId &&
-        classResult.data[index].semester.includes(semester)
-      ) {
-        // This check should never fail
-        if (classResult.data[index].periods.length > schoolDay.order) {
-          // Find Time
-          const period: number =
-            classResult.data[index].periods[schoolDay.order];
-          const periodData = schedule.periods[period - 1];
-          const startDate: Date = new Date(date.toISOString());
-          startDate.setHours(periodData.startHour);
-          startDate.setMinutes(periodData.startMinute);
-          startDate.setSeconds(0);
-          const endDate: Date = date;
-          endDate.setHours(periodData.endHour);
-          endDate.setMinutes(periodData.endMinute);
-          endDate.setSeconds(0);
-          outputEvents.push({
-            id: classResult.data[index].id,
-            name: classResult.data[index].name,
-            startTime: startDate.toISOString(),
-            endTime: endDate.toISOString(),
-            eventColor: Colors.white,
-            microsoftEvent: false,
-            allDay: false,
-            paulyEventType: 'studentSchedule'
-          });
-        }
+  let classData: classType[] = []
+  if (store.getState().classes.lastCalled === "" || new Date(store.getState().classes.lastCalled).getTime() >= (new Date().getTime() - 7200000)) {
+    const classResult = await getClasses();
+    if (classResult.result !== loadingStateEnum.success) {
+      return {result: loadingStateEnum.failed}
+    }
+    classData = classResult.data
+    store.dispatch(classesSlice.actions.setClasses({
+      classes: classResult.data,
+      lastCalled: new Date().toISOString()
+    }))
+  } else {
+    classData = store.getState().classes.classes
+  }
+  let outputEvents: eventType[] = [];
+  for (let index = 0; index < classData.length; index += 1) {
+    if (
+      classData[index].schoolYearId === schoolYearEventId &&
+      classData[index].semester.includes(semester)
+    ) {
+      // This check should never fail
+      if (classData[index].periods.length > schoolDay.order) {
+        // Find Time
+        const period: number =
+          classData[index].periods[schoolDay.order];
+        const periodData = schedule.periods[period - 1];
+        const startDate: Date = new Date(date.toISOString());
+        startDate.setHours(periodData.startHour);
+        startDate.setMinutes(periodData.startMinute);
+        startDate.setSeconds(0);
+        const endDate: Date = date;
+        endDate.setHours(periodData.endHour);
+        endDate.setMinutes(periodData.endMinute);
+        endDate.setSeconds(0);
+        outputEvents.push({
+          id: classData[index].id,
+          name: classData[index].name,
+          startTime: startDate.toISOString(),
+          endTime: endDate.toISOString(),
+          eventColor: Colors.white,
+          microsoftEvent: false,
+          allDay: false,
+          paulyEventType: 'studentSchedule'
+        });
       }
     }
-    outputEvents = outputEvents.sort((a, b) => {
-      return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
-    });
-    return { result: loadingStateEnum.success, data: outputEvents };
   }
-  return { result: loadingStateEnum.failed };
+  outputEvents = outputEvents.sort((a, b) => {
+    return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
+  });
+  return { result: loadingStateEnum.success, data: outputEvents };
 }
 
 export async function getClassEventsFromDay(
@@ -223,48 +232,77 @@ export async function getClassEventsFromDay(
   | { result: loadingStateEnum.success; data: eventType[] }
   | { result: loadingStateEnum.failed }
 > {
-  const result = await getSchoolDay(date || new Date());
-  if (
-    result.result === loadingStateEnum.success &&
-    result.event.paulyEventType === 'schoolDay'
-  ) {
-    store.dispatch(
-      homepageDataSlice.actions.setSchoolDayData(result.event.schoolDayData),
-    );
-    const classResult = await getClassEvents(
-      result.event.schoolDayData.schedule,
-      result.event.schoolDayData.semester,
-      result.event.schoolDayData.schoolYearEventId,
-      result.event.schoolDayData.schoolDay,
-      new Date(result.event.startTime),
-    );
-    if (
-      classResult.result === loadingStateEnum.success
-    ) {
-      if (classResult.data.length >= 1) {
-        const startTimeDate = new Date(classResult.data[0].startTime);
-        const hourTime =
-          (startTimeDate.getHours() % 12) + 1 <= 9
-            ? `0${(startTimeDate.getHours() % 12) + 1}`
-            : (startTimeDate.getHours() % 12) + 1;
-        const monthTime =
-          startTimeDate.getMinutes() <= 9
-            ? `0${startTimeDate.getMinutes()}`
-            : startTimeDate.getMinutes().toString();
-        store.dispatch(
-          homepageDataSlice.actions.setStartTime(
-            `${hourTime}:${monthTime}`,
-          ),
-        );
+  const defindedDate = (date !== undefined) ? date:new Date()
+  let resultEvent: eventType | undefined = undefined
+  if (defindedDate.getMonth() === new Date(store.getState().lastCalledSelectedDate).getMonth() && defindedDate.getFullYear() === new Date(store.getState().lastCalledSelectedDate).getFullYear()) {
+    const startTime = `${new Date(
+      Date.UTC(
+        defindedDate.getFullYear(),
+        defindedDate.getMonth(),
+        defindedDate.getDate(),
+        0,
+      ),
+    )
+      .toISOString()
+      .slice(0, -1)}0000`
+    const foundEvent = store.getState().currentEvents.find((e) => {
+      e.paulyEventType === 'schoolDay' && e.startTime === startTime
+    })
+    if (foundEvent === undefined) {
+      const result = await getSchoolDay(defindedDate);
+      if (result.result !== loadingStateEnum.success) {
+        return { result: loadingStateEnum.failed };
       }
-      console.log(classResult.data)
-      return {
-        result: loadingStateEnum.success,
-        data: classResult.data,
-      };
+      resultEvent = result.event;
+    } else {
+      resultEvent = foundEvent;
     }
-    return { result: loadingStateEnum.failed };
-        
+  } else {
+    const result = await getSchoolDay(defindedDate);
+    if (result.result !== loadingStateEnum.success) {
+      return { result: loadingStateEnum.failed };
+    }
+    resultEvent = result.event;
   }
+  
+  if (resultEvent === undefined || resultEvent.paulyEventType !== 'schoolDay') {
+    return { result: loadingStateEnum.failed };
+  }
+
+  store.dispatch(
+    homepageDataSlice.actions.setSchoolDayData(resultEvent.schoolDayData),
+  );
+  const classResult = await getClassEvents(
+    resultEvent.schoolDayData.schedule,
+    resultEvent.schoolDayData.semester,
+    resultEvent.schoolDayData.schoolYearEventId,
+    resultEvent.schoolDayData.schoolDay,
+    new Date(resultEvent.startTime),
+  );
+  if (
+    classResult.result === loadingStateEnum.success
+  ) {
+    if (classResult.data.length >= 1) {
+      const startTimeDate = new Date(classResult.data[0].startTime);
+      const hourTime =
+        (startTimeDate.getHours() % 12) + 1 <= 9
+          ? `0${(startTimeDate.getHours() % 12) + 1}`
+          : (startTimeDate.getHours() % 12) + 1;
+      const monthTime =
+        startTimeDate.getMinutes() <= 9
+          ? `0${startTimeDate.getMinutes()}`
+          : startTimeDate.getMinutes().toString();
+      store.dispatch(
+        homepageDataSlice.actions.setStartTime(
+          `${hourTime}:${monthTime}`,
+        ),
+      );
+    }
+    return {
+      result: loadingStateEnum.success,
+      data: classResult.data,
+    };
+  }
+        
   return { result: loadingStateEnum.failed };
 }

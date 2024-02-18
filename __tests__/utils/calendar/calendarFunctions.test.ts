@@ -1,3 +1,4 @@
+import { isDateToday } from '@src/utils/calendar/calendarFunctions';
 import {
   convertYearToSchoolYear,
   isTimeOnDay,
@@ -33,3 +34,8 @@ it('compares two days correctly', () => {
   );
   expect(yearDifference).toBe(false);
 });
+
+it('checks todays date correctly', () => {
+  expect(isDateToday(new Date())).toBe(true)
+  expect(isDateToday(new Date(1704070800))).toBe(false)
+})

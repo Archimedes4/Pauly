@@ -2,6 +2,7 @@ import {
   calculateIfShowing,
   computeEventHeight,
   findTimeOffset,
+  isDateToday,
   isTimeOnDay,
 } from '@utils/calendar/calendarFunctions';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
@@ -11,17 +12,52 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useColorScheme, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import createUUID from '@utils/ultility/createUUID';
+import dayCurrentTimeLine from '@src/hooks/dayCurrentTimeLine';
+
+function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: number, height: number, topPadding: number}) {
+  const [timeWidth, setTimeWidth] = useState<number>(0)
+  const dayData = dayCurrentTimeLine(height)
+
+  if (isDateToday(day)) {
+    return (
+    <View
+      style={{
+        position: 'absolute',
+        top: dayData.heightOffsetTop + topPadding,
+        height: height * 0.005,
+        width,
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}
+    >
+      <Text onLayout={(e) => {
+        setTimeWidth(e.nativeEvent.layout.width)
+      }} selectable={false} style={{ color: 'red', zIndex: 2 }}>
+        {dayData.currentTime}
+      </Text>
+      <View
+        style={{
+          backgroundColor: 'red',
+          width: width - timeWidth - 2,
+          height: 6,
+          position: 'absolute',
+          right: 0,
+          borderRadius: 15
+        }}
+      />
+    </View>
+  )}
+  return null
+}
 
 function EventBlock({
   event,
   width,
   height,
-  eventPane,
 }: {
   event: eventType;
   width: number;
   height: number;
-  eventPane: number[][];
 }) {
   const EventHeight = computeEventHeight(
     new Date(event.startTime),
@@ -29,82 +65,6 @@ function EventBlock({
     height,
   );
   const Offset = findTimeOffset(new Date(event.startTime), height);
-  const [horizontalShift, setHorizontalShift] = useState<number>(0);
-  function calculateHorizontalShift() {
-    let handeled = false;
-    for (
-      let horizontalCheck = 0;
-      horizontalCheck < eventPane.length;
-      horizontalCheck += 1
-    ) {
-      const beforeIndex = eventPane[horizontalCheck].findIndex(
-        e => e >= Offset,
-      );
-      if (beforeIndex !== -1) {
-        if (beforeIndex - 1 < eventPane[horizontalCheck].length) {
-          if (eventPane[horizontalCheck][beforeIndex - 1] <= Offset) {
-            // Fail Check Next Hoizontal Array
-            continue;
-          } else {
-            // Everything Checks Out
-            const afterIndex = eventPane[horizontalCheck].findIndex(
-              e => e >= Offset + EventHeight,
-            );
-            if (afterIndex !== -1) {
-              if (afterIndex - 1 < eventPane[horizontalCheck].length) {
-                if (
-                  eventPane[horizontalCheck][afterIndex - 1] <=
-                  Offset + EventHeight
-                ) {
-                  // Fails check next horizontal array
-                  continue;
-                } else {
-                  // All Good
-                  eventPane[horizontalCheck].push(Offset);
-                  eventPane[horizontalCheck].push(Offset + EventHeight);
-                  eventPane[horizontalCheck].sort();
-                  handeled = true;
-                  break;
-                }
-              } else {
-                // Error
-                continue;
-              }
-            } else {
-              // All Good
-              const newEvents: number[][] = eventPane;
-              newEvents[horizontalCheck].push(Offset);
-              newEvents[horizontalCheck].push(Offset + EventHeight);
-              // [...eventPane[horizontalCheck], Offset, Offset + EventHeight])
-              eventPane[horizontalCheck].sort();
-              handeled = true;
-              break;
-            }
-          }
-        } else {
-          // Error
-          continue;
-        }
-      } else {
-        eventPane[horizontalCheck].push(Offset);
-        eventPane[horizontalCheck].push(Offset + EventHeight);
-        eventPane[horizontalCheck].sort();
-        handeled = true;
-        break;
-      }
-    }
-
-    if (!handeled) {
-      eventPane.push([]);
-      eventPane[eventPane.length - 1].push(Offset);
-      eventPane[eventPane.length - 1].push(Offset + EventHeight);
-    }
-    // setHorizontalShift(width * horizontalCheck);
-  }
-
-  useEffect(() => {
-    calculateHorizontalShift();
-  }, []);
 
   return (
     <View
@@ -148,22 +108,19 @@ function EventBlock({
 export default function WeekDayView({
   width,
   height,
-  week,
   start,
   day,
+  topPadding
 }: {
   width: number;
   height: number;
-  week: true;
   start: boolean;
   day: Date;
+  topPadding: number
 }) {
   const colorScheme = useColorScheme();
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
-  const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0);
-  const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0);
-  const [currentTime, setCurrentTime] = useState<string>('12:00');
   const [isShowingTime, setIsShowingTime] = useState<boolean>(true);
   const [hourLength, setHourLength] = useState<number>(0);
   const hoursText: string[] = [
@@ -193,73 +150,29 @@ export default function WeekDayView({
     '11PM',
   ];
   const mainScrollRef = useRef<ScrollView>(null);
-  const [eventsPane, setEventsPane] = useState<number[][]>([[]]); // This is a sorted 2d array for calculating the horizintal shift of an event
   const [schoolEvents, setSchoolEvents] = useState<eventType[]>();
 
-  function setCurrentTimeFunction(hour: number, minuite: number) {
-    if (minuite.toString().length === 1) {
-      if (hour === 12) {
-        setCurrentTime(`12:0${minuite.toString()}`);
-      } else {
-        setCurrentTime(`${(hour % 12).toString()}:0${minuite.toString()}`);
-      }
-    } else if (hour === 12) {
-      setCurrentTime(`12:${minuite}`);
-    } else {
-      setCurrentTime(`${(hour % 12).toString()}:${minuite.toString()}`);
+  useEffect(() => {
+    setHourLength(height * 0.1);
+  }, [height]);
+
+  async function getClassesEvents() {
+    const result = await getClassEventsFromDay();
+    if (
+      result.result === loadingStateEnum.success
+    ) {
+      setSchoolEvents(result.data);
     }
   }
 
-  const loadCalendarContent = useCallback(() => {
-    const currentDate = new Date();
-    const resultHeightTopOffset = findTimeOffset(currentDate, height);
-    setHeightOffsetTop(resultHeightTopOffset);
-    const minuiteInt: number = currentDate.getMinutes();
-    setCurrentMinuteInt(minuiteInt);
-    const hourInt = currentDate.getHours();
-    setCurrentTimeFunction(hourInt, minuiteInt);
+  useEffect(() => {
+    const resultHeightTopOffset = findTimeOffset(new Date(), height);
     mainScrollRef.current?.scrollTo({
       x: 0,
       y: resultHeightTopOffset,
       animated: false,
     });
-  }, [height]);
-
-  // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
-  // Upadtes every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const minuiteInt = new Date().getMinutes();
-      if (currentMinuteInt !== minuiteInt!) {
-        setCurrentMinuteInt(minuiteInt);
-
-        const hourInt = new Date().getHours();
-        if (minuiteInt.toString().length === 1) {
-          setCurrentTimeFunction(hourInt, minuiteInt);
-        } else {
-          setCurrentTimeFunction(hourInt, minuiteInt);
-        }
-        setHeightOffsetTop(findTimeOffset(new Date(), height));
-      }
-    }, 1000);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [currentMinuteInt, height]);
-
-  useEffect(() => {
-    setHourLength(height * 0.1);
-    loadCalendarContent();
-  }, [height, loadCalendarContent]);
-
-  async function getClassesEvents() {
-    const result = await getClassEventsFromDay();
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
-    ) {
-      setSchoolEvents(result.data);
-    }
-  }
+  }, [])
 
   useEffect(() => {
     getClassesEvents();
@@ -268,9 +181,10 @@ export default function WeekDayView({
   return (
     <View
       style={{
-        height: week ? undefined : height,
+        height: height,
         width,
         backgroundColor: Colors.white,
+        paddingTop: topPadding
       }}
     >
       <>
@@ -282,7 +196,7 @@ export default function WeekDayView({
                 style={{ flexDirection: 'row', height: hourLength }}
               >
                 {calculateIfShowing(value, new Date(selectedDate)) &&
-                (week === undefined || start === true) ? (
+                (start === true) ? (
                   <Text
                     selectable={false}
                     style={{
@@ -315,10 +229,10 @@ export default function WeekDayView({
         
         return (
           <EventBlock
+            key={event.id}
             event={event}
             width={width}
             height={height}
-            eventPane={eventsPane}
           />
         )
       })}
@@ -332,35 +246,10 @@ export default function WeekDayView({
             event={event}
             width={width}
             height={height}
-            eventPane={eventsPane}
           />
         )
       })}
-      {isTimeOnDay(selectedDate, day.toISOString()) ? (
-        <View
-          style={{
-            position: 'absolute',
-            top: heightOffsetTop,
-            height: height * 0.005,
-            width,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-        >
-          <Text selectable={false} style={{ color: 'red', zIndex: 2 }}>
-            {currentTime}
-          </Text>
-          <View
-            style={{
-              backgroundColor: 'red',
-              width: width * 0.914,
-              height: 6,
-              position: 'absolute',
-              right: 0,
-            }}
-          />
-        </View>
-      ) : null}
+      <CurrentTimeLine day={day} width={width} height={height} topPadding={topPadding}/>
     </View>
   );
 }

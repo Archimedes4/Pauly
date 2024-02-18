@@ -95,7 +95,7 @@ export default async function getDressCodes(): Promise<
           dressCodeIncentives: [],
         });
       } catch {
-        // continue on
+        // continue on ignoring error
       }
     }
     return { result: loadingStateEnum.success, data: newDressCodes };

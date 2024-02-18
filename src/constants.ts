@@ -265,8 +265,8 @@ declare global {
     id: string;
   };
   type dayEvent = {
-    event: eventType[];
-    offset: number;
+    event: eventType;
+    horizontalOffset: number;
   };
   type dressCodeType = {
     name: string;

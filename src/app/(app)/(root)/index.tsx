@@ -13,6 +13,8 @@ import {
   Linking,
   ScrollView,
   Switch,
+  Platform,
+  Modal,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -642,6 +644,7 @@ export default function Notifications() {
   const { message } = useSelector((state: RootState) => state.paulyData);
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
+  const [isShowingDiscipline, setIsShowingdiscipline] = useState<boolean>(false); 
 
   const loadData = useCallback(async () => {
     // Calendar Data
@@ -742,6 +745,16 @@ export default function Notifications() {
       )}
       <TaskBlock />
       <InsightsBlock />
+      {/* <Pressable onPress={() => {
+        if (Platform.OS == "web") {
+          Linking.openURL("https://www.stpauls.mb.ca/discipline/")
+        }
+      }}>
+        <Text>Discipline</Text>
+      </Pressable>
+      <Modal visible={isShowingDiscipline}>
+
+      </Modal> */}
     </ScrollView>
   );
 }
