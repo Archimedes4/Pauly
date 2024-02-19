@@ -40,7 +40,7 @@ function getCalendarFontSize(breakPoint: number, height: number) {
 function TopView({ width, height }: { width: number; height: number }) {
   const dispatch = useDispatch();
   const { currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   return (
     <View
@@ -145,7 +145,7 @@ function isLastSelectedDateValid() {
 
 export default function Calendar() {
   const { width, height, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { selectedCalendarMode, isShowingAddDate } = useSelector(
     (state: RootState) => state.addEvent,
@@ -178,7 +178,7 @@ export default function Calendar() {
   // In day view things work similary as month view.
   useEffect(() => {
     if (isLastSelectedDateValid()){
-      dispatch(currentEventsSlice.actions.setCurrentEvents([]))
+      dispatch(currentEventsSlice.actions.clearEvents())
       getEvents()
       loadClassEvents()
       dispatch(lastCalledSelectedDateSlice.actions.setLastCalledSelectedDate(selectedDate))

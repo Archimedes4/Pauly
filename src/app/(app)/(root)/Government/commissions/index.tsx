@@ -81,7 +81,7 @@ function GovernmentCommissionsBody() {
 }
 
 export default function GovernmentCommissions() {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
 
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
@@ -106,7 +106,7 @@ export default function GovernmentCommissions() {
 }
 
 function CommissionBlock({ commission }: { commission: commissionType }) {
-  const { width } = useSelector((state: RootState) => state.dimentions);
+  const { width } = useSelector((state: RootState) => state.dimensions);
   const [unclaimedState, setUnclaimedState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );

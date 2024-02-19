@@ -57,7 +57,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function WidgetView({ width, height }: { width: number; height: number }) {
   const { currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { schoolDayData, startTime } = useSelector(
     (state: RootState) => state.homepageData,
@@ -179,7 +179,7 @@ function DeleteTask({ onDelete }: { onDelete: () => void }) {
 }
 
 function TaskItem({ task, index }: { task: taskType; index: number }) {
-  const { width } = useSelector((state: RootState) => state.dimentions);
+  const { width } = useSelector((state: RootState) => state.dimensions);
   const { isShowingCompleteTasks } = useSelector(
     (state: RootState) => state.homepageData,
   );
@@ -290,7 +290,7 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
 }
 
 function TaskBlock() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const { taskState, userTasks, isShowingCompleteTasks } = useSelector(
     (state: RootState) => state.homepageData,
   );
@@ -386,7 +386,7 @@ function TaskBlock() {
 
 function BoardBlock() {
   const { width, height, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { powerpointBlob, paulyDataState } = useSelector(
     (state: RootState) => state.paulyData,
@@ -456,7 +456,7 @@ function BoardBlock() {
 }
 
 function PopularFiles({ width }: { width: number }) {
-  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { height } = useSelector((state: RootState) => state.dimensions);
   const { trendingData, trendingState } = useSelector(
     (state: RootState) => state.homepageData,
   );
@@ -502,7 +502,7 @@ function PopularFiles({ width }: { width: number }) {
 }
 
 function TrendingFiles({ width }: { width: number }) {
-  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { height } = useSelector((state: RootState) => state.dimensions);
   const { userState, userData } = useSelector(
     (state: RootState) => state.homepageData,
   );
@@ -540,7 +540,7 @@ function TrendingFiles({ width }: { width: number }) {
 
 function InsightsBlock() {
   const { width, height, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
 
   if (currentBreakPoint <= 0) {
@@ -639,7 +639,7 @@ function InsightsBlock() {
 
 export default function Notifications() {
   const { width, height, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { message } = useSelector((state: RootState) => state.paulyData);
   const dispatch = useDispatch();

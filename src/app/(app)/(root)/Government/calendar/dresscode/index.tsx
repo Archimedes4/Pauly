@@ -9,7 +9,7 @@ import ProgressView from '@components/ProgressView';
 import getDressCodeData from '@utils/calendar/dressCodeFunctions';
 
 function GovernmentDressCodeBody() {
-  const { width } = useSelector((state: RootState) => state.dimentions);
+  const { width } = useSelector((state: RootState) => state.dimensions);
   const [getDressCodeState, setGetDressCodeState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -64,7 +64,7 @@ function GovernmentDressCodeBody() {
 }
 
 export default function GovernmentDressCode() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>

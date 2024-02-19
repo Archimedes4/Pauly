@@ -11,7 +11,7 @@ import { Link, useGlobalSearchParams } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 
 export default function MicrosoftGraphEditGroup() {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
 
   const { id } = useGlobalSearchParams();
 

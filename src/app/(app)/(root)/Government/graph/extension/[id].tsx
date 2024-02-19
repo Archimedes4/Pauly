@@ -9,7 +9,7 @@ import { Link, useGlobalSearchParams } from 'expo-router';
 import ProgressView from '@components/ProgressView';
 
 export default function MicrosoftGraphEditExtension() {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
   const { id } = useGlobalSearchParams();
 
   const [extensionState, setExtensionState] = useState<loadingStateEnum>(

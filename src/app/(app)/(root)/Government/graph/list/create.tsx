@@ -30,7 +30,7 @@ type ColumnItem = {
 };
 
 export default function MicrosoftGraphCreateList() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
 
   const [columns, setColumns] = useState<ColumnItem[]>([]);

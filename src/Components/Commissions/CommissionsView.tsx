@@ -58,7 +58,7 @@ export default function CommissionsView({
   id: string;
   onClose: () => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [commissionData, setCommissionData] = useState<
     commissionType | undefined
   >(undefined);

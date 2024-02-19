@@ -24,7 +24,7 @@ import { useSignOut } from '@hooks/authentication';
 export default function Settings() {
   const router = useRouter();
   const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,

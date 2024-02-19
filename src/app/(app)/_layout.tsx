@@ -29,7 +29,7 @@ function Loading() {
   );
   const signOut = useSignOut();
   const { height, totalWidth } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const insets = useSafeAreaInsets();
   const isShowingLogout = useIsShowingLogout();
@@ -69,7 +69,7 @@ function Loading() {
 export default function Layout() {
   const isConnected = useIsConnected();
   const { height, totalWidth } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const insets = useSafeAreaInsets();
   const isLoading = useAuthentication();

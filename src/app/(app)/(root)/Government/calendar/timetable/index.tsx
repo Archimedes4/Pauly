@@ -19,7 +19,7 @@ import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 
 export default function GovernmentTimetable() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>

@@ -32,7 +32,7 @@ function YoutubeVideosSelector({
 }: {
   onSelect: (item: string) => void;
 }) {
-  const { width } = useSelector((state: RootState) => state.dimentions);
+  const { width } = useSelector((state: RootState) => state.dimensions);
   const [ytVideos, setytVideos] = useState<youtubeVideoType[]>([]);
   const [ytState, setytState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -94,7 +94,7 @@ function YoutubeVideosSelector({
 }
 
 export default function GovernmentSportsTeamAddPost() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
   const [fileId, setFileId] = useState<string>('');
   const [postName, setPostName] = useState<string>('');

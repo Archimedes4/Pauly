@@ -14,7 +14,7 @@ import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 
 function GovernmentSportsBody() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [currentSports, setCurrentSports] = useState<sportType[]>([]);
   const [sportsState, setSportsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -75,7 +75,7 @@ function GovernmentSportsBody() {
 }
 
 export default function GovernmentSports() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>

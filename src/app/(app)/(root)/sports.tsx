@@ -39,7 +39,7 @@ import SportsYoutube from '@components/SportsYoutube';
 
 export default function Sports() {
   const { width, height, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const [sportsPosts, setSportsPosts] = useState<sportPost[]>([]);
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(
@@ -367,7 +367,7 @@ export default function Sports() {
 }
 
 function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View
       key={`Sport_${post.item.data.fileId}`}

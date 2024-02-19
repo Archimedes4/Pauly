@@ -7,7 +7,7 @@ import StyledButton from '@components/StyledButton';
 import BackButton from '@components/BackButton';
 
 export default function GovernmentCalendar() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View
       style={{

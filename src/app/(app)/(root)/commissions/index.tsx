@@ -56,7 +56,7 @@ function PickerPiece({
   setIsHoverPicker: (item: boolean) => void;
 }) {
   const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const [isSelected, setIsSelected] = useState<boolean>(false);
   function getPickerWidth(isInner: boolean): number {
@@ -148,7 +148,7 @@ function CommissionsBody() {
   const { currentCommissions, commissionsState, commissionNextLink } =
     useSelector((state: RootState) => state.commissions);
 
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
 
   const dispatch = useDispatch();
 
@@ -243,7 +243,7 @@ function CommissionsBody() {
 
 export default function Commissions() {
   const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { selectedCommission } = useSelector(
     (state: RootState) => state.commissions,

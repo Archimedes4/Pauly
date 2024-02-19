@@ -15,7 +15,7 @@ import { Link } from 'expo-router';
 import SecondStyledButton from '@components/StyledButton';
 
 export default function GovernmentCreateNewSport() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   const [sportName, setSportName] = useState<string>('');
   const { siteId, sportsListId } = useSelector(

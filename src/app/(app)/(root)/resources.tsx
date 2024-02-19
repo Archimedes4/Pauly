@@ -145,7 +145,7 @@ function ResourceBlock({
     messageId: string;
   }) => void;
 }) {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,
   );
@@ -314,7 +314,7 @@ function numberScholarBlock(width: number): number {
 }
 
 function ResourceScholarships() {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
   const [scholarState, setScholarState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -389,7 +389,7 @@ function ResourceScholarships() {
 
 export default function Resources() {
   const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { resources, loadingState, selectedResourceMode } = useSelector(
     (state: RootState) => state.resources,
@@ -531,7 +531,7 @@ function GovernmentCategoryView({
   messageId: string;
   onClose: () => void;
 }) {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
   const [categoryState, setCategoryState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );

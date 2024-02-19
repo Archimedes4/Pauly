@@ -12,7 +12,7 @@ export default function ResourceNewsPage({
   selectedPost: newsPost;
   setSelectedPost: (item: undefined) => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [headers, setHeaders] = useState<string>('');
   async function getHeaders() {
     console.log(selectedPost.url);

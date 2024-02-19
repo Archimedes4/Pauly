@@ -1,5 +1,5 @@
 import { EdgeInsets } from 'react-native-safe-area-context';
-import { dimentionsSlice } from '@redux/reducers/dimentionsReducer';
+import { dimensionsSlice } from '@redux/reducers/dimensionsReducer';
 import store from '@redux/store';
 import { breakPointMode } from '@constants';
 import getMainHeight from '../getMainHeight';
@@ -11,8 +11,8 @@ export default function setDimentions(
   isTop: boolean,
   isBottom: boolean,
 ) {
-  const oldWidth = store.getState().dimentions.width;
-  const { height } = store.getState().dimentions;
+  const oldWidth = store.getState().dimensions.width;
+  const { height } = store.getState().dimensions;
   const newWidth = dimWidth - insets.left - insets.right;
   const newHeight = getMainHeight(
     dimHeight,
@@ -23,7 +23,7 @@ export default function setDimentions(
   );
   if (oldWidth !== newWidth) {
     const oldCurrentBreakPointMode: breakPointMode =
-      store.getState().dimentions.currentBreakPoint;
+      store.getState().dimensions.currentBreakPoint;
     let currentBreakPoint: breakPointMode = breakPointMode.xSmall;
     if (newWidth >= 1200) {
       // extraLarge ≥1200px
@@ -45,7 +45,7 @@ export default function setDimentions(
       if (newWidth >= 576) {
         if (store.getState().expandedMode) {
           store.dispatch(
-            dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
+            dimensionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
               width: newWidth * 0.75,
               totalWidth: dimWidth,
               currentBreakPoint,
@@ -53,7 +53,7 @@ export default function setDimentions(
           );
         } else {
           store.dispatch(
-            dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
+            dimensionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
               width: newWidth * 0.9,
               totalWidth: dimWidth,
               currentBreakPoint,
@@ -62,7 +62,7 @@ export default function setDimentions(
         }
       } else {
         store.dispatch(
-          dimentionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
+          dimensionsSlice.actions.setDimentionsWidthCurrentBreakPoint({
             width: newWidth,
             totalWidth: dimWidth,
             currentBreakPoint,
@@ -72,14 +72,14 @@ export default function setDimentions(
     } else if (newWidth >= 576) {
       if (store.getState().expandedMode) {
         store.dispatch(
-          dimentionsSlice.actions.setDimentionsWidth({
+          dimensionsSlice.actions.setDimentionsWidth({
             width: newWidth * 0.75,
             totalWidth: dimWidth,
           }),
         );
       } else {
         store.dispatch(
-          dimentionsSlice.actions.setDimentionsWidth({
+          dimensionsSlice.actions.setDimentionsWidth({
             width: newWidth * 0.9,
             totalWidth: dimWidth,
           }),
@@ -87,7 +87,7 @@ export default function setDimentions(
       }
     } else {
       store.dispatch(
-        dimentionsSlice.actions.setDimentionsWidth({
+        dimensionsSlice.actions.setDimentionsWidth({
           width: newWidth,
           totalWidth: dimWidth,
         }),
@@ -96,14 +96,14 @@ export default function setDimentions(
   } else if (newWidth >= 576) {
     if (store.getState().expandedMode) {
       store.dispatch(
-        dimentionsSlice.actions.setDimentionsWidth({
+        dimensionsSlice.actions.setDimentionsWidth({
           width: newWidth * 0.75,
           totalWidth: dimWidth,
         }),
       );
     } else {
       store.dispatch(
-        dimentionsSlice.actions.setDimentionsWidth({
+        dimensionsSlice.actions.setDimentionsWidth({
           width: newWidth * 0.9,
           totalWidth: dimWidth,
         }),
@@ -111,6 +111,6 @@ export default function setDimentions(
     }
   }
   if (height !== newHeight) {
-    store.dispatch(dimentionsSlice.actions.setDimentionsHeight(newHeight));
+    store.dispatch(dimensionsSlice.actions.setDimentionsHeight(newHeight));
   }
 }

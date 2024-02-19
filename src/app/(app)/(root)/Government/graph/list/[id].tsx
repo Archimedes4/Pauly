@@ -9,7 +9,7 @@ import { Colors } from '@constants';
 import { Link, useLocalSearchParams } from 'expo-router';
 
 export default function MicrosoftGraphEditList() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
   const [currentColumns, setCurrentColumns] = useState<listColumnType[]>([]);
   const { id } = useLocalSearchParams();

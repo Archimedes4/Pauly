@@ -63,7 +63,7 @@ async function deleteEvents() {
 }
 
 export default function GovernmentClaendarUtility() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <Link href="/government/calendar/">

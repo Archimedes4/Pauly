@@ -16,7 +16,7 @@ import selectedDateReducer from './reducers/selectedDateReducer';
 import paulyListReducer from './reducers/paulyListReducer';
 import authenticationTokenReducer from './reducers/authenticationTokenReducer';
 import authenticationRefreshTokenReducer from './reducers/authenticationRefreshTokenReducer';
-import dimentionsReducer from './reducers/dimentionsReducer';
+import dimensionsReducer from './reducers/dimensionsReducer';
 import authenticationApiTokenReducer from './reducers/authenticationApiToken';
 import { tasksDeltaReducer, tasksReducer } from './reducers/tasksReducers';
 import paulyDataReducer from './reducers/paulyDataReducer';
@@ -47,7 +47,7 @@ const store = configureStore({
     classes: classesReducer,
     commissions: commissionsReducer,
     currentEvents: currentEventsReducer,
-    dimentions: dimentionsReducer,
+    dimensions: dimensionsReducer,
     expandedMode: expandedModeReducer,
     homepageData: homepageDataReducer,
     isGovernmentMode: isGovernmentModeReducer,

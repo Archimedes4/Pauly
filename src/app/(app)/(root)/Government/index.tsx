@@ -94,7 +94,7 @@ function Block({
 export default function Government() {
   const router = useRouter();
   const { width, height, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const isGovernmentMode = useSelector(
     (state: RootState) => state.isGovernmentMode,

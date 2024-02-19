@@ -98,7 +98,7 @@ function OpenBar({
   onClose: () => void;
   barWidth: number;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View
       style={{
@@ -173,7 +173,7 @@ function OpenBar({
 
 export default function ResourceBar() {
   const [barWidth, setBarWidth] = useState(0);
-  const { width } = useSelector((state: RootState) => state.dimentions);
+  const { width } = useSelector((state: RootState) => state.dimensions);
   const [isOpen, setIsOpen] = useState(false);
   const selectedResourceMode = useSelector(
     (state: RootState) => state.resources.selectedResourceMode,

@@ -71,7 +71,7 @@ function QRCodeBlockWebPrint({
   QRCodeItem: commissionQRCode;
   onClose: () => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [mounted, setMounted] = useState<boolean>(false);
 
   async function print() {
@@ -110,7 +110,7 @@ function QRCodeBlockModal({
   setQRCodeItem: (e: commissionQRCode) => void;
   setIsEditing: (item: boolean) => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [showingWebPrint, setShowingWebPrint] = useState<boolean>();
   async function print() {
     if (Platform.OS === 'web') {
@@ -274,7 +274,7 @@ export function GovernmentCommissionUpdate({
 }: {
   isCreate: boolean;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const { commissionListId, siteId } = useSelector(
     (state: RootState) => state.paulyList,
   );
@@ -1351,7 +1351,7 @@ function PickUser({
     loadingStateEnum.loading,
   );
   const [nextLink, setNextLink] = useState<string | undefined>(undefined);
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
 
   async function getUserId() {
     const result = await callMsGraph('https://graph.microsoft.com/v1.0/me');

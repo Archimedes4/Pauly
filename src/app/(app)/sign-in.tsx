@@ -22,7 +22,7 @@ import { router } from 'expo-router';
 export function SignInComponent({ government }: { government: boolean }) {
   // visual
   const { height, totalWidth } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const [isBottonHover, setIsButtonHover] = useState<boolean>(false);
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
@@ -64,7 +64,7 @@ export function SignInComponent({ government }: { government: boolean }) {
     useState<boolean>(false);
   const isAuthenticated = useIsAuthenticated();
   const currentBreakPoint = useSelector(
-    (state: RootState) => state.dimentions.currentBreakPoint,
+    (state: RootState) => state.dimensions.currentBreakPoint,
   );
 
   useEffect(() => {

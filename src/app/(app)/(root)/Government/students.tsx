@@ -38,7 +38,7 @@ function SelectMainFile({
   userId: string;
   setFilePickingMode: (item: filePickingModeEnum) => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [fileData, setFileData] = useState<studentInformationType[]>([]);
   const [fileState, setFileState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -241,7 +241,7 @@ function StudentSelectFileBlock({
 }
 
 export default function GovernmentStudents() {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
   const { usersState, users } = useSelector(
     (state: RootState) => state.studentSearch,
   );
@@ -314,7 +314,7 @@ enum filePickingModeEnum {
 }
 
 function StudentItem({ e }: { e: ListRenderItemInfo<schoolUserType> }) {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
   const [filePickingMode, setFilePickingMode] = useState<filePickingModeEnum>(
     filePickingModeEnum.notStarted,
   );
@@ -373,7 +373,7 @@ function StudentsSelectFile({
   setFilePickingMode: (item: filePickingModeEnum) => void;
   userId: string;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [isReviewing, setIsReviewing] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<
     microsoftFileType | undefined

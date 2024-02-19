@@ -40,7 +40,7 @@ function useWindowSize() {
   return [dimensions.width, dimensions.height];
 }
 
-// App core holds dimentions
+// App core holds dimensions
 export default function AppCore() {
   // Dimentions
   const safeAreaColors = useSelector(
@@ -48,7 +48,7 @@ export default function AppCore() {
   );
   const expandedMode = useSelector((state: RootState) => state.expandedMode);
   const { currentBreakPoint, width, height } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const windowWidth = useWindowSize()[0];
   const windowHeight = useWindowSize()[1];

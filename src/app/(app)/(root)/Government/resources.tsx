@@ -163,7 +163,7 @@ function GroupBlockBody({
   groupId: string;
   selectedGroup: string;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [channels, setChannels] = useState<channelType[]>([]);
   const [channelState, setChannelState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -235,7 +235,7 @@ function GroupBlock({
   selectedGroup: string;
   setSelectedGroup: (item: string) => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   return (
     <Pressable
@@ -353,7 +353,7 @@ function GovernmentResourceLayout() {
 }
 
 export default function GovernmentResources() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [groups, setGroups] = useState<resourceGroupType[]>([]);
   const [getTeamsState, setGetTeamsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,

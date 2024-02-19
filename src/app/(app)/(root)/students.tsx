@@ -46,7 +46,7 @@ function StudentImage({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
 }
 
 function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const getImage = useCallback(async () => {
     const newUser: any = {};
     Object.assign(newUser, user.item);
@@ -161,7 +161,7 @@ function StudentBlock({ user }: { user: ListRenderItemInfo<schoolUserType> }) {
 export default function Students() {
   useStudentSafeArea();
   const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { usersState, users, nextLink } = useSelector(
     (state: RootState) => state.studentSearch,

@@ -40,7 +40,7 @@ function isValidHexaCode(input: string) {
 // NOTE: period length cannot be longer than 20
 export function GovernmentSchedule({ create }: { create: boolean }) {
   const { id } = useGlobalSearchParams();
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   const [scheduleListId, setScheduleListId] = useState<string | undefined>(
     undefined,

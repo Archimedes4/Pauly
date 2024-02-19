@@ -26,7 +26,7 @@ export function GovernmentDressCodeEdit({
 }: {
   isCreating: boolean;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [dressCode, setDressCode] = useState<dressCodeType>({
     name: '',
     id: 'create',

@@ -23,7 +23,7 @@ export default function ResourcesNews() {
   const [selectedPost, setSelectedPost] = useState<newsPost | undefined>(
     undefined,
   );
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [nextLink, setNextLink] = useState<undefined | string>(undefined);
 
   const loadArticles = useCallback(async () => {

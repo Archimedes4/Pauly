@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export function useStudentSafeArea() {
   const { currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { usersState } = useSelector((state: RootState) => state.studentSearch);
 

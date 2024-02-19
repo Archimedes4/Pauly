@@ -10,11 +10,14 @@ import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import React, { useEffect, useRef, useState } from 'react';
-import { ScrollView, View, useColorScheme, Text, Pressable } from 'react-native';
+import { ScrollView, View, useColorScheme, Text, Pressable, Modal, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import createUUID from '@utils/ultility/createUUID';
 import dayCurrentTimeLine from '@hooks/dayCurrentTimeLine';
 import useTimeHidden from '@hooks/useTimeHidden';
+import { CloseIcon } from '../Icons';
+import { DefaultEventBlock } from './EventView';
+import DayEventBlock from './DayEventBlock';
 
 function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: number, height: number, topPadding: number}) {
   const [timeWidth, setTimeWidth] = useState<number>(0)
@@ -52,71 +55,16 @@ function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: num
   return null
 }
 
-function EventBlock({
-  event,
-  width,
-  height,
-}: {
-  event: eventType;
-  width: number;
-  height: number;
-}) {
-  const EventHeight = computeEventHeight(
-    new Date(event.startTime),
-    new Date(event.endTime),
-    height,
-  );
-  const Offset = findTimeOffset(new Date(event.startTime), height);
-
-  return (
-    <View
-      key={`Event_${createUUID()}`}
-      style={{
-        width: width * 0.9,
-        height: EventHeight,
-        top: Offset,
-        position: 'absolute',
-        right: 0,
-        borderColor: Colors.maroon,
-        borderLeftWidth: 3,
-      }}
-    >
-      <View
-        style={{
-          width: width * 0.9,
-          height: EventHeight,
-          position: 'absolute',
-          backgroundColor: event.eventColor,
-          opacity: 0.3,
-          zIndex: -1,
-        }}
-      />
-      <Text style={{ opacity: 1 }}>{event.name}</Text>
-      <Text>
-        {new Date(event.startTime).toLocaleString('en-us', {
-          hour: 'numeric',
-          minute: 'numeric',
-        })}{' '}
-        to{' '}
-        {new Date(event.endTime).toLocaleString('en-us', {
-          hour: 'numeric',
-          minute: 'numeric',
-        })}
-      </Text>
-    </View>
-  );
-}
-
 function MultiEventBlock({
   start,
   end,
-  length,
+  events,
   width,
   height,
 }: {
   start: string;
   end: string;
-  length: number;
+  events: eventType[];
   width: number;
   height: number;
 }) {
@@ -126,46 +74,66 @@ function MultiEventBlock({
     height,
   );
   const Offset = findTimeOffset(new Date(start), height);
+  const [isShowingModal, setIsShowingModal] = useState<boolean>(false);
+  const dimensions = useSelector(
+    (state: RootState) => state.dimensions,
+  );
 
   return (
-    <Pressable
-      key={`Event_${createUUID()}`}
-      style={{
-        width: width,
-        height: EventHeight,
-        top: Offset,
-        position: 'absolute',
-        right: 0,
-        borderColor: Colors.maroon,
-        borderLeftWidth: 3,
-      }}
-      onPress={() => {
-
-      }}
-    >
-      <View
+    <>
+      <Modal transparent visible={isShowingModal}>
+        <Pressable style={{width: dimensions.totalWidth, height: dimensions.height}} onPress={() => setIsShowingModal(false)}/>
+        <View style={{left: dimensions.totalWidth * 0.15, top: dimensions.height * 0.05, height: dimensions.height * 0.9, width: dimensions.totalWidth * 0.8, borderRadius: 15, borderWidth: 4, backgroundColor: Colors.lightGray, position: 'absolute', zIndex: 2}}>
+          <Pressable style={{margin: 10}} onPress={() => setIsShowingModal(false)}>
+            <CloseIcon width={25} height={25}/>
+          </Pressable>
+          <FlatList
+            data={events}
+            renderItem={(event) => (
+              <DefaultEventBlock event={event.item} />
+            )}
+          />
+        </View>
+      </Modal>
+      <Pressable
+        key={`Event_${createUUID()}`}
         style={{
           width: width,
           height: EventHeight,
+          top: Offset,
           position: 'absolute',
-          backgroundColor: Colors.lightGray,
-          opacity: 0.8,
-          zIndex: -1,
+          right: 0,
+          borderColor: Colors.maroon,
+          borderLeftWidth: 3,
         }}
-      />
-      <Text style={{ opacity: 1 }}>{length} events from</Text>
-      <Text>
-        {new Date(start).toLocaleString('en-us', {
-          hour: 'numeric',
-          minute: 'numeric',
-        })}{' '}
-        to{' '}
-        {new Date(end).toLocaleString('en-us', {
-          hour: 'numeric',
-          minute: 'numeric',
-        })}
-      </Text>
-    </Pressable>
+        onPress={() => {
+          setIsShowingModal(true)
+        }}
+      >
+        <View
+          style={{
+            width: width,
+            height: EventHeight,
+            position: 'absolute',
+            backgroundColor: Colors.lightGray,
+            opacity: 0.8,
+            zIndex: -1,
+          }}
+        />
+        <Text style={{ opacity: 1 }}>{events.length} events from</Text>
+        <Text>
+          {new Date(start).toLocaleString('en-us', {
+            hour: 'numeric',
+            minute: 'numeric',
+          })}{' '}
+          to{' '}
+          {new Date(end).toLocaleString('en-us', {
+            hour: 'numeric',
+            minute: 'numeric',
+          })}
+        </Text>
+      </Pressable>
+    </>
   );
 }
 
@@ -231,7 +199,6 @@ export default function WeekDayView({
     dayEvents = dayEvents.sort((a, b) => {
       return a.startTime.localeCompare(b.startTime);
     });
-    console.log("Day Events", dayEvents)
     const result: weekDayEvent[] = [];
     for (let index = 0; index < dayEvents.length; index += 1) {
       let found = false
@@ -248,7 +215,6 @@ export default function WeekDayView({
         }
       }
       if (found === false) {
-        console.log("push")
         result.push({
           start: dayEvents[index].startTime,
           end: dayEvents[index].endTime,
@@ -256,7 +222,6 @@ export default function WeekDayView({
         })
       }
     }
-    console.log(result)
     setWeekEvents(result);
   }
 
@@ -332,7 +297,7 @@ export default function WeekDayView({
           }
           
           return (
-            <EventBlock
+            <DayEventBlock
               key={weekDay.events[0].id + day.toISOString()}
               event={weekDay.events[0]}
               width={width}
@@ -345,7 +310,7 @@ export default function WeekDayView({
             key={weekDay.events[0].id + day.toISOString() + "multi"}
             start={weekDay.start}
             end={weekDay.end}
-            length={weekDay.events.length}
+            events={weekDay.events}
             width={width}
             height={height}
           />

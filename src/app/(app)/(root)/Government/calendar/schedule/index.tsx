@@ -11,7 +11,7 @@ import SecondStyledButton from '@components/StyledButton';
 import StyledButton from '@components/StyledButton';
 
 function GovernmentScheduleBody() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [loadingState, setLoadingState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -96,7 +96,7 @@ function GovernmentScheduleBody() {
 }
 
 export default function GovernmentSchedule() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: height * 0.1 }}>

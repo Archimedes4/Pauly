@@ -232,7 +232,7 @@ function ExtensionBody({
 }
 
 export default function MicrosoftGraphOverview() {
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
   const [lists, setLists] = useState<listType[]>([]);
   const [groups, setGroups] = useState<groupType[]>([]);

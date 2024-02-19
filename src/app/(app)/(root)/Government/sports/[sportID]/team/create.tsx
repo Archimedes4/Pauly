@@ -98,7 +98,7 @@ function SelectMicrosoftTeam({
 
 export function GovernmentTeam({ create }: { create: boolean }) {
   const { sportID, teamID } = useGlobalSearchParams();
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const { siteId } = useSelector((state: RootState) => state.paulyList);
 
   const [createTeamLoadingState, setCreateTeamLoadingState] =
@@ -893,7 +893,7 @@ function RosterSelectFile({
   setIsSelectingFile: (item: boolean) => void;
   setSelectedFile: (item: string) => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View
       style={{

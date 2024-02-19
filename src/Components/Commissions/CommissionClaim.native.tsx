@@ -36,7 +36,7 @@ export default function CommissionClaim({
 }) {
   const [claimCommissionState, setClaimCommissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
-  const { width } = useSelector((state: RootState) => state.dimentions);
+  const { width } = useSelector((state: RootState) => state.dimensions);
 
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,

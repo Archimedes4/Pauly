@@ -18,7 +18,7 @@ import { SignInComponent } from '../sign-in';
 
 function AuthenticatedView() {
   const { currentBreakPoint, totalWidth, width } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const isShowingProfileBlock = useSelector(
     (state: RootState) => state.isShowingProfileBlock,

@@ -19,7 +19,7 @@ import BackButton from '@components/BackButton';
 import ProgressView from '@components/ProgressView';
 
 export function GovermentRoomsUpdate({ isCreate }: { isCreate: boolean }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [createRoomState, setCreateRoomState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );

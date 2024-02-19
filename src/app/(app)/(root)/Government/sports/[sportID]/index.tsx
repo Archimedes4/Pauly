@@ -181,7 +181,7 @@ function GovernmentSportTeams({ sportID }: { sportID: string }) {
 
 export default function GovernmentSport() {
   const { sportID } = useGlobalSearchParams();
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   const [sportName, setSportName] = useState<string | undefined>(undefined);
   const [sportState, setSportState] = useState(loadingStateEnum.notStarted);

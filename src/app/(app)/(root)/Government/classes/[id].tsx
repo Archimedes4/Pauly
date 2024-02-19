@@ -25,7 +25,7 @@ function PeriodBlock({
   periods: number[],
   setPeriods: (item: number[]) => void
 }) { 
-  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { height } = useSelector((state: RootState) => state.dimensions);
   const [timetableState, setTimetableState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
@@ -112,7 +112,7 @@ function RoomsBlock({
   selectedRoom: roomType | undefined,
   setSelectedRoom: (item: roomType) => void
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   // Rooms States
   const [roomSearchText, setRoomSearchText] = useState<string>('');
   const [roomsNextLink, setRoomsNextLink] = useState<string | undefined>(
@@ -190,7 +190,7 @@ function SchoolYearBlock({
   selectedSchoolYear: eventType | undefined
   setSelectedSchoolYear: (e: eventType) => void
 }) {
-  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { height } = useSelector((state: RootState) => state.dimensions);
   const [schoolYearState, setSchoolYearState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -248,7 +248,7 @@ function SchoolYearBlock({
 }
 
 export default function GovernmentClassesEdit() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const { id } = useGlobalSearchParams();
   const [selectedSemester, setSelectedSemester] = useState<semesters[]>(
     [],

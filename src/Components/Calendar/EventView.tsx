@@ -4,14 +4,15 @@
   November 9 2023
   EventView.tsx
 */
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { Colors, loadingStateEnum } from '@constants';
+import { addEventSlice } from '@redux/reducers/addEventReducer';
 
-function EventBlock({ event }: { event: eventType }) {
+export function DefaultEventBlock({ event }: { event: eventType }) {
   function getStart() {
     if (event.allDay) {
       return new Date(event.startTime).toLocaleString('en-us', {
@@ -34,7 +35,7 @@ function EventBlock({ event }: { event: eventType }) {
   function getText() {
     const start = getStart()
     if (new Date(event.startTime).getDate() === new Date(event.endTime).getDate()) {
-      return new Date().toLocaleString('en-us', {
+      return new Date(event.startTime).toLocaleString('en-us', {
         weekday: 'long',
         month: 'long',
         day: 'numeric',
@@ -47,7 +48,11 @@ function EventBlock({ event }: { event: eventType }) {
     return start
   }
   return (
-    <View
+    <Pressable
+      onPress={() => {
+        store.dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+        store.dispatch(addEventSlice.actions.setSelectedEvent(event));
+      }}
       style={{
         borderRadius: 15,
         backgroundColor: Colors.white,
@@ -61,7 +66,7 @@ function EventBlock({ event }: { event: eventType }) {
       <Text>
         {getText()}
       </Text>
-    </View>
+    </Pressable>
   );
 }
 
@@ -94,7 +99,7 @@ export default function EventView({
         return ('' + a.startTime).localeCompare(b.endTime);
       })}
       renderItem={(event) => (
-        <EventBlock key={event.item.id} event={event.item} />
+        <DefaultEventBlock key={event.item.id} event={event.item} />
       )}
       style={{backgroundColor: Colors.lightGray, width: width, paddingTop: 10}}
       ListEmptyComponent={() => (
@@ -105,3 +110,4 @@ export default function EventView({
     />
   );
 }
+

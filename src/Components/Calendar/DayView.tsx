@@ -21,6 +21,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import dayCurrentTimeLine from '@hooks/dayCurrentTimeLine';
 import useTimeHidden from '@hooks/useTimeHidden';
+import DayEventBlock from './DayEventBlock';
 
 function CurrentTimeLine({day, width, height, highestHorizontalOffset}:{day: Date, width: number, height: number, highestHorizontalOffset: number}) {
   const [timeWidth, setTimeWidth] = useState<number>(0)
@@ -259,7 +260,7 @@ export default function DayView({
           {dayEvents.map(event => {
             if (!event.event.allDay) {
               return (
-                <EventBlock
+                <DayEventBlock
                   key={event.event.id}
                   event={event.event}
                   width={width}
@@ -274,63 +275,5 @@ export default function DayView({
         </View>
       </ScrollView>
     </ScrollView>
-  );
-}
-
-function EventBlock({
-  event,
-  width,
-  height,
-  horizontalShift
-}: {
-  event: eventType;
-  width: number;
-  height: number;
-  horizontalShift: number;
-}) {
-  const EventHeight = computeEventHeight(
-    new Date(event.startTime),
-    new Date(event.endTime),
-    height,
-  );
-  const Offset = findTimeOffset(new Date(event.startTime), height);
-
-  return (
-    <View
-      key={`Event_${createUUID()}`}
-      style={{
-        width: width * 0.9,
-        height: EventHeight,
-        top: Offset,
-        left: horizontalShift * width,
-        position: 'absolute',
-        right: 0,
-        borderColor: Colors.maroon,
-        borderLeftWidth: 3,
-      }}
-    >
-      <View
-        style={{
-          width: width * 0.9,
-          height: EventHeight,
-          position: 'absolute',
-          backgroundColor: event.eventColor,
-          opacity: 0.3,
-          zIndex: -1,
-        }}
-      />
-      <Text style={{ opacity: 1 }}>{event.name}</Text>
-      <Text>
-        {new Date(event.startTime).toLocaleString('en-us', {
-          hour: 'numeric',
-          minute: 'numeric',
-        })}{' '}
-        to{' '}
-        {new Date(event.endTime).toLocaleString('en-us', {
-          hour: 'numeric',
-          minute: 'numeric',
-        })}
-      </Text>
-    </View>
   );
 }

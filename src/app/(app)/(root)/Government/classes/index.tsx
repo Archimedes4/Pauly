@@ -96,7 +96,7 @@ function GovernmentClassesBody() {
 }
 
 export default function GovernmentClasses() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View>

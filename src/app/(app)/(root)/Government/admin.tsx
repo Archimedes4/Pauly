@@ -26,7 +26,7 @@ enum initStage {
 }
 
 export default function GovernmentAdmin() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   const [selectedUser, setSelectedUser] = useState<
     microsoftUserType | undefined
@@ -458,7 +458,7 @@ function UserBlock({
     loadingStateEnum.loading,
   );
   const [nextLink, setNextLink] = useState<string | undefined>(undefined);
-  const { height, width } = useSelector((state: RootState) => state.dimentions);
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
 
   async function getUserId() {
     const result = await callMsGraph('https://graph.microsoft.com/v1.0/me');

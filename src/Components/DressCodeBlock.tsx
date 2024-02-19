@@ -22,7 +22,7 @@ export default function DressCodeBlock({
   dressCodeData: dressCodeDataType[];
   setDressCodeData: (item: dressCodeDataType[]) => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <Pressable
       style={{

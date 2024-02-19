@@ -28,7 +28,7 @@ import getDressCodeData from '@utils/calendar/dressCodeFunctions';
 
 // TO DO longest amount of school days is 20 make sure this is enforced
 export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   // Loading States
   const [createTimetableLoadingState, setCreateTimetableLoadingState] =
@@ -135,7 +135,7 @@ function DressCodeBlock({
   selectedDressCode: dressCodeType | undefined;
   setSelectedDressCode: (item: dressCodeType | undefined) => void;
 }) {
-  const { height } = useSelector((state: RootState) => state.dimentions);
+  const { height } = useSelector((state: RootState) => state.dimensions);
   const [dressCodeState, setDressCodeState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -372,7 +372,7 @@ function ScheduleBlock({
   selectedDefaultSchedule: scheduleType | undefined;
   setSelectedDefaultSchedule: (item: scheduleType) => void;
 }) {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [loadedSchedules, setLoadedSchedules] = useState<scheduleType[]>([]);
   const [scheduleState, setScheduleState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,

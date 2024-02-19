@@ -125,7 +125,7 @@ function CalendarSyncBody({
 }
 
 export default function CalendarSync() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const syncCalendar = useSyncCalendar();
   const [loadState, setLoadState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,

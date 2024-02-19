@@ -25,7 +25,7 @@ export default function CommissionClaim({
 }) {
   const [claimCommissionState, setClaimCommissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
-  const { width } = useSelector((state: RootState) => state.dimentions);
+  const { width } = useSelector((state: RootState) => state.dimensions);
   const { instance } = useMsal();
 
   async function claimCommission() {

@@ -30,7 +30,7 @@ function getDenyText(reviewed: boolean, accepted: boolean) {
 }
 
 export default function GovernmentReviewFileSubmission() {
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   const { submissionID } = useParams();
   const [dataURL, setDataURL] = useState<string>('');

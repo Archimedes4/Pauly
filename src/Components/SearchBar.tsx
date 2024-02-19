@@ -30,7 +30,7 @@ export default function SearchBar({
   top?: number;
 }) {
   // Dimensions
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [mounted, setMounted] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Boolean true if text overflowing. This is telling the search icon to show or not.
   const style: StyleProp<TextStyle> =

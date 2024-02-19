@@ -34,7 +34,7 @@ function NavBarBlock({
   text: string;
   children: ReactNode;
 }) {
-  const { totalWidth } = useSelector((state: RootState) => state.dimentions);
+  const { totalWidth } = useSelector((state: RootState) => state.dimensions);
   const [isHover, setIsHover] = useState<boolean>(false);
   const expandedMode = useSelector((state: RootState) => state.expandedMode);
   const dispatch = useDispatch();
@@ -123,7 +123,7 @@ function NavBarBlock({
 
 export default function NavBarComponent() {
   const { height, totalWidth } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const { uri, displayName } = useSelector(
     (state: RootState) => state.microsoftProfileData,

@@ -25,7 +25,7 @@ export default function GovernmentHomePage() {
   const { paulyDataListId, siteId } = useSelector(
     (state: RootState) => state.paulyList,
   );
-  const { width, height } = useSelector((state: RootState) => state.dimentions);
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
 
   // Loading States
   const [loadContentLoadingState, setLoadContentLoadingState] =

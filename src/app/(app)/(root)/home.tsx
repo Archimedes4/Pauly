@@ -29,7 +29,7 @@ export default function HomePage() {
     (state: RootState) => state.paulyData,
   );
   const { height, width, currentBreakPoint } = useSelector(
-    (state: RootState) => state.dimentions,
+    (state: RootState) => state.dimensions,
   );
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
