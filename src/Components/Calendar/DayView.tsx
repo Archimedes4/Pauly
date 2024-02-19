@@ -10,7 +10,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, ScrollView, useColorScheme, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
-  calculateIfShowing,
   computeEventHeight,
   findTimeOffset,
   isDateToday,
@@ -20,8 +19,8 @@ import { RootState } from '@redux/store';
 import createUUID from '@utils/ultility/createUUID';
 import { Colors, loadingStateEnum } from '@constants';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
-import dayCurrentTimeLine from '@src/hooks/dayCurrentTimeLine';
-
+import dayCurrentTimeLine from '@hooks/dayCurrentTimeLine';
+import useTimeHidden from '@hooks/useTimeHidden';
 
 function CurrentTimeLine({day, width, height, highestHorizontalOffset}:{day: Date, width: number, height: number, highestHorizontalOffset: number}) {
   const [timeWidth, setTimeWidth] = useState<number>(0)
@@ -71,10 +70,6 @@ export default function DayView({
   const colorScheme = useColorScheme();
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
-  const [heightOffsetTop, setHeightOffsetTop] = useState<number>(0);
-  const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0);
-  const [currentTime, setCurrentTime] = useState<string>('12:00');
-  const [isShowingTime, setIsShowingTime] = useState<boolean>(true);
   const [hourLength, setHourLength] = useState<number>(0);
   const hoursText: string[] = [
     '12AM',
@@ -107,14 +102,7 @@ export default function DayView({
   const [dayEvents, setDayEvents] = useState<dayEvent[]>([]);
   const [highestHorizontalOffset, setHighestHorizontalOffset] = useState<number>(1);
   const [textWidth, setTextWidth] = useState<number>(0);
-
-  function setCurrentTimeFunction(hour: number, minuite: number) {
-    if (hour === 12) {
-      setCurrentTime(`12:${minuite.toString().padStart(2, "0")}`);
-    } else {
-      setCurrentTime(`${(hour % 12).toString()}:${minuite.toString().padStart(2, "0")}`);
-    }
-  }
+  const hiddenTime = useTimeHidden()
 
   const getDayEvents = useCallback(() => {
     let allEvents = (schoolEvents !== undefined) ? [...currentEvents, ...schoolEvents]:[...currentEvents]
@@ -127,7 +115,6 @@ export default function DayView({
     dayEvents = dayEvents.sort((a, b) => {
       return a.startTime.localeCompare(b.startTime);
     });
-    console.log("\nStart\n\n\nDay Events:", dayEvents)
     const result: dayEvent[] = [];
     let busy: {
       start: string,
@@ -135,7 +122,6 @@ export default function DayView({
     }[][] = []
     let highestHorizontalOffsetTemp = 0;
     for (let index = 0; index < dayEvents.length; index += 1) {
-      console.log(`\n Busy: ${JSON.stringify(busy)} \nEvent: ${dayEvents[index].name}`)
       if (busy.length == 0) {
         busy = [[]]
         busy[0].push({
@@ -178,7 +164,6 @@ export default function DayView({
         });
       }
     }
-    console.log(`result: `, result, `\nHighest: ${highestHorizontalOffsetTemp}`)
     setHighestHorizontalOffset(highestHorizontalOffsetTemp + 1)
     setDayEvents(result);
   }, [selectedDate, currentEvents, schoolEvents])
@@ -186,11 +171,7 @@ export default function DayView({
   const loadCalendarContent = useCallback(() => {
     const currentDate = new Date();
     const resultHeightTopOffset = findTimeOffset(currentDate, height);
-    setHeightOffsetTop(resultHeightTopOffset);
-    const minuiteInt: number = currentDate.getMinutes();
-    setCurrentMinuteInt(minuiteInt);
-    const hourInt = currentDate.getHours();
-    setCurrentTimeFunction(hourInt, minuiteInt);
+    console.log(resultHeightTopOffset)
     mainScrollRef.current?.scrollTo({
       x: 0,
       y: resultHeightTopOffset,
@@ -237,14 +218,14 @@ export default function DayView({
       >
         <View>
           <>
-            {isShowingTime ? (
+            {(isDateToday(new Date(selectedDate))) ? (
               <>
                 {hoursText.map(value => (
                   <View
                     key={`${value}`}
                     style={{ flexDirection: 'row', height: hourLength }}
                   >
-                    {calculateIfShowing(value, new Date(selectedDate)) ? (
+                    {value !== hiddenTime ? (
                       <Text
                         selectable={false}
                         style={{

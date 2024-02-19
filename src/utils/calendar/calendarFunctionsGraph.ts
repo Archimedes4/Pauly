@@ -926,7 +926,9 @@ export function getMonthData(selectedDate: Date) {
       });
     }
   }
-  store.dispatch(monthDataSlice.actions.setMonthData(monthDataResult));
+  const chunckedMonthData = [];
+  while(monthDataResult.length) chunckedMonthData.push(monthDataResult.splice(0,7));
+  store.dispatch(monthDataSlice.actions.setMonthData(chunckedMonthData));
 }
 
 async function getSchoolDayData(data: schoolDayDataCompressedType): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: schoolDayDataType}> {

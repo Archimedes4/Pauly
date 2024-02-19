@@ -37,7 +37,8 @@ export function findFirstDayinMonth(currentTime: Date): number {
   // Sunday is 0, Saturday is 6
 }
 
-export function isDateToday(dateToCheck: Date) {
+export function isDateToday(dateToCheckIn: Date | string): boolean {
+  const dateToCheck = (typeof dateToCheckIn === 'string') ? new Date(dateToCheckIn):dateToCheckIn
   // Get today's date
   const today = new Date();
 
@@ -55,36 +56,6 @@ export function isDateToday(dateToCheck: Date) {
 
 export function convertYearToSchoolYear(year: number) {
   return `${year - 1}-${year}`;
-}
-
-export function calculateIfShowing(value: string, Time: Date): boolean {
-  // TO DO shorten
-  if (isDateToday(Time)) {
-    const hourInt = Time.getHours();
-    const minuiteInt = Time.getMinutes();
-    if (minuiteInt + 15 >= 60) {
-      let resepctiveTime: string = `${hourInt > 12}`
-        ? (hourInt - 12).toString()
-        : hourInt.toString();
-      resepctiveTime += hourInt > 12 ? 'PM' : 'AM';
-      if (resepctiveTime === value) {
-        return false;
-      }
-      return true;
-    }
-    if (minuiteInt - 15 <= 0) {
-      let resepctiveTime: string = `${hourInt > 12}`
-        ? (hourInt - 12).toString()
-        : hourInt.toString();
-      resepctiveTime += hourInt > 12 ? 'PM' : 'AM';
-      if (resepctiveTime === value) {
-        return false;
-      }
-      return true;
-    }
-    return true;
-  }
-  return true;
 }
 
 export function findTimeOffset(time: Date, height: number): number {
@@ -167,6 +138,24 @@ export function isEventDuringInterval(
     0,
   ).getTime();
 
+  // Start time starts before and end time ends after or on day
+  if (startTimeDate < checkStart && endTimeDate >= checkEnd) {
+    return true;
+    // Start time is on day
+  }
+  if (startTimeDate >= checkStart && startTimeDate < checkEnd) {
+    return true;
+  }
+  return false;
+}
+
+export function isEventDuringIntervalRaw(
+  event: eventType,
+  checkStart: number,
+  checkEnd: number,
+) {
+  const startTimeDate = new Date(event.startTime).getTime(); // String to date
+  const endTimeDate = new Date(event.endTime).getTime(); // String to date
   // Start time starts before and end time ends after or on day
   if (startTimeDate < checkStart && endTimeDate >= checkEnd) {
     return true;

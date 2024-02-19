@@ -108,7 +108,7 @@ export default function Week({
             <ChevronLeft width={16} height={16}/>
           </Pressable>
           {daysOfWeek.map(dow => (
-            <View key={dow.toISOString()} onLayout={(e) => {setTopPadding(e.nativeEvent.layout.height)}} style={{ width: ((width - 36)/7), backgroundColor: isDateToday(dow) ? Colors.darkGray + "60":Colors.white + "50", padding: 'auto' }}>
+            <View key={dow.toISOString()} onLayout={(e) => {setTopPadding(e.nativeEvent.layout.height)}} style={{ width: ((width - 36)/7), backgroundColor: isDateToday(dow) ? Colors.darkGray + "75":Colors.white + "70", padding: 'auto' }}>
               <Text style={{opacity: 1, marginLeft: 'auto', marginRight: 'auto'}}>
                 {dow.toLocaleDateString('en-US', { weekday: 'long' })}
               </Text>

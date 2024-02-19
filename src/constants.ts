@@ -584,6 +584,11 @@ declare global {
     title: string;
     videoId: string;
   };
+  type weekDayEvent = {
+    events: eventType[],
+    start: string,
+    end: string
+  }
 }
 
 export class Colors {
