@@ -164,6 +164,7 @@ export default function Calendar() {
 
   async function loadClassEvents() {
     const result = await getClassEventsFromDay(new Date(selectedDate))
+    console.log(result)
     if (result.result === loadingStateEnum.success) {
       store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data))
     }

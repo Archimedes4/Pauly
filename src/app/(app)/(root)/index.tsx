@@ -34,7 +34,7 @@ import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { TrashIcon, WarningIcon } from '@components/Icons';
 import { deleteTask, updateTaskStatus, updateTaskText } from '@utils/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { abort } from 'process';
+import calculateFontSize from '@src/utils/ultility/calculateFontSize';
 
 // Get Messages
 // Last Chat Message Channels Included
@@ -125,7 +125,7 @@ function WidgetView({ width, height }: { width: number; height: number }) {
                 style={{
                   color: Colors.white,
                   fontWeight: 'bold',
-                  fontSize: height * 0.4,
+                  fontSize: calculateFontSize(width * 0.2, height * 0.5, schoolDayData?.schoolDay.shorthand),
                 }}
               >
                 {schoolDayData?.schoolDay.shorthand}
@@ -140,7 +140,7 @@ function WidgetView({ width, height }: { width: number; height: number }) {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ color: Colors.white, fontSize: height / 3 }}>
+              <Text style={{ color: Colors.white, fontSize: calculateFontSize(width * 0.7, height * 0.5, startTime), fontFamily: 'Roboto-Bold'}}>
                 {startTime}
               </Text>
             </View>

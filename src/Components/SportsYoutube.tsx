@@ -4,7 +4,7 @@
   
 */
 import { View, Platform } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import WebView from 'react-native-webview';
 import YoutubeWeb from './youtubeIframeFunction';
 
@@ -19,13 +19,11 @@ export default function SportsYoutube({
 }) {
   if (Platform.OS === 'web') {
     return (
-      <View style={{ width, height: height || (width / 16) * 9 }}>
-        <YoutubeWeb
-          id={videoId}
-          width={width}
-          height={height || (width / 16) * 9}
-        />
-      </View>
+      <YoutubeWeb
+        id={videoId}
+        width={width}
+        height={height || (width / 16) * 9}
+      />
     );
   }
   return (

@@ -368,15 +368,38 @@ export default function Sports() {
 
 function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
+  const [imageAspect, setImageAspect] = useState<number>(0);
+  function getPostHeight(currentWidth: number, currentHeight: number, currentImageAspect: number) {
+    if (post.item.data.postType === postType.microsoftFile && post.item.data.fileType === dataContentTypeOptions.image) {
+      if (imageAspect == -1) {
+        return (currentWidth * 9) / 16;
+      }
+      console.log("ASPECT", (currentWidth * 0.9)/currentImageAspect, currentImageAspect, currentWidth * 0.9)
+      return ((currentWidth * 0.9)/currentImageAspect)
+    }
+    if (post.item.data.postType === postType.youtubeVideo) {
+      return ((currentWidth * 0.9) / 16) * 9
+    }
+    return currentHeight * 0.4
+  }
+  useEffect(() => {
+    if (post.item.data.postType === postType.microsoftFile && post.item.data.fileType === dataContentTypeOptions.image) {
+      Image.getSize(post.item.data.fileId, (srcWidth, srcHeight) => {
+        const aspectRatio = srcWidth / srcHeight;
+        setImageAspect(aspectRatio)
+      }, error => {
+        //Fallback height
+        setImageAspect(-1)
+      });
+    }
+    
+  }, [])
   return (
     <View
       key={`Sport_${post.item.data.fileId}`}
       style={{
         width: width * 0.9,
-        height:
-          post.item.data.postType === postType.youtubeVideo
-            ? ((width * 0.9) / 16) * 9
-            : height * 0.4,
+        height: getPostHeight(width, height, imageAspect),
         backgroundColor: Colors.white,
         elevation: 2,
         shadowColor: Colors.black,
@@ -394,17 +417,14 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
         style={{
           overflow: 'hidden',
           width: width * 0.9,
-          height:
-            post.item.data.postType === postType.youtubeVideo
-              ? ((width * 0.9) / 16) * 9
-              : height * 0.4,
+          height: getPostHeight(width, height, imageAspect),
           borderRadius: 15,
         }}
       >
         {post.item.data.postType === postType.microsoftFile ? (
           <>
             {post.item.data.fileType === dataContentTypeOptions.image ? (
-              <View>
+              <>
                 <Text
                   style={{
                     position: 'absolute',
@@ -418,14 +438,13 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
                 <Image
                   style={{
                     width: width * 0.9,
-                    height: height * 0.4,
-                    marginLeft: width * 0.05,
-                    marginRight: width * 0.05,
+                    height: getPostHeight(width, height, imageAspect),
                     borderRadius: 15,
+                    position: 'absolute'
                   }}
                   source={{ uri: post.item.data.fileId }}
                 />
-              </View>
+              </>
             ) : null}
             {post.item.data.fileType === dataContentTypeOptions.video ? (
               <View>

@@ -3,10 +3,7 @@ import { homepageDataSlice } from '@redux/reducers/homepageDataReducer';
 import { Colors, loadingStateEnum, semesters } from '@constants';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import {
-  getEvent,
   getSchoolDay,
-  getTimetable,
-  getSchedule,
 } from './calendar/calendarFunctionsGraph';
 import { classesSlice } from '@src/redux/reducers/classesReducer';
 
@@ -198,7 +195,8 @@ export async function getClassEvents(
         // Find Time
         const period: number =
           classData[index].periods[schoolDay.order];
-        const periodData = schedule.periods[period - 1];
+        const periodData = schedule.periods[period];
+        console.log(periodData, period)
         const startDate: Date = new Date(date.toISOString());
         startDate.setHours(periodData.startHour);
         startDate.setMinutes(periodData.startMinute);

@@ -20,6 +20,7 @@ import SelectTimetable from './SelectTimetable';
 import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons';
 import PickerWrapper from '../Pickers/Picker';
 import SecondStyledButton from '../StyledButton';
+import calculateFontSize from '@src/utils/ultility/calculateFontSize';
 
 function setSelectedEventType(e: number) {
   const selectedEvent = store.getState().addEvent.selectedEvent
@@ -488,18 +489,6 @@ export default function AddEvent({
     }
   }
 
-  function calculateFontSize(srcWidth: number, srcHeight: number) {
-    if (srcWidth/selectedEvent.name.length < srcHeight) {
-      console.log("width")
-      //width limiting factor
-      const widthPerChar = srcWidth/selectedEvent.name.length
-      return widthPerChar * 1.7
-    } else {
-      // height limiting factor
-      return srcHeight
-    }
-  }
-
   if (!isGovernmentMode && ["schoolDay", "schoolYear", "regular", "studentCouncil"].includes(selectedEvent.paulyEventType)) {
     return (
       <View
@@ -524,7 +513,7 @@ export default function AddEvent({
         >
           <CloseIcon width={20} height={20} />
         </Pressable>
-        <Text style={{marginLeft: 15, marginRight: 'auto', height: calculateFontSize(width, height * 0.1) + 10, width, fontSize: calculateFontSize(width, height * 0.1), fontFamily: 'Comfortaa-Regular'}} adjustsFontSizeToFit numberOfLines={1}>{selectedEvent.name}</Text>
+        <Text style={{marginLeft: 15, marginRight: 'auto', height: calculateFontSize(width, height * 0.1, selectedEvent.name) + 10, width, fontSize: calculateFontSize(width, height * 0.1, selectedEvent.name), fontFamily: 'Comfortaa-Regular'}} adjustsFontSizeToFit numberOfLines={1}>{selectedEvent.name}</Text>
         <Text style={{margin: 15, fontSize: height * 0.025, fontFamily: 'Roboto-Bold'}}>
           {new Date(selectedEvent.startTime).toLocaleString('en-us', { month: 'long' })}{' '}
           {new Date(selectedEvent.startTime).getDate()}{' '}

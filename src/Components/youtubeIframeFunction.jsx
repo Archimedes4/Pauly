@@ -28,7 +28,7 @@ class YouTubeVideo extends React.PureComponent {
   };
 
   loadVideo = () => {
-    const { id } = this.props;
+    const { id, width, height } = this.props;
 
     // the Player object is created uniquely based on the id in props
     this.player = new window.YT.Player(`youtube-player-${id}`, {
