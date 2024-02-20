@@ -5,7 +5,7 @@
   commissions.tsx
   Holds the main commission view. To learn about what commissions are see README
 */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -24,6 +24,7 @@ import getCommissions from '@utils/commissions/getCommissions';
 import ProgressView from '@components/ProgressView';
 import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
+import { CurrentIcon, FutureIcon, MoreIcon, PastIcon, PiggyBankIcon } from '@src/components/Icons';
 
 async function loadCommissionData(
   startDate?: { date: Date; filter: 'ge' | 'le' },
@@ -49,11 +50,13 @@ function PickerPiece({
   isHoverPicker,
   setIsHoverPicker,
   onPress,
+  children
 }: {
   text: string;
   onPress: () => void;
   isHoverPicker: boolean;
   setIsHoverPicker: (item: boolean) => void;
+  children: ReactNode
 }) {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimensions,
@@ -100,8 +103,12 @@ function PickerPiece({
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
+          flexDirection: 'row'
         }}
       >
+        <>
+          {children}
+        </>
         <Text style={{ color: Colors.white }}>{text}</Text>
       </View>
     </Pressable>
@@ -348,7 +355,9 @@ export default function Commissions() {
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
-            />
+            >
+              <MoreIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+            </PickerPiece>
             <PickerPiece
               text="Current"
               onPress={() => {
@@ -359,7 +368,9 @@ export default function Commissions() {
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
-            />
+            >
+              <CurrentIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+            </PickerPiece>
             <PickerPiece
               text="Past"
               onPress={() => {
@@ -370,7 +381,9 @@ export default function Commissions() {
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
-            />
+            >
+              <PastIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+            </PickerPiece>
             <PickerPiece
               text="Claimed"
               onPress={() => {
@@ -378,7 +391,9 @@ export default function Commissions() {
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
-            />
+            >
+              <PiggyBankIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+            </PickerPiece>
             <PickerPiece
               text="Future"
               onPress={() => {
@@ -389,7 +404,9 @@ export default function Commissions() {
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
-            />
+            >
+              <FutureIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+            </PickerPiece>
           </ScrollView>
         </Pressable>
       </View>

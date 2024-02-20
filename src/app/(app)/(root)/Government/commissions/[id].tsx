@@ -319,6 +319,7 @@ export function GovernmentCommissionUpdate({
       setGetCommissionResult(loadingStateEnum.loading);
       const result = await getCommission(id);
       if (result.result === loadingStateEnum.success) {
+        console.log(result.data)
         setCommissionData(result.data);
       }
       setGetCommissionResult(result.result);
@@ -334,19 +335,11 @@ export function GovernmentCommissionUpdate({
     }
     setDeleteCommissionResult(loadingStateEnum.loading);
     const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${commissionListId}/items/${commissionData?.commissionId}`,
+      `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${commissionListId}/items/${commissionData?.itemId}`,
       'DELETE',
     );
     if (result.ok) {
-      const deleteList = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${id}`,
-        'DELETE',
-      );
-      if (deleteList.ok) {
-        setDeleteCommissionResult(loadingStateEnum.success);
-      } else {
-        setDeleteCommissionResult(loadingStateEnum.failed);
-      }
+      setDeleteCommissionResult(loadingStateEnum.success);
     } else {
       setDeleteCommissionResult(loadingStateEnum.failed);
     }
@@ -363,19 +356,17 @@ export function GovernmentCommissionUpdate({
     ) {
       setSubmitCommissionState(loadingStateEnum.loading);
       if (
-        commissionData !== undefined &&
-        commissionData.title &&
-        commissionData.timed &&
-        commissionData.points &&
-        commissionData.hidden &&
-        commissionData.maxNumberOfClaims &&
-        commissionData.allowMultipleSubmissions &&
-        commissionData.postData &&
-        commissionData.itemId
+        commissionData !== undefined
       ) {
+        console.log(commissionData)
         const result = await updateCommission(isCreate, commissionData);
         setSubmitCommissionState(result);
+      } else {
+        console.log(commissionData)
+        setSubmitCommissionState(loadingStateEnum.failed)
       }
+    } else {
+      setSubmitCommissionState(loadingStateEnum.failed)
     }
   }
 
@@ -502,7 +493,8 @@ export function GovernmentCommissionUpdate({
         <TextInput
           value={commissionData.title}
           onChangeText={text =>
-            setCommissionData({ ...commissionData, title: text })
+            {console.log(text)
+              setCommissionData({ ...commissionData, title: text })}
           }
           placeholder="Commission Name"
           style={styles.textInputStyle}
