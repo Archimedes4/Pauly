@@ -7,7 +7,7 @@ import {
   isTimeOnDay,
 } from '@utils/calendar/calendarFunctions';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useColorScheme, Text, Pressable, Modal, FlatList } from 'react-native';
@@ -15,9 +15,10 @@ import { useSelector } from 'react-redux';
 import createUUID from '@utils/ultility/createUUID';
 import dayCurrentTimeLine from '@hooks/dayCurrentTimeLine';
 import useTimeHidden from '@hooks/useTimeHidden';
-import { CloseIcon } from '../Icons';
+import { CloseIcon, UpIcon } from '../Icons';
 import { DefaultEventBlock } from './EventView';
 import DayEventBlock from './DayEventBlock';
+import { addEventSlice } from '@src/redux/reducers/addEventReducer';
 
 function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: number, height: number, topPadding: number}) {
   const [timeWidth, setTimeWidth] = useState<number>(0)
@@ -37,7 +38,7 @@ function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: num
     >
       <Text onLayout={(e) => {
         setTimeWidth(e.nativeEvent.layout.width)
-      }} selectable={false} style={{ color: 'red', zIndex: 2 }}>
+      }} selectable={false} style={{ color: 'red', zIndex: 2, backgroundColor: Colors.white, padding: 4, paddingLeft: 1, paddingRight: 1, borderRadius: 15 }}>
         {dayData.currentTime}
       </Text>
       <View
@@ -46,7 +47,7 @@ function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: num
           width: width - timeWidth - 2,
           height: 6,
           position: 'absolute',
-          right: 0,
+          left: timeWidth + 2,
           borderRadius: 15
         }}
       />
@@ -183,6 +184,8 @@ export default function WeekDayView({
   ];
   const mainScrollRef = useRef<ScrollView>(null);
   const hiddenTime = useTimeHidden()
+  const [hourTextWidth, setHourTextWidth] = useState<number>(0)
+  const [hourTextHeight, setHourTextHeight] = useState<number>(0)
 
   useEffect(() => {
     setHourLength(height * 0.1);
@@ -269,6 +272,16 @@ export default function WeekDayView({
               selectable={false}
               style={{
                 color: colorScheme == 'dark' ? Colors.white : 'black',
+                position: 'absolute',
+                top: -hourTextHeight
+              }}
+              onLayout={(e) => {
+                if (value == "12PM") {
+                  setHourTextWidth(e.nativeEvent.layout.width)
+                  if (e.nativeEvent.layout.height - 6 >= 0) {
+                    setHourTextHeight((e.nativeEvent.layout.height - 6)/2)
+                  }
+                }
               }}
             >
               {value}
@@ -277,7 +290,7 @@ export default function WeekDayView({
           <View
             style={{
               backgroundColor: 'black',
-              width: start ? width * 0.8 : width,
+              width: start ? width - hourTextWidth - 3: width,
               height: 6,
               position: 'absolute',
               right: 0,

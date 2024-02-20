@@ -14,6 +14,7 @@ import WeekDayView from './WeekDayView';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import DayView from './DayView';
 import { isDateToday } from '@src/utils/calendar/calendarFunctions';
+import AllDayComponent from './AllDayComponent';
 
 function WeekDayButton({ width, day }: { width: number; day: Date }) {
   const selectedDateRedux: string = useSelector(
@@ -115,6 +116,11 @@ export default function Week({
               <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>
                 {dow.toLocaleDateString('en-US', { day: 'numeric' })}
               </Text>
+              <AllDayComponent
+                day={dow.toISOString()}
+                width={width/7}
+                topPadding={topPadding}
+              />
             </View>
           ))}
           <Pressable

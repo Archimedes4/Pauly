@@ -7,7 +7,7 @@
 */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, ScrollView, useColorScheme, Text, FlatList } from 'react-native';
+import { View, ScrollView, useColorScheme, Text, FlatList, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
   computeEventHeight,
@@ -15,13 +15,15 @@ import {
   isDateToday,
   isEventDuringInterval,
 } from '@utils/calendar/calendarFunctions';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import createUUID from '@utils/ultility/createUUID';
 import { Colors, loadingStateEnum } from '@constants';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import dayCurrentTimeLine from '@hooks/dayCurrentTimeLine';
 import useTimeHidden from '@hooks/useTimeHidden';
 import DayEventBlock from './DayEventBlock';
+import { addEventSlice } from '@src/redux/reducers/addEventReducer';
+import { UpIcon } from '../Icons';
 
 function CurrentTimeLine({day, width, height, highestHorizontalOffset}:{day: Date, width: number, height: number, highestHorizontalOffset: number}) {
   const [timeWidth, setTimeWidth] = useState<number>(0)
@@ -102,8 +104,11 @@ export default function DayView({
   const [schoolEvents, setSchoolEvents] = useState<eventType[]>();
   const [dayEvents, setDayEvents] = useState<dayEvent[]>([]);
   const [highestHorizontalOffset, setHighestHorizontalOffset] = useState<number>(1);
-  const [textWidth, setTextWidth] = useState<number>(0);
+  const [allDayEventsExpanded, setAllDayEventsExpanded] = useState<boolean>(false);
+  const [allDayEvents, setAllDayEvents] = useState<eventType[]>([]);
   const hiddenTime = useTimeHidden()
+  const [hourTextWidth, setHourTextWidth] = useState<number>(0)
+  const [hourTextHeight, setHourTextHeight] = useState<number>(0)
 
   const getDayEvents = useCallback(() => {
     let allEvents = (schoolEvents !== undefined) ? [...currentEvents, ...schoolEvents]:[...currentEvents]
@@ -199,81 +204,119 @@ export default function DayView({
 
   useEffect(() => {
     getClassesEvents();
+    setAllDayEvents(currentEvents.filter((e) => {return e.allDay === true && new Date(e.startTime).getDate() === new Date(selectedDate).getDate()}))
   }, [selectedDate, currentEvents]);
 
   return (
-    <ScrollView
-      ref={mainScrollRef}
-      contentContainerStyle={{
-        height:hourLength * 24,
-      }}
-    >
+    <>
+      {allDayEvents.length >= 1 ?
+        <Pressable onPress={() => {setAllDayEventsExpanded(!allDayEventsExpanded)}} style={{position: 'absolute', backgroundColor: Colors.white + "75", width, zIndex: 3}}>
+          {allDayEvents.length >= 2 && !allDayEventsExpanded ?
+            <View style={{backgroundColor: Colors.lightGray, borderRadius: 15, padding: 5}}>
+              <Text>{allDayEvents.length} all day events</Text>
+            </View>:
+            <View>
+              {allDayEvents.map((event) => (
+                <Pressable
+                  key={event.id}
+                  onPress={() => {
+                    store.dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+                    store.dispatch(addEventSlice.actions.setSelectedEvent(event));
+                  }}
+                  style={{backgroundColor: Colors.lightGray, borderRadius: 15, padding: 5, margin: 5}}
+                >
+                  <Text style={{fontFamily: 'Roboto'}}>{event.name}</Text>
+                </Pressable>
+              ))}
+              <Pressable onPress={() => {setAllDayEventsExpanded(!allDayEventsExpanded)}} style={{flexDirection: 'row', backgroundColor: Colors.white, borderWidth: 1, borderColor: Colors.black, borderRadius: 15, padding: 5, margin: 5}}>
+                <UpIcon width={14} height={14} />
+                <Text style={{marginLeft: 3}}>Close</Text>
+              </Pressable>
+            </View>
+          }
+          
+        </Pressable>:null
+      }
       <ScrollView
+        ref={mainScrollRef}
         contentContainerStyle={{
-          width: width * highestHorizontalOffset,
+          height:hourLength * 24,
         }}
-        style={{
-          width: width
-        }}
-        horizontal
       >
-        <View>
-          <>
-            {(isDateToday(new Date(selectedDate))) ? (
-              <>
-                {hoursText.map(value => (
-                  <View
-                    key={`${value}`}
-                    style={{ flexDirection: 'row', height: hourLength }}
-                  >
-                    {value !== hiddenTime ? (
-                      <Text
-                        selectable={false}
-                        style={{
-                          color:
-                            colorScheme == 'dark' ? Colors.white : Colors.black,
-                        }}
-                        onLayout={(e) => {
-                          if (e.nativeEvent.layout.width >= textWidth) {
-                            setTextWidth(e.nativeEvent.layout.width)
-                          }
-                        }}
-                      >
-                        {value}
-                      </Text>
-                    ) : null}
+        <ScrollView
+          contentContainerStyle={{
+            width: width * highestHorizontalOffset,
+          }}
+          style={{
+            width: width
+          }}
+          horizontal
+        >
+          <View>
+            <>
+              {(isDateToday(new Date(selectedDate))) ? (
+                <>
+                  {hoursText.map(value => (
                     <View
-                      style={{
-                        backgroundColor: Colors.black,
-                        width: width * 0.9 + (highestHorizontalOffset * width),
-                        height: 6,
-                        position: 'absolute',
-                        left: textWidth,
-                        borderRadius: 25,
-                      }}
-                    />
-                  </View>
-                ))}
-              </>
-            ) : null}
-          </>
-          {dayEvents.map(event => {
-            if (!event.event.allDay) {
-              return (
-                <DayEventBlock
-                  key={event.event.id}
-                  event={event.event}
-                  width={width}
-                  height={height}
-                  horizontalShift={event.horizontalOffset}
-                />
-              );
-            }
-            return null;
-          })}
-          <CurrentTimeLine day={new Date(selectedDate)} width={width} height={height} highestHorizontalOffset={highestHorizontalOffset} />
-        </View>
+                      key={`${value}`}
+                      style={{ flexDirection: 'row', height: hourLength }}
+                    >
+                      {value !== hiddenTime ? (
+                        <Text
+                          selectable={false}
+                          style={{
+                            color:
+                              colorScheme == 'dark' ? Colors.white : Colors.black,
+                              position: 'absolute',
+                              left: 0,
+                              top: -hourTextHeight
+                          }}
+                          onLayout={(e) => {
+                            if (value === '12PM') {
+                              if ((e.nativeEvent.layout.height - 6) >= 0) {
+                                setHourTextHeight((e.nativeEvent.layout.height -6)/2)
+                              }
+                              setHourTextWidth(e.nativeEvent.layout.width + 4)
+                            }
+                          }}
+                        >
+                          {value}
+                        </Text>
+                      ) : null}
+                      <View
+                        style={{
+                          backgroundColor: Colors.black,
+                          width: (highestHorizontalOffset * width) - hourTextWidth,
+                          height: 6,
+                          position: 'absolute',
+                          left: hourTextWidth,
+                          borderRadius: 25,
+                        }}
+                      />
+                    </View>
+                  ))}
+                </>
+              ) : null}
+            </>
+            {dayEvents.map(event => {
+              if (!event.event.allDay) {
+                return (
+                  <DayEventBlock
+                    key={event.event.id}
+                    event={event.event}
+                    width={width}
+                    height={height}
+                    horizontalShift={event.horizontalOffset}
+                  />
+                );
+              }
+              return null;
+            })}
+            <CurrentTimeLine day={new Date(selectedDate)} width={width} height={height} highestHorizontalOffset={highestHorizontalOffset} />
+          </View>
+        </ScrollView>
       </ScrollView>
-    </ScrollView>
+    </>
+    
   );
 }

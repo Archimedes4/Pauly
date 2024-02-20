@@ -10,7 +10,7 @@ Saint Paul's High School Student Council 2023-2024
 # Technologies
 Power by expo using expo router at its core. Application also uses redux for storage.
 # Backend
-Pauly uses Microsoft graph and SharePoint lists as a database
+Pauly uses Microsoft graph and SharePoint lists as a database.
 ## Structure 
 ### Calendar
 The calendar is organized into documents of years containing collections of months. These months are formatted as a number based on January being 1. Inside each collection documents of days are inside. Each day contains the day, month, and year. As well as the school day and schedule id. If the schedule does not have a value it is schedule one (default schedule).
@@ -233,7 +233,7 @@ All permissions are Delegated permissions
 # Oddities
 Some things were needed in order to get things working without errors. Here is a list of them please check that these patches are actually needed.
 
-1. React Native Reanimated (fixed in react native reanimated 3.5)
+1. React Native Reanimated
 Expo is compatable with React Native Reanimated 3.3. 
 
 Error: requestAnimationFrame is not defined

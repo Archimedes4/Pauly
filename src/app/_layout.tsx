@@ -35,16 +35,13 @@ export default function App(): React.JSX.Element | null {
   }, []);
 
   useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
+    async function hideSplash() {
+      if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+      }
     }
+    hideSplash()
   }, [fontsLoaded])
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
 
   if (!mounted && !fontsLoaded) {
     return null;
@@ -55,7 +52,7 @@ export default function App(): React.JSX.Element | null {
       <Head>
         <title>Pauly</title>
       </Head>
-      <View onLayout={onLayoutRootView}>
+      <View>
         <RootLayout />
       </View>
     </>
