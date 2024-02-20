@@ -20,6 +20,7 @@ import {
   getDataWithShareID,
 } from '@utils/ultility/handleShareID';
 import ProgressView from '@components/ProgressView';
+import BackButton from '@src/components/BackButton';
 
 export default function GovernmentHomePage() {
   const { paulyDataListId, siteId } = useSelector(
@@ -98,9 +99,7 @@ export default function GovernmentHomePage() {
           justifyContent: 'center',
         }}
       >
-        <Link href="/government">
-          <Text>Back</Text>
-        </Link>
+        <BackButton to='/government'/>
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>

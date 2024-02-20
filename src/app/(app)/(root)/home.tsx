@@ -77,10 +77,10 @@ export default function HomePage() {
     <>
       <View style={{ backgroundColor: Colors.maroon, overflow: 'hidden' }}>
         <Link
-          href="/notifications"
+          href="/"
           style={{ padding: 0, height: height * 0.08 }}
         >
-          <Pressable style={{ width: width * 1.0, height: height * 0.08 }}>
+          <View style={{ width: width * 1.0, height: height * 0.08 }}>
             {paulyDataState === loadingStateEnum.loading ? (
               <View
                 style={{
@@ -113,7 +113,7 @@ export default function HomePage() {
                 )}
               </>
             )}
-          </Pressable>
+          </View>
         </Link>
         <Link href="/calendar" style={{ padding: 0, height: height * 0.42 }}>
           <View style={{ width: width * 0.999, height: height * 0.42 }}>

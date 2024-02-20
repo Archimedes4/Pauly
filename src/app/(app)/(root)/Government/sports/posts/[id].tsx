@@ -5,7 +5,6 @@
 */
 import { View, Text, Image, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-native';
 import { useSelector } from 'react-redux';
 import { ResizeMode, Video } from 'expo-av';
 import callMsGraph from '@utils/ultility/microsoftAssets';
@@ -19,7 +18,8 @@ import {
 } from '@constants';
 import SportsYoutube from '@components/SportsYoutube';
 import { getTextState } from '@utils/ultility/createUUID';
-import { Link } from 'expo-router';
+import { Link, useGlobalSearchParams } from 'expo-router';
+import ProgressView from '@components/ProgressView';
 
 function getDenyText(reviewed: boolean, accepted: boolean) {
   if (!reviewed && !accepted) {
@@ -32,7 +32,7 @@ function getDenyText(reviewed: boolean, accepted: boolean) {
 export default function GovernmentReviewFileSubmission() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
 
-  const { submissionID } = useParams();
+  const { id } = useGlobalSearchParams()
   const [dataURL, setDataURL] = useState<string>('');
   const [dataContentType, setDataContentType] =
     useState<dataContentTypeOptions>(dataContentTypeOptions.unknown);
@@ -71,13 +71,13 @@ export default function GovernmentReviewFileSubmission() {
   }
 
   async function getSubmissionInformation() {
-    if (submissionID !== undefined) {
+    if (id !== undefined) {
       const result = await callMsGraph(
         `https://graph.microsoft.com/v1.0/sites/${
           store.getState().paulyList.siteId
         }/lists/${
           store.getState().paulyList.sportsSubmissionsListId
-        }/items?expand=fields&filter=fields/submissionId%20eq%20'${submissionID}'`,
+        }/items?expand=fields&filter=fields/submissionId%20eq%20'${id}'`,
       );
       if (result.ok) {
         const data = await result.json();
@@ -212,118 +212,118 @@ export default function GovernmentReviewFileSubmission() {
   }
 
   useEffect(() => {
-    if (submissionID !== undefined) {
+    if (id !== undefined) {
       getSubmissionInformation();
     }
-  }, [submissionID]);
+  }, [id]);
 
   useEffect(() => {
     loadFile();
   }, [currentSubmissionInfomration]);
 
-  return (
-    <>
-      {loadingState === loadingStateEnum.loading ? (
-        <View
-          style={{
-            width,
-            height,
-            backgroundColor: Colors.white,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
+  if (loadingState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14}/>
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (loadingState === loadingStateEnum.success && currentSubmissionInfomration !== undefined) {
+    return (
+      <View
+        style={{
+          width,
+          height,
+          backgroundColor: Colors.white,
+        }}
+      >
+        <Link href="/government/sports/posts">Back</Link>
+        <Text>GovernmentReviewFileSubmission</Text>
+        {dataURL !== '' && (
+          <View>
+            {dataContentType === dataContentTypeOptions.image ? (
+              <Image
+                height={100}
+                style={{ height: 100 }}
+                source={{ uri: dataURL }}
+              />
+            ) : null}
+            {dataContentType === dataContentTypeOptions.video ? (
+              <Video
+                useNativeControls
+                source={{ uri: dataURL }}
+                resizeMode={ResizeMode.COVER}
+                style={{
+                  width: width * 0.9,
+                  height: height * 0.4,
+                  alignSelf: 'stretch',
+                  marginLeft: width * 0.05,
+                  marginRight: width * 0.05,
+                }}
+                videoStyle={{ width: width * 0.9, height: height * 0.4 }}
+              />
+            ) : null}
+          </View>
+        )}
+        {currentSubmissionInfomration.fileType ===
+        postType.youtubeVideo ? (
+          <View style={{ height: ((width * 0.9) / 16) * 9 }}>
+            <SportsYoutube
+              videoId={currentSubmissionInfomration.fileId}
+              width={width * 0.9}
+              height={undefined}
+            />
+          </View>
+        ) : null}
+        <Pressable
+          onPress={() => {
+            if (currentSubmissionInfomration) {
+              deleteSubmission(currentSubmissionInfomration.itemID);
+            }
           }}
         >
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <>
-          {loadingState === loadingStateEnum.success &&
-          currentSubmissionInfomration !== undefined ? (
-            <View
-              style={{
-                width,
-                height,
-                backgroundColor: Colors.white,
-              }}
-            >
-              <Link href="/government/sports">Back</Link>
-              <Text>GovernmentReviewFileSubmission</Text>
-              {dataURL !== '' && (
-                <View>
-                  {dataContentType === dataContentTypeOptions.image ? (
-                    <Image
-                      height={100}
-                      style={{ height: 100 }}
-                      source={{ uri: dataURL }}
-                    />
-                  ) : null}
-                  {dataContentType === dataContentTypeOptions.video ? (
-                    <Video
-                      useNativeControls
-                      source={{ uri: dataURL }}
-                      resizeMode={ResizeMode.COVER}
-                      style={{
-                        width: width * 0.9,
-                        height: height * 0.4,
-                        alignSelf: 'stretch',
-                        marginLeft: width * 0.05,
-                        marginRight: width * 0.05,
-                      }}
-                      videoStyle={{ width: width * 0.9, height: height * 0.4 }}
-                    />
-                  ) : null}
-                </View>
-              )}
-              {currentSubmissionInfomration.fileType ===
-              postType.youtubeVideo ? (
-                <View style={{ height: ((width * 0.9) / 16) * 9 }}>
-                  <SportsYoutube
-                    videoId={currentSubmissionInfomration.fileId}
-                    width={width * 0.9}
-                    height={undefined}
-                  />
-                </View>
-              ) : null}
-              <Pressable
-                onPress={() => {
-                  if (currentSubmissionInfomration) {
-                    deleteSubmission(currentSubmissionInfomration.itemID);
-                  }
-                }}
-              >
-                <Text>Remove File Submission</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  approveSubmission();
-                }}
-              >
-                <Text>{getTextState(approveSubmissionState)}</Text>
-              </Pressable>
-              <Pressable onPress={() => denySubmission()}>
-                <Text>
-                  {getTextState(denySubmissionState, {
-                    success: getDenyText(
-                      currentSubmissionInfomration.reviewed,
-                      currentSubmissionInfomration.accepted,
-                    ),
-                    notStarted: getDenyText(
-                      currentSubmissionInfomration.reviewed,
-                      currentSubmissionInfomration.accepted,
-                    ),
-                  })}
-                </Text>
-              </Pressable>
-            </View>
-          ) : (
-            <View style={{ width, height }}>
-              <Link href="/government/sports">Back</Link>
-              <Text>Failed</Text>
-            </View>
-          )}
-        </>
-      )}
-    </>
+          <Text>Remove File Submission</Text>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            approveSubmission();
+          }}
+        >
+          <Text>{getTextState(approveSubmissionState)}</Text>
+        </Pressable>
+        <Pressable onPress={() => denySubmission()}>
+          <Text>
+            {getTextState(denySubmissionState, {
+              success: getDenyText(
+                currentSubmissionInfomration.reviewed,
+                currentSubmissionInfomration.accepted,
+              ),
+              notStarted: getDenyText(
+                currentSubmissionInfomration.reviewed,
+                currentSubmissionInfomration.accepted,
+              ),
+            })}
+          </Text>
+        </Pressable>
+      </View>
+    )
+  }
+
+  return (
+    <View style={{ width, height }}>
+      <Link href="/government/sports">Back</Link>
+      <Text>Failed</Text>
+    </View>
   );
 }

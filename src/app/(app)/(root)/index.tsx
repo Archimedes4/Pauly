@@ -20,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import store, { RootState } from '@redux/store';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
-import { Colors, loadingStateEnum, taskStatusEnum } from '@constants';
+import { Colors, loadingStateEnum } from '@constants';
 import getUsersTasks from '@utils/notifications/getUsersTasks';
 import ProgressView from '@components/ProgressView';
 import getInsightData from '@utils/notifications/getInsightData';
@@ -32,8 +32,9 @@ import BackButton from '@components/BackButton';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { TrashIcon, WarningIcon } from '@components/Icons';
-import { deleteTask, updateTaskText } from '@utils/notifications/updateTasks';
+import { deleteTask, updateTaskStatus, updateTaskText } from '@utils/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { abort } from 'process';
 
 // Get Messages
 // Last Chat Message Channels Included
@@ -184,16 +185,21 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
     (state: RootState) => state.homepageData,
   );
   const [mounted, setMounted] = useState(false);
+  const [change, setChange] = useState<boolean>(false);
+  const [statusChange, setStatusChange] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const checkUpdateText = useCallback(async () => {
+  const checkUpdateText = useCallback(async (abort: AbortController) => {
     if (mounted) {
       const taskNameSave = store.getState().homepageData.userTasks[index].name;
-      setTimeout(() => {
+      setTimeout(async () => {
         if (
-          store.getState().homepageData.userTasks[index].name === taskNameSave
+          store.getState().homepageData.userTasks[index].name === taskNameSave && !abort.signal.aborted && change
         ) {
-          updateTaskText(task, index);
+          await updateTaskText(task, index, abort);
+          if (!abort.signal.aborted) {
+            setChange(false)
+          }
         }
       }, 1500);
     } else {
@@ -201,7 +207,27 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
     }
   }, [mounted, task]);
 
-  if (isShowingCompleteTasks || task.status !== taskStatusEnum.completed) {
+  useEffect(() => {
+    let abort = new AbortController();
+    if (change) {
+      const loadTaskStatus = async () => {
+        await checkUpdateText(abort);
+      }
+      loadTaskStatus()
+    }
+    if (statusChange) {
+      const loadTaskStatus = async () => {
+        await updateTaskStatus(task, index, abort)
+        setStatusChange(false)
+      }
+      loadTaskStatus()
+    }
+    return () => {
+      abort.abort()
+    }
+  }, [task.name, task.status])
+
+  if (isShowingCompleteTasks || task.status !== "completed") {
     return (
       <Swipeable
         renderRightActions={() => {
@@ -221,21 +247,22 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
         >
           <Pressable
             onPress={() => {
-              if (task.status !== taskStatusEnum.completed) {
+              if (task.status !== "completed") {
                 dispatch(
                   homepageDataSlice.actions.updateUserTask({
-                    task: { ...task, status: taskStatusEnum.completed },
+                    task: { ...task, status: "completed" },
                     index,
                   }),
                 );
               } else {
                 dispatch(
                   homepageDataSlice.actions.updateUserTask({
-                    task: { ...task, status: taskStatusEnum.notStarted },
+                    task: { ...task, status: "notStarted" },
                     index,
                   }),
                 );
               }
+              setChange(true)
             }}
             style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: 2 }}
           >
@@ -256,7 +283,7 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
               task.state === loadingStateEnum.success ||
               task.excess) && (
               <CustomCheckBox
-                checked={task.status === taskStatusEnum.completed}
+                checked={task.status === "completed"}
                 checkMarkColor="blue"
                 strokeDasharray={task.excess ? 5 : undefined}
                 height={20}
@@ -276,7 +303,7 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
                   index,
                 }),
               );
-              checkUpdateText();
+              setChange(true)
             }}
             multiline
             numberOfLines={1}
@@ -439,7 +466,7 @@ function BoardBlock() {
   return (
     <View
       style={{
-        width: width * 0.9,
+        width:  currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
         height: height * 0.3,
         marginTop: height * 0.03,
         marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
@@ -650,8 +677,14 @@ export default function Notifications() {
     // Calendar Data
     getClassEventsFromDay();
 
+    const awaitResult = await Promise.all([getInsightData(), getUsersTasks(), getCurrentPaulyData()])
+
     // Insights
-    const insightResult = await getInsightData();
+    const insightResult = awaitResult[0]
+
+    // List Data
+    const taskResult = awaitResult[1];
+
     dispatch(
       homepageDataSlice.actions.setTrendingData(insightResult.trendingData),
     );
@@ -661,11 +694,6 @@ export default function Notifications() {
     dispatch(homepageDataSlice.actions.setUserData(insightResult.userData));
     dispatch(homepageDataSlice.actions.setUserState(insightResult.userState));
 
-    // Pauly Data
-    await getCurrentPaulyData();
-
-    // List Data
-    const taskResult = await getUsersTasks();
     if (
       taskResult.result === loadingStateEnum.success &&
       taskResult.data !== undefined

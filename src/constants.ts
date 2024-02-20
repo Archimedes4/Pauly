@@ -47,14 +47,6 @@ export enum taskImportanceEnum {
   normal,
   high,
 }
-
-export enum taskStatusEnum {
-  notStarted,
-  inProgress,
-  completed,
-  waitingOnOthers,
-  deferred,
-}
 export enum resourceResponce {
   found,
   notFound,
@@ -450,6 +442,13 @@ declare global {
     excess: boolean;
     state: loadingStateEnum;
   };
+  type taskStatusEnum =
+    "notStarted" |
+    "inProgress" |
+    "completed" |
+    "waitingOnOthers" |
+    "deferred"
+  
   type paulyEventTypes = 'schoolDay' | 'schoolYear' | 'personal' | 'studentCouncil' | 'regular';
   type newsPost = {
     title: string;

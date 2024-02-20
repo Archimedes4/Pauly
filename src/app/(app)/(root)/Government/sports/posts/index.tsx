@@ -15,6 +15,7 @@ import { RootState } from '@redux/store';
 import StyledButton from '@components/StyledButton';
 
 function GovernmentSportsPostsBody() {
+  const { width} = useSelector((state: RootState) => state.dimensions);
   const router = useRouter();
   const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<
     mediaSubmissionType[]
@@ -60,21 +61,19 @@ function GovernmentSportsPostsBody() {
       <FlatList
         data={currentMediaSubmissions}
         renderItem={item => (
-          <Pressable
+          <StyledButton
             key={`Submission_${item.item.submissionId}`}
             onPress={() =>
               router.push(
-                `/government/sports/post/review/${item.item.submissionId}`,
+                `/government/sports/posts/${item.item.submissionId}`,
               )
             }
-            style={{ borderColor: Colors.black, borderWidth: 2 }}
-          >
-            <Text>{item.item.Title}</Text>
-            <Text>Accepted: {item.item.accepted ? 'Yes' : 'No'}</Text>
-            <Text>Reviewed: {item.item.reviewed ? 'Yes' : 'No'}</Text>
-            <Text>{item.item.user}</Text>
-          </Pressable>
+            style={{ margin: 15 }}
+            text={item.item.Title}
+            caption={`Accepted: ${item.item.accepted ? 'Yes' : 'No'}\nReviewed: ${item.item.reviewed ? 'Yes' : 'No'}\n${item.item.user}`}
+          />
         )}
+        style={{width: width}}
       />
     )
   }
@@ -110,16 +109,7 @@ export default function GovernmentSportsposts() {
       >
         Government Sports Posts
       </Text>
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: 5,
-        }}
-      >
-        <GovernmentSportsPostsBody />
-      </View>
+      <GovernmentSportsPostsBody />
       <StyledButton
         text="Create Post"
         style={{

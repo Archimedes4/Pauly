@@ -18,7 +18,7 @@ import authenticationTokenReducer from './reducers/authenticationTokenReducer';
 import authenticationRefreshTokenReducer from './reducers/authenticationRefreshTokenReducer';
 import dimensionsReducer from './reducers/dimensionsReducer';
 import authenticationApiTokenReducer from './reducers/authenticationApiToken';
-import { tasksDeltaReducer, tasksReducer } from './reducers/tasksReducers';
+import { tasksDeltaReducer } from './reducers/tasksReducers';
 import paulyDataReducer from './reducers/paulyDataReducer';
 import resourcesReducer from './reducers/resourcesReducer';
 import addEventReducer from './reducers/addEventReducer';
@@ -62,7 +62,6 @@ const store = configureStore({
     resources: resourcesReducer,
     resourcesLastCalled: resourcesLastCallReducer,
     safeAreaColors: safeAreaColorsReducer,
-    tasks: tasksReducer,
     tasksDeltaLink: tasksDeltaReducer,
     selectedDate: selectedDateReducer,
     studentSearch: studentSearchReducer,

@@ -23,8 +23,9 @@ function PDFViewBody({ width }: { width: number }) {
   const [imageHeight, setImageHeight] = useState<number>(0);
 
   async function convertPdfToImages(url: string) {
-    let { pdfjsLib } = globalThis;
+    let pdfjsLib: any = undefined;
     while (pdfjsLib === undefined) {
+      // @ts-expect-error 
       pdfjsLib = globalThis.pdfjsLib;
       await new Promise(resolve => {
         setTimeout(() => {

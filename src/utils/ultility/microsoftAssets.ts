@@ -8,6 +8,7 @@ export default async function callMsGraph(
   body?: string | Blob,
   headersIn?: { key: string; value: string }[],
   secondAuth?: boolean,
+  abort?: AbortController
 ): Promise<Response> {
   const headers: Headers = new Headers();
   const bearer = `Bearer ${store.getState().authenticationToken}`;
@@ -25,10 +26,11 @@ export default async function callMsGraph(
     }
   }
 
-  const options = {
+  const options: RequestInit = {
     method: method || 'GET',
     headers,
     body,
+    signal: abort?.signal
   };
 
   let outUrl = url;

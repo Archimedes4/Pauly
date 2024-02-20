@@ -215,19 +215,25 @@ export default function GovernmentSportsTeamAddPost() {
         ]}
       />
       {postMode === postType.microsoftFile ? (
-        <MicrosoftFilePicker
+        <View style={{width, height: 500, overflow: 'hidden'}}>
+          <MicrosoftFilePicker
           onSelectedFile={(item: microsoftFileType) => {
             getShareLink(item);
           }}
           height={500}
+          selectedFile={fileId}
           width={width}
         />
+        </View>
+        
       ) : null}
       {postMode === postType.youtubeVideo ? (
         <YoutubeVideosSelector onSelect={setFileId} />
       ) : null}
+      <View>
       {fileId !== '' ? (
-        <Pressable
+        <StyledButton
+          text={fileId !== '' && selectedTeamId !== '' ? 'Submit' : 'Select Team'}
           onPress={() => {
             if (
               postSubmissionState === loadingStateEnum.notStarted &&
@@ -236,12 +242,10 @@ export default function GovernmentSportsTeamAddPost() {
             ) {
               createFileSubmission();
             }
-          }}
-        >
-          <Text>
-            {fileId !== '' && selectedTeamId !== '' ? 'Submit' : 'Select Team'}
-          </Text>
-        </Pressable>
+          }}  
+          style={{margin: 15}}
+          second
+        />
       ) : null}
       {postSubmissionState === loadingStateEnum.loading ? (
         <Text>Loading</Text>
@@ -252,6 +256,7 @@ export default function GovernmentSportsTeamAddPost() {
       {postSubmissionState === loadingStateEnum.success ? (
         <Text>Success</Text>
       ) : null}
+      </View>
     </ScrollView>
   );
 }

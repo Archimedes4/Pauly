@@ -463,7 +463,7 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
           <SportsYoutube
             width={width * 0.9}
             videoId={post.item.data.fileId}
-            height={100}
+            height={height * 0.4}
           />
         ) : null}
       </View>

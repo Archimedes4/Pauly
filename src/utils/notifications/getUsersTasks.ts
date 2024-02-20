@@ -9,14 +9,13 @@ import store from '@redux/store';
 import {
   loadingStateEnum,
   taskImportanceEnum,
-  taskStatusEnum,
 } from '@constants';
 import callMsGraph from '../ultility/microsoftAssets';
 
 // deltaRunAgain is send if the delta link has failed or the responce 410 meaning syncronization is needed.
 export default async function getUsersTasks(
   deltaRunAgain?: boolean,
-): Promise<{ result: loadingStateEnum; data?: taskType[] }> {
+): Promise<{ result: loadingStateEnum.success; data: taskType[] } | {result: loadingStateEnum.failed}> {
   let deltaMode = false;
   if (store.getState().tasksDeltaLink !== '' && deltaRunAgain !== true) {
     deltaMode = true;
@@ -41,10 +40,7 @@ export default async function getUsersTasks(
           taskImportanceEnum[
             taskData.value[index].importance as keyof typeof taskImportanceEnum
           ],
-        status:
-          taskStatusEnum[
-            taskData.value[index].status as keyof typeof taskStatusEnum
-          ],
+        status: taskData.value[index].status,
         excess: false,
         state: loadingStateEnum.notStarted,
       });
@@ -53,7 +49,7 @@ export default async function getUsersTasks(
       name: '',
       importance: taskImportanceEnum.normal,
       id: '',
-      status: taskStatusEnum.notStarted,
+      status: 'notStarted',
       excess: true,
       state: loadingStateEnum.notStarted,
     });

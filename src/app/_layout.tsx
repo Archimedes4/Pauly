@@ -34,6 +34,12 @@ export default function App(): React.JSX.Element | null {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded])
+
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();

@@ -2,7 +2,6 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import {
   loadingStateEnum,
   taskImportanceEnum,
-  taskStatusEnum,
 } from '@constants';
 
 type homepageStatesType = {
@@ -28,7 +27,7 @@ const initalState: homepageStatesType = {
       name: '',
       id: '',
       importance: taskImportanceEnum.normal,
-      status: taskStatusEnum.notStarted,
+      status: 'notStarted',
       excess: true,
       state: loadingStateEnum.notStarted,
     },

@@ -26,6 +26,7 @@ export default function MicrosoftFilePicker({
   height,
   width,
   allowedTypes,
+  selectedFile
 }: {
   height: number;
   width: number;
@@ -33,11 +34,13 @@ export default function MicrosoftFilePicker({
   onSetIsShowingMicrosoftUpload?: ((item: boolean) => void) | undefined;
   onSelectedFile: (item: microsoftFileType) => void;
   allowedTypes?: string[];
+  selectedFile?: string
 }) {
   const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([]);
   const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] =
     useState<MicrosoftUploadModeType>(MicrosoftUploadModeType.Personal);
   const [shareLinkString, setShareLinkString] = useState<string>('');
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
 
   async function loadUserTeams() {
     const result = await getUserTeams();
@@ -72,23 +75,23 @@ export default function MicrosoftFilePicker({
 
   return (
     <View style={{ height, width }}>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={{ textAlign: 'left' }}>Upload File From Microsoft</Text>
-        {onSetIsShowingMicrosoftUpload === undefined ||
-        onSetIsShowingUpload === undefined ? null : (
-          <Pressable
-            onPress={() => {
-              onSetIsShowingUpload(false);
-              onSetIsShowingMicrosoftUpload(false);
-            }}
-          >
-            <View>
-              <Text>Back</Text>
-            </View>
-          </Pressable>
-        )}
-      </View>
-      <View>
+      <View onLayout={(e) => {setHeaderHeight(e.nativeEvent.layout.height)}}>
+        <View style={{ flexDirection: 'row' }}>
+          <Text style={{ textAlign: 'left' }}>Upload File From Microsoft</Text>
+          {onSetIsShowingMicrosoftUpload === undefined ||
+          onSetIsShowingUpload === undefined ? null : (
+            <Pressable
+              onPress={() => {
+                onSetIsShowingUpload(false);
+                onSetIsShowingMicrosoftUpload(false);
+              }}
+            >
+              <View>
+                <Text>Back</Text>
+              </View>
+            </Pressable>
+          )}
+        </View>
         <View style={{ width }}>
           <Picker
             selectedIndex={
@@ -126,45 +129,46 @@ export default function MicrosoftFilePicker({
             </Text>
           </Picker>
         </View>
-        {selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal ? (
-          <PersonalBlock
-            height={height}
-            width={width}
-            onSelectedFile={onSelectedFile}
-            allowedTypes={allowedTypes}
-          />
-        ) : null}
-        {selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink ? (
-          <View>
-            <View>
-              <Text>Share Link</Text>
-              <TextInput
-                placeholder="Share Link"
-                value={shareLinkString}
-                onChangeText={e => {
-                  setShareLinkString(e);
-                }}
-              />
-            </View>
-            <Pressable
-              onPress={() => {
-                // TO DO make this work
-                let base64Value = btoa(shareLinkString);
-                base64Value.replace('/', '_');
-                base64Value.replace('+', '-');
-                base64Value.trimEnd();
-                base64Value = `u!${base64Value}`;
-                getShareFile(base64Value);
-              }}
-            >
-              <Text>Submit</Text>
-            </Pressable>
-          </View>
-        ) : null}
-        {selectedMicrosoftUploadMode === MicrosoftUploadModeType.Site ? (
-          <TeamsBlock userTeams={usersTeams} height={height} />
-        ) : null}
       </View>
+      {selectedMicrosoftUploadMode === MicrosoftUploadModeType.Personal ? (
+        <PersonalBlock
+          height={height - headerHeight}
+          width={width}
+          onSelectedFile={onSelectedFile}
+          allowedTypes={allowedTypes}
+          selectedFile={selectedFile}
+        />
+      ) : null}
+      {selectedMicrosoftUploadMode === MicrosoftUploadModeType.ShareLink ? (
+        <View>
+          <View>
+            <Text>Share Link</Text>
+            <TextInput
+              placeholder="Share Link"
+              value={shareLinkString}
+              onChangeText={e => {
+                setShareLinkString(e);
+              }}
+            />
+          </View>
+          <Pressable
+            onPress={() => {
+              // TO DO make this work
+              let base64Value = btoa(shareLinkString);
+              base64Value.replace('/', '_');
+              base64Value.replace('+', '-');
+              base64Value.trimEnd();
+              base64Value = `u!${base64Value}`;
+              getShareFile(base64Value);
+            }}
+          >
+            <Text>Submit</Text>
+          </Pressable>
+        </View>
+      ) : null}
+      {selectedMicrosoftUploadMode === MicrosoftUploadModeType.Site ? (
+        <TeamsBlock userTeams={usersTeams} height={height} />
+      ) : null}
     </View>
   );
 }
