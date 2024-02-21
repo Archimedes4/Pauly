@@ -17,20 +17,21 @@ export default function ResourceNewsPage({
   const [headers, setHeaders] = useState<string>('');
   const accessToken = usePaulyApi();
   async function getHeaders() {
-    console.log(selectedPost.url);
     if (typeof accessToken !== 'string') {
       return
     }
     const result = await fetch(
-      '${process.env.EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT}/api/getNewsHead',
+      `${process.env.EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT}/api/getNewsHead`,
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }
       }
     );
-    const data = await result.text();
-    setHeaders(data)
+    if (result.ok) {
+      const data = await result.text();
+      setHeaders(data)
+    }
   }
   useEffect(() => {
     if (typeof accessToken === 'string') {

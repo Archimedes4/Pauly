@@ -30,8 +30,10 @@ export default function ResourceNewsPage({
         }
       }
     );
-    const data = await result.text();
-    setHeaders(data)
+    if (result.ok) {
+      const data = await result.text();
+      setHeaders(data)
+    }
   }
   useEffect(() => {
     if (typeof accessToken === 'string') {
