@@ -10,8 +10,8 @@ import store from '@redux/store';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { useMsal } from '@azure/msal-react';
 import { governmentScopes, scopes } from '@constants';
-import { authActiveSlice } from '@src/redux/reducers/authActiveReducer';
-import { InteractionStatus, InteractionType } from '@azure/msal-browser';
+import { authActiveSlice } from '@redux/reducers/authActiveReducer';
+import { InteractionStatus } from '@azure/msal-browser';
 
 export const useRefresh = () => {
   const { instance } = useMsal();

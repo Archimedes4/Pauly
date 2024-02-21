@@ -1,9 +1,10 @@
-import { Text, ScrollView, Pressable, View } from 'react-native';
+import { Text, Pressable, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import { CloseIcon } from '../Icons';
+import usePaulyApi from '@hooks/usePaulyApi';
 
 export default function ResourceNewsPage({
   selectedPost,
@@ -14,26 +15,28 @@ export default function ResourceNewsPage({
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [headers, setHeaders] = useState<string>('');
+  const accessToken = usePaulyApi();
   async function getHeaders() {
     console.log(selectedPost.url);
+    if (typeof accessToken !== 'string') {
+      return
+    }
     const result = await fetch(
-      'https://thecrusadernews.ca/2023/12/20/throne-speech-marks-time-of-optimism-in-manitoba/',
+      'http://localhost:9000/api/getNewsHead',
       {
         headers: {
-          'Access-Control-Allow-Origin': '*',
-        },
-      },
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }
     );
     const data = await result.text();
-    console.log(`Result${data}`);
-    result.headers.forEach(function (val: string, key: string) {
-      console.log(`${key} -> ${val}`);
-    });
+    setHeaders(data)
   }
   useEffect(() => {
-    console.log('headers');
-    getHeaders();
-  }, []);
+    if (typeof accessToken === 'string') {
+      getHeaders();
+    }
+  }, [accessToken]);
   return (
     <View
       style={{
@@ -55,23 +58,8 @@ export default function ResourceNewsPage({
         <!DOCTYPE html>
         <html>
         <head>
-          <link crossorigin="anonymous" rel="stylesheet" id="all-css-8-1" href="https://s0.wp.com/wp-content/themes/pub/baskerville-2/style.css?m=1645133114i&amp;cssminify=yes" type="text/css" media="all">
-          <link crossorigin="anonymous" rel="stylesheet" id="all-css-0-1" href="https://s0.wp.com/_static/??-eJzTLy/QTc7PK0nNK9HPLdUtyClNz8wr1s9KLSlITM6G8vVz8/NBREppTmqxflFqTmJJaopuQX5xCRpPL7m4WEcfu5E5mdmpCIPBPJBy+1xbQ3MDUxNjcwNzyywAYHY02w==&amp;cssminify=yes" type="text/css" media="all">
-          <link crossorigin="anonymous" rel="stylesheet" id="all-css-2-1" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/v17.6.0/build/block-library/style.css?m=1706747918i&amp;cssminify=yes" type="text/css" media="all">
-
+          ${headers}
           <meta name="viewport" content="width=${width - 20}px"/>
-          <style>
-            body {font-weight: normal; font-family: Arial; width: 100%}
-            div {font-weight: normal; font-family: Arial; width: 100%; padding: 0; margin: 0; font-size: 15px}
-            .main {
-              padding: 0;
-              margin: 0;
-              paddingBottom: 100;
-              position: absolute;
-            }
-          </style>
-          <script>
-            $(function(){ $("head").load("https://thecrusadernews.ca/2023/12/20/throne-speech-marks-time-of-optimism-in-manitoba/") });
         </script>
         </head>
         <body>
@@ -87,6 +75,7 @@ export default function ResourceNewsPage({
           marginRight: 'auto',
           padding: 0,
           border: 0,
+          paddingBlock: 60
         }}
       />
     </View>

@@ -1,10 +1,11 @@
 import { Text, ScrollView, Pressable } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
 import WebViewCross from '../WebViewCross';
 import { CloseIcon } from '../Icons';
+import usePaulyApi from '@hooks/usePaulyApi';
 
 export default function ResourceNewsPage({
   selectedPost,
@@ -14,6 +15,29 @@ export default function ResourceNewsPage({
   setSelectedPost: (item: undefined) => void;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
+  const [headers, setHeaders] = useState<string>('');
+  const accessToken = usePaulyApi();
+  async function getHeaders() {
+    console.log(selectedPost.url);
+    if (typeof accessToken !== 'string') {
+      return
+    }
+    const result = await fetch(
+      'http://localhost:9000/api/getNewsHead',
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }
+    );
+    const data = await result.text();
+    setHeaders(data)
+  }
+  useEffect(() => {
+    if (typeof accessToken === 'string') {
+      getHeaders();
+    }
+  }, [accessToken]);
   return (
     <ScrollView
       style={{
@@ -35,18 +59,8 @@ export default function ResourceNewsPage({
         <!DOCTYPE html>
         <html>
         <head>
-          <link crossorigin="anonymous" rel="stylesheet" id="all-css-8-1" href="https://s0.wp.com/wp-content/themes/pub/baskerville-2/style.css?m=1645133114i&amp;cssminify=yes" type="text/css" media="all">
-          <link crossorigin="anonymous" rel="stylesheet" id="all-css-2-1" href="https://s0.wp.com/wp-content/plugins/gutenberg-core/v17.0.3/build/block-library/style.css?m=1700688996i&amp;cssminify=yes" type="text/css" media="all">
+          ${headers}
           <meta name="viewport" content="width=${width - 20}px"/>
-          <style>
-            body {font-weight: normal; font-family: Arial; width: 100%}
-            div {font-weight: normal; font-family: Arial; width: 100%; padding: 0; margin: 0; font-size: 15px}
-            .main {
-              padding: 0;
-              margin: 0;
-              position: absolute;
-            }
-          </style>
         </head>
         <body>
           <div id="pauly-main" class="main">

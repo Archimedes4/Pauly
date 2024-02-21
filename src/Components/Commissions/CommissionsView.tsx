@@ -97,8 +97,7 @@ export default function CommissionsView({
   const getCommissionInformation = useCallback(async () => {
     const result = await getCommission(id);
     if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
+      result.result === loadingStateEnum.success
     ) {
       setCommissionData(result.data);
       if (result.data?.postData !== undefined) {
