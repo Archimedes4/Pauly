@@ -22,7 +22,7 @@ export default function ResourceNewsPage({
       return
     }
     const result = await fetch(
-      'http://localhost:9000/api/getNewsHead',
+      '${process.env.EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT}/api/getNewsHead',
       {
         headers: {
           'Authorization': `Bearer ${accessToken}`
