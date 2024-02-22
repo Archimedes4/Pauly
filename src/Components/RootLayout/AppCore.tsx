@@ -55,27 +55,16 @@ export default function AppCore() {
 
   const insets = useSafeAreaInsets();
 
-  if (Platform.OS === 'web') {
-    useEffect(() => {
-      setDimentions(
-        windowWidth,
-        windowHeight,
-        insets,
-        safeAreaColors.isTopTransparent,
-        safeAreaColors.isBottomTransparent,
-      );
-    }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets]);
-  } else {
-    useEffect(() => {
-      setDimentions(
-        windowWidth,
-        windowHeight,
-        insets,
-        safeAreaColors.isTopTransparent,
-        safeAreaColors.isBottomTransparent,
-      );
-    });
-  }
+  useEffect(() => {
+    setDimentions(
+      windowWidth,
+      windowHeight,
+      insets,
+      safeAreaColors.isTopTransparent,
+      safeAreaColors.isBottomTransparent,
+    );
+  }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets]);
+
 
   return (
     <>

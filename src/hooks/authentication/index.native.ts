@@ -29,7 +29,6 @@ export function useSilentLogin(): () => Promise<void> {
   const rootNavigationState = useRootNavigationState();
   async function main() {
     const interval = setInterval(() => {
-      console.log('here int')
       if (rootNavigationState?.key != null) {
         if (store.getState().authenticationToken === '') {
           // checking if auth token exists

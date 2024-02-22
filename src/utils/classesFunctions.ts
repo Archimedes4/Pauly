@@ -195,26 +195,27 @@ export async function getClassEvents(
         // Find Time
         const period: number =
           classData[index].periods[schoolDay.order];
-        const periodData = schedule.periods[period];
-        console.log(periodData, period)
-        const startDate: Date = new Date(date.toISOString());
-        startDate.setHours(periodData.startHour);
-        startDate.setMinutes(periodData.startMinute);
-        startDate.setSeconds(0);
-        const endDate: Date = date;
-        endDate.setHours(periodData.endHour);
-        endDate.setMinutes(periodData.endMinute);
-        endDate.setSeconds(0);
-        outputEvents.push({
-          id: classData[index].id,
-          name: classData[index].name,
-          startTime: startDate.toISOString(),
-          endTime: endDate.toISOString(),
-          eventColor: Colors.white,
-          microsoftEvent: false,
-          allDay: false,
-          paulyEventType: 'studentSchedule'
-        });
+        if (period !== 0) {
+          const periodData = schedule.periods[period - 1];
+          const startDate: Date = new Date(date.toISOString());
+          startDate.setHours(periodData.startHour);
+          startDate.setMinutes(periodData.startMinute);
+          startDate.setSeconds(0);
+          const endDate: Date = date;
+          endDate.setHours(periodData.endHour);
+          endDate.setMinutes(periodData.endMinute);
+          endDate.setSeconds(0);
+          outputEvents.push({
+            id: classData[index].id,
+            name: classData[index].name,
+            startTime: startDate.toISOString(),
+            endTime: endDate.toISOString(),
+            eventColor: Colors.white,
+            microsoftEvent: false,
+            allDay: false,
+            paulyEventType: 'studentSchedule'
+          });
+        }
       }
     }
   }

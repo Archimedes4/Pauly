@@ -4,7 +4,6 @@
   November 9 2023
   updateTasks.ts
 */
-import { ListRenderItemInfo } from 'react-native';
 import { homepageDataSlice } from '@redux/reducers/homepageDataReducer';
 import store from '@redux/store';
 import {
@@ -24,8 +23,9 @@ export async function updateTaskStatus(
       task: { ...task, state: loadingStateEnum.loading },
     }),
   );
+  console.log(task.status)
   const data = {
-    status
+    status: task.status
   };
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`,

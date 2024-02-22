@@ -22,7 +22,7 @@ import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@components/Calendar/MonthView';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
-import { lastCalledSelectedDateSlice } from '@src/redux/reducers/lastCalledSelectedDateReducer';
+import { lastCalledSelectedDateSlice } from '@redux/reducers/lastCalledSelectedDateReducer';
 
 function getCalendarFontSize(breakPoint: number, height: number) {
   if (breakPoint === 0) {
@@ -164,7 +164,6 @@ export default function Calendar() {
 
   async function loadClassEvents() {
     const result = await getClassEventsFromDay(new Date(selectedDate))
-    console.log(result)
     if (result.result === loadingStateEnum.success) {
       store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data))
     }
@@ -179,6 +178,7 @@ export default function Calendar() {
   // In day view things work similary as month view.
   useEffect(() => {
     if (isLastSelectedDateValid()){
+      console.log("HERE")
       dispatch(currentEventsSlice.actions.clearEvents())
       getEvents()
       loadClassEvents()

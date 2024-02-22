@@ -262,12 +262,15 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
                   }),
                 );
               }
-              setChange(true)
+              setStatusChange(true)
             }}
             style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: 2 }}
           >
             {task.state === loadingStateEnum.loading && (
-              <ProgressView width={14} height={14} />
+              <View style={{height: 20, width: 20}}>
+                <ProgressView width={14} height={14} style={{margin: 'auto'}}/>
+              </View>
+              
             )}
             {task.state !== loadingStateEnum.loading &&
               task.state !== loadingStateEnum.notStarted &&

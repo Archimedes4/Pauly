@@ -96,8 +96,6 @@ function AttachmentComponent({
         resizeMode={ResizeMode.COVER}
         onReadyForDisplay={e => {
           if (Platform.OS === 'web') {
-            // TODO make this think work well
-            console.log(e)
             setHeight((width * 9) / 16);
           } else {
             const aspectRatio = e.naturalSize.width / e.naturalSize.height;
@@ -267,7 +265,6 @@ function ScholarshipBlock({
   item: ListRenderItemInfo<scholarship>;
   width: number;
 }) {
-  console.log(item);
   const [height, setHeight] = useState<number>(0);
   useEffect(() => {
     Image.getSize(item.item.cover, (imgWidth, imgHeight) => {

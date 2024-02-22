@@ -118,6 +118,7 @@ export default function DayView({
         dayEvents.push(allEvents[index]);
       }
     }
+  
     dayEvents = dayEvents.sort((a, b) => {
       return a.startTime.localeCompare(b.startTime);
     });
@@ -140,7 +141,8 @@ export default function DayView({
         });
       } else {
         let numberOfOffsets = 0
-        for (let busyIndex = 0, len = busy[numberOfOffsets].length;busyIndex < len; busyIndex += 1) {
+        let len = busy[numberOfOffsets].length
+        for (let busyIndex = 0; busyIndex < len; busyIndex += 1) {
           if (new Date(dayEvents[index].startTime) < new Date(busy[numberOfOffsets][busyIndex].start) && new Date(dayEvents[index].endTime) >= new Date(busy[numberOfOffsets][busyIndex].end)) {
             // Starts before and ends after check
             // it is busy duing this time
@@ -156,6 +158,7 @@ export default function DayView({
             busy.push([])
             break
           }
+          len = busy[numberOfOffsets].length
         }
         if (numberOfOffsets > highestHorizontalOffsetTemp) {
           highestHorizontalOffsetTemp = numberOfOffsets
@@ -177,7 +180,6 @@ export default function DayView({
   const loadCalendarContent = useCallback(() => {
     const currentDate = new Date();
     const resultHeightTopOffset = findTimeOffset(currentDate, height);
-    console.log(resultHeightTopOffset)
     mainScrollRef.current?.scrollTo({
       x: 0,
       y: resultHeightTopOffset,
@@ -203,7 +205,7 @@ export default function DayView({
   }
 
   useEffect(() => {
-    getClassesEvents();
+    getDayEvents()
     setAllDayEvents(currentEvents.filter((e) => {return e.allDay === true && new Date(e.startTime).getDate() === new Date(selectedDate).getDate()}))
   }, [selectedDate, currentEvents]);
 
@@ -253,51 +255,45 @@ export default function DayView({
           horizontal
         >
           <View>
-            <>
-              {(isDateToday(new Date(selectedDate))) ? (
-                <>
-                  {hoursText.map(value => (
-                    <View
-                      key={`${value}`}
-                      style={{ flexDirection: 'row', height: hourLength }}
-                    >
-                      {value !== hiddenTime ? (
-                        <Text
-                          selectable={false}
-                          style={{
-                            color:
-                              colorScheme == 'dark' ? Colors.white : Colors.black,
-                              position: 'absolute',
-                              left: 0,
-                              top: -hourTextHeight
-                          }}
-                          onLayout={(e) => {
-                            if (value === '12PM') {
-                              if ((e.nativeEvent.layout.height - 6) >= 0) {
-                                setHourTextHeight((e.nativeEvent.layout.height -6)/2)
-                              }
-                              setHourTextWidth(e.nativeEvent.layout.width + 4)
-                            }
-                          }}
-                        >
-                          {value}
-                        </Text>
-                      ) : null}
-                      <View
-                        style={{
-                          backgroundColor: Colors.black,
-                          width: (highestHorizontalOffset * width) - hourTextWidth,
-                          height: 6,
-                          position: 'absolute',
-                          left: hourTextWidth,
-                          borderRadius: 25,
-                        }}
-                      />
-                    </View>
-                  ))}
-                </>
-              ) : null}
-            </>
+            {hoursText.map(value => (
+              <View
+                key={`${value}_${selectedDate}`}
+                style={{ flexDirection: 'row', height: hourLength }}
+              >
+                {value !== hiddenTime ? (
+                  <Text
+                    selectable={false}
+                    style={{
+                      color:
+                        colorScheme == 'dark' ? Colors.white : Colors.black,
+                        position: 'absolute',
+                        left: 0,
+                        top: -hourTextHeight
+                    }}
+                    onLayout={(e) => {
+                      if (value === '12PM') {
+                        if ((e.nativeEvent.layout.height - 6) >= 0) {
+                          setHourTextHeight((e.nativeEvent.layout.height -6)/2)
+                        }
+                        setHourTextWidth(e.nativeEvent.layout.width + 4)
+                      }
+                    }}
+                  >
+                    {value}
+                  </Text>
+                ) : null}
+                <View
+                  style={{
+                    backgroundColor: Colors.black,
+                    width: (highestHorizontalOffset * width) - hourTextWidth,
+                    height: 6,
+                    position: 'absolute',
+                    left: hourTextWidth,
+                    borderRadius: 25,
+                  }}
+                />
+              </View>
+            ))}
             {dayEvents.map(event => {
               if (!event.event.allDay) {
                 return (
@@ -307,6 +303,7 @@ export default function DayView({
                     width={width}
                     height={height}
                     horizontalShift={event.horizontalOffset}
+                    hourTextWidth={hourTextWidth}
                   />
                 );
               }

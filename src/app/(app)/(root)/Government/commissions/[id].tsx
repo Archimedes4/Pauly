@@ -319,7 +319,6 @@ export function GovernmentCommissionUpdate({
       setGetCommissionResult(loadingStateEnum.loading);
       const result = await getCommission(id);
       if (result.result === loadingStateEnum.success) {
-        console.log(result.data)
         setCommissionData(result.data);
       }
       setGetCommissionResult(result.result);
@@ -358,11 +357,9 @@ export function GovernmentCommissionUpdate({
       if (
         commissionData !== undefined
       ) {
-        console.log(commissionData)
         const result = await updateCommission(isCreate, commissionData);
         setSubmitCommissionState(result);
       } else {
-        console.log(commissionData)
         setSubmitCommissionState(loadingStateEnum.failed)
       }
     } else {
@@ -492,9 +489,7 @@ export function GovernmentCommissionUpdate({
         <Text style={{ marginLeft: 25, marginBottom: 2 }}>Commission Name</Text>
         <TextInput
           value={commissionData.title}
-          onChangeText={text =>
-            {console.log(text)
-              setCommissionData({ ...commissionData, title: text })}
+          onChangeText={text => {setCommissionData({ ...commissionData, title: text })}
           }
           placeholder="Commission Name"
           style={styles.textInputStyle}
@@ -570,7 +565,6 @@ export function GovernmentCommissionUpdate({
           <QRCodeMenu
             QRCodes={commissionData.QRCodeData}
             setQRCodes={e => {
-              console.log(e);
               setCommissionData({ ...commissionData, QRCodeData: e });
             }}
           />

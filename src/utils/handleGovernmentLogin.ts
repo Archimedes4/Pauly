@@ -25,7 +25,6 @@ export async function validateGovernmentMode() {
               isGovernmentModeSlice.actions.setIsGovernmentMode(true),
             );
           } catch (e) {
-            console.log(e)
             store.dispatch(
               isGovernmentModeSlice.actions.setIsGovernmentMode(false),
             );

@@ -39,7 +39,6 @@ export function useSilentLogin(): () => Promise<void> {
       redirectResult !== null &&
       inProgress === InteractionStatus.HandleRedirect
     ) {
-      console.log(redirectResult);
       instance.setActiveAccount(redirectResult.account);
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(

@@ -142,15 +142,15 @@ export default async function createEvent(): Promise<void> {
       schoolYearId !== undefined
     ) {
       const selectedSchoolDayDataCompressed: schoolDayDataCompressedType = {
-        schoolDayId: selectedEvent.schoolDayData.schoolDay.id,
-        scheduleId: selectedEvent.schoolDayData.schedule.id,
-        dressCodeId: selectedEvent.schoolDayData.dressCode.id,
-        semester: selectedEvent.schoolDayData.semester,
-        dressCodeIncentiveId:
+        sdId: selectedEvent.schoolDayData.schoolDay.id,
+        sId: selectedEvent.schoolDayData.schedule.id,
+        dcId: selectedEvent.schoolDayData.dressCode.id,
+        sem: selectedEvent.schoolDayData.semester,
+        dciId:
         selectedEvent.schoolDayData.dressCodeIncentive?.id === undefined
             ? ''
             : selectedEvent.schoolDayData.dressCodeIncentive?.id,
-        schoolYearEventId: schoolYearId,
+        syeId: schoolYearId,
       };
       data.singleValueExtendedProperties = [
         {

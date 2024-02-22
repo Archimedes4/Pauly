@@ -289,13 +289,11 @@ export default function GovernmentClassesEdit() {
       const extensionData = data[store.getState().paulyList.classExtensionId];
       if (extensionData !== undefined) {
         setIsCreating(false)
-        console.log(extensionData)
         setClassName(extensionData.className);
         setSelectedSemester(JSON.parse(extensionData.semesterId));
         setPeriods(JSON.parse(extensionData.periodData));
         const eventResult = await getEvent(extensionData.schoolYearEventId);
         const roomResult = await getRoom(extensionData.roomId);
-        console.log(eventResult, roomResult)
         if (
           eventResult.result === loadingStateEnum.success &&
           roomResult.result === loadingStateEnum.success

@@ -180,7 +180,7 @@ Go to the admin panel and initilize pauly. Code will break if Pauly is already i
 ![Graph Permissions](./ReamMeImages/GraphPermissions.png)
 
 ### Maintenance
-Rotating client secrets after 160 days. Follow the steps in Set Environment Variables no need to change teant id and client id tho.
+Rotating client secrets after 160 days. Follow the steps in Set Environment Variables no need to change teant id and client id.
 
 ## Graph Permissions
 > **Reference**

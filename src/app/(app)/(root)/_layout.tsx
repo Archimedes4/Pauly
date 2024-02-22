@@ -62,11 +62,9 @@ function AuthenticatedView() {
 function PushToAuth() {
   const router = useRouter();
   useFocusEffect(() => {
-    console.log('push');
     try {
       router.push('/sign-in');
     } catch (error) {
-      console.error(error);
     }
   });
   return null;

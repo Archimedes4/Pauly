@@ -11,6 +11,7 @@ import { loadingStateEnum } from '@constants';
 import { getGraphEvents } from './calendarFunctionsGraph';
 
 export default async function getEvents() {
+  console.log("GETTING EVENTs")
   // date the user picks
   const selectedDate = new Date(store.getState().selectedDate);
   // Start of month that the selected date is in
@@ -69,6 +70,6 @@ export default async function getEvents() {
       url = '';
     }
   }
-
+  console.log("END")
   store.dispatch(currentEventsSlice.actions.addCurrentEvents(outputEvents));
 }

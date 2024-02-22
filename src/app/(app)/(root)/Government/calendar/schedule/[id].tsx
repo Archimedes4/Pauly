@@ -250,7 +250,6 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
               period={period.item}
               periods={newPeriods}
               onSetNewPeriods={out => {
-                console.log(out);
                 setNewPeriods([...out]);
               }}
             />

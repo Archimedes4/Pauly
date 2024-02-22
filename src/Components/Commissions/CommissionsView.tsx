@@ -376,7 +376,7 @@ export default function CommissionsView({
               ) : null}
               {isOverflowing ? null : (
                 <View style={{ marginTop: 10, marginBottom: 10 }}>
-                  <CommissionClaim commission={commissionData} />
+                  <CommissionClaim commission={commissionData} imageData={imageUri !== '' ? imageUri : undefined} />
                 </View>
               )}
             </View>

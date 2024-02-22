@@ -315,6 +315,7 @@ export default function WeekDayView({
               event={weekDay.events[0]}
               width={width}
               height={height}
+              hourTextWidth={start ? hourTextWidth:0}
             />
           ) 
         }

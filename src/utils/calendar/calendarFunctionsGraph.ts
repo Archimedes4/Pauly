@@ -50,7 +50,6 @@ export function getSingleValueProperties(data: any): undefined | {
     }
     return
   } catch (e) {
-    console.log(e)
     return
   }
 }
@@ -87,24 +86,30 @@ export async function getGraphEvents(
     const newEvents: eventType[] = [];
     for (let index = 0; index < data.value.length; index += 1) {
       const singleValueResult = getSingleValueProperties(data.value[index]);
+      console.log(singleValueResult)
       if (singleValueResult !== undefined && singleValueResult.eventType === 'schoolDay') {
-        const schoolDayResult = await getSchoolDayData(JSON.parse(singleValueResult.eventData))
-        if (schoolDayResult.result === loadingStateEnum.success) {
-          newEvents.push({
-            id: data.value[index].id,
-            name: data.value[index].subject,
-            startTime: data.value[index].start.dateTime,
-            endTime: data.value[index].end.dateTime,
-            allDay: data.value[index].isAllDay,
-            eventColor: Colors.white,
-            paulyEventType: singleValueResult.eventType,
-            microsoftEvent: true,
-            microsoftReference:
-              referenceUrl !== undefined
-                ? referenceUrl + data.value[index].id
-                : `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
-            schoolDayData: schoolDayResult.data
-          });
+        console.log(singleValueResult.eventData)
+        try {
+          const schoolDayResult = await getSchoolDayData(JSON.parse(singleValueResult.eventData))
+          if (schoolDayResult.result === loadingStateEnum.success) {
+            newEvents.push({
+              id: data.value[index].id,
+              name: data.value[index].subject,
+              startTime: data.value[index].start.dateTime,
+              endTime: data.value[index].end.dateTime,
+              allDay: data.value[index].isAllDay,
+              eventColor: Colors.white,
+              paulyEventType: singleValueResult.eventType,
+              microsoftEvent: true,
+              microsoftReference:
+                referenceUrl !== undefined
+                  ? referenceUrl + data.value[index].id
+                  : `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
+              schoolDayData: schoolDayResult.data
+            });
+          }
+        } catch {
+          return { result: loadingStateEnum.failed };
         }
         //TO DO handle error (alert user of error)
       } else if (singleValueResult !== undefined && singleValueResult.eventType === 'schoolYear'){
@@ -531,8 +536,8 @@ export async function getSchoolDays(date: Date): Promise<{
           },
         ).value,
       );
-      scheduleIds.set(outputIds.scheduleId, 0);
-      schoolYearIds.set(outputIds.schoolYearEventId, 0);
+      scheduleIds.set(outputIds.sId, 0);
+      schoolYearIds.set(outputIds.syeId, 0);
     }
     // Get batch data
 
@@ -606,13 +611,13 @@ export async function getSchoolDays(date: Date): Promise<{
           },
         ).value,
       );
-      const schedule = schedules.get(outputIds.scheduleId);
-      const timetable = timetableResult.data.get(outputIds.schoolYearEventId);
+      const schedule = schedules.get(outputIds.sId);
+      const timetable = timetableResult.data.get(outputIds.syeId);
       const dressCode = timetable?.dressCode.dressCodeData.find(e => {
-        return e.id === outputIds.dressCodeId;
+        return e.id === outputIds.dcId;
       });
       const schoolDay = timetable?.days.find(e => {
-        return e.id === outputIds.schoolDayId;
+        return e.id === outputIds.sdId;
       });
       if (
         schedule !== undefined &&
@@ -633,9 +638,9 @@ export async function getSchoolDays(date: Date): Promise<{
             schoolDay: schoolDay,
             schedule,
             dressCode,
-            semester: outputIds.semester,
-            dressCodeIncentive: outputIds.dressCodeIncentiveId as unknown as dressCodeIncentiveType,
-            schoolYearEventId: outputIds.schoolYearEventId
+            semester: outputIds.sem,
+            dressCodeIncentive: undefined,
+            schoolYearEventId: outputIds.syeId
           },
         });
       } else {
@@ -932,7 +937,7 @@ export function getMonthData(selectedDate: Date) {
 }
 
 async function getSchoolDayData(data: schoolDayDataCompressedType): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: schoolDayDataType}> {
-  const schoolYearResult = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.schoolYearEventId}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+  const schoolYearResult = await callMsGraph(`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.syeId}?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
     store.getState().paulyList.eventTypeExtensionId
   }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`)
   if (!schoolYearResult.ok) {
@@ -947,9 +952,9 @@ async function getSchoolDayData(data: schoolDayDataCompressedType): Promise<{res
   if (timetableResult.result !== loadingStateEnum.success) {
     return {result: loadingStateEnum.failed}
   }
-  const schoolDay = timetableResult.timetable.days.find((e) => {return e.id === data.schoolDayId})
-  const schedule = timetableResult.timetable.schedules.find((e) => {return e.id === data.scheduleId})
-  const dressCode = timetableResult.timetable.dressCode.dressCodeData.find((e) => {return e.id === data.dressCodeId})
+  const schoolDay = timetableResult.timetable.days.find((e) => {return e.id === data.sdId})
+  const schedule = timetableResult.timetable.schedules.find((e) => {return e.id === data.sId})
+  const dressCode = timetableResult.timetable.dressCode.dressCodeData.find((e) => {return e.id === data.dcId})
   if (schoolDay === undefined || schedule === undefined || dressCode === undefined) {
     return {result: loadingStateEnum.failed}
   }
@@ -957,8 +962,8 @@ async function getSchoolDayData(data: schoolDayDataCompressedType): Promise<{res
     schoolDay: schoolDay,
     schedule: schedule,
     dressCode: dressCode,
-    semester: data.semester,
-    schoolYearEventId: data.schoolYearEventId
+    semester: data.sem,
+    schoolYearEventId: data.syeId
   }}
   //TO DO dress code insentive
 }

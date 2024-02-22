@@ -39,7 +39,6 @@ function setSelectedEventType(e: number) {
         }))
         break;
       case 2:
-        console.log("")
         store.dispatch(addEventSlice.actions.setSelectedEvent({
           ...selectedEvent,
           paulyEventType: 'schoolDay',

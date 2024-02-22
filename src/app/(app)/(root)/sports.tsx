@@ -374,7 +374,6 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
       if (imageAspect == -1) {
         return (currentWidth * 9) / 16;
       }
-      console.log("ASPECT", (currentWidth * 0.9)/currentImageAspect, currentImageAspect, currentWidth * 0.9)
       return ((currentWidth * 0.9)/currentImageAspect)
     }
     if (post.item.data.postType === postType.youtubeVideo) {

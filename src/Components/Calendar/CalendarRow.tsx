@@ -231,10 +231,6 @@ export default function CalendarRow({
   calendarWidth: number;
 }) {
   const [isOverflow, setIsOverflow] = useState<boolean>(true)
-  // useEffect(() => {
-  //   console.log("Row " + (value.index + 1) + " is " + isOverflow)
-  //   console.log(width)
-  // }, [isOverflow])
   return (
     <ScrollView scrollEnabled={isOverflow} style={{height: height, borderTopWidth: (width <= 74.14285714285714) ? 0:value.index === 0 ? 2 : 1, borderColor: Colors.lightGray}}>
       <View style={{flexDirection: 'row'}}>

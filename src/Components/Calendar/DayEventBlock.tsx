@@ -9,11 +9,13 @@ export default function DayEventBlock({
   event,
   width,
   height,
-  horizontalShift
+  horizontalShift,
+  hourTextWidth
 }: {
   event: eventType;
   width: number;
   height: number;
+  hourTextWidth: number;
   horizontalShift?: number;
 }) {
   const EventHeight = computeEventHeight(
@@ -26,14 +28,15 @@ export default function DayEventBlock({
   return (
     <Pressable
       style={{
-        width: width * 0.9,
+        width: (horizontalShift === 0) ? width-hourTextWidth:width,
         height: EventHeight,
         top: Offset,
-        left: (horizontalShift || 1) * width,
+        left: (horizontalShift === 0) ? hourTextWidth:((horizontalShift || 1) - 1) * width,
         position: 'absolute',
         right: 0,
         borderColor: Colors.maroon,
         borderLeftWidth: 3,
+        backgroundColor: Colors.lightGray
       }}
       onPress={() => {
         store.dispatch(addEventSlice.actions.setIsShowingAddDate(true));
@@ -42,7 +45,7 @@ export default function DayEventBlock({
     >
       <View
         style={{
-          width: width * 0.9,
+          width: (horizontalShift === 0) ? width-hourTextWidth:width,
           height: EventHeight,
           position: 'absolute',
           backgroundColor: event.eventColor,

@@ -256,8 +256,6 @@ export default async function getCommissions(
     }
     return { result: loadingStateEnum.failed };
   }
-  const data = await result.json();
-  console.error(data)
   return { result: loadingStateEnum.failed };
 }
 

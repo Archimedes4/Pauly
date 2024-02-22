@@ -113,7 +113,6 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
         batchIndex += 1
       ) {
         if (batchResult.data[batchIndex].status === 200) {
-          console.log(batchResult.data[batchIndex].body);
           // TO DO OK
           if (batchResult.data[batchIndex].body.value.length === 1) {
             // Checking to make suare only one item is selected

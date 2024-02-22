@@ -4,7 +4,6 @@ module.exports = function (api) {
     presets: ['babel-preset-expo'],
     plugins: [
       '@babel/plugin-proposal-export-namespace-from',
-      'react-native-reanimated/plugin',
       [
         'module-resolver',
         {
@@ -20,6 +19,7 @@ module.exports = function (api) {
           extensions: ['.js', '.jsx', '.ts', '.tsx', '.native.tsx', '.web.tsx', '.native.ts', '.web.ts'],
         },
       ],
+      'react-native-reanimated/plugin',
     ],
     env: {
       production: {

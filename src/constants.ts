@@ -377,12 +377,12 @@ declare global {
     id: string;
   };
   type schoolDayDataCompressedType = {
-    schoolDayId: string;
-    scheduleId: string;
-    dressCodeId: string;
-    semester: semesters;
-    dressCodeIncentiveId: string;
-    schoolYearEventId: string;
+    sdId: string; //school day Id
+    sId: string; //schedule Id
+    dcId: string; // dress code Id
+    sem: semesters; //semester
+    dciId: string; //dresscode incentive Id
+    syeId: string; // school year event id
   };
   type schoolDayDataType = {
     schoolDay: schoolDayType;

@@ -48,7 +48,6 @@ function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
         store.getState().paulyList.eventTypeExtensionId
       }'%20and%20ep/value%20eq%20'schoolYear')`,
     );
-    console.log(result)
     if (
       result.result === loadingStateEnum.success &&
       result.events !== undefined
@@ -311,10 +310,6 @@ export default function SelectSchoolDayData() {
       loadData(selectedSchoolYear.timetableId);
     }
   }, [loadData, schoolDayMode, selectedSchoolYear, timetable]);
-
-  useEffect(() => {
-    console.log(selectedEvent)
-  }, [selectedEvent])
 
   if (selectedEvent.paulyEventType !== 'schoolDay') {
     return (
