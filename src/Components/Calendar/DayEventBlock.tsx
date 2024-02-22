@@ -10,13 +10,15 @@ export default function DayEventBlock({
   width,
   height,
   horizontalShift,
-  hourTextWidth
+  hourTextWidth,
+  topPadding
 }: {
   event: eventType;
   width: number;
   height: number;
   hourTextWidth: number;
   horizontalShift?: number;
+  topPadding?: number
 }) {
   const EventHeight = computeEventHeight(
     new Date(event.startTime),
@@ -30,7 +32,7 @@ export default function DayEventBlock({
       style={{
         width: (horizontalShift === 0) ? width-hourTextWidth:width,
         height: EventHeight,
-        top: Offset,
+        top: Offset + ((topPadding === undefined) ? 0:topPadding),
         left: (horizontalShift === 0) ? hourTextWidth:((horizontalShift || 1) - 1) * width,
         position: 'absolute',
         right: 0,

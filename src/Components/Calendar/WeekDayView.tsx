@@ -7,7 +7,7 @@ import {
   isTimeOnDay,
 } from '@utils/calendar/calendarFunctions';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
-import store, { RootState } from '@redux/store';
+import { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useColorScheme, Text, Pressable, Modal, FlatList } from 'react-native';
@@ -18,7 +18,6 @@ import useTimeHidden from '@hooks/useTimeHidden';
 import { CloseIcon, UpIcon } from '../Icons';
 import { DefaultEventBlock } from './EventView';
 import DayEventBlock from './DayEventBlock';
-import { addEventSlice } from '@src/redux/reducers/addEventReducer';
 
 function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: number, height: number, topPadding: number}) {
   const [timeWidth, setTimeWidth] = useState<number>(0)
@@ -30,7 +29,7 @@ function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: num
       style={{
         position: 'absolute',
         top: dayData.heightOffsetTop + topPadding,
-        height: height * 0.005,
+        height: 20,
         width,
         flexDirection: 'row',
         alignItems: 'center',
@@ -255,7 +254,7 @@ export default function WeekDayView({
   return (
     <View
       style={{
-        height: height,
+        height: hourLength * 24,
         width,
         backgroundColor: Colors.white,
         paddingTop: topPadding
@@ -316,6 +315,7 @@ export default function WeekDayView({
               width={width}
               height={height}
               hourTextWidth={start ? hourTextWidth:0}
+              topPadding={topPadding}
             />
           ) 
         }

@@ -166,3 +166,14 @@ export function isEventDuringIntervalRaw(
   }
   return false;
 }
+
+export function getDOW(selectedDate: Date) {
+  const week: Date[] = [];
+  // Starting Monday not Sunday
+  selectedDate.setDate(selectedDate.getDate() - selectedDate.getDay());
+  for (let i = 0; i < 7; i += 1) {
+    week.push(new Date(selectedDate));
+    selectedDate.setDate(selectedDate.getDate() + 1);
+  }
+  return week;
+}

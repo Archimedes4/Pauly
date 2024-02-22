@@ -7,16 +7,14 @@
 */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, ScrollView, useColorScheme, Text, FlatList, Pressable } from 'react-native';
+import { View, ScrollView, useColorScheme, Text, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
-  computeEventHeight,
   findTimeOffset,
   isDateToday,
   isEventDuringInterval,
 } from '@utils/calendar/calendarFunctions';
 import store, { RootState } from '@redux/store';
-import createUUID from '@utils/ultility/createUUID';
 import { Colors, loadingStateEnum } from '@constants';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import dayCurrentTimeLine from '@hooks/dayCurrentTimeLine';
@@ -28,7 +26,6 @@ import { UpIcon } from '../Icons';
 function CurrentTimeLine({day, width, height, highestHorizontalOffset}:{day: Date, width: number, height: number, highestHorizontalOffset: number}) {
   const [timeWidth, setTimeWidth] = useState<number>(0)
   const dayData = dayCurrentTimeLine(height)
-
   if (isDateToday(day)) {
     return (
       <View
@@ -101,7 +98,6 @@ export default function DayView({
     '11PM',
   ];
   const mainScrollRef = useRef<ScrollView>(null);
-  const [schoolEvents, setSchoolEvents] = useState<eventType[]>();
   const [dayEvents, setDayEvents] = useState<dayEvent[]>([]);
   const [highestHorizontalOffset, setHighestHorizontalOffset] = useState<number>(1);
   const [allDayEventsExpanded, setAllDayEventsExpanded] = useState<boolean>(false);
@@ -111,11 +107,10 @@ export default function DayView({
   const [hourTextHeight, setHourTextHeight] = useState<number>(0)
 
   const getDayEvents = useCallback(() => {
-    let allEvents = (schoolEvents !== undefined) ? [...currentEvents, ...schoolEvents]:[...currentEvents]
     let dayEvents = [];
-    for (let index = 0; index < allEvents.length; index += 1) {
-      if (isEventDuringInterval(selectedDate, allEvents[index]) && !allEvents[index].allDay) {
-        dayEvents.push(allEvents[index]);
+    for (let index = 0; index < currentEvents.length; index += 1) {
+      if (isEventDuringInterval(selectedDate, currentEvents[index]) && !currentEvents[index].allDay) {
+        dayEvents.push(currentEvents[index]);
       }
     }
   
@@ -175,7 +170,7 @@ export default function DayView({
     }
     setHighestHorizontalOffset(highestHorizontalOffsetTemp + 1)
     setDayEvents(result);
-  }, [selectedDate, currentEvents, schoolEvents])
+  }, [selectedDate, currentEvents])
 
   const loadCalendarContent = useCallback(() => {
     const currentDate = new Date();
@@ -192,20 +187,12 @@ export default function DayView({
     loadCalendarContent();
   }, [height, loadCalendarContent]);
 
-  async function getClassesEvents() {
-    const result = await getClassEventsFromDay();
-    if (result.result === loadingStateEnum.success) {
-      setSchoolEvents(result.data);
-    }
+  useEffect(() => {
     if (currentEvents.length > 0) {
       getDayEvents();
     } else {
       setDayEvents([])
     }
-  }
-
-  useEffect(() => {
-    getDayEvents()
     setAllDayEvents(currentEvents.filter((e) => {return e.allDay === true && new Date(e.startTime).getDate() === new Date(selectedDate).getDate()}))
   }, [selectedDate, currentEvents]);
 

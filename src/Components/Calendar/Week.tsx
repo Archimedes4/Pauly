@@ -13,7 +13,7 @@ import { Colors } from '@constants';
 import WeekDayView from './WeekDayView';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import DayView from './DayView';
-import { isDateToday } from '@src/utils/calendar/calendarFunctions';
+import { getDOW, isDateToday } from '@src/utils/calendar/calendarFunctions';
 import AllDayComponent from './AllDayComponent';
 
 function WeekDayButton({ width, day }: { width: number; day: Date }) {
@@ -78,16 +78,6 @@ export default function Week({
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([]);
   const [topPadding, setTopPadding] = useState<number>(0);
   const dispatch = useDispatch();
-  function getDOW(selectedDate: Date) {
-    const week: Date[] = [];
-    // Starting Monday not Sunday
-    selectedDate.setDate(selectedDate.getDate() - selectedDate.getDay());
-    for (let i = 0; i < 7; i += 1) {
-      week.push(new Date(selectedDate));
-      selectedDate.setDate(selectedDate.getDate() + 1);
-    }
-    return week;
-  }
   useEffect(() => {
     setDaysOfWeek(getDOW(new Date(selectedDateRedux)));
   }, [selectedDateRedux]);
@@ -136,7 +126,7 @@ export default function Week({
             <ChevronRight width={16} height={16}/>
           </Pressable>
         </View>
-        <ScrollView style={{ height }}>
+        <ScrollView style={{ height }} >
           <View style={{ flexDirection: 'row' }}>
             {daysOfWeek.map((day, index) => (
               <View key={day.getDate()} id={day.getDate().toString()}>

@@ -271,6 +271,7 @@ export async function getClassEventsFromDay(
   store.dispatch(
     homepageDataSlice.actions.setSchoolDayData(resultEvent.schoolDayData),
   );
+  console.log(resultEvent.schoolDayData)
   const classResult = await getClassEvents(
     resultEvent.schoolDayData.schedule,
     resultEvent.schoolDayData.semester,
@@ -283,17 +284,11 @@ export async function getClassEventsFromDay(
   ) {
     if (classResult.data.length >= 1) {
       const startTimeDate = new Date(classResult.data[0].startTime);
-      const hourTime =
-        (startTimeDate.getHours() % 12) + 1 <= 9
-          ? `0${(startTimeDate.getHours() % 12) + 1}`
-          : (startTimeDate.getHours() % 12) + 1;
-      const monthTime =
-        startTimeDate.getMinutes() <= 9
-          ? `0${startTimeDate.getMinutes()}`
-          : startTimeDate.getMinutes().toString();
+      const hourTime = startTimeDate.getHours().toString().padStart(2, "0")
+      const minuteTime = startTimeDate.getMinutes().toString().padStart(2, "0")
       store.dispatch(
         homepageDataSlice.actions.setStartTime(
-          `${hourTime}:${monthTime}`,
+          `${hourTime}:${minuteTime}`,
         ),
       );
     }

@@ -79,23 +79,10 @@ export default function EventView({
 }) {
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
-  const [schoolEvents, setSchoolEvents] = useState<eventType[]>([]);
-  async function getClassesEvents() {
-    const result = await getClassEventsFromDay();
-    if (
-      result.result === loadingStateEnum.success &&
-      result.data !== undefined
-    ) {
-      setSchoolEvents(result.data);
-    }
-  }
 
-  useEffect(() => {
-    getClassesEvents();
-  }, [selectedDate]);
   return (
     <FlatList 
-      data={[...schoolEvents, ...currentEvents].sort(function (a, b) {
+      data={currentEvents.sort(function (a, b) {
         return ('' + a.startTime).localeCompare(b.endTime);
       })}
       renderItem={(event) => (
