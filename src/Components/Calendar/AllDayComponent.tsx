@@ -19,7 +19,7 @@ export default function AllDayComponent({day, width, topPadding}:{day: string, w
       <Pressable onPress={() => {setAllDayEventsExpanded(!allDayEventsExpanded)}} style={{position: 'absolute', backgroundColor: Colors.white + "75", width, zIndex: 3, top: topPadding + 2}}>
         {allDayEvents.length >= 2 && !allDayEventsExpanded ?
           <View style={{backgroundColor: Colors.lightGray, borderRadius: 15, padding: 5, margin: 5}}>
-            <Text style={{fontSize: 12}}>{allDayEvents.length} all day events</Text>
+            <Text style={{fontFamily: 'Roboto'}}>{allDayEvents.length} all day events</Text>
           </View>:
           <View>
             {allDayEvents.map((event) => (
@@ -31,7 +31,7 @@ export default function AllDayComponent({day, width, topPadding}:{day: string, w
                 }}
                 style={{backgroundColor: Colors.lightGray, borderRadius: 15, padding: 5, margin: 5}}
               >
-                <Text style={{fontFamily: 'Roboto'}}>{event.name}</Text>
+                <Text style={{fontFamily: 'Roboto'}} numberOfLines={allDayEventsExpanded ? undefined:1}>{event.name}</Text>
               </Pressable>
             ))}
             {(allDayEvents.length >= 2) ?

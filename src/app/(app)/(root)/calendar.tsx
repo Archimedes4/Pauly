@@ -163,21 +163,6 @@ export default function Calendar() {
     );
   }, [dispatch]);
 
-  async function loadClassEvents() {
-    let days = getDOW(new Date(selectedDate))
-    let pendingRequests = []
-    for (let index = 0; index < days.length; index += 1) {
-      pendingRequests.push(getClassEventsFromDay(days[index]))
-    }
-    const results = await Promise.all(pendingRequests)
-    for (let index = 0; index < days.length; index += 1) {
-      const result = results[index]
-      if (result.result === loadingStateEnum.success) {
-        store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data))
-      }
-    }
-  }
-
   useEffect(() => {
     updateColors();
   }, []);
@@ -189,7 +174,6 @@ export default function Calendar() {
     if (isLastSelectedDateValid()){
       dispatch(currentEventsSlice.actions.clearEvents())
       getEvents()
-      loadClassEvents()
       dispatch(lastCalledSelectedDateSlice.actions.setLastCalledSelectedDate(selectedDate))
     } else {
       dispatch(currentEventsSlice.actions.removeClassEvents())

@@ -36,6 +36,7 @@ import paulyLoadingReducer from './reducers/paulyLoadingReducer';
 import authActiveReducer from './reducers/authActiveReducer';
 import lastCalledSelectedDateReducer from './reducers/lastCalledSelectedDateReducer';
 import classesReducer from './reducers/classesReducer';
+import timetableReducer from './reducers/timetableReducer';
 
 const store = configureStore({
   reducer: {
@@ -69,6 +70,7 @@ const store = configureStore({
     authActive: authActiveReducer,
     isOverride: isOverrideReducer,
     paulyLoading: paulyLoadingReducer,
+    timetables: timetableReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

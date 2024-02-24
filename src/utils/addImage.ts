@@ -6,10 +6,7 @@
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-
-// https://stackoverflow.com/questions/3583724/how-do-i-add-a-delay-in-a-javascript-loop
-const timer = (ms: number | undefined) =>
-  new Promise(res => setTimeout(res, ms));
+import { timer } from './ultility/utils';
 
 export default async function addImage(
   userId: string,

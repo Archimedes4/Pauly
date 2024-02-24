@@ -5,7 +5,7 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import {
   getSchoolDay,
 } from './calendar/calendarFunctionsGraph';
-import { classesSlice } from '@src/redux/reducers/classesReducer';
+import { classesSlice, getClasses } from '@src/redux/reducers/classesReducer';
 
 export async function getRooms(
   nextLink?: string,
@@ -73,11 +73,11 @@ export async function getRoom(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getClasses(): Promise<
-  | {
-      result: loadingStateEnum.success;
-      data: classType[];
-    }
+export async function getClassesApi(): Promise<
+  {
+    result: loadingStateEnum.success;
+    data: classType[];
+  }
   | {
       result: loadingStateEnum.failed;
     }
@@ -171,16 +171,24 @@ export async function getClassEvents(
   date: Date,
 ): Promise<{ result: loadingStateEnum.success; data: eventType[] } | { result: loadingStateEnum.failed }> {
   let classData: classType[] = []
-  if (store.getState().classes.lastCalled === "" || new Date(store.getState().classes.lastCalled).getTime() >= (new Date().getTime() - 7200000)) {
-    const classResult = await getClasses();
-    if (classResult.result !== loadingStateEnum.success) {
-      return {result: loadingStateEnum.failed}
+  if (store.getState().classes.lastCalled === "" || new Date(store.getState().classes.lastCalled).getTime() >= (new Date().getTime() - 7200000) && store.getState().classes.loadingState !== loadingStateEnum.loading) {
+    const classResult = await store.dispatch(getClasses());
+    if (classResult.meta.requestStatus == 'fulfilled') {
+      classData = store.getState().classes.classes
+    } else {
+      return { result: loadingStateEnum.failed };
     }
-    classData = classResult.data
-    store.dispatch(classesSlice.actions.setClasses({
-      classes: classResult.data,
-      lastCalled: new Date().toISOString()
-    }))
+  } else if (store.getState().classes.loadingState !== loadingStateEnum.loading) {
+    const unsubscribe = store.subscribe(() => {
+      if (store.getState().classes.loadingState !== loadingStateEnum.loading) {
+        if (store.getState().classes.loadingState === loadingStateEnum.success) {
+          classData = store.getState().classes.classes
+        } else {
+          return { result: loadingStateEnum.failed };
+        }
+        unsubscribe()
+      }
+    })
   } else {
     classData = store.getState().classes.classes
   }
@@ -230,6 +238,7 @@ export async function getClassEventsFromDay(
 ): Promise<
   | { result: loadingStateEnum.success; data: eventType[] }
   | { result: loadingStateEnum.failed }
+  | { result: loadingStateEnum.notFound }
 > {
   const defindedDate = (date !== undefined) ? date:new Date()
   let resultEvent: eventType | undefined = undefined
@@ -244,26 +253,24 @@ export async function getClassEventsFromDay(
     )
       .toISOString()
       .slice(0, -1)}0000`
+    console.log(store.getState().currentEvents)
     const foundEvent = store.getState().currentEvents.find((e) => {
-      e.paulyEventType === 'schoolDay' && e.startTime === startTime
+      return e.paulyEventType === 'schoolDay' && e.startTime === startTime
     })
     if (foundEvent === undefined) {
-      const result = await getSchoolDay(defindedDate);
-      if (result.result !== loadingStateEnum.success) {
-        return { result: loadingStateEnum.failed };
-      }
-      resultEvent = result.event;
-    } else {
-      resultEvent = foundEvent;
-    }
+      console.log("Unfound", startTime)
+      return { result: loadingStateEnum.notFound };
+    } 
+    resultEvent = foundEvent;
   } else {
     const result = await getSchoolDay(defindedDate);
     if (result.result !== loadingStateEnum.success) {
+      console.log("Failed here one", defindedDate, new Date(store.getState().lastCalledSelectedDate))
       return { result: loadingStateEnum.failed };
     }
     resultEvent = result.event;
   }
-  
+
   if (resultEvent === undefined || resultEvent.paulyEventType !== 'schoolDay') {
     return { result: loadingStateEnum.failed };
   }
@@ -271,7 +278,6 @@ export async function getClassEventsFromDay(
   store.dispatch(
     homepageDataSlice.actions.setSchoolDayData(resultEvent.schoolDayData),
   );
-  console.log(resultEvent.schoolDayData)
   const classResult = await getClassEvents(
     resultEvent.schoolDayData.schedule,
     resultEvent.schoolDayData.semester,

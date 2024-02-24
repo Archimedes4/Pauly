@@ -4,7 +4,7 @@
   November 10 2023
   Week.tsx
 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
@@ -13,7 +13,7 @@ import { Colors } from '@constants';
 import WeekDayView from './WeekDayView';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import DayView from './DayView';
-import { getDOW, isDateToday } from '@src/utils/calendar/calendarFunctions';
+import { findTimeOffset, getDOW, isDateToday } from '@src/utils/calendar/calendarFunctions';
 import AllDayComponent from './AllDayComponent';
 
 function WeekDayButton({ width, day }: { width: number; day: Date }) {
@@ -78,9 +78,22 @@ export default function Week({
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([]);
   const [topPadding, setTopPadding] = useState<number>(0);
   const dispatch = useDispatch();
+  const weekScollRef = useRef<ScrollView>(null)
+
   useEffect(() => {
     setDaysOfWeek(getDOW(new Date(selectedDateRedux)));
   }, [selectedDateRedux]);
+
+  useEffect(() => {
+    if (weekScollRef !== null) {
+      const resultHeightTopOffset = findTimeOffset(new Date(), height);
+      weekScollRef.current?.scrollTo({
+        x: 0,
+        y: resultHeightTopOffset,
+        animated: false,
+      });
+    }
+  }, [weekScollRef])
 
   if (width >= 768) {
     return (
@@ -126,7 +139,7 @@ export default function Week({
             <ChevronRight width={16} height={16}/>
           </Pressable>
         </View>
-        <ScrollView style={{ height }} >
+        <ScrollView style={{ height }} ref={weekScollRef}>
           <View style={{ flexDirection: 'row' }}>
             {daysOfWeek.map((day, index) => (
               <View key={day.getDate()} id={day.getDate().toString()}>

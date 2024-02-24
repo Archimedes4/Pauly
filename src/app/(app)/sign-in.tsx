@@ -7,7 +7,7 @@
 */
 /* eslint-disable global-require */
 /* This is for the requires which is not possible to not use require and docs for relevant resources use requrire. */
-import { View, Text, Pressable, Image, Platform } from 'react-native';
+import { View, Text, Pressable, Image, Platform, StatusBar } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
@@ -91,6 +91,7 @@ export function SignInComponent({ government }: { government: boolean }) {
       }}
       delayLongPress={5000}
     >
+      <StatusBar barStyle={"light-content"}/>
       <View
         id="Content_Area"
         style={{

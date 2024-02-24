@@ -5,10 +5,9 @@
   _layout.tsx
 */
 import RootLayout from '@components/RootLayout';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'expo-router/head';
 import { loadAsync } from 'expo-font';
-import { View } from 'react-native';
 import { SplashScreen } from 'expo-router';
 
 SplashScreen.preventAutoHideAsync();
@@ -52,9 +51,7 @@ export default function App(): React.JSX.Element | null {
       <Head>
         <title>Pauly</title>
       </Head>
-      <View>
-        <RootLayout />
-      </View>
+      <RootLayout />
     </>
   );
 }

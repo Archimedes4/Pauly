@@ -190,12 +190,11 @@ export default function WeekDayView({
     setHourLength(height * 0.1);
   }, [height]);
 
-  async function getWeekEvents(schoolEvents: eventType[]) {
-    let allEvents = (schoolEvents !== undefined) ? [...currentEvents, ...schoolEvents]:[...currentEvents]
+  async function getWeekEvents() {
     let dayEvents = [];
-    for (let index = 0; index < allEvents.length; index += 1) {
-      if (isEventDuringInterval(day, allEvents[index]) && !allEvents[index].allDay) {
-        dayEvents.push(allEvents[index]);
+    for (let index = 0; index < currentEvents.length; index += 1) {
+      if (isEventDuringInterval(day, currentEvents[index]) && !currentEvents[index].allDay) {
+        dayEvents.push(currentEvents[index]);
       }
     }
     dayEvents = dayEvents.sort((a, b) => {
@@ -227,17 +226,6 @@ export default function WeekDayView({
     setWeekEvents(result);
   }
 
-  async function getClassesEvents() {
-    const result = await getClassEventsFromDay();
-    if (
-      result.result === loadingStateEnum.success
-    ) {
-      getWeekEvents(result.data);
-    } else {
-      getWeekEvents([]);
-    }
-  }
-
   useEffect(() => {
     const resultHeightTopOffset = findTimeOffset(new Date(), height);
     mainScrollRef.current?.scrollTo({
@@ -248,8 +236,8 @@ export default function WeekDayView({
   }, [])
 
   useEffect(() => {
-    getClassesEvents();
-  }, [selectedDate]);
+    getWeekEvents()
+  }, [selectedDate, currentEvents]);
 
   return (
     <View

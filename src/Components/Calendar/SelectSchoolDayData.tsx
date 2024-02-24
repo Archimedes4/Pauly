@@ -11,12 +11,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import createUUID from '@utils/ultility/createUUID';
 import {
   getGraphEvents,
-  getTimetable,
 } from '@utils/calendar/calendarFunctionsGraph';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import store, { RootState } from '@redux/store';
 import { loadingStateEnum, semesters } from '@constants';
 import { FlatList } from 'react-native';
+import { getTimetable } from '@src/redux/reducers/timetableReducer';
 
 enum pickSchoolDayMode {
   schoolYear,
@@ -295,7 +295,7 @@ export default function SelectSchoolDayData() {
     if (
       result.result === loadingStateEnum.success
     ) {
-      setTimetable(result.timetable);
+      setTimetable(result.data);
       setTimetableState(loadingStateEnum.success);
     } else {
       setTimetableState(loadingStateEnum.failed);

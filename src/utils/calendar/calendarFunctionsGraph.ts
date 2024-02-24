@@ -16,6 +16,8 @@ import {
   isEventDuringInterval,
 } from './calendarFunctions';
 import { getDressCode } from './dressCodeFunctions';
+import { getTimetable, timetableSlice } from '@src/redux/reducers/timetableReducer';
+import { timer } from '../ultility/utils';
 
 export function getSingleValueProperties(data: any): undefined | {
   eventType: paulyEventTypes,
@@ -86,9 +88,7 @@ export async function getGraphEvents(
     const newEvents: eventType[] = [];
     for (let index = 0; index < data.value.length; index += 1) {
       const singleValueResult = getSingleValueProperties(data.value[index]);
-      console.log(singleValueResult)
       if (singleValueResult !== undefined && singleValueResult.eventType === 'schoolDay') {
-        console.log(singleValueResult.eventData)
         try {
           const schoolDayResult = await getSchoolDayData(JSON.parse(singleValueResult.eventData))
           if (schoolDayResult.result === loadingStateEnum.success) {
@@ -266,6 +266,7 @@ export async function getSchedule(id: string): Promise<
       result: loadingStateEnum.failed;
     }
 > {
+  console.log("schedule")
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -352,11 +353,49 @@ export async function getSchedules(): Promise<
   return { result: loadingStateEnum.failed };
 }
 
-export async function getTimetable(
+export async function getTimetableApi(
   timetableId: string,
 ): Promise<{ result: loadingStateEnum.success; timetable: timetableType } | {
   result: loadingStateEnum.failed
 }> {
+  const cachedTimetable = store.getState().timetables.timetables.find((e) => {return e.id === timetableId})
+  if (cachedTimetable !== undefined) {
+    return { result: loadingStateEnum.success, timetable: cachedTimetable}
+  }
+  const fetchedTables = store.getState().timetables.timetablesFetching.find((e) => {return e === timetableId})
+  if (fetchedTables !== undefined) {
+    const timetableResult: {
+      result: loadingStateEnum.success;
+      data: timetableType
+    } | {result: loadingStateEnum.failed} = await new Promise(resolve => {
+      const unsubscribe = store.subscribe(async () => {
+        const cachedTimetable = store.getState().timetables.timetables.find((e) => {return e.id === timetableId})
+        if (cachedTimetable !== undefined) {
+          resolve({
+            result: loadingStateEnum.success,
+            data: cachedTimetable
+          })
+          unsubscribe();
+        }        
+      });
+      async function killCurrentProccess() {
+        await timer(5000)
+        resolve({
+          result: loadingStateEnum.failed
+        });
+        unsubscribe(); // Unsubscribe after getting the new result
+      }
+      killCurrentProccess()
+    });
+    if (timetableResult.result === loadingStateEnum.success) {
+      return {
+        result: loadingStateEnum.success,
+        timetable: timetableResult.data
+      }
+    }
+  } else {
+    console.log("no fetch" + timetableId)
+  }
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -366,47 +405,48 @@ export async function getTimetable(
   );
   if (result.ok) {
     const data = await result.json();
-    if (data.value.length !== undefined) {
-      if (data.value.length === 1) {
-        try {
-          const scheduleData: string[] = JSON.parse(
-            data.value[0].fields.timetableDataSchedules,
-          );
-          const newSchedules: scheduleType[] = [];
-          for (let index = 0; index < scheduleData.length; index += 1) {
-            const result = await getSchedule(scheduleData[index]);
-            if (
-              result.result === loadingStateEnum.success &&
-              result.schedule !== undefined
-            ) {
-              newSchedules.push(result.schedule);
-            } else {
-              return { result: loadingStateEnum.failed };
-            }
-          }
-          const dressCodeResult = await getDressCode(
-            data.value[0].fields.timetableDressCodeId,
-          );
+    if (data.value.length !== undefined && data.value.length === 1) {
+      try {
+        const scheduleData: string[] = JSON.parse(
+          data.value[0].fields.timetableDataSchedules,
+        );
+        const newSchedules: scheduleType[] = [];
+        for (let index = 0; index < scheduleData.length; index += 1) {
+          const result = await getSchedule(scheduleData[index]);
           if (
-            dressCodeResult.result === loadingStateEnum.success
+            result.result === loadingStateEnum.success &&
+            result.schedule !== undefined
           ) {
-            const resultingTimetable: timetableType = {
+            newSchedules.push(result.schedule);
+          } else {
+            return { result: loadingStateEnum.failed };
+          }
+        }
+        const dressCodeResult = await getDressCode(
+          data.value[0].fields.timetableDressCodeId,
+        );
+        if (
+          dressCodeResult.result === loadingStateEnum.success
+        ) {
+          try {
+            const timetableResult: timetableType = {
               name: data.value[0].fields.timetableName,
               id: data.value[0].fields.timetableId,
               schedules: newSchedules,
               days: JSON.parse(data.value[0].fields.timetableDataDays),
               dressCode: dressCodeResult.data,
             };
+            store.dispatch(timetableSlice.actions.addTimetable(timetableResult))
             return {
               result: loadingStateEnum.success,
-              timetable: resultingTimetable,
+              timetable: timetableResult,
             };
+          } catch {
+            return { result: loadingStateEnum.failed }
           }
-          return { result: loadingStateEnum.failed };
-        } catch (e) {
-          return { result: loadingStateEnum.failed };
         }
-      } else {
+        return { result: loadingStateEnum.failed };
+      } catch (e) {
         return { result: loadingStateEnum.failed };
       }
     } else {
@@ -466,6 +506,7 @@ export async function getSchoolDay(
       if (singleValueResult !== undefined && singleValueResult.eventType === 'schoolDay') {
         const schoolDayDataResult = await getSchoolDayData(JSON.parse(singleValueResult.eventData) as schoolDayDataCompressedType)
         if (schoolDayDataResult.result !== loadingStateEnum.success) {
+          console.log("FAILED ON SCHOOL DAY DATA ")
           return { result: loadingStateEnum.failed };
         }
         const event: eventType = {
@@ -483,8 +524,10 @@ export async function getSchoolDay(
         return { result: loadingStateEnum.success, event };
       }
     }
+    console.log("FAILED ON SCHOOL SINGLE")
     return { result: loadingStateEnum.failed };
   }
+  console.log("FAILED ON SCHOOL OKAY ")
   return { result: loadingStateEnum.failed };
 }
 
@@ -948,13 +991,13 @@ async function getSchoolDayData(data: schoolDayDataCompressedType): Promise<{res
   if (singleValue == undefined) {
     return {result: loadingStateEnum.failed}
   }
-  const timetableResult = await getTimetable(singleValue.eventData)
-  if (timetableResult.result !== loadingStateEnum.success) {
+  const timetable = await getTimetable(singleValue.eventData)
+  if (timetable.result !== loadingStateEnum.success) {
     return {result: loadingStateEnum.failed}
   }
-  const schoolDay = timetableResult.timetable.days.find((e) => {return e.id === data.sdId})
-  const schedule = timetableResult.timetable.schedules.find((e) => {return e.id === data.sId})
-  const dressCode = timetableResult.timetable.dressCode.dressCodeData.find((e) => {return e.id === data.dcId})
+  const schoolDay = timetable.data.days.find((e) => {return e.id === data.sdId})
+  const schedule = timetable.data.schedules.find((e) => {return e.id === data.sId})
+  const dressCode = timetable.data.dressCode.dressCodeData.find((e) => {return e.id === data.dcId})
   if (schoolDay === undefined || schedule === undefined || dressCode === undefined) {
     return {result: loadingStateEnum.failed}
   }

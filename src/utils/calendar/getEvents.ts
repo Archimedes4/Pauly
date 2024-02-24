@@ -9,6 +9,8 @@ import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import { getGraphEvents } from './calendarFunctionsGraph';
+import { getClassEventsFromDay } from '../classesFunctions';
+import { getDOW } from './calendarFunctions';
 
 export default async function getEvents() {
   // date the user picks
@@ -70,4 +72,18 @@ export default async function getEvents() {
     }
   }
   store.dispatch(currentEventsSlice.actions.addCurrentEvents(outputEvents));
+
+  let days = getDOW(new Date(selectedDate))
+  let pendingRequests = []
+  for (let index = 0; index < days.length; index += 1) {
+    pendingRequests.push(getClassEventsFromDay(days[index]))
+  }
+  const results = await Promise.all(pendingRequests)
+  for (let index = 0; index < days.length; index += 1) {
+    const result = results[index]
+    console.log(result)
+    if (result.result === loadingStateEnum.success) {
+      store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data))
+    }
+  }
 }

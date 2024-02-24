@@ -15,6 +15,7 @@ import {
   Switch,
   Platform,
   Modal,
+  StatusBar,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -723,7 +724,9 @@ export default function Notifications() {
   }, [dispatch]);
 
   return (
-    <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
+    <>
+      <StatusBar barStyle={"dark-content"}/>
+      <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
       <View style={{ height: insets.top }} />
       {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
       <View
@@ -787,5 +790,6 @@ export default function Notifications() {
 
       </Modal> */}
     </ScrollView>
+    </>
   );
 }
