@@ -145,7 +145,7 @@ export default async function getSubmissions(): Promise<{
 
 export async function getSportsContent(
   team?: string,
-): Promise<{ result: loadingStateEnum; sports?: sportPost[] }> {
+): Promise<{ result: loadingStateEnum.success; sports: sportPost[] } | {result: loadingStateEnum.failed}> {
   const filter = team ? `&$filter=fields/selectedTeamId%20eq%20'${team}'` : '';
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${

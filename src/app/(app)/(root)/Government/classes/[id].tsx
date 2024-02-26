@@ -5,8 +5,7 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, semesters } from '@constants';
 import getSchoolYears from '@utils/calendar/getSchoolYears';
-import SegmentedPicker from '@components/Pickers/SegmentedPicker';
-import { getEvent, getTimetable } from '@utils/calendar/calendarFunctionsGraph';
+import { getEvent } from '@utils/calendar/calendarFunctionsGraph';
 import { CloseIcon, WarningIcon } from '@components/Icons';
 import Dropdown from '@components/Dropdown';
 import { getRoom, getRooms } from '@utils/classesFunctions';
@@ -15,6 +14,7 @@ import ProgressView from '@components/ProgressView';
 import SecondStyledButton from '@components/StyledButton';
 import { getTextState } from '@utils/ultility/createUUID';
 import StyledButton from '@components/StyledButton';
+import { getTimetable } from '@src/redux/reducers/timetableReducer';
 
 function PeriodBlock({
   selectedSchoolYear,
@@ -39,15 +39,14 @@ function PeriodBlock({
       setTimetableState(loadingStateEnum.loading);
       const result = await getTimetable(selectedSchoolYear.timetableId);
       if (
-        result.result === loadingStateEnum.success &&
-        result.timetable !== undefined
+        result.result === loadingStateEnum.success
       ) {
-        if (result.timetable.days.length !== periods.length) {
-          const newArray = Array.from(Array(result.timetable.days.length));
+        if (result.data.days.length !== periods.length) {
+          const newArray = Array.from(Array(result.data.days.length));
           newArray.fill(0, 0, newArray.length);
           setPeriods(newArray);
         }
-        setSelectedTimetable(result.timetable);
+        setSelectedTimetable(result.data);
       }
       setTimetableState(result.result);
     }

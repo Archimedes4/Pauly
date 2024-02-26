@@ -3,8 +3,8 @@
   Andrew Mainella
   
 */
-import { View, Platform } from 'react-native';
-import React, { useEffect } from 'react';
+import { Platform } from 'react-native';
+import React from 'react';
 import WebView from 'react-native-webview';
 import YoutubeWeb from './youtubeIframeFunction';
 

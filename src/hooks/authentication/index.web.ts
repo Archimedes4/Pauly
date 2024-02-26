@@ -33,6 +33,10 @@ export const useRefresh = () => {
 export function useSilentLogin(): () => Promise<void> {
   const { instance, inProgress } = useMsal();
   async function main() {
+    if (store.getState().authActive) {
+      return
+    }
+    store.dispatch(authActiveSlice.actions.setAuthActive(true))
     // handle auth redired/do all initial setup for msal
     const redirectResult = await instance.handleRedirectPromise();
     if (

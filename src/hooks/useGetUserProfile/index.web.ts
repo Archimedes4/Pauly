@@ -3,10 +3,15 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import { useMsal } from '@azure/msal-react';
 import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
 import getUserImage from './getUserImage';
+import { loadingStateEnum } from '@constants';
 
 export default function getUserProfile() {
   const { instance } = useMsal();
   async function main() {
+    if (store.getState().microsoftProfileData.state !== loadingStateEnum.notStarted) {
+      return
+    }
+    store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileState(loadingStateEnum.loading))
     getUserImage();
     const account = instance.getActiveAccount();
     if (

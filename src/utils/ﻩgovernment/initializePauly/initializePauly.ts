@@ -1,7 +1,7 @@
 import { loadingStateEnum } from '@constants';
 import createUUID from '@utils/ultility/createUUID';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import store from '@src/redux/store';
+import store from '@redux/store';
 import {
   paulyListData,
   paulyDataData,

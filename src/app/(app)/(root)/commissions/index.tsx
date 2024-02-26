@@ -25,6 +25,7 @@ import ProgressView from '@components/ProgressView';
 import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
 import { CurrentIcon, FutureIcon, MoreIcon, PastIcon, PiggyBankIcon } from '@src/components/Icons';
+import getLeaderboard from '@src/utils/commissions/getLeaderboard';
 
 async function loadCommissionData(
   startDate?: { date: Date; filter: 'ge' | 'le' },
@@ -301,6 +302,7 @@ export default function Commissions() {
 
   useEffect(() => {
     loadData();
+    getLeaderboard()
   }, [loadData]);
 
   return (

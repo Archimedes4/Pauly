@@ -16,7 +16,7 @@ import { addEventSlice } from '@redux/reducers/addEventReducer';
 import store, { RootState } from '@redux/store';
 import { loadingStateEnum, semesters } from '@constants';
 import { FlatList } from 'react-native';
-import { getTimetable } from '@src/redux/reducers/timetableReducer';
+import { getTimetable } from '@redux/reducers/timetableReducer';
 
 enum pickSchoolDayMode {
   schoolYear,

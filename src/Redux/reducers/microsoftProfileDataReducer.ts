@@ -1,26 +1,34 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { loadingStateEnum } from '@constants';
 
-const initalState: { uri: string; displayName: string; id: string } = {
+const initalState: { uri: string; displayName: string; id: string, state: loadingStateEnum } = {
   uri: '',
   displayName: '',
   id: '',
+  state: loadingStateEnum.notStarted
 };
 
 export const microsoftProfileDataSlice = createSlice({
   name: 'microsoftProfileData',
   initialState: initalState,
   reducers: {
-    setMicrosoftProfileData: (
-      _state,
-      action: PayloadAction<{ uri: string; displayName: string; id: string }>,
+    setMicrosoftProfileState: (
+      state,
+      action: PayloadAction<loadingStateEnum>,
     ) => {
-      return action.payload;
+      return {
+        uri: state.uri,
+        displayName: state.displayName,
+        id: state.id,
+        state: action.payload
+      };
     },
     setMicrosftProfileUrl: (state, action: PayloadAction<string>) => {
       return {
         uri: action.payload,
         displayName: state.displayName,
         id: state.id,
+        state: state.state
       };
     },
     setMicrosoftProfileInformation: (
@@ -31,6 +39,7 @@ export const microsoftProfileDataSlice = createSlice({
         uri: state.uri,
         displayName: action.payload.displayName,
         id: action.payload.id,
+        state: state.state
       };
     },
   },

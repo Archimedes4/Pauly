@@ -328,6 +328,21 @@ declare global {
     latCoordinate: number;
     lngCoordinate: number;
   };
+  type largeBatchInput = batchRequest[][] | {
+    firstUrl: string;
+    secondUrl: string;
+    array: string[];
+    method: 'GET' | 'POST';
+  } | {
+    firstUrl: string;
+    secondUrl: string;
+    map: Map<string, unknown>;
+    method: 'GET' | 'POST';
+  }
+  type leaderboardUserType = {
+    name: string;
+    points: number;
+  }
   type monthDataType = {
     id: string;
     showing: boolean;

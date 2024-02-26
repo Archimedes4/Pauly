@@ -14,9 +14,9 @@ export function getDaysInMonth(input: Date): number {
 
 export function getDay(value: number, startdate: number): number | undefined {
   let offset: number = 0;
-  const let1: number = value / 5.0;
-  const let2: number = Math.floor(let1);
-  const let4: number = let2 * 2;
+  const weekNumDec: number = value / 5.0;
+  const weekNum: number = Math.floor(weekNumDec);
+  const let4: number = weekNum * 2;
   offset += let4;
   const result: number = value - startdate + 2 + offset;
   const month = new Date();

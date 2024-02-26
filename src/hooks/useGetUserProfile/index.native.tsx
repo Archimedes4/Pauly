@@ -3,9 +3,14 @@ import callMsGraph from '@utils/ultility/microsoftAssets';
 import { fetchUserInfoAsync, useAutoDiscovery } from 'expo-auth-session';
 import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
 import getUserImage from './getUserImage';
+import { loadingStateEnum } from '@src/constants';
 
 export default function getUserProfile() {
   async function main() {
+    if (store.getState().microsoftProfileData.state !== loadingStateEnum.notStarted) {
+      return
+    }
+    store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileState(loadingStateEnum.loading))
     getUserImage();
     const profileResult = await callMsGraph(
       'https://graph.microsoft.com/v1.0/me',

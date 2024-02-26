@@ -1,6 +1,6 @@
 import { AsyncThunkAction } from "@reduxjs/toolkit";
-import { loadingStateEnum } from "@src/constants";
-import store, { RootState } from "@src/redux/store";
+import { loadingStateEnum } from "@constants";
+import store from "@redux/store";
 
 // https://stackoverflow.com/questions/3583724/how-do-i-add-a-delay-in-a-javascript-loop
 export const timer = (ms: number | undefined) =>

@@ -532,9 +532,11 @@ export async function getSchoolDay(
 }
 
 export async function getSchoolDays(date: Date): Promise<{
-  result: loadingStateEnum;
-  data?: eventType[];
+  result: loadingStateEnum.success;
+  data: eventType[];
   nextLink?: string;
+} | {
+  result: loadingStateEnum.failed;
 }> {
   const firstDay = `${
     new Date(date.getFullYear(), date.getMonth(), 1)
@@ -584,15 +586,13 @@ export async function getSchoolDays(date: Date): Promise<{
     }
     // Get batch data
 
-    const batchRequestResultSchedule = await batchRequest(undefined, {
+    const batchRequestResultSchedule = await batchRequest({
       firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
         store.getState().paulyList.scheduleListId
       }/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleColor,scheduleData,scheduleId)&$filter=fields/scheduleId%20eq%20'`,
       secondUrl: `'&$select=id`,
       method: 'GET',
-      keys: {
-        map: scheduleIds,
-      },
+      map: scheduleIds
     });
 
     if (
@@ -705,15 +705,13 @@ async function getTimetablesFromSchoolYears(
   schedules: Map<string, scheduleType>,
 ): Promise<{ result: loadingStateEnum; data?: Map<string, timetableType> }> {
   // Get School Years
-  const batchRequestResultSchoolYear = await batchRequest(undefined, {
+  const batchRequestResultSchoolYear = await batchRequest({
     firstUrl: `/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
     secondUrl: `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
       store.getState().paulyList.eventTypeExtensionId
     }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`,
-    method: 'GET',
-    keys: {
-      map: schoolYearIds,
-    },
+    method: 'GET',  
+    map: schoolYearIds,
   });
 
   if (batchRequestResultSchoolYear.result !== loadingStateEnum.success) {
@@ -759,15 +757,13 @@ async function getTimetablesFromSchoolYears(
   }
 
   // Get timetables
-  const batchRequestResultTimetable = await batchRequest(undefined, {
+  const batchRequestResultTimetable = await batchRequest({
     firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
       store.getState().paulyList.timetablesListId
     }/items?expand=fields($select=timetableName,timetableId,timetableDataDays,timetableDataSchedules,timetableDefaultScheduleId,timetableDressCodeId)&$filter=fields/timetableId%20eq%20'`,
     secondUrl: `'&$select=id`,
     method: 'GET',
-    keys: {
-      map: timetableIds,
-    },
+    map: timetableIds,
   });
 
   if (
@@ -809,15 +805,13 @@ async function getTimetablesFromSchoolYears(
   }
 
   // Get dress code data
-  const batchRequestResultDressCode = await batchRequest(undefined, {
+  const batchRequestResultDressCode = await batchRequest({
     firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
       store.getState().paulyList.dressCodeListId
     }/items?expand=fields($select=dressCodeData,dressCodeIncentivesData,dressCodeName,dressCodeId)&$select=id&$filter=fields/dressCodeId%20eq%20'`,
     secondUrl: `'&$top=1`,
     method: 'GET',
-    keys: {
-      map: dressCodeIds,
-    },
+    map: dressCodeIds,
   });
 
   if (batchRequestResultDressCode.result !== loadingStateEnum.success) {

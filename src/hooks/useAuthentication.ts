@@ -13,7 +13,7 @@ import {
 } from '@utils/handleGovernmentLogin';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { authLoadingSlice } from '@src/redux/reducers/authLoadingReducer';
+import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
 import { useRefresh, useSilentLogin } from './authentication';
 import { Platform } from 'react-native';
 

@@ -140,8 +140,7 @@ export default function MonthView({
     if (monthViewData.length <= 0) {
       const result = await getSchoolDays(new Date());
       if (
-        result.result === loadingStateEnum.success &&
-        result.data !== undefined
+        result.result === loadingStateEnum.success
       ) {
         dispatch(monthViewSlice.actions.setMonthViewData(result.data));
       }
@@ -173,7 +172,7 @@ export default function MonthView({
       >
         <Text
           numberOfLines={1}
-          style={{ width: width * 0.2, textAlign: 'center' }}
+          style={{ width: width * 0.2, textAlign: 'center', color: Colors.white }}
         >
           Monday
         </Text>
@@ -190,7 +189,7 @@ export default function MonthView({
       >
         <Text
           numberOfLines={1}
-          style={{ width: width * 0.2, textAlign: 'center' }}
+          style={{ width: width * 0.2, textAlign: 'center', color: Colors.white }}
         >
           Tuesday
         </Text>
@@ -207,7 +206,7 @@ export default function MonthView({
       >
         <Text
           numberOfLines={1}
-          style={{ width: width * 0.2, textAlign: 'center' }}
+          style={{ width: width * 0.2, textAlign: 'center', color: Colors.white }}
         >
           Wednesday
         </Text>
@@ -224,7 +223,7 @@ export default function MonthView({
       >
         <Text
           numberOfLines={1}
-          style={{ width: width * 0.2, textAlign: 'center' }}
+          style={{ width: width * 0.2, textAlign: 'center', color: Colors.white }}
         >
           Thursday
         </Text>
@@ -241,7 +240,7 @@ export default function MonthView({
       >
         <Text
           numberOfLines={1}
-          style={{ width: width * 0.2, textAlign: 'center' }}
+          style={{ width: width * 0.2, textAlign: 'center', color: Colors.white }}
         >
           Friday
         </Text>

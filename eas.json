@@ -37,7 +37,8 @@
         "EXPO_PUBLIC_YOUTUBEUPLOADSID":"UU8HbRWjbR0xjOeE6OlQ1sLA",
         "EXPO_PUBLIC_RAINDROPTOKEN":"8ea167d6-0792-4b10-a3a1-e8571743c3e6",
         "EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT":"https://pauly-functions.azurewebsites.net",
-        "EXPO_PUBLIC_PAULY_FUNCTION_KEY":"7tojyRh5Yu-0FblbWNhmjZsLDKMpjVbS0EJR08jZO_-4AzFut0sMgg=="
+        "EXPO_PUBLIC_PAULY_FUNCTION_KEY":"7tojyRh5Yu-0FblbWNhmjZsLDKMpjVbS0EJR08jZO_-4AzFut0sMgg==",
+        "NODE_ENV":"production"
       }
     },
     "development-simulator": {

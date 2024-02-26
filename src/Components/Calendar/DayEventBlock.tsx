@@ -1,7 +1,7 @@
 import { Colors } from "@constants";
 import { addEventSlice } from "@redux/reducers/addEventReducer";
 import store from "@redux/store";
-import calculateFontSize from "@src/utils/ultility/calculateFontSize";
+import calculateFontSize from "@utils/ultility/calculateFontSize";
 import { computeEventHeight, findTimeOffset } from "@utils/calendar/calendarFunctions";
 import React from "react";
 import { Pressable, Text, View } from "react-native";

@@ -916,6 +916,7 @@ export function GovernmentCommissionUpdate({
               width={width - 50}
               height={height * 0.5}
             />
+            <StyledButton text='Add Submission' onPress={() => setIsAddingCommissionSubmission(true)}/>
           </View>
         ) : null}
         <StyledButton
@@ -943,9 +944,11 @@ export function GovernmentCommissionUpdate({
           />
         ) : null}
       </ScrollView>
-      <Modal visible={isAddingCommissionSubmission}>
-        <AddCommissionSubmission commissionId="" />
-      </Modal>
+      { (!isCreate && typeof id === "string") ?
+        <Modal visible={isAddingCommissionSubmission} transparent>
+          <AddCommissionSubmission commissionId={id} onClose={() => setIsAddingCommissionSubmission(false)}/>
+        </Modal>: null
+      }
     </View>
   );
 }
@@ -1415,7 +1418,8 @@ function PickUser({
   );
 }
 
-function AddCommissionSubmission({ commissionId }: { commissionId: string }) {
+function AddCommissionSubmission({ commissionId, onClose }: { commissionId: string; onClose: () => void }) {
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [isPickingUser, setIsPickingUser] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<
     undefined | microsoftUserType
@@ -1450,17 +1454,19 @@ function AddCommissionSubmission({ commissionId }: { commissionId: string }) {
 
   if (isPickingUser) {
     return (
-      <PickUser
-        selectedUser={selectedUser}
-        onBack={() => setIsPickingUser(false)}
-        setSelectedUser={setSelectedUser}
-      />
+      <View style={{width: width * 0.8, height: height * 0.8, margin: 'auto', borderRadius: 15, borderWidth: 2, borderColor: Colors.black, backgroundColor: Colors.white}}>
+        <PickUser
+          selectedUser={selectedUser}
+          onBack={() => setIsPickingUser(false)}
+          setSelectedUser={setSelectedUser}
+        />
+      </View>
     );
   }
 
   return (
-    <View>
-      <StyledButton text="Select User" onPress={() => setIsPickingUser(true)} />
+    <View style={{width: width * 0.8, height: height * 0.8, margin: 'auto', borderRadius: 15, borderWidth: 2, borderColor: Colors.black, backgroundColor: Colors.white}}>
+      <StyledButton text="Select User" onPress={() => setIsPickingUser(true)} style={{margin: 15}}/>
       <StyledButton
         text={getTextState(addSubmissionState, {
           cannotStart: 'Please Pick a User',
@@ -1470,7 +1476,9 @@ function AddCommissionSubmission({ commissionId }: { commissionId: string }) {
           failed: 'Failed to Create Submission',
         })}
         onPress={() => loadCreateCommissionSubmission()}
+        style={{margin: 15}}
       />
+      <StyledButton text="Close" onPress={() => {onClose()}}  style={{margin: 15}}/>
     </View>
   );
 }

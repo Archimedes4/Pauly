@@ -5,7 +5,6 @@ import { Colors } from '@constants';
 import React, { useEffect } from 'react';
 import {
   FlatList,
-  ListRenderItemInfo,
   Pressable,
   ScrollView,
   Text,
@@ -16,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getMonthData } from '@utils/calendar/calendarFunctionsGraph';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { ChevronLeft, ChevronRight } from '../Icons';
-import { findFirstDayinMonth, isDateToday } from '@src/utils/calendar/calendarFunctions';
+import { findFirstDayinMonth, isDateToday } from '@utils/calendar/calendarFunctions';
 import CalendarRow from './CalendarRow';
 
 function MonthView({ width, height }: { width: number; height: number }) {

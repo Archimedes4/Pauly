@@ -47,13 +47,7 @@ async function makeBatch(
 }
 
 export default async function largeBatch(
-  defaultBatchData?: batchRequest[][],
-  createData?: {
-    firstUrl: string;
-    secondUrl: string;
-    keys: { array?: string[]; map?: Map<string, unknown> };
-    method: 'GET' | 'POST';
-  },
+  input: largeBatchInput
 ): Promise<
   | { result: loadingStateEnum.success; data: batchResponseType[] }
   | {
@@ -61,14 +55,14 @@ export default async function largeBatch(
     }
 > {
   let data: batchRequest[][] = [];
-  if (defaultBatchData) {
-    data = defaultBatchData;
-  } else if (createData) {
+  if (Array.isArray(input)) {
+    data = input;
+  } else {
     let batchIndex = 0;
-    if (createData.keys.array !== undefined) {
+    if ('array' in input) {
       for (
         let createDataIndex = 0;
-        createDataIndex < createData.keys.array.length;
+        createDataIndex < input.array.length;
         createDataIndex += 1
       ) {
         if (batchIndex >= data.length) {
@@ -76,23 +70,23 @@ export default async function largeBatch(
         }
         data[batchIndex].push({
           id: (createDataIndex + 1).toString(),
-          method: createData.method,
-          url: `${createData.firstUrl}${createData.keys.array[createDataIndex]}${createData.secondUrl}`,
+          method: input.method,
+          url: `${input.firstUrl}${input.array[createDataIndex]}${input.secondUrl}`,
         });
         if (createDataIndex % 19 === 0 && createDataIndex !== 0) {
           batchIndex += 1;
         }
       }
-    } else if (createData.keys.map !== undefined) {
+    } else if (input.map !== undefined) {
       const createDataIndexMap = 0;
-      createData.keys.map.forEach((value, key) => {
+      input.map.forEach((_value, key) => {
         if (batchIndex >= data.length) {
           data.push([]);
         }
         data[batchIndex].push({
           id: (createDataIndexMap + 1).toString(),
-          method: createData.method,
-          url: `${createData.firstUrl}${key}${createData.secondUrl}`,
+          method: input.method,
+          url: `${input.firstUrl}${key}${input.secondUrl}`,
         });
         if (createDataIndexMap % 19 === 0) {
           batchIndex += 1;
@@ -101,8 +95,6 @@ export default async function largeBatch(
     } else {
       return { result: loadingStateEnum.failed };
     }
-  } else {
-    return { result: loadingStateEnum.failed };
   }
 
   let output: batchResponseType[] = [];

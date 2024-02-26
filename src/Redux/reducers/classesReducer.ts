@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '@constants';
-import { getClassesApi } from '@utils/classesFunctions';
+import getClassesApi from '@utils/getClassesApi';
 
 const initalState: {
   classes: classType[],

@@ -11,6 +11,67 @@ Saint Paul's High School Student Council 2023-2024
 Power by expo using expo router at its core. Application also uses redux for storage.
 # Backend
 Pauly uses Microsoft graph and SharePoint lists as a database.
+# Dependencies
+| Dependency                | Main Version | Reason |
+| ------------------------- | ---------------------- | ----------- |
+| @azure/msal-browser | 2 | Core auth api for web |
+| @azure/msal-react | 1 | Core auth api for web |
+| @expo/config-plugins | 7 |  |
+| @react-google-maps/api | 2 | |
+| @react-native-async-storage/async-storage | 1 |
+| @react-native-community/datetimepicker | 7 |
+| @react-native-community/slider | 4 |
+| @reduxjs/toolkit | 1 |
+| @types/node" | 20 |
+| @types/pdfjs-dist | 2 |
+| @types/react | 18 |
+| expo | sdk 50 | Core api |
+| expo-auth-session | 5 | Core auth api for native |
+| expo-av | 13 |
+| expo-build-properties | 0 |
+| expo-clipboard | 5 |
+| expo-constants | 15 |
+| expo-crypto | 12 |
+| expo-dev-client | 3 | Dev cliant for testing without the use of expo go |
+| expo-font | 11 | Used to load fonts into the application |
+| expo-image | 1 |
+| expo-image-picker | 14 |
+| expo-linking | 6 |
+| expo-location | 16 | Used to get location in commissions |
+| expo-network | 5 | Used to make such connection is avaliable |
+| expo-print | 12 | Used in commissions to print QR code |
+| expo-router | 3 | Holds navigations and linking for the project |
+| expo-splash-screen | 0.26 |
+| expo-status-bar | 1 |
+| expo-web-browser | 12 |
+| geolib | 3 | used to calculated distance in commission |
+| metro | 0 | 
+| patch-package | 8 | Used to fix some of the intricisies with the packages the reasons for which are documenent in the oddities section |
+| pdfjs-dist | 3 | 
+| postinstall-postinstall | 2 |
+| react | 18 | Core api for the project |
+| react-art | 18 |
+| react-dom | 18 | A peer dependancy for expo router |
+| react-native | 73 | Core api for the project |
+| react-native-gesture-handler | 2 | gesuture handler used as a peer depency and in places such as home view. |
+| react-native-maps | 1 | Used in government commission comonent for native apps |
+| react-native-paper | 5 | Needed for react-native-paper-dates |
+| react-native-paper-dates | 0 | Main components used to set time. |
+| react-native-qrcode-svg | 6 |
+| react-native-reanimated | 3 |
+| react-native-safe-area-context | 4 |
+| react-native-screens | 3 |
+| react-native-svg | 14 | used for svgs, svgs can be found in [src -> components -> icons](/src/components/Icons/index.tsx) |
+| react-native-vector-icons | 10 |
+| react-native-webview | 13 |
+| react-quill | 2 |
+| react-redux | 8 | Core store api |
+| react-refresh | 0
+| react-router-native | 6 |
+| react-test-renderer | 18 |
+| reanimated-color-picker | 3 | Used in schedules to pick the schedule color |
+| redux | 4 |
+| typescript | 5 |
 ## Structure 
 ### Calendar
 The calendar is organized into documents of years containing collections of months. These months are formatted as a number based on January being 1. Inside each collection documents of days are inside. Each day contains the day, month, and year. As well as the school day and schedule id. If the schedule does not have a value it is schedule one (default schedule).

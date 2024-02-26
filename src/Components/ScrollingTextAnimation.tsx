@@ -6,7 +6,7 @@
   Used in Home view for current break point = 0
 */
 import { View, Text, Platform } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors } from '@constants';
 import Animated, {
@@ -14,7 +14,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
-  withSequence,
   withTiming,
 } from 'react-native-reanimated';
 

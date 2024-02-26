@@ -1,4 +1,4 @@
-import { findTimeOffset } from "@src/utils/calendar/calendarFunctions";
+import { findTimeOffset } from "@utils/calendar/calendarFunctions";
 import { useCallback, useEffect, useState } from "react";
 
 export default function dayCurrentTimeLine(height: number) {

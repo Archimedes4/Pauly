@@ -62,7 +62,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
   );
 
   async function main(government?: boolean) {
-    if (discovery !== null) {
+    if (discovery !== null && !store.getState().authActive) {
       store.dispatch(authActiveSlice.actions.setAuthActive(true));
       if (government !== undefined) {
         await setWantGovernment(government);

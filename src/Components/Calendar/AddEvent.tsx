@@ -20,7 +20,7 @@ import SelectTimetable from './SelectTimetable';
 import { CalendarIcon, CloseIcon, TimeIcon } from '../Icons';
 import PickerWrapper from '../Pickers/Picker';
 import SecondStyledButton from '../StyledButton';
-import calculateFontSize from '@src/utils/ultility/calculateFontSize';
+import calculateFontSize from '@utils/ultility/calculateFontSize';
 
 function setSelectedEventType(e: number) {
   const selectedEvent = store.getState().addEvent.selectedEvent
