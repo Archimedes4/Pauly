@@ -16,6 +16,7 @@ import {
   Platform,
   Modal,
   StatusBar,
+  FlatList,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -36,6 +37,7 @@ import { TrashIcon, WarningIcon } from '@components/Icons';
 import { deleteTask, updateTaskStatus, updateTaskText } from '@utils/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import calculateFontSize from '@src/utils/ultility/calculateFontSize';
+import { getClasses } from '@src/redux/reducers/classesReducer';
 
 // Get Messages
 // Last Chat Message Channels Included
@@ -666,6 +668,42 @@ function InsightsBlock() {
       </View>
     </>
   );
+}
+
+function ClassBlock() {
+  const { width, height, currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimensions,
+  );
+  const classes = useSelector(
+    (state: RootState) => state.classes,
+  );
+  useEffect(() => {
+    getClasses()
+  }, [])
+  return (
+    <>
+      <Text
+        style={{
+          fontSize: 24,
+          marginLeft: width * 0.05,
+          marginTop: height * 0.03,
+          marginBottom: height * 0.02,
+        }}
+      >
+        Recent Files
+      </Text>
+      <View>
+        <FlatList 
+          data={classes.classes}
+          renderItem={(e) => (
+            <View>
+              <Text>{e.item.name}</Text>
+            </View>
+          )}
+        />
+      </View>
+    </>
+  )
 }
 
 export default function Notifications() {

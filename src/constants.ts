@@ -185,6 +185,7 @@ declare global {
     schoolYearId: string;
     semester: semesters[];
     periods: number[];
+    teamLink: string;
   };
   type commissionQRCodeTimed =
     | {

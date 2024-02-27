@@ -37,6 +37,7 @@ import authActiveReducer from './reducers/authActiveReducer';
 import lastCalledSelectedDateReducer from './reducers/lastCalledSelectedDateReducer';
 import classesReducer from './reducers/classesReducer';
 import timetableReducer from './reducers/timetableReducer';
+import leaderboardReducer from './reducers/leaderboardReducer';
 
 const store = configureStore({
   reducer: {
@@ -54,6 +55,7 @@ const store = configureStore({
     isGovernmentMode: isGovernmentModeReducer,
     isShowingProfileBlock: isShowingProfileBlockReducer,
     lastCalledSelectedDate: lastCalledSelectedDateReducer,
+    leaderboard: leaderboardReducer,
     microsoftProfileData: microsoftProfileDataReducer,
     monthData: monthDataReducer,
     monthView: monthViewReducer,

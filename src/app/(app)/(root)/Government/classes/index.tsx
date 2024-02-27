@@ -33,6 +33,7 @@ function GovernmentClassesBody() {
             },
             schoolYearId: '',
             semester: [semesters.semesterOne],
+            teamLink: ''
           });
         }
         setClasses(outputData);

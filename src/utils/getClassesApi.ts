@@ -79,6 +79,9 @@ export default async function getClassesApi(): Promise<
               semester: JSON.parse(batchResultData.responses[batchIndex].body[
                 store.getState().paulyList.classExtensionId
               ].semesterId),
+
+              // TODO add teamlink
+              teamLink: ''
             });
           }
         } else {

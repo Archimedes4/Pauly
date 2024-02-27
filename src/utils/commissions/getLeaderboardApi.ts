@@ -3,7 +3,7 @@ import callMsGraph from "../ultility/microsoftAssets";
 import { loadingStateEnum } from "@src/constants";
 import largeBatch from "../ultility/batchRequest";
 
-export default async function getLeaderboard(commissionId?: string) {
+export default async function getLeaderboard(commissionId?: string): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: leaderboardUserType[]}> {
   let commissionFilter = ""
   if (commissionId !== undefined) {
     commissionFilter = `&fields/commissionId%20eq%20'${commissionId}'`
@@ -78,7 +78,7 @@ export default async function getLeaderboard(commissionId?: string) {
     const points = commissions.get(userAndCommision[index].commission)
     if (points == undefined) {
       // An error has occured
-      return
+      return {result: loadingStateEnum.failed}
     }
     if (currentUser === "") {
       currentUser = userAndCommision[index].user
@@ -89,7 +89,7 @@ export default async function getLeaderboard(commissionId?: string) {
       const oldUser = users.get(currentUser)
       if (oldUser === undefined) {
         //Error
-        return
+        return {result: loadingStateEnum.failed}
       }
       console.log("HERE", currentPoints)
       users.set(currentUser, {
@@ -104,7 +104,7 @@ export default async function getLeaderboard(commissionId?: string) {
       const oldUser = users.get(currentUser)
       if (oldUser === undefined) {
         //Error
-        return
+        return {result: loadingStateEnum.failed}
       }
       users.set(currentUser, {
         name: oldUser.name,
@@ -113,4 +113,18 @@ export default async function getLeaderboard(commissionId?: string) {
     }
   }
   console.log(users)
+  let leaderboardResult: leaderboardUserType[] = []
+  users.forEach((user: {
+    name: string;
+    points: number;
+  }) => {
+    leaderboardResult.push({
+      name: user.name,
+      points: user.points
+    })
+  });
+  return {
+    result: loadingStateEnum.success,
+    data: leaderboardResult
+  }
 }
