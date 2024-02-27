@@ -539,35 +539,41 @@ function TrendingFiles({ width }: { width: number }) {
   const { userState, userData } = useSelector(
     (state: RootState) => state.homepageData,
   );
-  return (
-    <ScrollView nestedScrollEnabled style={{ height: height * 0.3, width }}>
-      {userState === loadingStateEnum.loading ? (
+
+  if (userState === loadingStateEnum.loading) {
+    return (
+      <View style={{ height: height * 0.3, width, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
+        <ProgressView width={14} height={14}/>
         <Text>Loading</Text>
-      ) : (
-        <View>
-          {userState === loadingStateEnum.success ? (
-            <View>
-              {userData.map(data => (
-                <Pressable
-                  key={`User_Insight_${data.id}`}
-                  style={{ flexDirection: 'row' }}
-                  onPress={() => {
-                    Linking.openURL(data.webUrl);
-                  }}
-                >
-                  <View style={{ margin: 10, flexDirection: 'row' }}>
-                    <MimeTypeIcon width={14} height={14} mimeType={data.type} />
-                    <Text>{data.title}</Text>
-                  </View>
-                </Pressable>
-              ))}
+      </View>
+    )
+  }
+
+  if (userState === loadingStateEnum.success) {
+    return (
+      <ScrollView nestedScrollEnabled style={{ height: height * 0.3, width }}>
+        {userData.map(data => (
+          <Pressable
+            key={`User_Insight_${data.id}`}
+            style={{ flexDirection: 'row' }}
+            onPress={() => {
+              Linking.openURL(data.webUrl);
+            }}
+          >
+            <View style={{ margin: 10, flexDirection: 'row' }}>
+              <MimeTypeIcon width={14} height={14} mimeType={data.type} />
+              <Text>{data.title}</Text>
             </View>
-          ) : (
-            <Text>Failed</Text>
-          )}
-        </View>
-      )}
-    </ScrollView>
+          </Pressable>
+        ))}
+      </ScrollView>
+    )
+  }
+
+  return (
+    <View style={{ height: height * 0.3, width }}>
+      <Text>Failed</Text>
+    </View>
   );
 }
 
@@ -764,7 +770,7 @@ export default function Notifications() {
   return (
     <>
       <StatusBar barStyle={"dark-content"}/>
-      <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
+      <ScrollView style={{ width, height, backgroundColor: Colors.lightGray }}>
       <View style={{ height: insets.top }} />
       {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
       <View

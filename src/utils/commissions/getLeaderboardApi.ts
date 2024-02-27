@@ -3,7 +3,7 @@ import callMsGraph from "../ultility/microsoftAssets";
 import { loadingStateEnum } from "@src/constants";
 import largeBatch from "../ultility/batchRequest";
 
-export default async function getLeaderboard(commissionId?: string): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: leaderboardUserType[]}> {
+export default async function getLeaderboardApi(commissionId?: string): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: leaderboardUserType[]}> {
   let commissionFilter = ""
   if (commissionId !== undefined) {
     commissionFilter = `&fields/commissionId%20eq%20'${commissionId}'`

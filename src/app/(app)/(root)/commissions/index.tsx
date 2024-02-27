@@ -26,6 +26,7 @@ import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
 import { CurrentIcon, FutureIcon, MoreIcon, PastIcon, PiggyBankIcon } from '@src/components/Icons';
 import getLeaderboard from '@src/utils/commissions/getLeaderboardApi';
+import { Link } from 'expo-router';
 
 async function loadCommissionData(
   startDate?: { date: Date; filter: 'ge' | 'le' },
@@ -238,7 +239,12 @@ function CommissionsBody() {
           }
         }}
         initialNumToRender={currentCommissions.length}
-        ListHeaderComponent={() => <CommissionPoints />}
+        ListHeaderComponent={() => <>
+          <CommissionPoints />
+          <Link href={'/commissions/leaderboard'} style={{padding: 10, backgroundColor: Colors.white}}>
+            <Text>Leaderboard</Text>
+          </Link>
+        </>}
       />
     );
   }
@@ -302,12 +308,11 @@ export default function Commissions() {
 
   useEffect(() => {
     loadData();
-    getLeaderboard()
   }, [loadData]);
 
   return (
     <>
-      <View style={{ width, height, backgroundColor: Colors.white }}>
+      <View style={{ width, height, backgroundColor: Colors.lightGray }}>
         <View
           style={{
             width,
@@ -346,7 +351,7 @@ export default function Commissions() {
             style={{
               height: isHoverPicker ? height * 0.1 : height * 0.05,
               width,
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.lightGray,
             }}
             showsHorizontalScrollIndicator={false}
           >

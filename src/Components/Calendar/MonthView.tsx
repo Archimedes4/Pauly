@@ -48,7 +48,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
           height: (height - 20) / 7,
           width,
           justifyContent: 'center',
-          alignContent: 'center',
+          alignContent: 'center'
         }}
         key="Calendar_Header"
       >
@@ -202,7 +202,7 @@ export default function MonthViewMain({
     return (
       <ScrollView
         style={{
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.lightGray,
           height,
           width,
         }}

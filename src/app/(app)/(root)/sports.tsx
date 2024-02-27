@@ -108,7 +108,7 @@ export default function Sports() {
       style={{
         height,
         width,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.lightGray,
         overflow: 'hidden',
       }}
     >

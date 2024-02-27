@@ -128,7 +128,7 @@ export default function Government() {
       style={{
         height: height * 5,
         width,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.lightGray,
         overflow: 'hidden',
       }}
     >

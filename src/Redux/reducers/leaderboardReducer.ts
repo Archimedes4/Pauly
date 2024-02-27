@@ -17,8 +17,11 @@ const getLeaderboardThunk = createAsyncThunk(
     }
 })
 
-export const getLeaderboards = (commissionId?: string | undefined) => getValueFromRedux<leaderboardUserType[]>(getLeaderboardThunk(commissionId), () => {
-  return store.getState().leaderboard.leaderboard
+export const getLeaderboard = (commissionId?: string | undefined) => getValueFromRedux<leaderboardUserType[]>(getLeaderboardThunk(commissionId), () => {
+  if (store.getState().leaderboard.state === loadingStateEnum.success) {
+    return store.getState().leaderboard.leaderboard
+  }
+  return undefined
 }, () => {
   return store.getState().leaderboard.state === loadingStateEnum.loading
 })
