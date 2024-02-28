@@ -16,6 +16,9 @@ import { InteractionStatus } from '@azure/msal-browser';
 export const useRefresh = () => {
   const { instance } = useMsal();
   async function main() {
+    if (instance.getActiveAccount() === null) {
+      return
+    }
     const result = instance.acquireTokenSilent({
       scopes,
     });
@@ -41,7 +44,7 @@ export function useSilentLogin(): () => Promise<void> {
     const redirectResult = await instance.handleRedirectPromise();
     if (
       redirectResult !== null &&
-      inProgress === InteractionStatus.HandleRedirect
+      inProgress === InteractionStatus.HandleRedirect && redirectResult.account !== null
     ) {
       instance.setActiveAccount(redirectResult.account);
       store.dispatch(

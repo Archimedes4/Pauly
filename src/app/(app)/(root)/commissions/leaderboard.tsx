@@ -1,5 +1,5 @@
 import { View, Text, FlatList } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Colors, loadingStateEnum } from '@constants'
 import ProgressView from '@components/ProgressView'
 import { useSelector } from 'react-redux'
@@ -7,18 +7,35 @@ import store, { RootState } from '@redux/store'
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer'
 import BackButton from '@components/BackButton'
 import { getLeaderboard } from '@redux/reducers/leaderboardReducer'
-import { MedalIcon } from '@src/components/Icons'
+import { MedalIcon } from '@components/Icons'
 
-export default function Leaderboard() {
+export function LeaderboardBody({commissionId}:{commissionId?: string}) {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimensions,
   );
   const { state, leaderboard } = useSelector(
     (state: RootState) => state.leaderboard,
   );
+  const [topThree, setTopThree] = useState<leaderboardUserType[]>([])
   useEffect(() => {
-    getLeaderboard()
+    getLeaderboard(commissionId)
   }, [])
+
+  useEffect(() => {
+    let newTopThree = []
+    if (leaderboard.length >= 1) {
+      newTopThree.push(leaderboard[0])
+    }
+    if (leaderboard.length >= 2) {
+      newTopThree.push(leaderboard[1])
+    }
+    if (leaderboard.length >= 3) {
+      newTopThree.push(leaderboard[2])
+    }
+    setTopThree(newTopThree)
+    console.log(leaderboard, (leaderboard.length < 3) ? leaderboard.length:3)
+    console.log((leaderboard.length >= 4) ? [...leaderboard.slice(3, -1)]:[])
+  }, [leaderboard])
 
   useEffect(() => {
     store.dispatch(
@@ -29,14 +46,10 @@ export default function Leaderboard() {
     );
   }, []);
 
-  useEffect(() => {
-    console.log(leaderboard)
-  }, [])
-
   if (state === loadingStateEnum.success) {
     return (
       <View style={{width, height}}>
-        <BackButton to='/commissions'/>
+        <BackButton to={commissionId ? `/commissions/${commissionId}`:'/commissions'}/>
         <View style={{
           width,
           height: height * 0.1,
@@ -56,7 +69,7 @@ export default function Leaderboard() {
           </Text>
         </View>
         <FlatList
-          data={leaderboard}
+          data={(leaderboard.length >= 4) ? [...leaderboard.slice(3, -1)]:[]}
           renderItem={(user) => (
             <View style={{backgroundColor: Colors.white, flexDirection: 'row', padding: 10, margin: 10, borderRadius: 15}}>
               {user.index < 3 ?
@@ -67,6 +80,31 @@ export default function Leaderboard() {
             </View>
           )}
           style={{width, backgroundColor: Colors.lightGray}}
+          ListHeaderComponent={() => (
+            <View style={{flexDirection: 'row', height: height * 0.3}}>
+              <View style={{height: height * 0.1, width: width * 0.2, backgroundColor: '#CD7F32', marginTop: 'auto', marginLeft: 'auto'}}>
+                {topThree.length >= 3 ?
+                  <>
+                    <Text>{topThree[2].name}</Text>
+                  </>:null
+                }
+              </View>
+              <View style={{height: height * 0.3, width: width * 0.2, backgroundColor: '#FFD700', marginTop: 'auto'}}>
+                {topThree.length >= 1 ?
+                  <>
+                    <Text>{topThree[0].name}</Text>  
+                  </>:null
+                }
+              </View>
+              <View style={{height: height * 0.2, width: width * 0.2, backgroundColor: '#C0C0C0', marginTop: 'auto', marginRight: 'auto'}}>
+                {topThree.length >= 2 ?
+                  <>
+                    <Text>{topThree[1].name}</Text>  
+                  </>:null
+                }
+              </View>
+            </View>
+          )}
         />
       </View>
     )
@@ -85,5 +123,11 @@ export default function Leaderboard() {
     <View>
       <Text>Something has gone wrong</Text>
     </View>
+  )
+}
+
+export default function Leaderboard() {
+  return (
+    <LeaderboardBody />
   )
 }

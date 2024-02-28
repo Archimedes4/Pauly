@@ -38,7 +38,7 @@ import {
   getPosts,
   getTeams,
 } from '@utils/microsoftGroupsFunctions';
-import getCommission from '@utils/commissions/getCommission';
+import getCommission from '@src/utils/commissions/getCommissionApi';
 import getSubmissions from '@utils/commissions/getSubmissions';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';

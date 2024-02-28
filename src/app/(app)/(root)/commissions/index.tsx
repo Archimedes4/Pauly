@@ -16,36 +16,15 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
-import { commissionsSlice } from '@redux/reducers/commissionsReducer';
-import store, { RootState } from '@redux/store';
+import { commissionsSlice, getCommissions } from '@redux/reducers/commissionsReducer';
+import { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import getPoints from '@utils/commissions/getPoints';
-import getCommissions from '@utils/commissions/getCommissions';
 import ProgressView from '@components/ProgressView';
 import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
-import { CurrentIcon, FutureIcon, MoreIcon, PastIcon, PiggyBankIcon } from '@src/components/Icons';
-import getLeaderboard from '@src/utils/commissions/getLeaderboardApi';
+import { CurrentIcon, FutureIcon, MoreIcon, PastIcon, PiggyBankIcon } from '@components/Icons';
 import { Link } from 'expo-router';
-
-async function loadCommissionData(
-  startDate?: { date: Date; filter: 'ge' | 'le' },
-  endDate?: { date: Date; filter: 'ge' | 'le' },
-  claimed?: boolean,
-  nextLink?: string,
-) {
-  store.dispatch(
-    commissionsSlice.actions.setCommissionsState(loadingStateEnum.loading),
-  );
-  const result = await getCommissions(nextLink, startDate, endDate, claimed);
-  if (result.result === loadingStateEnum.success) {
-    store.dispatch(commissionsSlice.actions.setCurrentCommissions(result.data));
-    store.dispatch(
-      commissionsSlice.actions.setCommissionNextLink(result.nextLink),
-    );
-  }
-  store.dispatch(commissionsSlice.actions.setCommissionsState(result.result));
-}
 
 function PickerPiece({
   text,
@@ -159,8 +138,6 @@ function CommissionsBody() {
 
   const { height, width } = useSelector((state: RootState) => state.dimensions);
 
-  const dispatch = useDispatch();
-
   if (commissionsState === loadingStateEnum.loading) {
     return (
       <View
@@ -186,16 +163,10 @@ function CommissionsBody() {
         style={{ height: height * 0.9 }}
         data={currentCommissions}
         renderItem={({ item }) => (
-          <Pressable
-            onPress={() => {
-              dispatch(
-                commissionsSlice.actions.setSelectedCommission(
-                  item.commissionId,
-                ),
-              );
-            }}
+          <Link
             key={`Link_${item.commissionId}`}
             style={{ backgroundColor: 'transparent' }}
+            href={`/commissions/${item.commissionId}`}
           >
             <View
               key={item.commissionId}
@@ -210,6 +181,7 @@ function CommissionsBody() {
                 shadowOffset: { width: 1, height: 1 },
                 shadowOpacity: 1,
                 shadowRadius: 5,
+                width: width - (width * 0.05)
               }}
             >
               <View style={{ margin: 10 }}>
@@ -225,23 +197,20 @@ function CommissionsBody() {
                 ) : null}
               </View>
             </View>
-          </Pressable>
+          </Link>
         )}
         onEndReachedThreshold={1}
         onEndReached={() => {
           if (commissionNextLink !== undefined) {
-            loadCommissionData(
-              undefined,
-              undefined,
-              undefined,
-              commissionNextLink,
-            );
+            getCommissions({
+              nextLink: commissionNextLink
+            });
           }
         }}
         initialNumToRender={currentCommissions.length}
         ListHeaderComponent={() => <>
           <CommissionPoints />
-          <Link href={'/commissions/leaderboard'} style={{padding: 10, backgroundColor: Colors.white}}>
+          <Link href={'/commissions/leaderboard'} style={{padding: 10, backgroundColor: Colors.white, margin: 10, borderRadius: 15}}>
             <Text>Leaderboard</Text>
           </Link>
         </>}
@@ -255,12 +224,9 @@ function CommissionsBody() {
   );
 }
 
-export default function Commissions() {
+export function CommissionsMain({commissionId}:{commissionId?: string}) {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimensions,
-  );
-  const { selectedCommission } = useSelector(
-    (state: RootState) => state.commissions,
   );
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
@@ -273,22 +239,7 @@ export default function Commissions() {
     const pointResult = await getPoints();
     if (pointResult.result === loadingStateEnum.success) {
       dispatch(commissionsSlice.actions.setPoints(pointResult.data));
-      const commissionsResult = await getCommissions();
-      if (commissionsResult.result === loadingStateEnum.success) {
-        dispatch(
-          commissionsSlice.actions.setCurrentCommissions(
-            commissionsResult.data,
-          ),
-        );
-        dispatch(
-          commissionsSlice.actions.setCommissionNextLink(
-            commissionsResult.nextLink,
-          ),
-        );
-      }
-      dispatch(
-        commissionsSlice.actions.setCommissionsState(commissionsResult.result),
-      );
+      getCommissions()
     } else {
       dispatch(
         commissionsSlice.actions.setCommissionsState(pointResult.result),
@@ -358,7 +309,7 @@ export default function Commissions() {
             <PickerPiece
               text="All"
               onPress={() => {
-                loadCommissionData();
+                getCommissions();
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
@@ -368,10 +319,10 @@ export default function Commissions() {
             <PickerPiece
               text="Current"
               onPress={() => {
-                loadCommissionData(
-                  { date: new Date(), filter: 'ge' },
-                  { date: new Date(), filter: 'le' },
-                );
+                getCommissions({
+                  startDate: { date: new Date(), filter: 'ge' },
+                  endDate: { date: new Date(), filter: 'le' }
+                });
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
@@ -381,9 +332,8 @@ export default function Commissions() {
             <PickerPiece
               text="Past"
               onPress={() => {
-                loadCommissionData(
-                  { date: new Date(), filter: 'le' },
-                  { date: new Date(), filter: 'le' },
+                getCommissions(
+                  {startDate: { date: new Date(), filter: 'le' }, endDate: { date: new Date(), filter: 'le' }}
                 );
               }}
               isHoverPicker={isHoverPicker}
@@ -394,7 +344,9 @@ export default function Commissions() {
             <PickerPiece
               text="Claimed"
               onPress={() => {
-                loadCommissionData(undefined, undefined, true);
+                getCommissions({
+                  claimed: true
+                });
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
@@ -404,10 +356,10 @@ export default function Commissions() {
             <PickerPiece
               text="Future"
               onPress={() => {
-                loadCommissionData(undefined, {
+                getCommissions({startDate: {
                   date: new Date(),
                   filter: 'ge',
-                });
+                }});
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
@@ -425,15 +377,18 @@ export default function Commissions() {
           left: width * 0.05,
         }}
       >
-        {selectedCommission !== '' ? (
+        {commissionId !== undefined ? (
           <CommissionsView
-            id={selectedCommission}
-            onClose={() =>
-              dispatch(commissionsSlice.actions.setSelectedCommission(''))
-            }
+            id={commissionId}
           />
         ) : null}
       </View>
     </>
   );
+}
+
+export default function Commissions() {
+  return (
+    <CommissionsMain />
+  )
 }

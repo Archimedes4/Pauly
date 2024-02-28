@@ -1,8 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '@constants';
-import { getTimetableApi } from '@src/utils/calendar/calendarFunctionsGraph';
-import { getValueFromRedux } from '@src/utils/ultility/utils';
-import store from '../store';
+import { getTimetableApi } from '@utils/calendar/calendarFunctionsGraph';
+import { getValueFromRedux } from '@utils/ultility/utils';
 
 const initalState: {timetables: timetableType[], timetablesFetching: string[]} = {
   timetables: [], //cache timetables
@@ -20,10 +19,10 @@ const getTimetableThunk = createAsyncThunk(
     }
 })
 
-export const getTimetable = (timetableId: string) => getValueFromRedux<timetableType>(getTimetableThunk(timetableId), () => {
-  return store.getState().timetables.timetables.find((e) => {return e.id === timetableId})
-}, () => {
-  return store.getState().timetables.timetablesFetching.includes(timetableId)
+export const getTimetable = (timetableId: string) => getValueFromRedux<timetableType>(getTimetableThunk(timetableId), (store) => {
+  return store.timetables.timetables.find((e) => {return e.id === timetableId})
+}, (store) => {
+  return store.timetables.timetablesFetching.includes(timetableId)
 })
 
 export const timetableSlice = createSlice({

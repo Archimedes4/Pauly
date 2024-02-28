@@ -5,13 +5,15 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import CommissionClaim from '@components/Commissions/CommissionClaim';
-import getCommission from '@utils/commissions/getCommission';
+import getCommission from '@src/utils/commissions/getCommissionApi';
 import callMsGraph from '@utils/ultility/microsoftAssets';
 import ProgressView from '@components/ProgressView';
 import { CloseIcon } from '@components/Icons';
 import WebViewCross from '@components/WebViewCross';
 import { Colors, commissionTypeEnum, loadingStateEnum } from '@constants';
 import { getTextState } from '@utils/ultility/createUUID';
+import { Link, router } from 'expo-router';
+import StyledButton from '../StyledButton';
 
 enum CameraResult {
   notStarted,
@@ -53,10 +55,8 @@ function getTextTakeImage(result: CameraResult) {
 
 export default function CommissionsView({
   id,
-  onClose,
 }: {
   id: string;
-  onClose: () => void;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [commissionData, setCommissionData] = useState<
@@ -212,7 +212,7 @@ export default function CommissionsView({
         <View>
           <View style={{ height: height * 0.1, overflow: 'hidden' }}>
             <Pressable
-              onPress={() => onClose()}
+              onPress={() => router.push('/commissions')}
               style={{ marginTop: 10, marginLeft: 10 }}
             >
               <CloseIcon
@@ -374,6 +374,23 @@ export default function CommissionsView({
                   </Pressable>
                 </>
               ) : null}
+              <Link
+                href={`/commissions/${id}/leaderboard`}
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  backgroundColor: '#ededed',
+                  width: width * 0.7,
+                  borderRadius: 15,
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  padding: 10,
+                  fontFamily: 'Roboto-Bold'
+                }}
+              >
+                Leaderboard
+              </Link>
               {isOverflowing ? null : (
                 <View style={{ marginTop: 10, marginBottom: 10 }}>
                   <CommissionClaim commission={commissionData} imageData={imageUri !== '' ? imageUri : undefined} />

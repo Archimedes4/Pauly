@@ -246,6 +246,12 @@ declare global {
         postId: string;
       };
     };
+  type commissionApiParams = {
+    nextLink?: string,
+    startDate?: { date: Date; filter: 'ge' | 'le' },
+    endDate?: { date: Date; filter: 'ge' | 'le' },
+    claimed?: boolean,
+  }
   type dressCodeIncentiveType = {
     name: string;
     description: string;

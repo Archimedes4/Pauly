@@ -8,6 +8,7 @@ import {
   claimCommissionPost,
 } from '@utils/commissions/claimCommissionsFunctions';
 import {
+  Colors,
   commissionTypeEnum,
   loadingStateEnum,
   locationStateEnum,
@@ -74,6 +75,7 @@ export default function CommissionClaim({
         outImageUrl !== '' ? outImageUrl : undefined,
         undefined,
       );
+      console.log(result)
       setClaimCommissionState(result);
     }
   }
@@ -86,7 +88,7 @@ export default function CommissionClaim({
       style={{
         marginLeft: 'auto',
         marginRight: 'auto',
-        backgroundColor: '#ededed',
+        backgroundColor: Colors.lightGray,
         width: width * 0.7,
         borderRadius: 15,
         alignItems: 'center',
@@ -99,7 +101,7 @@ export default function CommissionClaim({
           <ProgressView width={24} height={24} />
         </View>
       ) : (
-        <Text style={{ margin: 10, fontWeight: 'bold' }}>
+        <Text style={{ margin: 10, fontFamily: 'Roboto-Bold' }}>
           {getTextState(claimCommissionState, {
             notStarted: 'CLAIM COMMISSION',
             success: 'SUBMISSION SENT',

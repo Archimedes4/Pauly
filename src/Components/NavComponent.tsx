@@ -45,9 +45,10 @@ function NavBarBlock({
         height: blockLength,
         width: expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
         backgroundColor: isHover ? Colors.darkGray : 'transparent',
-        alignItems: 'center',
+        alignItems: expandedMode ? 'flex-start':'center',
         overflow: 'hidden',
         margin: 0,
+        flexDirection: expandedMode ? 'row':'column'
       }}
       onHoverIn={() => {
         setIsHover(true);
@@ -62,61 +63,32 @@ function NavBarBlock({
     >
       <View
         style={[
-          styles.LinkStyle,
           {
             height: blockLength,
-            width: expandedMode ? blockLength * 2.5 : blockLength,
-            margin: 0,
-            position: expandedMode ? 'absolute' : 'relative',
-            left: expandedMode
-              ? (totalWidth * 0.1 - blockLength) / 2
-              : undefined,
+            width: blockLength,
+            position: 'relative',
+            marginLeft: expandedMode ? ((totalWidth * 0.1 - blockLength) / 2) : undefined,
             alignItems: 'center',
+            justifyContent: 'center',
           },
         ]}
       >
-        <View
-          id="ViewHigh"
+        <>{children}</>
+      </View>
+      {expandedMode ? (
+        <Text
           style={{
-            width: expandedMode ? blockLength * 2.5 : blockLength,
-            flexDirection: 'row',
-            margin: 'auto',
-            padding: 0,
-            alignItems: 'center',
-            alignContent: 'center',
-            justifyContent: 'center',
+            color: Colors.white,
+            margin: 0,
+            marginLeft: 8,
+            fontFamily: 'Roboto',
+            marginTop: 'auto',
+            marginBottom: 'auto'
           }}
         >
-          <View
-            style={[
-              {
-                height: blockLength,
-                width: blockLength,
-                position: expandedMode ? 'absolute' : 'relative',
-                left: expandedMode ? 0 : undefined,
-                alignItems: 'center',
-                justifyContent: 'center',
-              },
-            ]}
-          >
-            <>{children}</>
-          </View>
-          {expandedMode ? (
-            <Text
-              style={{
-                position: 'absolute',
-                left: blockLength,
-                color: Colors.white,
-                margin: 0,
-                marginLeft: 8,
-                fontFamily: 'Roboto',
-              }}
-            >
-              {text}
-            </Text>
-          ) : null}
-        </View>
-      </View>
+          {text}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }
@@ -311,63 +283,48 @@ export default function NavBarComponent() {
             styles.LinkStyle,
             {
               height: blockLength,
-              width: expandedMode ? blockLength * 2.5 : blockLength,
+              width:  expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
               margin: 0,
               position: 'absolute',
-              left: expandedMode
-                ? (totalWidth * 0.1 - blockLength) / 2
-                : undefined,
               bottom: height * 0.05,
+             flexDirection: 'row'
             },
           ]}
         >
-          <View
-            style={{
-              width: expandedMode ? blockLength * 0.25 : blockLength,
-              height: iconLength,
-              position: expandedMode ? 'absolute' : 'relative',
-              left: expandedMode ? 0 : undefined,
-              flexDirection: 'row',
-            }}
-          >
-            {uri !== '' ? (
+          {uri !== '' ? (
+            <View style={{
+              width: blockLength,
+              height: blockLength,
+              marginLeft: expandedMode ? ((totalWidth * 0.1 - blockLength) / 2):undefined
+            }}>
               <Image
                 source={{ uri }}
                 style={{
                   width: iconLength,
                   height: iconLength,
                   borderRadius: iconLength / 2,
-                  overflow: 'hidden'
+                  overflow: 'hidden',
                 }}
               />
-            ) : (
-              <PersonIcon width={iconLength} height={iconLength} />
-            )}
-            <View
-              style={{
-                height: iconLength,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginLeft: blockLength - iconLength,
-              }}
-            >
-              {expandedMode ? (
-                <Text
-                  adjustsFontSizeToFit
-                  numberOfLines={1}
-                  style={{
-                    color: Colors.white,
-                    marginLeft: 8,
-                    width: blockLength * 2.5,
-                  }}
-                  selectable={false}
-                >
-                  {displayName}
-                </Text>
-              ) : null}
-            </View>
-          </View>
+            </View> 
+          ) : (
+            <PersonIcon width={iconLength} height={iconLength} style={{width: blockLength, height: blockLength, marginLeft: expandedMode ? ((totalWidth * 0.1 - blockLength) / 2):undefined}}/>
+          )}
+            {expandedMode ? (
+              <Text
+                adjustsFontSizeToFit
+                numberOfLines={1}
+                style={{
+                  color: Colors.white,
+                  marginLeft: 8,
+                  width: blockLength * 2.5,
+                  marginRight: 'auto'
+                }}
+                selectable={false}
+              >
+                {displayName}
+              </Text>
+            ) : null}
         </Pressable>
       </View>
     </Pressable>

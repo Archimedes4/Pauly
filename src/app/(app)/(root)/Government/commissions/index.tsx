@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
-import getCommissions from '@utils/commissions/getCommissions';
+import getCommissions from '@src/utils/commissions/getCommissionsApi';
 import getSubmissions from '@utils/commissions/getSubmissions';
 import createUUID from '@utils/ultility/createUUID';
 import { RootState } from '@redux/store';

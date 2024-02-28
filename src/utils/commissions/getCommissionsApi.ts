@@ -174,11 +174,8 @@ async function getSubmissions(commissionIds: string[]): Promise<{
   return { result: loadingStateEnum.success, data: outputMap };
 }
 
-export default async function getCommissions(
-  nextLink?: string,
-  startDate?: { date: Date; filter: 'ge' | 'le' },
-  endDate?: { date: Date; filter: 'ge' | 'le' },
-  claimed?: boolean,
+export default async function getCommissionsApi(
+  params?: commissionApiParams
 ): Promise<
   | {
       result: loadingStateEnum.success;
@@ -189,6 +186,7 @@ export default async function getCommissions(
       result: loadingStateEnum.failed;
     }
 > {
+  const {nextLink, claimed, startDate, endDate} = params || {};
   if (nextLink === undefined) {
     store.dispatch(commissionsSlice.actions.setCommissionNextLink(undefined));
   }
