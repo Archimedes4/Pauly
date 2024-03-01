@@ -281,9 +281,11 @@ function DateAndTimeSection({
         >
           <Text>All Day</Text>
           <Switch
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={selectedEvent.allDay ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
+            trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
+            thumbColor={
+              selectedEvent.allDay ? Colors.maroon : Colors.darkGray
+            }
+            ios_backgroundColor={Colors.lightGray}
             onValueChange={e => {
               dispatch(addEventSlice.actions.setAllDay(e));
             }}

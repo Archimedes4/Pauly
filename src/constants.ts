@@ -349,6 +349,7 @@ declare global {
   type leaderboardUserType = {
     name: string;
     points: number;
+    id: string;
   }
   type monthDataType = {
     id: string;

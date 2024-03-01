@@ -1,6 +1,5 @@
 import store from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssets';
-import { fetchUserInfoAsync, useAutoDiscovery } from 'expo-auth-session';
 import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
 import getUserImage from './getUserImage';
 import { loadingStateEnum } from '@src/constants';

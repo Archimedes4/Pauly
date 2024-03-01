@@ -240,17 +240,12 @@ function ResourceBlock({
             overflow: 'scroll',
           }}
         >
-          {resource.item.attachments.map(attachment => (
-            <Pressable
+          {resource.item.attachments?.map(attachment => (
+            <AttachmentComponent
               key={attachment.id}
-              style={{ flexDirection: 'row' }}
-              onPress={() => {
-                Linking.openURL(attachment.webUrl);
-              }}
-            >
-              <MimeTypeIcon width={14} height={14} mimeType={attachment.type} />
-              <Text>{attachment.title}</Text>
-            </Pressable>
+              attachment={attachment}
+              width={width * 0.8 - 20}
+            />
           ))}
         </View>
       ) : null}

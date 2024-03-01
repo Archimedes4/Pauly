@@ -13,8 +13,6 @@ import {
   Linking,
   ScrollView,
   Switch,
-  Platform,
-  Modal,
   StatusBar,
   FlatList,
 } from 'react-native';
@@ -36,8 +34,8 @@ import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { TrashIcon, WarningIcon } from '@components/Icons';
 import { deleteTask, updateTaskStatus, updateTaskText } from '@utils/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import calculateFontSize from '@src/utils/ultility/calculateFontSize';
-import { getClasses } from '@src/redux/reducers/classesReducer';
+import calculateFontSize from '@utils/ultility/calculateFontSize';
+import { getClasses } from '@redux/reducers/classesReducer';
 
 // Get Messages
 // Last Chat Message Channels Included
@@ -523,7 +521,7 @@ function PopularFiles({ width }: { width: number }) {
             }}
           >
             <View style={{ margin: 10, flexDirection: 'row' }}>
-              <MimeTypeIcon width={14} height={14} mimeType={data.type} />
+              <MimeTypeIcon width={14} height={14} mimeType={data.type} style={{marginTop: 'auto', marginBottom: 'auto'}}/>
               <Text>{data.title}</Text>
             </View>
           </Pressable>
@@ -561,7 +559,7 @@ function TrendingFiles({ width }: { width: number }) {
             }}
           >
             <View style={{ margin: 10, flexDirection: 'row' }}>
-              <MimeTypeIcon width={14} height={14} mimeType={data.type} />
+              <MimeTypeIcon width={14} height={14} mimeType={data.type} style={{marginTop: 'auto', marginBottom: 'auto'}}/>
               <Text>{data.title}</Text>
             </View>
           </Pressable>

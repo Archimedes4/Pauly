@@ -117,10 +117,11 @@ export default async function getLeaderboardApi(commissionId?: string): Promise<
   users.forEach((user: {
     name: string;
     points: number;
-  }) => {
+  }, key) => {
     leaderboardResult.push({
       name: user.name,
-      points: user.points
+      points: user.points,
+      id: key
     })
   });
   return {

@@ -31,14 +31,14 @@ export const leaderboardSlice = createSlice({
   initialState: initalState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getLeaderboardThunk.pending, (state, payload) => {
+    builder.addCase(getLeaderboardThunk.pending, (state) => {
       state.state = loadingStateEnum.loading
     }),
     builder.addCase(getLeaderboardThunk.fulfilled, (state, payload) => {
       state.state = loadingStateEnum.success
       state.leaderboard = payload.payload
     }),
-    builder.addCase(getLeaderboardThunk.rejected,(state, payload) => {
+    builder.addCase(getLeaderboardThunk.rejected,(state) => {
       state.state = loadingStateEnum.failed
     })
   },

@@ -5,11 +5,10 @@
   EventView.tsx
 */
 import { View, Text, FlatList, Pressable } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
-import { getClassEventsFromDay } from '@utils/classesFunctions';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors } from '@constants';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 
 export function DefaultEventBlock({ event }: { event: eventType }) {
@@ -72,7 +71,6 @@ export function DefaultEventBlock({ event }: { event: eventType }) {
 
 export default function EventView({
   width,
-  height,
 }: {
   width: number;
   height: number;

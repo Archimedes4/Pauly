@@ -2,7 +2,7 @@ import createUUID from '@utils/ultility/createUUID';
 import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
 import store, { RootState } from '@redux/store';
 import { Colors } from '@constants';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   FlatList,
   Pressable,
@@ -170,55 +170,110 @@ function MonthView({ width, height }: { width: number; height: number }) {
   );
 }
 
+// A list of events on the selected event to go under the calendar when the width is less than or equal to 519.
+function ReducedMonthEvents({}:{}) {
+  const selectedDate: string = useSelector(
+    (state: RootState) => state.selectedDate,
+  );
+  const monthData = useSelector((state: RootState) => state.monthData);
+  const lastCalledDate = useSelector((state: RootState) => state.lastCalledSelectedDate);
+  const [longestWidth, setLongestWidth] = useState<number>(0);
+  const [longestText, setLongestText] = useState<string>("")
+  const [dayData, setDayData] = useState<eventType[][]>([])
+  function getDayData(): eventType[][] {
+    if (monthData.length !== 6) {
+      return []
+    }
+    let firstIndex = Math.floor((new Date(selectedDate).getDate() + findFirstDayinMonth(new Date(selectedDate)))/7)
+    let secondIndex = (new Date(selectedDate).getDate() + findFirstDayinMonth(new Date(selectedDate)))%7
+    if ((new Date(selectedDate).getDate() + findFirstDayinMonth(new Date(selectedDate))) % 7 === 0) {
+      firstIndex -= 1
+    }
+    if (secondIndex !== 0) {
+      secondIndex -= 1
+    } else {
+      secondIndex = 6
+    }
+    let result = []
+
+    console.log(monthData[firstIndex], firstIndex, secondIndex)
+    let newDayData = [...monthData[firstIndex][secondIndex].events].sort(function (a, b) {
+      return ('' + a.startTime).localeCompare(b.endTime);
+    })
+    let longestText = ""
+    for (let index = 0; index < newDayData.length; index += 1) {
+      if (getEventTime(newDayData[index]).length > longestText.length) {
+        longestText = getEventTime(newDayData[index])
+      }
+      if (index !== 0 && ((newDayData[index].startTime === newDayData[index - 1].startTime && newDayData[index].endTime === newDayData[index - 1].endTime) || newDayData[index].allDay === newDayData[index - 1].allDay)) {
+        result[result.length - 1].push(newDayData[index])
+      } else {
+        result.push([newDayData[index]])
+      }
+    }
+    setLongestText(longestText)
+    return result
+  }
+  function getEventTime(event: eventType) {
+    if (event.allDay) {
+      return "all-day"
+    }
+    const startDate = new Date(event.startTime)
+    if (startDate.getSeconds() === 0) {
+      return startDate.toLocaleString('en-us', { hour: 'numeric', minute: 'numeric' })
+    }
+    return startDate.toLocaleString('en-us', { hour: 'numeric', minute: 'numeric', second: 'numeric' })
+  }
+  useEffect(() => {
+    setDayData(getDayData())
+  }, [monthData, selectedDate])
+  return (
+    <>
+      <View>
+        <Text style={{height: 0, overflow: 'hidden', marginRight: 'auto'}} onLayout={(e) => {setLongestWidth(e.nativeEvent.layout.width + 5)}}>{longestText}</Text>
+      </View>
+      {dayData.map(row => (
+        <View key={`${row[0].id}_${lastCalledDate}_Row`} style={{flexDirection: 'row', marginBottom: 5}}>
+          <View style={{marginLeft: 5, width: longestWidth}}>
+            {row.length >= 1 ?
+              <Text>{getEventTime(row[0])} </Text>:null
+            }
+          </View>
+          <View>
+            {row.map((event) => (
+              <Pressable key={`${event.id}_${lastCalledDate}_${selectedDate}`} onPress={() => {
+                store.dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+                store.dispatch(addEventSlice.actions.setSelectedEvent(event));
+              }} style={{flexDirection: 'row', borderLeftColor: Colors.maroon, borderLeftWidth: 2, marginLeft: 5}}>
+                <Text style={{fontFamily: 'Roboto', padding: 2}}>{event.name}</Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      ))}
+    </>
+  )
+}
+
 export default function MonthViewMain({
   width,
   height,
 }: {
   width: number;
   height: number;
-}) {
-  const monthData = useSelector((state: RootState) => state.monthData);
-  const lastCalledDate = useSelector((state: RootState) => state.lastCalledSelectedDate);
-  const selectedDate: string = useSelector(
-    (state: RootState) => state.selectedDate,
-  );
+}) {  
   /* Chosing between large mode with each day having expanded calendars and reduced mode with list of events on each day. */
-  function getMonthDataEvents(): eventType[] {
-    if (monthData.length !== 6) {
-      return []
-    }
-    let firstIndex = Math.floor((new Date(selectedDate).getDate() + findFirstDayinMonth(new Date(selectedDate)))/7)
-    let secondIndex = (new Date(selectedDate).getDate() + findFirstDayinMonth(new Date(selectedDate)))%7
-    if (secondIndex !== 0) {
-      secondIndex -= 1
-    } else {
-      secondIndex = 6
-    }
-    
-    return monthData[firstIndex][secondIndex].events
-  }
-  
   if (width <= 519) {
     return (
       <ScrollView
         style={{
-          backgroundColor: Colors.lightGray,
+          backgroundColor: Colors.white,
           height,
           width,
         }}
       >
         <MonthView width={width} height={height * 0.8} />
-        <>
-          {monthData.length === 6 && getMonthDataEvents().map(event => (
-              <Pressable key={`${event.id}_${lastCalledDate}`} onPress={() => {
-                store.dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-                store.dispatch(addEventSlice.actions.setSelectedEvent(event));
-              }}>
-                <Text style={{fontFamily: 'Roboto', padding: 2}}>{event.name}</Text>
-              </Pressable>
-            )
-          )}
-        </>
+        <ReducedMonthEvents />
       </ScrollView>
     );
   }

@@ -1612,6 +1612,12 @@ function CommissionSubmissions({
             height={height}
             submissionData={selectedSubmission}
             onClose={() => setSelectedSubmisson(undefined)}
+            onSetSubmissionData={(e) => {
+              let newSubmissions = [...submissions]
+              const index = newSubmissions.findIndex((sub) => {return e.id === sub.id})
+              newSubmissions[index] = e
+              setSubmissions(newSubmissions)
+            }}
           />
         ) : null}
       </>
@@ -1634,6 +1640,7 @@ function SubmissionView({
   width: number;
   height: number;
   submissionData: submissionType;
+  onSetSubmissionData: (item: submissionType) => void
   onClose: () => void;
 }) {
   const [changeState, setChangeState] = useState<loadingStateEnum>(

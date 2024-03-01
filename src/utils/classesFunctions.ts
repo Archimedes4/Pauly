@@ -163,12 +163,10 @@ export async function getClassEventsFromDay(
     )
       .toISOString()
       .slice(0, -1)}0000`
-    console.log(store.getState().currentEvents)
     const foundEvent = store.getState().currentEvents.find((e) => {
       return e.paulyEventType === 'schoolDay' && e.startTime === startTime
     })
     if (foundEvent === undefined) {
-      console.log("Unfound", startTime)
       return { result: loadingStateEnum.notFound };
     } 
     resultEvent = foundEvent;
