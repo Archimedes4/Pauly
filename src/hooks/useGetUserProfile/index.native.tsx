@@ -1,5 +1,5 @@
 import store from '@redux/store';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
 import getUserImage from './getUserImage';
 import { loadingStateEnum } from '@src/constants';

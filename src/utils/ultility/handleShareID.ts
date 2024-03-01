@@ -1,5 +1,5 @@
 import { loadingStateEnum, dataContentTypeOptions } from '@constants';
-import callMsGraph from './microsoftAssets';
+import callMsGraph from './microsoftAssests';
 
 export async function getFileWithShareID(
   shareID: string,

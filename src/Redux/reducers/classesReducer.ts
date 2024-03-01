@@ -1,6 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '@constants';
 import getClassesApi from '@utils/getClassesApi';
+import { StoreType } from '../store';
+import { getValueFromRedux } from '@src/utils/ultility/utils';
 
 const initalState: {
   classes: classType[],
@@ -12,10 +14,10 @@ const initalState: {
   loadingState: loadingStateEnum.notStarted
 }
 
-export const getClasses = createAsyncThunk(
+const getClassesThunk = createAsyncThunk(
   'classes/getClasses',
-  async (_thunkAPI, {rejectWithValue, getState}) => {
-    const classResult = await getClassesApi()
+  async (store: StoreType, {rejectWithValue}) => {
+    const classResult = await getClassesApi(store)
     if (classResult.result === loadingStateEnum.success) {
       return classResult.data
     } else {
@@ -23,20 +25,30 @@ export const getClasses = createAsyncThunk(
     }
 })
 
+export const getClasses = (store: StoreType) => getValueFromRedux<classType[]>(getClassesThunk(store), (store) => {
+  // Check if the last called was over an hour ago or the current classes don't have a succesful state.
+  if ((new Date(store.classes.lastCalled).getTime() - new Date().getTime()) >= 3600000 || store.classes.loadingState !== loadingStateEnum.success) {
+    return undefined
+  }
+  return store.classes.classes
+}, (store) => {
+  return store.classes.loadingState === loadingStateEnum.loading
+}, store)
+
 export const classesSlice = createSlice({
   name: 'classes',
   initialState: initalState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getClasses.pending, (state) => {
+    builder.addCase(getClassesThunk.pending, (state) => {
       state.loadingState = loadingStateEnum.loading
     }),
-    builder.addCase(getClasses.fulfilled, (state, payload) => {
+    builder.addCase(getClassesThunk.fulfilled, (state, payload) => {
       state.loadingState = loadingStateEnum.success
       state.classes = payload.payload
       state.lastCalled = new Date().toISOString()
     }),
-    builder.addCase(getClasses.rejected,(state) => {
+    builder.addCase(getClassesThunk.rejected,(state) => {
       state.loadingState = loadingStateEnum.failed
     })
   },

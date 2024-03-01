@@ -6,7 +6,7 @@
 */
 import store from '@redux/store';
 import { commissionTypeEnum, loadingStateEnum } from '@constants';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 import createUUID from '../ultility/createUUID';
 
 export async function updateCommission(

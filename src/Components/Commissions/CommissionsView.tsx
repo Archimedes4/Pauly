@@ -3,10 +3,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import CommissionClaim from '@components/Commissions/CommissionClaim';
 import getCommission from '@src/utils/commissions/getCommissionApi';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import ProgressView from '@components/ProgressView';
 import { CloseIcon } from '@components/Icons';
 import WebViewCross from '@components/WebViewCross';
@@ -95,7 +95,7 @@ export default function CommissionsView({
   }
 
   const getCommissionInformation = useCallback(async () => {
-    const result = await getCommission(id);
+    const result = await getCommission(id, store);
     if (
       result.result === loadingStateEnum.success
     ) {

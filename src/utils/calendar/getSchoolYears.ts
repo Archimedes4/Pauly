@@ -6,7 +6,7 @@
 */
 import store from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 import { getSingleValueProperties } from './calendarFunctionsGraph';
 
 export default async function getSchoolYears(nextLink?: string): Promise<

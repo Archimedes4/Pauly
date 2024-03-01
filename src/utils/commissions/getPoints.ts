@@ -6,7 +6,7 @@
 */
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 
 // Gets points when given an array of commission ids
 async function getPointsBatch(

@@ -291,7 +291,7 @@ export default function SelectSchoolDayData() {
 
   const loadData = useCallback(async (id: string) => {
     setTimetableState(loadingStateEnum.loading);
-    const result = await getTimetable(id);
+    const result = await getTimetable(id, store);
     if (
       result.result === loadingStateEnum.success
     ) {

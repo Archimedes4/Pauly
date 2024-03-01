@@ -8,7 +8,7 @@ import { View, Text, TextInput } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { Colors, loadingStateEnum } from '@constants';
 import SVGXml from '@components/SVGXml';
 import { Link } from 'expo-router';

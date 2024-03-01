@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import { addEventSlice } from '@src/redux/reducers/addEventReducer';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { Colors, loadingStateEnum, paulyEventType, semesters, styles } from '@constants';
 import updateEvent from '@src/utils/calendar/updateEvent';
 import { getTextState } from '@utils/ultility/createUUID';

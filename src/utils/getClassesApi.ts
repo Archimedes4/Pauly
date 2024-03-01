@@ -1,8 +1,8 @@
 import { loadingStateEnum } from "@constants";
-import callMsGraph from "./ultility/microsoftAssets";
-import store from "@redux/store";
+import callMsGraph from "./ultility/microsoftAssests/noStore";
+import { StoreType } from "@redux/store";
 
-export default async function getClassesApi(): Promise<
+export default async function getClassesApi(store: StoreType): Promise<
   {
     result: loadingStateEnum.success;
     data: classType[];
@@ -14,7 +14,7 @@ export default async function getClassesApi(): Promise<
   let classQuery: string = `https://graph.microsoft.com/v1.0/me/joinedTeams?$select=id`;
   const batchDataRequests: batchRequest[][] = [[]];
   while (classQuery !== undefined) {
-    const classResult = await callMsGraph(classQuery);
+    const classResult = await callMsGraph(classQuery, store);
     if (classResult.ok) {
       const classData = await classResult.json();
       classQuery = classData['@odata.nextLink'];
@@ -45,6 +45,7 @@ export default async function getClassesApi(): Promise<
     };
     const batchResult = await callMsGraph(
       'https://graph.microsoft.com/v1.0/$batch',
+      store,
       'POST',
       JSON.stringify(batchData),
     );

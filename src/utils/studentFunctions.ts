@@ -8,7 +8,7 @@ import { loadingStateEnum } from '@constants';
 import { studentSearchSlice } from '@redux/reducers/studentSearchReducer';
 import store from '@redux/store';
 import largeBatch from '@utils/ultility/batchRequest';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 
 function checkIfStudent(role: string): {
   result: boolean;
@@ -102,8 +102,8 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
       }/items?$expand=fields($select=userId,selected,itemId)&$select=fields,id&$filter=fields/userId%20eq%20'`,
       secondUrl: "'%20and%20fields/selected%20eq%201",
       method: 'GET',
-      array: userIds
-    });
+      array: userIds,
+    }, store);
     const imagesIdsMap = new Map<string, string>(); // Key is userId, value is image data id
     const imageIdsArray: string[] = [];
     if (batchResult.result === loadingStateEnum.success) {
@@ -145,8 +145,8 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
       firstUrl: `/sites/${store.getState().paulyList.siteId}/drive/items/`,
       secondUrl: '?$expand=thumbnails($select=c300x400_crop)&$select=id', // ?select=id,content.downloadUrl
       method: 'GET',
-      array: imageIdsArray
-    });
+      array: imageIdsArray,
+    }, store);
     const imagesDownloadUrls = new Map<string, string>(); // Key is the item id on the sharepoint and value is the downlad url
     if (batchResultDownloadUrls.result === loadingStateEnum.success) {
       for (

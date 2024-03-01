@@ -682,7 +682,7 @@ function ClassBlock() {
     (state: RootState) => state.classes,
   );
   useEffect(() => {
-    getClasses()
+    getClasses(store)
   }, [])
   return (
     <>

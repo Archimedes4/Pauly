@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import getCommissions from '@src/utils/commissions/getCommissionsApi';
 import getSubmissions from '@utils/commissions/getSubmissions';
 import createUUID from '@utils/ultility/createUUID';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import {
   Colors,
   loadingStateEnum,
@@ -22,7 +22,7 @@ function GovernmentCommissionsBody() {
   );
 
   async function loadData() {
-    const result = await getCommissions();
+    const result = await getCommissions({store});
     if (result.result === loadingStateEnum.success) {
       if (result.data !== undefined) {
         setCommissions(result.data);

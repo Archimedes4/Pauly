@@ -6,7 +6,7 @@
 */
 import store from '@redux/store';
 import { loadingStateEnum, submissionTypeEnum } from '@constants';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 
 function convertSubmissionTypeToFilter(
   submissionType: submissionTypeEnum,

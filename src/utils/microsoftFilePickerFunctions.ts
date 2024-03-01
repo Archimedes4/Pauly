@@ -6,7 +6,7 @@
   functions for src/components/MicorosftFilePicker.tsx
 */
 import { loadingStateEnum } from '@constants';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 
 export async function getUserMicrosoftFiles(
   path: string,

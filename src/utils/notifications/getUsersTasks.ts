@@ -10,7 +10,7 @@ import {
   loadingStateEnum,
   taskImportanceEnum,
 } from '@constants';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 
 // deltaRunAgain is send if the delta link has failed or the responce 410 meaning syncronization is needed.
 export default async function getUsersTasks(

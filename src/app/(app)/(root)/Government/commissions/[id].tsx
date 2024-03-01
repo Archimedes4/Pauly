@@ -40,7 +40,7 @@ import {
 } from '@utils/microsoftGroupsFunctions';
 import getCommission from '@src/utils/commissions/getCommissionApi';
 import getSubmissions from '@utils/commissions/getSubmissions';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import {
@@ -317,7 +317,7 @@ export function GovernmentCommissionUpdate({
       });
     } else if (typeof id === 'string') {
       setGetCommissionResult(loadingStateEnum.loading);
-      const result = await getCommission(id);
+      const result = await getCommission(id, store);
       if (result.result === loadingStateEnum.success) {
         setCommissionData(result.data);
       }

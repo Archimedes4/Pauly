@@ -2,7 +2,7 @@ import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import store from '@redux/store';
 import { Colors, loadingStateEnum, paulyEventType } from '@constants';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 
 // function getPaulyEventData() {
 //   if (store.getState().addEvent.selectedEvent.paulyEventType === 'schoolDay') {

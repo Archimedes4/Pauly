@@ -2,7 +2,7 @@ import { View, Text, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import * as Clipboard from 'expo-clipboard';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { CopyIcon } from '@components/Icons';
 import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';

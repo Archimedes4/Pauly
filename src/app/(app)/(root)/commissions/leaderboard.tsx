@@ -7,7 +7,7 @@ import store, { RootState } from '@redux/store'
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer'
 import BackButton from '@components/BackButton'
 import { getLeaderboard } from '@redux/reducers/leaderboardReducer'
-import callMsGraph from '@utils/ultility/microsoftAssets'
+import callMsGraph from '@src/utils/ultility/microsoftAssests'
 import { PersonIcon } from '@components/Icons'
 
 function UserImage({id}:{id: string}) {

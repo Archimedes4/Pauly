@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import store from '@redux/store';
 import { paulyListSlice } from '@redux/reducers/paulyListReducer';
-import callMsGraph from './microsoftAssets';
+import callMsGraph from './microsoftAssests';
 
 export default async function getPaulyLists() {
   const getRootSiteIdResult = await callMsGraph(

@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Pressable, ScrollView, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, semesters } from '@constants';
 import getSchoolYears from '@utils/calendar/getSchoolYears';
@@ -37,7 +37,7 @@ function PeriodBlock({
       selectedSchoolYear !== undefined && selectedSchoolYear.paulyEventType === 'schoolYear'
     ) {
       setTimetableState(loadingStateEnum.loading);
-      const result = await getTimetable(selectedSchoolYear.timetableId);
+      const result = await getTimetable(selectedSchoolYear.timetableId, store);
       if (
         result.result === loadingStateEnum.success
       ) {

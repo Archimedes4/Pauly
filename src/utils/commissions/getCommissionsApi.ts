@@ -4,10 +4,9 @@
   November 9 2023
   getCommissions.ts
 */
-import { commissionsSlice } from '@redux/reducers/commissionsReducer';
-import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests/noStore';
+import { StoreType } from '@redux/store';
 
 function getFilter(
   startDate?: { date: Date; filter: 'ge' | 'le' },
@@ -30,7 +29,7 @@ function getFilter(
   return '';
 }
 
-async function getSubmissions(commissionIds: string[]): Promise<{
+async function getSubmissions(commissionIds: string[], store: StoreType): Promise<{
   result: loadingStateEnum;
   data?: Map<
     string,
@@ -62,6 +61,7 @@ async function getSubmissions(commissionIds: string[]): Promise<{
       `https://graph.microsoft.com/v1.0/sites/${
         store.getState().paulyList.siteId
       }/lists/${store.getState().paulyList.commissionListId}/items`,
+      store,
       'POST',
       JSON.stringify(requestData),
     );
@@ -175,7 +175,7 @@ async function getSubmissions(commissionIds: string[]): Promise<{
 }
 
 export default async function getCommissionsApi(
-  params?: commissionApiParams
+  params: commissionApiParams
 ): Promise<
   | {
       result: loadingStateEnum.success;
@@ -187,11 +187,8 @@ export default async function getCommissionsApi(
     }
 > {
   const {nextLink, claimed, startDate, endDate} = params || {};
-  if (nextLink === undefined) {
-    store.dispatch(commissionsSlice.actions.setCommissionNextLink(undefined));
-  }
   if (claimed === true) {
-    const result = await getUnclaimedCommissions();
+    const result = await getUnclaimedCommissions(params.store);
     if (result.result === loadingStateEnum.success) {
       return { result: result.result, data: result.data };
     }
@@ -201,10 +198,11 @@ export default async function getCommissionsApi(
   const result = await callMsGraph(
     nextLink ||
       `https://graph.microsoft.com/v1.0/sites/${
-        store.getState().paulyList.siteId
+        params.store.getState().paulyList.siteId
       }/lists/${
-        store.getState().paulyList.commissionListId
+        params.store.getState().paulyList.commissionListId
       }/items?expand=fields${filter}`,
+      params.store
   );
   if (result.ok) {
     const data = await result.json();
@@ -213,7 +211,7 @@ export default async function getCommissionsApi(
       for (let index = 0; index < data.value.length; index += 1) {
         commissionsIds.push(data.value[index].fields.commissionId);
       }
-      const submissions = await getSubmissions(commissionsIds);
+      const submissions = await getSubmissions(commissionsIds, params.store);
       if (
         submissions.result === loadingStateEnum.success &&
         submissions.data !== undefined
@@ -267,6 +265,7 @@ type unclaimedCommissionSubmissionType = {
 // Gets points when given an array of commission ids
 async function getCommissionsBatch(
   commissions: unclaimedCommissionSubmissionType[],
+  store: StoreType
 ): Promise<{ result: loadingStateEnum; data?: commissionType[] }> {
   const outputRequests: { id: string; method: string; url: string }[] = [];
   for (let index = 0; index < commissions.length; index += 1) {
@@ -290,6 +289,7 @@ async function getCommissionsBatch(
 
   const result = await callMsGraph(
     'https://graph.microsoft.com/v1.0/$batch',
+    store,
     'POST',
     JSON.stringify(batchData),
     [{ key: 'Accept', value: 'application/json' }],
@@ -348,7 +348,7 @@ async function getCommissionsBatch(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getUnclaimedCommissions(): Promise<
+export async function getUnclaimedCommissions(store: StoreType): Promise<
   | {
       result: loadingStateEnum.success;
       data: commissionType[];
@@ -367,7 +367,7 @@ export async function getUnclaimedCommissions(): Promise<
   // The first value in the map is the commission id and the second is the submissions count b/c all are unclaimed
   const commissionsMap = new Map<string, number>();
   while (nextUrl !== '') {
-    const submissionResultClaimed = await callMsGraph(nextUrl);
+    const submissionResultClaimed = await callMsGraph(nextUrl, store);
     if (!submissionResultClaimed.ok) {
       return { result: loadingStateEnum.failed };
     }
@@ -424,7 +424,7 @@ export async function getUnclaimedCommissions(): Promise<
 
   let outCommissions: commissionType[] = [];
   for (let index = 0; index < commissionsBatchData.length; index += 1) {
-    const result = await getCommissionsBatch(commissionsBatchData[index]);
+    const result = await getCommissionsBatch(commissionsBatchData[index], store);
     if (
       result.result === loadingStateEnum.success &&
       result.data !== undefined

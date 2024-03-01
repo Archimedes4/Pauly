@@ -10,7 +10,7 @@ import {
   loadingStateEnum,
   taskImportanceEnum,
 } from '@constants';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 
 export async function updateTaskStatus(
   task: taskType,

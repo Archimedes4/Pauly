@@ -1,7 +1,8 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '@constants';
-import { getTimetableApi } from '@utils/calendar/calendarFunctionsGraph';
 import { getValueFromRedux } from '@utils/ultility/utils';
+import { StoreType } from '../store';
+import { getTimetableApi } from '@src/utils/calendar/calendarFunctionsGraphNoStore';
 
 const initalState: {timetables: timetableType[], timetablesFetching: string[]} = {
   timetables: [], //cache timetables
@@ -10,8 +11,11 @@ const initalState: {timetables: timetableType[], timetablesFetching: string[]} =
 
 const getTimetableThunk = createAsyncThunk(
   'timetables/getTimetable',
-  async (timetableId: string, {rejectWithValue}) => {
-    const timetableResult = await getTimetableApi(timetableId)
+  async (input: {
+    timetableId: string;
+    store: StoreType
+  }, {rejectWithValue}) => {
+    const timetableResult = await getTimetableApi(input.timetableId, input.store)
     if (timetableResult.result === loadingStateEnum.success) {
       return timetableResult.timetable
     } else {
@@ -19,11 +23,14 @@ const getTimetableThunk = createAsyncThunk(
     }
 })
 
-export const getTimetable = (timetableId: string) => getValueFromRedux<timetableType>(getTimetableThunk(timetableId), (store) => {
+export const getTimetable = (timetableId: string, store: StoreType) => getValueFromRedux<timetableType>(getTimetableThunk({
+  timetableId: timetableId,
+  store: store
+}), (store) => {
   return store.timetables.timetables.find((e) => {return e.id === timetableId})
 }, (store) => {
   return store.timetables.timetablesFetching.includes(timetableId)
-})
+}, store)
 
 export const timetableSlice = createSlice({
   name: 'timetables',
@@ -35,14 +42,14 @@ export const timetableSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getTimetableThunk.pending, (state, payload) => {
-      state.timetablesFetching.push(payload.meta.arg)
+      state.timetablesFetching.push(payload.meta.arg.timetableId)
     }),
     builder.addCase(getTimetableThunk.fulfilled, (state, payload) => {
       state.timetables.push(payload.payload)
-      state.timetablesFetching = state.timetablesFetching.filter((e) => {e !== payload.meta.arg})
+      state.timetablesFetching = state.timetablesFetching.filter((e) => {e !== payload.meta.arg.timetableId})
     }),
     builder.addCase(getTimetableThunk.rejected,(state, payload) => {
-      state.timetablesFetching = state.timetablesFetching.filter((e) => {e !== payload.meta.arg})
+      state.timetablesFetching = state.timetablesFetching.filter((e) => {e !== payload.meta.arg.timetableId})
     })
   },
 });

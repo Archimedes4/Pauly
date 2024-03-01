@@ -1,9 +1,9 @@
-import store from "@src/redux/store";
-import callMsGraph from "../ultility/microsoftAssets";
-import { loadingStateEnum } from "@src/constants";
+import { StoreType } from '@redux/store';
+import callMsGraph from "../ultility/microsoftAssests/noStore";
+import { loadingStateEnum } from "@constants";
 import largeBatch from "../ultility/batchRequest";
 
-export default async function getLeaderboardApi(commissionId?: string): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: leaderboardUserType[]}> {
+export default async function getLeaderboardApi(store: StoreType, commissionId?: string): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: leaderboardUserType[]}> {
   let commissionFilter = ""
   if (commissionId !== undefined) {
     commissionFilter = `&fields/commissionId%20eq%20'${commissionId}'`
@@ -16,7 +16,7 @@ export default async function getLeaderboardApi(commissionId?: string): Promise<
   }> = new Map()
   let userAndCommision: {user: string, commission: string}[] = []
   while (nextUrl !== undefined) {
-    const result = await callMsGraph(nextUrl)
+    const result = await callMsGraph(nextUrl, store)
     if (result.ok) {
       const data = await result.json()
       for (let index = 0; index < data["value"].length; index += 1) {
@@ -40,7 +40,7 @@ export default async function getLeaderboardApi(commissionId?: string): Promise<
     secondUrl: "'",
     map: commissions,
     method: "GET"
-  })
+  }, store)
   if (commissionBatchResult.result !== loadingStateEnum.success) {
     return { result: loadingStateEnum.failed}
   }
@@ -57,7 +57,7 @@ export default async function getLeaderboardApi(commissionId?: string): Promise<
     secondUrl: "?$select=displayName,id",
     map: users,
     method: "GET"
-  })
+  }, store)
   if (userBatchResult.result !== loadingStateEnum.success) {
     return { result: loadingStateEnum.failed}
   }

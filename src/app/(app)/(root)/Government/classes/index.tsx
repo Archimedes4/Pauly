@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { Colors, loadingStateEnum, semesters, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';

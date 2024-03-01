@@ -10,6 +10,7 @@ import { DefaultTheme, configureFonts } from 'react-native-paper';
 import { ColorValue, Platform, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MD3Type, ThemeProp } from 'react-native-paper/lib/typescript/types';
+import { StoreType } from './redux/store';
 
 // From https://getbootstrap.com/docs/5.0/layout/breakpoints/
 export enum breakPointMode {
@@ -251,6 +252,7 @@ declare global {
     startDate?: { date: Date; filter: 'ge' | 'le' },
     endDate?: { date: Date; filter: 'ge' | 'le' },
     claimed?: boolean,
+    store: StoreType
   }
   type dressCodeIncentiveType = {
     name: string;

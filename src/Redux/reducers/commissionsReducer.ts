@@ -3,6 +3,7 @@ import { loadingStateEnum } from '@constants';
 import getCommissionsApi from '@utils/commissions/getCommissionsApi';
 import { getValueFromRedux } from '@utils/ultility/utils';
 import getCommissionApi from '@utils/commissions/getCommissionApi';
+import { StoreType } from '../store';
 
 type commissionsStateType = {
   commissionsState: loadingStateEnum;
@@ -22,7 +23,7 @@ const initalState: commissionsStateType = {
 
 const getCommissionsThunk = createAsyncThunk(
   'commissions/getCommissions',
-  async (params: commissionApiParams | undefined, {rejectWithValue}) => {
+  async (params: commissionApiParams, {rejectWithValue}) => {
     const commissionsResult = await getCommissionsApi(params)
     if (commissionsResult.result === loadingStateEnum.success) {
       return {
@@ -36,8 +37,11 @@ const getCommissionsThunk = createAsyncThunk(
 
 const getCommissionThunk = createAsyncThunk(
   'commissions/getCommission',
-  async (commissionId: string, {rejectWithValue}) => {
-    const commissionsResult = await getCommissionApi(commissionId)
+  async (input: {
+    commissionId: string
+    store: StoreType
+  }, {rejectWithValue}) => {
+    const commissionsResult = await getCommissionApi(input.commissionId, input.store)
     if (commissionsResult.result === loadingStateEnum.success) {
       return commissionsResult.data
     } else {
@@ -45,17 +49,20 @@ const getCommissionThunk = createAsyncThunk(
     }
 })
 
-export const getCommissions = (params?: commissionApiParams) => getValueFromRedux<commissionType[]>(getCommissionsThunk(params), () => {
+export const getCommissions = (params: commissionApiParams) => getValueFromRedux<commissionType[]>(getCommissionsThunk(params), () => {
   return undefined
 }, (store) => {
   return store.commissions.commissionsState !== loadingStateEnum.loading
-})
+}, params.store)
 
-export const getCommission = (commissionId: string) => getValueFromRedux<commissionType>(getCommissionThunk(commissionId), (store) => {
+export const getCommission = (commissionId: string, store: StoreType) => getValueFromRedux<commissionType>(getCommissionThunk({
+  commissionId: commissionId,
+  store: store
+}), (store) => {
   return store.commissions.currentCommissions.find((e) => {return e.commissionId === commissionId})
 }, (store) => {
   return store.commissions.commissionsState === loadingStateEnum.loading
-})
+}, store)
 
 export const commissionsSlice = createSlice({
   name: 'commissions',

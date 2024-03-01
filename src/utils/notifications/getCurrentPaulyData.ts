@@ -7,7 +7,7 @@
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import { paulyDataSlice } from '@redux/reducers/paulyDataReducer';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 
 export default async function getCurrentPaulyData() {
   const result = await callMsGraph(

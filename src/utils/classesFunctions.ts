@@ -1,7 +1,7 @@
 import store from '@redux/store';
 import { homepageDataSlice } from '@redux/reducers/homepageDataReducer';
 import { Colors, loadingStateEnum, semesters } from '@constants';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import {
   getSchoolDay,
 } from './calendar/calendarFunctionsGraph';
@@ -80,39 +80,22 @@ export async function getClassEvents(
   schoolDay: schoolDayType,
   date: Date,
 ): Promise<{ result: loadingStateEnum.success; data: eventType[] } | { result: loadingStateEnum.failed }> {
-  let classData: classType[] = []
-  if (store.getState().classes.lastCalled === "" || new Date(store.getState().classes.lastCalled).getTime() >= (new Date().getTime() - 7200000) && store.getState().classes.loadingState !== loadingStateEnum.loading) {
-    const classResult = await store.dispatch(getClasses());
-    if (classResult.meta.requestStatus == 'fulfilled') {
-      classData = store.getState().classes.classes
-    } else {
-      return { result: loadingStateEnum.failed };
-    }
-  } else if (store.getState().classes.loadingState !== loadingStateEnum.loading) {
-    const unsubscribe = store.subscribe(() => {
-      if (store.getState().classes.loadingState !== loadingStateEnum.loading) {
-        if (store.getState().classes.loadingState === loadingStateEnum.success) {
-          classData = store.getState().classes.classes
-        } else {
-          return { result: loadingStateEnum.failed };
-        }
-        unsubscribe()
-      }
-    })
-  } else {
-    classData = store.getState().classes.classes
+  let classResult = await getClasses(store)
+  if (classResult.result !== loadingStateEnum.success) {
+    return {result: loadingStateEnum.failed}
   }
+
   let outputEvents: eventType[] = [];
-  for (let index = 0; index < classData.length; index += 1) {
+  for (let index = 0; index < classResult.data.length; index += 1) {
     if (
-      classData[index].schoolYearId === schoolYearEventId &&
-      classData[index].semester.includes(semester)
+      classResult.data[index].schoolYearId === schoolYearEventId &&
+      classResult.data[index].semester.includes(semester)
     ) {
       // This check should never fail
-      if (classData[index].periods.length > schoolDay.order) {
+      if (classResult.data[index].periods.length > schoolDay.order) {
         // Find Time
         const period: number =
-          classData[index].periods[schoolDay.order];
+        classResult.data[index].periods[schoolDay.order];
         if (period !== 0) {
           const periodData = schedule.periods[period - 1];
           const startDate: Date = new Date(date.toISOString());
@@ -124,8 +107,8 @@ export async function getClassEvents(
           endDate.setMinutes(periodData.endMinute);
           endDate.setSeconds(0);
           outputEvents.push({
-            id: classData[index].id,
-            name: classData[index].name,
+            id: classResult.data[index].id,
+            name: classResult.data[index].name,
             startTime: startDate.toISOString(),
             endTime: endDate.toISOString(),
             eventColor: Colors.white,

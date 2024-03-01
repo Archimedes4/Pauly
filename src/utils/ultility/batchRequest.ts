@@ -5,10 +5,12 @@
   batchRequest.ts
 */
 import { loadingStateEnum } from '@constants';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import { StoreType } from '@src/redux/store';
+import callMsGraph from '@utils/ultility/microsoftAssests/noStore';
 
 async function makeBatch(
   data: batchRequest[],
+  store: StoreType
 ): Promise<
   | { result: loadingStateEnum.success; output: batchResponseType[] }
   | { result: loadingStateEnum.failed }
@@ -18,6 +20,7 @@ async function makeBatch(
   };
   const result = await callMsGraph(
     'https://graph.microsoft.com/v1.0/$batch',
+    store,
     'POST',
     JSON.stringify(batchData),
     [{ key: 'Accept', value: 'application/json' }],
@@ -47,7 +50,8 @@ async function makeBatch(
 }
 
 export default async function largeBatch(
-  input: largeBatchInput
+  input: largeBatchInput,
+  store: StoreType
 ): Promise<
   | { result: loadingStateEnum.success; data: batchResponseType[] }
   | {
@@ -100,7 +104,7 @@ export default async function largeBatch(
   let output: batchResponseType[] = [];
   const ongoingRequests = [];
   for (let index = 0; index < data.length; index += 1) {
-    ongoingRequests.push(makeBatch(data[index]));
+    ongoingRequests.push(makeBatch(data[index], store));
   }
   const finalRequests = await Promise.all(ongoingRequests);
   for (let index = 0; index < data.length; index += 1) {

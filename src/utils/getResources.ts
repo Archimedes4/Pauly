@@ -7,7 +7,7 @@
 */
 import { loadingStateEnum, resourceMode, resourceResponce } from '@constants';
 import store from '@redux/store';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { resourcesSlice } from '@redux/reducers/resourcesReducer';
 import createUUID from './ultility/createUUID';
 

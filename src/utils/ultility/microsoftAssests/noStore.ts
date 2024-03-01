@@ -1,9 +1,10 @@
-import { Platform } from 'react-native';
-import store from '@redux/store';
-import { authenticationCallSlice } from '@redux/reducers/authenticationCallReducer';
+import { authenticationCallSlice } from "@src/redux/reducers/authenticationCallReducer";
+import { StoreType } from "@src/redux/store";
+import { Platform } from "react-native";
 
 export default async function callMsGraph(
   url: string,
+  store: StoreType,
   method?: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT',
   body?: string | Blob,
   headersIn?: { key: string; value: string }[],
@@ -60,6 +61,7 @@ export default async function callMsGraph(
           if (newValue !== previousValue) {
             const result = await callMsGraph(
               url,
+              store,
               method,
               body,
               headersIn,

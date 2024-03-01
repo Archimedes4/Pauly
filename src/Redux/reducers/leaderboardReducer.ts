@@ -1,15 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '@constants';
 import { getValueFromRedux } from '@utils/ultility/utils';
-import store from '../store';
 import getLeaderboardApi from '@utils/commissions/getLeaderboardApi';
+import { StoreType } from '../store';
 
 const initalState: {state: loadingStateEnum; leaderboard: leaderboardUserType[]} = {state: loadingStateEnum.notStarted, leaderboard: []}
 
 const getLeaderboardThunk = createAsyncThunk(
   'leaderboard/getLeaderboard',
-  async (commissionId: string | undefined, {rejectWithValue}) => {
-    const leaderboardResult = await getLeaderboardApi(commissionId)
+  async (input: {commissionId: string | undefined, store: StoreType}, {rejectWithValue}) => {
+    const leaderboardResult = await getLeaderboardApi(input.store, input.commissionId)
     if (leaderboardResult.result === loadingStateEnum.success) {
       return leaderboardResult.data
     } else {
@@ -17,14 +17,17 @@ const getLeaderboardThunk = createAsyncThunk(
     }
 })
 
-export const getLeaderboard = (commissionId?: string | undefined) => getValueFromRedux<leaderboardUserType[]>(getLeaderboardThunk(commissionId), () => {
-  if (store.getState().leaderboard.state === loadingStateEnum.success) {
-    return store.getState().leaderboard.leaderboard
+export const getLeaderboard = (store: StoreType, commissionId?: string | undefined) => getValueFromRedux<leaderboardUserType[]>(getLeaderboardThunk({
+  commissionId: commissionId,
+  store
+}), (store) => {
+  if (store.leaderboard.state === loadingStateEnum.success) {
+    return store.leaderboard.leaderboard
   }
   return undefined
-}, () => {
-  return store.getState().leaderboard.state === loadingStateEnum.loading
-})
+}, (store) => {
+  return store.leaderboard.state === loadingStateEnum.loading
+}, store)
 
 export const leaderboardSlice = createSlice({
   name: 'leaderboard',

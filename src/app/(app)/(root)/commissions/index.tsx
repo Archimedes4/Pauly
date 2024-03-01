@@ -17,7 +17,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
 import { commissionsSlice, getCommissions } from '@redux/reducers/commissionsReducer';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import getPoints from '@utils/commissions/getPoints';
 import ProgressView from '@components/ProgressView';
@@ -203,7 +203,8 @@ function CommissionsBody() {
         onEndReached={() => {
           if (commissionNextLink !== undefined) {
             getCommissions({
-              nextLink: commissionNextLink
+              nextLink: commissionNextLink,
+              store: store
             });
           }
         }}
@@ -239,7 +240,7 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
     const pointResult = await getPoints();
     if (pointResult.result === loadingStateEnum.success) {
       dispatch(commissionsSlice.actions.setPoints(pointResult.data));
-      getCommissions()
+      getCommissions({store: store})
     } else {
       dispatch(
         commissionsSlice.actions.setCommissionsState(pointResult.result),
@@ -309,7 +310,7 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
             <PickerPiece
               text="All"
               onPress={() => {
-                getCommissions();
+                getCommissions({store: store});
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
@@ -320,6 +321,7 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
               text="Current"
               onPress={() => {
                 getCommissions({
+                  store: store,
                   startDate: { date: new Date(), filter: 'ge' },
                   endDate: { date: new Date(), filter: 'le' }
                 });
@@ -333,7 +335,7 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
               text="Past"
               onPress={() => {
                 getCommissions(
-                  {startDate: { date: new Date(), filter: 'le' }, endDate: { date: new Date(), filter: 'le' }}
+                  {startDate: { date: new Date(), filter: 'le' }, endDate: { date: new Date(), filter: 'le' }, store}
                 );
               }}
               isHoverPicker={isHoverPicker}
@@ -345,7 +347,8 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
               text="Claimed"
               onPress={() => {
                 getCommissions({
-                  claimed: true
+                  claimed: true,
+                  store: store
                 });
               }}
               isHoverPicker={isHoverPicker}
@@ -359,7 +362,7 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
                 getCommissions({startDate: {
                   date: new Date(),
                   filter: 'ge',
-                }});
+                }, store});
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}

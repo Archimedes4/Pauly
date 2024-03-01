@@ -7,7 +7,7 @@
 */
 import React, { useEffect, useState } from 'react';
 import { Pressable, View, Text, TextInput, FlatList } from 'react-native';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { getUserTeams } from '@utils/microsoftFilePickerFunctions';
 import { loadingStateEnum } from '@constants';
 import Picker from '../Pickers/Picker';

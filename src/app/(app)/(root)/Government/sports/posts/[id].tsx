@@ -7,7 +7,7 @@ import { View, Text, Image, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { ResizeMode, Video } from 'expo-av';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import store, { RootState } from '@redux/store';
 import {

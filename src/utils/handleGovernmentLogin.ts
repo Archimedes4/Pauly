@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isGovernmentModeSlice } from '@redux/reducers/isGovernmentModeReducer';
 import store from '@redux/store';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 
 export async function validateGovernmentMode() {
   const userResult = await callMsGraph(

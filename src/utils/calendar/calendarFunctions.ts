@@ -177,3 +177,61 @@ export function getDOW(selectedDate: Date) {
   }
   return week;
 }
+
+export function encodeSchoolDayData(data: schoolDayDataCompressedType): string {
+  let result = ""
+  if (data.dcId.length !== 36) {
+    return ""
+  }
+  if (data.sId.length !== 36) {
+    return ""
+  }
+  if (data.sdId.length !== 36) {
+    return ""
+  }
+  if (data.syeId.length !== 152) {
+    return ""
+  }
+  result += data.dcId + data.sId + data.sdId + data.syeId
+  if (data.dciId !== "") {
+    result += data.dciId
+  }
+  result += data.sem
+  return result
+}
+
+export function decodeSchoolDayData(data: string): schoolDayDataCompressedType | 'failed' {
+  if (data.length < 260) {
+    //failed
+    return 'failed'
+  }
+  
+  if (data.length >= 297) {
+    try {
+      const sem = parseInt(data.substring(296, -1))
+      return {
+        dcId: data.substring(0, 35),
+        sId: data.substring(36, 71),
+        sdId: data.substring(72, 107),
+        syeId: data.substring(108, 260),
+        sem: sem,
+        dciId: data.substring(261, 295)
+      }
+    } catch {
+      return 'failed'
+    }
+  }
+  try {
+    const sem = parseInt(data.substring(144, -1))
+    return {
+      dciId: '',
+      dcId: data.substring(0, 35),
+      sId: data.substring(36, 71),
+      sdId: data.substring(72, 107),
+      syeId: data.substring(108, 260),
+      sem: sem
+    }
+  } catch {
+    return 'failed'
+  }
+}

@@ -2,7 +2,7 @@ import { View, Text, TextInput, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import { Link } from 'react-router-native';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { RootState } from '@redux/store';
 import StyledButton from '@components/StyledButton';
 

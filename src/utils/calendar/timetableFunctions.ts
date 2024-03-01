@@ -6,7 +6,7 @@
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import createUUID from '../ultility/createUUID';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 
 export async function createTimetable(
   selectedDefaultSchedule: scheduleType,

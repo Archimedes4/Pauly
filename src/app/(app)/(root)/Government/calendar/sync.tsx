@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import useSyncCalendar from '@hooks/useSyncCalendar';
-import callMsGraph from '@utils/ultility/microsoftAssets';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import StyledButton from '@components/StyledButton';
 import ProgressView from '@components/ProgressView';
 

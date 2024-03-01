@@ -7,7 +7,7 @@
 */
 import { loadingStateEnum } from '@constants';
 import createUUID from '../ultility/createUUID';
-import callMsGraph from '../ultility/microsoftAssets';
+import callMsGraph from '../ultility/microsoftAssests';
 
 async function b64toBlob(b64Data: string): Promise<Blob | undefined> {
   const result = await fetch(b64Data);
