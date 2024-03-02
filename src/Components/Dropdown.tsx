@@ -51,7 +51,7 @@ export default function Dropdown({
                     setExpanded(false);
                   }
                 }}
-                style={{borderWidth: 2, borderColor: Colors.black}}
+                style={{ borderWidth: 2, borderColor: Colors.black }}
               >
                 <Text>{option}</Text>
               </Pressable>

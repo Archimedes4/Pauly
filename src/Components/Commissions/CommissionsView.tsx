@@ -53,11 +53,7 @@ function getTextTakeImage(result: CameraResult) {
   return 'AN ERROR OCCURED';
 }
 
-export default function CommissionsView({
-  id,
-}: {
-  id: string;
-}) {
+export default function CommissionsView({ id }: { id: string }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [commissionData, setCommissionData] = useState<
     commissionType | undefined
@@ -96,9 +92,7 @@ export default function CommissionsView({
 
   const getCommissionInformation = useCallback(async () => {
     const result = await getCommission(id, store);
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setCommissionData(result.data);
       if (result.data?.postData !== undefined) {
         getPost(
@@ -386,14 +380,17 @@ export default function CommissionsView({
                   alignContent: 'center',
                   justifyContent: 'center',
                   padding: 10,
-                  fontFamily: 'Roboto-Bold'
+                  fontFamily: 'Roboto-Bold',
                 }}
               >
                 Leaderboard
               </Link>
               {isOverflowing ? null : (
                 <View style={{ marginTop: 10, marginBottom: 10 }}>
-                  <CommissionClaim commission={commissionData} imageData={imageUri !== '' ? imageUri : undefined} />
+                  <CommissionClaim
+                    commission={commissionData}
+                    imageData={imageUri !== '' ? imageUri : undefined}
+                  />
                 </View>
               )}
             </View>

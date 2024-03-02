@@ -345,11 +345,7 @@ function GovernmentResourcesBody() {
 }
 
 function GovernmentResourceLayout() {
-  return (
-    <View>
-      
-    </View>
-  )
+  return <View />;
 }
 
 export default function GovernmentResources() {

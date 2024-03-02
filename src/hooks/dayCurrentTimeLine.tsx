@@ -1,5 +1,5 @@
-import { findTimeOffset } from "@utils/calendar/calendarFunctions";
-import { useCallback, useEffect, useState } from "react";
+import { findTimeOffset } from '@utils/calendar/calendarFunctions';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function dayCurrentTimeLine(height: number) {
   const [currentMinuteInt, setCurrentMinuteInt] = useState<number>(0);
@@ -20,7 +20,7 @@ export default function dayCurrentTimeLine(height: number) {
     }
   }
 
-    // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
+  // https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-component
   // Upadtes every second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -40,7 +40,7 @@ export default function dayCurrentTimeLine(height: number) {
 
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
   }, [currentMinuteInt, height]);
-  
+
   const loadCalendarContent = useCallback(() => {
     const currentDate = new Date();
     const resultHeightTopOffset = findTimeOffset(currentDate, height);
@@ -49,15 +49,14 @@ export default function dayCurrentTimeLine(height: number) {
     setCurrentMinuteInt(minuiteInt);
     const hourInt = currentDate.getHours();
     setCurrentTimeFunction(hourInt, minuiteInt);
-    
   }, [height]);
 
   useEffect(() => {
     loadCalendarContent();
-  }, [height])
+  }, [height]);
 
   return {
     currentTime,
-    heightOffsetTop
-  }
+    heightOffsetTop,
+  };
 }

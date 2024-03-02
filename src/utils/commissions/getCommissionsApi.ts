@@ -5,8 +5,8 @@
   getCommissions.ts
 */
 import { loadingStateEnum } from '@constants';
-import callMsGraph from '../ultility/microsoftAssests/noStore';
 import { StoreType } from '@redux/store';
+import callMsGraph from '../ultility/microsoftAssests/noStore';
 
 function getFilter(
   startDate?: { date: Date; filter: 'ge' | 'le' },
@@ -29,7 +29,10 @@ function getFilter(
   return '';
 }
 
-async function getSubmissions(commissionIds: string[], store: StoreType): Promise<{
+async function getSubmissions(
+  commissionIds: string[],
+  store: StoreType,
+): Promise<{
   result: loadingStateEnum;
   data?: Map<
     string,
@@ -175,7 +178,7 @@ async function getSubmissions(commissionIds: string[], store: StoreType): Promis
 }
 
 export default async function getCommissionsApi(
-  params: commissionApiParams
+  params: commissionApiParams,
 ): Promise<
   | {
       result: loadingStateEnum.success;
@@ -186,7 +189,7 @@ export default async function getCommissionsApi(
       result: loadingStateEnum.failed;
     }
 > {
-  const {nextLink, claimed, startDate, endDate} = params || {};
+  const { nextLink, claimed, startDate, endDate } = params || {};
   if (claimed === true) {
     const result = await getUnclaimedCommissions(params.store);
     if (result.result === loadingStateEnum.success) {
@@ -202,7 +205,7 @@ export default async function getCommissionsApi(
       }/lists/${
         params.store.getState().paulyList.commissionListId
       }/items?expand=fields${filter}`,
-      params.store
+    params.store,
   );
   if (result.ok) {
     const data = await result.json();
@@ -240,7 +243,7 @@ export default async function getCommissionsApi(
             allowMultipleSubmissions:
               data.value[index].fields.allowMultipleSubmissions,
             value: data.value[index].fields.value - 1,
-            competitionType: data.value[index].fields.homeValue
+            competitionType: data.value[index].fields.homeValue,
           });
         }
         return {
@@ -266,7 +269,7 @@ type unclaimedCommissionSubmissionType = {
 // Gets points when given an array of commission ids
 async function getCommissionsBatch(
   commissions: unclaimedCommissionSubmissionType[],
-  store: StoreType
+  store: StoreType,
 ): Promise<{ result: loadingStateEnum; data?: commissionType[] }> {
   const outputRequests: { id: string; method: string; url: string }[] = [];
   for (let index = 0; index < commissions.length; index += 1) {
@@ -338,7 +341,8 @@ async function getCommissionsBatch(
                 .allowMultipleSubmissions,
             value:
               data.responses[requestIndex].body.value[index].fields.hidden - 1,
-            competitionType:   data.responses[requestIndex].body.value[index].fields.homeValue
+            competitionType:
+              data.responses[requestIndex].body.value[index].fields.homeValue,
           });
         }
       } else {
@@ -426,7 +430,10 @@ export async function getUnclaimedCommissions(store: StoreType): Promise<
 
   let outCommissions: commissionType[] = [];
   for (let index = 0; index < commissionsBatchData.length; index += 1) {
-    const result = await getCommissionsBatch(commissionsBatchData[index], store);
+    const result = await getCommissionsBatch(
+      commissionsBatchData[index],
+      store,
+    );
     if (
       result.result === loadingStateEnum.success &&
       result.data !== undefined

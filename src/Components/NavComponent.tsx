@@ -8,7 +8,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Image, StyleSheet, View, Pressable, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigation, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import store, { RootState } from '@redux/store';
 import { expandedModeSlice } from '@redux/reducers/expandedModeReducer';
 import { isShowingProfileBlockSlice } from '@redux/reducers/isShowingProfileBlockReducer';
@@ -45,10 +45,10 @@ function NavBarBlock({
         height: blockLength,
         width: expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
         backgroundColor: isHover ? Colors.darkGray : 'transparent',
-        alignItems: expandedMode ? 'flex-start':'center',
+        alignItems: expandedMode ? 'flex-start' : 'center',
         overflow: 'hidden',
         margin: 0,
-        flexDirection: expandedMode ? 'row':'column'
+        flexDirection: expandedMode ? 'row' : 'column',
       }}
       onHoverIn={() => {
         setIsHover(true);
@@ -67,7 +67,9 @@ function NavBarBlock({
             height: blockLength,
             width: blockLength,
             position: 'relative',
-            marginLeft: expandedMode ? ((totalWidth * 0.1 - blockLength) / 2) : undefined,
+            marginLeft: expandedMode
+              ? (totalWidth * 0.1 - blockLength) / 2
+              : undefined,
             alignItems: 'center',
             justifyContent: 'center',
           },
@@ -83,7 +85,7 @@ function NavBarBlock({
             marginLeft: 8,
             fontFamily: 'Roboto',
             marginTop: 'auto',
-            marginBottom: 'auto'
+            marginBottom: 'auto',
           }}
         >
           {text}
@@ -194,10 +196,10 @@ export default function NavBarComponent() {
                     top: blockLength * 0.3,
                     left: blockLength * 0.65,
                     fontSize: blockLength * 0.75,
-                    
+
                     textShadowColor: 'rgba(0, 0, 0, 1)',
                     textShadowOffset: { width: 4, height: 2 },
-                    textShadowRadius: 0
+                    textShadowRadius: 0,
                   }}
                   selectable={false}
                 >
@@ -283,20 +285,24 @@ export default function NavBarComponent() {
             styles.LinkStyle,
             {
               height: blockLength,
-              width:  expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
+              width: expandedMode ? totalWidth * 0.25 : totalWidth * 0.1,
               margin: 0,
               position: 'absolute',
               bottom: height * 0.05,
-             flexDirection: 'row'
+              flexDirection: 'row',
             },
           ]}
         >
           {uri !== '' ? (
-            <View style={{
-              width: blockLength,
-              height: blockLength,
-              marginLeft: expandedMode ? ((totalWidth * 0.1 - blockLength) / 2):undefined
-            }}>
+            <View
+              style={{
+                width: blockLength,
+                height: blockLength,
+                marginLeft: expandedMode
+                  ? (totalWidth * 0.1 - blockLength) / 2
+                  : undefined,
+              }}
+            >
               <Image
                 source={{ uri }}
                 style={{
@@ -306,25 +312,35 @@ export default function NavBarComponent() {
                   overflow: 'hidden',
                 }}
               />
-            </View> 
+            </View>
           ) : (
-            <PersonIcon width={iconLength} height={iconLength} style={{width: blockLength, height: blockLength, marginLeft: expandedMode ? ((totalWidth * 0.1 - blockLength) / 2):undefined}}/>
+            <PersonIcon
+              width={iconLength}
+              height={iconLength}
+              style={{
+                width: blockLength,
+                height: blockLength,
+                marginLeft: expandedMode
+                  ? (totalWidth * 0.1 - blockLength) / 2
+                  : undefined,
+              }}
+            />
           )}
-            {expandedMode ? (
-              <Text
-                adjustsFontSizeToFit
-                numberOfLines={1}
-                style={{
-                  color: Colors.white,
-                  marginLeft: 8,
-                  width: blockLength * 2.5,
-                  marginRight: 'auto'
-                }}
-                selectable={false}
-              >
-                {displayName}
-              </Text>
-            ) : null}
+          {expandedMode ? (
+            <Text
+              adjustsFontSizeToFit
+              numberOfLines={1}
+              style={{
+                color: Colors.white,
+                marginLeft: 8,
+                width: blockLength * 2.5,
+                marginRight: 'auto',
+              }}
+              selectable={false}
+            >
+              {displayName}
+            </Text>
+          ) : null}
         </Pressable>
       </View>
     </Pressable>

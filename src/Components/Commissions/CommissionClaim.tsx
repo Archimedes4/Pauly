@@ -27,13 +27,13 @@ export default function CommissionClaim({
   const [claimCommissionState, setClaimCommissionState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
   const { width } = useSelector((state: RootState) => state.dimensions);
-  const accessToken = usePaulyApi()
+  const accessToken = usePaulyApi();
 
   async function claimCommission() {
     setClaimCommissionState(loadingStateEnum.loading);
     if (typeof accessToken !== 'string') {
       setClaimCommissionState(loadingStateEnum.failed);
-      return
+      return;
     }
 
     let outImageUrl: string = '';
@@ -79,7 +79,7 @@ export default function CommissionClaim({
         outImageUrl !== '' ? outImageUrl : undefined,
         undefined,
       );
-      console.log(result)
+      console.log(result);
       setClaimCommissionState(result);
     }
   }

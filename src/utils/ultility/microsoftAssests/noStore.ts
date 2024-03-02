@@ -1,6 +1,6 @@
-import { authenticationCallSlice } from "@src/redux/reducers/authenticationCallReducer";
-import { StoreType } from "@src/redux/store";
-import { Platform } from "react-native";
+import { authenticationCallSlice } from '@src/redux/reducers/authenticationCallReducer';
+import { StoreType } from '@src/redux/store';
+import { Platform } from 'react-native';
 
 export default async function callMsGraph(
   url: string,
@@ -9,7 +9,7 @@ export default async function callMsGraph(
   body?: string | Blob,
   headersIn?: { key: string; value: string }[],
   secondAuth?: boolean,
-  abort?: AbortController
+  abort?: AbortController,
 ): Promise<Response> {
   const headers: Headers = new Headers();
   const bearer = `Bearer ${store.getState().authenticationToken}`;
@@ -31,7 +31,7 @@ export default async function callMsGraph(
     method: method || 'GET',
     headers,
     body,
-    signal: abort?.signal
+    signal: abort?.signal,
   };
 
   let outUrl = url;

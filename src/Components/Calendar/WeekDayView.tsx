@@ -3,56 +3,85 @@ import {
   findTimeOffset,
   isDateToday,
   isEventDuringInterval,
-  isEventDuringIntervalRaw,
   isTimeOnDay,
 } from '@utils/calendar/calendarFunctions';
-import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { RootState } from '@redux/store';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors } from '@constants';
 import React, { useEffect, useRef, useState } from 'react';
-import { ScrollView, View, useColorScheme, Text, Pressable, Modal, FlatList } from 'react-native';
+import {
+  ScrollView,
+  View,
+  useColorScheme,
+  Text,
+  Pressable,
+  Modal,
+  FlatList,
+} from 'react-native';
 import { useSelector } from 'react-redux';
 import createUUID from '@utils/ultility/createUUID';
 import dayCurrentTimeLine from '@hooks/dayCurrentTimeLine';
 import useTimeHidden from '@hooks/useTimeHidden';
-import { CloseIcon, UpIcon } from '../Icons';
+import { CloseIcon } from '../Icons';
 import { DefaultEventBlock } from './EventView';
 import DayEventBlock from './DayEventBlock';
 
-function CurrentTimeLine({day, width, height, topPadding}:{day: Date, width: number, height: number, topPadding: number}) {
-  const [timeWidth, setTimeWidth] = useState<number>(0)
-  const dayData = dayCurrentTimeLine(height)
+function CurrentTimeLine({
+  day,
+  width,
+  height,
+  topPadding,
+}: {
+  day: Date;
+  width: number;
+  height: number;
+  topPadding: number;
+}) {
+  const [timeWidth, setTimeWidth] = useState<number>(0);
+  const dayData = dayCurrentTimeLine(height);
 
   if (isDateToday(day)) {
     return (
-    <View
-      style={{
-        position: 'absolute',
-        top: dayData.heightOffsetTop + topPadding,
-        height: 20,
-        width,
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}
-    >
-      <Text onLayout={(e) => {
-        setTimeWidth(e.nativeEvent.layout.width)
-      }} selectable={false} style={{ color: 'red', zIndex: 2, backgroundColor: Colors.white, padding: 4, paddingLeft: 1, paddingRight: 1, borderRadius: 15 }}>
-        {dayData.currentTime}
-      </Text>
       <View
         style={{
-          backgroundColor: 'red',
-          width: width - timeWidth - 2,
-          height: 6,
           position: 'absolute',
-          left: timeWidth + 2,
-          borderRadius: 15
+          top: dayData.heightOffsetTop + topPadding,
+          height: 20,
+          width,
+          flexDirection: 'row',
+          alignItems: 'center',
         }}
-      />
-    </View>
-  )}
-  return null
+      >
+        <Text
+          onLayout={e => {
+            setTimeWidth(e.nativeEvent.layout.width);
+          }}
+          selectable={false}
+          style={{
+            color: 'red',
+            zIndex: 2,
+            backgroundColor: Colors.white,
+            padding: 4,
+            paddingLeft: 1,
+            paddingRight: 1,
+            borderRadius: 15,
+          }}
+        >
+          {dayData.currentTime}
+        </Text>
+        <View
+          style={{
+            backgroundColor: 'red',
+            width: width - timeWidth - 2,
+            height: 6,
+            position: 'absolute',
+            left: timeWidth + 2,
+            borderRadius: 15,
+          }}
+        />
+      </View>
+    );
+  }
+  return null;
 }
 
 function MultiEventBlock({
@@ -75,30 +104,44 @@ function MultiEventBlock({
   );
   const Offset = findTimeOffset(new Date(start), height);
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false);
-  const dimensions = useSelector(
-    (state: RootState) => state.dimensions,
-  );
+  const dimensions = useSelector((state: RootState) => state.dimensions);
 
   return (
     <>
       <Modal transparent visible={isShowingModal}>
-        <Pressable style={{width: dimensions.totalWidth, height: dimensions.height}} onPress={() => setIsShowingModal(false)}/>
-        <View style={{left: dimensions.totalWidth * 0.15, top: dimensions.height * 0.05, height: dimensions.height * 0.9, width: dimensions.totalWidth * 0.8, borderRadius: 15, borderWidth: 4, backgroundColor: Colors.lightGray, position: 'absolute', zIndex: 2}}>
-          <Pressable style={{margin: 10}} onPress={() => setIsShowingModal(false)}>
-            <CloseIcon width={25} height={25}/>
+        <Pressable
+          style={{ width: dimensions.totalWidth, height: dimensions.height }}
+          onPress={() => setIsShowingModal(false)}
+        />
+        <View
+          style={{
+            left: dimensions.totalWidth * 0.15,
+            top: dimensions.height * 0.05,
+            height: dimensions.height * 0.9,
+            width: dimensions.totalWidth * 0.8,
+            borderRadius: 15,
+            borderWidth: 4,
+            backgroundColor: Colors.lightGray,
+            position: 'absolute',
+            zIndex: 2,
+          }}
+        >
+          <Pressable
+            style={{ margin: 10 }}
+            onPress={() => setIsShowingModal(false)}
+          >
+            <CloseIcon width={25} height={25} />
           </Pressable>
           <FlatList
             data={events}
-            renderItem={(event) => (
-              <DefaultEventBlock event={event.item} />
-            )}
+            renderItem={event => <DefaultEventBlock event={event.item} />}
           />
         </View>
       </Modal>
       <Pressable
         key={`Event_${createUUID()}`}
         style={{
-          width: width,
+          width,
           height: EventHeight,
           top: Offset,
           position: 'absolute',
@@ -107,12 +150,12 @@ function MultiEventBlock({
           borderLeftWidth: 3,
         }}
         onPress={() => {
-          setIsShowingModal(true)
+          setIsShowingModal(true);
         }}
       >
         <View
           style={{
-            width: width,
+            width,
             height: EventHeight,
             position: 'absolute',
             backgroundColor: Colors.lightGray,
@@ -142,13 +185,13 @@ export default function WeekDayView({
   height,
   start,
   day,
-  topPadding
+  topPadding,
 }: {
   width: number;
   height: number;
   start: boolean;
   day: Date;
-  topPadding: number
+  topPadding: number;
 }) {
   const colorScheme = useColorScheme();
   const currentEvents = useSelector((state: RootState) => state.currentEvents);
@@ -182,9 +225,9 @@ export default function WeekDayView({
     '11PM',
   ];
   const mainScrollRef = useRef<ScrollView>(null);
-  const hiddenTime = useTimeHidden()
-  const [hourTextWidth, setHourTextWidth] = useState<number>(0)
-  const [hourTextHeight, setHourTextHeight] = useState<number>(0)
+  const hiddenTime = useTimeHidden();
+  const [hourTextWidth, setHourTextWidth] = useState<number>(0);
+  const [hourTextHeight, setHourTextHeight] = useState<number>(0);
 
   useEffect(() => {
     setHourLength(height * 0.1);
@@ -193,7 +236,13 @@ export default function WeekDayView({
   async function getWeekEvents() {
     let dayEvents = [];
     for (let index = 0; index < currentEvents.length; index += 1) {
-      if (isEventDuringInterval(day, currentEvents[index]) && !currentEvents[index].allDay) {
+      if (
+        isEventDuringInterval({
+          selectedDate: day,
+          event: currentEvents[index],
+        }) &&
+        !currentEvents[index].allDay
+      ) {
         dayEvents.push(currentEvents[index]);
       }
     }
@@ -202,16 +251,27 @@ export default function WeekDayView({
     });
     const result: weekDayEvent[] = [];
     for (let index = 0; index < dayEvents.length; index += 1) {
-      let found = false
+      let found = false;
       for (let busyIndex = 0; busyIndex < result.length; busyIndex += 1) {
-        if (isEventDuringIntervalRaw(dayEvents[index], new Date(result[busyIndex].start).getTime(), new Date(result[busyIndex].end).getTime())) {
-          found = true
-          result[busyIndex].events.push(dayEvents[index])
-          if (new Date(dayEvents[index].startTime) > new Date(result[busyIndex].start)) {
-            result[busyIndex].start = dayEvents[index].startTime
+        if (
+          isEventDuringInterval({
+            event: dayEvents[index],
+            checkStart: new Date(result[busyIndex].start).getTime(),
+            checkEnd: new Date(result[busyIndex].end).getTime(),
+          })
+        ) {
+          found = true;
+          result[busyIndex].events.push(dayEvents[index]);
+          if (
+            new Date(dayEvents[index].startTime) >
+            new Date(result[busyIndex].start)
+          ) {
+            result[busyIndex].start = dayEvents[index].startTime;
           }
-          if (new Date(dayEvents[index].endTime) > new Date(result[busyIndex].end)) {
-            result[busyIndex].end = dayEvents[index].endTime 
+          if (
+            new Date(dayEvents[index].endTime) > new Date(result[busyIndex].end)
+          ) {
+            result[busyIndex].end = dayEvents[index].endTime;
           }
         }
       }
@@ -219,8 +279,8 @@ export default function WeekDayView({
         result.push({
           start: dayEvents[index].startTime,
           end: dayEvents[index].endTime,
-          events: [dayEvents[index]]
-        })
+          events: [dayEvents[index]],
+        });
       }
     }
     setWeekEvents(result);
@@ -233,10 +293,10 @@ export default function WeekDayView({
       y: resultHeightTopOffset,
       animated: false,
     });
-  }, [])
+  }, []);
 
   useEffect(() => {
-    getWeekEvents()
+    getWeekEvents();
   }, [selectedDate, currentEvents]);
 
   return (
@@ -245,7 +305,7 @@ export default function WeekDayView({
         height: hourLength * 24,
         width,
         backgroundColor: Colors.white,
-        paddingTop: topPadding
+        paddingTop: topPadding,
       }}
     >
       {hoursText.map(value => (
@@ -253,31 +313,31 @@ export default function WeekDayView({
           key={`${value}_${createUUID()}`}
           style={{ flexDirection: 'row', height: hourLength }}
         >
-          {((value !== hiddenTime || !isDateToday(new Date(day))) &&
-          (start === true) ? (
+          {(value !== hiddenTime || !isDateToday(new Date(day))) &&
+          start === true ? (
             <Text
               selectable={false}
               style={{
                 color: colorScheme == 'dark' ? Colors.white : 'black',
                 position: 'absolute',
-                top: -hourTextHeight
+                top: -hourTextHeight,
               }}
-              onLayout={(e) => {
-                if (value == "12PM") {
-                  setHourTextWidth(e.nativeEvent.layout.width)
+              onLayout={e => {
+                if (value == '12PM') {
+                  setHourTextWidth(e.nativeEvent.layout.width);
                   if (e.nativeEvent.layout.height - 6 >= 0) {
-                    setHourTextHeight((e.nativeEvent.layout.height - 6)/2)
+                    setHourTextHeight((e.nativeEvent.layout.height - 6) / 2);
                   }
                 }
               }}
             >
               {value}
             </Text>
-          ) : null)}
+          ) : null}
           <View
             style={{
               backgroundColor: 'black',
-              width: start ? width - hourTextWidth - 3: width,
+              width: start ? width - hourTextWidth - 3 : width,
               height: 6,
               position: 'absolute',
               right: 0,
@@ -289,36 +349,44 @@ export default function WeekDayView({
       ))}
       {weekEvents.map(weekDay => {
         if (weekDay.events.length <= 0) {
-          return null
+          return null;
         }
         if (weekDay.events.length === 1) {
-          if (weekDay.events[0].allDay || !isTimeOnDay(weekDay.events[0].endTime, day.toISOString())) {
-            return null
+          if (
+            weekDay.events[0].allDay ||
+            !isTimeOnDay(weekDay.events[0].endTime, day.toISOString())
+          ) {
+            return null;
           }
-          
+
           return (
             <DayEventBlock
               key={weekDay.events[0].id + day.toISOString()}
               event={weekDay.events[0]}
               width={width}
               height={height}
-              hourTextWidth={start ? hourTextWidth:0}
+              hourTextWidth={start ? hourTextWidth : 0}
               topPadding={topPadding}
             />
-          ) 
+          );
         }
         return (
           <MultiEventBlock
-            key={weekDay.events[0].id + day.toISOString() + "multi"}
+            key={`${weekDay.events[0].id + day.toISOString()}multi`}
             start={weekDay.start}
             end={weekDay.end}
             events={weekDay.events}
             width={width}
             height={height}
           />
-        )
+        );
       })}
-      <CurrentTimeLine day={day} width={width} height={height} topPadding={topPadding}/>
+      <CurrentTimeLine
+        day={day}
+        width={width}
+        height={height}
+        topPadding={topPadding}
+      />
     </View>
   );
 }

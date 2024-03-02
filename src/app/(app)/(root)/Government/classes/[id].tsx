@@ -1,4 +1,11 @@
-import { View, Text, TextInput, Pressable, ScrollView, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  FlatList,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@src/utils/ultility/microsoftAssests';
@@ -19,12 +26,12 @@ import { getTimetable } from '@src/redux/reducers/timetableReducer';
 function PeriodBlock({
   selectedSchoolYear,
   periods,
-  setPeriods
-}:{
-  selectedSchoolYear: eventType | undefined,
-  periods: number[],
-  setPeriods: (item: number[]) => void
-}) { 
+  setPeriods,
+}: {
+  selectedSchoolYear: eventType | undefined;
+  periods: number[];
+  setPeriods: (item: number[]) => void;
+}) {
   const { height } = useSelector((state: RootState) => state.dimensions);
   const [timetableState, setTimetableState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
@@ -34,13 +41,12 @@ function PeriodBlock({
   >(undefined);
   async function loadTimetable() {
     if (
-      selectedSchoolYear !== undefined && selectedSchoolYear.paulyEventType === 'schoolYear'
+      selectedSchoolYear !== undefined &&
+      selectedSchoolYear.paulyEventType === 'schoolYear'
     ) {
       setTimetableState(loadingStateEnum.loading);
       const result = await getTimetable(selectedSchoolYear.timetableId, store);
-      if (
-        result.result === loadingStateEnum.success
-      ) {
+      if (result.result === loadingStateEnum.success) {
         if (result.data.days.length !== periods.length) {
           const newArray = Array.from(Array(result.data.days.length));
           newArray.fill(0, 0, newArray.length);
@@ -60,7 +66,7 @@ function PeriodBlock({
       <View style={{ height: height * 0.3, marginBottom: height * 0.1 }}>
         <Text>Please pick a school year</Text>
       </View>
-    )
+    );
   }
 
   if (timetableState === loadingStateEnum.loading) {
@@ -68,20 +74,21 @@ function PeriodBlock({
       <View style={{ height: height * 0.3, marginBottom: height * 0.1 }}>
         <Text>Periods</Text>
         <Text>{periods.toString()}</Text>
-        <ProgressView width={14} height={14}/>
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
-  if (timetableState === loadingStateEnum.success && selectedTimetable?.days.length === periods.length) {
+  if (
+    timetableState === loadingStateEnum.success &&
+    selectedTimetable?.days.length === periods.length
+  ) {
     return (
       <View style={{ height: height * 0.3, marginBottom: height * 0.1 }}>
         <Text>Periods</Text>
         <Text>{periods.toString()}</Text>
-        <ScrollView
-          style={{ height: height * 0.3, zIndex: 100 }}
-        > 
+        <ScrollView style={{ height: height * 0.3, zIndex: 100 }}>
           {selectedTimetable.days.map((day, dayIndex) => (
             <DayBlock
               key={day.id}
@@ -94,22 +101,22 @@ function PeriodBlock({
           ))}
         </ScrollView>
       </View>
-    )
+    );
   }
-  
+
   return (
     <View>
       <Text>Failed</Text>
     </View>
-  )
+  );
 }
 
 function RoomsBlock({
   selectedRoom,
-  setSelectedRoom
-}:{
-  selectedRoom: roomType | undefined,
-  setSelectedRoom: (item: roomType) => void
+  setSelectedRoom,
+}: {
+  selectedRoom: roomType | undefined;
+  setSelectedRoom: (item: roomType) => void;
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   // Rooms States
@@ -121,7 +128,7 @@ function RoomsBlock({
   const [roomsState, setRoomsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
-  
+
   async function loadRooms() {
     // TO DO figure out if there will be performance issuses in continually getting next page
     const result = await getRooms(
@@ -141,11 +148,11 @@ function RoomsBlock({
 
   if (roomsState === loadingStateEnum.loading) {
     return (
-      <View style={{flex: 1}}>
-        <ProgressView width={14} height={14}/>
+      <View style={{ flex: 1 }}>
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (roomsState === loadingStateEnum.success) {
@@ -159,35 +166,35 @@ function RoomsBlock({
         </View>
         <FlatList
           data={rooms}
-          renderItem={(room) => (
+          renderItem={room => (
             <StyledButton
               text={room.item.name}
               onPress={() => {
                 setSelectedRoom(room.item);
               }}
-              style={{margin: 15, marginBottom: 5}}
+              style={{ margin: 15, marginBottom: 5 }}
               selected={room.item.id === selectedRoom?.id}
             />
           )}
           style={{ height: height * 0.3 }}
         />
       </View>
-    )
+    );
   }
 
   return (
     <View>
       <Text>Failed</Text>
     </View>
-  )
+  );
 }
 
 function SchoolYearBlock({
   selectedSchoolYear,
-  setSelectedSchoolYear
-}:{
-  selectedSchoolYear: eventType | undefined
-  setSelectedSchoolYear: (e: eventType) => void
+  setSelectedSchoolYear,
+}: {
+  selectedSchoolYear: eventType | undefined;
+  setSelectedSchoolYear: (e: eventType) => void;
 }) {
   const { height } = useSelector((state: RootState) => state.dimensions);
   const [schoolYearState, setSchoolYearState] = useState<loadingStateEnum>(
@@ -208,50 +215,48 @@ function SchoolYearBlock({
   }
 
   useEffect(() => {
-    loadSchoolYears()
-  }, [])
+    loadSchoolYears();
+  }, []);
 
   if (schoolYearState === loadingStateEnum.loading) {
     return (
-      <View style={{height: height * 0.3}}>
+      <View style={{ height: height * 0.3 }}>
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (schoolYearState === loadingStateEnum.success) {
     return (
-      <FlatList 
+      <FlatList
         data={schoolYears}
-        renderItem={(e) => (
-          <StyledButton 
+        renderItem={e => (
+          <StyledButton
             key={e.item.id}
             text={e.item.name}
             onPress={() => {
               setSelectedSchoolYear(e.item);
             }}
-            style={{margin: 15, marginBottom: 5}}
+            style={{ margin: 15, marginBottom: 5 }}
             selected={e.item.id === selectedSchoolYear?.id}
           />
         )}
-        style={{height: height * 0.3}}
+        style={{ height: height * 0.3 }}
       />
-    )
+    );
   }
 
   return (
     <View>
       <Text>Failed</Text>
     </View>
-  )
+  );
 }
 
 export default function GovernmentClassesEdit() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const { id } = useGlobalSearchParams();
-  const [selectedSemester, setSelectedSemester] = useState<semesters[]>(
-    [],
-  );
+  const [selectedSemester, setSelectedSemester] = useState<semesters[]>([]);
 
   const [className, setClassName] = useState<string>('');
   const [selectedRoom, setSelectedRoom] = useState<roomType | undefined>(
@@ -287,7 +292,7 @@ export default function GovernmentClassesEdit() {
       const data = await result.json();
       const extensionData = data[store.getState().paulyList.classExtensionId];
       if (extensionData !== undefined) {
-        setIsCreating(false)
+        setIsCreating(false);
         setClassName(extensionData.className);
         setSelectedSemester(JSON.parse(extensionData.semesterId));
         setPeriods(JSON.parse(extensionData.periodData));
@@ -303,7 +308,7 @@ export default function GovernmentClassesEdit() {
           setClassState(loadingStateEnum.failed);
         }
       } else {
-        setIsCreating(true)
+        setIsCreating(true);
         setClassName(data.displayName);
       }
       setClassState(loadingStateEnum.success);
@@ -315,14 +320,14 @@ export default function GovernmentClassesEdit() {
   async function updateClass() {
     if (selectedRoom !== undefined && selectedSchoolYear !== undefined) {
       setUpdateClassState(loadingStateEnum.loading);
-      let data: any = {};
+      const data: any = {};
       data[store.getState().paulyList.classExtensionId] = {
         className,
         schoolYearEventId: selectedSchoolYear.id,
         semesterId: JSON.stringify(selectedSemester),
         roomId: selectedRoom.id,
         periodData: JSON.stringify(periods),
-      }
+      };
 
       const result = await callMsGraph(
         `https://graph.microsoft.com/v1.0/groups/${id}`,
@@ -404,37 +409,67 @@ export default function GovernmentClassesEdit() {
                 />
               </View>
               <Text>School Years</Text>
-              <SchoolYearBlock selectedSchoolYear={selectedSchoolYear} setSelectedSchoolYear={setSelectedSchoolYear}/>
-              <PeriodBlock selectedSchoolYear={selectedSchoolYear} periods={periods} setPeriods={setPeriods} />
-              <View style={{ marginLeft: 'auto', marginRight: 'auto', flexDirection: 'row' }}>
+              <SchoolYearBlock
+                selectedSchoolYear={selectedSchoolYear}
+                setSelectedSchoolYear={setSelectedSchoolYear}
+              />
+              <PeriodBlock
+                selectedSchoolYear={selectedSchoolYear}
+                periods={periods}
+                setPeriods={setPeriods}
+              />
+              <View
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  flexDirection: 'row',
+                }}
+              >
                 <StyledButton
-                  text='Semester One' 
+                  text="Semester One"
                   selected={selectedSemester.includes(semesters.semesterOne)}
                   onPress={() => {
                     if (selectedSemester.includes(semesters.semesterOne)) {
-                      setSelectedSemester([...selectedSemester.filter((e) => {return e !== semesters.semesterOne})])
+                      setSelectedSemester([
+                        ...selectedSemester.filter(e => {
+                          return e !== semesters.semesterOne;
+                        }),
+                      ]);
                     } else {
-                      setSelectedSemester([...selectedSemester, semesters.semesterOne])
+                      setSelectedSemester([
+                        ...selectedSemester,
+                        semesters.semesterOne,
+                      ]);
                     }
                   }}
-                  style={{marginRight: 5}}
+                  style={{ marginRight: 5 }}
                 />
                 <StyledButton
-                  text='Semester Two'
+                  text="Semester Two"
                   selected={selectedSemester.includes(semesters.semesterTwo)}
                   onPress={() => {
                     if (selectedSemester.includes(semesters.semesterTwo)) {
-                      setSelectedSemester([...selectedSemester.filter((e) => {return e !== semesters.semesterTwo})])
+                      setSelectedSemester([
+                        ...selectedSemester.filter(e => {
+                          return e !== semesters.semesterTwo;
+                        }),
+                      ]);
                     } else {
-                      setSelectedSemester([...selectedSemester, semesters.semesterTwo])
+                      setSelectedSemester([
+                        ...selectedSemester,
+                        semesters.semesterTwo,
+                      ]);
                     }
                   }}
-                  style={{marginLeft: 5}}
+                  style={{ marginLeft: 5 }}
                 />
               </View>
-              <RoomsBlock selectedRoom={selectedRoom} setSelectedRoom={setSelectedRoom}/>
+              <RoomsBlock
+                selectedRoom={selectedRoom}
+                setSelectedRoom={setSelectedRoom}
+              />
               <SecondStyledButton
-                text={`${isCreating ? 'Create':'Update'} Class`}
+                text={`${isCreating ? 'Create' : 'Update'} Class`}
                 onPress={() => {
                   setIsShowingClassConfirmMenu(true);
                 }}
@@ -466,18 +501,16 @@ export default function GovernmentClassesEdit() {
             onPress={() => {
               setIsShowingClassConfirmMenu(false);
             }}
-            style={{margin: 15}}
+            style={{ margin: 15 }}
           >
             <CloseIcon width={14} height={14} />
           </Pressable>
-          <Text>{isCreating ? "Create":"Update"} Class</Text>
+          <Text>{isCreating ? 'Create' : 'Update'} Class</Text>
           <Text>Name: {className}</Text>
           <Text>Room: {selectedRoom?.name}</Text>
           <Text>School Year: {selectedSchoolYear?.name}</Text>
-          <Text>
-            Semester:{' '} {selectedSemester.toString()}
-          </Text>
-          <StyledButton 
+          <Text>Semester: {selectedSemester.toString()}</Text>
+          <StyledButton
             text={getTextState(updateClassState, {
               cannotStart: 'Cannot Update Class',
               notStarted: 'Update Class',
@@ -487,7 +520,7 @@ export default function GovernmentClassesEdit() {
             onPress={() => {
               updateClass();
             }}
-            style={{margin: 15}}
+            style={{ margin: 15 }}
           />
         </View>
       ) : null}

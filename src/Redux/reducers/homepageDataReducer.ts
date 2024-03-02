@@ -1,8 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import {
-  loadingStateEnum,
-  taskImportanceEnum,
-} from '@constants';
+import { loadingStateEnum, taskImportanceEnum } from '@constants';
 
 type homepageStatesType = {
   taskState: loadingStateEnum;

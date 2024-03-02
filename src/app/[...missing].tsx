@@ -14,8 +14,7 @@ export default function Missing() {
     useFocusEffect(() => {
       try {
         router.push('/');
-      } catch (error) {
-      }
+      } catch (error) {}
     });
   }
   return null;

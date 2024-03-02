@@ -22,19 +22,13 @@ function useWindowSize() {
     }, []);
     return size;
   }
-  
 
-  const [dimensions, setDimensions] = useState(
-    windowDimensions
-  );
+  const [dimensions, setDimensions] = useState(windowDimensions);
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener(
-      'change',
-      ({window}) => {
-        setDimensions(window);
-      },
-    );
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setDimensions(window);
+    });
     return () => subscription?.remove();
   });
   return [dimensions.width, dimensions.height];
@@ -65,7 +59,6 @@ export default function AppCore() {
     );
   }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets]);
 
-
   return (
     <>
       {!safeAreaColors.isTopTransparent ? (
@@ -81,7 +74,7 @@ export default function AppCore() {
         style={{
           backgroundColor: safeAreaColors.bottom,
           width: windowWidth,
-          height: height,
+          height,
           zIndex: 10,
           position: 'absolute',
           top: safeAreaColors.isTopTransparent ? 0 : insets.top,

@@ -19,11 +19,15 @@ export const currentEventsSlice = createSlice({
       state.slice(action.payload, 1);
     },
     removeClassEvents: (state, action?: PayloadAction<undefined>) => {
-      return [...state.filter((e) => {return e.paulyEventType !== 'studentSchedule'})]
+      return [
+        ...state.filter(e => {
+          return e.paulyEventType !== 'studentSchedule';
+        }),
+      ];
     },
     clearEvents: (_state, _action: PayloadAction<void>) => {
-      return []
-    }
+      return [];
+    },
   },
 });
 

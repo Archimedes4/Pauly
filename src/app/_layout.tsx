@@ -26,8 +26,7 @@ export default function App(): React.JSX.Element | null {
         'Roboto-Bold': require('assets/fonts/Roboto-Bold.ttf'),
         'Comfortaa-Regular': require('assets/fonts/Comfortaa-Regular.ttf'),
       })
-        .then(() => setFontsLoaded(true
-          ))
+        .then(() => setFontsLoaded(true))
         .catch(() => {});
     }
     setMounted(true);
@@ -39,8 +38,8 @@ export default function App(): React.JSX.Element | null {
         await SplashScreen.hideAsync();
       }
     }
-    hideSplash()
-  }, [fontsLoaded])
+    hideSplash();
+  }, [fontsLoaded]);
 
   if (!mounted && !fontsLoaded) {
     return null;

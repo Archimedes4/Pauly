@@ -1,11 +1,16 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '@constants';
 
-const initalState: { uri: string; displayName: string; id: string, state: loadingStateEnum } = {
+const initalState: {
+  uri: string;
+  displayName: string;
+  id: string;
+  state: loadingStateEnum;
+} = {
   uri: '',
   displayName: '',
   id: '',
-  state: loadingStateEnum.notStarted
+  state: loadingStateEnum.notStarted,
 };
 
 export const microsoftProfileDataSlice = createSlice({
@@ -20,7 +25,7 @@ export const microsoftProfileDataSlice = createSlice({
         uri: state.uri,
         displayName: state.displayName,
         id: state.id,
-        state: action.payload
+        state: action.payload,
       };
     },
     setMicrosftProfileUrl: (state, action: PayloadAction<string>) => {
@@ -28,7 +33,7 @@ export const microsoftProfileDataSlice = createSlice({
         uri: action.payload,
         displayName: state.displayName,
         id: state.id,
-        state: state.state
+        state: state.state,
       };
     },
     setMicrosoftProfileInformation: (
@@ -39,7 +44,7 @@ export const microsoftProfileDataSlice = createSlice({
         uri: state.uri,
         displayName: action.payload.displayName,
         id: action.payload.id,
-        state: state.state
+        state: state.state,
       };
     },
   },

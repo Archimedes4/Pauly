@@ -191,7 +191,7 @@ export const commissionsData = {
       required: true,
     },
     {
-      name: 'homeValue',// 0 for indiviual, 1 for home, 2 for both
+      name: 'homeValue', // 0 for indiviual, 1 for home, 2 for both
       number: {},
       required: true,
     },

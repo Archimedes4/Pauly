@@ -43,7 +43,7 @@ export default async function getSchoolYears(nextLink?: string): Promise<
     const data = await result.json();
     const newEvents: eventType[] = [];
     for (let index = 0; index < data.value.length; index += 1) {
-      const singleValue = getSingleValueProperties(data.value[index])
+      const singleValue = getSingleValueProperties(data.value[index]);
       if (singleValue !== undefined && singleValue.eventType === 'schoolYear') {
         newEvents.push({
           id: data.value[index].id,

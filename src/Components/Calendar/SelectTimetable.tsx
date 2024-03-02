@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { RootState } from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import StyledButton from '../StyledButton';
@@ -16,11 +16,11 @@ import StyledButton from '../StyledButton';
 export default function SelectTimetable({
   governmentMode,
   onSelect,
-  selectedTimetableId
+  selectedTimetableId,
 }: {
   governmentMode: boolean;
   onSelect?: (item: timetableStringType) => void;
-  selectedTimetableId?: string
+  selectedTimetableId?: string;
 }) {
   const router = useRouter();
   const { timetablesListId, siteId } = useSelector(
@@ -68,17 +68,24 @@ export default function SelectTimetable({
 
   if (loadingState === loadingStateEnum.loading) {
     return (
-      <View style={{flex: 1, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+      <View
+        style={{
+          flex: 1,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (loadingState === loadingStateEnum.success) {
-    return  (
-      <FlatList 
+    return (
+      <FlatList
         data={loadedTimetables}
-        renderItem={(timetable) => (
+        renderItem={timetable => (
           <StyledButton
             key={`Timetable_${timetable.item.id}`}
             onPress={() => {
@@ -91,12 +98,12 @@ export default function SelectTimetable({
               }
             }}
             text={timetable.item.name}
-            style={{margin: 15}}
+            style={{ margin: 15 }}
             selected={selectedTimetableId === timetable.item.id}
           />
         )}
       />
-    )
+    );
   }
 
   return (

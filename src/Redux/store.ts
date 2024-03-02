@@ -72,7 +72,7 @@ const store = configureStore({
     authActive: authActiveReducer,
     isOverride: isOverrideReducer,
     paulyLoading: paulyLoadingReducer,
-    timetables: timetableReducer
+    timetables: timetableReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
@@ -86,4 +86,4 @@ export type RootState = ReturnType<typeof store.getState>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;
 
-export type StoreType = typeof store
+export type StoreType = typeof store;

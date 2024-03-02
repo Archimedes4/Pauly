@@ -6,16 +6,16 @@
 */
 import { taskDeltaSlice } from '@redux/reducers/tasksReducers';
 import store from '@redux/store';
-import {
-  loadingStateEnum,
-  taskImportanceEnum,
-} from '@constants';
+import { loadingStateEnum, taskImportanceEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests';
 
 // deltaRunAgain is send if the delta link has failed or the responce 410 meaning syncronization is needed.
 export default async function getUsersTasks(
   deltaRunAgain?: boolean,
-): Promise<{ result: loadingStateEnum.success; data: taskType[] } | {result: loadingStateEnum.failed}> {
+): Promise<
+  | { result: loadingStateEnum.success; data: taskType[] }
+  | { result: loadingStateEnum.failed }
+> {
   let deltaMode = false;
   if (store.getState().tasksDeltaLink !== '' && deltaRunAgain !== true) {
     deltaMode = true;

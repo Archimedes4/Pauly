@@ -13,46 +13,46 @@ import {
 } from '@constants';
 
 type addEventStatesType = {
-  //eventName: string;
+  // eventName: string;
   createEventState: loadingStateEnum;
   isPickingStartDate: boolean;
   isPickingEndDate: boolean;
-  //allDay: boolean;
+  // allDay: boolean;
   isGovernmentEvent: boolean;
   selectedTimetable: timetableStringType;
-  //selectedSchoolDayData: schoolDayDataType | undefined;
+  // selectedSchoolDayData: schoolDayDataType | undefined;
   selectedSchoolYear: eventType | undefined;
-  //selectedEventType: paulyEventType;
+  // selectedEventType: paulyEventType;
   recurringEvent: boolean;
   selectedRecurringType: recurringType;
-  //startDate: string;
-  //endDate: string;
+  // startDate: string;
+  // endDate: string;
   isShowingAddDate: boolean;
-  //isEditing: boolean;
+  // isEditing: boolean;
   selectedCalendarMode: calendarMode;
-  selectedEvent: eventType //| undefined;
+  selectedEvent: eventType; // | undefined;
 };
 
 const initalState: addEventStatesType = {
-  //eventName: '',
+  // eventName: '',
   createEventState: loadingStateEnum.notStarted,
   isPickingStartDate: false,
   isPickingEndDate: false,
-  //allDay: false,
+  // allDay: false,
   isGovernmentEvent: false,
   selectedTimetable: {
-   name: '',
-   id: '',
+    name: '',
+    id: '',
   },
-  //selectedSchoolDayData: undefined,
+  // selectedSchoolDayData: undefined,
   selectedSchoolYear: undefined,
- // selectedEventType: paulyEventType.personal,
+  // selectedEventType: paulyEventType.personal,
   recurringEvent: false,
   selectedRecurringType: recurringType.daily,
-  //startDate: new Date().toISOString(),
- // endDate: new Date().toISOString(),
+  // startDate: new Date().toISOString(),
+  // endDate: new Date().toISOString(),
   isShowingAddDate: false,
-  //isEditing: false,
+  // isEditing: false,
   selectedCalendarMode: calendarMode.month,
   selectedEvent: {
     id: 'create',
@@ -62,7 +62,7 @@ const initalState: addEventStatesType = {
     eventColor: Colors.white,
     microsoftEvent: true,
     allDay: false,
-    paulyEventType: 'personal'
+    paulyEventType: 'personal',
   },
 };
 
@@ -75,9 +75,9 @@ export const addEventSlice = createSlice({
         ...state,
         selectedEvent: {
           ...state.selectedEvent,
-          name: action.payload
-        }
-      }
+          name: action.payload,
+        },
+      };
     },
     setCreateEventState: (state, action: PayloadAction<loadingStateEnum>) => {
       return { ...state, createEventState: action.payload };
@@ -93,9 +93,9 @@ export const addEventSlice = createSlice({
         ...state,
         selectedEvent: {
           ...state.selectedEvent,
-          allDay: action.payload
-        }
-      }
+          allDay: action.payload,
+        },
+      };
     },
     setIsGovernmentEvent: (state, action: PayloadAction<boolean>) => {
       return { ...state, isGovernmentEvent: action.payload };
@@ -110,12 +110,13 @@ export const addEventSlice = createSlice({
       state,
       action: PayloadAction<schoolDayDataType>,
     ) => {
-      if (state.selectedEvent.paulyEventType === 'schoolDay' ) {
-        return { ...state, 
+      if (state.selectedEvent.paulyEventType === 'schoolDay') {
+        return {
+          ...state,
           selectedEvent: {
             ...state.selectedEvent,
-            schoolDayData: action.payload
-          } 
+            schoolDayData: action.payload,
+          },
         };
       }
     },
@@ -130,27 +131,39 @@ export const addEventSlice = createSlice({
     },
     setStartDate: (state, action: PayloadAction<string | Date>) => {
       if (typeof action.payload === 'string') {
-        return { ...state, selectedEvent: {
-          ...state.selectedEvent,
-          startTime: action.payload
-        }};
+        return {
+          ...state,
+          selectedEvent: {
+            ...state.selectedEvent,
+            startTime: action.payload,
+          },
+        };
       }
-      return { ...state, selectedEvent: {
-        ...state.selectedEvent,
-        startTime: action.payload.toISOString()
-      }};
+      return {
+        ...state,
+        selectedEvent: {
+          ...state.selectedEvent,
+          startTime: action.payload.toISOString(),
+        },
+      };
     },
     setEndDate: (state, action: PayloadAction<string | Date>) => {
       if (typeof action.payload === 'string') {
-        return { ...state, selectedEvent: {
-          ...state.selectedEvent,
-          endTime: action.payload
-        }};
+        return {
+          ...state,
+          selectedEvent: {
+            ...state.selectedEvent,
+            endTime: action.payload,
+          },
+        };
       }
-      return { ...state, selectedEvent: {
-        ...state.selectedEvent,
-        endTime: action.payload.toISOString()
-      }};
+      return {
+        ...state,
+        selectedEvent: {
+          ...state.selectedEvent,
+          endTime: action.payload.toISOString(),
+        },
+      };
     },
     setIsShowingAddDate: (state, action: PayloadAction<boolean>) => {
       state.isShowingAddDate = action.payload;

@@ -64,8 +64,7 @@ function PushToAuth() {
   useFocusEffect(() => {
     try {
       router.push('/sign-in');
-    } catch (error) {
-    }
+    } catch (error) {}
   });
   return null;
 }

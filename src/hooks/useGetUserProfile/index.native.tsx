@@ -1,15 +1,22 @@
 import store from '@redux/store';
 import callMsGraph from '@src/utils/ultility/microsoftAssests';
 import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
-import getUserImage from './getUserImage';
 import { loadingStateEnum } from '@src/constants';
+import getUserImage from './getUserImage';
 
 export default function getUserProfile() {
   async function main() {
-    if (store.getState().microsoftProfileData.state !== loadingStateEnum.notStarted) {
-      return
+    if (
+      store.getState().microsoftProfileData.state !==
+      loadingStateEnum.notStarted
+    ) {
+      return;
     }
-    store.dispatch(microsoftProfileDataSlice.actions.setMicrosoftProfileState(loadingStateEnum.loading))
+    store.dispatch(
+      microsoftProfileDataSlice.actions.setMicrosoftProfileState(
+        loadingStateEnum.loading,
+      ),
+    );
     getUserImage();
     const profileResult = await callMsGraph(
       'https://graph.microsoft.com/v1.0/me',

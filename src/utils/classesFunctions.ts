@@ -1,10 +1,7 @@
 import store from '@redux/store';
 import { homepageDataSlice } from '@redux/reducers/homepageDataReducer';
 import { Colors, loadingStateEnum, semesters } from '@constants';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
-import {
-  getSchoolDay,
-} from './calendar/calendarFunctionsGraph';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { getClasses } from '@redux/reducers/classesReducer';
 
 export async function getRooms(
@@ -45,11 +42,12 @@ export async function getRooms(
   return { result: loadingStateEnum.failed };
 }
 
-export async function getRoom(
-  roomId: string,
-): Promise<{ result: loadingStateEnum.success; data: roomType } | {
-  result: loadingStateEnum.failed
-}> {
+export async function getRoom(roomId: string): Promise<
+  | { result: loadingStateEnum.success; data: roomType }
+  | {
+      result: loadingStateEnum.failed;
+    }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
@@ -79,10 +77,13 @@ export async function getClassEvents(
   schoolYearEventId: string,
   schoolDay: schoolDayType,
   date: Date,
-): Promise<{ result: loadingStateEnum.success; data: eventType[] } | { result: loadingStateEnum.failed }> {
-  let classResult = await getClasses(store)
+): Promise<
+  | { result: loadingStateEnum.success; data: eventType[] }
+  | { result: loadingStateEnum.failed }
+> {
+  const classResult = await getClasses(store);
   if (classResult.result !== loadingStateEnum.success) {
-    return {result: loadingStateEnum.failed}
+    return { result: loadingStateEnum.failed };
   }
 
   let outputEvents: eventType[] = [];
@@ -94,8 +95,7 @@ export async function getClassEvents(
       // This check should never fail
       if (classResult.data[index].periods.length > schoolDay.order) {
         // Find Time
-        const period: number =
-        classResult.data[index].periods[schoolDay.order];
+        const period: number = classResult.data[index].periods[schoolDay.order];
         if (period !== 0) {
           const periodData = schedule.periods[period - 1];
           const startDate: Date = new Date(date.toISOString());
@@ -114,7 +114,7 @@ export async function getClassEvents(
             eventColor: Colors.white,
             microsoftEvent: false,
             allDay: false,
-            paulyEventType: 'studentSchedule'
+            paulyEventType: 'studentSchedule',
           });
         }
       }
@@ -133,34 +133,25 @@ export async function getClassEventsFromDay(
   | { result: loadingStateEnum.failed }
   | { result: loadingStateEnum.notFound }
 > {
-  const defindedDate = (date !== undefined) ? date:new Date()
-  let resultEvent: eventType | undefined = undefined
-  if (defindedDate.getMonth() === new Date(store.getState().lastCalledSelectedDate).getMonth() && defindedDate.getFullYear() === new Date(store.getState().lastCalledSelectedDate).getFullYear()) {
-    const startTime = `${new Date(
-      Date.UTC(
-        defindedDate.getFullYear(),
-        defindedDate.getMonth(),
-        defindedDate.getDate(),
-        0,
-      ),
-    )
-      .toISOString()
-      .slice(0, -1)}0000`
-    const foundEvent = store.getState().currentEvents.find((e) => {
-      return e.paulyEventType === 'schoolDay' && e.startTime === startTime
-    })
-    if (foundEvent === undefined) {
-      return { result: loadingStateEnum.notFound };
-    } 
-    resultEvent = foundEvent;
-  } else {
-    const result = await getSchoolDay(defindedDate);
-    if (result.result !== loadingStateEnum.success) {
-      console.log("Failed here one", defindedDate, new Date(store.getState().lastCalledSelectedDate))
-      return { result: loadingStateEnum.failed };
-    }
-    resultEvent = result.event;
+  const defindedDate = date !== undefined ? date : new Date();
+  let resultEvent: eventType | undefined;
+  const startTime = `${new Date(
+    Date.UTC(
+      defindedDate.getFullYear(),
+      defindedDate.getMonth(),
+      defindedDate.getDate(),
+      0,
+    ),
+  )
+    .toISOString()
+    .slice(0, -1)}0000`;
+  const foundEvent = store.getState().currentEvents.find(e => {
+    return e.paulyEventType === 'schoolDay' && e.startTime === startTime;
+  });
+  if (foundEvent === undefined) {
+    return { result: loadingStateEnum.notFound };
   }
+  resultEvent = foundEvent;
 
   if (resultEvent === undefined || resultEvent.paulyEventType !== 'schoolDay') {
     return { result: loadingStateEnum.failed };
@@ -176,17 +167,13 @@ export async function getClassEventsFromDay(
     resultEvent.schoolDayData.schoolDay,
     new Date(resultEvent.startTime),
   );
-  if (
-    classResult.result === loadingStateEnum.success
-  ) {
+  if (classResult.result === loadingStateEnum.success) {
     if (classResult.data.length >= 1) {
       const startTimeDate = new Date(classResult.data[0].startTime);
-      const hourTime = startTimeDate.getHours().toString().padStart(2, "0")
-      const minuteTime = startTimeDate.getMinutes().toString().padStart(2, "0")
+      const hourTime = startTimeDate.getHours().toString().padStart(2, '0');
+      const minuteTime = startTimeDate.getMinutes().toString().padStart(2, '0');
       store.dispatch(
-        homepageDataSlice.actions.setStartTime(
-          `${hourTime}:${minuteTime}`,
-        ),
+        homepageDataSlice.actions.setStartTime(`${hourTime}:${minuteTime}`),
       );
     }
     return {
@@ -194,6 +181,6 @@ export async function getClassEventsFromDay(
       data: classResult.data,
     };
   }
-        
+
   return { result: loadingStateEnum.failed };
 }

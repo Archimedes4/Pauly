@@ -34,7 +34,7 @@ export function useSilentLogin(): () => Promise<void> {
           // checking if auth token exists
           router.push('/sign-in');
         }
-        clearInterval(interval)
+        clearInterval(interval);
       }
     }, 1000);
   }

@@ -1,7 +1,7 @@
-import store from "@redux/store";
-import callMsGraph from "../ultility/microsoftAssests";
-import { loadingStateEnum } from "@constants";
-import createUUID from "../ultility/createUUID";
+import store from '@redux/store';
+import { loadingStateEnum } from '@constants';
+import callMsGraph from '../ultility/microsoftAssests';
+import createUUID from '../ultility/createUUID';
 
 export async function deleteDressCode(dressCodeItemId: string) {
   const result = await callMsGraph(
@@ -13,9 +13,9 @@ export async function deleteDressCode(dressCodeItemId: string) {
     'DELETE',
   );
   if (result.ok) {
-    return loadingStateEnum.success
+    return loadingStateEnum.success;
   }
-  return loadingStateEnum.failed
+  return loadingStateEnum.failed;
 }
 
 export default async function getDressCodes(): Promise<
@@ -82,7 +82,7 @@ export async function createDressCode(
 }
 
 export async function updateDressCode(
-  dressCode: dressCodeType
+  dressCode: dressCodeType,
 ): Promise<loadingStateEnum> {
   const data = {
     fields: {

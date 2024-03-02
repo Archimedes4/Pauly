@@ -22,7 +22,7 @@ function GovernmentCommissionsBody() {
   );
 
   async function loadData() {
-    const result = await getCommissions({store});
+    const result = await getCommissions({ store });
     if (result.result === loadingStateEnum.success) {
       if (result.data !== undefined) {
         setCommissions(result.data);

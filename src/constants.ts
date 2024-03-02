@@ -116,7 +116,7 @@ export enum resourceMode {
 export enum commissionCompetitionType {
   individual,
   homeroom,
-  both
+  both,
 }
 
 declare global {
@@ -221,7 +221,7 @@ declare global {
     claimCount: number;
     reviewedCount: number;
     commissionId: string;
-    competitionType: commissionCompetitionType
+    competitionType: commissionCompetitionType;
   };
   type commissionTypeTimed =
     | {
@@ -256,12 +256,12 @@ declare global {
       };
     };
   type commissionApiParams = {
-    nextLink?: string,
-    startDate?: { date: Date; filter: 'ge' | 'le' },
-    endDate?: { date: Date; filter: 'ge' | 'le' },
-    claimed?: boolean,
-    store: StoreType
-  }
+    nextLink?: string;
+    startDate?: { date: Date; filter: 'ge' | 'le' };
+    endDate?: { date: Date; filter: 'ge' | 'le' };
+    claimed?: boolean;
+    store: StoreType;
+  };
   type dressCodeIncentiveType = {
     name: string;
     description: string;
@@ -298,31 +298,37 @@ declare global {
     eventColor: string; // This is held in iso format
     allDay: boolean;
     microsoftReference?: string;
-  }
-  type eventTypePauly = {
-    paulyEventType: 'schoolDay';    
-    schoolDayData: schoolDayDataType;
-    microsoftEvent: true;
-  } | {
-    paulyEventType: 'schoolYear';
-    timetableId: string;
-    microsoftEvent: true;
-  } | {
-    paulyEventType: 'personal';
-    paulyEventData?: string;
-    microsoftEvent: true;
-  } | {
-    paulyEventType: 'regular';
-    paulyEventData?: string;
-    microsoftEvent: true;
-  } | {
-    paulyEventType: 'studentCouncil';
-    paulyEventData?: string;
-    microsoftEvent: true;
-  } | {
-    microsoftEvent: false;
-    paulyEventType: 'studentSchedule';
   };
+  type eventTypePauly =
+    | {
+        paulyEventType: 'schoolDay';
+        schoolDayData: schoolDayDataType;
+        microsoftEvent: true;
+      }
+    | {
+        paulyEventType: 'schoolYear';
+        timetableId: string;
+        microsoftEvent: true;
+      }
+    | {
+        paulyEventType: 'personal';
+        paulyEventData?: string;
+        microsoftEvent: true;
+      }
+    | {
+        paulyEventType: 'regular';
+        paulyEventData?: string;
+        microsoftEvent: true;
+      }
+    | {
+        paulyEventType: 'studentCouncil';
+        paulyEventData?: string;
+        microsoftEvent: true;
+      }
+    | {
+        microsoftEvent: false;
+        paulyEventType: 'studentSchedule';
+      };
   type eventType = eventTypeBase & eventTypePauly;
   type groupType = {
     name: string;
@@ -345,22 +351,25 @@ declare global {
     latCoordinate: number;
     lngCoordinate: number;
   };
-  type largeBatchInput = batchRequest[][] | {
-    firstUrl: string;
-    secondUrl: string;
-    array: string[];
-    method: 'GET' | 'POST';
-  } | {
-    firstUrl: string;
-    secondUrl: string;
-    map: Map<string, unknown>;
-    method: 'GET' | 'POST';
-  }
+  type largeBatchInput =
+    | batchRequest[][]
+    | {
+        firstUrl: string;
+        secondUrl: string;
+        array: string[];
+        method: 'GET' | 'POST';
+      }
+    | {
+        firstUrl: string;
+        secondUrl: string;
+        map: Map<string, unknown>;
+        method: 'GET' | 'POST';
+      };
   type leaderboardUserType = {
     name: string;
     points: number;
     id: string;
-  }
+  };
   type monthDataType = {
     id: string;
     showing: boolean;
@@ -410,11 +419,11 @@ declare global {
     id: string;
   };
   type schoolDayDataCompressedType = {
-    sdId: string; //school day Id
-    sId: string; //schedule Id
+    sdId: string; // school day Id
+    sId: string; // schedule Id
     dcId: string; // dress code Id
-    sem: semesters; //semester
-    dciId: string; //dresscode incentive Id
+    sem: semesters; // semester
+    dciId: string; // dresscode incentive Id
     syeId: string; // school year event id
   };
   type schoolDayDataType = {
@@ -476,13 +485,18 @@ declare global {
     state: loadingStateEnum;
   };
   type taskStatusEnum =
-    "notStarted" |
-    "inProgress" |
-    "completed" |
-    "waitingOnOthers" |
-    "deferred"
-  
-  type paulyEventTypes = 'schoolDay' | 'schoolYear' | 'personal' | 'studentCouncil' | 'regular';
+    | 'notStarted'
+    | 'inProgress'
+    | 'completed'
+    | 'waitingOnOthers'
+    | 'deferred';
+
+  type paulyEventTypes =
+    | 'schoolDay'
+    | 'schoolYear'
+    | 'personal'
+    | 'studentCouncil'
+    | 'regular';
   type newsPost = {
     title: string;
     excerpt: string;
@@ -611,17 +625,20 @@ declare global {
           postType: postType.youtubeVideo;
         };
   };
-  type usePaulyApiReturn = string | loadingStateEnum.failed | loadingStateEnum.loading;
+  type usePaulyApiReturn =
+    | string
+    | loadingStateEnum.failed
+    | loadingStateEnum.loading;
   type youtubeVideoType = {
     thumbnail: string;
     title: string;
     videoId: string;
   };
   type weekDayEvent = {
-    events: eventType[],
-    start: string,
-    end: string
-  }
+    events: eventType[];
+    start: string;
+    end: string;
+  };
 }
 
 export class Colors {

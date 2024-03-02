@@ -306,8 +306,15 @@ export default function GovernmentSport() {
         to={`/government/sports/${sportID}/team/create`}
       />
       <StyledButton
-        style={{ marginLeft: 15, marginRight: 15, marginBottom: 10, flexDirection: 'row', height: 36, overflow: 'hidden' }}
-        mainColor='red'
+        style={{
+          marginLeft: 15,
+          marginRight: 15,
+          marginBottom: 10,
+          flexDirection: 'row',
+          height: 36,
+          overflow: 'hidden',
+        }}
+        mainColor="red"
         onPress={() => {
           if (
             deleteSportState === loadingStateEnum.notStarted ||
@@ -321,12 +328,12 @@ export default function GovernmentSport() {
           success: 'Sport Deleted',
           failed: 'Failed To Delete Sport',
         })}
-        icon={(alt) => (
+        icon={alt => (
           <WarningIcon
             width={14}
             height={14}
             style={{ marginTop: 'auto', marginBottom: 'auto' }}
-            outlineColor={alt ? Colors.white:Colors.black}
+            outlineColor={alt ? Colors.white : Colors.black}
           />
         )}
       />

@@ -6,16 +6,13 @@
   This is for selecting school day data 
 */
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, FlatList } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import createUUID from '@utils/ultility/createUUID';
-import {
-  getGraphEvents,
-} from '@utils/calendar/calendarFunctionsGraph';
+import { getGraphEvents } from '@utils/calendar/calendarFunctionsGraph';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import store, { RootState } from '@redux/store';
 import { loadingStateEnum, semesters } from '@constants';
-import { FlatList } from 'react-native';
 import { getTimetable } from '@redux/reducers/timetableReducer';
 
 enum pickSchoolDayMode {
@@ -131,11 +128,11 @@ function SchoolDaySelect({
     (state: RootState) => state.addEvent,
   );
   if (selectedSchoolYear === undefined) {
-    return  (
+    return (
       <View>
         <Text>Something went wrong</Text>
       </View>
-    )
+    );
   }
   return (
     <View>
@@ -174,7 +171,7 @@ function SchoolDaySelect({
                       id: '',
                     },
                     semester: semesters.semesterOne,
-                    schoolYearEventId: selectedSchoolYear.id
+                    schoolYearEventId: selectedSchoolYear.id,
                   }),
                 );
               }}
@@ -236,7 +233,7 @@ function DressCodeSelect({
       </Pressable>
       <FlatList
         data={dressCodeData}
-        renderItem={(item) => (
+        renderItem={item => (
           <Pressable
             key={item.item.id}
             onPress={() => {
@@ -292,9 +289,7 @@ export default function SelectSchoolDayData() {
   const loadData = useCallback(async (id: string) => {
     setTimetableState(loadingStateEnum.loading);
     const result = await getTimetable(id, store);
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setTimetable(result.data);
       setTimetableState(loadingStateEnum.success);
     } else {
@@ -316,15 +311,19 @@ export default function SelectSchoolDayData() {
       <View>
         <Text>Something went wrong</Text>
       </View>
-    )
+    );
   }
 
-  if (schoolDayMode === pickSchoolDayMode.schoolYear || selectedSchoolYear === undefined || selectedSchoolYear.paulyEventType !== 'schoolYear') {
+  if (
+    schoolDayMode === pickSchoolDayMode.schoolYear ||
+    selectedSchoolYear === undefined ||
+    selectedSchoolYear.paulyEventType !== 'schoolYear'
+  ) {
     return (
       <SchoolYearsSelect
         onSelect={() => setSchoolDayMode(pickSchoolDayMode.schoolDay)}
       />
-    )
+    );
   }
 
   if (schoolDayMode === pickSchoolDayMode.schoolDay) {
@@ -339,10 +338,10 @@ export default function SelectSchoolDayData() {
           setSchoolDayMode(pickSchoolDayMode.schoolYear);
         }}
       />
-    )
+    );
   }
 
-  if ((schoolDayMode === pickSchoolDayMode.schedule && timetable !== undefined)) {
+  if (schoolDayMode === pickSchoolDayMode.schedule && timetable !== undefined) {
     return (
       <ScheduleSelect
         schedules={timetable.schedules}
@@ -353,7 +352,7 @@ export default function SelectSchoolDayData() {
               schedule: e,
               dressCode: selectedEvent.schoolDayData.dressCode,
               semester: selectedEvent.schoolDayData.semester,
-              schoolYearEventId: selectedSchoolYear.id
+              schoolYearEventId: selectedSchoolYear.id,
             }),
           );
           setSchoolDayMode(pickSchoolDayMode.dressCode);
@@ -362,10 +361,13 @@ export default function SelectSchoolDayData() {
           setSchoolDayMode(pickSchoolDayMode.schoolDay);
         }}
       />
-    )
+    );
   }
 
-  if (schoolDayMode === pickSchoolDayMode.dressCode && timetable !== undefined) {
+  if (
+    schoolDayMode === pickSchoolDayMode.dressCode &&
+    timetable !== undefined
+  ) {
     return (
       <DressCodeSelect
         dressCodeData={timetable.dressCode.dressCodeData}
@@ -376,7 +378,7 @@ export default function SelectSchoolDayData() {
               schedule: selectedEvent.schoolDayData.schedule,
               dressCode: e,
               semester: selectedEvent.schoolDayData.semester,
-              schoolYearEventId: selectedSchoolYear.id
+              schoolYearEventId: selectedSchoolYear.id,
             }),
           );
           setSchoolDayMode(pickSchoolDayMode.semester);
@@ -385,7 +387,7 @@ export default function SelectSchoolDayData() {
           setSchoolDayMode(pickSchoolDayMode.schedule);
         }}
       />
-    )
+    );
   }
 
   if (schoolDayMode === pickSchoolDayMode.semester) {
@@ -406,7 +408,7 @@ export default function SelectSchoolDayData() {
                 schedule: selectedEvent.schoolDayData.schedule,
                 dressCode: selectedEvent.schoolDayData.dressCode,
                 semester: semesters.semesterOne,
-                schoolYearEventId: selectedSchoolYear.id
+                schoolYearEventId: selectedSchoolYear.id,
               }),
             );
             setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives);
@@ -422,7 +424,7 @@ export default function SelectSchoolDayData() {
                 schedule: selectedEvent.schoolDayData.schedule,
                 dressCode: selectedEvent.schoolDayData.dressCode,
                 semester: semesters.semesterTwo,
-                schoolYearEventId: selectedSchoolYear.id
+                schoolYearEventId: selectedSchoolYear.id,
               }),
             );
             setSchoolDayMode(pickSchoolDayMode.dressCodeIncentives);
@@ -431,10 +433,13 @@ export default function SelectSchoolDayData() {
           <Text>Semester Two</Text>
         </Pressable>
       </View>
-    )
+    );
   }
 
-  if (schoolDayMode === pickSchoolDayMode.dressCodeIncentives && timetable !== undefined) {
+  if (
+    schoolDayMode === pickSchoolDayMode.dressCodeIncentives &&
+    timetable !== undefined
+  ) {
     return (
       <DressCodeIncentivesSelect
         dressCodeIncentivesData={timetable.dressCode.dressCodeIncentives}
@@ -446,7 +451,7 @@ export default function SelectSchoolDayData() {
               dressCode: selectedEvent.schoolDayData.dressCode,
               semester: selectedEvent.schoolDayData.semester,
               dressCodeIncentive: e,
-              schoolYearEventId: selectedSchoolYear.id
+              schoolYearEventId: selectedSchoolYear.id,
             }),
           );
         }}
@@ -454,12 +459,12 @@ export default function SelectSchoolDayData() {
           setSchoolDayMode(pickSchoolDayMode.semester);
         }}
       />
-    )
+    );
   }
 
   return (
     <View>
       <Text>Something went wrong.</Text>
     </View>
-  )
+  );
 }

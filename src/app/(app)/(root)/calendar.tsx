@@ -75,7 +75,7 @@ function TopView({ width, height }: { width: number; height: number }) {
             height: getCalendarFontSize(currentBreakPoint, height),
             color: Colors.white,
             textAlign: 'center',
-            overflow: 'visible'
+            overflow: 'visible',
           }}
         >
           Calendar
@@ -95,16 +95,18 @@ function TopView({ width, height }: { width: number; height: number }) {
         <Pressable
           onPress={() => {
             dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-            dispatch(addEventSlice.actions.setSelectedEvent({
-              id: 'create',
-              name: '',
-              startTime: new Date().toISOString(),
-              endTime: new Date(Date.now() + 3600000).toISOString(),
-              eventColor: Colors.white,
-              microsoftEvent: true,
-              allDay: false,
-              paulyEventType: 'personal'
-            }));
+            dispatch(
+              addEventSlice.actions.setSelectedEvent({
+                id: 'create',
+                name: '',
+                startTime: new Date().toISOString(),
+                endTime: new Date(Date.now() + 3600000).toISOString(),
+                eventColor: Colors.white,
+                microsoftEvent: true,
+                allDay: false,
+                paulyEventType: 'personal',
+              }),
+            );
           }}
           style={{
             height: width * 0.1 < height * 0.6 ? width * 0.1 : height * 0.6,
@@ -133,15 +135,18 @@ function TopView({ width, height }: { width: number; height: number }) {
 }
 
 function isLastSelectedDateValid() {
-  if (store.getState().lastCalledSelectedDate === "") {
-    return true
+  if (store.getState().lastCalledSelectedDate === '') {
+    return true;
   }
-  const lastDate = new Date(store.getState().lastCalledSelectedDate)
-  const selectedDate = new Date(store.getState().selectedDate)
-  if (lastDate.getMonth() !== selectedDate.getMonth() || lastDate.getFullYear() !== selectedDate.getFullYear()) {
-    return true
+  const lastDate = new Date(store.getState().lastCalledSelectedDate);
+  const selectedDate = new Date(store.getState().selectedDate);
+  if (
+    lastDate.getMonth() !== selectedDate.getMonth() ||
+    lastDate.getFullYear() !== selectedDate.getFullYear()
+  ) {
+    return true;
   }
-  return false
+  return false;
 }
 
 export default function Calendar() {
@@ -171,12 +176,16 @@ export default function Calendar() {
   // In the month view month data is calculated but the events come from this hook and the month view is a decendant of this view.
   // In day view things work similary as month view.
   useEffect(() => {
-    if (isLastSelectedDateValid()){
-      dispatch(currentEventsSlice.actions.clearEvents())
-      getEvents()
-      dispatch(lastCalledSelectedDateSlice.actions.setLastCalledSelectedDate(selectedDate))
+    if (isLastSelectedDateValid()) {
+      dispatch(currentEventsSlice.actions.clearEvents());
+      dispatch(
+        lastCalledSelectedDateSlice.actions.setLastCalledSelectedDate(
+          selectedDate,
+        ),
+      );
+      getEvents();
     } else {
-      dispatch(currentEventsSlice.actions.removeClassEvents())
+      dispatch(currentEventsSlice.actions.removeClassEvents());
     }
   }, [selectedDate]);
 

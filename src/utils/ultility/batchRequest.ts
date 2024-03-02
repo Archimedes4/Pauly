@@ -10,7 +10,7 @@ import callMsGraph from '@utils/ultility/microsoftAssests/noStore';
 
 async function makeBatch(
   data: batchRequest[],
-  store: StoreType
+  store: StoreType,
 ): Promise<
   | { result: loadingStateEnum.success; output: batchResponseType[] }
   | { result: loadingStateEnum.failed }
@@ -51,7 +51,7 @@ async function makeBatch(
 
 export default async function largeBatch(
   input: largeBatchInput,
-  store: StoreType
+  store: StoreType,
 ): Promise<
   | { result: loadingStateEnum.success; data: batchResponseType[] }
   | {

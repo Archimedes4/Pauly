@@ -1,10 +1,16 @@
-import { Colors } from "@src/constants";
-import { addEventSlice } from "@src/redux/reducers/addEventReducer";
-import { selectedDateSlice } from "@src/redux/reducers/selectedDateReducer";
-import { RootState } from "@src/redux/store";
-import React, { useEffect, useState } from "react";
-import { ListRenderItemInfo, Pressable, View, Text, ScrollView } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { Colors } from '@src/constants';
+import { addEventSlice } from '@src/redux/reducers/addEventReducer';
+import { selectedDateSlice } from '@src/redux/reducers/selectedDateReducer';
+import { RootState } from '@src/redux/store';
+import React, { useEffect, useState } from 'react';
+import {
+  ListRenderItemInfo,
+  Pressable,
+  View,
+  Text,
+  ScrollView,
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 function getBackgroundColor(selectedDate: string, dayData: number): string {
   if (dayData === new Date(selectedDate).getDate()) {
@@ -46,13 +52,13 @@ function CalendarCardView({
   width,
   height,
   calendarWidth,
-  setIsOverflow
+  setIsOverflow,
 }: {
   value: monthDataType;
   width: number;
   height: number;
   calendarWidth: number;
-  setIsOverflow: (item: boolean) => void
+  setIsOverflow: (item: boolean) => void;
 }) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
@@ -78,11 +84,11 @@ function CalendarCardView({
           backgroundColor: getBackgroundColor(selectedDate, value.dayData),
         }}
         onPress={() => pressCalendar()}
-        onLayout={(e) => {
+        onLayout={e => {
           if (e.nativeEvent.layout.height >= height) {
-            setIsOverflow(true)
+            setIsOverflow(true);
           } else {
-            setIsOverflow(false)
+            setIsOverflow(false);
           }
         }}
       >
@@ -141,11 +147,11 @@ function CalendarCardView({
           dispatch(addEventSlice.actions.setStartDate(startDate.toISOString()));
           dispatch(addEventSlice.actions.setEndDate(endDate));
         }}
-        onLayout={(e) => {
+        onLayout={e => {
           if (e.nativeEvent.layout.height >= height) {
-            setIsOverflow(true)
+            setIsOverflow(true);
           } else {
-            setIsOverflow(false)
+            setIsOverflow(false);
           }
         }}
       >
@@ -154,10 +160,7 @@ function CalendarCardView({
             borderRadius: 50,
             width: 16,
             height: 16,
-            backgroundColor: isCalendarTextColor(
-              selectedDate,
-              value.dayData,
-            )
+            backgroundColor: isCalendarTextColor(selectedDate, value.dayData)
               ? 'red'
               : 'transparent',
             alignContent: 'center',
@@ -179,31 +182,31 @@ function CalendarCardView({
           </Text>
         </View>
         {value.events.map((event: eventType) => {
-          if (event.paulyEventType !== "studentSchedule") {
-          return (
-            <Pressable
-              key={`Calendar_Event_${event.id}`}
-              onPress={() => {
-                dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-                dispatch(addEventSlice.actions.setSelectedEvent(event));
-              }}
-            >
-              <Text style={{ fontSize: 10 }}>{event.name}</Text>
-            </Pressable>
-          )
-          } 
-          return null
+          if (event.paulyEventType !== 'studentSchedule') {
+            return (
+              <Pressable
+                key={`Calendar_Event_${event.id}`}
+                onPress={() => {
+                  dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+                  dispatch(addEventSlice.actions.setSelectedEvent(event));
+                }}
+              >
+                <Text style={{ fontSize: 10 }}>{event.name}</Text>
+              </Pressable>
+            );
+          }
+          return null;
         })}
       </Pressable>
     );
   }
   return (
     <View
-      onLayout={(e) => {
+      onLayout={e => {
         if (e.nativeEvent.layout.height > height) {
-          setIsOverflow(true)
+          setIsOverflow(true);
         } else {
-          setIsOverflow(false)
+          setIsOverflow(false);
         }
       }}
       style={{
@@ -218,7 +221,6 @@ function CalendarCardView({
   );
 }
 
-
 export default function CalendarRow({
   value,
   width,
@@ -230,14 +232,29 @@ export default function CalendarRow({
   height: number;
   calendarWidth: number;
 }) {
-  const [isOverflow, setIsOverflow] = useState<boolean>(true)
+  const [isOverflow, setIsOverflow] = useState<boolean>(true);
   return (
-    <ScrollView scrollEnabled={isOverflow} style={{height: height, borderTopWidth: (width <= 74.14285714285714) ? 0:value.index === 0 ? 2 : 1, borderColor: Colors.lightGray}}>
-      <View style={{flexDirection: 'row'}}>
-      {value.item.map((day, dayIndex) => (
-        <CalendarCardView key={value.item[dayIndex].id + "Card"} value={day} width={width} height={height} calendarWidth={calendarWidth} setIsOverflow={setIsOverflow}/>
-      ))}
+    <ScrollView
+      scrollEnabled={isOverflow}
+      style={{
+        height,
+        borderTopWidth:
+          width <= 74.14285714285714 ? 0 : value.index === 0 ? 2 : 1,
+        borderColor: Colors.lightGray,
+      }}
+    >
+      <View style={{ flexDirection: 'row' }}>
+        {value.item.map((day, dayIndex) => (
+          <CalendarCardView
+            key={`${value.item[dayIndex].id}Card`}
+            value={day}
+            width={width}
+            height={height}
+            calendarWidth={calendarWidth}
+            setIsOverflow={setIsOverflow}
+          />
+        ))}
       </View>
     </ScrollView>
-  )
+  );
 }

@@ -1,5 +1,3 @@
-
-
 /*
   Pauly
   Andrew Mainella

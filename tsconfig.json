@@ -25,7 +25,6 @@
       "assets/*": ["assets/*"],
     }
   },
-  "include": ["src/**/*", "./App.tsx", "assets/*", "public/*"],
-  "extends": "expo/tsconfig.base",
-  "exclude": ["api/*"]
+  "include": ["src/**/*", "./App.tsx", "assets/*", "public/*", "tests/**/*"],
+  "extends": "expo/tsconfig.base"
 }

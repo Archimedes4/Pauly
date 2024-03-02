@@ -3,12 +3,7 @@
   Andrew Mainella
   21 Decemeber 2023
 */
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-} from 'react-native';
+import { View, Text, TextInput, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
@@ -19,7 +14,11 @@ import { Link, useGlobalSearchParams } from 'expo-router';
 import DressCodeBlock from '@components/DressCodeBlock';
 import BackButton from '@components/BackButton';
 import StyledButton from '@components/StyledButton';
-import { createDressCode, deleteDressCode, updateDressCode } from '@utils/calendar/dressCodeFunctions';
+import {
+  createDressCode,
+  deleteDressCode,
+  updateDressCode,
+} from '@utils/calendar/dressCodeFunctions';
 import getDressCode from '@utils/calendar/dressCodeFunctionsNoStore';
 
 export function GovernmentDressCodeEdit({
@@ -33,14 +32,14 @@ export function GovernmentDressCodeEdit({
     id: 'create',
     dressCodeData: [],
     itemId: 'create',
-    dressCodeIncentives: []
-  })
+    dressCodeIncentives: [],
+  });
 
   const [createDressCodeState, setCreateDressCodeState] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
 
   async function loadCreateDressCode() {
-    setCreateDressCodeState(loadingStateEnum.loading)
+    setCreateDressCodeState(loadingStateEnum.loading);
     if (isCreating) {
       const result = await createDressCode(dressCode);
       setCreateDressCodeState(result);
@@ -60,7 +59,7 @@ export function GovernmentDressCodeEdit({
 
   async function onPressDeleteDressCode() {
     setDeleteDressCodeState(loadingStateEnum.loading);
-    const result = await deleteDressCode(dressCode.itemId)
+    const result = await deleteDressCode(dressCode.itemId);
     if (result === loadingStateEnum.success) {
       setDeleteDressCodeState(loadingStateEnum.success);
     } else {
@@ -71,10 +70,8 @@ export function GovernmentDressCodeEdit({
   async function loadData() {
     if (typeof id === 'string' && !isCreating) {
       const result = await getDressCode(id, store);
-      if (
-        result.result === loadingStateEnum.success
-      ) {
-        setDressCode(result.data)
+      if (result.result === loadingStateEnum.success) {
+        setDressCode(result.data);
         setDressCodeState(loadingStateEnum.success);
       } else {
         setDressCodeState(loadingStateEnum.failed);
@@ -104,11 +101,11 @@ export function GovernmentDressCodeEdit({
         <Text style={{ marginLeft: 25 }}>Dress Code Name:</Text>
         <TextInput
           value={dressCode.name}
-          onChangeText={(e) => {
+          onChangeText={e => {
             setDressCode({
               ...dressCode,
-              name: e
-            })
+              name: e,
+            });
           }}
           placeholder="Dress Code Name"
           style={styles.textInputStyle}
@@ -121,11 +118,11 @@ export function GovernmentDressCodeEdit({
               dressCode={item.item}
               dressCodeData={dressCode.dressCodeData}
               index={item.index}
-              setDressCodeData={(e) => {
+              setDressCodeData={e => {
                 setDressCode({
                   ...dressCode,
-                  dressCodeData: e
-                })
+                  dressCodeData: e,
+                });
               }}
             />
           )}
@@ -138,8 +135,8 @@ export function GovernmentDressCodeEdit({
               dressCodeData: [
                 ...dressCode.dressCodeData,
                 { name: '', description: '', id: createUUID() },
-              ]
-            })
+              ],
+            });
           }}
           text="Add"
         />
@@ -148,11 +145,11 @@ export function GovernmentDressCodeEdit({
           style={{ margin: 15 }}
           onPress={() => loadCreateDressCode()}
           text={getTextState(createDressCodeState, {
-            notStarted: (isCreating) ? 'Create Dress Code':'Save Dress Code',
+            notStarted: isCreating ? 'Create Dress Code' : 'Save Dress Code',
           })}
         />
         {!isCreating ? (
-          <StyledButton 
+          <StyledButton
             text={getTextState(deleteDressCodeState, {
               notStarted: 'Delete',
             })}

@@ -99,7 +99,7 @@ export default function GovernmentHomePage() {
           justifyContent: 'center',
         }}
       >
-        <BackButton to='/government'/>
+        <BackButton to="/government" />
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>

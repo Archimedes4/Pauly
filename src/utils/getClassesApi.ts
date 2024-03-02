@@ -1,12 +1,12 @@
-import { loadingStateEnum } from "@constants";
-import callMsGraph from "./ultility/microsoftAssests/noStore";
-import { StoreType } from "@redux/store";
+import { loadingStateEnum } from '@constants';
+import { StoreType } from '@redux/store';
+import callMsGraph from './ultility/microsoftAssests/noStore';
 
 export default async function getClassesApi(store: StoreType): Promise<
-  {
-    result: loadingStateEnum.success;
-    data: classType[];
-  }
+  | {
+      result: loadingStateEnum.success;
+      data: classType[];
+    }
   | {
       result: loadingStateEnum.failed;
     }
@@ -74,15 +74,18 @@ export default async function getClassesApi(store: StoreType): Promise<
                 name: '',
                 id: '',
               },
-              schoolYearId: batchResultData.responses[batchIndex].body[
-                store.getState().paulyList.classExtensionId
-              ].schoolYearEventId,
-              semester: JSON.parse(batchResultData.responses[batchIndex].body[
-                store.getState().paulyList.classExtensionId
-              ].semesterId),
+              schoolYearId:
+                batchResultData.responses[batchIndex].body[
+                  store.getState().paulyList.classExtensionId
+                ].schoolYearEventId,
+              semester: JSON.parse(
+                batchResultData.responses[batchIndex].body[
+                  store.getState().paulyList.classExtensionId
+                ].semesterId,
+              ),
 
               // TODO add teamlink
-              teamLink: ''
+              teamLink: '',
             });
           }
         } else {

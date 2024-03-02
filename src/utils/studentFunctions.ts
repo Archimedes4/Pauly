@@ -16,7 +16,7 @@ function checkIfStudent(role: string): {
 } {
   if (role !== null && role.length >= 20) {
     const reversed = role.split('').reverse().join('');
-    const domainName: string = process.env.EXPO_PUBLIC_DOMAINNAME ?? "";
+    const domainName: string = process.env.EXPO_PUBLIC_DOMAINNAME ?? '';
     const domainLength = domainName.length;
     const slice = reversed.slice(0, domainLength);
     if (slice === domainName.split('').reverse().join('')) {
@@ -67,7 +67,9 @@ function checkIfStudent(role: string): {
         if (reversed.slice(domainLength, domainLength + 2) === reverseYearTen) {
           return { result: true, grade: '10' };
         }
-        if (reversed.slice(domainLength, domainLength + 2) === reverseYearNine) {
+        if (
+          reversed.slice(domainLength, domainLength + 2) === reverseYearNine
+        ) {
           return { result: true, grade: '9' };
         }
         return { result: false };
@@ -96,14 +98,17 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
       userIds.push(data.value[index].id);
     }
     // Getting selected user images from student files list in a batch request.
-    const batchResult = await largeBatch({
-      firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
-        store.getState().paulyList.studentFilesListId
-      }/items?$expand=fields($select=userId,selected,itemId)&$select=fields,id&$filter=fields/userId%20eq%20'`,
-      secondUrl: "'%20and%20fields/selected%20eq%201",
-      method: 'GET',
-      array: userIds,
-    }, store);
+    const batchResult = await largeBatch(
+      {
+        firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
+          store.getState().paulyList.studentFilesListId
+        }/items?$expand=fields($select=userId,selected,itemId)&$select=fields,id&$filter=fields/userId%20eq%20'`,
+        secondUrl: "'%20and%20fields/selected%20eq%201",
+        method: 'GET',
+        array: userIds,
+      },
+      store,
+    );
     const imagesIdsMap = new Map<string, string>(); // Key is userId, value is image data id
     const imageIdsArray: string[] = [];
     if (batchResult.result === loadingStateEnum.success) {
@@ -141,12 +146,15 @@ export async function getUsersAndPhotos(url?: string, search?: string) {
     }
 
     // Getting downloadUrls for images
-    const batchResultDownloadUrls = await largeBatch({
-      firstUrl: `/sites/${store.getState().paulyList.siteId}/drive/items/`,
-      secondUrl: '?$expand=thumbnails($select=c300x400_crop)&$select=id', // ?select=id,content.downloadUrl
-      method: 'GET',
-      array: imageIdsArray,
-    }, store);
+    const batchResultDownloadUrls = await largeBatch(
+      {
+        firstUrl: `/sites/${store.getState().paulyList.siteId}/drive/items/`,
+        secondUrl: '?$expand=thumbnails($select=c300x400_crop)&$select=id', // ?select=id,content.downloadUrl
+        method: 'GET',
+        array: imageIdsArray,
+      },
+      store,
+    );
     const imagesDownloadUrls = new Map<string, string>(); // Key is the item id on the sharepoint and value is the downlad url
     if (batchResultDownloadUrls.result === loadingStateEnum.success) {
       for (

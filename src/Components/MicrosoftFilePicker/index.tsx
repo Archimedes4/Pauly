@@ -26,7 +26,7 @@ export default function MicrosoftFilePicker({
   height,
   width,
   allowedTypes,
-  selectedFile
+  selectedFile,
 }: {
   height: number;
   width: number;
@@ -34,7 +34,7 @@ export default function MicrosoftFilePicker({
   onSetIsShowingMicrosoftUpload?: ((item: boolean) => void) | undefined;
   onSelectedFile: (item: microsoftFileType) => void;
   allowedTypes?: string[];
-  selectedFile?: string
+  selectedFile?: string;
 }) {
   const [usersTeams, setUsersTeams] = useState<teamsGroupType[]>([]);
   const [selectedMicrosoftUploadMode, setSelectedMicrosoftUploadMode] =
@@ -75,7 +75,11 @@ export default function MicrosoftFilePicker({
 
   return (
     <View style={{ height, width }}>
-      <View onLayout={(e) => {setHeaderHeight(e.nativeEvent.layout.height)}}>
+      <View
+        onLayout={e => {
+          setHeaderHeight(e.nativeEvent.layout.height);
+        }}
+      >
         <View style={{ flexDirection: 'row' }}>
           <Text style={{ textAlign: 'left' }}>Upload File From Microsoft</Text>
           {onSetIsShowingMicrosoftUpload === undefined ||

@@ -38,7 +38,8 @@ export function findFirstDayinMonth(currentTime: Date): number {
 }
 
 export function isDateToday(dateToCheckIn: Date | string): boolean {
-  const dateToCheck = (typeof dateToCheckIn === 'string') ? new Date(dateToCheckIn):dateToCheckIn
+  const dateToCheck =
+    typeof dateToCheckIn === 'string' ? new Date(dateToCheckIn) : dateToCheckIn;
   // Get today's date
   const today = new Date();
 
@@ -90,7 +91,8 @@ export function computeEventHeight(
   const HourHeight = height * 0.1;
   const MinuteHeight = (height * 0.1) / 60;
 
-  const ReturnOffset = HourHeight * Math.floor(deltaHours) + MinuteHeight * deltaMinutes;
+  const ReturnOffset =
+    HourHeight * Math.floor(deltaHours) + MinuteHeight * deltaMinutes;
   return ReturnOffset;
 }
 
@@ -110,61 +112,79 @@ export function isTimeOnDay(lhs: string, rhs: string): boolean {
   return true;
 }
 
-export function isEventDuringInterval(
-  selectedDate: Date | string,
-  event: eventType,
-  checkDayStart?: number,
-  checkDayEnd?: number,
+export function isTimeDuringInterval(
+  start: number,
+  end: number,
+  checkStart: number,
+  checkEnd: number,
 ) {
-  const startTimeDate = new Date(event.startTime).getTime(); // String to date
-  const endTimeDate = new Date(event.endTime).getTime(); // String to date
-
-  const checkDate =
-    typeof selectedDate === 'string' ? new Date(selectedDate) : selectedDate;
-
-  // Check is the current date
-  const checkStart: number = new Date(
-    checkDate.getFullYear(),
-    checkDate.getMonth(),
-    checkDayStart !== undefined ? checkDayStart : checkDate.getDate(),
-    0,
-    0,
-  ).getTime();
-  const checkEnd: number = new Date(
-    checkDate.getFullYear(),
-    checkDate.getMonth(),
-    checkDayEnd !== undefined ? checkDayEnd : checkDate.getDate() + 1,
-    0,
-    0,
-  ).getTime();
-
   // Start time starts before and end time ends after or on day
-  if (startTimeDate < checkStart && endTimeDate >= checkEnd) {
+  if (start < checkStart && end >= checkEnd) {
     return true;
     // Start time is on day
   }
-  if (startTimeDate >= checkStart && startTimeDate < checkEnd) {
+  if (start >= checkStart && start < checkEnd) {
     return true;
   }
   return false;
 }
 
-export function isEventDuringIntervalRaw(
-  event: eventType,
-  checkStart: number,
-  checkEnd: number,
-) {
-  const startTimeDate = new Date(event.startTime).getTime(); // String to date
-  const endTimeDate = new Date(event.endTime).getTime(); // String to date
-  // Start time starts before and end time ends after or on day
-  if (startTimeDate < checkStart && endTimeDate >= checkEnd) {
-    return true;
-    // Start time is on day
+export function isEventDuringInterval(
+  input:
+    | {
+        selectedDate: Date | string;
+        event: eventType;
+        checkDayStart?: number;
+        checkDayEnd?: number;
+      }
+    | {
+        event: eventType;
+        checkStart: number;
+        checkEnd: number;
+      },
+): boolean {
+  const startTimeDate = new Date(input.event.startTime).getTime(); // String to date
+  const endTimeDate = new Date(input.event.endTime).getTime(); // String to date
+
+  if ('selectedDate' in input) {
+    const checkDate =
+      typeof input.selectedDate === 'string'
+        ? new Date(input.selectedDate)
+        : input.selectedDate;
+
+    // Check is the current date
+    const checkStart: number = new Date(
+      checkDate.getFullYear(),
+      checkDate.getMonth(),
+      input.checkDayStart !== undefined
+        ? input.checkDayStart
+        : checkDate.getDate(),
+      0,
+      0,
+    ).getTime();
+    const checkEnd: number = new Date(
+      checkDate.getFullYear(),
+      checkDate.getMonth(),
+      input.checkDayEnd !== undefined
+        ? input.checkDayEnd
+        : checkDate.getDate() + 1,
+      0,
+      0,
+    ).getTime();
+
+    return isTimeDuringInterval(
+      startTimeDate,
+      endTimeDate,
+      checkStart,
+      checkEnd,
+    );
   }
-  if (startTimeDate >= checkStart && startTimeDate < checkEnd) {
-    return true;
-  }
-  return false;
+  return isTimeDuringInterval(
+    startTimeDate,
+    endTimeDate,
+    input.checkStart,
+    input.checkEnd,
+  );
 }
 
 export function getDOW(selectedDate: Date) {
@@ -179,59 +199,61 @@ export function getDOW(selectedDate: Date) {
 }
 
 export function encodeSchoolDayData(data: schoolDayDataCompressedType): string {
-  let result = ""
+  let result = '';
   if (data.dcId.length !== 36) {
-    return "failed"
+    return 'failed';
   }
   if (data.sId.length !== 36) {
-    return "failed"
+    return 'failed';
   }
   if (data.sdId.length !== 36) {
-    return "failed"
+    return 'failed';
   }
   if (data.syeId.length !== 152) {
-    return "failed"
+    return 'failed';
   }
-  result += data.dcId + data.sId + data.sdId + data.syeId
-  if (data.dciId !== "") {
-    result += data.dciId
+  result += data.dcId + data.sId + data.sdId + data.syeId;
+  if (data.dciId !== '') {
+    result += data.dciId;
   }
-  result += data.sem
-  return result
+  result += data.sem;
+  return result;
 }
 
-export function decodeSchoolDayData(data: string): schoolDayDataCompressedType | 'failed' {
+export function decodeSchoolDayData(
+  data: string,
+): schoolDayDataCompressedType | 'failed' {
   if (data.length < 260) {
-    //failed
-    return 'failed'
+    // failed
+    return 'failed';
   }
-  
+
   if (data.length >= 297) {
     try {
-      const sem = parseInt(data.substring(296, -1))
+      const sem = parseInt(data.substring(296, data.length));
       return {
-        dcId: data.substring(0, 35),
-        sId: data.substring(36, 71),
-        sdId: data.substring(72, 107),
+        dcId: data.substring(0, 36),
+        sId: data.substring(36, 72),
+        sdId: data.substring(72, 108),
         syeId: data.substring(108, 260),
-        sem: sem,
-        dciId: data.substring(261, 295)
-      }
+        sem,
+        dciId: data.substring(260, 296),
+      };
     } catch {
-      return 'failed'
+      return 'failed';
     }
   }
   try {
-    const sem = parseInt(data.substring(144, -1))
+    const sem = parseInt(data.substring(260, data.length));
     return {
       dciId: '',
-      dcId: data.substring(0, 35),
-      sId: data.substring(36, 71),
-      sdId: data.substring(72, 107),
+      dcId: data.substring(0, 36),
+      sId: data.substring(36, 72),
+      sdId: data.substring(72, 108),
       syeId: data.substring(108, 260),
-      sem: sem
-    }
+      sem,
+    };
   } catch {
-    return 'failed'
+    return 'failed';
   }
 }

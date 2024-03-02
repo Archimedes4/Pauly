@@ -11,7 +11,7 @@ import {
   Image,
   ImageSourcePropType,
   Pressable,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -69,7 +69,7 @@ function Block({
         setIsSelected(false);
       }}
       onPress={() => {
-        router.push(href)
+        router.push(href);
       }}
     >
       {imageSource !== undefined && (
@@ -117,7 +117,7 @@ export default function Government() {
   }, []);
 
   useEffect(() => {
-    const setWidth = (currentBreakPoint === 0) ? width * 0.95:width * 0.8
+    const setWidth = currentBreakPoint === 0 ? width * 0.95 : width * 0.8;
     const fivePercent = width * 0.05;
     const remainder = setWidth % (100 + fivePercent);
     setMainWidth(setWidth - remainder - fivePercent + 1);
@@ -132,9 +132,7 @@ export default function Government() {
         overflow: 'hidden',
       }}
     >
-      {currentBreakPoint <= 0 ? (
-        <BackButton to={'/settings'}/>
-      ) : null}
+      {currentBreakPoint <= 0 ? <BackButton to="/settings" /> : null}
       <View
         style={{
           height: height * 0.2,
@@ -175,7 +173,7 @@ export default function Government() {
             flexWrap: 'wrap',
             rowGap: height * 0.05,
             columnGap: width * 0.05,
-            marginLeft: (width - mainWidth)/2
+            marginLeft: (width - mainWidth) / 2,
           }}
         >
           <Block href="/government/graph" width={100} height={100} text="Graph">

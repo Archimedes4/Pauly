@@ -5,7 +5,7 @@
   GovernmentHandleFileSubmissions.tsx
 */
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, FlatList} from 'react-native';
+import { View, Text, Pressable, FlatList } from 'react-native';
 import { Colors, loadingStateEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import getSubmissions from '@utils/sports/sportsFunctions';
@@ -15,7 +15,7 @@ import { RootState } from '@redux/store';
 import StyledButton from '@components/StyledButton';
 
 function GovernmentSportsPostsBody() {
-  const { width} = useSelector((state: RootState) => state.dimensions);
+  const { width } = useSelector((state: RootState) => state.dimensions);
   const router = useRouter();
   const [currentMediaSubmissions, setCurrentMediaSubmissions] = useState<
     mediaSubmissionType[]
@@ -53,7 +53,7 @@ function GovernmentSportsPostsBody() {
         <ProgressView width={14} height={14} />
         <Text>loading</Text>
       </View>
-    )
+    );
   }
 
   if (loadingSubmissionsState === loadingStateEnum.success) {
@@ -64,18 +64,16 @@ function GovernmentSportsPostsBody() {
           <StyledButton
             key={`Submission_${item.item.submissionId}`}
             onPress={() =>
-              router.push(
-                `/government/sports/posts/${item.item.submissionId}`,
-              )
+              router.push(`/government/sports/posts/${item.item.submissionId}`)
             }
             style={{ margin: 15 }}
             text={item.item.Title}
             caption={`Accepted: ${item.item.accepted ? 'Yes' : 'No'}\nReviewed: ${item.item.reviewed ? 'Yes' : 'No'}\n${item.item.user}`}
           />
         )}
-        style={{width: width}}
+        style={{ width }}
       />
-    )
+    );
   }
 
   return (

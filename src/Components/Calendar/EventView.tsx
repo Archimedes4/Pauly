@@ -19,7 +19,7 @@ export function DefaultEventBlock({ event }: { event: eventType }) {
         month: 'long',
         day: 'numeric',
         year: 'numeric',
-      })
+      });
     }
     return new Date(event.startTime).toLocaleString('en-us', {
       weekday: 'long',
@@ -29,11 +29,13 @@ export function DefaultEventBlock({ event }: { event: eventType }) {
       hour: 'numeric',
       minute: 'numeric',
       second: 'numeric',
-    })
+    });
   }
   function getText() {
-    const start = getStart()
-    if (new Date(event.startTime).getDate() === new Date(event.endTime).getDate()) {
+    const start = getStart();
+    if (
+      new Date(event.startTime).getDate() === new Date(event.endTime).getDate()
+    ) {
       return new Date(event.startTime).toLocaleString('en-us', {
         weekday: 'long',
         month: 'long',
@@ -42,9 +44,9 @@ export function DefaultEventBlock({ event }: { event: eventType }) {
         hour: 'numeric',
         minute: 'numeric',
         second: 'numeric',
-      })
+      });
     }
-    return start
+    return start;
   }
   return (
     <Pressable
@@ -62,9 +64,7 @@ export function DefaultEventBlock({ event }: { event: eventType }) {
       }}
     >
       <Text>{event.name}</Text>
-      <Text>
-        {getText()}
-      </Text>
+      <Text>{getText()}</Text>
     </Pressable>
   );
 }
@@ -79,14 +79,18 @@ export default function EventView({
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
 
   return (
-    <FlatList 
+    <FlatList
       data={currentEvents.sort(function (a, b) {
-        return ('' + a.startTime).localeCompare(b.endTime);
+        return `${a.startTime}`.localeCompare(b.endTime);
       })}
-      renderItem={(event) => (
+      renderItem={event => (
         <DefaultEventBlock key={event.item.id} event={event.item} />
       )}
-      style={{backgroundColor: Colors.lightGray, width: width, paddingTop: 10}}
+      style={{
+        backgroundColor: Colors.lightGray,
+        width,
+        paddingTop: 10,
+      }}
       ListEmptyComponent={() => (
         <View>
           <Text style={{ margin: 'auto' }}>There are no events!</Text>
@@ -95,4 +99,3 @@ export default function EventView({
     />
   );
 }
-

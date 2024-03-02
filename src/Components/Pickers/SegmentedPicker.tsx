@@ -1,4 +1,11 @@
-import { View, Text, Animated, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  Animated,
+  Pressable,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Colors } from '@constants';
 
@@ -8,6 +15,7 @@ type PickerWrapperProps = {
   options: string[];
   width: number;
   height: number;
+  style?: StyleProp<ViewStyle>;
 };
 
 export default function SegmentedPicker({
@@ -16,6 +24,7 @@ export default function SegmentedPicker({
   selectedIndex,
   setSelectedIndex,
   options,
+  style,
 }: PickerWrapperProps) {
   const pan = useRef(new Animated.Value(0)).current;
   const [compoentWidth, setComponentWidth] = useState(width / 3);
@@ -39,17 +48,20 @@ export default function SegmentedPicker({
 
   return (
     <View
-      style={{
-        flexDirection: 'row',
-        height,
-        width,
-        backgroundColor: '#7d7d7d',
-        borderRadius: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.8,
-        shadowRadius: 1,
-      }}
+      style={[
+        {
+          flexDirection: 'row',
+          height,
+          width,
+          backgroundColor: '#7d7d7d',
+          borderRadius: 20,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 1,
+        },
+        style,
+      ]}
     >
       {options.map((option, index) => (
         <Pressable

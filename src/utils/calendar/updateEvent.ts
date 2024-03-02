@@ -6,7 +6,7 @@ import callMsGraph from '@utils/ultility/microsoftAssests';
 import { encodeSchoolDayData } from './calendarFunctions';
 
 export default async function createEvent(): Promise<void> {
-  const selectedEvent = store.getState().addEvent.selectedEvent
+  const { selectedEvent } = store.getState().addEvent;
   if (selectedEvent.paulyEventType === 'personal') {
     const data: {
       subject: string;
@@ -20,7 +20,7 @@ export default async function createEvent(): Promise<void> {
         timeZone: 'Central America Standard Time',
       },
       end: {
-        dateTime:selectedEvent.endTime.replace(/.\d+Z$/g, 'Z'),
+        dateTime: selectedEvent.endTime.replace(/.\d+Z$/g, 'Z'),
         timeZone: 'Central America Standard Time',
       },
     };
@@ -40,8 +40,8 @@ export default async function createEvent(): Promise<void> {
       data.isAllDay = true;
     }
     const result = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/me/events${(selectedEvent.id === 'create') ? '':'/' + selectedEvent.id}`,
-      (selectedEvent.id === 'create') ? 'POST':'PATCH',
+      `https://graph.microsoft.com/v1.0/me/events${selectedEvent.id === 'create' ? '' : `/${selectedEvent.id}`}`,
+      selectedEvent.id === 'create' ? 'POST' : 'PATCH',
       JSON.stringify(data),
     );
     if (result.ok) {
@@ -55,7 +55,7 @@ export default async function createEvent(): Promise<void> {
         microsoftEvent: true,
         microsoftReference: `https://graph.microsoft.com/v1.0/me/events/${dataOut.id}`,
         allDay: false,
-        paulyEventType: "personal"
+        paulyEventType: 'personal',
       };
       store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent));
       store.dispatch(
@@ -79,17 +79,12 @@ export default async function createEvent(): Promise<void> {
       },
     };
     const schoolYearId = store.getState().addEvent.selectedSchoolYear?.id;
-    if (
-      selectedEvent.paulyEventType === 'schoolDay'
-    ) {
+    if (selectedEvent.paulyEventType === 'schoolDay') {
       data.start.dateTime = `${
-        selectedEvent.startTime.replace(/.\d+Z$/g, 'Z')
-          .split(/[T ]/i, 1)[0]
+        selectedEvent.startTime.replace(/.\d+Z$/g, 'Z').split(/[T ]/i, 1)[0]
       }T00:00:00.0000000`;
       const newEndDate = new Date(selectedEvent.startTime);
-      newEndDate.setDate(
-        new Date(selectedEvent.startTime).getDate() + 1,
-      );
+      newEndDate.setDate(new Date(selectedEvent.startTime).getDate() + 1);
       data.end.dateTime = `${
         newEndDate
           .toISOString()
@@ -115,9 +110,7 @@ export default async function createEvent(): Promise<void> {
       }T00:00:00.0000000`;
       data.isAllDay = true;
     }
-    if (
-      selectedEvent.paulyEventType === 'schoolYear'
-    ) {
+    if (selectedEvent.paulyEventType === 'schoolYear') {
       data.singleValueExtendedProperties = [
         {
           id: store.getState().paulyList.eventTypeExtensionId,
@@ -129,8 +122,7 @@ export default async function createEvent(): Promise<void> {
         },
       ];
     } else if (
-      selectedEvent.paulyEventType ===
-        'schoolDay' &&
+      selectedEvent.paulyEventType === 'schoolDay' &&
       schoolYearId !== undefined
     ) {
       const selectedSchoolDayDataCompressed: schoolDayDataCompressedType = {
@@ -139,17 +131,19 @@ export default async function createEvent(): Promise<void> {
         dcId: selectedEvent.schoolDayData.dressCode.id,
         sem: selectedEvent.schoolDayData.semester,
         dciId:
-        selectedEvent.schoolDayData.dressCodeIncentive?.id === undefined
+          selectedEvent.schoolDayData.dressCodeIncentive?.id === undefined
             ? ''
             : selectedEvent.schoolDayData.dressCodeIncentive?.id,
         syeId: schoolYearId,
       };
-      const encodedSchoolDayData = encodeSchoolDayData(selectedSchoolDayDataCompressed)
-      if (encodedSchoolDayData !== 'failed') {
+      const encodedSchoolDayData = encodeSchoolDayData(
+        selectedSchoolDayDataCompressed,
+      );
+      if (encodedSchoolDayData === 'failed') {
         store.dispatch(
           addEventSlice.actions.setCreateEventState(loadingStateEnum.failed),
         );
-        return
+        return;
       }
       data.singleValueExtendedProperties = [
         {
@@ -164,8 +158,10 @@ export default async function createEvent(): Promise<void> {
     }
     // TODO Reocurring
     const result = await callMsGraph(
-      (selectedEvent.id === 'create') ? `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events`:`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${selectedEvent.id}`,
-      (selectedEvent.id === 'create') ? 'POST':'PATCH',
+      selectedEvent.id === 'create'
+        ? `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events`
+        : `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${selectedEvent.id}`,
+      selectedEvent.id === 'create' ? 'POST' : 'PATCH',
       JSON.stringify(data),
     );
     if (result.ok) {
@@ -183,17 +179,20 @@ export default async function createEvent(): Promise<void> {
       if (selectedEvent.id === 'create') {
         resultEvent = {
           ...resultEvent,
-          id: dataOut.id
-        }
+          id: dataOut.id,
+        };
         store.dispatch(currentEventsSlice.actions.pushEvent(resultEvent));
       } else {
-
-        store.dispatch(currentEventsSlice.actions.setCurrentEvents([...store.getState().currentEvents.map((e) => {
-          if (e.id === selectedEvent.id) {
-            return resultEvent
-          }
-          return e
-        })]))
+        store.dispatch(
+          currentEventsSlice.actions.setCurrentEvents([
+            ...store.getState().currentEvents.map(e => {
+              if (e.id === selectedEvent.id) {
+                return resultEvent;
+              }
+              return e;
+            }),
+          ]),
+        );
       }
       store.dispatch(
         addEventSlice.actions.setCreateEventState(loadingStateEnum.success),

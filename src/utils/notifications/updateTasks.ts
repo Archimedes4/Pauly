@@ -6,26 +6,23 @@
 */
 import { homepageDataSlice } from '@redux/reducers/homepageDataReducer';
 import store from '@redux/store';
-import {
-  loadingStateEnum,
-  taskImportanceEnum,
-} from '@constants';
+import { loadingStateEnum, taskImportanceEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests';
 
 export async function updateTaskStatus(
   task: taskType,
   index: number,
-  abortController: AbortController
+  abortController: AbortController,
 ) {
   store.dispatch(
     homepageDataSlice.actions.updateUserTask({
-      index: index,
+      index,
       task: { ...task, state: loadingStateEnum.loading },
     }),
   );
-  console.log(task.status)
+  console.log(task.status);
   const data = {
-    status: task.status
+    status: task.status,
   };
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`,
@@ -33,26 +30,30 @@ export async function updateTaskStatus(
     JSON.stringify(data),
     undefined,
     undefined,
-    abortController
+    abortController,
   );
   if (result.ok) {
     store.dispatch(
       homepageDataSlice.actions.updateUserTask({
-        index: index,
+        index,
         task: { ...task, state: loadingStateEnum.success, status: task.status },
       }),
     );
   } else {
     store.dispatch(
       homepageDataSlice.actions.updateUserTask({
-        index: index,
+        index,
         task: { ...task, state: loadingStateEnum.failed },
       }),
     );
   }
 }
 
-export async function updateTaskText(task: taskType, index: number, abortController: AbortController) {
+export async function updateTaskText(
+  task: taskType,
+  index: number,
+  abortController: AbortController,
+) {
   store.dispatch(
     homepageDataSlice.actions.updateUserTask({
       index,
@@ -61,7 +62,7 @@ export async function updateTaskText(task: taskType, index: number, abortControl
   );
   const data = {
     title: task.name,
-    status: task.status
+    status: task.status,
   };
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/me/todo/lists/Tasks/tasks/${task.id}`,
@@ -69,7 +70,7 @@ export async function updateTaskText(task: taskType, index: number, abortControl
     JSON.stringify(data),
     undefined,
     undefined,
-    abortController
+    abortController,
   );
   if (result.ok) {
     if (task.excess) {
@@ -95,7 +96,7 @@ export async function updateTaskText(task: taskType, index: number, abortControl
           name: '',
           importance: taskImportanceEnum.normal,
           id: '',
-          status: "notStarted",
+          status: 'notStarted',
           excess: true,
           state: loadingStateEnum.notStarted,
         }),

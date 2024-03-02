@@ -15,6 +15,7 @@ import {
   Switch,
   StatusBar,
   FlatList,
+  Platform,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -32,7 +33,11 @@ import BackButton from '@components/BackButton';
 import MimeTypeIcon from '@components/Icons/MimeTypeIcon';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { TrashIcon, WarningIcon } from '@components/Icons';
-import { deleteTask, updateTaskStatus, updateTaskText } from '@utils/notifications/updateTasks';
+import {
+  deleteTask,
+  updateTaskStatus,
+  updateTaskText,
+} from '@utils/notifications/updateTasks';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
 import { getClasses } from '@redux/reducers/classesReducer';
@@ -126,7 +131,11 @@ function WidgetView({ width, height }: { width: number; height: number }) {
                 style={{
                   color: Colors.white,
                   fontWeight: 'bold',
-                  fontSize: calculateFontSize(width * 0.2, height * 0.5, schoolDayData?.schoolDay.shorthand),
+                  fontSize: calculateFontSize(
+                    width * 0.2,
+                    height * 0.5,
+                    schoolDayData?.schoolDay.shorthand,
+                  ),
                 }}
               >
                 {schoolDayData?.schoolDay.shorthand}
@@ -141,7 +150,17 @@ function WidgetView({ width, height }: { width: number; height: number }) {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ color: Colors.white, fontSize: calculateFontSize(width * 0.7, height * 0.5, startTime), fontFamily: 'Roboto-Bold'}}>
+              <Text
+                style={{
+                  color: Colors.white,
+                  fontSize: calculateFontSize(
+                    width * 0.7,
+                    height * 0.5,
+                    startTime,
+                  ),
+                  fontFamily: 'Roboto-Bold',
+                }}
+              >
                 {startTime}
               </Text>
             </View>
@@ -190,45 +209,52 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
   const [statusChange, setStatusChange] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const checkUpdateText = useCallback(async (abort: AbortController) => {
-    if (mounted) {
-      const taskNameSave = store.getState().homepageData.userTasks[index].name;
-      setTimeout(async () => {
-        if (
-          store.getState().homepageData.userTasks[index].name === taskNameSave && !abort.signal.aborted && change
-        ) {
-          await updateTaskText(task, index, abort);
-          if (!abort.signal.aborted) {
-            setChange(false)
+  const checkUpdateText = useCallback(
+    async (abort: AbortController) => {
+      if (mounted) {
+        const taskNameSave =
+          store.getState().homepageData.userTasks[index].name;
+        setTimeout(async () => {
+          if (
+            store.getState().homepageData.userTasks[index].name ===
+              taskNameSave &&
+            !abort.signal.aborted &&
+            change
+          ) {
+            await updateTaskText(task, index, abort);
+            if (!abort.signal.aborted) {
+              setChange(false);
+            }
           }
-        }
-      }, 1500);
-    } else {
-      setMounted(true);
-    }
-  }, [mounted, task]);
+        }, 1500);
+      } else {
+        setMounted(true);
+      }
+    },
+    [mounted, task],
+  );
 
   useEffect(() => {
-    let abort = new AbortController();
+    const abort = new AbortController();
     if (change) {
       const loadTaskStatus = async () => {
         await checkUpdateText(abort);
-      }
-      loadTaskStatus()
+      };
+      loadTaskStatus();
     }
     if (statusChange) {
       const loadTaskStatus = async () => {
-        await updateTaskStatus(task, index, abort)
-        setStatusChange(false)
-      }
-      loadTaskStatus()
+        await updateTaskStatus(task, index, abort);
+        setStatusChange(false);
+      };
+      loadTaskStatus();
     }
     return () => {
-      abort.abort()
-    }
-  }, [task.name, task.status])
+      abort.abort();
+    };
+  }, [task.name, task.status]);
 
-  if (isShowingCompleteTasks || task.status !== "completed") {
+  if (isShowingCompleteTasks || task.status !== 'completed') {
     return (
       <Swipeable
         renderRightActions={() => {
@@ -248,30 +274,33 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
         >
           <Pressable
             onPress={() => {
-              if (task.status !== "completed") {
+              if (task.status !== 'completed') {
                 dispatch(
                   homepageDataSlice.actions.updateUserTask({
-                    task: { ...task, status: "completed" },
+                    task: { ...task, status: 'completed' },
                     index,
                   }),
                 );
               } else {
                 dispatch(
                   homepageDataSlice.actions.updateUserTask({
-                    task: { ...task, status: "notStarted" },
+                    task: { ...task, status: 'notStarted' },
                     index,
                   }),
                 );
               }
-              setStatusChange(true)
+              setStatusChange(true);
             }}
             style={{ marginTop: 'auto', marginBottom: 'auto', marginRight: 2 }}
           >
             {task.state === loadingStateEnum.loading && (
-              <View style={{height: 20, width: 20}}>
-                <ProgressView width={14} height={14} style={{margin: 'auto'}}/>
+              <View style={{ height: 20, width: 20 }}>
+                <ProgressView
+                  width={14}
+                  height={14}
+                  style={{ margin: 'auto' }}
+                />
               </View>
-              
             )}
             {task.state !== loadingStateEnum.loading &&
               task.state !== loadingStateEnum.notStarted &&
@@ -287,7 +316,7 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
               task.state === loadingStateEnum.success ||
               task.excess) && (
               <CustomCheckBox
-                checked={task.status === "completed"}
+                checked={task.status === 'completed'}
                 checkMarkColor="blue"
                 strokeDasharray={task.excess ? 5 : undefined}
                 height={20}
@@ -307,7 +336,7 @@ function TaskItem({ task, index }: { task: taskType; index: number }) {
                   index,
                 }),
               );
-              setChange(true)
+              setChange(true);
             }}
             multiline
             numberOfLines={1}
@@ -358,6 +387,11 @@ function TaskBlock() {
             thumbColor={
               isShowingCompleteTasks ? Colors.maroon : Colors.darkGray
             }
+            {...Platform.select({
+              web: {
+                activeThumbColor: Colors.maroon,
+              },
+            })}
             ios_backgroundColor={Colors.lightGray}
             onValueChange={e => {
               store.dispatch(
@@ -470,7 +504,7 @@ function BoardBlock() {
   return (
     <View
       style={{
-        width:  currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
+        width: currentBreakPoint === 0 ? width * 0.9 : width * 0.7,
         height: height * 0.3,
         marginTop: height * 0.03,
         marginLeft: currentBreakPoint === 0 ? width * 0.05 : 0,
@@ -521,7 +555,12 @@ function PopularFiles({ width }: { width: number }) {
             }}
           >
             <View style={{ margin: 10, flexDirection: 'row' }}>
-              <MimeTypeIcon width={14} height={14} mimeType={data.type} style={{marginTop: 'auto', marginBottom: 'auto'}}/>
+              <MimeTypeIcon
+                width={14}
+                height={14}
+                mimeType={data.type}
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}
+              />
               <Text>{data.title}</Text>
             </View>
           </Pressable>
@@ -540,11 +579,19 @@ function TrendingFiles({ width }: { width: number }) {
 
   if (userState === loadingStateEnum.loading) {
     return (
-      <View style={{ height: height * 0.3, width, alignContent: 'center', alignItems: 'center', justifyContent: 'center' }}>
-        <ProgressView width={14} height={14}/>
+      <View
+        style={{
+          height: height * 0.3,
+          width,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
   if (userState === loadingStateEnum.success) {
@@ -559,13 +606,18 @@ function TrendingFiles({ width }: { width: number }) {
             }}
           >
             <View style={{ margin: 10, flexDirection: 'row' }}>
-              <MimeTypeIcon width={14} height={14} mimeType={data.type} style={{marginTop: 'auto', marginBottom: 'auto'}}/>
+              <MimeTypeIcon
+                width={14}
+                height={14}
+                mimeType={data.type}
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}
+              />
               <Text>{data.title}</Text>
             </View>
           </Pressable>
         ))}
       </ScrollView>
-    )
+    );
   }
 
   return (
@@ -678,12 +730,10 @@ function ClassBlock() {
   const { width, height, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimensions,
   );
-  const classes = useSelector(
-    (state: RootState) => state.classes,
-  );
+  const classes = useSelector((state: RootState) => state.classes);
   useEffect(() => {
-    getClasses(store)
-  }, [])
+    getClasses(store);
+  }, []);
   return (
     <>
       <Text
@@ -697,9 +747,9 @@ function ClassBlock() {
         Recent Files
       </Text>
       <View>
-        <FlatList 
+        <FlatList
           data={classes.classes}
-          renderItem={(e) => (
+          renderItem={e => (
             <View>
               <Text>{e.item.name}</Text>
             </View>
@@ -707,7 +757,7 @@ function ClassBlock() {
         />
       </View>
     </>
-  )
+  );
 }
 
 export default function Notifications() {
@@ -717,16 +767,21 @@ export default function Notifications() {
   const { message } = useSelector((state: RootState) => state.paulyData);
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
-  const [isShowingDiscipline, setIsShowingdiscipline] = useState<boolean>(false); 
+  const [isShowingDiscipline, setIsShowingdiscipline] =
+    useState<boolean>(false);
 
   const loadData = useCallback(async () => {
     // Calendar Data
     getClassEventsFromDay();
 
-    const awaitResult = await Promise.all([getInsightData(), getUsersTasks(), getCurrentPaulyData()])
+    const awaitResult = await Promise.all([
+      getInsightData(),
+      getUsersTasks(),
+      getCurrentPaulyData(),
+    ]);
 
     // Insights
-    const insightResult = awaitResult[0]
+    const insightResult = awaitResult[0];
 
     // List Data
     const taskResult = awaitResult[1];
@@ -767,61 +822,61 @@ export default function Notifications() {
 
   return (
     <>
-      <StatusBar barStyle={"dark-content"}/>
+      <StatusBar barStyle="dark-content" />
       <ScrollView style={{ width, height, backgroundColor: Colors.lightGray }}>
-      <View style={{ height: insets.top }} />
-      {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
-      <View
-        style={{
-          width,
-          height: height * 0.1,
-          marginTop: currentBreakPoint === 0 ? 10 : 0,
-        }}
-      >
+        <View style={{ height: insets.top }} />
+        {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
         <View
           style={{
-            width: width * 0.9,
-            height: height * 0.07,
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 15,
-            backgroundColor: Colors.darkGray,
-            marginLeft: width * 0.05,
-            marginRight: width * 0.05,
-            marginTop: height * 0.015,
-            marginBottom: height * 0.015,
+            width,
+            height: height * 0.1,
+            marginTop: currentBreakPoint === 0 ? 10 : 0,
           }}
         >
-          <Text
-            style={{ color: Colors.white, fontFamily: 'Comfortaa-Regular' }}
+          <View
+            style={{
+              width: width * 0.9,
+              height: height * 0.07,
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 15,
+              backgroundColor: Colors.darkGray,
+              marginLeft: width * 0.05,
+              marginRight: width * 0.05,
+              marginTop: height * 0.015,
+              marginBottom: height * 0.015,
+            }}
           >
-            {message}
-          </Text>
-        </View>
-      </View>
-      {currentBreakPoint === 0 ? (
-        <>
-          <WidgetView width={width * 0.9} height={height * 0.3} />
-          <BoardBlock />
-        </>
-      ) : (
-        <View
-          style={{
-            flexDirection: 'row',
-            width: width * 0.9,
-            marginLeft: width * 0.05,
-          }}
-        >
-          <BoardBlock />
-          <View style={{ marginTop: height * 0.03 }}>
-            <WidgetView width={width * 0.2} height={height * 0.2} />
+            <Text
+              style={{ color: Colors.white, fontFamily: 'Comfortaa-Regular' }}
+            >
+              {message}
+            </Text>
           </View>
         </View>
-      )}
-      <TaskBlock />
-      <InsightsBlock />
-      {/* <Pressable onPress={() => {
+        {currentBreakPoint === 0 ? (
+          <>
+            <WidgetView width={width * 0.9} height={height * 0.3} />
+            <BoardBlock />
+          </>
+        ) : (
+          <View
+            style={{
+              flexDirection: 'row',
+              width: width * 0.9,
+              marginLeft: width * 0.05,
+            }}
+          >
+            <BoardBlock />
+            <View style={{ marginTop: height * 0.03 }}>
+              <WidgetView width={width * 0.2} height={height * 0.2} />
+            </View>
+          </View>
+        )}
+        <TaskBlock />
+        <InsightsBlock />
+        {/* <Pressable onPress={() => {
         if (Platform.OS == "web") {
           Linking.openURL("https://www.stpauls.mb.ca/discipline/")
         }
@@ -831,7 +886,7 @@ export default function Notifications() {
       <Modal visible={isShowingDiscipline}>
 
       </Modal> */}
-    </ScrollView>
+      </ScrollView>
     </>
   );
 }

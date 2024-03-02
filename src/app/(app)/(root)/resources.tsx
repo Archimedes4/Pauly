@@ -72,21 +72,31 @@ function AttachmentComponent({
   const [height, setHeight] = useState(200);
   if (attachment.type.split('/')[0] === 'image') {
     return (
-      <Image width={width} style={{width, height, borderRadius: 15}} onLoad={(e) => {
-        if (Platform.OS === 'web') {
-          Image.getSize(attachment.webUrl, (srcWidth, srcHeight) => {
-            const aspectRatio = srcWidth / srcHeight;
-            setHeight(width / aspectRatio)
-          }, error => {
-            //Fallback height
-            setHeight((width * 9) / 16);
-          });
-        } else {
-          const aspectRatio = e.nativeEvent.source.width / e.nativeEvent.source.height;
-          setHeight(width * aspectRatio);
-        }
-      }} source={{uri: attachment.webUrl}}/>
-    )
+      <Image
+        width={width}
+        style={{ width, height, borderRadius: 15 }}
+        onLoad={e => {
+          if (Platform.OS === 'web') {
+            Image.getSize(
+              attachment.webUrl,
+              (srcWidth, srcHeight) => {
+                const aspectRatio = srcWidth / srcHeight;
+                setHeight(width / aspectRatio);
+              },
+              error => {
+                // Fallback height
+                setHeight((width * 9) / 16);
+              },
+            );
+          } else {
+            const aspectRatio =
+              e.nativeEvent.source.width / e.nativeEvent.source.height;
+            setHeight(width * aspectRatio);
+          }
+        }}
+        source={{ uri: attachment.webUrl }}
+      />
+    );
   }
   if (attachment.type.split('/')[0] === 'video') {
     return (

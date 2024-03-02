@@ -5,21 +5,24 @@
   getDressCode.ts
 */
 
-import { loadingStateEnum } from "@constants";
-import callMsGraph from "../ultility/microsoftAssests/noStore";
-import { StoreType } from "@redux/store";
+import { loadingStateEnum } from '@constants';
+import { StoreType } from '@redux/store';
+import callMsGraph from '../ultility/microsoftAssests/noStore';
 
 export default async function getDressCode(
   dressCodeId: string,
-  store: StoreType
-): Promise<{ result: loadingStateEnum.success; data: dressCodeType } | { result: loadingStateEnum.failed }> {
+  store: StoreType,
+): Promise<
+  | { result: loadingStateEnum.success; data: dressCodeType }
+  | { result: loadingStateEnum.failed }
+> {
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
     }/lists/${
       store.getState().paulyList.dressCodeListId
     }/items?expand=fields($select=dressCodeData,dressCodeIncentivesData,dressCodeName,dressCodeId)&$select=id&$filter=fields/dressCodeId%20eq%20'${dressCodeId}'`,
-    store
+    store,
   );
   if (result.ok) {
     const data = await result.json();

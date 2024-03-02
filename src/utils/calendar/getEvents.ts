@@ -8,20 +8,47 @@
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
+import { selectedDateSlice } from '@src/redux/reducers/selectedDateReducer';
 import { getGraphEvents } from './calendarFunctionsGraph';
 import { getClassEventsFromDay } from '../classesFunctions';
-import { getDOW } from './calendarFunctions';
+import { findFirstDayinMonth, getDOW } from './calendarFunctions';
 
-export default async function getEvents() {
+export function getEventInterval(selectedDateString: string) {
+  if (selectedDateString === '') {
+    selectedDateString = new Date().toISOString();
+    store.dispatch(
+      selectedDateSlice.actions.setSelectedDate(new Date().toISOString()),
+    );
+  }
   // date the user picks
-  const selectedDate = new Date(store.getState().selectedDate);
+  const selectedDate = new Date(selectedDateString);
   // Start of month that the selected date is in
+  const firstDay = findFirstDayinMonth(selectedDate);
   const startDate = new Date(
-    Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), 1),
+    Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth(), 1 - firstDay),
   );
   // End of month that the selected date is in
   const endDate = new Date(
-    Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1),
+    Date.UTC(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth() + 1,
+      7 -
+        new Date(
+          Date.UTC(selectedDate.getFullYear(), selectedDate.getMonth() + 1),
+        ).getDay(),
+    ),
+  );
+
+  return {
+    startDate,
+    endDate,
+    selectedDate,
+  };
+}
+
+export default async function getEvents() {
+  const { startDate, endDate, selectedDate } = getEventInterval(
+    store.getState().selectedDate,
   );
 
   // Personal Calendar
@@ -58,7 +85,7 @@ export default async function getEvents() {
     store.getState().paulyList.eventTypeExtensionId
   }'%20or%20id%20eq%20'${
     store.getState().paulyList.eventDataExtensionId
-  }')`;
+  }')&$select=singleValueExtendedProperties,id,subject,start,end,isAllDay`;
   while (url !== '') {
     const furtherResult = await getGraphEvents(
       url,
@@ -73,17 +100,17 @@ export default async function getEvents() {
   }
   store.dispatch(currentEventsSlice.actions.addCurrentEvents(outputEvents));
 
-  let days = getDOW(new Date(selectedDate))
-  let pendingRequests = []
+  const days = getDOW(new Date(selectedDate));
+  const pendingRequests = [];
   for (let index = 0; index < days.length; index += 1) {
-    pendingRequests.push(getClassEventsFromDay(days[index]))
+    pendingRequests.push(getClassEventsFromDay(days[index]));
   }
-  const results = await Promise.all(pendingRequests)
+  const results = await Promise.all(pendingRequests);
   for (let index = 0; index < days.length; index += 1) {
-    const result = results[index]
-    console.log(result)
+    const result = results[index];
+    console.log(result);
     if (result.result === loadingStateEnum.success) {
-      store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data))
+      store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data));
     }
   }
 }

@@ -315,7 +315,7 @@ export function GovernmentCommissionUpdate({
         commissionId: createUUID(),
         timed: false,
         value: commissionTypeEnum.Issued,
-        competitionType: commissionCompetitionType.individual
+        competitionType: commissionCompetitionType.individual,
       });
     } else if (typeof id === 'string') {
       setGetCommissionResult(loadingStateEnum.loading);
@@ -356,16 +356,14 @@ export function GovernmentCommissionUpdate({
       submitCommissionState === loadingStateEnum.notStarted
     ) {
       setSubmitCommissionState(loadingStateEnum.loading);
-      if (
-        commissionData !== undefined
-      ) {
+      if (commissionData !== undefined) {
         const result = await updateCommission(isCreate, commissionData);
         setSubmitCommissionState(result);
       } else {
-        setSubmitCommissionState(loadingStateEnum.failed)
+        setSubmitCommissionState(loadingStateEnum.failed);
       }
     } else {
-      setSubmitCommissionState(loadingStateEnum.failed)
+      setSubmitCommissionState(loadingStateEnum.failed);
     }
   }
 
@@ -439,7 +437,7 @@ export function GovernmentCommissionUpdate({
           <View
             style={{
               width,
-              height: height * 0.15,
+              height: height * 0.25 + 10,
               alignContent: 'center',
               alignItems: 'center',
               justifyContent: 'center',
@@ -487,24 +485,26 @@ export function GovernmentCommissionUpdate({
               height={height * 0.1}
             />
             <SegmentedPicker
-              options={["Individual"]}
+              options={['Individual', 'Home Room', 'Both']}
               selectedIndex={commissionData.competitionType}
-              setSelectedIndex={(e) => {
+              setSelectedIndex={e => {
                 setCommissionData({
                   ...commissionData,
-                  competitionType: e
+                  competitionType: e,
                 });
               }}
               width={width * 0.8}
               height={height * 0.1}
+              style={{ marginTop: 10 }}
             />
           </View>
         ) : null}
         <Text style={{ marginLeft: 25, marginBottom: 2 }}>Commission Name</Text>
         <TextInput
           value={commissionData.title}
-          onChangeText={text => {setCommissionData({ ...commissionData, title: text })}
-          }
+          onChangeText={text => {
+            setCommissionData({ ...commissionData, title: text });
+          }}
           placeholder="Commission Name"
           style={styles.textInputStyle}
         />
@@ -930,7 +930,10 @@ export function GovernmentCommissionUpdate({
               width={width - 50}
               height={height * 0.5}
             />
-            <StyledButton text='Add Submission' onPress={() => setIsAddingCommissionSubmission(true)}/>
+            <StyledButton
+              text="Add Submission"
+              onPress={() => setIsAddingCommissionSubmission(true)}
+            />
           </View>
         ) : null}
         <StyledButton
@@ -958,11 +961,14 @@ export function GovernmentCommissionUpdate({
           />
         ) : null}
       </ScrollView>
-      { (!isCreate && typeof id === "string") ?
+      {!isCreate && typeof id === 'string' ? (
         <Modal visible={isAddingCommissionSubmission} transparent>
-          <AddCommissionSubmission commissionId={id} onClose={() => setIsAddingCommissionSubmission(false)}/>
-        </Modal>: null
-      }
+          <AddCommissionSubmission
+            commissionId={id}
+            onClose={() => setIsAddingCommissionSubmission(false)}
+          />
+        </Modal>
+      ) : null}
     </View>
   );
 }
@@ -1432,7 +1438,13 @@ function PickUser({
   );
 }
 
-function AddCommissionSubmission({ commissionId, onClose }: { commissionId: string; onClose: () => void }) {
+function AddCommissionSubmission({
+  commissionId,
+  onClose,
+}: {
+  commissionId: string;
+  onClose: () => void;
+}) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [isPickingUser, setIsPickingUser] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<
@@ -1468,7 +1480,17 @@ function AddCommissionSubmission({ commissionId, onClose }: { commissionId: stri
 
   if (isPickingUser) {
     return (
-      <View style={{width: width * 0.8, height: height * 0.8, margin: 'auto', borderRadius: 15, borderWidth: 2, borderColor: Colors.black, backgroundColor: Colors.white}}>
+      <View
+        style={{
+          width: width * 0.8,
+          height: height * 0.8,
+          margin: 'auto',
+          borderRadius: 15,
+          borderWidth: 2,
+          borderColor: Colors.black,
+          backgroundColor: Colors.white,
+        }}
+      >
         <PickUser
           selectedUser={selectedUser}
           onBack={() => setIsPickingUser(false)}
@@ -1479,8 +1501,22 @@ function AddCommissionSubmission({ commissionId, onClose }: { commissionId: stri
   }
 
   return (
-    <View style={{width: width * 0.8, height: height * 0.8, margin: 'auto', borderRadius: 15, borderWidth: 2, borderColor: Colors.black, backgroundColor: Colors.white}}>
-      <StyledButton text="Select User" onPress={() => setIsPickingUser(true)} style={{margin: 15}}/>
+    <View
+      style={{
+        width: width * 0.8,
+        height: height * 0.8,
+        margin: 'auto',
+        borderRadius: 15,
+        borderWidth: 2,
+        borderColor: Colors.black,
+        backgroundColor: Colors.white,
+      }}
+    >
+      <StyledButton
+        text="Select User"
+        onPress={() => setIsPickingUser(true)}
+        style={{ margin: 15 }}
+      />
       <StyledButton
         text={getTextState(addSubmissionState, {
           cannotStart: 'Please Pick a User',
@@ -1490,9 +1526,15 @@ function AddCommissionSubmission({ commissionId, onClose }: { commissionId: stri
           failed: 'Failed to Create Submission',
         })}
         onPress={() => loadCreateCommissionSubmission()}
-        style={{margin: 15}}
+        style={{ margin: 15 }}
       />
-      <StyledButton text="Close" onPress={() => {onClose()}}  style={{margin: 15}}/>
+      <StyledButton
+        text="Close"
+        onPress={() => {
+          onClose();
+        }}
+        style={{ margin: 15 }}
+      />
     </View>
   );
 }
@@ -1626,11 +1668,13 @@ function CommissionSubmissions({
             height={height}
             submissionData={selectedSubmission}
             onClose={() => setSelectedSubmisson(undefined)}
-            onSetSubmissionData={(e) => {
-              let newSubmissions = [...submissions]
-              const index = newSubmissions.findIndex((sub) => {return e.id === sub.id})
-              newSubmissions[index] = e
-              setSubmissions(newSubmissions)
+            onSetSubmissionData={e => {
+              const newSubmissions = [...submissions];
+              const index = newSubmissions.findIndex(sub => {
+                return e.id === sub.id;
+              });
+              newSubmissions[index] = e;
+              setSubmissions(newSubmissions);
             }}
           />
         ) : null}
@@ -1654,7 +1698,7 @@ function SubmissionView({
   width: number;
   height: number;
   submissionData: submissionType;
-  onSetSubmissionData: (item: submissionType) => void
+  onSetSubmissionData: (item: submissionType) => void;
   onClose: () => void;
 }) {
   const [changeState, setChangeState] = useState<loadingStateEnum>(

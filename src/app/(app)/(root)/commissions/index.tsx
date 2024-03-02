@@ -16,14 +16,23 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
-import { commissionsSlice, getCommissions } from '@redux/reducers/commissionsReducer';
+import {
+  commissionsSlice,
+  getCommissions,
+} from '@redux/reducers/commissionsReducer';
 import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import getPoints from '@utils/commissions/getPoints';
 import ProgressView from '@components/ProgressView';
 import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
-import { CurrentIcon, FutureIcon, MoreIcon, PastIcon, PiggyBankIcon } from '@components/Icons';
+import {
+  CurrentIcon,
+  FutureIcon,
+  MoreIcon,
+  PastIcon,
+  PiggyBankIcon,
+} from '@components/Icons';
 import { Link } from 'expo-router';
 import StyledButton from '@src/components/StyledButton';
 
@@ -32,13 +41,13 @@ function PickerPiece({
   isHoverPicker,
   setIsHoverPicker,
   onPress,
-  children
+  children,
 }: {
   text: string;
   onPress: () => void;
   isHoverPicker: boolean;
   setIsHoverPicker: (item: boolean) => void;
-  children: ReactNode
+  children: ReactNode;
 }) {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimensions,
@@ -85,12 +94,10 @@ function PickerPiece({
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
-          flexDirection: 'row'
+          flexDirection: 'row',
         }}
       >
-        <>
-          {children}
-        </>
+        <>{children}</>
         <Text style={{ color: Colors.white }}>{text}</Text>
       </View>
     </Pressable>
@@ -145,9 +152,9 @@ function CommissionsBody() {
         month: 'long',
         day: 'numeric',
         minute: 'numeric',
-      })
+      });
     }
-    return undefined
+    return undefined;
   }
 
   if (commissionsState === loadingStateEnum.loading) {
@@ -175,24 +182,42 @@ function CommissionsBody() {
         style={{ height: height * 0.9 }}
         data={currentCommissions}
         renderItem={({ item }) => (
-          <StyledButton key={`Link_${item.commissionId}`} to={`/commissions/${item.commissionId}`} text={item.title} caption={getItemCaption(item)} style={{margin: 10}} mainColor={Colors.white}/>
+          <StyledButton
+            key={`Link_${item.commissionId}`}
+            to={`/commissions/${item.commissionId}`}
+            text={item.title}
+            caption={getItemCaption(item)}
+            style={{ margin: 10 }}
+            mainColor={Colors.white}
+          />
         )}
         onEndReachedThreshold={1}
         onEndReached={() => {
           if (commissionNextLink !== undefined) {
             getCommissions({
               nextLink: commissionNextLink,
-              store: store
+              store,
             });
           }
         }}
         initialNumToRender={currentCommissions.length}
-        ListHeaderComponent={() => <>
-          <CommissionPoints />
-          <Link href={'/commissions/leaderboard'} style={{padding: 10, backgroundColor: Colors.white, margin: 10, borderRadius: 15, overflow:'hidden'}}>
-            <Text>Leaderboard</Text>
-          </Link>
-        </>}
+        ListHeaderComponent={() => (
+          <>
+            <CommissionPoints />
+            <Link
+              href="/commissions/leaderboard"
+              style={{
+                padding: 10,
+                backgroundColor: Colors.white,
+                margin: 10,
+                borderRadius: 15,
+                overflow: 'hidden',
+              }}
+            >
+              <Text>Leaderboard</Text>
+            </Link>
+          </>
+        )}
       />
     );
   }
@@ -203,7 +228,7 @@ function CommissionsBody() {
   );
 }
 
-export function CommissionsMain({commissionId}:{commissionId?: string}) {
+export function CommissionsMain({ commissionId }: { commissionId?: string }) {
   const { height, width, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimensions,
   );
@@ -218,7 +243,7 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
     const pointResult = await getPoints();
     if (pointResult.result === loadingStateEnum.success) {
       dispatch(commissionsSlice.actions.setPoints(pointResult.data));
-      getCommissions({store: store})
+      getCommissions({ store });
     } else {
       dispatch(
         commissionsSlice.actions.setCommissionsState(pointResult.result),
@@ -288,64 +313,94 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
             <PickerPiece
               text="All"
               onPress={() => {
-                getCommissions({store: store});
+                getCommissions({ store });
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
             >
-              <MoreIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+              <MoreIcon
+                width={14}
+                height={14}
+                color={Colors.white}
+                style={{ marginRight: 3 }}
+              />
             </PickerPiece>
             <PickerPiece
               text="Current"
               onPress={() => {
                 getCommissions({
-                  store: store,
+                  store,
                   startDate: { date: new Date(), filter: 'ge' },
-                  endDate: { date: new Date(), filter: 'le' }
+                  endDate: { date: new Date(), filter: 'le' },
                 });
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
             >
-              <CurrentIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+              <CurrentIcon
+                width={14}
+                height={14}
+                color={Colors.white}
+                style={{ marginRight: 3 }}
+              />
             </PickerPiece>
             <PickerPiece
               text="Past"
               onPress={() => {
-                getCommissions(
-                  {startDate: { date: new Date(), filter: 'le' }, endDate: { date: new Date(), filter: 'le' }, store}
-                );
+                getCommissions({
+                  startDate: { date: new Date(), filter: 'le' },
+                  endDate: { date: new Date(), filter: 'le' },
+                  store,
+                });
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
             >
-              <PastIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+              <PastIcon
+                width={14}
+                height={14}
+                color={Colors.white}
+                style={{ marginRight: 3 }}
+              />
             </PickerPiece>
             <PickerPiece
               text="Claimed"
               onPress={() => {
                 getCommissions({
                   claimed: true,
-                  store: store
+                  store,
                 });
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
             >
-              <PiggyBankIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+              <PiggyBankIcon
+                width={14}
+                height={14}
+                color={Colors.white}
+                style={{ marginRight: 3 }}
+              />
             </PickerPiece>
             <PickerPiece
               text="Future"
               onPress={() => {
-                getCommissions({startDate: {
-                  date: new Date(),
-                  filter: 'ge',
-                }, store});
+                getCommissions({
+                  startDate: {
+                    date: new Date(),
+                    filter: 'ge',
+                  },
+                  store,
+                });
               }}
               isHoverPicker={isHoverPicker}
               setIsHoverPicker={setIsHoverPicker}
             >
-              <FutureIcon width={14} height={14} color={Colors.white} style={{marginRight: 3}}/>
+              <FutureIcon
+                width={14}
+                height={14}
+                color={Colors.white}
+                style={{ marginRight: 3 }}
+              />
             </PickerPiece>
           </ScrollView>
         </Pressable>
@@ -359,9 +414,7 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
         }}
       >
         {commissionId !== undefined ? (
-          <CommissionsView
-            id={commissionId}
-          />
+          <CommissionsView id={commissionId} />
         ) : null}
       </View>
     </>
@@ -369,7 +422,5 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
 }
 
 export default function Commissions() {
-  return (
-    <CommissionsMain />
-  )
+  return <CommissionsMain />;
 }

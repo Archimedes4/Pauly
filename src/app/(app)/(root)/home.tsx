@@ -76,10 +76,7 @@ export default function HomePage() {
   return (
     <>
       <View style={{ backgroundColor: Colors.maroon, overflow: 'hidden' }}>
-        <Link
-          href="/"
-          style={{ padding: 0, height: height * 0.08 }}
-        >
+        <Link href="/" style={{ padding: 0, height: height * 0.08 }}>
           <View style={{ width: width * 1.0, height: height * 0.08 }}>
             {paulyDataState === loadingStateEnum.loading ? (
               <View

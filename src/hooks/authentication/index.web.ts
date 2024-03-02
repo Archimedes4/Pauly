@@ -17,7 +17,7 @@ export const useRefresh = () => {
   const { instance } = useMsal();
   async function main() {
     if (instance.getActiveAccount() === null) {
-      return
+      return;
     }
     const result = instance.acquireTokenSilent({
       scopes,
@@ -37,14 +37,15 @@ export function useSilentLogin(): () => Promise<void> {
   const { instance, inProgress } = useMsal();
   async function main() {
     if (store.getState().authActive) {
-      return
+      return;
     }
-    store.dispatch(authActiveSlice.actions.setAuthActive(true))
+    store.dispatch(authActiveSlice.actions.setAuthActive(true));
     // handle auth redired/do all initial setup for msal
     const redirectResult = await instance.handleRedirectPromise();
     if (
       redirectResult !== null &&
-      inProgress === InteractionStatus.HandleRedirect && redirectResult.account !== null
+      inProgress === InteractionStatus.HandleRedirect &&
+      redirectResult.account !== null
     ) {
       instance.setActiveAccount(redirectResult.account);
       store.dispatch(

@@ -54,7 +54,7 @@ function GovernmentDressCodeBody() {
             key={dressCode.item.id}
             to={`/government/calendar/dresscode/${dressCode.item.id}`}
             text={dressCode.item.name}
-            style={{margin: 15, marginBottom: 5}}
+            style={{ margin: 15, marginBottom: 5 }}
           />
         )}
       />

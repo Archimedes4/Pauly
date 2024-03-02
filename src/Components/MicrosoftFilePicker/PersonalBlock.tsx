@@ -16,7 +16,7 @@ function PersonalBlockBody({
   setFilesBackAvaliable,
   onSelectedFile,
   allowedTypes,
-  selectedFile
+  selectedFile,
 }: {
   getFilesState: loadingStateEnum;
   width: number;
@@ -27,7 +27,7 @@ function PersonalBlockBody({
   setFilesBackAvaliable: (item: boolean) => void;
   onSelectedFile: (item: microsoftFileType) => void;
   allowedTypes?: string[];
-  selectedFile?: string
+  selectedFile?: string;
 }) {
   if (getFilesState === loadingStateEnum.loading) {
     return (
@@ -72,7 +72,12 @@ function PersonalBlockBody({
                     onSelectedFile(file.item);
                   }
                 }}
-                style={{backgroundColor: selectedFile === file.item.id ? Colors.lightGray:Colors.white}}
+                style={{
+                  backgroundColor:
+                    selectedFile === file.item.id
+                      ? Colors.lightGray
+                      : Colors.white,
+                }}
                 key={`Users_${file.item.id}_${createUUID()}`}
               >
                 <View style={{ flexDirection: 'row', margin: 5 }}>
@@ -123,13 +128,13 @@ export default function PersonalBlock({
   width,
   onSelectedFile,
   allowedTypes,
-  selectedFile
+  selectedFile,
 }: {
   height: number;
   width: number;
   onSelectedFile: (item: microsoftFileType) => void;
   allowedTypes?: string[];
-  selectedFile?: string
+  selectedFile?: string;
 }) {
   const [usersFiles, setUsersFies] = useState<microsoftFileType[]>([]);
   const [microsoftPath, setMicrosoftPath] = useState<string>(

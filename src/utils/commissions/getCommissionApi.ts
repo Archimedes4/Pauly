@@ -8,7 +8,10 @@ import { StoreType } from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests/noStore';
 
-export default async function getCommission(commissionId: string, store: StoreType): Promise<
+export default async function getCommission(
+  commissionId: string,
+  store: StoreType,
+): Promise<
   | { result: loadingStateEnum.success; data: commissionType }
   | {
       result: loadingStateEnum.failed;
@@ -20,7 +23,7 @@ export default async function getCommission(commissionId: string, store: StoreTy
     }/lists/${
       store.getState().paulyList.commissionListId
     }/items?expand=fields($select=Title,timed,points,hidden,maxNumberOfClaims,allowMultipleSubmissions,commissionID,value,postTeamId,postChannelId,postId,id)&$filter=fields/commissionID%20eq%20'${commissionId}'&$select=fields,id`,
-    store
+    store,
   );
   if (result.ok) {
     const data = await result.json();
@@ -51,7 +54,7 @@ export default async function getCommission(commissionId: string, store: StoreTy
       submissionsCount: 0,
       claimCount: 0,
       reviewedCount: 0,
-      competitionType: data.value[0].fields.homeValue
+      competitionType: data.value[0].fields.homeValue,
     };
     return { result: loadingStateEnum.success, data: dataResult };
   }

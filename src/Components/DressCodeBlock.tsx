@@ -41,11 +41,14 @@ export default function DressCodeBlock({
         <View>
           <View style={{ flexDirection: 'row' }}>
             {dressCode.name === '' ? (
-              <WarningIcon width={14} height={14} outlineColor="red" style={{marginTop: 'auto', marginBottom: 'auto'}}/>
+              <WarningIcon
+                width={14}
+                height={14}
+                outlineColor="red"
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}
+              />
             ) : null}
-            <Text>
-              Name: 
-            </Text>
+            <Text>Name:</Text>
             <TextInput
               placeholder="Dress Code Name"
               value={dressCode.name}
@@ -55,15 +58,19 @@ export default function DressCodeBlock({
                 setDressCodeData([...newDressCodeData]);
               }}
             />
-
           </View>
-          <View style={{ flexDirection: 'row', width: width - width * 0.06 - 80 }}>
+          <View
+            style={{ flexDirection: 'row', width: width - width * 0.06 - 80 }}
+          >
             {dressCode.description === '' ? (
-              <WarningIcon width={14} height={14} outlineColor="red" style={{marginTop: 'auto', marginBottom: 'auto'}}/>
+              <WarningIcon
+                width={14}
+                height={14}
+                outlineColor="red"
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}
+              />
             ) : null}
-            <Text>
-              Description: 
-            </Text>
+            <Text>Description:</Text>
             <TextInput
               placeholder="Dress Code Description"
               value={dressCode.description}

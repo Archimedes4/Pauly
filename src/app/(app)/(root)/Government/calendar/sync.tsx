@@ -135,7 +135,7 @@ export default function CalendarSync() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <BackButton to='/government/calendar'/>
+      <BackButton to="/government/calendar" />
       <Text
         style={{
           marginLeft: 'auto',
@@ -147,13 +147,18 @@ export default function CalendarSync() {
       >
         Calendar Sync
       </Text>
-      <StyledButton text='Refresh' onPress={async () => {
-        const result = await getPastCalendarSyncs();
-        if (result.result === loadingStateEnum.success) {
-          setSyncStates(result.data);
-        }
-        setLoadState(result.result);
-      }} second style={{margin: 15}}/>
+      <StyledButton
+        text="Refresh"
+        onPress={async () => {
+          const result = await getPastCalendarSyncs();
+          if (result.result === loadingStateEnum.success) {
+            setSyncStates(result.data);
+          }
+          setLoadState(result.result);
+        }}
+        second
+        style={{ margin: 15 }}
+      />
       <CalendarSyncBody
         loadState={loadState}
         setLoadState={setLoadState}

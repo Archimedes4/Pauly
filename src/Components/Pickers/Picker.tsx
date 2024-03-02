@@ -29,10 +29,12 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
   height,
 }) => {
   const [componentWidth, setCompoentWidth] = useState<number>(0);
-  const [newChildren, setNewChildren] = useState<{
-    child: Exclude<ReactNode, boolean | null | undefined>
-    id: string
-  }[]>([])
+  const [newChildren, setNewChildren] = useState<
+    {
+      child: Exclude<ReactNode, boolean | null | undefined>;
+      id: string;
+    }[]
+  >([]);
   const pan = useSharedValue(0);
   function fadeIn(id: number) {
     // Will change fadeAnim value to 1 in 5 seconds
@@ -46,23 +48,27 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
     transform: [{ translateX: pan.value }],
   }));
 
-  //count compoents and set componet width
+  // count compoents and set componet width
   useEffect(() => {
-    let count = 0
-    let oldChildren = Children.toArray(children)
-    let newChildren = [...oldChildren.filter((e) => {
-      count += 1
-      return e !== null
-    }).map((e) => {
-      return {
-        child: e,
-        id: createUUID() 
-      }
-    })]
-    setNewChildren(newChildren)
-    setCompoentWidth(width/count)
-    pan.value = selectedIndex * (width/count)
-  }, [])
+    let count = 0;
+    const oldChildren = Children.toArray(children);
+    const newChildren = [
+      ...oldChildren
+        .filter(e => {
+          count += 1;
+          return e !== null;
+        })
+        .map(e => {
+          return {
+            child: e,
+            id: createUUID(),
+          };
+        }),
+    ];
+    setNewChildren(newChildren);
+    setCompoentWidth(width / count);
+    pan.value = selectedIndex * (width / count);
+  }, []);
 
   return (
     <View style={{ flexDirection: 'row', height: height * 0.8, width }}>
@@ -83,7 +89,7 @@ const PickerWrapper: React.FC<PickerWrapperProps> = ({
           >
             {child.child}
           </Pressable>
-        </View> 
+        </View>
       ))}
       <Animated.View style={animatedDefault}>
         <View

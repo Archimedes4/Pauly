@@ -5,7 +5,14 @@
   StyledButton.tsx
   A default button for consistancy and eas of use.
 */
-import { Text, Pressable, ViewStyle, StyleProp, TextStyle, View } from 'react-native';
+import {
+  Text,
+  Pressable,
+  ViewStyle,
+  StyleProp,
+  TextStyle,
+  View,
+} from 'react-native';
 import React, { useState } from 'react';
 import { Link } from 'expo-router';
 import { Colors } from '@constants';
@@ -37,7 +44,7 @@ interface StyledChildButtonProps {
   text?: undefined;
   mainColor?: string;
   altColor?: string;
-  icon?: undefined
+  icon?: undefined;
 }
 
 function getBackgroundColor(
@@ -96,19 +103,24 @@ export default function StyledButton({
   textStyle,
   mainColor,
   altColor,
-  icon
+  icon,
 }: StyledTextButtonProps | StyledChildButtonProps) {
   const [isAlt, setIsAlt] = useState<boolean>(false);
   if (typeof to === 'string') {
     return (
-      <View style={[{
-        shadowColor: Colors.black,
-        shadowOffset: { width: 2, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 10,
-        flex: text !== undefined ? undefined : 1,
-        borderRadius: 15
-      }, style]}>
+      <View
+        style={[
+          {
+            shadowColor: Colors.black,
+            shadowOffset: { width: 2, height: 2 },
+            shadowOpacity: 0.8,
+            shadowRadius: 10,
+            flex: text !== undefined ? undefined : 1,
+            borderRadius: 15,
+          },
+          style,
+        ]}
+      >
         <Link
           href={to}
           style={{
@@ -126,7 +138,7 @@ export default function StyledButton({
                   ? 48
                   : 36
                 : undefined,
-            overflow: 'hidden'
+            overflow: 'hidden',
           }}
         >
           <Pressable
@@ -212,10 +224,8 @@ export default function StyledButton({
         <>{children}</>
       ) : (
         <>
-          <View style={{flexDirection: 'row'}}>
-            {icon !== undefined ?
-              icon(isAlt):null
-            }
+          <View style={{ flexDirection: 'row' }}>
+            {icon !== undefined ? icon(isAlt) : null}
             <Text
               style={[
                 {

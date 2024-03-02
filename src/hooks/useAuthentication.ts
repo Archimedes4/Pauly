@@ -14,12 +14,14 @@ import {
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
-import { useRefresh, useSilentLogin } from './authentication';
 import { Platform } from 'react-native';
+import { useRefresh, useSilentLogin } from './authentication';
 
 export default function useAuthentication() {
   const isLoading = useSelector((state: RootState) => state.authLoading);
-  const authToken = useSelector((state: RootState) => state.authenticationToken);
+  const authToken = useSelector(
+    (state: RootState) => state.authenticationToken,
+  );
   const authenticationCall = useSelector(
     (state: RootState) => state.authenticationCall,
   );

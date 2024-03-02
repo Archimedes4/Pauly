@@ -81,9 +81,7 @@ export default function Sports() {
 
   async function loadSportsContent() {
     const result = await getSportsContent(selectedTeam?.teamId);
-    if (
-      result.result === loadingStateEnum.success
-    ) {
+    if (result.result === loadingStateEnum.success) {
       setSportsPosts(result.sports);
     }
     setLoadingResult(result.result);
@@ -238,9 +236,12 @@ export default function Sports() {
                                   : 10,
                           }}
                         >
-                          {(sport.id === selectedSport?.id &&
-                        selectedTeam !== undefined &&
-                        !isShowingTeams) ? selectedTeam?.teamName:""} {sport.name}
+                          {sport.id === selectedSport?.id &&
+                          selectedTeam !== undefined &&
+                          !isShowingTeams
+                            ? selectedTeam?.teamName
+                            : ''}{' '}
+                          {sport.name}
                         </Text>
                       </View>
                     </Pressable>
@@ -368,30 +369,43 @@ export default function Sports() {
 function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [imageAspect, setImageAspect] = useState<number>(0);
-  function getPostHeight(currentWidth: number, currentHeight: number, currentImageAspect: number) {
-    if (post.item.data.postType === postType.microsoftFile && post.item.data.fileType === dataContentTypeOptions.image) {
+  function getPostHeight(
+    currentWidth: number,
+    currentHeight: number,
+    currentImageAspect: number,
+  ) {
+    if (
+      post.item.data.postType === postType.microsoftFile &&
+      post.item.data.fileType === dataContentTypeOptions.image
+    ) {
       if (imageAspect == -1) {
         return (currentWidth * 9) / 16;
       }
-      return ((currentWidth * 0.9)/currentImageAspect)
+      return (currentWidth * 0.9) / currentImageAspect;
     }
     if (post.item.data.postType === postType.youtubeVideo) {
-      return ((currentWidth * 0.9) / 16) * 9
+      return ((currentWidth * 0.9) / 16) * 9;
     }
-    return currentHeight * 0.4
+    return currentHeight * 0.4;
   }
   useEffect(() => {
-    if (post.item.data.postType === postType.microsoftFile && post.item.data.fileType === dataContentTypeOptions.image) {
-      Image.getSize(post.item.data.fileId, (srcWidth, srcHeight) => {
-        const aspectRatio = srcWidth / srcHeight;
-        setImageAspect(aspectRatio)
-      }, error => {
-        //Fallback height
-        setImageAspect(-1)
-      });
+    if (
+      post.item.data.postType === postType.microsoftFile &&
+      post.item.data.fileType === dataContentTypeOptions.image
+    ) {
+      Image.getSize(
+        post.item.data.fileId,
+        (srcWidth, srcHeight) => {
+          const aspectRatio = srcWidth / srcHeight;
+          setImageAspect(aspectRatio);
+        },
+        error => {
+          // Fallback height
+          setImageAspect(-1);
+        },
+      );
     }
-    
-  }, [])
+  }, []);
   return (
     <View
       key={`Sport_${post.item.data.fileId}`}
@@ -438,7 +452,7 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
                     width: width * 0.9,
                     height: getPostHeight(width, height, imageAspect),
                     borderRadius: 15,
-                    position: 'absolute'
+                    position: 'absolute',
                   }}
                   source={{ uri: post.item.data.fileId }}
                 />

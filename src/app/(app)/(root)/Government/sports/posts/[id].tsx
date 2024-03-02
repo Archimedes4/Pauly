@@ -32,7 +32,7 @@ function getDenyText(reviewed: boolean, accepted: boolean) {
 export default function GovernmentReviewFileSubmission() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
 
-  const { id } = useGlobalSearchParams()
+  const { id } = useGlobalSearchParams();
   const [dataURL, setDataURL] = useState<string>('');
   const [dataContentType, setDataContentType] =
     useState<dataContentTypeOptions>(dataContentTypeOptions.unknown);
@@ -233,13 +233,16 @@ export default function GovernmentReviewFileSubmission() {
           justifyContent: 'center',
         }}
       >
-        <ProgressView width={14} height={14}/>
+        <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
-  if (loadingState === loadingStateEnum.success && currentSubmissionInfomration !== undefined) {
+  if (
+    loadingState === loadingStateEnum.success &&
+    currentSubmissionInfomration !== undefined
+  ) {
     return (
       <View
         style={{
@@ -276,8 +279,7 @@ export default function GovernmentReviewFileSubmission() {
             ) : null}
           </View>
         )}
-        {currentSubmissionInfomration.fileType ===
-        postType.youtubeVideo ? (
+        {currentSubmissionInfomration.fileType === postType.youtubeVideo ? (
           <View style={{ height: ((width * 0.9) / 16) * 9 }}>
             <SportsYoutube
               videoId={currentSubmissionInfomration.fileId}
@@ -317,7 +319,7 @@ export default function GovernmentReviewFileSubmission() {
           </Text>
         </Pressable>
       </View>
-    )
+    );
   }
 
   return (

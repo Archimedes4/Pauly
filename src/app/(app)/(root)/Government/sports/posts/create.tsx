@@ -215,47 +215,48 @@ export default function GovernmentSportsTeamAddPost() {
         ]}
       />
       {postMode === postType.microsoftFile ? (
-        <View style={{width, height: 500, overflow: 'hidden'}}>
+        <View style={{ width, height: 500, overflow: 'hidden' }}>
           <MicrosoftFilePicker
-          onSelectedFile={(item: microsoftFileType) => {
-            getShareLink(item);
-          }}
-          height={500}
-          selectedFile={fileId}
-          width={width}
-        />
+            onSelectedFile={(item: microsoftFileType) => {
+              getShareLink(item);
+            }}
+            height={500}
+            selectedFile={fileId}
+            width={width}
+          />
         </View>
-        
       ) : null}
       {postMode === postType.youtubeVideo ? (
         <YoutubeVideosSelector onSelect={setFileId} />
       ) : null}
       <View>
-      {fileId !== '' ? (
-        <StyledButton
-          text={fileId !== '' && selectedTeamId !== '' ? 'Submit' : 'Select Team'}
-          onPress={() => {
-            if (
-              postSubmissionState === loadingStateEnum.notStarted &&
-              fileId !== '' &&
-              selectedTeamId !== ''
-            ) {
-              createFileSubmission();
+        {fileId !== '' ? (
+          <StyledButton
+            text={
+              fileId !== '' && selectedTeamId !== '' ? 'Submit' : 'Select Team'
             }
-          }}  
-          style={{margin: 15}}
-          second
-        />
-      ) : null}
-      {postSubmissionState === loadingStateEnum.loading ? (
-        <Text>Loading</Text>
-      ) : null}
-      {postSubmissionState === loadingStateEnum.failed ? (
-        <Text>Failure</Text>
-      ) : null}
-      {postSubmissionState === loadingStateEnum.success ? (
-        <Text>Success</Text>
-      ) : null}
+            onPress={() => {
+              if (
+                postSubmissionState === loadingStateEnum.notStarted &&
+                fileId !== '' &&
+                selectedTeamId !== ''
+              ) {
+                createFileSubmission();
+              }
+            }}
+            style={{ margin: 15 }}
+            second
+          />
+        ) : null}
+        {postSubmissionState === loadingStateEnum.loading ? (
+          <Text>Loading</Text>
+        ) : null}
+        {postSubmissionState === loadingStateEnum.failed ? (
+          <Text>Failure</Text>
+        ) : null}
+        {postSubmissionState === loadingStateEnum.success ? (
+          <Text>Success</Text>
+        ) : null}
       </View>
     </ScrollView>
   );
@@ -318,7 +319,10 @@ function PickSportTeam({
   }, [selectedSport]);
 
   // pick team
-  if (sportTeamState === loadingStateEnum.success && selectedSport !== undefined) {
+  if (
+    sportTeamState === loadingStateEnum.success &&
+    selectedSport !== undefined
+  ) {
     return (
       <View>
         <Pressable
@@ -333,7 +337,7 @@ function PickSportTeam({
         </Pressable>
         <FlatList
           data={sportsTeams}
-          renderItem={(item) => (
+          renderItem={item => (
             <StyledButton
               key={item.item.teamId}
               onPress={() =>
@@ -343,12 +347,12 @@ function PickSportTeam({
                 })
               }
               text={item.item.teamName}
-              style={{margin: 15, marginBottom: 5}}
+              style={{ margin: 15, marginBottom: 5 }}
             />
           )}
         />
       </View>
-    )
+    );
   }
 
   // pick sport
@@ -356,21 +360,24 @@ function PickSportTeam({
     return (
       <FlatList
         data={currentSports}
-        renderItem={(item) => (
+        renderItem={item => (
           <StyledButton
             text={item.item.name}
             key={item.item.id}
             onPress={() => setSelectedSport(item.item)}
-            style={{margin: 15}}
+            style={{ margin: 15 }}
           />
         )}
         ListEmptyComponent={() => (
           <View>
-            <Text>This sport has no teams. Please go back and add a team before creating a post.</Text>
+            <Text>
+              This sport has no teams. Please go back and add a team before
+              creating a post.
+            </Text>
           </View>
         )}
       />
-    )
+    );
   }
 
   if (sportTeamState === loadingStateEnum.loading) {
@@ -390,20 +397,20 @@ function PickSportTeam({
         />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
-  
-
   return (
-    <View style={{
-      width,
-      height,
-      alignContent: 'center',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}>
+    <View
+      style={{
+        width,
+        height,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <Text>Error</Text>
     </View>
-  )
+  );
 }
