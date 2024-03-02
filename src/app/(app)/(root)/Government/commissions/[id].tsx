@@ -22,6 +22,7 @@ import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 import store, { RootState } from '@redux/store';
 import {
   Colors,
+  commissionCompetitionType,
   commissionTypeEnum,
   loadingStateEnum,
   styles,
@@ -38,9 +39,9 @@ import {
   getPosts,
   getTeams,
 } from '@utils/microsoftGroupsFunctions';
-import getCommission from '@src/utils/commissions/getCommissionApi';
+import getCommission from '@utils/commissions/getCommissionApi';
 import getSubmissions from '@utils/commissions/getSubmissions';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import {
@@ -314,6 +315,7 @@ export function GovernmentCommissionUpdate({
         commissionId: createUUID(),
         timed: false,
         value: commissionTypeEnum.Issued,
+        competitionType: commissionCompetitionType.individual
       });
     } else if (typeof id === 'string') {
       setGetCommissionResult(loadingStateEnum.loading);
@@ -481,6 +483,18 @@ export function GovernmentCommissionUpdate({
                 'Image and Location',
                 'QRCode',
               ]}
+              width={width * 0.8}
+              height={height * 0.1}
+            />
+            <SegmentedPicker
+              options={["Individual"]}
+              selectedIndex={commissionData.competitionType}
+              setSelectedIndex={(e) => {
+                setCommissionData({
+                  ...commissionData,
+                  competitionType: e
+                });
+              }}
               width={width * 0.8}
               height={height * 0.1}
             />

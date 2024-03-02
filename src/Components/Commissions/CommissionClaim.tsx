@@ -31,6 +31,10 @@ export default function CommissionClaim({
 
   async function claimCommission() {
     setClaimCommissionState(loadingStateEnum.loading);
+    if (typeof accessToken !== 'string') {
+      setClaimCommissionState(loadingStateEnum.failed);
+      return
+    }
 
     let outImageUrl: string = '';
     if (

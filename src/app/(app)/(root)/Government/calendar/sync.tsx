@@ -5,9 +5,10 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import useSyncCalendar from '@hooks/useSyncCalendar';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import StyledButton from '@components/StyledButton';
 import ProgressView from '@components/ProgressView';
+import BackButton from '@src/components/BackButton';
 
 async function getPastCalendarSyncs(): Promise<
   | {
@@ -134,9 +135,7 @@ export default function CalendarSync() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href="/government/calendar">
-        <Text>Back</Text>
-      </Link>
+      <BackButton to='/government/calendar'/>
       <Text
         style={{
           marginLeft: 'auto',

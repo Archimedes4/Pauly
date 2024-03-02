@@ -7,7 +7,7 @@ export default function usePaulyApi() {
   const discovery = useAutoDiscovery(
     `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID}/v2.0`,
   );
-  const [apiToken, setApiToken] = useState<string | loadingStateEnum.failed | loadingStateEnum.loading>(loadingStateEnum.loading)
+  const [apiToken, setApiToken] = useState<usePaulyApiReturn>(loadingStateEnum.loading)
   async function loadApi() {
     if (discovery !== null){
       const apiResult = await refreshAsync(

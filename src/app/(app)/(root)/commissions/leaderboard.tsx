@@ -9,6 +9,7 @@ import BackButton from '@components/BackButton'
 import { getLeaderboard } from '@redux/reducers/leaderboardReducer'
 import callMsGraph from '@src/utils/ultility/microsoftAssests'
 import { PersonIcon } from '@components/Icons'
+import SegmentedPicker from '@src/components/Pickers/SegmentedPicker'
 
 function UserImage({id}:{id: string}) {
   const { height, width } = useSelector(
@@ -75,8 +76,10 @@ export function LeaderboardBody({commissionId}:{commissionId?: string}) {
     (state: RootState) => state.leaderboard,
   );
   const [topThree, setTopThree] = useState<leaderboardUserType[]>([])
+  const [isHomeroom, setIsHomeroom] = useState<boolean>(false)
+
   useEffect(() => {
-    getLeaderboard(commissionId)
+    getLeaderboard(store, commissionId)
   }, [])
 
   useEffect(() => {
@@ -124,6 +127,13 @@ export function LeaderboardBody({commissionId}:{commissionId?: string}) {
             Leaderboard
           </Text>
         </View>
+        <SegmentedPicker options={["Individual", "Homeroom"]} selectedIndex={isHomeroom ? 1:0} setSelectedIndex={(e) => {
+          if (e === 0) {
+            setIsHomeroom(false)
+          } else {
+            setIsHomeroom(true)
+          }
+        }} width={width} height={50}/>
         <FlatList
           data={(leaderboard.length >= 4) ? [...leaderboard.slice(3, -1)]:[]}
           renderItem={(user) => (
@@ -189,7 +199,7 @@ export function LeaderboardBody({commissionId}:{commissionId?: string}) {
 
   if (state === loadingStateEnum.loading) {
     return (
-      <View style={{width, height, alignContent: 'center', alignItems: 'center', justifyContent: 'center'}}>
+      <View style={{width, height, alignContent: 'center', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.white}}>
         { currentBreakPoint === 0 ?
           <BackButton to={'/commissions'} />:null
         }
@@ -200,7 +210,10 @@ export function LeaderboardBody({commissionId}:{commissionId?: string}) {
   }
 
   return (
-    <View>
+    <View style={{width, height, alignContent: 'center', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.white}}>
+      { currentBreakPoint === 0 ?
+        <BackButton to={'/commissions'} />:null
+      }
       <Text>Something has gone wrong</Text>
     </View>
   )

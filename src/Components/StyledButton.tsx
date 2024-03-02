@@ -101,10 +101,17 @@ export default function StyledButton({
   const [isAlt, setIsAlt] = useState<boolean>(false);
   if (typeof to === 'string') {
     return (
-      <Link
-        href={to}
-        style={[
-          {
+      <View style={[{
+        shadowColor: Colors.black,
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 10,
+        flex: text !== undefined ? undefined : 1,
+        borderRadius: 15
+      }, style]}>
+        <Link
+          href={to}
+          style={{
             backgroundColor: getBackgroundColor(
               isAlt,
               selected,
@@ -112,10 +119,6 @@ export default function StyledButton({
               mainColor,
               altColor,
             ),
-            shadowColor: Colors.black,
-            shadowOffset: { width: 2, height: 2 },
-            shadowOpacity: 0.8,
-            shadowRadius: 10,
             borderRadius: 15,
             height:
               text !== undefined
@@ -123,54 +126,53 @@ export default function StyledButton({
                   ? 48
                   : 36
                 : undefined,
-            flex: text !== undefined ? undefined : 1,
-          },
-          style,
-        ]}
-      >
-        <Pressable
-          onHoverIn={() => setIsAlt(true)}
-          onHoverOut={() => setIsAlt(false)}
-          onPressIn={() => setIsAlt(true)}
-          onPressOut={() => setIsAlt(false)}
-          onPress={() => {
-            if (onPress !== undefined) {
-              onPress();
-            }
+            overflow: 'hidden'
           }}
-          style={{ padding: 10, width: '100%' }}
         >
-          {children ? (
-            <>{children}</>
-          ) : (
-            <>
-              <Text
-                style={[
-                  {
-                    fontSize: 16,
-                    color: getTextColor(isAlt, selected, second),
-                    fontFamily: 'Roboto',
-                  },
-                  textStyle,
-                ]}
-              >
-                {text}
-              </Text>
-              {caption !== undefined ? (
+          <Pressable
+            onHoverIn={() => setIsAlt(true)}
+            onHoverOut={() => setIsAlt(false)}
+            onPressIn={() => setIsAlt(true)}
+            onPressOut={() => setIsAlt(false)}
+            onPress={() => {
+              if (onPress !== undefined) {
+                onPress();
+              }
+            }}
+            style={{ padding: 10, width: '100%' }}
+          >
+            {children ? (
+              <>{children}</>
+            ) : (
+              <>
                 <Text
-                  style={{
-                    fontSize: 12,
-                    color: getTextColor(isAlt, selected, second),
-                    fontFamily: 'Roboto',
-                  }}
+                  style={[
+                    {
+                      fontSize: 16,
+                      color: getTextColor(isAlt, selected, second),
+                      fontFamily: 'Roboto',
+                    },
+                    textStyle,
+                  ]}
                 >
-                  {caption}
+                  {text}
                 </Text>
-              ) : null}
-            </>
-          )}
-        </Pressable>
-      </Link>
+                {caption !== undefined ? (
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      color: getTextColor(isAlt, selected, second),
+                      fontFamily: 'Roboto',
+                    }}
+                  >
+                    {caption}
+                  </Text>
+                ) : null}
+              </>
+            )}
+          </Pressable>
+        </Link>
+      </View>
     );
   }
   return (

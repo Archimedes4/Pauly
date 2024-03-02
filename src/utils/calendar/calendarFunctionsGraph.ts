@@ -12,10 +12,11 @@ import callMsGraph from '../ultility/microsoftAssests';
 import batchRequest from '../ultility/batchRequest';
 import createUUID from '../ultility/createUUID';
 import {
+  decodeSchoolDayData,
   findFirstDayinMonth,
   isEventDuringInterval,
 } from './calendarFunctions';
-import { getTimetable, timetableSlice } from '@src/redux/reducers/timetableReducer';
+import { getTimetable } from '@redux/reducers/timetableReducer';
 
 export function getSingleValueProperties(data: any): undefined | {
   eventType: paulyEventTypes,
@@ -88,7 +89,11 @@ export async function getGraphEvents(
       const singleValueResult = getSingleValueProperties(data.value[index]);
       if (singleValueResult !== undefined && singleValueResult.eventType === 'schoolDay') {
         try {
-          const schoolDayResult = await getSchoolDayData(JSON.parse(singleValueResult.eventData))
+          const schoolDayEventData = decodeSchoolDayData(singleValueResult.eventData)
+          if (schoolDayEventData === 'failed') {
+            return { result: loadingStateEnum.failed };
+          }
+          const schoolDayResult = await getSchoolDayData(schoolDayEventData)
           if (schoolDayResult.result === loadingStateEnum.success) {
             newEvents.push({
               id: data.value[index].id,
@@ -443,7 +448,7 @@ export async function getSchoolDays(date: Date): Promise<{
       secondUrl: `'&$select=id`,
       method: 'GET',
       map: scheduleIds
-    });
+    }, store);
 
     if (
       batchRequestResultSchedule.result !== loadingStateEnum.success
@@ -562,7 +567,7 @@ async function getTimetablesFromSchoolYears(
     }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`,
     method: 'GET',  
     map: schoolYearIds,
-  });
+  }, store);
 
   if (batchRequestResultSchoolYear.result !== loadingStateEnum.success) {
     return { result: loadingStateEnum.failed };
@@ -614,7 +619,7 @@ async function getTimetablesFromSchoolYears(
     secondUrl: `'&$select=id`,
     method: 'GET',
     map: timetableIds,
-  });
+  }, store);
 
   if (
     batchRequestResultTimetable.result !== loadingStateEnum.success ||
@@ -662,7 +667,7 @@ async function getTimetablesFromSchoolYears(
     secondUrl: `'&$top=1`,
     method: 'GET',
     map: dressCodeIds,
-  });
+  }, store);
 
   if (batchRequestResultDressCode.result !== loadingStateEnum.success) {
     return { result: loadingStateEnum.failed };

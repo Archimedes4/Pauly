@@ -255,7 +255,7 @@ export async function getRoster(
         url: `/users/${data.value[index].fields.playerId}`,
       });
     }
-    const batchResult = await batchRequest(batchData);
+    const batchResult = await batchRequest(batchData, store);
     if (
       batchResult.result === loadingStateEnum.success &&
       batchResult.data !== undefined

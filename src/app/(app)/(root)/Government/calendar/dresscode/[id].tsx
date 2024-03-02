@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
@@ -19,7 +19,8 @@ import { Link, useGlobalSearchParams } from 'expo-router';
 import DressCodeBlock from '@components/DressCodeBlock';
 import BackButton from '@components/BackButton';
 import StyledButton from '@components/StyledButton';
-import { createDressCode, deleteDressCode, getDressCode, updateDressCode } from '@src/utils/calendar/dressCodeFunctions';
+import { createDressCode, deleteDressCode, updateDressCode } from '@utils/calendar/dressCodeFunctions';
+import getDressCode from '@utils/calendar/dressCodeFunctionsNoStore';
 
 export function GovernmentDressCodeEdit({
   isCreating,
@@ -69,7 +70,7 @@ export function GovernmentDressCodeEdit({
 
   async function loadData() {
     if (typeof id === 'string' && !isCreating) {
-      const result = await getDressCode(id);
+      const result = await getDressCode(id, store);
       if (
         result.result === loadingStateEnum.success
       ) {

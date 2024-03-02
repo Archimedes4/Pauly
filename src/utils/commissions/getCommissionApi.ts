@@ -51,6 +51,7 @@ export default async function getCommission(commissionId: string, store: StoreTy
       submissionsCount: 0,
       claimCount: 0,
       reviewedCount: 0,
+      competitionType: data.value[0].fields.homeValue
     };
     return { result: loadingStateEnum.success, data: dataResult };
   }

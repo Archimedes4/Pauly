@@ -1,17 +1,9 @@
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import store from '@redux/store';
-import { Colors, loadingStateEnum, paulyEventType } from '@constants';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
-
-// function getPaulyEventData() {
-//   if (store.getState().addEvent.selectedEvent.paulyEventType === 'schoolDay') {
-//     return JSON.stringify(store.getState().addEvent.selectedEvent.selectedSchoolDayData)
-//   } else if (store.getState().addEvent.selectedEventType === paulyEventType.schoolYear) {
-//     return store.getState().addEvent.selectedTimetable.id
-//   }
-//   return undefined
-// }
+import { Colors, loadingStateEnum } from '@constants';
+import callMsGraph from '@utils/ultility/microsoftAssests';
+import { encodeSchoolDayData } from './calendarFunctions';
 
 export default async function createEvent(): Promise<void> {
   const selectedEvent = store.getState().addEvent.selectedEvent
@@ -152,6 +144,13 @@ export default async function createEvent(): Promise<void> {
             : selectedEvent.schoolDayData.dressCodeIncentive?.id,
         syeId: schoolYearId,
       };
+      const encodedSchoolDayData = encodeSchoolDayData(selectedSchoolDayDataCompressed)
+      if (encodedSchoolDayData !== 'failed') {
+        store.dispatch(
+          addEventSlice.actions.setCreateEventState(loadingStateEnum.failed),
+        );
+        return
+      }
       data.singleValueExtendedProperties = [
         {
           id: store.getState().paulyList.eventTypeExtensionId,
@@ -159,7 +158,7 @@ export default async function createEvent(): Promise<void> {
         },
         {
           id: store.getState().paulyList.eventDataExtensionId,
-          value: JSON.stringify(selectedSchoolDayDataCompressed),
+          value: encodedSchoolDayData,
         },
       ];
     }

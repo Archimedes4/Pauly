@@ -25,6 +25,7 @@ import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
 import { CurrentIcon, FutureIcon, MoreIcon, PastIcon, PiggyBankIcon } from '@components/Icons';
 import { Link } from 'expo-router';
+import StyledButton from '@src/components/StyledButton';
 
 function PickerPiece({
   text,
@@ -138,6 +139,17 @@ function CommissionsBody() {
 
   const { height, width } = useSelector((state: RootState) => state.dimensions);
 
+  function getItemCaption(item: commissionType) {
+    if (item.timed && item.startDate !== undefined) {
+      return new Date('en-US').toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        minute: 'numeric',
+      })
+    }
+    return undefined
+  }
+
   if (commissionsState === loadingStateEnum.loading) {
     return (
       <View
@@ -163,41 +175,7 @@ function CommissionsBody() {
         style={{ height: height * 0.9 }}
         data={currentCommissions}
         renderItem={({ item }) => (
-          <Link
-            key={`Link_${item.commissionId}`}
-            style={{ backgroundColor: 'transparent' }}
-            href={`/commissions/${item.commissionId}`}
-          >
-            <View
-              key={item.commissionId}
-              style={{
-                borderRadius: 15,
-                marginLeft: width * 0.025,
-                elevation: 2,
-                marginRight: width * 0.025,
-                marginTop: height * 0.02,
-                backgroundColor: Colors.white,
-                shadowColor: Colors.black,
-                shadowOffset: { width: 1, height: 1 },
-                shadowOpacity: 1,
-                shadowRadius: 5,
-                width: width - (width * 0.05)
-              }}
-            >
-              <View style={{ margin: 10 }}>
-                <Text>{item.title}</Text>
-                {item.timed && item.startDate !== undefined ? (
-                  <Text>
-                    {new Date('en-US').toLocaleDateString('en-US', {
-                      month: 'long',
-                      day: 'numeric',
-                      minute: 'numeric',
-                    })}
-                  </Text>
-                ) : null}
-              </View>
-            </View>
-          </Link>
+          <StyledButton key={`Link_${item.commissionId}`} to={`/commissions/${item.commissionId}`} text={item.title} caption={getItemCaption(item)} style={{margin: 10}} mainColor={Colors.white}/>
         )}
         onEndReachedThreshold={1}
         onEndReached={() => {
@@ -211,7 +189,7 @@ function CommissionsBody() {
         initialNumToRender={currentCommissions.length}
         ListHeaderComponent={() => <>
           <CommissionPoints />
-          <Link href={'/commissions/leaderboard'} style={{padding: 10, backgroundColor: Colors.white, margin: 10, borderRadius: 15}}>
+          <Link href={'/commissions/leaderboard'} style={{padding: 10, backgroundColor: Colors.white, margin: 10, borderRadius: 15, overflow:'hidden'}}>
             <Text>Leaderboard</Text>
           </Link>
         </>}
@@ -253,7 +231,7 @@ export function CommissionsMain({commissionId}:{commissionId?: string}) {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
-        bottom: Colors.white,
+        bottom: Colors.lightGray,
       }),
     );
   }, [dispatch]);

@@ -181,16 +181,16 @@ export function getDOW(selectedDate: Date) {
 export function encodeSchoolDayData(data: schoolDayDataCompressedType): string {
   let result = ""
   if (data.dcId.length !== 36) {
-    return ""
+    return "failed"
   }
   if (data.sId.length !== 36) {
-    return ""
+    return "failed"
   }
   if (data.sdId.length !== 36) {
-    return ""
+    return "failed"
   }
   if (data.syeId.length !== 152) {
-    return ""
+    return "failed"
   }
   result += data.dcId + data.sId + data.sdId + data.syeId
   if (data.dciId !== "") {

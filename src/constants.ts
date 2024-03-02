@@ -112,6 +112,13 @@ export enum resourceMode {
   scholarships,
 }
 
+// 0 for indiviual, 1 for home, 2 for both
+export enum commissionCompetitionType {
+  individual,
+  homeroom,
+  both
+}
+
 declare global {
   type animatedCheckMarkColor =
     | ColorValue
@@ -214,6 +221,7 @@ declare global {
     claimCount: number;
     reviewedCount: number;
     commissionId: string;
+    competitionType: commissionCompetitionType
   };
   type commissionTypeTimed =
     | {
@@ -603,6 +611,7 @@ declare global {
           postType: postType.youtubeVideo;
         };
   };
+  type usePaulyApiReturn = string | loadingStateEnum.failed | loadingStateEnum.loading;
   type youtubeVideoType = {
     thumbnail: string;
     title: string;

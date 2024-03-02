@@ -239,7 +239,8 @@ export default async function getCommissionsApi(
             maxNumberOfClaims: data.value[index].fields.maxNumberOfClaims,
             allowMultipleSubmissions:
               data.value[index].fields.allowMultipleSubmissions,
-            value: data.value[index].fields.hidden - 1,
+            value: data.value[index].fields.value - 1,
+            competitionType: data.value[index].fields.homeValue
           });
         }
         return {
@@ -337,6 +338,7 @@ async function getCommissionsBatch(
                 .allowMultipleSubmissions,
             value:
               data.responses[requestIndex].body.value[index].fields.hidden - 1,
+            competitionType:   data.responses[requestIndex].body.value[index].fields.homeValue
           });
         }
       } else {
