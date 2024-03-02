@@ -101,13 +101,14 @@ This is the sports page that shows sport highlights and has team rosters. The sp
 
 ## Format
 ### Colors
-| name           | value     |
+| Name           | Value     |
 | -------------- | --------- |
-| white          | `white`   |
-| light gray     | "#ededed" |
-| dark gray      | "#444444" |
-| maroon         | "#793033" |
-| warning orange | "#FF6700" |
+| white          | `#ffffff` |
+| light gray     | `#ededed` |
+| dark gray      | `#444444` |
+| maroon         | `#793033` |
+| warning orange | `#FF6700` |
+| blue gray      | `#6699CC` |
 ## Extensions
 > **NOTE**
 > Extensions are automatically setup in the initialization process
