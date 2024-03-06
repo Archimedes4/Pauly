@@ -1,5 +1,5 @@
 # <img src="./assets/images/PaulyLogo.png" height="28px" alt="logo"/> Pauly
-READ ME Last updated February 13 2023 \
+READ ME Last updated March 5 2023 \
 Pauly is a hub for all things school-related. \
 Build by Andrew Mainella \
 Saint Paul's High School Student Council 2023-2024
@@ -35,34 +35,37 @@ Microsoft Graph Permissions see [Permissions](#graph-permissions)
 |/me/photo/$value|GET|https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http
 |/me/joinedTeams | GET | https://learn.microsoft.com/en-us/graph/api/user-list-joinedteams?view=graph-rest-1.0&tabs=http |
 |/me/calendarView | GET | https://learn.microsoft.com/en-us/graph/api/user-list-calendarview?view=graph-rest-1.0&tabs=http
-|/me/insights/used [GET] | https://learn.microsoft.com/en-us/graph/api/insights-list-used?view=graph-rest-1.0&tabs=http
-|/me/insights/trending [GET] |https://learn.microsoft.com/en-us/graph/api/insights-list-trending?view=graph-rest-1.0&tabs=http
+|/me/insights/used | GET | https://learn.microsoft.com/en-us/graph/api/insights-list-used?view=graph-rest-1.0&tabs=http
+|/me/insights/trending | GET |https://learn.microsoft.com/en-us/graph/api/insights-list-trending?view=graph-rest-1.0&tabs=http
 |/sites/{siteId}/lists/{listId}/items | GET | https://learn.microsoft.com/en-us/graph/api/listitem-list?view=graph-rest-1.0&tabs=http
-|/users/{userId}/photos/$value | https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http |
+|/users/{userId}/photos/$value | GET | https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http |
 |/$batch | POST | https://learn.microsoft.com/en-us/graph/json-batching |
 |/groups/{groupId} | GET | https://learn.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http |
 |/groups/{groupId}/calendar/events | GET | https://learn.microsoft.com/en-us/graph/api/calendar-list-events?view=graph-rest-1.0&tabs=http |
 |/shares/{shareLink}/driveItem | GET | https://learn.microsoft.com/en-us/graph/api/shares-get?view=graph-rest-1.0&tabs=http |
 |/search/query | POST | https://learn.microsoft.com/en-us/graph/api/search-query?view=graph-rest-1.0&tabs=http
-|/teams/{teamId}/channels/{channelId}/messages/{messageId} [GET]
-|/teams/{teamId}/channels/{channelId}/filesFolder [GET]
-|/drives/{driveId}/items/{itemId} [GET]
+|/teams/{teamId}/channels/{channelId}/messages/{messageId} | GET | https://learn.microsoft.com/en-us/graph/api/chatmessage-get?view=graph-rest-1.0&tabs=http |
+|/teams/{teamId}/channels/{channelId}/filesFolder | GET | https://learn.microsoft.com/en-us/graph/api/channel-get-filesfolder?view=graph-rest-1.0&tabs=http |
+| /drives/{driveId}/items/{itemId} | GET | https://learn.microsoft.com/en-us/graph/api/driveitem-get?view=graph-rest-1.0&tabs=http |
 
 Government
-/sites/{siteId}/lists [POST] \
-/sites/{siteId}/lists/{listId}/items [POST, DELETE] \
-/sites/{siteId}/lists/{listId}/items/{itemId}/fields [PATCH]
-/sites/{siteId}/lists/{listId}/columns/{columnId} [PATCH, GET]
-/groups [GET, POST]
-/groups/{groupId} [DELETE]
-/groups/{groupId}/calendar/events [DELETE, POST]
-/groups/{groupId}/calendar/events/{eventId} [PATCH]
-/schemaExtensions [GET]
-/teams/{teamId} [GET]
-/teams/{teamId}/members [GET]
-/teams/{teamId}/allChannels [GET]
-| /drives/{driveId}/items/{itemId}/createLink | POST| https://learn.microsoft.com/en-us/graph/api/driveitem-createlink?view=graph-rest-1.0&tabs=http
-/me/drive/root/children [GET]
+|Endpoint|Methods|Referenece|
+|--------|------|----------|
+|/sites/{siteId}/lists|POST|https://learn.microsoft.com/en-us/graph/api/list-create?view=graph-rest-1.0&tabs=http
+|/sites/{siteId}/lists/{listId}/items|POST, DELETE|https://learn.microsoft.com/en-us/graph/api/listitem-create?view=graph-rest-1.0&tabs=http|
+|/sites/{siteId}/lists/{listId}/items/{itemId}/fields |PATCH|
+|/sites/{siteId}/lists/{listId}/columns/{columnId} | PATCH, GET |https://learn.microsoft.com/en-us/graph/api/columndefinition-get?view=graph-rest-1.0&tabs=http |
+|/groups | GET, POST| https://learn.microsoft.com/en-us/graph/api/group-post-groups?view=graph-rest-1.0&tabs=http
+|/groups/{groupId} | DELETE | https://learn.microsoft.com/en-us/graph/api/group-delete?view=graph-rest-1.0&tabs=http
+|/groups/{groupId}/calendar/events | DELETE, POST | https://learn.microsoft.com/en-us/graph/api/group-post-events?view=graph-rest-1.0&tabs=http |
+|/groups/{groupId}/calendar/events/{eventId} | PATCH | https://learn.microsoft.com/en-us/graph/api/group-update-event?view=graph-rest-1.0&tabs=http |
+|/schemaExtensions | GET | https://learn.microsoft.com/en-us/graph/extensibility-schema-groups?tabs=http
+|/teams/{teamId} | GET | https://learn.microsoft.com/en-us/graph/api/team-get?view=graph-rest-1.0&tabs=http
+|/teams/{teamId}/members | GET | https://learn.microsoft.com/en-us/graph/api/team-get?view=graph-rest-1.0&tabs=http
+|/teams/{teamId}/allChannels | GET | https://learn.microsoft.com/en-us/graph/api/team-get?view=graph-rest-1.0&tabs=http
+| /drives/{driveId}/items/{itemId}/createLink | POST| https://learn.microsoft.com/en-us/graph/api/driveitem-createlink?view=graph-rest-1.0&tabs=http |
+| /me/drive/root/children | GET | https://learn.microsoft.com/en-us/graph/api/driveitem-list-children?view=graph-rest-1.0&tabs=http |
+|/teams/{teamId}/channels/{channelId}/messages|GET|https://learn.microsoft.com/en-us/graph/api/channel-list-messages?view=graph-rest-1.0&tabs=http |
 
 
 Youtube Iframe and data
