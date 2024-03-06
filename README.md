@@ -399,9 +399,40 @@ Pauly has a config file named PaulyConfig which contains three values these valu
   2. Client ID (the ID of Paulys application)
   3. org id (the id of Pauly's group)
 
-### Setp #3 Initilize Pauly
+### Step #3 Initilize Pauly
 Go to the admin panel and initilize pauly. Code will break if Pauly is already initilized. If hard reseting Pauly delete Pauly group and Pauly extensions. This can all be done in the graph section of Government.
 ![Graph Permissions](./ReamMeImages/GraphPermissions.png)
+
+### Step # 4 Give function permissions
+Give the application the Sties.Selected permission.
+go to https://developer.microsoft.com/en-us/graph/graph-explorer
+
+get the site id
+```
+  https://graph.microsoft.com/v1.0/groups/{orwidegroupId}/sites/root?$select=id
+```
+Give the permission Sites.FullControl.All to ms graph. Do not consent on behalf of organization. \
+set the method to POST and the url to
+```
+  https://graph.microsoft.com/v1.0/sites/{siteId}/permissions
+```
+body
+```
+{
+    "roles": [
+        "write"
+    ],
+    "grantedToIdentities": [
+        {
+            "application": {
+                "id": clientId,
+                "displayName": "Pauly"
+            }
+        }
+    ]
+}
+```
+![site permission image](./documentation/READMEImages/GraphSitePerms.png)
 
 ### Maintenance
 Rotating client secrets after 160 days. Follow the steps in Set Environment Variables no need to change teant id and client id.

@@ -138,6 +138,7 @@ export default function MonthView({
 
   async function loadData() {
     if (monthViewData.length <= 0) {
+
       const result = await getSchoolDays(new Date());
       if (result.result === loadingStateEnum.success) {
         dispatch(monthViewSlice.actions.setMonthViewData(result.data));

@@ -418,7 +418,6 @@ export async function getSchoolDays(date: Date): Promise<
   | {
       result: loadingStateEnum.success;
       data: eventType[];
-      nextLink?: string;
     }
   | {
       result: loadingStateEnum.failed;
@@ -436,385 +435,172 @@ export async function getSchoolDays(date: Date): Promise<
       .replace(/.\d+Z$/g, 'Z')
       .split(/[T ]/i, 1)[0]
   }T00:00:00.0000000`;
-  const result = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/groups/${
-      process.env.EXPO_PUBLIC_ORGWIDEGROUPID
-    }/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${
-      store.getState().paulyList.eventTypeExtensionId
-    }'%20or%20id%20eq%20'${
-      store.getState().paulyList.eventDataExtensionId
-    }')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${
-      store.getState().paulyList.eventTypeExtensionId
-    }'%20and%20ep/value%20eq%20'schoolDay')`,
-    'GET',
-    undefined,
-    [
-      {
-        key: 'Prefer',
-        value: 'outlook.timezone="Central America Standard Time"',
-      },
-    ],
-  );
-  if (result.ok) {
-    const data = await result.json();
-    const scheduleIds = new Map<string, number>();
-    const schoolYearIds = new Map<string, number>();
-    for (let index = 0; index < data.value.length; index += 1) {
-      const outputIds: schoolDayDataCompressedType = JSON.parse(
-        data.value[index].singleValueExtendedProperties.find(
-          (e: { id: string; value: string }) => {
-            return e.id === store.getState().paulyList.eventDataExtensionId;
-          },
-        ).value,
-      );
-      scheduleIds.set(outputIds.sId, 0);
-      schoolYearIds.set(outputIds.syeId, 0);
-    }
-    // Get batch data
-
-    const batchRequestResultSchedule = await batchRequest(
-      {
-        firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
-          store.getState().paulyList.scheduleListId
-        }/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleColor,scheduleData,scheduleId)&$filter=fields/scheduleId%20eq%20'`,
-        secondUrl: `'&$select=id`,
-        method: 'GET',
-        map: scheduleIds,
-      },
-      store,
+  let url = `https://graph.microsoft.com/v1.0/groups/${
+    process.env.EXPO_PUBLIC_ORGWIDEGROUPID
+  }/calendarView?startDateTime=${firstDay}&endDateTime=${lastDay}&$expand=singleValueExtendedProperties($filter=id%20eq%20'${
+    store.getState().paulyList.eventTypeExtensionId
+  }'%20or%20id%20eq%20'${
+    store.getState().paulyList.eventDataExtensionId
+  }')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${
+    store.getState().paulyList.eventTypeExtensionId
+  }'%20and%20ep/value%20ne%20null)&$select=id,singleValueExtendedProperties,start,end,isAllDay`
+  let data: any[] = []
+  while (url !== undefined) {
+    const result = await callMsGraph(url,
+      'GET',
+      undefined,
+      [
+        {
+          key: 'Prefer',
+          value: 'outlook.timezone="Central America Standard Time"',
+        },
+      ],
     );
-
-    if (batchRequestResultSchedule.result !== loadingStateEnum.success) {
-      return { result: loadingStateEnum.failed };
-    }
-    const schedules = new Map<string, scheduleType>();
-    for (
-      let scheudleIndex = 0;
-      scheudleIndex < batchRequestResultSchedule.data.length;
-      scheudleIndex += 1
-    ) {
-      const resultScheduleData =
-        batchRequestResultSchedule.data[scheudleIndex].body;
-      if (
-        batchRequestResultSchedule.data[scheudleIndex].status === 200 &&
-        resultScheduleData !== undefined
-      ) {
-        // TO DO fix status code
-        if (resultScheduleData.value.length === 1) {
-          const scheduleResponseData = resultScheduleData.value[0].fields;
-          try {
-            schedules.set(scheduleResponseData.scheduleId, {
-              properName: scheduleResponseData.scheduleProperName,
-              descriptiveName: scheduleResponseData.scheduleDescriptiveName,
-              periods: JSON.parse(scheduleResponseData.scheduleData),
-              id: scheduleResponseData.scheduleId,
-              color: scheduleResponseData.scheduleColor,
-            });
-          } catch {
-            return { result: loadingStateEnum.failed };
-          }
-        } else {
-          return { result: loadingStateEnum.failed };
-        }
-      } else {
-        return { result: loadingStateEnum.failed };
-      }
-    }
-
-    const timetableResult = await getTimetablesFromSchoolYears(
-      schoolYearIds,
-      schedules,
-    );
-    if (
-      timetableResult.result !== loadingStateEnum.success ||
-      timetableResult.data === undefined
-    ) {
-      return { result: loadingStateEnum.failed };
-    }
-
-    const schoolDaysResult: eventType[] = [];
-    for (let index = 0; index < data.value.length; index += 1) {
-      const outputIds: schoolDayDataCompressedType = JSON.parse(
-        data.value[index].singleValueExtendedProperties.find(
-          (e: { id: string; value: string }) => {
-            return e.id === store.getState().paulyList.eventDataExtensionId;
-          },
-        ).value,
-      );
-      const schedule = schedules.get(outputIds.sId);
-      const timetable = timetableResult.data.get(outputIds.syeId);
-      const dressCode = timetable?.dressCode.dressCodeData.find(e => {
-        return e.id === outputIds.dcId;
-      });
-      const schoolDay = timetable?.days.find(e => {
-        return e.id === outputIds.sdId;
-      });
-      if (
-        schedule !== undefined &&
-        timetable !== undefined &&
-        dressCode !== undefined &&
-        schoolDay !== undefined
-      ) {
-        schoolDaysResult.push({
-          id: data.value[index].id,
-          name: data.value[index].subject,
-          startTime: data.value[index].start.dateTime,
-          endTime: data.value[index].end.dateTime,
-          eventColor: schedule.color,
-          microsoftEvent: true,
-          allDay: !!data.value[index].isAllDay,
-          paulyEventType: 'schoolDay',
-          schoolDayData: {
-            schoolDay,
-            schedule,
-            dressCode,
-            semester: outputIds.sem,
-            dressCodeIncentive: undefined,
-            schoolYearEventId: outputIds.syeId,
-          },
-        });
-      } else {
-        return { result: loadingStateEnum.failed };
-      }
-    }
-    return {
-      result: loadingStateEnum.success,
-      data: schoolDaysResult,
-      nextLink: data['@odata.nextLink'],
-    };
-  }
-  return { result: loadingStateEnum.failed };
-}
-
-// This function gets both school years and their timetable data
-async function getTimetablesFromSchoolYears(
-  schoolYearIds: Map<string, number>,
-  schedules: Map<string, scheduleType>,
-): Promise<{ result: loadingStateEnum; data?: Map<string, timetableType> }> {
-  // Get School Years
-  const batchRequestResultSchoolYear = await batchRequest(
-    {
-      firstUrl: `/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
-      secondUrl: `?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
-        store.getState().paulyList.eventTypeExtensionId
-      }'%20or%20id%20eq%20'${store.getState().paulyList.eventDataExtensionId}')`,
-      method: 'GET',
-      map: schoolYearIds,
-    },
-    store,
-  );
-
-  if (batchRequestResultSchoolYear.result !== loadingStateEnum.success) {
-    return { result: loadingStateEnum.failed };
-  }
-
-  const timetableIds = new Map<string, string[]>();
-  for (
-    let schoolYearIndex = 0;
-    schoolYearIndex < batchRequestResultSchoolYear.data.length;
-    schoolYearIndex += 1
-  ) {
-    if (batchRequestResultSchoolYear.data[schoolYearIndex].status === 200) {
-      // TO DO fix status code
-      const schoolYearResponseData: { id: string; value: string }[] =
-        batchRequestResultSchoolYear.data[schoolYearIndex].body
-          .singleValueExtendedProperties;
-      const schoolYearData = schoolYearResponseData.find(e => {
-        return e.id === store.getState().paulyList.eventDataExtensionId;
-      });
-      if (schoolYearData !== undefined) {
-        try {
-          const perviousTimetable = timetableIds.get(schoolYearData.value);
-          if (perviousTimetable !== undefined) {
-            timetableIds.set(schoolYearData.value, [
-              ...perviousTimetable,
-              batchRequestResultSchoolYear.data[schoolYearIndex].body.id,
-            ]);
-          } else {
-            timetableIds.set(schoolYearData.value, [
-              batchRequestResultSchoolYear.data[schoolYearIndex].body.id,
-            ]);
-          }
-        } catch {
-          return { result: loadingStateEnum.failed };
-        }
-      } else {
-        return { result: loadingStateEnum.failed };
-      }
+    if (result.ok) {
+      const outData = await result.json();
+      data = [...outData.value, ...data]
+      url = outData["@odata.nextLink"]
     } else {
-      return { result: loadingStateEnum.failed };
+      return {result: loadingStateEnum.failed }
     }
   }
-
-  // Get timetables
-  const batchRequestResultTimetable = await batchRequest(
+  const scheduleIds = new Map<string, number>();
+  const schoolYearIds = new Map<string, string>();
+  for (let index = 0; index < data.length; index += 1) {
+    const singleValue = getSingleValueProperties(data[index])
+    if (singleValue == undefined) {
+      return { result: loadingStateEnum.failed };
+    }
+    if (singleValue.eventType === 'schoolYear') {
+      const decodedSchoolYear = decodeSchoolYearData(singleValue.eventData)
+      if (decodedSchoolYear === 'failed') {
+        return { result: loadingStateEnum.failed };
+      }
+      schoolYearIds.set(decodedSchoolYear.paulyId, decodedSchoolYear.timetableId);
+      continue
+    }
+    const schoolDayDecoded = decodeSchoolDayData(singleValue.eventData)
+    if (schoolDayDecoded === 'failed') {
+      return { result: loadingStateEnum.failed };
+    }
+    scheduleIds.set(schoolDayDecoded.sId, 0);
+  }
+  // Get batch data
+  const batchRequestResultSchedule = await batchRequest(
     {
       firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
-        store.getState().paulyList.timetablesListId
-      }/items?expand=fields($select=timetableName,timetableId,timetableDataDays,timetableDataSchedules,timetableDefaultScheduleId,timetableDressCodeId)&$filter=fields/timetableId%20eq%20'`,
+        store.getState().paulyList.scheduleListId
+      }/items?expand=fields($select=scheduleProperName,scheduleDescriptiveName,scheduleColor,scheduleData,scheduleId)&$filter=fields/scheduleId%20eq%20'`,
       secondUrl: `'&$select=id`,
       method: 'GET',
-      map: timetableIds,
+      map: scheduleIds,
     },
     store,
   );
 
-  if (
-    batchRequestResultTimetable.result !== loadingStateEnum.success ||
-    batchRequestResultTimetable.data === undefined
-  ) {
+  if (batchRequestResultSchedule.result !== loadingStateEnum.success) {
     return { result: loadingStateEnum.failed };
   }
-
-  const dressCodeIds = new Map<string, number>();
+  const schedules = new Map<string, scheduleType>();
   for (
-    let responseIndex = 0;
-    responseIndex < batchRequestResultTimetable.data.length;
-    responseIndex += 1
+    let scheudleIndex = 0;
+    scheudleIndex < batchRequestResultSchedule.data.length;
+    scheudleIndex += 1
   ) {
+    const resultScheduleData =
+      batchRequestResultSchedule.data[scheudleIndex].body;
     if (
-      batchRequestResultTimetable.data[responseIndex].status === 200 &&
-      batchRequestResultTimetable.data[responseIndex] !== undefined
+      batchRequestResultSchedule.data[scheudleIndex].status === 200 &&
+      resultScheduleData !== undefined
     ) {
       // TO DO fix status code
-      if (
-        batchRequestResultTimetable.data[responseIndex].body.value.length === 1
-      ) {
+      if (resultScheduleData.value.length === 1) {
+        const scheduleResponseData = resultScheduleData.value[0].fields;
         try {
-          dressCodeIds.set(
-            batchRequestResultTimetable.data[responseIndex].body.value[0].fields
-              .timetableDressCodeId,
-            0,
-          );
-        } catch {
-          return { result: loadingStateEnum.failed };
-        }
-      } else {
-        return { result: loadingStateEnum.failed };
-      }
-    } else {
-      return { result: loadingStateEnum.failed };
-    }
-  }
-
-  // Get dress code data
-  const batchRequestResultDressCode = await batchRequest(
-    {
-      firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${
-        store.getState().paulyList.dressCodeListId
-      }/items?expand=fields($select=dressCodeData,dressCodeIncentivesData,dressCodeName,dressCodeId)&$select=id&$filter=fields/dressCodeId%20eq%20'`,
-      secondUrl: `'&$top=1`,
-      method: 'GET',
-      map: dressCodeIds,
-    },
-    store,
-  );
-
-  if (batchRequestResultDressCode.result !== loadingStateEnum.success) {
-    return { result: loadingStateEnum.failed };
-  }
-
-  const dressCodes = new Map<string, dressCodeType>();
-  for (
-    let dressCodeIndex = 0;
-    dressCodeIndex < batchRequestResultDressCode.data.length;
-    dressCodeIndex += 1
-  ) {
-    if (
-      batchRequestResultDressCode.data[dressCodeIndex].status === 200 &&
-      batchRequestResultDressCode.data[dressCodeIndex].body !== undefined
-    ) {
-      batchRequestResultDressCode.data[dressCodeIndex].body;
-      if (
-        batchRequestResultDressCode.data[dressCodeIndex].body?.value.length ===
-        1
-      ) {
-        try {
-          dressCodes.set(
-            batchRequestResultDressCode.data[dressCodeIndex].body?.value[0]
-              .fields.dressCodeId,
-            {
-              name: batchRequestResultDressCode.data[dressCodeIndex].body
-                .value[0].fields.dressCodeName,
-              id: batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
-                .fields.dressCodeId,
-              dressCodeData: JSON.parse(
-                batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
-                  .fields.dressCodeData,
-              ),
-              dressCodeIncentives:
-                batchRequestResultDressCode.data[dressCodeIndex].body.value[0]
-                  .fields.dressCodeIncentivesData,
-              itemId: '',
-            },
-          );
-        } catch {
-          return { result: loadingStateEnum.failed };
-        }
-      } else {
-        return { result: loadingStateEnum.failed };
-      }
-    } else {
-      return { result: loadingStateEnum.failed };
-    }
-  }
-
-  const timetables = new Map<string, timetableType>();
-  for (
-    let timetableIndex = 0;
-    timetableIndex < batchRequestResultTimetable.data.length;
-    timetableIndex += 1
-  ) {
-    const resultTimetableData =
-      batchRequestResultTimetable.data[timetableIndex].body;
-    if (
-      batchRequestResultTimetable.data[timetableIndex].status === 200 &&
-      resultTimetableData !== undefined
-    ) {
-      if (resultTimetableData.value.length === 1) {
-        const timetableData = resultTimetableData.value[0].fields;
-        const dressCode = dressCodes.get(timetableData.timetableDressCodeId);
-        const timetableSchedules: scheduleType[] = [];
-        const scheduleIds: string[] = JSON.parse(
-          timetableData.timetableDataSchedules,
-        );
-
-        for (
-          let scheduleIndex = 0;
-          scheduleIndex < scheduleIds.length;
-          scheduleIndex += 1
-        ) {
-          const newSchedule = schedules.get(scheduleIds[scheduleIndex]);
-          if (newSchedule !== undefined) {
-            timetableSchedules.push(newSchedule);
-          }
-        }
-        if (dressCode !== undefined) {
-          timetables.set(timetableData.timetableId, {
-            name: timetableData.timetableName,
-            id: timetableData.timetableId,
-            schedules: timetableSchedules,
-            days: JSON.parse(timetableData.timetableDataDays),
-            dressCode,
+          schedules.set(scheduleResponseData.scheduleId, {
+            properName: scheduleResponseData.scheduleProperName,
+            descriptiveName: scheduleResponseData.scheduleDescriptiveName,
+            periods: JSON.parse(scheduleResponseData.scheduleData),
+            id: scheduleResponseData.scheduleId,
+            color: scheduleResponseData.scheduleColor,
           });
+        } catch {
+          return { result: loadingStateEnum.failed };
         }
+      } else {
+        return { result: loadingStateEnum.failed };
       }
     } else {
       return { result: loadingStateEnum.failed };
     }
   }
 
-  const outputTimetables = new Map<string, timetableType>();
-  timetables.forEach((value, key) => {
-    const timetablesArray = timetableIds.get(key);
-    if (timetablesArray) {
-      timetablesArray.forEach(item => {
-        outputTimetables.set(item, value);
-      });
+  
+  console.log("mark 3")
+  const schoolDaysResult: eventType[] = [];
+  for (let index = 0; index < data.length; index += 1) {
+    const singleValue = getSingleValueProperties(data[index])
+    if (singleValue == undefined) {
+      return { result: loadingStateEnum.failed };
     }
-  });
-
-  return { result: loadingStateEnum.success, data: outputTimetables };
+    console.log("mark 4")
+    if (singleValue.eventType !== 'schoolDay') {
+      continue
+    }
+    const schoolDayDecoded = decodeSchoolDayData(singleValue.eventData)
+    if (schoolDayDecoded === 'failed') {
+      return { result: loadingStateEnum.failed };
+    }
+    console.log("mark 5", schoolYearIds)
+    const schedule = schedules.get(schoolDayDecoded.sId);
+    const timetableId = schoolYearIds.get(schoolDayDecoded.syeId)
+    if (timetableId === undefined) {
+      return { result: loadingStateEnum.failed };
+    }
+    console.log("mark 6")
+    const timetable = await getTimetable(timetableId, store);
+    console.log(timetable)
+    if (timetable.result !== loadingStateEnum.success) {
+      return { result: loadingStateEnum.failed };
+    }
+    const dressCode = timetable.data.dressCode.dressCodeData.find(e => {
+      return e.id === schoolDayDecoded.dcId;
+    });
+    const schoolDay = timetable.data.days.find(e => {
+      return e.id === schoolDayDecoded.sdId;
+    });
+    if (
+      schedule !== undefined &&
+      timetable !== undefined &&
+      dressCode !== undefined &&
+      schoolDay !== undefined
+    ) {
+      schoolDaysResult.push({
+        id: data[index].id,
+        name: data[index].subject,
+        startTime: data[index].start.dateTime,
+        endTime: data[index].end.dateTime,
+        eventColor: schedule.color,
+        microsoftEvent: true,
+        allDay: data[index].isAllDay,
+        paulyEventType: 'schoolDay',
+        schoolDayData: {
+          schoolDay,
+          schedule,
+          dressCode,
+          semester: schoolDayDecoded.sem,
+          dressCodeIncentive: undefined,
+          schoolYearEventId: schoolDayDecoded.syeId, //TO Do make sure this event works
+        },
+      });
+    } else {
+      return { result: loadingStateEnum.failed };
+    }
+  }
+  return {
+    result: loadingStateEnum.success,
+    data: schoolDaysResult
+  };
 }
 
 export function getMonthData(selectedDate: Date) {
