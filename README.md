@@ -22,6 +22,64 @@ Power by expo using expo router at its core. Application also uses redux for sto
 ## Backend
 Pauly uses Microsoft graph and SharePoint lists as a database.
 
+## Endpoints
+
+Microsoft Graph Permissions see [Permissions](#graph-permissions)
+
+> [!NOTE]
+> If an endpoint appears both in regular and government mode. It will only be under the regular mode unless the methods are different. Different methods appear in government
+
+|Endpoint|Methods|Referenece|
+|--------|------|----------|
+|/me|Get|https://learn.microsoft.com/en-us/graph/api/user-get?view=graph-rest-1.0&tabs=http|
+|/me/photo/$value|GET|https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http
+|/me/joinedTeams | GET | https://learn.microsoft.com/en-us/graph/api/user-list-joinedteams?view=graph-rest-1.0&tabs=http |
+|/me/calendarView | GET | https://learn.microsoft.com/en-us/graph/api/user-list-calendarview?view=graph-rest-1.0&tabs=http
+|/me/insights/used [GET] | https://learn.microsoft.com/en-us/graph/api/insights-list-used?view=graph-rest-1.0&tabs=http
+|/me/insights/trending [GET] |https://learn.microsoft.com/en-us/graph/api/insights-list-trending?view=graph-rest-1.0&tabs=http
+|/sites/{siteId}/lists/{listId}/items | GET | https://learn.microsoft.com/en-us/graph/api/listitem-list?view=graph-rest-1.0&tabs=http
+|/users/{userId}/photos/$value | https://learn.microsoft.com/en-us/graph/api/profilephoto-get?view=graph-rest-1.0&tabs=http |
+|/$batch | POST | https://learn.microsoft.com/en-us/graph/json-batching |
+|/groups/{groupId} | GET | https://learn.microsoft.com/en-us/graph/api/group-get?view=graph-rest-1.0&tabs=http |
+|/groups/{groupId}/calendar/events | GET | https://learn.microsoft.com/en-us/graph/api/calendar-list-events?view=graph-rest-1.0&tabs=http |
+|/shares/{shareLink}/driveItem | GET | https://learn.microsoft.com/en-us/graph/api/shares-get?view=graph-rest-1.0&tabs=http |
+|/search/query | POST | https://learn.microsoft.com/en-us/graph/api/search-query?view=graph-rest-1.0&tabs=http
+|/teams/{teamId}/channels/{channelId}/messages/{messageId} [GET]
+|/teams/{teamId}/channels/{channelId}/filesFolder [GET]
+|/drives/{driveId}/items/{itemId} [GET]
+
+Government
+/sites/{siteId}/lists [POST] \
+/sites/{siteId}/lists/{listId}/items [POST, DELETE] \
+/sites/{siteId}/lists/{listId}/items/{itemId}/fields [PATCH]
+/sites/{siteId}/lists/{listId}/columns/{columnId} [PATCH, GET]
+/groups [GET, POST]
+/groups/{groupId} [DELETE]
+/groups/{groupId}/calendar/events [DELETE, POST]
+/groups/{groupId}/calendar/events/{eventId} [PATCH]
+/schemaExtensions [GET]
+/teams/{teamId} [GET]
+/teams/{teamId}/members [GET]
+/teams/{teamId}/allChannels [GET]
+| /drives/{driveId}/items/{itemId}/createLink | POST| https://learn.microsoft.com/en-us/graph/api/driveitem-createlink?view=graph-rest-1.0&tabs=http
+/me/drive/root/children [GET]
+
+
+Youtube Iframe and data
+
+|Endpoint|Methods|Referenece|
+|--------|------|----------|
+|https://www.googleapis.com/youtube/v3/playlistItems | GET |https://developers.google.com/youtube/v3/docs/playlistItems/list|
+| https://www.youtube.com/iframe_api | GET | https://developers.google.com/youtube/iframe_api_reference |
+
+Randrop api
+|Endpoint|Methods|Referenece|
+|--------|------|----------|
+|https://api.raindrop.io/rest/v1/raindrops|GET|https://developer.raindrop.io/|
+
+Pauly Functions
+[See in functions](#functions)
+
 ## File Structure
 
 > [!IMPORTANT]
@@ -58,6 +116,36 @@ Expo fonts and React Native Paper aren't playing nice. Taking over the 3 second 
 
 Issue: https://github.com/expo/expo/issues/12382
 Patch: Inside Issue very simple chaning the timout
+
+## Graph Permissions
+> **Reference**
+> https://learn.microsoft.com/en-us/graph/permissions-reference
+
+> **Why Consent Is Needed**
+> https://learn.microsoft.com/en-us/graph/api/resources/consentrequests-overview?view=graph-rest-1.0
+
+All permissions are Delegated permissions
+### Users
+| Permission                | Admin Consent Required | Description |
+| ------------------------- | ---------------------- | ----------- |
+| User.Read                 | NO                     | Allows users to sign-in to the app, and allows the app to read the profile of signed-in users. It also allows the app to read basic company information of signed-in users. |
+| User.ReadBasic.All        | NO                     | Allows the app to read a basic set of profile properties of other users in your organization on behalf of the signed-in user. This includes display name, first and last name, email address, open extensions and photo. Also allows the app to read the full profile of the signed-in user. |
+| People.Read.All           | YES                    | Allows the app to read a scored list of people relevant to the signed-in user or other users in the signed-in user's organization. The list can include local contacts, contacts from social networking or your organization's directory, and people from recent communications (such as email and Skype). Also allows the app to search the entire directory of the signed-in user's organization. |
+| ChannelMessage.Read.All   | YES                    | Allows an app to read a channel's messages in Microsoft Teams, on behalf of the signed-in user. |
+| Channel.ReadBasic.All     | NO                     | Read channel names and channel descriptions, on behalf of the signed-in user. |
+| Calendars.ReadWrite       | YES                    | Allows the app to create, read, update, and delete events in user calendars. |
+| Team.ReadBasic.All        | NO                     | Read the names and descriptions of teams, on behalf of the signed-in user. |
+| Tasks.ReadWrite           | NO                     | Allows the app to create, read, update, and delete the signed-in user's tasks and task lists, including any shared with the user. |
+| Sites.Read.All            | NO                     | Allows the app to read documents and list items in all site collections on behalf of the signed-in user. |
+| Group.ReadWrite.All       | YES                    | Allows the app to create groups and read all group properties and memberships on behalf of the signed-in user. Also allows the app to read and write calendar, conversations, files, and other group content for all groups the signed-in user can access. Additionally allows group owners to manage their groups and allows group members to update group content. |
+
+### Government
+| Permission                | Admin Consent Required | Description |
+| ------------------------- | ---------------------- | ----------- |
+| Application.ReadWrite.All | YES                    | Allows the app to create, read, update and delete applications and service principals on behalf of the signed-in user. |
+| Sites.Manage.All          | YES                    | Allows the app to manage and create lists, documents, and list items in all site collections on behalf of the signed-in user. |
+| TeamMember.Read.All       | YES                    | Read the members of teams, on behalf of the signed-in user. |
+
 
 # Functions
 SubmitCommission - Used to generate a valid commission submission. Because users cannot write to Pauly the function firsts validates the commissions submission and adds data like the date. Doing all this with the users credentials. Then users an application adds the submission.
@@ -99,8 +187,7 @@ The resource page takes teams posts and displays them. It has access to files an
 ## Sports
 This is the sports page that shows sport highlights and has team rosters. The sports page has embeded youtube videos from the Saint Paul's High School youtube page. It also as videos and images uploaded through government.
 
-## Format
-### Colors
+## Colors
 | Name           | Value     |
 | -------------- | --------- |
 | white          | `#ffffff` |
@@ -114,22 +201,36 @@ This is the sports page that shows sport highlights and has team rosters. The sp
 > Extensions are automatically setup in the initialization process
 ```
 {
-    "id": "paulyEvents",
-    "description": "Pauly Event Data",
-    "targetTypes": [
-        "Event"
-    ],
-    "owner": {application id},
-    "properties": [
-        {
-            "name": "eventType",
-            "type": "String"
-        },
-        {
-            "name": "eventData",
-            "type": "String"
-        }
-    ]
+  id: 'paulyClass',
+  description: 'Pauly Class Data',
+  targetTypes: ['Group'],
+  owner: CLIENT_ID,
+  properties: [
+    {
+      name: 'className', // This property will be optional in the future
+      type: 'String',
+    },
+    {
+      name: 'schoolYearEventId',
+      type: 'String',
+    },
+    {
+      name: 'semesterId',
+      type: 'String',
+    },
+    {
+      name: 'roomId',
+      type: 'String',
+    },
+    {
+      name: 'periodData',
+      type: 'String', // An Array as long as the number of days in the cycle
+    },
+    {
+      name: 'homeroom',
+      type: 'Boolean'
+    }
+  ],
 }
 ```
 
@@ -301,32 +402,3 @@ Go to the admin panel and initilize pauly. Code will break if Pauly is already i
 
 ### Maintenance
 Rotating client secrets after 160 days. Follow the steps in Set Environment Variables no need to change teant id and client id.
-
-## Graph Permissions
-> **Reference**
-> https://learn.microsoft.com/en-us/graph/permissions-reference
-
-> **Why Consent Is Needed**
-> https://learn.microsoft.com/en-us/graph/api/resources/consentrequests-overview?view=graph-rest-1.0
-
-All permissions are Delegated permissions
-### Users
-| Permission                | Admin Consent Required | Description |
-| ------------------------- | ---------------------- | ----------- |
-| User.Read                 | NO                     | Allows users to sign-in to the app, and allows the app to read the profile of signed-in users. It also allows the app to read basic company information of signed-in users. |
-| User.ReadBasic.All        | NO                     | Allows the app to read a basic set of profile properties of other users in your organization on behalf of the signed-in user. This includes display name, first and last name, email address, open extensions and photo. Also allows the app to read the full profile of the signed-in user. |
-| People.Read.All           | YES                    | Allows the app to read a scored list of people relevant to the signed-in user or other users in the signed-in user's organization. The list can include local contacts, contacts from social networking or your organization's directory, and people from recent communications (such as email and Skype). Also allows the app to search the entire directory of the signed-in user's organization. |
-| ChannelMessage.Read.All   | YES                    | Allows an app to read a channel's messages in Microsoft Teams, on behalf of the signed-in user. |
-| Channel.ReadBasic.All     | NO                     | Read channel names and channel descriptions, on behalf of the signed-in user. |
-| Calendars.ReadWrite       | YES                    | Allows the app to create, read, update, and delete events in user calendars. |
-| Team.ReadBasic.All        | NO                     | Read the names and descriptions of teams, on behalf of the signed-in user. |
-| Tasks.ReadWrite           | NO                     | Allows the app to create, read, update, and delete the signed-in user's tasks and task lists, including any shared with the user. |
-| Sites.Read.All            | NO                     | Allows the app to read documents and list items in all site collections on behalf of the signed-in user. |
-| Group.ReadWrite.All       | YES                    | Allows the app to create groups and read all group properties and memberships on behalf of the signed-in user. Also allows the app to read and write calendar, conversations, files, and other group content for all groups the signed-in user can access. Additionally allows group owners to manage their groups and allows group members to update group content. |
-
-### Government
-| Permission                | Admin Consent Required | Description |
-| ------------------------- | ---------------------- | ----------- |
-| Application.ReadWrite.All | YES                    | Allows the app to create, read, update and delete applications and service principals on behalf of the signed-in user. |
-| Sites.Manage.All          | YES                    | Allows the app to manage and create lists, documents, and list items in all site collections on behalf of the signed-in user. |
-| TeamMember.Read.All       | YES                    | Read the members of teams, on behalf of the signed-in user. |

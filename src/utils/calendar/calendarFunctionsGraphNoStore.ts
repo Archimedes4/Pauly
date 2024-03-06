@@ -13,56 +13,6 @@ export async function getTimetableApi(
       result: loadingStateEnum.failed;
     }
 > {
-  const cachedTimetable = store.getState().timetables.timetables.find(e => {
-    return e.id === timetableId;
-  });
-  if (cachedTimetable !== undefined) {
-    return { result: loadingStateEnum.success, timetable: cachedTimetable };
-  }
-  const fetchedTables = store
-    .getState()
-    .timetables.timetablesFetching.find(e => {
-      return e === timetableId;
-    });
-  if (fetchedTables !== undefined) {
-    const timetableResult:
-      | {
-          result: loadingStateEnum.success;
-          data: timetableType;
-        }
-      | { result: loadingStateEnum.failed } = await new Promise(resolve => {
-      const unsubscribe = store.subscribe(async () => {
-        const cachedTimetable = store
-          .getState()
-          .timetables.timetables.find(e => {
-            return e.id === timetableId;
-          });
-        if (cachedTimetable !== undefined) {
-          resolve({
-            result: loadingStateEnum.success,
-            data: cachedTimetable,
-          });
-          unsubscribe();
-        }
-      });
-      async function killCurrentProccess() {
-        await timer(5000);
-        resolve({
-          result: loadingStateEnum.failed,
-        });
-        unsubscribe(); // Unsubscribe after getting the new result
-      }
-      killCurrentProccess();
-    });
-    if (timetableResult.result === loadingStateEnum.success) {
-      return {
-        result: loadingStateEnum.success,
-        timetable: timetableResult.data,
-      };
-    }
-  } else {
-    console.log(`no fetch${timetableId}`);
-  }
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId

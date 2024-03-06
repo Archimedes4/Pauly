@@ -86,6 +86,8 @@ export async function getClassEvents(
     return { result: loadingStateEnum.failed };
   }
 
+  console.log("Class Result", classResult)
+  console.log(classResult.data[0].schoolYearId, schoolYearEventId)
   let outputEvents: eventType[] = [];
   for (let index = 0; index < classResult.data.length; index += 1) {
     if (
@@ -123,6 +125,7 @@ export async function getClassEvents(
   outputEvents = outputEvents.sort((a, b) => {
     return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
   });
+  console.log(outputEvents)
   return { result: loadingStateEnum.success, data: outputEvents };
 }
 
@@ -160,6 +163,7 @@ export async function getClassEventsFromDay(
   store.dispatch(
     homepageDataSlice.actions.setSchoolDayData(resultEvent.schoolDayData),
   );
+  console.log("Here")
   const classResult = await getClassEvents(
     resultEvent.schoolDayData.schedule,
     resultEvent.schoolDayData.semester,
@@ -167,6 +171,7 @@ export async function getClassEventsFromDay(
     resultEvent.schoolDayData.schoolDay,
     new Date(resultEvent.startTime),
   );
+  console.log(classResult)
   if (classResult.result === loadingStateEnum.success) {
     if (classResult.data.length >= 1) {
       const startTimeDate = new Date(classResult.data[0].startTime);

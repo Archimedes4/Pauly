@@ -8,6 +8,7 @@ import store from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests';
 import { getSingleValueProperties } from './calendarFunctionsGraph';
+import { decodeSchoolYearData } from './calendarFunctions';
 
 export default async function getSchoolYears(nextLink?: string): Promise<
   | {
@@ -45,6 +46,10 @@ export default async function getSchoolYears(nextLink?: string): Promise<
     for (let index = 0; index < data.value.length; index += 1) {
       const singleValue = getSingleValueProperties(data.value[index]);
       if (singleValue !== undefined && singleValue.eventType === 'schoolYear') {
+        const decodedSchoolYearData = decodeSchoolYearData(singleValue.eventData)
+        if (decodedSchoolYearData === 'failed') {
+          return { result: loadingStateEnum.failed };
+        }
         newEvents.push({
           id: data.value[index].id,
           name: data.value[index].subject,
@@ -53,9 +58,10 @@ export default async function getSchoolYears(nextLink?: string): Promise<
           allDay: data.value[index].isAllDay,
           eventColor: Colors.white,
           paulyEventType: 'schoolYear',
-          timetableId: singleValue.eventData,
+          timetableId: decodedSchoolYearData.timetableId,
           microsoftEvent: true,
           microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
+          paulyId: decodedSchoolYearData.paulyId
         });
       }
     }

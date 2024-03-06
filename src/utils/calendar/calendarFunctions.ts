@@ -6,6 +6,8 @@
   Basic calendar functions non api, non async
 */
 
+import createUUID from "../ultility/createUUID";
+
 export function getDaysInMonth(input: Date): number {
   const d = new Date();
   d.setFullYear(input.getFullYear(), input.getMonth() + 1, 0);
@@ -209,7 +211,7 @@ export function encodeSchoolDayData(data: schoolDayDataCompressedType): string {
   if (data.sdId.length !== 36) {
     return 'failed';
   }
-  if (data.syeId.length !== 152) {
+  if (data.syeId.length !== 36) {
     return 'failed';
   }
   result += data.dcId + data.sId + data.sdId + data.syeId;
@@ -223,37 +225,54 @@ export function encodeSchoolDayData(data: schoolDayDataCompressedType): string {
 export function decodeSchoolDayData(
   data: string,
 ): schoolDayDataCompressedType | 'failed' {
-  if (data.length < 260) {
+  if (data.length < 145) {
     // failed
     return 'failed';
   }
 
-  if (data.length >= 297) {
+  if (data.length >= 180) {
     try {
-      const sem = parseInt(data.substring(296, data.length));
+      const sem = parseInt(data.substring(180, data.length));
       return {
         dcId: data.substring(0, 36),
         sId: data.substring(36, 72),
         sdId: data.substring(72, 108),
-        syeId: data.substring(108, 260),
+        syeId: data.substring(108, 144),
         sem,
-        dciId: data.substring(260, 296),
+        dciId: data.substring(144, 180),
       };
     } catch {
       return 'failed';
     }
   }
   try {
-    const sem = parseInt(data.substring(260, data.length));
+    const sem = parseInt(data.substring(144, data.length));
     return {
       dciId: '',
       dcId: data.substring(0, 36),
       sId: data.substring(36, 72),
       sdId: data.substring(72, 108),
-      syeId: data.substring(108, 260),
+      syeId: data.substring(108, 144),
       sem,
     };
   } catch {
     return 'failed';
+  }
+}
+
+export function encodeSchoolYearData(timetableId: string) {
+  if (timetableId.length !== 36) {
+    return 'failed'
+  }
+  return timetableId + createUUID()
+}
+
+export function decodeSchoolYearData(input: string) {
+  if (input.length !== 72) {
+    return 'failed'
+  }
+  return {
+    timetableId: input.substring(0, 36),
+    paulyId: input.substring(36, 72)
   }
 }

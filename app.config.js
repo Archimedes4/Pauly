@@ -25,7 +25,7 @@ module.exports = {
         ],
         LSApplicationQueriesSchemes: ['msauthv2', 'msauthv3']
       },
-      buildNumber: '75'
+      buildNumber: '76'
     },
     android: {
       adaptiveIcon: {

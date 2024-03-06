@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { Colors, styles } from '@constants';
 import StyledButton from '@components/StyledButton';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 
 async function deleteEvents() {

@@ -51,6 +51,7 @@ function CurrentTimeLine({
           width: width * highestHorizontalOffset,
           flexDirection: 'row',
           alignItems: 'center',
+          zIndex: 100
         }}
       >
         <Text

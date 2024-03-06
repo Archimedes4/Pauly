@@ -90,13 +90,26 @@ export default async function getEvents() {
     const furtherResult = await getGraphEvents(
       url,
       `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
+      outputEvents
     );
     if (furtherResult.result === loadingStateEnum.success) {
-      outputEvents = [...new Set([...outputEvents, ...furtherResult.events])];
+      outputEvents = [...outputEvents, ...furtherResult.events];
       url = furtherResult.nextLink !== undefined ? furtherResult.nextLink : '';
     } else {
+      console.log("Failed", furtherResult)
       url = '';
     }
+  }
+  function hasDuplicates(array: eventType[]) {
+    var valuesSoFar = [];
+    for (var i = 0; i < array.length; ++i) {
+        var value = array[i].id;
+        if (valuesSoFar.indexOf(value) !== -1) {
+          return true;
+        }
+        valuesSoFar.push(value);
+    }
+    return false;
   }
   store.dispatch(currentEventsSlice.actions.addCurrentEvents(outputEvents));
 
@@ -108,9 +121,9 @@ export default async function getEvents() {
   const results = await Promise.all(pendingRequests);
   for (let index = 0; index < days.length; index += 1) {
     const result = results[index];
-    console.log(result);
     if (result.result === loadingStateEnum.success) {
       store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data));
     }
   }
+  console.log("End Two", store.getState().currentEvents.length)
 }

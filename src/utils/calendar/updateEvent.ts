@@ -3,7 +3,18 @@ import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import store from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import callMsGraph from '@utils/ultility/microsoftAssests';
-import { encodeSchoolDayData } from './calendarFunctions';
+import { encodeSchoolDayData, encodeSchoolYearData } from './calendarFunctions';
+
+function getSchoolYearId() {
+  const selectedSchoolYear = store.getState().addEvent.selectedSchoolYear
+  if (selectedSchoolYear === undefined) {
+    return undefined
+  }
+  if (selectedSchoolYear.paulyEventType !== 'schoolYear') {
+    return undefined
+  }
+  return selectedSchoolYear.paulyId
+}
 
 export default async function createEvent(): Promise<void> {
   const { selectedEvent } = store.getState().addEvent;
@@ -78,7 +89,7 @@ export default async function createEvent(): Promise<void> {
         timeZone: 'Central America Standard Time',
       },
     };
-    const schoolYearId = store.getState().addEvent.selectedSchoolYear?.id;
+    const schoolYearId = getSchoolYearId()
     if (selectedEvent.paulyEventType === 'schoolDay') {
       data.start.dateTime = `${
         selectedEvent.startTime.replace(/.\d+Z$/g, 'Z').split(/[T ]/i, 1)[0]
@@ -111,6 +122,13 @@ export default async function createEvent(): Promise<void> {
       data.isAllDay = true;
     }
     if (selectedEvent.paulyEventType === 'schoolYear') {
+      const encodedSchoolYearData = encodeSchoolYearData(selectedEvent.timetableId);
+      if (encodedSchoolYearData === 'failed') {
+        store.dispatch(
+          addEventSlice.actions.setCreateEventState(loadingStateEnum.failed),
+        );
+        return;
+      }
       data.singleValueExtendedProperties = [
         {
           id: store.getState().paulyList.eventTypeExtensionId,
@@ -118,7 +136,7 @@ export default async function createEvent(): Promise<void> {
         },
         {
           id: store.getState().paulyList.eventDataExtensionId,
-          value: selectedEvent.timetableId,
+          value: encodedSchoolYearData,
         },
       ];
     } else if (

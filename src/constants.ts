@@ -309,6 +309,7 @@ declare global {
         paulyEventType: 'schoolYear';
         timetableId: string;
         microsoftEvent: true;
+        paulyId: string
       }
     | {
         paulyEventType: 'personal';

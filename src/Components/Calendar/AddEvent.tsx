@@ -13,19 +13,14 @@ import {
   TextInput,
   Platform,
 } from 'react-native';
-import { TimePickerModal, DatePickerModal, he } from 'react-native-paper-dates';
+import { TimePickerModal, DatePickerModal } from 'react-native-paper-dates';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import callMsGraph from '@utils/ultility/microsoftAssests';
-import {
-  Colors,
-  loadingStateEnum,
-  semesters,
-  styles,
-} from '@constants';
-import updateEvent from '@src/utils/calendar/updateEvent';
+import { Colors, loadingStateEnum, semesters, styles } from '@constants';
+import updateEvent from '@utils/calendar/updateEvent';
 import { getTextState } from '@utils/ultility/createUUID';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
 import SelectSchoolDayData from './SelectSchoolDayData';
@@ -90,6 +85,7 @@ function setSelectedEventType(e: number) {
             ...selectedEvent,
             paulyEventType: 'schoolYear',
             timetableId: '',
+            paulyId: ''
           }),
         );
         break;
@@ -148,6 +144,7 @@ function setSelectedEventType(e: number) {
             ...selectedEvent,
             paulyEventType: 'schoolYear',
             timetableId: '',
+            paulyId: ''
           }),
         );
         break;

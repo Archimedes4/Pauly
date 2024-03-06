@@ -5,12 +5,14 @@ import {
   Pressable,
   ScrollView,
   FlatList,
+  Switch,
+  Platform,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import store, { RootState } from '@redux/store';
-import { Colors, loadingStateEnum, semesters } from '@constants';
+import { Colors, loadingStateEnum, semesters, styles } from '@constants';
 import getSchoolYears from '@utils/calendar/getSchoolYears';
 import { getEvent } from '@utils/calendar/calendarFunctionsGraph';
 import { CloseIcon, WarningIcon } from '@components/Icons';
@@ -21,7 +23,7 @@ import ProgressView from '@components/ProgressView';
 import SecondStyledButton from '@components/StyledButton';
 import { getTextState } from '@utils/ultility/createUUID';
 import StyledButton from '@components/StyledButton';
-import { getTimetable } from '@src/redux/reducers/timetableReducer';
+import { getTimetable } from '@redux/reducers/timetableReducer';
 
 function PeriodBlock({
   selectedSchoolYear,
@@ -242,6 +244,9 @@ function SchoolYearBlock({
           />
         )}
         style={{ height: height * 0.3 }}
+        ListEmptyComponent={() => (
+          <Text>No School Years Created</Text>
+        )}
       />
     );
   }
@@ -262,6 +267,7 @@ export default function GovernmentClassesEdit() {
   const [selectedRoom, setSelectedRoom] = useState<roomType | undefined>(
     undefined,
   );
+  const [isHomeroom, setIsHomeroom] = useState<boolean>(false)
 
   // School Years State
   const [selectedSchoolYear, setSelectedSchoolYear] = useState<
@@ -296,14 +302,12 @@ export default function GovernmentClassesEdit() {
         setClassName(extensionData.className);
         setSelectedSemester(JSON.parse(extensionData.semesterId));
         setPeriods(JSON.parse(extensionData.periodData));
-        const eventResult = await getEvent(extensionData.schoolYearEventId);
+        setIsHomeroom(extensionData.isHomeroom)
         const roomResult = await getRoom(extensionData.roomId);
         if (
-          eventResult.result === loadingStateEnum.success &&
           roomResult.result === loadingStateEnum.success
         ) {
           setSelectedRoom(roomResult.data);
-          setSelectedSchoolYear(eventResult.data);
         } else {
           setClassState(loadingStateEnum.failed);
         }
@@ -318,15 +322,16 @@ export default function GovernmentClassesEdit() {
   }
 
   async function updateClass() {
-    if (selectedRoom !== undefined && selectedSchoolYear !== undefined) {
+    if (selectedRoom !== undefined && selectedSchoolYear !== undefined && selectedSchoolYear.paulyEventType === 'schoolYear') {
       setUpdateClassState(loadingStateEnum.loading);
       const data: any = {};
       data[store.getState().paulyList.classExtensionId] = {
         className,
-        schoolYearEventId: selectedSchoolYear.id,
+        schoolYearEventId: selectedSchoolYear.paulyId,
         semesterId: JSON.stringify(selectedSemester),
         roomId: selectedRoom.id,
         periodData: JSON.stringify(periods),
+        isHomeroom
       };
 
       const result = await callMsGraph(
@@ -370,161 +375,175 @@ export default function GovernmentClassesEdit() {
     );
   }
 
-  return (
-    <>
-      <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
-        <View>
-          {classState === loadingStateEnum.success ? (
-            <View
+  if (classState === loadingStateEnum.success) {
+    return (
+      <>
+        <ScrollView style={{ width, height, backgroundColor: Colors.white }}>
+          <View
+            style={{
+              width,
+              backgroundColor: Colors.white,
+            }}
+          >
+            <Link href="/government/classes">Back</Link>
+            <Text
               style={{
-                width,
-                backgroundColor: Colors.white,
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                fontFamily: 'Comfortaa-Regular',
+                marginBottom: 5,
+                fontSize: 25,
               }}
             >
-              <Link href="/government/classes">Back</Link>
-              <Text
-                style={{
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                  fontFamily: 'Comfortaa-Regular',
-                  marginBottom: 5,
-                  fontSize: 25,
-                }}
-              >
-                Add Class Data
-              </Text>
-              <View>
-                <Text style={{ marginLeft: 25 }}>Name</Text>
-                <TextInput
-                  value={className}
-                  onChangeText={setClassName}
-                  style={{
-                    padding: 10,
-                    borderWidth: 1,
-                    borderColor: Colors.black,
-                    borderRadius: 30,
-                    marginLeft: 15,
-                    marginRight: 15,
-                  }}
-                />
-              </View>
-              <Text>School Years</Text>
-              <SchoolYearBlock
-                selectedSchoolYear={selectedSchoolYear}
-                setSelectedSchoolYear={setSelectedSchoolYear}
-              />
-              <PeriodBlock
-                selectedSchoolYear={selectedSchoolYear}
-                periods={periods}
-                setPeriods={setPeriods}
-              />
-              <View
-                style={{
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                  flexDirection: 'row',
-                }}
-              >
-                <StyledButton
-                  text="Semester One"
-                  selected={selectedSemester.includes(semesters.semesterOne)}
-                  onPress={() => {
-                    if (selectedSemester.includes(semesters.semesterOne)) {
-                      setSelectedSemester([
-                        ...selectedSemester.filter(e => {
-                          return e !== semesters.semesterOne;
-                        }),
-                      ]);
-                    } else {
-                      setSelectedSemester([
-                        ...selectedSemester,
-                        semesters.semesterOne,
-                      ]);
-                    }
-                  }}
-                  style={{ marginRight: 5 }}
-                />
-                <StyledButton
-                  text="Semester Two"
-                  selected={selectedSemester.includes(semesters.semesterTwo)}
-                  onPress={() => {
-                    if (selectedSemester.includes(semesters.semesterTwo)) {
-                      setSelectedSemester([
-                        ...selectedSemester.filter(e => {
-                          return e !== semesters.semesterTwo;
-                        }),
-                      ]);
-                    } else {
-                      setSelectedSemester([
-                        ...selectedSemester,
-                        semesters.semesterTwo,
-                      ]);
-                    }
-                  }}
-                  style={{ marginLeft: 5 }}
-                />
-              </View>
-              <RoomsBlock
-                selectedRoom={selectedRoom}
-                setSelectedRoom={setSelectedRoom}
-              />
-              <SecondStyledButton
-                text={`${isCreating ? 'Create' : 'Update'} Class`}
-                onPress={() => {
-                  setIsShowingClassConfirmMenu(true);
-                }}
-                style={{ marginBottom: 10, marginLeft: 15, marginRight: 15 }}
+              Add Class Data
+            </Text>
+            <View>
+              <Text style={{ marginLeft: 25 }}>Name</Text>
+              <TextInput
+                value={className}
+                onChangeText={setClassName}
+                style={styles.textInputStyle}
               />
             </View>
-          ) : (
-            <Text>Failed</Text>
-          )}
-        </View>
-      </ScrollView>
-      {isShowingClassConfirmMenu ? (
-        <View
-          style={{
-            width: width * 0.8,
-            height: height * 0.8,
-            top: height * 0.1,
-            left: width * 0.1,
-            borderRadius: 15,
-            backgroundColor: Colors.white,
-            position: 'absolute',
-            shadowColor: Colors.black,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.8,
-            shadowRadius: 10,
-          }}
-        >
-          <Pressable
-            onPress={() => {
-              setIsShowingClassConfirmMenu(false);
+            <View style={{flexDirection: 'row', margin: 15}}>
+              <Text style={{marginRight: 15}}>Is Homeroom</Text>
+              <Switch
+                trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
+                thumbColor={
+                  isHomeroom ? Colors.maroon : Colors.darkGray
+                }
+                {...Platform.select({
+                  web: {
+                    activeThumbColor: Colors.maroon,
+                  },
+                })}
+                ios_backgroundColor={Colors.lightGray}
+                onValueChange={setIsHomeroom}
+                value={isHomeroom}
+                style={{ marginLeft: 5 }}
+              />
+            </View>
+            <Text>School Years</Text>
+            <SchoolYearBlock
+              selectedSchoolYear={selectedSchoolYear}
+              setSelectedSchoolYear={setSelectedSchoolYear}
+            />
+            <PeriodBlock
+              selectedSchoolYear={selectedSchoolYear}
+              periods={periods}
+              setPeriods={setPeriods}
+            />
+            <View
+              style={{
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                flexDirection: 'row',
+              }}
+            >
+              <StyledButton
+                text="Semester One"
+                selected={selectedSemester.includes(semesters.semesterOne)}
+                onPress={() => {
+                  if (selectedSemester.includes(semesters.semesterOne)) {
+                    setSelectedSemester([
+                      ...selectedSemester.filter(e => {
+                        return e !== semesters.semesterOne;
+                      }),
+                    ]);
+                  } else {
+                    setSelectedSemester([
+                      ...selectedSemester,
+                      semesters.semesterOne,
+                    ]);
+                  }
+                }}
+                style={{ marginRight: 5 }}
+              />
+              <StyledButton
+                text="Semester Two"
+                selected={selectedSemester.includes(semesters.semesterTwo)}
+                onPress={() => {
+                  if (selectedSemester.includes(semesters.semesterTwo)) {
+                    setSelectedSemester([
+                      ...selectedSemester.filter(e => {
+                        return e !== semesters.semesterTwo;
+                      }),
+                    ]);
+                  } else {
+                    setSelectedSemester([
+                      ...selectedSemester,
+                      semesters.semesterTwo,
+                    ]);
+                  }
+                }}
+                style={{ marginLeft: 5 }}
+              />
+            </View>
+            <RoomsBlock
+              selectedRoom={selectedRoom}
+              setSelectedRoom={setSelectedRoom}
+            />
+            <SecondStyledButton
+              text={`${isCreating ? 'Create' : 'Update'} Class`}
+              onPress={() => {
+                setIsShowingClassConfirmMenu(true);
+              }}
+              style={{ marginBottom: 10, marginLeft: 15, marginRight: 15 }}
+            />
+          </View>
+        </ScrollView>
+        {isShowingClassConfirmMenu ? (
+          <View
+            style={{
+              width: width * 0.8,
+              height: height * 0.8,
+              top: height * 0.1,
+              left: width * 0.1,
+              borderRadius: 15,
+              backgroundColor: Colors.white,
+              position: 'absolute',
+              shadowColor: Colors.black,
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.8,
+              shadowRadius: 10,
             }}
-            style={{ margin: 15 }}
           >
-            <CloseIcon width={14} height={14} />
-          </Pressable>
-          <Text>{isCreating ? 'Create' : 'Update'} Class</Text>
-          <Text>Name: {className}</Text>
-          <Text>Room: {selectedRoom?.name}</Text>
-          <Text>School Year: {selectedSchoolYear?.name}</Text>
-          <Text>Semester: {selectedSemester.toString()}</Text>
-          <StyledButton
-            text={getTextState(updateClassState, {
-              cannotStart: 'Cannot Update Class',
-              notStarted: 'Update Class',
-              success: 'Updated Class',
-              failed: 'Failed To Update Class',
-            })}
-            onPress={() => {
-              updateClass();
-            }}
-            style={{ margin: 15 }}
-          />
-        </View>
-      ) : null}
-    </>
+            <Pressable
+              onPress={() => {
+                setIsShowingClassConfirmMenu(false);
+              }}
+              style={{ margin: 15 }}
+            >
+              <CloseIcon width={14} height={14} />
+            </Pressable>
+            <Text>{isCreating ? 'Create' : 'Update'} Class</Text>
+            <Text>Name: {className}</Text>
+            <Text>Room: {selectedRoom?.name}</Text>
+            <Text>School Year: {selectedSchoolYear?.name}</Text>
+            <Text>Semester: {selectedSemester.toString()}</Text>
+            <StyledButton
+              text={getTextState(updateClassState, {
+                cannotStart: 'Cannot Update Class',
+                notStarted: 'Update Class',
+                success: 'Updated Class',
+                failed: 'Failed To Update Class',
+              })}
+              onPress={() => {
+                updateClass();
+              }}
+              style={{ margin: 15 }}
+            />
+          </View>
+        ) : null}
+      </>
+    )
+  }
+
+  return (
+    <View style={{ width, height, backgroundColor: Colors.white }}>
+      <Link href="/government/classes">Back</Link>
+      <Text style={{margin: 'auto'}}>Failed</Text>
+    </View>
   );
 }
 

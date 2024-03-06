@@ -7,9 +7,9 @@ import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import BackButton from '@components/BackButton';
 import { getLeaderboard } from '@redux/reducers/leaderboardReducer';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { PersonIcon } from '@components/Icons';
-import SegmentedPicker from '@src/components/Pickers/SegmentedPicker';
+import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 
 function UserImage({ id }: { id: string }) {
   const { height, width } = useSelector((state: RootState) => state.dimensions);
@@ -206,7 +206,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                   }}
                 >
                   {topThree.length >= 3 ? (
-                    <UserImage id={topThree[2].id}/>:null
+                    <UserImage id={topThree[2].id}/>
                   ) : null}
                   <View
                     style={{
@@ -217,13 +217,13 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                     }}
                   >
                     {topThree.length >= 3 ? (
-                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[2].name}</Text>:null
+                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[2].name}</Text>
                     ) : null}
                   </View>
                 </View>
                 <View style={{ width: width * 0.2, height: height * 0.3 }}>
                   {topThree.length >= 1 ? (
-                    <UserImage id={topThree[0].id}/>:null
+                    <UserImage id={topThree[0].id}/>
                   ) : null}
                   <View
                     style={{
@@ -235,7 +235,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                     }}
                   >
                     {topThree.length >= 1 ? (
-                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[0].name}</Text>:null
+                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[0].name}</Text>
                     ) : null}
                   </View>
                 </View>
@@ -248,7 +248,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                   }}
                 >
                   {topThree.length >= 2 ? (
-                    <UserImage id={topThree[1].id}/>:null
+                    <UserImage id={topThree[1].id}/>
                   ) : null}
                   <View
                     style={{
@@ -260,7 +260,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                     }}
                   >
                     {topThree.length >= 2 ? (
-                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[1].name}</Text>:null
+                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[1].name}</Text>
                     ) : null}
                   </View>
                 </View>
