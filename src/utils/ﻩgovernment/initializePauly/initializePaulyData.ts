@@ -268,7 +268,7 @@ export const commissionsSubmissionsData = {
       indexed: true
     },
     {
-      name: 'hoomroomId',
+      name: 'homeroomId',
       text: {},
       required: true,
       indexed: true

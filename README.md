@@ -329,7 +329,7 @@ https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#a
 https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update \
 update azure ad app
 ```
-  az rest `--method PATCH ` --uri 'https://graph.microsoft.com/v1.0/applications/{id}' `--headers 'Content-Type=application/json' ` --body "{spa:{redirectUris:['http://localhost:19006/auth', 'https://paulysphs.ca', 'https://www.paulysphs.ca']},publicClientApplication: {redirectUris: ['com.Archimedes4.Pauly://auth']}, signInAudience: "AzureADMyOrg"}"
+  az rest --method patch --uri 'https://graph.microsoft.com/v1.0/applications/{id}' --headers 'Content-Type=application/json' --body "{"spa":{"redirectUris":["http://localhost:19006/auth","https://paulysphs.ca","https://www.paulysphs.ca"]},"publicClientApplication":{"redirectUris":["com.Archimedes4.Pauly://auth"]},"signInAudience":"AzureADMyOrg","api":{"oauth2PermissionScopes":[{"adminConsentDescription":"All the scopes required to claim commissions in Pauly. This is to access the main function of the commissions api.","adminConsentDisplayName":"claim commission","id":"c62762bd-6568-4f5f-b9d5-eb0eae3882cf","isEnabled":true,"type":"User","userConsentDescription":null,"userConsentDisplayName":null,"value":"commissions"}]}}"
 ```
 
 #### Create Static Web App

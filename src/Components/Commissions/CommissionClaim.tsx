@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Pressable, View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import getUsersLocation from '@utils/commissions/getLocation';
 import {
   addImage,
@@ -16,6 +16,7 @@ import {
 import ProgressView from '@components/ProgressView';
 import { getTextState } from '@utils/ultility/createUUID';
 import usePaulyApi from '@hooks/usePaulyApi';
+import { getClasses } from '@redux/reducers/classesReducer';
 
 export default function CommissionClaim({
   commission,
@@ -36,6 +37,16 @@ export default function CommissionClaim({
       return;
     }
 
+    const classes = await getClasses(store)
+    if (classes.result !== loadingStateEnum.success) {
+      setClaimCommissionState(loadingStateEnum.failed);
+      return;
+    }
+    const homeroom = classes.data.find((e) => {return e.isHomeroom === true})
+    if (homeroom === undefined) {
+      setClaimCommissionState(loadingStateEnum.failed);
+      return;
+    }
     let outImageUrl: string = '';
     if (
       (commission.value === commissionTypeEnum.Image ||
@@ -65,6 +76,7 @@ export default function CommissionClaim({
         const result = await claimCommissionPost(
           accessToken,
           commission.commissionId,
+          homeroom.id,
           outImageUrl !== '' ? outImageUrl : undefined,
           locationResult.data,
         );
@@ -76,6 +88,7 @@ export default function CommissionClaim({
       const result = await claimCommissionPost(
         accessToken,
         commission.commissionId,
+        homeroom.id,
         outImageUrl !== '' ? outImageUrl : undefined,
         undefined,
       );

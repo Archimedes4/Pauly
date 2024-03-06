@@ -143,6 +143,7 @@ export async function addImage(
 export async function claimCommissionPost(
   auth: string,
   commissionId: string,
+  homeroomId: string,
   imageShare?: string,
   location?: locationCoords,
 ): Promise<loadingStateEnum> {
@@ -156,14 +157,13 @@ export async function claimCommissionPost(
   const bearer = `Bearer ${auth}`;
   try {
     const result = await fetch(
-      `${process.env.EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT}/api/SubmitCommission?orgWideGroupId=${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}&commissionId=${commissionId}${outResult}`,
+      `${process.env.EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT}/api/SubmitCommission?orgWideGroupId=${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}&commissionId=${commissionId}${outResult}&homeroomId=${homeroomId}`,
       {
         headers: {
           Authorization: bearer,
         },
       },
     );
-    const data = await result.json();
     if (result.ok) {
       return loadingStateEnum.success;
     }

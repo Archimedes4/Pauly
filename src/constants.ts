@@ -194,6 +194,7 @@ declare global {
     semester: semesters[];
     periods: number[];
     teamLink: string;
+    isHomeroom: boolean;
   };
   type commissionQRCodeTimed =
     | {
