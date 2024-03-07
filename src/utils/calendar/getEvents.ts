@@ -100,17 +100,6 @@ export default async function getEvents() {
       url = '';
     }
   }
-  function hasDuplicates(array: eventType[]) {
-    var valuesSoFar = [];
-    for (var i = 0; i < array.length; ++i) {
-        var value = array[i].id;
-        if (valuesSoFar.indexOf(value) !== -1) {
-          return true;
-        }
-        valuesSoFar.push(value);
-    }
-    return false;
-  }
   store.dispatch(currentEventsSlice.actions.addCurrentEvents(outputEvents));
 
   const days = getDOW(new Date(selectedDate));
@@ -125,5 +114,4 @@ export default async function getEvents() {
       store.dispatch(currentEventsSlice.actions.addCurrentEvents(result.data));
     }
   }
-  console.log("End Two", store.getState().currentEvents.length)
 }

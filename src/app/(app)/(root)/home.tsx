@@ -6,7 +6,7 @@
   This is the homepage for when the width is less than 576
 */
 import React, { useEffect, useCallback } from 'react';
-import { View, Text, Image, Pressable } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import MonthView from '@components/MonthView';

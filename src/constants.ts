@@ -740,14 +740,13 @@ export const paperTheme: ThemeProp = {
 export const scopes = [
   'User.Read',
   'User.ReadBasic.All',
-  'Sites.Read.All',
   'ChannelMessage.Read.All',
-  'Chat.ReadWrite',
+  'Channel.ReadBasic.All',
   'Calendars.ReadWrite',
   'Team.ReadBasic.All',
-  'Group.ReadWrite.All',
   'Tasks.ReadWrite',
-  'Channel.ReadBasic.All',
+  'Sites.Read.All',
+  'Group.ReadWrite.All',
 ];
 
 export const governmentScopes = [
@@ -755,7 +754,6 @@ export const governmentScopes = [
   'User.ReadBasic.All',
   'Sites.Read.All',
   'ChannelMessage.Read.All',
-  'Chat.ReadWrite',
   'Calendars.ReadWrite',
   'Team.ReadBasic.All',
   'Group.ReadWrite.All',

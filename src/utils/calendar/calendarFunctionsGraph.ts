@@ -236,9 +236,7 @@ export async function getGraphEvents(
       if (resultRequest.result === loadingStateEnum.success) {
         newEvents = [...newEvents, resultRequest.data]
       } else {
-        return {
-          result: loadingStateEnum.failed
-        }
+        console.log("Failure")
       }
     }
 
@@ -535,15 +533,12 @@ export async function getSchoolDays(date: Date): Promise<
     }
   }
 
-  
-  console.log("mark 3")
   const schoolDaysResult: eventType[] = [];
   for (let index = 0; index < data.length; index += 1) {
     const singleValue = getSingleValueProperties(data[index])
     if (singleValue == undefined) {
       return { result: loadingStateEnum.failed };
     }
-    console.log("mark 4")
     if (singleValue.eventType !== 'schoolDay') {
       continue
     }
@@ -551,15 +546,12 @@ export async function getSchoolDays(date: Date): Promise<
     if (schoolDayDecoded === 'failed') {
       return { result: loadingStateEnum.failed };
     }
-    console.log("mark 5", schoolYearIds)
     const schedule = schedules.get(schoolDayDecoded.sId);
     const timetableId = schoolYearIds.get(schoolDayDecoded.syeId)
     if (timetableId === undefined) {
       return { result: loadingStateEnum.failed };
     }
-    console.log("mark 6")
     const timetable = await getTimetable(timetableId, store);
-    console.log(timetable)
     if (timetable.result !== loadingStateEnum.success) {
       return { result: loadingStateEnum.failed };
     }
@@ -678,6 +670,7 @@ async function getSchoolDayData(
   if (schoolYearEvent === undefined || schoolYearEvent.paulyEventType !== 'schoolYear') {
     return { result: loadingStateEnum.failed };
   }
+
   const timetable = await getTimetable(schoolYearEvent.timetableId, store);
   if (timetable.result !== loadingStateEnum.success) {
     return { result: loadingStateEnum.failed };

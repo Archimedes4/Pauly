@@ -657,9 +657,9 @@ export default function AddEvent({
             );
           }}
         >
-          <CloseIcon width={10} height={10} />
+          <CloseIcon width={20} height={20} />
         </Pressable>
-        <Text style={{ fontFamily: 'BukhariScript' }}>
+        <Text style={{ fontFamily: 'BukhariScript', marginBottom: 5, marginTop: 5 }}>
           {selectedEvent.id !== 'create' ? 'Edit' : 'Add'} Event
         </Text>
         <TextInput

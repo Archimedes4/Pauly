@@ -128,12 +128,11 @@ Patch: Inside Issue very simple chaning the timout
 > https://learn.microsoft.com/en-us/graph/api/resources/consentrequests-overview?view=graph-rest-1.0
 
 All permissions are Delegated permissions
-### Users
+### Regular Users Permissions
 | Permission                | Admin Consent Required | Description |
 | ------------------------- | ---------------------- | ----------- |
 | User.Read                 | NO                     | Allows users to sign-in to the app, and allows the app to read the profile of signed-in users. It also allows the app to read basic company information of signed-in users. |
 | User.ReadBasic.All        | NO                     | Allows the app to read a basic set of profile properties of other users in your organization on behalf of the signed-in user. This includes display name, first and last name, email address, open extensions and photo. Also allows the app to read the full profile of the signed-in user. |
-| People.Read.All           | YES                    | Allows the app to read a scored list of people relevant to the signed-in user or other users in the signed-in user's organization. The list can include local contacts, contacts from social networking or your organization's directory, and people from recent communications (such as email and Skype). Also allows the app to search the entire directory of the signed-in user's organization. |
 | ChannelMessage.Read.All   | YES                    | Allows an app to read a channel's messages in Microsoft Teams, on behalf of the signed-in user. |
 | Channel.ReadBasic.All     | NO                     | Read channel names and channel descriptions, on behalf of the signed-in user. |
 | Calendars.ReadWrite       | YES                    | Allows the app to create, read, update, and delete events in user calendars. |
@@ -142,12 +141,14 @@ All permissions are Delegated permissions
 | Sites.Read.All            | NO                     | Allows the app to read documents and list items in all site collections on behalf of the signed-in user. |
 | Group.ReadWrite.All       | YES                    | Allows the app to create groups and read all group properties and memberships on behalf of the signed-in user. Also allows the app to read and write calendar, conversations, files, and other group content for all groups the signed-in user can access. Additionally allows group owners to manage their groups and allows group members to update group content. |
 
-### Government
+### Government Permissions
+This also has the regular permissions these are just extra.
 | Permission                | Admin Consent Required | Description |
 | ------------------------- | ---------------------- | ----------- |
 | Application.ReadWrite.All | YES                    | Allows the app to create, read, update and delete applications and service principals on behalf of the signed-in user. |
 | Sites.Manage.All          | YES                    | Allows the app to manage and create lists, documents, and list items in all site collections on behalf of the signed-in user. |
 | TeamMember.Read.All       | YES                    | Read the members of teams, on behalf of the signed-in user. |
+| TeamSettings.ReadWrite.All| YES                    | Read and change all teams' settings, on behalf of the signed-in user. |
 
 
 # Functions
@@ -155,9 +156,9 @@ SubmitCommission - Used to generate a valid commission submission. Because users
 
 SyncCalendarOrchestator - A durable function composed of activities that sync a iCalendar with Paulys Calendar. The function is mostly idempotent and uses apis that have the same output no matter when called.
 
-Known limitations:
--For loops, find and some are used throught the code. Therefore, if many thousands of events were to be tracked the function would fail.
--As for being idempotent, if the function was called many times at once and had to create events, the function would create multiple events. This is because the function looks for events that exist and then creates them, but all the orchestrates would have calculated that an event needs to be created and therefore would create events. As long as the orcestrator is not spammed and called many times while other orcestrations are running it will work. It also does not matter when azure decideds to run the function, if the function is run well after it is called it still works. The only limitation in that regard is the token expiering and therefore, the function would fail and could be run again without issue.
+Known limitations: 
+1. For loops, find and some are used throught the code. Therefore, if many thousands of events were to be tracked the function would fail. 
+2. As for being idempotent, if the function was called many times at once and had to create events, the function would create multiple events. This is because the function looks for events that exist and then creates them, but all the orchestrates would have calculated that an event needs to be created and therefore would create events. As long as the orcestrator is not spammed and called many times while other orcestrations are running it will work. It also does not matter when azure decideds to run the function, if the function is run well after it is called it still works. The only limitation in that regard is the token expiering and therefore, the function would fail and could be run again without issue.
 
 # About the app 
 ## Calendar
@@ -394,6 +395,7 @@ https://learn.microsoft.com/en-us/cli/azure/functionapp/deployment/github-action
 ```
 
 ### Step #2
+Login into pauly in government mode. Than go to governent -> graph -> groups. Look for Pauly, click on it can copy id. This is the org id for the group.
 Pauly has a config file named PaulyConfig which contains three values these values need to be apart of the main config file inorder for Pauly to work.
   1. tenant id
   2. Client ID (the ID of Paulys application)
@@ -401,15 +403,28 @@ Pauly has a config file named PaulyConfig which contains three values these valu
 
 ### Step #3 Initilize Pauly
 Go to the admin panel and initilize pauly. Code will break if Pauly is already initilized. If hard reseting Pauly delete Pauly group and Pauly extensions. This can all be done in the graph section of Government.
-![Graph Permissions](./ReamMeImages/GraphPermissions.png)
+![Graph Permissions](./documentation/ReamMeImages/GraphPermissions.png)
 
 ### Step # 4 Give function permissions
-Give the application the Sties.Selected permission.
+Give the application the Sties.Selected permission. \
+
+#### Give the Sites.Selected permission
+Go to Azure then -> Microsoft Entra Id -> App Registrations -> Pauly -> Api Permissions \
+looks like: \
+![add site](./documentation/READMEImages/PickAddPerm.png)
+
+Follow the images to add the permission.
+
+![pick ms graph](./documentation/READMEImages/PickMsGraph.png)
+![pick application](./documentation/READMEImages/PickApplicationPerm.png)
+![pick site](./documentation/READMEImages/PickSitePerm.png)
+
+#### Give the permission for Pauly's Site
 go to https://developer.microsoft.com/en-us/graph/graph-explorer
 
 get the site id
 ```
-  https://graph.microsoft.com/v1.0/groups/{orwidegroupId}/sites/root?$select=id
+  https://graph.microsoft.com/v1.0/groups/{orgId}/sites/root?$select=id
 ```
 Give the permission Sites.FullControl.All to ms graph. Do not consent on behalf of organization. \
 set the method to POST and the url to

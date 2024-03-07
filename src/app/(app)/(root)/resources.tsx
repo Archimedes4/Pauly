@@ -343,6 +343,9 @@ function ResourceScholarships() {
           height: height * 0.85,
           width,
           backgroundColor: Colors.lightGray,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
         <ProgressView width={14} height={14} />
