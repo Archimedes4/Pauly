@@ -1,4 +1,4 @@
-import { getEventInterval } from '@src/utils/calendar/getEvents';
+import { getEventInterval } from '@utils/calendar/getEvents';
 
 it('creates the correct interval', () => {
   expect(getEventInterval('2024-03-02T20:36:45.708Z')).toStrictEqual({

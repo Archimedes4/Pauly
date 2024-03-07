@@ -71,7 +71,7 @@ export async function getRoom(roomId: string): Promise<
   return { result: loadingStateEnum.failed };
 }
 
-export async function getClassEvents(
+async function getClassEvents(
   schedule: scheduleType,
   semester: semesters,
   schoolYearEventId: string,

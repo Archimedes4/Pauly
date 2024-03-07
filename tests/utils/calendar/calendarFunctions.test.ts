@@ -51,17 +51,17 @@ it('encodes school day data correctly without dress code id', () => {
       sem: 1,
       dciId: '',
       syeId:
-        'AAMkADIxNzhkZTNhLWZlMWEtNDJlOS1iMjM0LTRmMDlhYWJmN2M2MwBGAAAAAACD9GVGAvw2RrRZ4M8KnC4PBwDTZDqgAwbTSLGJgHaYgqsJAAAAAAENAADTZDqgAwbTSLGJgHaYgqsJAAAk-3meAAA=',
+        '27257221-6a42-4a8e-96c7-6aa79382437b',
     }),
   ).toBe(
-    '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602bAAMkADIxNzhkZTNhLWZlMWEtNDJlOS1iMjM0LTRmMDlhYWJmN2M2MwBGAAAAAACD9GVGAvw2RrRZ4M8KnC4PBwDTZDqgAwbTSLGJgHaYgqsJAAAAAAENAADTZDqgAwbTSLGJgHaYgqsJAAAk-3meAAA=1',
+    '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602b27257221-6a42-4a8e-96c7-6aa79382437b1',
   );
 });
 
 it('decodes school day data correctly without dress code id', () => {
   expect(
     decodeSchoolDayData(
-      '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602bAAMkADIxNzhkZTNhLWZlMWEtNDJlOS1iMjM0LTRmMDlhYWJmN2M2MwBGAAAAAACD9GVGAvw2RrRZ4M8KnC4PBwDTZDqgAwbTSLGJgHaYgqsJAAAAAAENAADTZDqgAwbTSLGJgHaYgqsJAAAk-3meAAA=1',
+      '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602b27257221-6a42-4a8e-96c7-6aa79382437b1',
     ),
   ).toStrictEqual({
     sdId: '20ae2a0a-c3e0-4ab7-b975-c189545b602b',
@@ -69,8 +69,7 @@ it('decodes school day data correctly without dress code id', () => {
     dcId: '456bd570-337e-4c99-ab99-defb3558c59f',
     sem: 1,
     dciId: '',
-    syeId:
-      'AAMkADIxNzhkZTNhLWZlMWEtNDJlOS1iMjM0LTRmMDlhYWJmN2M2MwBGAAAAAACD9GVGAvw2RrRZ4M8KnC4PBwDTZDqgAwbTSLGJgHaYgqsJAAAAAAENAADTZDqgAwbTSLGJgHaYgqsJAAAk-3meAAA=',
+    syeId: '27257221-6a42-4a8e-96c7-6aa79382437b',
   });
 });
 
@@ -83,17 +82,17 @@ it('encodes school day data correctly without dress code id', () => {
       sem: 1,
       dciId: '14253221-6b02-4n8e-19j2-6ja79682437f',
       syeId:
-        'AAMkADIxNzhkZTNhLWZlMWEtNDJlOS1iMjM0LTRmMDlhYWJmN2M2MwBGAAAAAACD9GVGAvw2RrRZ4M8KnC4PBwDTZDqgAwbTSLGJgHaYgqsJAAAAAAENAADTZDqgAwbTSLGJgHaYgqsJAAAk-3meAAA=',
+        '27257221-6a42-4a8e-96c7-6aa79382437b',
     }),
   ).toBe(
-    '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602bAAMkADIxNzhkZTNhLWZlMWEtNDJlOS1iMjM0LTRmMDlhYWJmN2M2MwBGAAAAAACD9GVGAvw2RrRZ4M8KnC4PBwDTZDqgAwbTSLGJgHaYgqsJAAAAAAENAADTZDqgAwbTSLGJgHaYgqsJAAAk-3meAAA=14253221-6b02-4n8e-19j2-6ja79682437f1',
+    '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602b27257221-6a42-4a8e-96c7-6aa79382437b14253221-6b02-4n8e-19j2-6ja79682437f1',
   );
 });
 
 it('decodes school day data correctly with dress code id', () => {
   expect(
     decodeSchoolDayData(
-      '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602bAAMkADIxNzhkZTNhLWZlMWEtNDJlOS1iMjM0LTRmMDlhYWJmN2M2MwBGAAAAAACD9GVGAvw2RrRZ4M8KnC4PBwDTZDqgAwbTSLGJgHaYgqsJAAAAAAENAADTZDqgAwbTSLGJgHaYgqsJAAAk-3meAAA=14253221-6b02-4n8e-19j2-6ja79682437f1',
+      '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602b456bd570-337e-4c99-ab99-defb3558c59f14253221-6b02-4n8e-19j2-6ja79682437f1',
     ),
   ).toStrictEqual({
     sdId: '20ae2a0a-c3e0-4ab7-b975-c189545b602b',
@@ -102,6 +101,6 @@ it('decodes school day data correctly with dress code id', () => {
     sem: 1,
     dciId: '14253221-6b02-4n8e-19j2-6ja79682437f',
     syeId:
-      'AAMkADIxNzhkZTNhLWZlMWEtNDJlOS1iMjM0LTRmMDlhYWJmN2M2MwBGAAAAAACD9GVGAvw2RrRZ4M8KnC4PBwDTZDqgAwbTSLGJgHaYgqsJAAAAAAENAADTZDqgAwbTSLGJgHaYgqsJAAAk-3meAAA=',
+      '456bd570-337e-4c99-ab99-defb3558c59f',
   });
 });

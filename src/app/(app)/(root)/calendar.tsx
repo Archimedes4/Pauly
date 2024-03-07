@@ -17,7 +17,7 @@ import { Colors, calendarMode } from '@constants';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import BackButton from '@components/BackButton';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
-import getEvents from '@utils/calendar/getEvents';
+import getEvents, { getClassEvents } from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@components/Calendar/MonthView';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
@@ -184,6 +184,7 @@ export default function Calendar() {
       getEvents();
     } else {
       dispatch(currentEventsSlice.actions.removeClassEvents());
+      getClassEvents()
     }
   }, [selectedDate]);
 

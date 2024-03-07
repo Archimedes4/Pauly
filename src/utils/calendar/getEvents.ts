@@ -101,7 +101,11 @@ export default async function getEvents() {
     }
   }
   store.dispatch(currentEventsSlice.actions.addCurrentEvents(outputEvents));
+  getClassEvents()
+}
 
+export async function getClassEvents() {
+  const selectedDate = store.getState().selectedDate
   const days = getDOW(new Date(selectedDate));
   const pendingRequests = [];
   for (let index = 0; index < days.length; index += 1) {
