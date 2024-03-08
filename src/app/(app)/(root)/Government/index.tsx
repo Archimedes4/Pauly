@@ -107,8 +107,8 @@ export default function Government() {
     }
     store.dispatch(
       safeAreaColorsSlice.actions.setSafeArea({
-        top: Colors.white,
-        bottom: Colors.white,
+        top: Colors.lightGray,
+        bottom: Colors.lightGray,
         isTopTransparent: false,
         isBottomTransparent: true,
         overflowHidden: true,

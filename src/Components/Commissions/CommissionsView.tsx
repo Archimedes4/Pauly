@@ -14,6 +14,7 @@ import { Colors, commissionTypeEnum, loadingStateEnum } from '@constants';
 import { getTextState } from '@utils/ultility/createUUID';
 import { Link, router } from 'expo-router';
 import StyledButton from '../StyledButton';
+import calculateFontSize from '@src/utils/ultility/calculateFontSize';
 
 enum CameraResult {
   notStarted,
@@ -222,8 +223,8 @@ export default function CommissionsView({ id }: { id: string }) {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: height * 0.03 }}>
-                Commission: {commissionData.title}
+              <Text style={{ fontSize: calculateFontSize(width * 0.9, height * 0.1, commissionData.title) }}>
+                {commissionData.title}
               </Text>
             </View>
           </View>
@@ -381,6 +382,7 @@ export default function CommissionsView({ id }: { id: string }) {
                   justifyContent: 'center',
                   padding: 10,
                   fontFamily: 'Roboto-Bold',
+                  overflow: 'hidden'
                 }}
               >
                 Leaderboard

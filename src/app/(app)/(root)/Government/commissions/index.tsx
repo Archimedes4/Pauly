@@ -14,6 +14,7 @@ import {
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
+import BackButton from '@src/components/BackButton';
 
 function GovernmentCommissionsBody() {
   const [commissions, setCommissions] = useState<commissionType[]>([]);
@@ -85,10 +86,8 @@ export default function GovernmentCommissions() {
 
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
-      <Link href="/government">
-        <Text>Back</Text>
-      </Link>
-      <Text style={styles.headerText}>Commissions</Text>
+      <BackButton to='/government'/>
+      <Text style={[styles.headerText, {paddingTop: 10}]}>Commissions</Text>
       <GovernmentCommissionsBody />
       <StyledButton
         style={{

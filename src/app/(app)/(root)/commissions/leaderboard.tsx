@@ -155,19 +155,21 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
             Leaderboard
           </Text>
         </View>
-        <SegmentedPicker
-          options={['Individual', 'Homeroom']}
-          selectedIndex={isHomeroom ? 1 : 0}
-          setSelectedIndex={e => {
-            if (e === 0) {
-              setIsHomeroom(false);
-            } else {
-              setIsHomeroom(true);
-            }
-          }}
-          width={width}
-          height={50}
-        />
+        <View style={{backgroundColor: Colors.lightGray}}>
+          <SegmentedPicker
+            options={['Individual', 'Homeroom']}
+            selectedIndex={isHomeroom ? 1 : 0}
+            setSelectedIndex={e => {
+              if (e === 0) {
+                setIsHomeroom(false);
+              } else {
+                setIsHomeroom(true);
+              }
+            }}
+            width={width}
+            height={50}
+          />
+        </View>
         <FlatList
           data={leaderboard.length >= 4 ? [...leaderboard.slice(3, -1)] : []}
           renderItem={user => (

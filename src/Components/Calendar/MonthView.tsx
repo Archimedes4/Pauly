@@ -214,7 +214,7 @@ function ReducedMonthEvents({}: {}) {
     const result = [];
 
     console.log(monthData[firstIndex], firstIndex, secondIndex);
-    const newDayData = [...monthData[firstIndex][secondIndex].events].sort(
+    const newDayData = [...monthData[firstIndex][secondIndex].events].filter((e) => {return e.paulyEventType !== 'studentSchedule'}).sort(
       function (a, b) {
         return `${a.startTime}`.localeCompare(b.endTime);
       },

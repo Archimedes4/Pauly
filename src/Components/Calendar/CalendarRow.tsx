@@ -148,7 +148,7 @@ function CalendarCardView({
           dispatch(addEventSlice.actions.setEndDate(endDate));
         }}
         onLayout={e => {
-          if (e.nativeEvent.layout.height >= height) {
+          if (e.nativeEvent.layout.height - 1 >= height) {
             setIsOverflow(true);
           } else {
             setIsOverflow(false);
@@ -181,8 +181,8 @@ function CalendarCardView({
             {value.dayData}
           </Text>
         </View>
-        {value.events.map((event: eventType) => {
-          if (event.paulyEventType !== 'studentSchedule') {
+        {value.events.map((event: monthEventType) => {
+          if (event.paulyEventType !== 'studentSchedule' && event.isFirst === true) {
             return (
               <Pressable
                 key={`Calendar_Event_${event.id}`}
@@ -194,6 +194,20 @@ function CalendarCardView({
                 <Text style={{ fontSize: 10 }}>{event.name}</Text>
               </Pressable>
             );
+          }
+          if (event.paulyEventType !== 'studentSchedule') {
+            return (
+              <Pressable
+                key={`Calendar_Event_${event.id}`}
+                onPress={() => {
+                  dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+                  dispatch(addEventSlice.actions.setSelectedEvent(event));
+                }}
+                style={{height: 10}}
+              >
+               
+              </Pressable>
+            )
           }
           return null;
         })}

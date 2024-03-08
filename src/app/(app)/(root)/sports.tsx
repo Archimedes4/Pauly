@@ -14,6 +14,7 @@ import {
   Pressable,
   FlatList,
   ListRenderItemInfo,
+  StatusBar,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
@@ -37,14 +38,23 @@ import {
 } from '@constants';
 import SportsYoutube from '@components/SportsYoutube';
 
-export default function Sports() {
-  const { width, height, currentBreakPoint } = useSelector(
+function TeamPickerBar({
+  isShowingTeams,
+  setIsShowingTeams,
+  selectedTeam,
+  setSelectedTeam,
+  setIsShowingRoster
+}:{
+  isShowingTeams: boolean;
+  setIsShowingTeams: (item: boolean) => void;
+  selectedTeam: undefined | sportTeamType;
+  setSelectedTeam: (item: undefined | sportTeamType) => void;
+  setIsShowingRoster: (item: boolean) => void;
+}) {
+  const { width, height } = useSelector(
     (state: RootState) => state.dimensions,
   );
-  const [sportsPosts, setSportsPosts] = useState<sportPost[]>([]);
-  const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(
-    loadingStateEnum.loading,
-  );
+  const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([]);
   const [sportsState, setSportsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -54,15 +64,7 @@ export default function Sports() {
   const [selectedSport, setSelectedSport] = useState<sportType | undefined>(
     undefined,
   );
-  const [selectedTeam, setSelectedTeam] = useState<sportTeamType | undefined>(
-    undefined,
-  );
-  const [isShowingTeams, setIsShowingTeams] = useState<boolean>(false);
   const [sports, setSports] = useState<sportType[]>([]);
-  const [isShowingRoster, setIsShowingRoster] = useState<boolean>(false);
-  const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([]);
-  const dispatch = useDispatch();
-
   async function loadSports() {
     const result = await getSports();
     if (result.result === loadingStateEnum.success) {
@@ -79,27 +81,311 @@ export default function Sports() {
     setTeamsState(result.result);
   }
 
+  useEffect(() => {
+    loadSports();
+  }, [])
+
+  return (
+    <ScrollView
+      style={{
+        height: isShowingTeams ? height * 0.1 : 24,
+        width,
+      }}
+      horizontal
+    >
+      <View>
+        {sportsState === loadingStateEnum.loading ? (
+          <View
+            style={{
+              width,
+              height: isShowingTeams ? height * 0.05 : height * 0.1,
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <ProgressView width={15} height={15} />
+          </View>
+        ) : (
+          <>
+            {sportsState === loadingStateEnum.success ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  height: isShowingTeams ? height * 0.05 : 32,
+                }}
+              >
+                <Pressable
+                  style={{
+                    backgroundColor: Colors.darkGray,
+                    borderWidth: selectedSport === undefined ? 3 : 0,
+                    borderColor: Colors.black,
+                    borderRadius: 15,
+                    alignContent: 'center',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginLeft: 3,
+                    marginTop: 3,
+                    padding: isShowingTeams ? 5 : 10,
+                    height: isShowingTeams ? 32 : 42,
+                  }}
+                  onPress={() => {
+                    setSelectedTeam(undefined);
+                    setSportsTeams([]);
+                    setSelectedSport(undefined);
+                    setIsShowingRoster(false);
+                    setIsShowingTeams(false);
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: Colors.white,
+                    }}
+                  >
+                    Highlights
+                  </Text>
+                </Pressable>
+                {sports.map(sport => (
+                  <Pressable
+                    key={`SportButton_${sport.id}`}
+                    onPress={() => {
+                      setSelectedSport(sport);
+                      loadTeams(sport);
+                      setIsShowingTeams(true);
+                      setIsShowingRoster(false);
+                    }}
+                    style={{
+                      backgroundColor: Colors.darkGray,
+                      borderWidth: selectedSport?.id === sport.id ? 3 : 0,
+                      borderColor: Colors.black,
+                      borderRadius: 15,
+                      alignContent: 'center',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      marginLeft: 3,
+                      marginTop: 3,
+                      height: isShowingTeams ? 32 : 42,
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignContent: 'center',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft: 10,
+                      }}
+                    >
+                      <SVGXml xml={sport.svgData} width={20} height={20} />
+                      <Text
+                        style={{
+                          margin: isShowingTeams ? 5 : 10,
+                          color: Colors.white,
+                          marginBottom:
+                            sport.id === selectedSport?.id &&
+                            selectedTeam !== undefined &&
+                            !isShowingTeams
+                              ? 10
+                              : isShowingTeams
+                                ? 5
+                                : 10,
+                        }}
+                      >
+                        {sport.id === selectedSport?.id &&
+                        selectedTeam !== undefined &&
+                        !isShowingTeams
+                          ? selectedTeam?.teamName
+                          : ''}{' '}
+                        {sport.name}
+                      </Text>
+                    </View>
+                  </Pressable>
+                ))}
+              </View>
+            ) : (
+              <View>
+                <Text>Failed</Text>
+              </View>
+            )}
+          </>
+        )}
+        {isShowingTeams ? (
+          <View style={{ flexDirection: 'row' }}>
+            {sportsState === loadingStateEnum.loading ? (
+              <View
+                style={{
+                  width,
+                  height: height * 0.05,
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ProgressView width={15} height={15} />
+              </View>
+            ) : (
+              <>
+                {sportsState === loadingStateEnum.success ? (
+                  <>
+                    {sportsTeams.map(team => (
+                      <Pressable
+                        key={`SportTeam_${team.teamId}`}
+                        onPress={() => {
+                          setSelectedTeam(team);
+                          setIsShowingTeams(false);
+                          setIsShowingRoster(false);
+                        }}
+                        style={{
+                          backgroundColor: Colors.darkGray,
+                          borderRadius: 15,
+                          alignContent: 'center',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          marginLeft: 3,
+                          marginTop: 3,
+                        }}
+                      >
+                        <Text style={{ margin: 5, color: Colors.white }}>
+                          {team.teamName}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </>
+                ) : (
+                  <Text>Failed to load Sports</Text>
+                )}
+              </>
+            )}
+          </View>
+        ) : null}
+      </View>
+    </ScrollView>
+  )
+}
+
+function SportsBody({
+  isShowingRoster,
+  setIsShowingRoster,
+  selectedTeam,
+  isShowingTeams
+}:{
+  isShowingRoster: boolean;
+  setIsShowingRoster: (item: boolean) => void
+  selectedTeam: sportTeamType | undefined
+  isShowingTeams: boolean
+}) {
+  const { width, height } = useSelector(
+    (state: RootState) => state.dimensions,
+  );
+  const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(
+    loadingStateEnum.loading,
+  );
+  const [sportsPosts, setSportsPosts] = useState<sportPost[]>([]);
+
   async function loadSportsContent() {
     const result = await getSportsContent(selectedTeam?.teamId);
     if (result.result === loadingStateEnum.success) {
+      console.log(result)
       setSportsPosts(result.sports);
     }
     setLoadingResult(result.result);
   }
 
   useEffect(() => {
+    loadSportsContent();
+  }, [selectedTeam]);
+
+  if (loadingResult === loadingStateEnum.loading)  {
+    return (
+      <View
+        style={{
+          width,
+          height: height * 0.8 + (isShowingTeams ? 0 : height * 0.1 - 34),
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView
+          width={width < height ? width * 0.25 : height * 0.25}
+          height={width < height ? width * 0.5 : height * 0.5}
+        />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+  
+  if (loadingResult === loadingStateEnum.success && selectedTeam === undefined) {
+    return (
+      <View style={{ height: height * 0.8 }}>
+        <FlatList
+          data={sportsPosts}
+          renderItem={post => (<SportsPostBlock key={post.item.data.fileId} post={post} />)}
+        />
+      </View>
+    )
+  }
+
+  if (loadingResult === loadingStateEnum.success && selectedTeam !== undefined) {
+    return (
+      <View style={{ height: height * 0.8 }}>
+        <View style={{ marginLeft: 5, marginRight: 10, marginTop: 10 }}>
+          <SegmentedPicker
+            selectedIndex={isShowingRoster ? 1 : 0}
+            setSelectedIndex={e => {
+              if (e === 0) {
+                setIsShowingRoster(false);
+              } else if (e === 1) {
+                setIsShowingRoster(true);
+              }
+            }}
+            options={['Highlights', 'Roster']}
+            width={width - 16}
+            height={25}
+          />
+        </View>
+        {isShowingRoster ? (
+          <RosterView
+            teamId={selectedTeam.teamId}
+            width={width}
+            height={height * 0.7}
+          />
+        ) : (
+          <FlatList
+            data={sportsPosts}
+            renderItem={post => (<SportsPostBlock key={post.item.data.fileId} post={post} />)}
+          />
+        )}
+      </View>
+    )
+  }
+  return (
+    <View>
+      <Text>Something went wrong</Text>
+    </View>
+  )
+}
+
+export default function Sports() {
+  const { width, height, currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimensions,
+  );
+  const [selectedTeam, setSelectedTeam] = useState<sportTeamType | undefined>(
+    undefined,
+  );
+
+  const [isShowingTeams, setIsShowingTeams] = useState<boolean>(false);
+  const [isShowingRoster, setIsShowingRoster] = useState<boolean>(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
-        bottom: Colors.white,
+        bottom: Colors.lightGray
       }),
     );
-    loadSports();
   }, []);
-
-  useEffect(() => {
-    loadSportsContent();
-  }, [selectedTeam]);
 
   return (
     <View
@@ -110,6 +396,7 @@ export default function Sports() {
         overflow: 'hidden',
       }}
     >
+      <StatusBar barStyle={'light-content'}/>
       <View
         style={{
           height: height * 0.1,
@@ -120,7 +407,7 @@ export default function Sports() {
           justifyContent: 'center',
         }}
       >
-        {currentBreakPoint <= 0 ? <BackButton to="/home" /> : null}
+        {currentBreakPoint <= 0 ? <BackButton to="/home" color={Colors.white}/> : null}
         <Text
           style={{
             fontFamily: 'BukhariScript',
@@ -131,237 +418,8 @@ export default function Sports() {
           Sports
         </Text>
       </View>
-      <ScrollView
-        style={{
-          height: isShowingTeams ? height * 0.1 : 24,
-          width,
-        }}
-        horizontal
-      >
-        <View>
-          {sportsState === loadingStateEnum.loading ? (
-            <View
-              style={{
-                width,
-                height: isShowingTeams ? height * 0.05 : height * 0.1,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <ProgressView width={15} height={15} />
-            </View>
-          ) : (
-            <>
-              {sportsState === loadingStateEnum.success ? (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    height: isShowingTeams ? height * 0.05 : 32,
-                  }}
-                >
-                  <Pressable
-                    style={{
-                      backgroundColor: Colors.darkGray,
-                      borderWidth: selectedSport === undefined ? 3 : 0,
-                      borderColor: Colors.black,
-                      borderRadius: 15,
-                      alignContent: 'center',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      marginLeft: 3,
-                      marginTop: 3,
-                      padding: isShowingTeams ? 5 : 10,
-                      height: isShowingTeams ? 32 : 42,
-                    }}
-                    onPress={() => {
-                      setSelectedTeam(undefined);
-                      setSportsTeams([]);
-                      setSelectedSport(undefined);
-                      setIsShowingRoster(false);
-                      setIsShowingTeams(false);
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: Colors.white,
-                      }}
-                    >
-                      Highlights
-                    </Text>
-                  </Pressable>
-                  {sports.map(sport => (
-                    <Pressable
-                      key={`SportButton_${sport.id}`}
-                      onPress={() => {
-                        setSelectedSport(sport);
-                        loadTeams(sport);
-                        setIsShowingTeams(true);
-                        setIsShowingRoster(false);
-                      }}
-                      style={{
-                        backgroundColor: Colors.darkGray,
-                        borderWidth: selectedSport?.id === sport.id ? 3 : 0,
-                        borderColor: Colors.black,
-                        borderRadius: 15,
-                        alignContent: 'center',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginLeft: 3,
-                        marginTop: 3,
-                        height: isShowingTeams ? 32 : 42,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignContent: 'center',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          marginLeft: 10,
-                        }}
-                      >
-                        <SVGXml xml={sport.svgData} width={20} height={20} />
-                        <Text
-                          style={{
-                            margin: isShowingTeams ? 5 : 10,
-                            color: Colors.white,
-                            marginBottom:
-                              sport.id === selectedSport?.id &&
-                              selectedTeam !== undefined &&
-                              !isShowingTeams
-                                ? 10
-                                : isShowingTeams
-                                  ? 5
-                                  : 10,
-                          }}
-                        >
-                          {sport.id === selectedSport?.id &&
-                          selectedTeam !== undefined &&
-                          !isShowingTeams
-                            ? selectedTeam?.teamName
-                            : ''}{' '}
-                          {sport.name}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  ))}
-                </View>
-              ) : (
-                <View>
-                  <Text>Failed</Text>
-                </View>
-              )}
-            </>
-          )}
-          {isShowingTeams ? (
-            <View style={{ flexDirection: 'row' }}>
-              {sportsState === loadingStateEnum.loading ? (
-                <View
-                  style={{
-                    width,
-                    height: height * 0.05,
-                    alignContent: 'center',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <ProgressView width={15} height={15} />
-                </View>
-              ) : (
-                <>
-                  {sportsState === loadingStateEnum.success ? (
-                    <>
-                      {sportsTeams.map(team => (
-                        <Pressable
-                          key={`SportTeam_${team.teamId}`}
-                          onPress={() => {
-                            setSelectedTeam(team);
-                            setIsShowingTeams(false);
-                            setIsShowingRoster(false);
-                          }}
-                          style={{
-                            backgroundColor: Colors.darkGray,
-                            borderRadius: 15,
-                            alignContent: 'center',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginLeft: 3,
-                            marginTop: 3,
-                          }}
-                        >
-                          <Text style={{ margin: 5, color: Colors.white }}>
-                            {team.teamName}
-                          </Text>
-                        </Pressable>
-                      ))}
-                    </>
-                  ) : (
-                    <Text>Failed to load Sports</Text>
-                  )}
-                </>
-              )}
-            </View>
-          ) : null}
-        </View>
-      </ScrollView>
-      {loadingResult === loadingStateEnum.loading ? (
-        <View
-          style={{
-            width,
-            height: height * 0.8 + (isShowingTeams ? 0 : height * 0.1 - 34),
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <ProgressView
-            width={width < height ? width * 0.25 : height * 0.25}
-            height={width < height ? width * 0.5 : height * 0.5}
-          />
-          <Text>Loading</Text>
-        </View>
-      ) : (
-        <>
-          {loadingResult === loadingStateEnum.success ? (
-            <View style={{ height: height * 0.8 }}>
-              {selectedTeam !== undefined ? (
-                <View style={{ marginLeft: 5, marginRight: 10, marginTop: 10 }}>
-                  <SegmentedPicker
-                    selectedIndex={isShowingRoster ? 1 : 0}
-                    setSelectedIndex={e => {
-                      if (e === 0) {
-                        setIsShowingRoster(false);
-                      } else if (e === 1) {
-                        setIsShowingRoster(true);
-                      }
-                    }}
-                    options={['Highlights', 'Roster']}
-                    width={width - 16}
-                    height={25}
-                  />
-                </View>
-              ) : null}
-              {isShowingRoster && selectedTeam !== undefined ? (
-                <RosterView
-                  teamId={selectedTeam.teamId}
-                  width={width}
-                  height={height * 0.7}
-                />
-              ) : (
-                <FlatList
-                  data={sportsPosts}
-                  renderItem={post => <SportsPostBlock post={post} />}
-                />
-              )}
-            </View>
-          ) : (
-            <View>
-              <Text>Something went wrong</Text>
-            </View>
-          )}
-        </>
-      )}
+      <TeamPickerBar isShowingTeams={isShowingTeams} setIsShowingTeams={setIsShowingTeams} selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} setIsShowingRoster={setIsShowingRoster} />
+      <SportsBody isShowingRoster={isShowingRoster} setIsShowingRoster={setIsShowingRoster} selectedTeam={selectedTeam} isShowingTeams={isShowingTeams}/>
     </View>
   );
 }
@@ -374,12 +432,16 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
     currentHeight: number,
     currentImageAspect: number,
   ) {
+    console.log(currentHeight, currentWidth)
     if (
       post.item.data.postType === postType.microsoftFile &&
       post.item.data.fileType === dataContentTypeOptions.image
     ) {
       if (imageAspect == -1) {
         return (currentWidth * 9) / 16;
+      }
+      if (imageAspect == 0) {
+        return currentWidth * 0.9
       }
       return (currentWidth * 0.9) / currentImageAspect;
     }
@@ -460,7 +522,7 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
             ) : null}
             {post.item.data.fileType === dataContentTypeOptions.video ? (
               <View>
-                <Text
+                {/* <Text
                   style={{
                     position: 'absolute',
                     left: 5,
@@ -469,7 +531,7 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
                   }}
                 >
                   {post.item.caption}
-                </Text>
+                </Text> */}
                 <Video
                   useNativeControls
                   source={{ uri: post.item.data.fileId }}

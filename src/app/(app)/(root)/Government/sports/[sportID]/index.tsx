@@ -291,7 +291,7 @@ export default function GovernmentSport() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <Link href="/government/sports">Back</Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontSize: 25 }}>
+      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontSize: 25, fontFamily: 'Comfortaa-Regular' }}>
         {sportName} Teams
       </Text>
       <GovernmentSportTeams sportID={sportID} />
@@ -299,11 +299,13 @@ export default function GovernmentSport() {
         style={{ marginLeft: 15, marginRight: 15, marginBottom: 10 }}
         text="Pick SVG"
         onPress={() => setIsPickingSvg(true)}
+        second
       />
       <StyledButton
         style={{ marginLeft: 15, marginRight: 15, marginBottom: 10 }}
         text="Create New Team"
         to={`/government/sports/${sportID}/team/create`}
+        second
       />
       <StyledButton
         style={{

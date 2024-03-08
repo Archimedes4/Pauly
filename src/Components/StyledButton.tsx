@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { Colors } from '@constants';
 
 interface StyledTextButtonProps {
@@ -108,7 +108,17 @@ export default function StyledButton({
   const [isAlt, setIsAlt] = useState<boolean>(false);
   if (typeof to === 'string') {
     return (
-      <View
+      <Pressable
+        onHoverIn={() => setIsAlt(true)}
+        onHoverOut={() => setIsAlt(false)}
+        onPressIn={() => setIsAlt(true)}
+        onPressOut={() => setIsAlt(false)}
+        onPress={() => {
+          router.push(to)
+          if (onPress !== undefined) {
+            onPress();
+          }
+        }}
         style={[
           {
             shadowColor: Colors.black,
@@ -121,8 +131,7 @@ export default function StyledButton({
           style,
         ]}
       >
-        <Link
-          href={to}
+        <View
           style={{
             backgroundColor: getBackgroundColor(
               isAlt,
@@ -139,52 +148,40 @@ export default function StyledButton({
                   : 36
                 : undefined,
             overflow: 'hidden',
+            padding: 10
           }}
         >
-          <Pressable
-            onHoverIn={() => setIsAlt(true)}
-            onHoverOut={() => setIsAlt(false)}
-            onPressIn={() => setIsAlt(true)}
-            onPressOut={() => setIsAlt(false)}
-            onPress={() => {
-              if (onPress !== undefined) {
-                onPress();
-              }
-            }}
-            style={{ padding: 10, width: '100%' }}
-          >
-            {children ? (
-              <>{children}</>
-            ) : (
-              <>
+          {children ? (
+            <>{children}</>
+          ) : (
+            <>
+              <Text
+                style={[
+                  {
+                    fontSize: 16,
+                    color: getTextColor(isAlt, selected, second),
+                    fontFamily: 'Roboto',
+                  },
+                  textStyle,
+                ]}
+              >
+                {text}
+              </Text>
+              {caption !== undefined ? (
                 <Text
-                  style={[
-                    {
-                      fontSize: 16,
-                      color: getTextColor(isAlt, selected, second),
-                      fontFamily: 'Roboto',
-                    },
-                    textStyle,
-                  ]}
+                  style={{
+                    fontSize: 12,
+                    color: getTextColor(isAlt, selected, second),
+                    fontFamily: 'Roboto',
+                  }}
                 >
-                  {text}
+                  {caption}
                 </Text>
-                {caption !== undefined ? (
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: getTextColor(isAlt, selected, second),
-                      fontFamily: 'Roboto',
-                    }}
-                  >
-                    {caption}
-                  </Text>
-                ) : null}
-              </>
-            )}
-          </Pressable>
-        </Link>
-      </View>
+              ) : null}
+            </>
+          )}
+        </View>
+      </Pressable>
     );
   }
   return (

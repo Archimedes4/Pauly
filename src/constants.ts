@@ -372,11 +372,14 @@ declare global {
     points: number;
     id: string;
   };
+  type monthEventType = eventType & {
+    isFirst: boolean
+  }
   type monthDataType = {
     id: string;
     showing: boolean;
     dayData: number;
-    events: eventType[];
+    events: monthEventType[];
   };
   type microsoftUserType = {
     id: string;

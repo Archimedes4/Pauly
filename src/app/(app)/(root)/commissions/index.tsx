@@ -13,6 +13,7 @@ import {
   View,
   Image,
   FlatList,
+  StatusBar,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
@@ -267,6 +268,7 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
 
   return (
     <>
+      <StatusBar barStyle={'light-content'}/>
       <View style={{ width, height, backgroundColor: Colors.lightGray }}>
         <View
           style={{
@@ -278,7 +280,7 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
             justifyContent: 'center',
           }}
         >
-          {currentBreakPoint <= 0 ? <BackButton to="/home" /> : null}
+          {currentBreakPoint <= 0 ? <BackButton to="/home" color={Colors.white} /> : null}
           <Text
             style={{
               fontFamily: 'BukhariScript',

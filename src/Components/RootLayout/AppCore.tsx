@@ -41,7 +41,7 @@ export default function AppCore() {
     (state: RootState) => state.safeAreaColors,
   );
   const expandedMode = useSelector((state: RootState) => state.expandedMode);
-  const { currentBreakPoint, width, height } = useSelector(
+  const { currentBreakPoint, height } = useSelector(
     (state: RootState) => state.dimensions,
   );
   const windowWidth = useWindowSize()[0];

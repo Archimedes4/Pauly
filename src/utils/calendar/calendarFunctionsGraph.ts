@@ -1,4 +1,3 @@
-import { scheduleData } from './../ﻩgovernment/initializePauly/initializePaulyData';
 /*
   Pauly
   Andrew Mainella
@@ -605,17 +604,25 @@ export function getMonthData(selectedDate: Date) {
   const firstDayWeek = findFirstDayinMonth(selectedDate);
   const monthDataResult: monthDataType[] = [];
   const { currentEvents } = store.getState();
+  const sortedCurrentEvents = [...currentEvents].sort((e) => {
+    if (e.paulyEventType === "schoolDay") {
+      return -1
+    } else {
+      return 0
+    }
+  })
+  console.log(sortedCurrentEvents)
   for (let index = 0; index < 42; index += 1) {
     if (index >= firstDayWeek && index - firstDayWeek < lastDay.getDate()) {
       // In the current month
-      const events: eventType[] = []; // The result events of that day
+      const events: monthEventType[] = []; // The result events of that day
 
       for (
         let indexEvent = 0;
-        indexEvent < currentEvents.length;
+        indexEvent < sortedCurrentEvents.length;
         indexEvent += 1
       ) {
-        const event: eventType = currentEvents[indexEvent]; // Event to be checked
+        const event: eventType = sortedCurrentEvents[indexEvent]; // Event to be checked
         if (
           isEventDuringInterval({
             selectedDate,
@@ -626,7 +633,7 @@ export function getMonthData(selectedDate: Date) {
           (event.paulyEventType !== 'schoolYear' ||
             store.getState().isGovernmentMode)
         ) {
-          events.push(event);
+          events.push({...event, isFirst: (new Date(event.startTime).getDate() === (index - firstDayWeek + 1) || (index % 7) === 0)});
         }
       }
       monthDataResult.push({

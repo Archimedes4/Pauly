@@ -5,8 +5,8 @@
   BackButton.tsx
   Default back button for all of Pauly to keep same style and cut down on redudant code. Manly used when the current break point is 0.
 */
-import { Text, ViewStyle } from 'react-native';
-import React from 'react';
+import { Text, ViewStyle, View } from 'react-native';
+import React, { useState } from 'react';
 import { Link } from 'expo-router';
 import { RootState } from '@redux/store';
 import { useSelector } from 'react-redux';
@@ -16,15 +16,18 @@ import { ChevronLeft } from './Icons';
 export default function BackButton({
   to,
   style,
+  color
 }: {
   to: string;
   // eslint-disable-next-line react/require-default-props
   style?: ViewStyle | undefined;
+  color?: string
 }) {
   const isTopTransparent = useSelector(
     (state: RootState) => state.safeAreaColors.isTopTransparent,
   );
   const insets = useSafeAreaInsets();
+  const [height, setHeight] = useState<number>(0);
   return (
     <Link
       href={to}
@@ -39,8 +42,8 @@ export default function BackButton({
         style,
       ]}
     >
-      <ChevronLeft width={14} height={14} />
-      <Text>Back</Text>
+      <ChevronLeft color={color} width={14} height={14}/>
+      <Text style={{color: color}}>Back</Text>
     </Link>
   );
 }
