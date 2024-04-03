@@ -20,6 +20,7 @@ import {
 } from '@utils/calendar/calendarFunctions';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import CalendarRow from './CalendarRow';
+import { monthDataSlice } from '@src/redux/reducers/monthDataReducer';
 
 function MonthView({ width, height }: { width: number; height: number }) {
   const daysInWeek: { DOW: string; id: string }[] = [
@@ -43,6 +44,10 @@ function MonthView({ width, height }: { width: number; height: number }) {
   useEffect(() => {
     return getMonthData(new Date(selectedDate));
   }, [selectedDate, currentEvents]);
+
+  useEffect(() => {
+    console.log(monthData)
+  }, [monthData])
 
   return (
     <>
@@ -184,8 +189,8 @@ function ReducedMonthEvents({}: {}) {
   );
   const [longestWidth, setLongestWidth] = useState<number>(0);
   const [longestText, setLongestText] = useState<string>('');
-  const [dayData, setDayData] = useState<eventType[][]>([]);
-  function getDayData(): eventType[][] {
+  const [dayData, setDayData] = useState<monthEventType[][]>([]);
+  function getDayData(): monthEventType[][] {
     if (monthData.length !== 6) {
       return [];
     }
@@ -213,7 +218,6 @@ function ReducedMonthEvents({}: {}) {
     }
     const result = [];
 
-    console.log(monthData[firstIndex], firstIndex, secondIndex);
     const newDayData = [...monthData[firstIndex][secondIndex].events].filter((e) => {return e.paulyEventType !== 'studentSchedule'}).sort(
       function (a, b) {
         return `${a.startTime}`.localeCompare(b.endTime);
@@ -255,9 +259,11 @@ function ReducedMonthEvents({}: {}) {
       second: 'numeric',
     });
   }
+  
   useEffect(() => {
     setDayData(getDayData());
   }, [monthData, selectedDate]);
+
   return (
     <>
       <View>

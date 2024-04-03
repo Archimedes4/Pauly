@@ -18,13 +18,6 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'Archimedes4.Pauly',
-      infoPlist: {
-        'keychain-access-groups': [
-          'com.microsoft.identity.universalstorage',
-          'com.microsoft.adalcache',
-        ],
-        LSApplicationQueriesSchemes: ['msauthv2', 'msauthv3']
-      },
       buildNumber: '78'
     },
     android: {
@@ -67,6 +60,12 @@ module.exports = {
               : process.env.EXPO_PUBLIC_PAULYHOST,
         },
       ],
+      [
+        '@archimedes4/expo-msal',
+        {
+          "androidPackageSignatureHash": ""
+        }
+      ]
     ],
     experiments: {
       tsconfigPaths: true,

@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useAuthentication from '@hooks/useAuthentication';
-import { useSignOut } from '@hooks/authentication';
+import { useSignOut } from '@src/hooks/authentication';
 import ProgressView from '@components/ProgressView';
 import useIsShowingLogout from '@hooks/useIsShowingLogout';
 

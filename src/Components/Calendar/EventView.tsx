@@ -80,7 +80,7 @@ export default function EventView({
 
   return (
     <FlatList
-      data={currentEvents.sort(function (a, b) {
+      data={[...currentEvents].sort(function (a, b) {
         return `${a.startTime}`.localeCompare(b.endTime);
       })}
       renderItem={event => (

@@ -276,3 +276,25 @@ export function decodeSchoolYearData(input: string) {
     paulyId: input.substring(36, 72)
   }
 }
+
+export function getDateWithDay(date: string, day: number): Date {
+  const dateResult = new Date(date)
+  dateResult.setDate(day)
+  return dateResult
+}
+
+// Gets the number of days left in the week for an event. This is used in the month view section.
+// For example if an event spans from the 1st to the 20th. And the 4 was a saturday. the result would be 7 as the 4 -> 10 would be 6.
+export function getWeekLengthOfEvent(event: eventType, day: Date) {
+  const numberOfDaysLeft = Math.floor(new Date(event.endTime).getTime()/86400000) - Math.floor(new Date(day).getTime()/86400000) + 1
+  const dayOfWeek = day.getDay()
+
+  const result = 7 - dayOfWeek
+  if (numberOfDaysLeft <= result) {
+    if (numberOfDaysLeft == 0) {
+      return 1
+    }
+    return numberOfDaysLeft
+  }
+  return result
+}

@@ -28,7 +28,7 @@ import isShowingProfileBlockReducer from './reducers/isShowingProfileBlockReduce
 import isGovernmentModeReducer from './reducers/isGovernmentModeReducer';
 import commissionsReducer from './reducers/commissionsReducer';
 import pdfDataReducer from './reducers/pdfDataReducer';
-import monthViewReducer from './reducers/monthViewReducer';
+import monthRowsReducer from './reducers/monthRowsReducer';
 import authenticationCallReducer from './reducers/authenticationCallReducer';
 import studentSearchReducer from './reducers/studentSearchReducer';
 import authLoadingReducer from './reducers/authLoadingReducer';
@@ -38,6 +38,7 @@ import lastCalledSelectedDateReducer from './reducers/lastCalledSelectedDateRedu
 import classesReducer from './reducers/classesReducer';
 import timetableReducer from './reducers/timetableReducer';
 import leaderboardReducer from './reducers/leaderboardReducer';
+import monthViewReducer from './reducers/monthViewReducer';
 
 const store = configureStore({
   reducer: {
@@ -59,6 +60,7 @@ const store = configureStore({
     microsoftProfileData: microsoftProfileDataReducer,
     monthData: monthDataReducer,
     monthView: monthViewReducer,
+    monthRows: monthRowsReducer,
     paulyData: paulyDataReducer,
     paulyList: paulyListReducer,
     pdfData: pdfDataReducer,

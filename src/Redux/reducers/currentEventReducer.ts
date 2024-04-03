@@ -27,7 +27,7 @@ export const currentEventsSlice = createSlice({
     },
     clearEvents: (_state, _action: PayloadAction<void>) => {
       return [];
-    },
+    }
   },
 });
 

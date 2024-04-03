@@ -14,8 +14,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@azure/msal-browser": "^2.38.2",
-    "@azure/msal-react": "^1.5.11",
+    "@archimedes4/expo-msal": "^0.1.2",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0-0",
     "@babel/plugin-proposal-optional-chaining": "^7.0.0-0",
@@ -83,8 +82,8 @@
     "react-test-renderer": "^18.2.0",
     "reanimated-color-picker": "^3.0.3",
     "redux": "^4.2.1",
-    "typescript": "^5.2.2",
-    "ts-jest": "^29.1.2"
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

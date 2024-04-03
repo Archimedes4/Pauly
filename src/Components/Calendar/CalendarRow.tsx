@@ -1,7 +1,11 @@
 import { Colors } from '@src/constants';
 import { addEventSlice } from '@src/redux/reducers/addEventReducer';
+import { currentEventsSlice } from '@src/redux/reducers/currentEventReducer';
+import { monthDataSlice } from '@src/redux/reducers/monthDataReducer';
+import monthRowsReducer, { monthRowsSlice } from '@src/redux/reducers/monthRowsReducer';
 import { selectedDateSlice } from '@src/redux/reducers/selectedDateReducer';
-import { RootState } from '@src/redux/store';
+import store, { RootState } from '@src/redux/store';
+import { getDateWithDay, getWeekLengthOfEvent } from '@src/utils/calendar/calendarFunctions';
 import React, { useEffect, useState } from 'react';
 import {
   ListRenderItemInfo,
@@ -53,12 +57,16 @@ function CalendarCardView({
   height,
   calendarWidth,
   setIsOverflow,
+  index,
+  setHeight
 }: {
   value: monthDataType;
   width: number;
   height: number;
+  setHeight: (item: number) => void;
   calendarWidth: number;
   setIsOverflow: (item: boolean) => void;
+  index: number;
 }) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
@@ -71,6 +79,7 @@ function CalendarCardView({
     );
     dispatch(selectedDateSlice.actions.setSelectedDate(d.toISOString()));
   }
+
   if (calendarWidth <= 519 && value.showing) {
     return (
       <Pressable
@@ -85,7 +94,7 @@ function CalendarCardView({
         }}
         onPress={() => pressCalendar()}
         onLayout={e => {
-          if (e.nativeEvent.layout.height >= height) {
+          if (e.nativeEvent.layout.height - 1 >= height) {
             setIsOverflow(true);
           } else {
             setIsOverflow(false);
@@ -126,92 +135,124 @@ function CalendarCardView({
   }
   if (value.showing) {
     return (
-      <Pressable
+      <View
         style={{
           width,
-          minHeight: height,
-          padding: 2,
-          borderWidth: 1,
-          borderBottomWidth: 0,
-          borderTopWidth: 0,
-          borderColor: Colors.lightGray,
-        }}
-        onPress={() => {
-          pressCalendar();
-          dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-          const startDate = new Date(selectedDate);
-          startDate.setDate(value.dayData);
-          const endDate = new Date(selectedDate);
-          endDate.setDate(value.dayData);
-          endDate.setHours(endDate.getHours() + 1);
-          dispatch(addEventSlice.actions.setStartDate(startDate.toISOString()));
-          dispatch(addEventSlice.actions.setEndDate(endDate));
-        }}
-        onLayout={e => {
-          if (e.nativeEvent.layout.height - 1 >= height) {
-            setIsOverflow(true);
-          } else {
-            setIsOverflow(false);
-          }
+          height: height,
+          zIndex: 10
         }}
       >
         <View
           style={{
-            borderRadius: 50,
-            width: 16,
-            height: 16,
-            backgroundColor: isCalendarTextColor(selectedDate, value.dayData)
-              ? 'red'
-              : 'transparent',
-            alignContent: 'center',
-            justifyContent: 'center',
-            alignItems: 'center',
+            width,
+            height: height,
+            borderWidth: 1,
+            borderBottomWidth: 0,
+            borderTopWidth: 0,
+            borderColor: Colors.lightGray,
+            position: 'absolute',
+            zIndex: -10
+          }}
+        />
+        <Pressable
+          style={{
+            width,
+            minHeight: height,
+            padding: 2,
+            position: 'absolute',
+            zIndex: 100
+          }}
+          onPress={() => {
+            pressCalendar();
+            dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+            const startDate = new Date(selectedDate);
+            startDate.setDate(value.dayData);
+            const endDate = new Date(selectedDate);
+            endDate.setDate(value.dayData);
+            endDate.setHours(endDate.getHours() + 1);
+            dispatch(addEventSlice.actions.setStartDate(startDate.toISOString()));
+            dispatch(addEventSlice.actions.setEndDate(endDate));
+          }}
+          onLayout={e => {
+            setHeight(e.nativeEvent.layout.height)
+            if (e.nativeEvent.layout.height - 1 >= height) {
+              setIsOverflow(true);
+            }
           }}
         >
-          <Text
+          <View
             style={{
-              color: isCalendarTextColor(selectedDate, value.dayData)
-                ? Colors.white
-                : Colors.black,
-              fontWeight: isCalendarTextColor(selectedDate, value.dayData)
-                ? 'bold'
-                : 'normal',
+              borderRadius: 50,
+              width: 19,
+              height: 19,
+              backgroundColor: isCalendarTextColor(selectedDate, value.dayData)
+                ? 'red'
+                : 'transparent',
+              alignContent: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            {value.dayData}
-          </Text>
-        </View>
-        {value.events.map((event: monthEventType) => {
-          if (event.paulyEventType !== 'studentSchedule' && event.isFirst === true) {
-            return (
-              <Pressable
-                key={`Calendar_Event_${event.id}`}
-                onPress={() => {
-                  dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-                  dispatch(addEventSlice.actions.setSelectedEvent(event));
-                }}
-              >
-                <Text style={{ fontSize: 10 }}>{event.name}</Text>
-              </Pressable>
-            );
-          }
-          if (event.paulyEventType !== 'studentSchedule') {
-            return (
-              <Pressable
-                key={`Calendar_Event_${event.id}`}
-                onPress={() => {
-                  dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-                  dispatch(addEventSlice.actions.setSelectedEvent(event));
-                }}
-                style={{height: 10}}
-              >
-               
-              </Pressable>
-            )
-          }
-          return null;
-        })}
-      </Pressable>
+            <Text
+              style={{
+                color: isCalendarTextColor(selectedDate, value.dayData)
+                  ? Colors.white
+                  : Colors.black,
+                fontWeight: isCalendarTextColor(selectedDate, value.dayData)
+                  ? 'bold'
+                  : 'normal',
+              }}
+            >
+              {value.dayData}
+            </Text>
+          </View>
+          {[...value.events].sort((a, b) => {return a.order - b.order}).map((event: monthEventType) => {
+            if (event.paulyEventType !== 'studentSchedule' && event.isFirst === true) {
+              return (
+                <Pressable
+                  key={`Calendar_Event_${event.id}`}
+                  onPress={() => {
+                    dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+                    dispatch(addEventSlice.actions.setSelectedEvent(event));
+                  }}
+                  style={{
+                    width: (width * getWeekLengthOfEvent(event, getDateWithDay(selectedDate, value.dayData))) - 10,
+                    backgroundColor: Colors.lightGray,
+                    padding: 5,
+                    borderRadius: 15,
+                    margin: 3,
+                    zIndex: 100
+                  }}
+                  onLayout={(e) => {
+                    if (event.height === undefined) {
+                      store.dispatch(monthDataSlice.actions.setEvent({
+                        firstIndex: index,
+                        id: event.id,
+                        height: e.nativeEvent.layout.height
+                      }))
+                    }
+                  }}
+                >
+                  <Text style={{ fontSize: 10 }}>{event.name}</Text>
+                </Pressable>
+              );
+            }
+            if (event.paulyEventType !== 'studentSchedule') {
+              return (
+                <Pressable
+                  key={`Calendar_Event_${event.id}`}
+                  style={{height: event.height, margin: 3}}
+                  onPress={() => {
+                    dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+                    dispatch(addEventSlice.actions.setSelectedEvent(event));
+                  }}
+                />
+              )
+            }
+            return null;
+          })}
+        </Pressable>
+      </View>
     );
   }
   return (
@@ -247,6 +288,43 @@ export default function CalendarRow({
   calendarWidth: number;
 }) {
   const [isOverflow, setIsOverflow] = useState<boolean>(true);
+  const rowData = useSelector((state: RootState) => state.monthRows);
+
+  function getRowHeight(data: monthRowHeight) {
+    if (value.index === 0) {
+      return data.rowOne
+    }
+    if (value.index === 1) {
+      return data.rowTwo
+    }
+    if (value.index === 2) {
+      return data.rowThree
+    }
+    if (value.index === 3) {
+      return data.rowFour
+    }
+    if (value.index === 4) {
+      return data.rowFive
+    }
+    if (value.index === 5) {
+      return data.rowSix
+    }
+    if (value.index === 6) {
+      return data.rowSeven
+    }
+    if (value.index === 7) {
+      return data.rowEight
+    }
+    return 0
+  }
+
+  useEffect(() => {
+    store.dispatch(monthRowsSlice.actions.setRow({
+      row: value.index,
+      height: height
+    }))
+  }, [height])
+
   return (
     <ScrollView
       scrollEnabled={isOverflow}
@@ -263,9 +341,18 @@ export default function CalendarRow({
             key={`${value.item[dayIndex].id}Card`}
             value={day}
             width={width}
-            height={height}
+            height={getRowHeight(rowData)}
             calendarWidth={calendarWidth}
             setIsOverflow={setIsOverflow}
+            index={value.index}
+            setHeight={(e) => {
+              if (e > getRowHeight(rowData)) {
+                store.dispatch(monthRowsSlice.actions.setRow({
+                  row: value.index,
+                  height: e
+                }))
+              }
+            }}
           />
         ))}
       </View>

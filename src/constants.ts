@@ -374,6 +374,8 @@ declare global {
   };
   type monthEventType = eventType & {
     isFirst: boolean
+    height: number | undefined
+    order: number
   }
   type monthDataType = {
     id: string;
@@ -381,6 +383,16 @@ declare global {
     dayData: number;
     events: monthEventType[];
   };
+  type monthRowHeight =  {
+    rowOne: number;
+    rowTwo: number;
+    rowThree: number;
+    rowFour: number;
+    rowFive: number;
+    rowSix: number;
+    rowSeven: number;
+    rowEight: number;
+  }
   type microsoftUserType = {
     id: string;
     displayName: string;

@@ -18,6 +18,18 @@ import { RootState } from '../redux/store';
 import { monthViewSlice } from '../redux/reducers/monthViewReducer';
 import { Colors, loadingStateEnum } from '../constants';
 
+function getBackgroundColor(day: number, textval: number, monthViewData: eventType | undefined) {
+  if (day == textval) {
+    return "red"
+  } else if (day >= textval + 1 && textval !== 0) {
+    return "gray"
+  } else if (monthViewData !== undefined) {
+    return monthViewData.eventColor
+  } else {
+    return Colors.white
+  }
+}
+
 function MonthBlock({
   value,
   width,
@@ -44,10 +56,15 @@ function MonthBlock({
         width,
         height,
         borderColor: Colors.black,
-        borderWidth: 2,
+        borderWidth: 1,
+        backgroundColor: getBackgroundColor(day, textval, monthViewData),
+        justifyContent: 'center',
+        alignContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
       }}
     >
-      {value >= startDate - 1 && value <= daySelected && textval !== 0 ? (
+      {/* {value >= startDate - 1 && value <= daySelected && textval !== 0 ? (
         <View
           style={{
             width,
@@ -72,19 +89,20 @@ function MonthBlock({
             height,
           }}
         />
-      )}
+      )} */}
       {textval >= 1 ? (
-        <View
-          id="Text"
-          style={{
-            width,
-            height,
-            justifyContent: 'center',
-            alignContent: 'center',
-            alignItems: 'center',
-            position: 'absolute',
-          }}
-        >
+        // <View
+        //   id="Text"
+        //   style={{
+        //     width,
+        //     height,
+        //     justifyContent: 'center',
+        //     alignContent: 'center',
+        //     alignItems: 'center',
+        //     position: 'absolute',
+        //   }}
+        // >
+        <>
           {monthViewData !== undefined ? (
             <>
               {monthViewData.paulyEventType === 'schoolDay' ? (
@@ -114,7 +132,8 @@ function MonthBlock({
               {textval}
             </Text>
           )}
-        </View>
+          </>
+        // </View>
       ) : null}
     </View>
   );

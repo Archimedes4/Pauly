@@ -594,6 +594,21 @@ export async function getSchoolDays(date: Date): Promise<
   };
 }
 
+function getHighestOrder(data: monthEventType[]): number {
+  let order = 0
+  let orderFound = true
+  while (orderFound) {
+    if (data.some((e) => {
+      return e.order === order
+    })) {
+      order += 1
+    } else {
+      orderFound = false
+    }
+  }
+  return order
+}
+
 export function getMonthData(selectedDate: Date) {
   // Check if this month
   const lastDay = new Date(
@@ -602,7 +617,6 @@ export function getMonthData(selectedDate: Date) {
     0,
   );
   const firstDayWeek = findFirstDayinMonth(selectedDate);
-  const monthDataResult: monthDataType[] = [];
   const { currentEvents } = store.getState();
   const sortedCurrentEvents = [...currentEvents].sort((e) => {
     if (e.paulyEventType === "schoolDay") {
@@ -611,12 +625,12 @@ export function getMonthData(selectedDate: Date) {
       return 0
     }
   })
-  console.log(sortedCurrentEvents)
+  const monthDataResult: monthDataType[] = [];
   for (let index = 0; index < 42; index += 1) {
-    if (index >= firstDayWeek && index - firstDayWeek < lastDay.getDate()) {
+    if (index >= firstDayWeek && (index - firstDayWeek) < lastDay.getDate()) {
       // In the current month
-      const events: monthEventType[] = []; // The result events of that day
-
+      let events: monthEventType[] = []; // The result events of that day
+      let eventsToOrder: monthEventType[] = []
       for (
         let indexEvent = 0;
         indexEvent < sortedCurrentEvents.length;
@@ -633,14 +647,35 @@ export function getMonthData(selectedDate: Date) {
           (event.paulyEventType !== 'schoolYear' ||
             store.getState().isGovernmentMode)
         ) {
-          events.push({...event, isFirst: (new Date(event.startTime).getDate() === (index - firstDayWeek + 1) || (index % 7) === 0)});
+          if ((new Date(event.startTime).getDate() === (index - firstDayWeek + 1) || (index % 7) === 0)) {
+            // isFirst true
+            eventsToOrder.push({
+              ...event,
+              isFirst: true,
+              height: undefined,
+              order: -1
+            });
+          } else {
+            events.push({
+              ...event,
+              isFirst: false,
+              height: undefined,
+              order: monthDataResult.findLast((e) => {return e.events.some((a) => {return a.id === event.id})})?.events.find((a) => {return a.id === event.id})?.order ?? 0
+            });
+          }
+        }
+      }
+      for (let eventIndex = 0; eventIndex < eventsToOrder.length; eventIndex += 1) {
+        eventsToOrder[eventIndex] = {
+          ...eventsToOrder[eventIndex],
+          order: getHighestOrder([...eventsToOrder, ...events])
         }
       }
       monthDataResult.push({
         showing: true,
         dayData: index - firstDayWeek + 1,
         id: createUUID(),
-        events,
+        events: [...events, ...eventsToOrder],
       });
     } else {
       monthDataResult.push({
@@ -652,8 +687,10 @@ export function getMonthData(selectedDate: Date) {
     }
   }
   const chunckedMonthData = [];
-  while (monthDataResult.length)
+  while (monthDataResult.length) {
     chunckedMonthData.push(monthDataResult.splice(0, 7));
+  }
+  console.log(chunckedMonthData)
   store.dispatch(monthDataSlice.actions.setMonthData(chunckedMonthData));
 }
 
