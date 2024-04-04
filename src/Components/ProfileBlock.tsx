@@ -11,14 +11,11 @@ import { Colors } from '@constants';
 import { useSignOut } from '@hooks/authentication';
 
 export default function ProfileBlock() {
-  //const signOut = useSignOut();
+  const signOut = useSignOut();
   return (
     <Pressable
       onPress={() => 
-        //signOut()
-        {
-          
-        }
+        signOut()
       }
       style={{
         position: 'absolute',

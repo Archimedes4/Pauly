@@ -1,11 +1,9 @@
-import { Colors } from '@src/constants';
-import { addEventSlice } from '@src/redux/reducers/addEventReducer';
-import { currentEventsSlice } from '@src/redux/reducers/currentEventReducer';
-import { monthDataSlice } from '@src/redux/reducers/monthDataReducer';
-import monthRowsReducer, { monthRowsSlice } from '@src/redux/reducers/monthRowsReducer';
-import { selectedDateSlice } from '@src/redux/reducers/selectedDateReducer';
-import store, { RootState } from '@src/redux/store';
-import { getDateWithDay, getWeekLengthOfEvent } from '@src/utils/calendar/calendarFunctions';
+import { Colors } from '@constants';
+import { addEventSlice } from '@redux/reducers/addEventReducer';
+import { monthDataSlice } from '@redux/reducers/monthDataReducer';
+import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
+import store, { RootState } from '@redux/store';
+import { findFirstDayEventWeek, findFirstDayinMonth, getDateWithDay, getEventsOnDay, getHeightEventsAbove, getWeekLengthOfEvent } from '@utils/calendar/calendarFunctions';
 import React, { useEffect, useState } from 'react';
 import {
   ListRenderItemInfo,
@@ -54,19 +52,13 @@ function isCalendarTextColor(selectedDate: string, day: number): boolean {
 function CalendarCardView({
   value,
   width,
-  height,
   calendarWidth,
-  setIsOverflow,
-  index,
-  setHeight
+  height,
 }: {
   value: monthDataType;
   width: number;
-  height: number;
-  setHeight: (item: number) => void;
   calendarWidth: number;
-  setIsOverflow: (item: boolean) => void;
-  index: number;
+  height: number
 }) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
@@ -90,16 +82,9 @@ function CalendarCardView({
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: height / 2,
-          backgroundColor: getBackgroundColor(selectedDate, value.dayData),
+          backgroundColor: getBackgroundColor(selectedDate, value.dayData)
         }}
         onPress={() => pressCalendar()}
-        onLayout={e => {
-          if (e.nativeEvent.layout.height - 1 >= height) {
-            setIsOverflow(true);
-          } else {
-            setIsOverflow(false);
-          }
-        }}
       >
         <Text
           style={{
@@ -108,7 +93,7 @@ function CalendarCardView({
         >
           {value.dayData}
         </Text>
-        {value.events.length >= 1 ? (
+        {value.hasEvents ? (
           <View
             style={{
               backgroundColor: 'black',
@@ -173,12 +158,6 @@ function CalendarCardView({
             dispatch(addEventSlice.actions.setStartDate(startDate.toISOString()));
             dispatch(addEventSlice.actions.setEndDate(endDate));
           }}
-          onLayout={e => {
-            setHeight(e.nativeEvent.layout.height)
-            if (e.nativeEvent.layout.height - 1 >= height) {
-              setIsOverflow(true);
-            }
-          }}
         >
           <View
             style={{
@@ -206,64 +185,12 @@ function CalendarCardView({
               {value.dayData}
             </Text>
           </View>
-          {[...value.events].sort((a, b) => {return a.order - b.order}).map((event: monthEventType) => {
-            if (event.paulyEventType !== 'studentSchedule' && event.isFirst === true) {
-              return (
-                <Pressable
-                  key={`Calendar_Event_${event.id}`}
-                  onPress={() => {
-                    dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-                    dispatch(addEventSlice.actions.setSelectedEvent(event));
-                  }}
-                  style={{
-                    width: (width * getWeekLengthOfEvent(event, getDateWithDay(selectedDate, value.dayData))) - 10,
-                    backgroundColor: Colors.lightGray,
-                    padding: 5,
-                    borderRadius: 15,
-                    margin: 3,
-                    zIndex: 100
-                  }}
-                  onLayout={(e) => {
-                    if (event.height === undefined) {
-                      store.dispatch(monthDataSlice.actions.setEvent({
-                        firstIndex: index,
-                        id: event.id,
-                        height: e.nativeEvent.layout.height
-                      }))
-                    }
-                  }}
-                >
-                  <Text style={{ fontSize: 10 }}>{event.name}</Text>
-                </Pressable>
-              );
-            }
-            if (event.paulyEventType !== 'studentSchedule') {
-              return (
-                <Pressable
-                  key={`Calendar_Event_${event.id}`}
-                  style={{height: event.height, margin: 3}}
-                  onPress={() => {
-                    dispatch(addEventSlice.actions.setIsShowingAddDate(true));
-                    dispatch(addEventSlice.actions.setSelectedEvent(event));
-                  }}
-                />
-              )
-            }
-            return null;
-          })}
         </Pressable>
       </View>
     );
   }
   return (
     <View
-      onLayout={e => {
-        if (e.nativeEvent.layout.height > height) {
-          setIsOverflow(true);
-        } else {
-          setIsOverflow(false);
-        }
-      }}
       style={{
         width,
         height,
@@ -276,55 +203,82 @@ function CalendarCardView({
   );
 }
 
+function CalendarRowEvent({event, value, width}:{
+  event: monthEventType;
+  value: ListRenderItemInfo<monthRowType>;
+  width: number;
+}) {
+  const [eventHeight, setEventHeight] = useState<number>(0);
+  const dispatch = useDispatch();
+  const selectedDate = useSelector((state: RootState) => state.selectedDate);
+
+  useEffect(() => {
+    const newEventHeight = getHeightEventsAbove(value.item.events, event, selectedDate, value.item.days)
+    if (newEventHeight + (event.height ?? 0) + 27 > value.item.height) {
+      dispatch(monthDataSlice.actions.setRowHeight({rowIndex: value.index, height: newEventHeight + (event.height ?? 0) + 27}))
+    }
+    setEventHeight(newEventHeight + 21)
+  }, [value.item, event, selectedDate])
+
+  if (event.paulyEventType !== 'studentSchedule') {
+    return (
+      <Pressable
+        key={`Calendar_Event_${event.id}`}
+        onPress={() => {
+          dispatch(addEventSlice.actions.setIsShowingAddDate(true));
+          dispatch(addEventSlice.actions.setSelectedEvent(event));
+        }}
+        style={{
+          width: (width * getWeekLengthOfEvent(event, getDateWithDay(selectedDate, findFirstDayEventWeek(event, value.item.days)))) - 10,
+          backgroundColor: Colors.blueGray,
+          padding: 5,
+          borderRadius: 15,
+          margin: 3,
+          zIndex: 100,
+          left: width * (findFirstDayEventWeek(event, value.item.days) - (value.index * 7) + findFirstDayinMonth(new Date(selectedDate)) - 1),
+          top: eventHeight,
+          position: 'absolute'
+        }}
+        onLayout={(e) => {
+          if (event.height === undefined) {
+            store.dispatch(monthDataSlice.actions.setEventHeight({
+              rowIndex: value.index,
+              eventIndex: value.item.events.findIndex((e) => {return e.id === event.id}),
+              height: e.nativeEvent.layout.height
+            }))
+          }
+        }}
+      >
+        <Text style={{ fontSize: 10 }}>{event.name}</Text>
+      </Pressable>
+    );
+  }
+  return null;
+}
+
 export default function CalendarRow({
   value,
   width,
   height,
   calendarWidth,
 }: {
-  value: ListRenderItemInfo<monthDataType[]>;
+  value: ListRenderItemInfo<monthRowType>;
   width: number;
   height: number;
   calendarWidth: number;
 }) {
   const [isOverflow, setIsOverflow] = useState<boolean>(true);
-  const rowData = useSelector((state: RootState) => state.monthRows);
-
-  function getRowHeight(data: monthRowHeight) {
-    if (value.index === 0) {
-      return data.rowOne
-    }
-    if (value.index === 1) {
-      return data.rowTwo
-    }
-    if (value.index === 2) {
-      return data.rowThree
-    }
-    if (value.index === 3) {
-      return data.rowFour
-    }
-    if (value.index === 4) {
-      return data.rowFive
-    }
-    if (value.index === 5) {
-      return data.rowSix
-    }
-    if (value.index === 6) {
-      return data.rowSeven
-    }
-    if (value.index === 7) {
-      return data.rowEight
-    }
-    return 0
-  }
-
   useEffect(() => {
-    store.dispatch(monthRowsSlice.actions.setRow({
-      row: value.index,
-      height: height
-    }))
-  }, [height])
-
+    console.log("The height is: ", height)
+    if (value.item.height === 0) {
+      store.dispatch(monthDataSlice.actions.setRowHeight({rowIndex: value.index, height: height}))
+    }
+    if (height >= value.item.height) {
+      setIsOverflow(false)
+    } else {
+      setIsOverflow(true)
+    }
+  }, [value.item.height, height])
   return (
     <ScrollView
       scrollEnabled={isOverflow}
@@ -336,25 +290,16 @@ export default function CalendarRow({
       }}
     >
       <View style={{ flexDirection: 'row' }}>
-        {value.item.map((day, dayIndex) => (
+        {value.item.days.map((day, dayIndex) => (
           <CalendarCardView
-            key={`${value.item[dayIndex].id}Card`}
+            key={`${value.item.days[dayIndex].id}Card`}
             value={day}
             width={width}
-            height={getRowHeight(rowData)}
             calendarWidth={calendarWidth}
-            setIsOverflow={setIsOverflow}
-            index={value.index}
-            setHeight={(e) => {
-              if (e > getRowHeight(rowData)) {
-                store.dispatch(monthRowsSlice.actions.setRow({
-                  row: value.index,
-                  height: e
-                }))
-              }
-            }}
+            height={calendarWidth > 519 ? value.item.height:height}
           />
         ))}
+        {calendarWidth > 519 && [...value.item.events].sort((a, b) => {return a.order - b.order}).map((event: monthEventType) => <CalendarRowEvent key={`Week_${value.index}_${event.id}`} event={event} value={value} width={width} />)}
       </View>
     </ScrollView>
   );

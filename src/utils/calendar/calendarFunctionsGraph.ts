@@ -16,6 +16,8 @@ import {
   decodeSchoolDayData,
   decodeSchoolYearData,
   findFirstDayinMonth,
+  getEventsOnDay,
+  getEventsWithEvent,
   isEventDuringInterval,
 } from './calendarFunctions';
 
@@ -625,73 +627,75 @@ export function getMonthData(selectedDate: Date) {
       return 0
     }
   })
-  const monthDataResult: monthDataType[] = [];
-  for (let index = 0; index < 42; index += 1) {
-    if (index >= firstDayWeek && (index - firstDayWeek) < lastDay.getDate()) {
-      // In the current month
-      let events: monthEventType[] = []; // The result events of that day
-      let eventsToOrder: monthEventType[] = []
-      for (
-        let indexEvent = 0;
-        indexEvent < sortedCurrentEvents.length;
-        indexEvent += 1
-      ) {
-        const event: eventType = sortedCurrentEvents[indexEvent]; // Event to be checked
-        if (
-          isEventDuringInterval({
-            selectedDate,
-            event,
-            checkDayStart: index - firstDayWeek + 1,
-            checkDayEnd: index - firstDayWeek + 2,
-          }) &&
-          (event.paulyEventType !== 'schoolYear' ||
-            store.getState().isGovernmentMode)
+  let resultingMonthData: monthRowType[] = []
+  for (let weekIndex = 0; weekIndex < 6; weekIndex += 1) {
+    let resultWeekDays: monthDataType[] = []
+    let resultWeekEvents: monthEventType[] = []
+    // going through the seven days in a week
+    for (let dayIndex = (7 * weekIndex); dayIndex < ((7 * weekIndex) + 7); dayIndex += 1) {
+      let hasEvents: boolean = false
+      if (dayIndex >= firstDayWeek && (dayIndex - firstDayWeek) < lastDay.getDate()) {
+        // Day in the current month
+        let eventsToOrder: monthEventType[] = []
+        for (
+          let indexEvent = 0;
+          indexEvent < sortedCurrentEvents.length;
+          indexEvent += 1
         ) {
-          if ((new Date(event.startTime).getDate() === (index - firstDayWeek + 1) || (index % 7) === 0)) {
-            // isFirst true
-            eventsToOrder.push({
-              ...event,
-              isFirst: true,
-              height: undefined,
-              order: -1
-            });
-          } else {
-            events.push({
-              ...event,
-              isFirst: false,
-              height: undefined,
-              order: monthDataResult.findLast((e) => {return e.events.some((a) => {return a.id === event.id})})?.events.find((a) => {return a.id === event.id})?.order ?? 0
-            });
+          const event: eventType = sortedCurrentEvents[indexEvent]; // Event to be checked
+          if (
+            isEventDuringInterval({
+              selectedDate,
+              event,
+              checkDayStart: dayIndex - firstDayWeek + 1,
+              checkDayEnd: dayIndex - firstDayWeek + 2,
+            }) &&
+            (event.paulyEventType !== 'schoolYear' ||
+              store.getState().isGovernmentMode)
+          ) {
+            hasEvents = true
+            if (!resultWeekEvents.some((e) => {return e.id === event.id})) {
+              eventsToOrder.push({
+                ...event,
+                height: undefined,
+                order: -1
+              });
+            }
           }
         }
-      }
-      for (let eventIndex = 0; eventIndex < eventsToOrder.length; eventIndex += 1) {
-        eventsToOrder[eventIndex] = {
-          ...eventsToOrder[eventIndex],
-          order: getHighestOrder([...eventsToOrder, ...events])
+        for (let eventIndex = 0; eventIndex < eventsToOrder.length; eventIndex += 1) {
+          eventsToOrder[eventIndex] = {
+            ...eventsToOrder[eventIndex],
+            order: getHighestOrder(getEventsWithEvent([...eventsToOrder, ...resultWeekEvents], eventsToOrder[eventIndex]))
+          }
         }
+        resultWeekEvents = [...resultWeekEvents, ...eventsToOrder]
+        resultWeekDays.push({
+          id: createUUID(),
+          showing: true,
+          dayData: dayIndex - firstDayWeek + 1,
+          hasEvents: hasEvents
+        })
+      } else {
+        resultWeekDays.push({
+          id: createUUID(),
+          showing: false,
+          dayData: 0,
+          hasEvents: hasEvents
+        })
       }
-      monthDataResult.push({
-        showing: true,
-        dayData: index - firstDayWeek + 1,
-        id: createUUID(),
-        events: [...events, ...eventsToOrder],
-      });
-    } else {
-      monthDataResult.push({
-        showing: false,
-        dayData: 0,
-        id: createUUID(),
-        events: [],
-      });
     }
+
+    // getting the events
+
+    resultingMonthData.push({
+      height: 0,
+      events: resultWeekEvents,
+      days: resultWeekDays
+    })
   }
-  const chunckedMonthData = [];
-  while (monthDataResult.length) {
-    chunckedMonthData.push(monthDataResult.splice(0, 7));
-  }
-  console.log(chunckedMonthData)
-  store.dispatch(monthDataSlice.actions.setMonthData(chunckedMonthData));
+
+  store.dispatch(monthDataSlice.actions.setMonthData(resultingMonthData));
 }
 
 async function getSchoolDayData(

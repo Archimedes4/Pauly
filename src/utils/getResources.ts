@@ -67,17 +67,18 @@ async function getAttachment(
   attachmentId: string,
 ): Promise<undefined | attachment> {
   const attachmentResult = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/filesFolder`,
+    `https://graph.microsoft.com/v1.0/teams/${teamId}/channels/${channelId}/filesFolder?$select=parentReference`,
   );
   if (attachmentResult.ok) {
     const attachmentData = await attachmentResult.json();
     const attachmentGetResult = await callMsGraph(
-      `https://graph.microsoft.com/v1.0/drives/${attachmentData.parentReference.driveId}/items/${attachmentId}`,
+      `https://graph.microsoft.com/v1.0/drives/${attachmentData.parentReference.driveId}/items/${attachmentId}?select=id,@microsoft.graph.downloadUrl,file`,
     );
     if (attachmentGetResult.ok) {
       const attachmentGetResultData = await attachmentGetResult.json();
+      console.log(attachmentGetResultData)
       return {
-        webUrl: attachmentGetResultData.webUrl,
+        webUrl: attachmentGetResultData["@microsoft.graph.downloadUrl"],
         id: attachmentGetResultData.id,
         title: attachmentGetResultData.name,
         type: attachmentGetResultData.file.mimeType,

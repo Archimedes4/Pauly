@@ -17,10 +17,10 @@ import { addEventSlice } from '@redux/reducers/addEventReducer';
 import {
   findFirstDayinMonth,
   isDateToday,
+  isEventDuringInterval,
 } from '@utils/calendar/calendarFunctions';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import CalendarRow from './CalendarRow';
-import { monthDataSlice } from '@src/redux/reducers/monthDataReducer';
 
 function MonthView({ width, height }: { width: number; height: number }) {
   const daysInWeek: { DOW: string; id: string }[] = [
@@ -168,7 +168,7 @@ function MonthView({ width, height }: { width: number; height: number }) {
               height={(height - 20) / 7}
               value={value}
               calendarWidth={width}
-              key={`Row_${value.item[0].id}`}
+              key={`Row_${value.item.days[0].id}`}
             />
           )}
           scrollEnabled={false}
@@ -218,7 +218,14 @@ function ReducedMonthEvents({}: {}) {
     }
     const result = [];
 
-    const newDayData = [...monthData[firstIndex][secondIndex].events].filter((e) => {return e.paulyEventType !== 'studentSchedule'}).sort(
+    const checkEndDate = new Date(selectedDate)
+    checkEndDate.setDate(checkEndDate.getDate() + 1)
+
+    const newDayData = [...monthData[firstIndex].events].filter((e) => {return e.paulyEventType !== 'studentSchedule' && isEventDuringInterval({
+      checkStart: new Date(selectedDate.slice(0, 10) + "T00:00:00.000Z").getTime(),
+      checkEnd: new Date(checkEndDate.toISOString().slice(0, 10) + "T00:00:00.000Z").getTime(),
+      event: e
+    })}).sort(
       function (a, b) {
         return `${a.startTime}`.localeCompare(b.endTime);
       },

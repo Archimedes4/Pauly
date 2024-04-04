@@ -9,7 +9,7 @@ import React, { useEffect, useCallback } from 'react';
 import { View, Text, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import MonthView from '@components/MonthView';
+import CompressedMonthView from '@components/CompressedMonthView';
 import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
@@ -138,7 +138,7 @@ export default function HomePage() {
                   Calendar
                 </Text>
               </View>
-              <MonthView width={width * 1.0} height={height * 0.37} />
+              <CompressedMonthView width={width * 1.0} height={height * 0.37} />
             </View>
           </View>
         </Link>

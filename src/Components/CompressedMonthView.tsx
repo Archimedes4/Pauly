@@ -2,7 +2,7 @@
   Andrew Mainella
   20 October 2023
   Pauly
-  MonthView.tsx
+  CompressedMonthView.tsx
   This is the componet used on the home page of the app
 */
 import React, { useEffect, useState } from 'react';
@@ -12,11 +12,11 @@ import {
   findFirstDayinMonth,
   getDay,
   getDaysInMonth,
-} from '../utils/calendar/calendarFunctions';
-import { getSchoolDays } from '../utils/calendar/calendarFunctionsGraph';
-import { RootState } from '../redux/store';
-import { monthViewSlice } from '../redux/reducers/monthViewReducer';
-import { Colors, loadingStateEnum } from '../constants';
+} from '@utils/calendar/calendarFunctions';
+import { getSchoolDays } from '@utils/calendar/calendarFunctionsGraph';
+import { RootState } from '@redux/store';
+import { monthViewSlice } from '@redux/reducers/monthViewReducer';
+import { Colors, loadingStateEnum } from '@constants';
 
 function getBackgroundColor(day: number, textval: number, monthViewData: eventType | undefined) {
   if (day == textval) {
@@ -35,13 +35,11 @@ function MonthBlock({
   width,
   height,
   startDate,
-  daySelected,
 }: {
   value: number;
   width: number;
   height: number;
   startDate: number;
-  daySelected: number;
 }) {
   const textval: number = getDay(value, startDate) ?? 0;
   const day = new Date().getDate();
@@ -139,7 +137,7 @@ function MonthBlock({
   );
 }
 
-export default function MonthView({
+export default function CompressedMonthView({
   width,
   height,
 }: {
@@ -148,9 +146,6 @@ export default function MonthView({
 }) {
   const Count = getDaysInMonth(new Date());
   const StartDate = findFirstDayinMonth(new Date());
-  const [daySelected, setDaySelected] = useState<number>(
-    Count + StartDate - 2 - (Count / 7) * 2,
-  );
   const thirtyValue = [...Array(30).keys()];
   const monthViewData = useSelector((state: RootState) => state.monthView);
   const dispatch = useDispatch();
@@ -297,7 +292,6 @@ export default function MonthView({
             width={width * 0.2}
             height={height * 0.145}
             startDate={StartDate}
-            daySelected={daySelected}
           />
         </View>
       ))}

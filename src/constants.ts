@@ -373,7 +373,6 @@ declare global {
     id: string;
   };
   type monthEventType = eventType & {
-    isFirst: boolean
     height: number | undefined
     order: number
   }
@@ -381,17 +380,12 @@ declare global {
     id: string;
     showing: boolean;
     dayData: number;
-    events: monthEventType[];
+    hasEvents:  boolean; // weather or not there are events on the day
   };
-  type monthRowHeight =  {
-    rowOne: number;
-    rowTwo: number;
-    rowThree: number;
-    rowFour: number;
-    rowFive: number;
-    rowSix: number;
-    rowSeven: number;
-    rowEight: number;
+  type monthRowType = {
+    height: number;
+    events: monthEventType[];
+    days: monthDataType[]; // the length of this array should always be seven
   }
   type microsoftUserType = {
     id: string;

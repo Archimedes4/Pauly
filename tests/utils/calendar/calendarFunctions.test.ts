@@ -4,6 +4,7 @@ import {
   isDateToday,
   convertYearToSchoolYear,
   isTimeOnDay,
+  isTimeDuringInterval,
 } from '@utils/calendar/calendarFunctions';
 
 it('converts year to school year', () => {
@@ -104,3 +105,11 @@ it('decodes school day data correctly with dress code id', () => {
       '456bd570-337e-4c99-ab99-defb3558c59f',
   });
 });
+
+it('Checks if a time is during a interval corretly', () => {
+  const intStart = new Date("2024-04-11T00:00:00.0000000").getTime()
+  const intEnd = new Date("2024-04-14T00:00:00.0000000").getTime()
+  const envStart = new Date("2024-04-08T00:00:00.0000000").getTime()
+  const envEnd = new Date("2024-04-12T00:00:00.0000000").getTime()
+  expect(isTimeDuringInterval(envStart, envEnd, intStart, intEnd)).toBe(true)
+})

@@ -1,27 +1,25 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-const initalState: monthDataType[][] = [];
+const initalState: monthRowType[] = [];
 
 export const monthDataSlice = createSlice({
   name: 'monthData',
   initialState: initalState,
   reducers: {
-    setMonthData: (_state, action: PayloadAction<monthDataType[][]>) => {
+    setMonthData: (_state, action: PayloadAction<monthRowType[]>) => {
       return action.payload;
     },
-    setEvent: (state, action: PayloadAction<{firstIndex: number, id: string, height: number}>) => {
-      let result = state[action.payload.firstIndex]
-      for (let index = 0; index < result.length; index += 1) {
-        for (let eventIndex = 0; eventIndex < result[index].events.length; eventIndex += 1) {
-          if (result[index].events[eventIndex].id == action.payload.id) {
-            result[index].events[eventIndex] = {
-              ...result[index].events[eventIndex],
-              height: action.payload.height
-            }
-          }
-        }
+    setEventHeight: (state, action: PayloadAction<{rowIndex: number, eventIndex: number, height: number}>) => {
+      let oldEvent = state[action.payload.rowIndex].events[action.payload.eventIndex]
+      state[action.payload.rowIndex].events[action.payload.eventIndex] = {
+        ...oldEvent,
+        height: action.payload.height
       }
-      state[action.payload.firstIndex] = result
+      
+    },
+    //0 is the first row
+    setRowHeight: (state, action: PayloadAction<{rowIndex: number, height: number}>) => {
+      state[action.payload.rowIndex].height = action.payload.height
     }
   },
 });

@@ -5,7 +5,7 @@
   BackButton.tsx
   Default back button for all of Pauly to keep same style and cut down on redudant code. Manly used when the current break point is 0.
 */
-import { Text, ViewStyle, View } from 'react-native';
+import { Text, ViewStyle } from 'react-native';
 import React, { useState } from 'react';
 import { Link } from 'expo-router';
 import { RootState } from '@redux/store';

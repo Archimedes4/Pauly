@@ -440,7 +440,7 @@ export default function Resources() {
             justifyContent: 'center',
           }}
         >
-          {currentBreakPoint <= 0 ? <BackButton to="/home" /> : null}
+          {currentBreakPoint <= 0 ? <BackButton to="/home" color={Colors.white} /> : null}
           <Text style={{ fontFamily: 'BukhariScript', color: Colors.white }}>
             Resources
           </Text>

@@ -192,7 +192,7 @@ export default function Calendar() {
     <View>
       <View style={{ height: height * 0.1, backgroundColor: Colors.darkGray }}>
         {currentBreakPoint >= 1 ? null : (
-          <BackButton to="/home" style={{ zIndex: 100 }} />
+          <BackButton to="/home" style={{ zIndex: 100 }} color={Colors.white} />
         )}
         <TopView width={width} height={height * 0.1} />
       </View>
