@@ -110,7 +110,6 @@ export default async function getLeaderboardApi(
         // Error
         return { result: loadingStateEnum.failed };
       }
-      console.log('HERE', currentPoints);
       users.set(currentUser, {
         name: oldUser.name,
         points: oldUser.points + currentPoints,
@@ -131,7 +130,6 @@ export default async function getLeaderboardApi(
       });
     }
   }
-  console.log(users);
   const leaderboardResult: leaderboardUserType[] = [];
   users.forEach(
     (

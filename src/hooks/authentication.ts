@@ -43,14 +43,10 @@ export function useSilentLogin(): () => Promise<void> {
     })
   })
   const main = async () => {
-    console.log("Silent")
     const result = await acquireTokenSilently()
     if (result !== undefined && result.result !== ResultState.error) {
-      console.log("Token")
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result));
     } else {
-      console.log(result)
-      console.log("Error")
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""));
     }
   }
@@ -77,7 +73,6 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     }
     store.dispatch(authActiveSlice.actions.setAuthActive(true))
     const result = await acquireTokenInteractively()
-    console.log(result)
     // On web the result is always undefined
     if (result !== undefined && result.result !== ResultState.error) {
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result));

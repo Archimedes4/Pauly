@@ -76,7 +76,6 @@ async function getAttachment(
     );
     if (attachmentGetResult.ok) {
       const attachmentGetResultData = await attachmentGetResult.json();
-      console.log(attachmentGetResultData)
       return {
         webUrl: attachmentGetResultData["@microsoft.graph.downloadUrl"],
         id: attachmentGetResultData.id,

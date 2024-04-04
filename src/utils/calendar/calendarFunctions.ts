@@ -337,9 +337,6 @@ export function getHeightEventsAbove(events: monthEventType[], event: monthEvent
   let heightestHeight = 0;
   for (let day = dateOfFirstDay.getDate(); day < delta; day += 1) {
     const heightEvents = getEventsOnDay(events, getDateWithDay(selectedDate, day))
-    if (event.name === "Admin Day:  No Classes") {
-      console.log("Admin", heightEvents)
-    }
     const newHeight = getHeightAbove(heightEvents, event.order)
     if (newHeight > heightestHeight) {
       heightestHeight = newHeight

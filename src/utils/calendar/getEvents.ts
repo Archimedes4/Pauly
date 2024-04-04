@@ -96,7 +96,6 @@ export default async function getEvents() {
       outputEvents = [...outputEvents, ...furtherResult.events];
       url = furtherResult.nextLink !== undefined ? furtherResult.nextLink : '';
     } else {
-      console.log("Failed", furtherResult)
       url = '';
     }
   }

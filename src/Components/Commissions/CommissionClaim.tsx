@@ -92,7 +92,6 @@ export default function CommissionClaim({
         outImageUrl !== '' ? outImageUrl : undefined,
         undefined,
       );
-      console.log(result);
       setClaimCommissionState(result);
     }
   }

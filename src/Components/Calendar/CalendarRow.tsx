@@ -272,7 +272,6 @@ export default function CalendarRow({
 }) {
   const [isOverflow, setIsOverflow] = useState<boolean>(true);
   useEffect(() => {
-    console.log("The height is: ", height)
     if (value.item.height === 0) {
       store.dispatch(monthDataSlice.actions.setRowHeight({rowIndex: value.index, height: height}))
     }

@@ -45,10 +45,6 @@ function MonthView({ width, height }: { width: number; height: number }) {
     return getMonthData(new Date(selectedDate));
   }, [selectedDate, currentEvents]);
 
-  useEffect(() => {
-    console.log(monthData)
-  }, [monthData])
-
   return (
     <>
       <View

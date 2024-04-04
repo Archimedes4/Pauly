@@ -20,7 +20,6 @@ export async function updateTaskStatus(
       task: { ...task, state: loadingStateEnum.loading },
     }),
   );
-  console.log(task.status);
   const data = {
     status: task.status,
   };

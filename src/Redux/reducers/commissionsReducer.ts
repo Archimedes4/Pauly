@@ -112,7 +112,6 @@ export const commissionsSlice = createSlice({
       state.commissionsState = loadingStateEnum.loading;
     }),
       builder.addCase(getCommissionsThunk.fulfilled, (state, payload) => {
-        console.log('This thing');
         state.commissionsState = loadingStateEnum.success;
         state.currentCommissions = payload.payload.data;
         state.commissionNextLink = payload.payload.nextLink;

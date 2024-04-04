@@ -86,7 +86,6 @@ export async function getSchedule(
       result: loadingStateEnum.failed;
     }
 > {
-  console.log('schedule');
   const result = await callMsGraph(
     `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId

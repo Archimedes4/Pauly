@@ -236,8 +236,6 @@ export async function getGraphEvents(
       const resultRequest = resultSchoolDayRequests[index]
       if (resultRequest.result === loadingStateEnum.success) {
         newEvents = [...newEvents, resultRequest.data]
-      } else {
-        console.log("Failure")
       }
     }
 

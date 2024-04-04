@@ -285,7 +285,6 @@ function SportsBody({
   async function loadSportsContent() {
     const result = await getSportsContent(selectedTeam?.teamId);
     if (result.result === loadingStateEnum.success) {
-      console.log(result)
       setSportsPosts(result.sports);
     }
     setLoadingResult(result.result);
@@ -432,7 +431,6 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
     currentHeight: number,
     currentImageAspect: number,
   ) {
-    console.log(currentHeight, currentWidth)
     if (
       post.item.data.postType === postType.microsoftFile &&
       post.item.data.fileType === dataContentTypeOptions.image
