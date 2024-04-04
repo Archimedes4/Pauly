@@ -1,4 +1,4 @@
-import store from '@src/redux/store';
+import store from '@redux/store';
 import callMsGraph from './noStore';
 
 export default function callMsGraphStore(

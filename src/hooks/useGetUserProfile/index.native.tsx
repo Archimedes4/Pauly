@@ -1,7 +1,7 @@
 import store from '@redux/store';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
-import { loadingStateEnum } from '@src/constants';
+import { loadingStateEnum } from '@constants';
 import getUserImage from './getUserImage';
 
 export default function getUserProfile() {

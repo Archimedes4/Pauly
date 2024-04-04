@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, FlatList, SectionList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import PickerWrapper from '@components/Pickers/Picker';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import { RootState } from '@redux/store';

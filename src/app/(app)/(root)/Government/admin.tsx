@@ -8,7 +8,7 @@ import {
 } from '@utils/ﻩgovernment/initializePauly/initializePauly';
 import { RootState } from '@redux/store';
 import { addDataArray } from '@utils/ﻩgovernment/initializePauly/initializePaulyData';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';

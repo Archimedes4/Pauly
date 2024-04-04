@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { Colors, loadingStateEnum } from '@constants';
 import { RootState } from '@redux/store';
 import { getTextState } from '@utils/ultility/createUUID';

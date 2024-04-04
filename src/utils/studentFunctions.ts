@@ -8,7 +8,7 @@ import { loadingStateEnum } from '@constants';
 import { studentSearchSlice } from '@redux/reducers/studentSearchReducer';
 import store from '@redux/store';
 import largeBatch from '@utils/ultility/batchRequest';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 
 function checkIfStudent(role: string): {
   result: boolean;

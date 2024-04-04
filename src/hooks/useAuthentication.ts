@@ -33,9 +33,7 @@ export default function useAuthentication() {
   const [mounted, setMounted] = useState(false);
   // main function
   async function loadContent() {
-    if (Platform.OS === 'web') {
-      await silentLogin();
-    }
+    await silentLogin();
     if (store.getState().authenticationToken !== '') {
       const webResult = webSession();
       if (!webResult) {

@@ -10,7 +10,7 @@ import store from '@redux/store';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { governmentScopes, scopes } from '@constants';
 import { authActiveSlice } from '@redux/reducers/authActiveReducer';
-import { useMSAL } from "@archimedes4/expo-msal"
+import { ResultState, TokenResult, useMSAL } from "@archimedes4/expo-msal"
 import { Platform } from 'react-native';
 
 export const useRefresh = () => {
@@ -43,10 +43,14 @@ export function useSilentLogin(): () => Promise<void> {
     })
   })
   const main = async () => {
+    console.log("Silent")
     const result = await acquireTokenSilently()
-    if (result !== undefined && result !== "Error") {
+    if (result !== undefined && result.result !== ResultState.error) {
+      console.log("Token")
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result));
     } else {
+      console.log(result)
+      console.log("Error")
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""));
     }
   }
@@ -59,7 +63,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ""}`,
     scopes: governmentScopes,
     redirectUri: Platform.select({
-      ios: "msauth.expo.modules.msal.example://auth",
+      ios: "msauth.Archimedes4.Pauly://auth",
       android: "msauth://expo.modules.msal.example",
       default: ""
     })
@@ -73,8 +77,9 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     }
     store.dispatch(authActiveSlice.actions.setAuthActive(true))
     const result = await acquireTokenInteractively()
+    console.log(result)
     // On web the result is always undefined
-    if (result !== undefined && result !== "Error") {
+    if (result !== undefined && result.result !== ResultState.error) {
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(result));
     } else {
       store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(""));

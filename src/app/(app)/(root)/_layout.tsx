@@ -14,7 +14,7 @@ import ProfileBlock from '@components/ProfileBlock';
 import { Colors } from '@constants';
 import { Slot, useFocusEffect, useRouter } from 'expo-router';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
-import { SignInComponent } from '../sign-in';
+import { SignInComponent } from '../(public)/sign-in';
 
 function AuthenticatedView() {
   const { currentBreakPoint, totalWidth, width } = useSelector(

@@ -14,7 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { convertYearToSchoolYear } from '@utils/calendar/calendarFunctions';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { Colors, dataContentTypeOptions, loadingStateEnum } from '@constants';
 import store, { RootState } from '@redux/store';

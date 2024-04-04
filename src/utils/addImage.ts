@@ -5,7 +5,7 @@
 */
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { timer } from './ultility/utils';
 
 export default async function addImage(

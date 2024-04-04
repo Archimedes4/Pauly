@@ -7,7 +7,7 @@
 */
 import { loadingStateEnum, resourceResponce } from '@constants';
 import getResource from '@utils/getResources';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 
 export async function getTeams(nextLink?: string): Promise<{
   result: loadingStateEnum;

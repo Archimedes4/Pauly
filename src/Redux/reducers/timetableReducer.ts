@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '@constants';
 import { getValueFromRedux } from '@utils/ultility/utils';
-import { getTimetableApi } from '@src/utils/calendar/calendarFunctionsGraphNoStore';
+import { getTimetableApi } from '@utils/calendar/calendarFunctionsGraphNoStore';
 import { StoreType } from '../store';
 
 const initalState: {

@@ -5,7 +5,7 @@
   batchRequest.ts
 */
 import { loadingStateEnum } from '@constants';
-import { StoreType } from '@src/redux/store';
+import { StoreType } from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssests/noStore';
 
 async function makeBatch(

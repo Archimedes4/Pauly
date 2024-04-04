@@ -1,5 +1,5 @@
 import { useMsal } from '@azure/msal-react';
-import { loadingStateEnum } from '@src/constants';
+import { loadingStateEnum } from '@constants';
 import { useEffect, useState } from 'react';
 
 export default function usePaulyApi() {

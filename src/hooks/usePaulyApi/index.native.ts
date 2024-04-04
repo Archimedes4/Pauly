@@ -1,5 +1,5 @@
-import { loadingStateEnum } from '@src/constants';
-import store from '@src/redux/store';
+import { loadingStateEnum } from '@constants';
+import store from '@redux/store';
 import { refreshAsync, useAutoDiscovery } from 'expo-auth-session';
 import { useEffect, useState } from 'react';
 

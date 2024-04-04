@@ -8,7 +8,7 @@
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import store from '@redux/store';
 import { loadingStateEnum } from '@constants';
-import { selectedDateSlice } from '@src/redux/reducers/selectedDateReducer';
+import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
 import { getGraphEvents } from './calendarFunctionsGraph';
 import { getClassEventsFromDay } from '../classesFunctions';
 import { findFirstDayinMonth, getDOW } from './calendarFunctions';

@@ -14,7 +14,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { Colors, loadingStateEnum, resourceResponce, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
 import getResource from '@utils/getResources';

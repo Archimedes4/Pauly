@@ -3,7 +3,7 @@
 // Picker with animated black line
 
 import { Colors } from '@constants';
-import createUUID from '@src/utils/ultility/createUUID';
+import createUUID from '@utils/ultility/createUUID';
 import React, { ReactNode, useEffect, Children, useState } from 'react';
 import { View, Pressable } from 'react-native';
 import Animated, {

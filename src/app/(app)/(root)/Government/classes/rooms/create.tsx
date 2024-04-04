@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import { WarningIcon } from '@components/Icons';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import StyledButton from '@components/StyledButton';

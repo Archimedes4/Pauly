@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { loadingStateEnum } from '@constants';
 import getClassesApi from '@utils/getClassesApi';
-import { getValueFromRedux } from '@src/utils/ultility/utils';
+import { getValueFromRedux } from '@utils/ultility/utils';
 import { StoreType } from '../store';
 
 const initalState: {

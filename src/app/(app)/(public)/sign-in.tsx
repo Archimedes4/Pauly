@@ -21,7 +21,7 @@ import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import { GearIcon } from '@components/Icons';
 import { Colors } from '@constants';
 import ProgressView from '@components/ProgressView';
-import { useInvokeLogin } from '@src/hooks/authentication';
+import { useInvokeLogin } from '@hooks/authentication';
 import { RootState } from '@redux/store';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
 import { router } from 'expo-router';

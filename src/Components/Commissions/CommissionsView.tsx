@@ -5,16 +5,14 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import CommissionClaim from '@components/Commissions/CommissionClaim';
-import getCommission from '@src/utils/commissions/getCommissionApi';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import getCommission from '@utils/commissions/getCommissionApi';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import ProgressView from '@components/ProgressView';
 import { CloseIcon } from '@components/Icons';
 import WebViewCross from '@components/WebViewCross';
 import { Colors, commissionTypeEnum, loadingStateEnum } from '@constants';
-import { getTextState } from '@utils/ultility/createUUID';
 import { Link, router } from 'expo-router';
-import StyledButton from '../StyledButton';
-import calculateFontSize from '@src/utils/ultility/calculateFontSize';
+import calculateFontSize from '@utils/ultility/calculateFontSize';
 
 enum CameraResult {
   notStarted,

@@ -213,11 +213,13 @@ function CalendarRowEvent({event, value, width}:{
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
 
   useEffect(() => {
-    const newEventHeight = getHeightEventsAbove(value.item.events, event, selectedDate, value.item.days)
+    const newEventHeight = getHeightEventsAbove(value.item.events, event, selectedDate, value.item.days) + 21
     if (newEventHeight + (event.height ?? 0) + 27 > value.item.height) {
       dispatch(monthDataSlice.actions.setRowHeight({rowIndex: value.index, height: newEventHeight + (event.height ?? 0) + 27}))
     }
-    setEventHeight(newEventHeight + 21)
+    if (eventHeight !== newEventHeight) {
+      setEventHeight(newEventHeight)
+    }
   }, [value.item, event, selectedDate])
 
   if (event.paulyEventType !== 'studentSchedule') {
@@ -230,14 +232,15 @@ function CalendarRowEvent({event, value, width}:{
         }}
         style={{
           width: (width * getWeekLengthOfEvent(event, getDateWithDay(selectedDate, findFirstDayEventWeek(event, value.item.days)))) - 10,
-          backgroundColor: Colors.blueGray,
+          backgroundColor: Colors.darkGray,
           padding: 5,
           borderRadius: 15,
           margin: 3,
           zIndex: 100,
           left: width * (findFirstDayEventWeek(event, value.item.days) - (value.index * 7) + findFirstDayinMonth(new Date(selectedDate)) - 1),
           top: eventHeight,
-          position: 'absolute'
+          position: 'absolute',
+          opacity: event.height !== 0 ? 1:0
         }}
         onLayout={(e) => {
           if (event.height === undefined) {
@@ -249,7 +252,7 @@ function CalendarRowEvent({event, value, width}:{
           }
         }}
       >
-        <Text style={{ fontSize: 10 }}>{event.name}</Text>
+        <Text style={{ fontSize: 10, color: Colors.white }}>{event.name}</Text>
       </Pressable>
     );
   }

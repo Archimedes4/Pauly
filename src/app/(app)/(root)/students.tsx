@@ -16,7 +16,7 @@ import { PersonIcon } from '@components/Icons';
 import { studentSearchSlice } from '@redux/reducers/studentSearchReducer';
 import BackButton from '@components/BackButton';
 import { getNumberOfBlocks, getUsersAndPhotos } from '@utils/studentFunctions';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import createUUID from '@utils/ultility/createUUID';
 import { Link } from 'expo-router';
 import { useStudentSafeArea } from '@hooks/safeAreaHooks';

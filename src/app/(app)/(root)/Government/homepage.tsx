@@ -6,7 +6,7 @@
 import { View, Text, TextInput, Switch } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import store, { RootState } from '@redux/store';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
@@ -20,7 +20,7 @@ import {
   getDataWithShareID,
 } from '@utils/ultility/handleShareID';
 import ProgressView from '@components/ProgressView';
-import BackButton from '@src/components/BackButton';
+import BackButton from '@components/BackButton';
 
 export default function GovernmentHomePage() {
   const { paulyDataListId, siteId } = useSelector(

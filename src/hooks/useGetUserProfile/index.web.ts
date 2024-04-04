@@ -1,5 +1,5 @@
 import store from '@redux/store';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import { useMsal } from '@azure/msal-react';
 import { microsoftProfileDataSlice } from '@redux/reducers/microsoftProfileDataReducer';
 import { loadingStateEnum } from '@constants';

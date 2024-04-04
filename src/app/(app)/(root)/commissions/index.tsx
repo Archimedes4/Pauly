@@ -35,7 +35,7 @@ import {
   PiggyBankIcon,
 } from '@components/Icons';
 import { Link } from 'expo-router';
-import StyledButton from '@src/components/StyledButton';
+import StyledButton from '@components/StyledButton';
 
 function PickerPiece({
   text,

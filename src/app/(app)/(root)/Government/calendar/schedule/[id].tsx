@@ -18,7 +18,7 @@ import ColorPicker, {
   RenderThumbProps,
   InputWidget,
 } from 'reanimated-color-picker';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, styles } from '@constants';
@@ -26,7 +26,7 @@ import { CloseIcon, WarningIcon } from '@components/Icons';
 import ProgressView from '@components/ProgressView';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import SecondStyledButton from '@components/StyledButton';
-import { getSchedule } from '@src/utils/calendar/calendarFunctionsGraphNoStore';
+import { getSchedule } from '@utils/calendar/calendarFunctionsGraphNoStore';
 
 function isValidHexaCode(input: string) {
   // Define the regular expression pattern for a valid hexadecimal color code

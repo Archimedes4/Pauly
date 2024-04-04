@@ -8,7 +8,7 @@ import useSyncCalendar from '@hooks/useSyncCalendar';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 import StyledButton from '@components/StyledButton';
 import ProgressView from '@components/ProgressView';
-import BackButton from '@src/components/BackButton';
+import BackButton from '@components/BackButton';
 
 async function getPastCalendarSyncs(): Promise<
   | {

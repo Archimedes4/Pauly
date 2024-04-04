@@ -2,7 +2,7 @@ import { View, Text, Pressable, Modal, TextInput } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
 import { getSport, getSportsTeams } from '@utils/sports/sportsFunctions';

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
-import getCommissions from '@src/utils/commissions/getCommissionsApi';
+import getCommissions from '@utils/commissions/getCommissionsApi';
 import getSubmissions from '@utils/commissions/getSubmissions';
 import createUUID from '@utils/ultility/createUUID';
 import store, { RootState } from '@redux/store';
@@ -14,7 +14,7 @@ import {
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
-import BackButton from '@src/components/BackButton';
+import BackButton from '@components/BackButton';
 
 function GovernmentCommissionsBody() {
   const [commissions, setCommissions] = useState<commissionType[]>([]);

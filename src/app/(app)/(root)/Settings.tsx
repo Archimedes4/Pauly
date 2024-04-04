@@ -19,7 +19,7 @@ import {
 import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';
-import { useSignOut } from '@src/hooks/authentication';
+import { useSignOut } from '@hooks/authentication';
 
 export default function Settings() {
   const router = useRouter();
