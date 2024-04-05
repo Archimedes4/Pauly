@@ -1,3 +1,7 @@
+/*
+  Pauly
+  Andrew Mainella
+*/
 import { findTimeOffset } from '@utils/calendar/calendarFunctions';
 import { useCallback, useEffect, useState } from 'react';
 

@@ -7,24 +7,14 @@
 */
 import React from 'react';
 import { Text, Platform } from 'react-native';
-import { Slot, useFocusEffect, useRouter } from 'expo-router';
+import { Redirect, Slot, useFocusEffect, useRouter } from 'expo-router';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
 import { SignInComponent } from './sign-in';
-
-function PushToMain() {
-  const router = useRouter();
-  useFocusEffect(() => {
-    try {
-      router.push('/');
-    } catch (error) {}
-  });
-  return null;
-}
 
 export default function Main() {
   const isAuthenticated = useIsAuthenticated();
   if (isAuthenticated.authenticated) {
-    return <PushToMain />;
+    return <Redirect href={"/home"}/>
   }
 
   if (!isAuthenticated.loading && Platform.OS !== 'web') {

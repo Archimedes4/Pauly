@@ -34,6 +34,7 @@ function GovernmentClassesBody() {
             schoolYearId: '',
             semester: [semesters.semesterOne],
             teamLink: '',
+            isHomeroom: false
           });
         }
         setClasses(outputData);

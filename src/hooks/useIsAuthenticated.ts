@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  useIsAuthenticated.ts
+  This is a hook that checks weather the use is or isn't authenticated.
+  The hook just checks weather the user has a token.
+*/
 import { RootState } from '@redux/store';
 import { getWantGovernment } from '@utils/handleGovernmentLogin';
 import { useEffect, useState } from 'react';
@@ -50,6 +57,6 @@ export default function useIsAuthenticated() {
   }
   useEffect(() => {
     checkAuthentication();
-  }, [siteId, authenticationToken, isOveride]);
+  }, [siteId, authenticationToken, isOveride, isLoading]);
   return isAuthenticated;
 }

@@ -6,15 +6,15 @@
   authentication component web, using msal library.
 */
 import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
-import store from '@redux/store';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
 import { governmentScopes } from '@constants';
 import { authActiveSlice } from '@redux/reducers/authActiveReducer';
 import { ResultState, useMSAL } from '@archimedes4/expo-msal';
 import { Platform } from 'react-native';
+import store from '@redux/store';
 
 export const useRefresh = () => {
-  const { acquireTokenInteractively } = useMSAL({
+  const { acquireTokenSilently } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
     scopes: governmentScopes,
@@ -25,10 +25,16 @@ export const useRefresh = () => {
     }),
   });
   const main = async () => {
-    const result = await acquireTokenInteractively();
-    store.dispatch(
-      authenticationTokenSlice.actions.setAuthenticationToken(result),
-    );
+    const result = await acquireTokenSilently();
+    if (result !== undefined && result.result !== ResultState.error) {
+      store.dispatch(
+        authenticationTokenSlice.actions.setAuthenticationToken(result.data),
+      );
+    } else {
+      store.dispatch(
+        authenticationTokenSlice.actions.setAuthenticationToken(''),
+      );
+    }
   };
   return main;
 };
@@ -48,7 +54,7 @@ export function useSilentLogin(): () => Promise<void> {
     const result = await acquireTokenSilently();
     if (result !== undefined && result.result !== ResultState.error) {
       store.dispatch(
-        authenticationTokenSlice.actions.setAuthenticationToken(result),
+        authenticationTokenSlice.actions.setAuthenticationToken(result.data),
       );
     } else {
       store.dispatch(
@@ -82,7 +88,7 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     // On web the result is always undefined
     if (result !== undefined && result.result !== ResultState.error) {
       store.dispatch(
-        authenticationTokenSlice.actions.setAuthenticationToken(result),
+        authenticationTokenSlice.actions.setAuthenticationToken(result.data),
       );
     } else {
       store.dispatch(
