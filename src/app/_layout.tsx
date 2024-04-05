@@ -132,7 +132,7 @@ function RootLayout() {
     <PaperProvider theme={paperTheme}>
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <ExpoMsalProvider>
+          <ExpoMsalProvider clientId={process.env.EXPO_PUBLIC_CLIENTID ?? ""} tenantId={process.env.EXPO_PUBLIC_TENANTID}>
             <AppCore />
           </ExpoMsalProvider>
         </GestureHandlerRootView>
