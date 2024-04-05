@@ -5,7 +5,7 @@
   Students.tsx
   Holds the student section of Pauly. See README.md for more information.
 */
-import { View, Text, ListRenderItemInfo, Image } from 'react-native';
+import { View, Text, ListRenderItemInfo, Image, StatusBar } from 'react-native';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
@@ -206,6 +206,7 @@ export default function Students() {
             currentBreakPoint === 0 ? Colors.maroon : Colors.white,
         }}
       >
+        <StatusBar barStyle="light-content" />
         <View
           style={{
             height: height * 0.15,
@@ -216,7 +217,7 @@ export default function Students() {
             backgroundColor: Colors.darkGray,
           }}
         >
-          {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
+          {currentBreakPoint === 0 ? <BackButton to="/home" color={Colors.white}/> : null}
           <Text style={{ fontFamily: 'BukhariScript', color: Colors.white }}>
             Students
           </Text>
@@ -260,6 +261,7 @@ export default function Students() {
         backgroundColor: currentBreakPoint === 0 ? Colors.maroon : Colors.white,
       }}
     >
+      <StatusBar barStyle="light-content" />
       <Link href="/">
         <Text>Back</Text>
       </Link>

@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image } from 'react-native';
+import { View, Text, FlatList, Image, StatusBar } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Colors, loadingStateEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
@@ -125,6 +125,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
         bottom: Colors.white,
+        
       }),
     );
   }, []);
@@ -132,8 +133,10 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
   if (state === loadingStateEnum.success) {
     return (
       <View style={{ width, height }}>
+        <StatusBar barStyle="light-content" />
         <BackButton
           to={commissionId ? `/commissions/${commissionId}` : '/commissions'}
+          color={Colors.white}
         />
         <View
           style={{
@@ -155,7 +158,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
             Leaderboard
           </Text>
         </View>
-        <View style={{ backgroundColor: Colors.lightGray }}>
+        <View style={{ backgroundColor: Colors.lightGray, padding: 3 }}>
           <SegmentedPicker
             options={['Individual', 'Homeroom']}
             selectedIndex={isHomeroom ? 1 : 0}
@@ -166,8 +169,8 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                 setIsHomeroom(true);
               }
             }}
-            width={width}
-            height={50}
+            width={width - 6}
+            height={40}
           />
         </View>
         <FlatList

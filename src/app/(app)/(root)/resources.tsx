@@ -16,6 +16,7 @@ import {
   ListRenderItemInfo,
   Image,
   Platform,
+  StatusBar,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
@@ -429,6 +430,7 @@ export default function Resources() {
 
   return (
     <>
+      <StatusBar barStyle="light-content" />
       <View style={{ height, width }}>
         <View
           style={{

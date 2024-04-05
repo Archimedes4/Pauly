@@ -5,7 +5,7 @@
   Calendar.tsx
   Main Calendar for Pauly see README.md for more info.
 */
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, StatusBar } from 'react-native';
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Week from '@components/Calendar/Week';
@@ -190,6 +190,7 @@ export default function Calendar() {
 
   return (
     <View>
+      <StatusBar barStyle="light-content" />
       <View style={{ height: height * 0.1, backgroundColor: Colors.darkGray }}>
         {currentBreakPoint >= 1 ? null : (
           <BackButton to="/home" style={{ zIndex: 100 }} color={Colors.white} />

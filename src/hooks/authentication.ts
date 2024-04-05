@@ -19,7 +19,7 @@ export const useRefresh = () => {
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
     scopes: governmentScopes,
     redirectUri: Platform.select({
-      ios: 'msauth.expo.modules.msal.example://auth',
+      ios: 'msauth.Archimedes4.Pauly://auth',
       android: 'msauth://expo.modules.msal.example',
       default: '',
     }),
@@ -39,7 +39,7 @@ export function useSilentLogin(): () => Promise<void> {
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
     scopes: governmentScopes,
     redirectUri: Platform.select({
-      ios: 'msauth.expo.modules.msal.example://auth',
+      ios: 'msauth.Archimedes4.Pauly://auth',
       android: 'msauth://expo.modules.msal.example',
       default: '',
     }),

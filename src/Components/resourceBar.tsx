@@ -175,18 +175,19 @@ export default function ResourceBar() {
   const [barWidth, setBarWidth] = useState(0);
   const { width } = useSelector((state: RootState) => state.dimensions);
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const selectedResourceMode = useSelector(
     (state: RootState) => state.resources.selectedResourceMode,
   );
 
-  const pan = useSharedValue(selectedResourceMode * 45);
+  const pan = useSharedValue(isCollapsed ? (selectedResourceMode * (barWidth/9)):selectedResourceMode * 45);
 
   const animatedDefault = useAnimatedStyle(() => ({
     transform: [{ translateX: pan.value }],
   }));
 
   useEffect(() => {
-    pan.value = withTiming(selectedResourceMode * 45, {
+    pan.value = withTiming(isCollapsed ? (selectedResourceMode * (barWidth/9)):selectedResourceMode * 45, {
       duration: 150,
       easing: Easing.linear,
     });
@@ -198,7 +199,15 @@ export default function ResourceBar() {
 
   return (
     <Pressable
-      onLayout={e => setBarWidth(e.nativeEvent.layout.width)}
+      onLayout={e => {
+        if (width < 405) {
+          setBarWidth(width-4)
+          setIsCollapsed(true)
+        } else {
+          setBarWidth(e.nativeEvent.layout.width)
+          setIsCollapsed(false)
+        }
+      }}
       style={{
         flexDirection: 'row',
         backgroundColor: Colors.white,
@@ -216,35 +225,35 @@ export default function ResourceBar() {
           {
             position: 'absolute',
             borderRadius: 30,
-            width: 45,
-            height: 45,
+            width: isCollapsed ? ((barWidth/9)):45,
+            height: isCollapsed ? ((barWidth/9)):45,
             backgroundColor: Colors.lightGray,
           },
         ]}
       />
       <BarPiece mode={resourceMode.home}>
-        <HomeIcon width={25} height={25} />
+        <HomeIcon width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </BarPiece>
       <BarPiece mode={resourceMode.sports}>
-        <SportsIcon width={25} height={25} />
+        <SportsIcon width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </BarPiece>
       <BarPiece mode={resourceMode.schoolEvents}>
-        <CalendarIcon width={25} height={25} />
+        <CalendarIcon width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </BarPiece>
       <BarPiece mode={resourceMode.annoucments}>
-        <Megaphone width={25} height={25} />
+        <Megaphone width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </BarPiece>
       <BarPiece mode={resourceMode.fitness}>
-        <GymIcon width={25} height={25} />
+        <GymIcon width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </BarPiece>
       <BarPiece mode={resourceMode.files}>
-        <DocumentIcon width={25} height={25} />
+        <DocumentIcon width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </BarPiece>
       <BarPiece mode={resourceMode.news}>
-        <NewsIcon width={25} height={25} />
+        <NewsIcon width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </BarPiece>
       <BarPiece mode={resourceMode.scholarships}>
-        <GraduationHatIcon width={25} height={25} />
+        <GraduationHatIcon width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </BarPiece>
       <Pressable
         onPress={() => {
@@ -252,7 +261,7 @@ export default function ResourceBar() {
         }}
         style={{ padding: 10 }}
       >
-        <UpIcon width={25} height={25} />
+        <UpIcon width={isCollapsed ? ((barWidth/9) - 20):25} height={isCollapsed ? ((barWidth/9) - 20):25} />
       </Pressable>
     </Pressable>
   );

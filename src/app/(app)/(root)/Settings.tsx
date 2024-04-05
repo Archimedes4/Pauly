@@ -6,7 +6,7 @@
   Settings for when current breake point is 0 (less than 576), allows the user to logout, go to the student search page and access goverment if in government mode.
 */
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Pressable, Image } from 'react-native';
+import { View, Text, Pressable, Image, StatusBar } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
@@ -59,6 +59,7 @@ export default function Settings() {
 
   return (
     <View>
+      <StatusBar barStyle="light-content" />
       <BackButton to="/home" color={Colors.white} />
       <View
         style={{
