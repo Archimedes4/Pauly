@@ -1,3 +1,10 @@
+/*
+  Pauly
+  Andrew Mainella
+  useIsShowingLogout.ts
+  A timeout of 10 seconds in the loading page.
+  After 10 seconds allows the user to logout in case there is an issue casing infinate loop.
+*/
 import { useEffect, useState } from 'react';
 
 export default function useIsShowingLogout() {

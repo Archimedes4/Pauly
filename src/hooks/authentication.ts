@@ -8,9 +8,9 @@
 import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
 import store from '@redux/store';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
-import { governmentScopes, scopes } from '@constants';
+import { governmentScopes } from '@constants';
 import { authActiveSlice } from '@redux/reducers/authActiveReducer';
-import { ResultState, TokenResult, useMSAL } from "@archimedes4/expo-msal"
+import { ResultState, useMSAL } from "@archimedes4/expo-msal"
 import { Platform } from 'react-native';
 
 export const useRefresh = () => {

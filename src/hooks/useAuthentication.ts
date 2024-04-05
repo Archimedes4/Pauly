@@ -14,7 +14,6 @@ import {
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
-import { Platform } from 'react-native';
 import { useRefresh, useSilentLogin } from './authentication';
 
 export default function useAuthentication() {
