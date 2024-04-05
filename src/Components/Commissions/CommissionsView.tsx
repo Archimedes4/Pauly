@@ -221,7 +221,18 @@ export default function CommissionsView({ id }: { id: string }) {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: calculateFontSize(width * 0.9, height * 0.1, commissionData.title), position: 'absolute', left: 'auto', right: 'auto' }}>
+              <Text
+                style={{
+                  fontSize: calculateFontSize(
+                    width * 0.9,
+                    height * 0.1,
+                    commissionData.title,
+                  ),
+                  position: 'absolute',
+                  left: 'auto',
+                  right: 'auto',
+                }}
+              >
                 {commissionData.title}
               </Text>
             </View>
@@ -380,7 +391,7 @@ export default function CommissionsView({ id }: { id: string }) {
                   justifyContent: 'center',
                   padding: 10,
                   fontFamily: 'Roboto-Bold',
-                  overflow: 'hidden'
+                  overflow: 'hidden',
                 }}
               >
                 Leaderboard

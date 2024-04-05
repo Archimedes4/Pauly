@@ -18,16 +18,21 @@ import { RootState } from '@redux/store';
 import { monthViewSlice } from '@redux/reducers/monthViewReducer';
 import { Colors, loadingStateEnum } from '@constants';
 
-function getBackgroundColor(day: number, textval: number, monthViewData: eventType | undefined) {
+function getBackgroundColor(
+  day: number,
+  textval: number,
+  monthViewData: eventType | undefined,
+) {
   if (day == textval) {
-    return "red"
-  } else if (day >= textval + 1 && textval !== 0) {
-    return "gray"
-  } else if (monthViewData !== undefined) {
-    return monthViewData.eventColor
-  } else {
-    return Colors.white
+    return 'red';
   }
+  if (day >= textval + 1 && textval !== 0) {
+    return 'gray';
+  }
+  if (monthViewData !== undefined) {
+    return monthViewData.eventColor;
+  }
+  return Colors.white;
 }
 
 function MonthBlock({
@@ -130,9 +135,9 @@ function MonthBlock({
               {textval}
             </Text>
           )}
-          </>
-        // </View>
-      ) : null}
+        </>
+      ) : // </View>
+      null}
     </View>
   );
 }
@@ -152,7 +157,6 @@ export default function CompressedMonthView({
 
   async function loadData() {
     if (monthViewData.length <= 0) {
-
       const result = await getSchoolDays(new Date());
       if (result.result === loadingStateEnum.success) {
         dispatch(monthViewSlice.actions.setMonthViewData(result.data));

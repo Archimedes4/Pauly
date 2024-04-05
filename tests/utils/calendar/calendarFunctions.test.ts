@@ -51,8 +51,7 @@ it('encodes school day data correctly without dress code id', () => {
       dcId: '456bd570-337e-4c99-ab99-defb3558c59f',
       sem: 1,
       dciId: '',
-      syeId:
-        '27257221-6a42-4a8e-96c7-6aa79382437b',
+      syeId: '27257221-6a42-4a8e-96c7-6aa79382437b',
     }),
   ).toBe(
     '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602b27257221-6a42-4a8e-96c7-6aa79382437b1',
@@ -82,8 +81,7 @@ it('encodes school day data correctly without dress code id', () => {
       dcId: '456bd570-337e-4c99-ab99-defb3558c59f',
       sem: 1,
       dciId: '14253221-6b02-4n8e-19j2-6ja79682437f',
-      syeId:
-        '27257221-6a42-4a8e-96c7-6aa79382437b',
+      syeId: '27257221-6a42-4a8e-96c7-6aa79382437b',
     }),
   ).toBe(
     '456bd570-337e-4c99-ab99-defb3558c59f27257221-6a42-4a8e-96c7-6aa79382437b20ae2a0a-c3e0-4ab7-b975-c189545b602b27257221-6a42-4a8e-96c7-6aa79382437b14253221-6b02-4n8e-19j2-6ja79682437f1',
@@ -101,15 +99,14 @@ it('decodes school day data correctly with dress code id', () => {
     dcId: '456bd570-337e-4c99-ab99-defb3558c59f',
     sem: 1,
     dciId: '14253221-6b02-4n8e-19j2-6ja79682437f',
-    syeId:
-      '456bd570-337e-4c99-ab99-defb3558c59f',
+    syeId: '456bd570-337e-4c99-ab99-defb3558c59f',
   });
 });
 
 it('Checks if a time is during a interval corretly', () => {
-  const intStart = new Date("2024-04-11T00:00:00.0000000").getTime()
-  const intEnd = new Date("2024-04-14T00:00:00.0000000").getTime()
-  const envStart = new Date("2024-04-08T00:00:00.0000000").getTime()
-  const envEnd = new Date("2024-04-12T00:00:00.0000000").getTime()
-  expect(isTimeDuringInterval(envStart, envEnd, intStart, intEnd)).toBe(true)
-})
+  const intStart = new Date('2024-04-11T00:00:00.0000000').getTime();
+  const intEnd = new Date('2024-04-14T00:00:00.0000000').getTime();
+  const envStart = new Date('2024-04-08T00:00:00.0000000').getTime();
+  const envEnd = new Date('2024-04-12T00:00:00.0000000').getTime();
+  expect(isTimeDuringInterval(envStart, envEnd, intStart, intEnd)).toBe(true);
+});

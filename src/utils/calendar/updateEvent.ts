@@ -6,14 +6,14 @@ import callMsGraph from '@utils/ultility/microsoftAssests';
 import { encodeSchoolDayData, encodeSchoolYearData } from './calendarFunctions';
 
 function getSchoolYearId() {
-  const selectedSchoolYear = store.getState().addEvent.selectedSchoolYear
+  const { selectedSchoolYear } = store.getState().addEvent;
   if (selectedSchoolYear === undefined) {
-    return undefined
+    return undefined;
   }
   if (selectedSchoolYear.paulyEventType !== 'schoolYear') {
-    return undefined
+    return undefined;
   }
-  return selectedSchoolYear.paulyId
+  return selectedSchoolYear.paulyId;
 }
 
 export default async function createEvent(): Promise<void> {
@@ -89,7 +89,7 @@ export default async function createEvent(): Promise<void> {
         timeZone: 'Central America Standard Time',
       },
     };
-    const schoolYearId = getSchoolYearId()
+    const schoolYearId = getSchoolYearId();
     if (selectedEvent.paulyEventType === 'schoolDay') {
       data.start.dateTime = `${
         selectedEvent.startTime.replace(/.\d+Z$/g, 'Z').split(/[T ]/i, 1)[0]
@@ -122,7 +122,9 @@ export default async function createEvent(): Promise<void> {
       data.isAllDay = true;
     }
     if (selectedEvent.paulyEventType === 'schoolYear') {
-      const encodedSchoolYearData = encodeSchoolYearData(selectedEvent.timetableId);
+      const encodedSchoolYearData = encodeSchoolYearData(
+        selectedEvent.timetableId,
+      );
       if (encodedSchoolYearData === 'failed') {
         store.dispatch(
           addEventSlice.actions.setCreateEventState(loadingStateEnum.failed),

@@ -244,9 +244,7 @@ function SchoolYearBlock({
           />
         )}
         style={{ height: height * 0.3 }}
-        ListEmptyComponent={() => (
-          <Text>No School Years Created</Text>
-        )}
+        ListEmptyComponent={() => <Text>No School Years Created</Text>}
       />
     );
   }
@@ -267,7 +265,7 @@ export default function GovernmentClassesEdit() {
   const [selectedRoom, setSelectedRoom] = useState<roomType | undefined>(
     undefined,
   );
-  const [isHomeroom, setIsHomeroom] = useState<boolean>(false)
+  const [isHomeroom, setIsHomeroom] = useState<boolean>(false);
 
   // School Years State
   const [selectedSchoolYear, setSelectedSchoolYear] = useState<
@@ -302,11 +300,9 @@ export default function GovernmentClassesEdit() {
         setClassName(extensionData.className);
         setSelectedSemester(JSON.parse(extensionData.semesterId));
         setPeriods(JSON.parse(extensionData.periodData));
-        setIsHomeroom(extensionData.isHomeroom)
+        setIsHomeroom(extensionData.isHomeroom);
         const roomResult = await getRoom(extensionData.roomId);
-        if (
-          roomResult.result === loadingStateEnum.success
-        ) {
+        if (roomResult.result === loadingStateEnum.success) {
           setSelectedRoom(roomResult.data);
         } else {
           setClassState(loadingStateEnum.failed);
@@ -322,7 +318,11 @@ export default function GovernmentClassesEdit() {
   }
 
   async function updateClass() {
-    if (selectedRoom !== undefined && selectedSchoolYear !== undefined && selectedSchoolYear.paulyEventType === 'schoolYear') {
+    if (
+      selectedRoom !== undefined &&
+      selectedSchoolYear !== undefined &&
+      selectedSchoolYear.paulyEventType === 'schoolYear'
+    ) {
       setUpdateClassState(loadingStateEnum.loading);
       const data: any = {};
       data[store.getState().paulyList.classExtensionId] = {
@@ -331,7 +331,7 @@ export default function GovernmentClassesEdit() {
         semesterId: JSON.stringify(selectedSemester),
         roomId: selectedRoom.id,
         periodData: JSON.stringify(periods),
-        isHomeroom
+        isHomeroom,
       };
 
       const result = await callMsGraph(
@@ -405,13 +405,11 @@ export default function GovernmentClassesEdit() {
                 style={styles.textInputStyle}
               />
             </View>
-            <View style={{flexDirection: 'row', margin: 15}}>
-              <Text style={{marginRight: 15}}>Is Homeroom</Text>
+            <View style={{ flexDirection: 'row', margin: 15 }}>
+              <Text style={{ marginRight: 15 }}>Is Homeroom</Text>
               <Switch
                 trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
-                thumbColor={
-                  isHomeroom ? Colors.maroon : Colors.darkGray
-                }
+                thumbColor={isHomeroom ? Colors.maroon : Colors.darkGray}
                 {...Platform.select({
                   web: {
                     activeThumbColor: Colors.maroon,
@@ -536,13 +534,13 @@ export default function GovernmentClassesEdit() {
           </View>
         ) : null}
       </>
-    )
+    );
   }
 
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <Link href="/government/classes">Back</Link>
-      <Text style={{margin: 'auto'}}>Failed</Text>
+      <Text style={{ margin: 'auto' }}>Failed</Text>
     </View>
   );
 }

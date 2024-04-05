@@ -9,11 +9,14 @@ import Head from 'expo-router/head';
 import { loadAsync } from 'expo-font';
 import { Slot, SplashScreen } from 'expo-router';
 import { Dimensions, Platform, View } from 'react-native';
-import { ExpoMsalProvider } from '@archimedes4/expo-msal'
+import { ExpoMsalProvider } from '@archimedes4/expo-msal';
 import store, { RootState } from '@redux/store';
 import { Colors, paperTheme } from '@constants';
 import { PaperProvider } from 'react-native-paper';
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { Provider, useSelector } from 'react-redux';
 import setDimentions from '@utils/ultility/setDimentions';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -123,7 +126,6 @@ function AppCore() {
     </>
   );
 }
-
 
 function RootLayout() {
   return (

@@ -9,18 +9,28 @@ export const monthDataSlice = createSlice({
     setMonthData: (_state, action: PayloadAction<monthRowType[]>) => {
       return action.payload;
     },
-    setEventHeight: (state, action: PayloadAction<{rowIndex: number, eventIndex: number, height: number}>) => {
-      let oldEvent = state[action.payload.rowIndex].events[action.payload.eventIndex]
+    setEventHeight: (
+      state,
+      action: PayloadAction<{
+        rowIndex: number;
+        eventIndex: number;
+        height: number;
+      }>,
+    ) => {
+      const oldEvent =
+        state[action.payload.rowIndex].events[action.payload.eventIndex];
       state[action.payload.rowIndex].events[action.payload.eventIndex] = {
         ...oldEvent,
-        height: action.payload.height
-      }
-      
+        height: action.payload.height,
+      };
     },
-    //0 is the first row
-    setRowHeight: (state, action: PayloadAction<{rowIndex: number, height: number}>) => {
-      state[action.payload.rowIndex].height = action.payload.height
-    }
+    // 0 is the first row
+    setRowHeight: (
+      state,
+      action: PayloadAction<{ rowIndex: number; height: number }>,
+    ) => {
+      state[action.payload.rowIndex].height = action.payload.height;
+    },
   },
 });
 

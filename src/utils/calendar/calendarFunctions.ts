@@ -6,7 +6,7 @@
   Basic calendar functions non api, non async
 */
 
-import createUUID from "../ultility/createUUID";
+import createUUID from '../ultility/createUUID';
 
 export function getDaysInMonth(input: Date): number {
   const d = new Date();
@@ -262,105 +262,134 @@ export function decodeSchoolDayData(
 
 export function encodeSchoolYearData(timetableId: string) {
   if (timetableId.length !== 36) {
-    return 'failed'
+    return 'failed';
   }
-  return timetableId + createUUID()
+  return timetableId + createUUID();
 }
 
 export function decodeSchoolYearData(input: string) {
   if (input.length !== 72) {
-    return 'failed'
+    return 'failed';
   }
   return {
     timetableId: input.substring(0, 36),
-    paulyId: input.substring(36, 72)
-  }
+    paulyId: input.substring(36, 72),
+  };
 }
 
 // just sets the date
 export function getDateWithDay(date: string, day: number): Date {
-  const dateResult = new Date(date)
-  dateResult.setDate(day)
-  return dateResult
+  const dateResult = new Date(date);
+  dateResult.setDate(day);
+  return dateResult;
 }
 
 // finds the first day of an event in a week
 // This functions makes assumptions about the input.
 // First there is a day that is showing in days
 // Second the event is occuring during the week that the days are provided for
-export function findFirstDayEventWeek(event: monthEventType, days: monthDataType[]) {
+export function findFirstDayEventWeek(
+  event: monthEventType,
+  days: monthDataType[],
+) {
   let firstDate = 0;
   for (let index = 0; index < days.length; index += 1) {
     if (days[index].showing) {
-      firstDate = days[index].dayData
-      break
+      firstDate = days[index].dayData;
+      break;
     }
   }
-  const eventFirstDate = new Date(event.startTime).getDate()
+  const eventFirstDate = new Date(event.startTime).getDate();
   if (eventFirstDate > firstDate) {
-    return eventFirstDate
+    return eventFirstDate;
   }
   // Maybe some error handling if the first day is zero
-  return firstDate
+  return firstDate;
 }
 
 // Gets the number of days left in the week for an event. This is used in the month view section.
 // For example if an event spans from the 1st to the 20th. And the 4 was a saturday. the result would be 7 as the 4 -> 10 would be 6.
 export function getWeekLengthOfEvent(event: eventType, day: Date) {
-  const numberOfDaysLeft = Math.floor(new Date(event.endTime).getTime()/86400000) - Math.floor(new Date(day).getTime()/86400000)
-  const dayOfWeek = day.getDay()
+  const numberOfDaysLeft =
+    Math.floor(new Date(event.endTime).getTime() / 86400000) -
+    Math.floor(new Date(day).getTime() / 86400000);
+  const dayOfWeek = day.getDay();
 
-  const result = 7 - dayOfWeek
+  const result = 7 - dayOfWeek;
   if (numberOfDaysLeft <= result) {
     if (numberOfDaysLeft == 0) {
-      return 1
+      return 1;
     }
-    return numberOfDaysLeft
+    return numberOfDaysLeft;
   }
-  return result
+  return result;
 }
 
 function getHeightAbove(events: monthEventType[], order: number) {
-  let heightAbove = 0
+  let heightAbove = 0;
   for (let index = 0; index < events.length; index += 1) {
-    const event = events[index]
+    const event = events[index];
     if (event.order < order && event.height !== undefined) {
-      heightAbove += event.height + 6
+      heightAbove += event.height + 6;
     }
   }
-  return heightAbove
+  return heightAbove;
 }
 
-export function getHeightEventsAbove(events: monthEventType[], event: monthEventType, selectedDate: string, days: monthDataType[]) {
-  let dateOfFirstDay = getDateWithDay(selectedDate, findFirstDayEventWeek(event, days))
-  const delta = getWeekLengthOfEvent(event, dateOfFirstDay) + dateOfFirstDay.getDate()
+export function getHeightEventsAbove(
+  events: monthEventType[],
+  event: monthEventType,
+  selectedDate: string,
+  days: monthDataType[],
+) {
+  const dateOfFirstDay = getDateWithDay(
+    selectedDate,
+    findFirstDayEventWeek(event, days),
+  );
+  const delta =
+    getWeekLengthOfEvent(event, dateOfFirstDay) + dateOfFirstDay.getDate();
   let heightestHeight = 0;
   for (let day = dateOfFirstDay.getDate(); day < delta; day += 1) {
-    const heightEvents = getEventsOnDay(events, getDateWithDay(selectedDate, day))
-    const newHeight = getHeightAbove(heightEvents, event.order)
+    const heightEvents = getEventsOnDay(
+      events,
+      getDateWithDay(selectedDate, day),
+    );
+    const newHeight = getHeightAbove(heightEvents, event.order);
     if (newHeight > heightestHeight) {
-      heightestHeight = newHeight
+      heightestHeight = newHeight;
     }
   }
-  return heightestHeight
+  return heightestHeight;
 }
 
-export function getEventsOnDay(events: monthEventType[], day: Date): monthEventType[] {
-  let result: monthEventType[] = []
+export function getEventsOnDay(
+  events: monthEventType[],
+  day: Date,
+): monthEventType[] {
+  const result: monthEventType[] = [];
   for (let index = 0; index < events.length; index += 1) {
-    if (isEventDuringInterval({selectedDate: day, event: events[index]})) {
-      result.push(events[index])
+    if (isEventDuringInterval({ selectedDate: day, event: events[index] })) {
+      result.push(events[index]);
     }
   }
-  return result
+  return result;
 }
 
-export function getEventsWithEvent(events: monthEventType[], event: monthEventType): monthEventType[] {
-  let result: monthEventType[] = []
+export function getEventsWithEvent(
+  events: monthEventType[],
+  event: monthEventType,
+): monthEventType[] {
+  const result: monthEventType[] = [];
   for (let index = 0; index < events.length; index += 1) {
-    if (isEventDuringInterval({checkStart: new Date(event.startTime).getTime(), checkEnd: new Date(event.endTime).getTime(), event: events[index]})) {
-      result.push(events[index])
+    if (
+      isEventDuringInterval({
+        checkStart: new Date(event.startTime).getTime(),
+        checkEnd: new Date(event.endTime).getTime(),
+        event: events[index],
+      })
+    ) {
+      result.push(events[index]);
     }
   }
-  return result
+  return result;
 }

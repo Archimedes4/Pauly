@@ -345,7 +345,7 @@ function ResourceScholarships() {
           backgroundColor: Colors.lightGray,
           alignContent: 'center',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
         }}
       >
         <ProgressView width={14} height={14} />
@@ -440,7 +440,9 @@ export default function Resources() {
             justifyContent: 'center',
           }}
         >
-          {currentBreakPoint <= 0 ? <BackButton to="/home" color={Colors.white} /> : null}
+          {currentBreakPoint <= 0 ? (
+            <BackButton to="/home" color={Colors.white} />
+          ) : null}
           <Text style={{ fontFamily: 'BukhariScript', color: Colors.white }}>
             Resources
           </Text>

@@ -3,7 +3,14 @@ import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { monthDataSlice } from '@redux/reducers/monthDataReducer';
 import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
 import store, { RootState } from '@redux/store';
-import { findFirstDayEventWeek, findFirstDayinMonth, getDateWithDay, getEventsOnDay, getHeightEventsAbove, getWeekLengthOfEvent } from '@utils/calendar/calendarFunctions';
+import {
+  findFirstDayEventWeek,
+  findFirstDayinMonth,
+  getDateWithDay,
+  getEventsOnDay,
+  getHeightEventsAbove,
+  getWeekLengthOfEvent,
+} from '@utils/calendar/calendarFunctions';
 import React, { useEffect, useState } from 'react';
 import {
   ListRenderItemInfo,
@@ -58,7 +65,7 @@ function CalendarCardView({
   value: monthDataType;
   width: number;
   calendarWidth: number;
-  height: number
+  height: number;
 }) {
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
   const dispatch = useDispatch();
@@ -82,7 +89,7 @@ function CalendarCardView({
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: height / 2,
-          backgroundColor: getBackgroundColor(selectedDate, value.dayData)
+          backgroundColor: getBackgroundColor(selectedDate, value.dayData),
         }}
         onPress={() => pressCalendar()}
       >
@@ -123,20 +130,20 @@ function CalendarCardView({
       <View
         style={{
           width,
-          height: height,
-          zIndex: 10
+          height,
+          zIndex: 10,
         }}
       >
         <View
           style={{
             width,
-            height: height,
+            height,
             borderWidth: 1,
             borderBottomWidth: 0,
             borderTopWidth: 0,
             borderColor: Colors.lightGray,
             position: 'absolute',
-            zIndex: -10
+            zIndex: -10,
           }}
         />
         <Pressable
@@ -145,7 +152,7 @@ function CalendarCardView({
             minHeight: height,
             padding: 2,
             position: 'absolute',
-            zIndex: 100
+            zIndex: 100,
           }}
           onPress={() => {
             pressCalendar();
@@ -155,7 +162,9 @@ function CalendarCardView({
             const endDate = new Date(selectedDate);
             endDate.setDate(value.dayData);
             endDate.setHours(endDate.getHours() + 1);
-            dispatch(addEventSlice.actions.setStartDate(startDate.toISOString()));
+            dispatch(
+              addEventSlice.actions.setStartDate(startDate.toISOString()),
+            );
             dispatch(addEventSlice.actions.setEndDate(endDate));
           }}
         >
@@ -203,7 +212,11 @@ function CalendarCardView({
   );
 }
 
-function CalendarRowEvent({event, value, width}:{
+function CalendarRowEvent({
+  event,
+  value,
+  width,
+}: {
   event: monthEventType;
   value: ListRenderItemInfo<monthRowType>;
   width: number;
@@ -213,14 +226,25 @@ function CalendarRowEvent({event, value, width}:{
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
 
   useEffect(() => {
-    const newEventHeight = getHeightEventsAbove(value.item.events, event, selectedDate, value.item.days) + 21
+    const newEventHeight =
+      getHeightEventsAbove(
+        value.item.events,
+        event,
+        selectedDate,
+        value.item.days,
+      ) + 21;
     if (newEventHeight + (event.height ?? 0) + 27 > value.item.height) {
-      dispatch(monthDataSlice.actions.setRowHeight({rowIndex: value.index, height: newEventHeight + (event.height ?? 0) + 27}))
+      dispatch(
+        monthDataSlice.actions.setRowHeight({
+          rowIndex: value.index,
+          height: newEventHeight + (event.height ?? 0) + 27,
+        }),
+      );
     }
     if (eventHeight !== newEventHeight) {
-      setEventHeight(newEventHeight)
+      setEventHeight(newEventHeight);
     }
-  }, [value.item, event, selectedDate])
+  }, [value.item, event, selectedDate]);
 
   if (event.paulyEventType !== 'studentSchedule') {
     return (
@@ -231,24 +255,42 @@ function CalendarRowEvent({event, value, width}:{
           dispatch(addEventSlice.actions.setSelectedEvent(event));
         }}
         style={{
-          width: (width * getWeekLengthOfEvent(event, getDateWithDay(selectedDate, findFirstDayEventWeek(event, value.item.days)))) - 10,
+          width:
+            width *
+              getWeekLengthOfEvent(
+                event,
+                getDateWithDay(
+                  selectedDate,
+                  findFirstDayEventWeek(event, value.item.days),
+                ),
+              ) -
+            10,
           backgroundColor: Colors.darkGray,
           padding: 5,
           borderRadius: 15,
           margin: 3,
           zIndex: 100,
-          left: width * (findFirstDayEventWeek(event, value.item.days) - (value.index * 7) + findFirstDayinMonth(new Date(selectedDate)) - 1),
+          left:
+            width *
+            (findFirstDayEventWeek(event, value.item.days) -
+              value.index * 7 +
+              findFirstDayinMonth(new Date(selectedDate)) -
+              1),
           top: eventHeight,
           position: 'absolute',
-          opacity: event.height !== 0 ? 1:0
+          opacity: event.height !== 0 ? 1 : 0,
         }}
-        onLayout={(e) => {
+        onLayout={e => {
           if (event.height === undefined) {
-            store.dispatch(monthDataSlice.actions.setEventHeight({
-              rowIndex: value.index,
-              eventIndex: value.item.events.findIndex((e) => {return e.id === event.id}),
-              height: e.nativeEvent.layout.height
-            }))
+            store.dispatch(
+              monthDataSlice.actions.setEventHeight({
+                rowIndex: value.index,
+                eventIndex: value.item.events.findIndex(e => {
+                  return e.id === event.id;
+                }),
+                height: e.nativeEvent.layout.height,
+              }),
+            );
           }
         }}
       >
@@ -273,14 +315,19 @@ export default function CalendarRow({
   const [isOverflow, setIsOverflow] = useState<boolean>(true);
   useEffect(() => {
     if (value.item.height === 0) {
-      store.dispatch(monthDataSlice.actions.setRowHeight({rowIndex: value.index, height: height}))
+      store.dispatch(
+        monthDataSlice.actions.setRowHeight({
+          rowIndex: value.index,
+          height,
+        }),
+      );
     }
     if (height >= value.item.height) {
-      setIsOverflow(false)
+      setIsOverflow(false);
     } else {
-      setIsOverflow(true)
+      setIsOverflow(true);
     }
-  }, [value.item.height, height])
+  }, [value.item.height, height]);
   return (
     <ScrollView
       scrollEnabled={isOverflow}
@@ -298,10 +345,22 @@ export default function CalendarRow({
             value={day}
             width={width}
             calendarWidth={calendarWidth}
-            height={calendarWidth > 519 ? value.item.height:height}
+            height={calendarWidth > 519 ? value.item.height : height}
           />
         ))}
-        {calendarWidth > 519 && [...value.item.events].sort((a, b) => {return a.order - b.order}).map((event: monthEventType) => <CalendarRowEvent key={`Week_${value.index}_${event.id}`} event={event} value={value} width={width} />)}
+        {calendarWidth > 519 &&
+          [...value.item.events]
+            .sort((a, b) => {
+              return a.order - b.order;
+            })
+            .map((event: monthEventType) => (
+              <CalendarRowEvent
+                key={`Week_${value.index}_${event.id}`}
+                event={event}
+                value={value}
+                width={width}
+              />
+            ))}
       </View>
     </ScrollView>
   );

@@ -5,8 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { Pressable, View, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
-import { UpIcon } from '../Icons';
 import { isTimeOnDay } from '@utils/calendar/calendarFunctions';
+import { UpIcon } from '../Icons';
 
 export default function AllDayComponent({
   day,
@@ -24,9 +24,7 @@ export default function AllDayComponent({
   useEffect(() => {
     setAllDayEvents(
       currentEvents.filter(e => {
-        return (
-          e.allDay === true && isTimeOnDay(e.startTime, day)
-        );
+        return e.allDay === true && isTimeOnDay(e.startTime, day);
       }),
     );
   }, [currentEvents]);

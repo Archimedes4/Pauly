@@ -184,7 +184,7 @@ export default function Calendar() {
       getEvents();
     } else {
       dispatch(currentEventsSlice.actions.removeClassEvents());
-      getClassEvents()
+      getClassEvents();
     }
   }, [selectedDate]);
 

@@ -90,7 +90,7 @@ export default async function getEvents() {
     const furtherResult = await getGraphEvents(
       url,
       `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
-      outputEvents
+      outputEvents,
     );
     if (furtherResult.result === loadingStateEnum.success) {
       outputEvents = [...outputEvents, ...furtherResult.events];
@@ -100,11 +100,11 @@ export default async function getEvents() {
     }
   }
   store.dispatch(currentEventsSlice.actions.addCurrentEvents(outputEvents));
-  getClassEvents()
+  getClassEvents();
 }
 
 export async function getClassEvents() {
-  const selectedDate = store.getState().selectedDate
+  const { selectedDate } = store.getState();
   const days = getDOW(new Date(selectedDate));
   const pendingRequests = [];
   for (let index = 0; index < days.length; index += 1) {

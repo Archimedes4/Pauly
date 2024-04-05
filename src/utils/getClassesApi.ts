@@ -86,9 +86,10 @@ export default async function getClassesApi(store: StoreType): Promise<
 
               // TODO add teamlink
               teamLink: '',
-              isHomeroom: batchResultData.responses[batchIndex].body[
-                store.getState().paulyList.classExtensionId
-              ].isHomeroom
+              isHomeroom:
+                batchResultData.responses[batchIndex].body[
+                  store.getState().paulyList.classExtensionId
+                ].isHomeroom,
             });
           }
         } else {

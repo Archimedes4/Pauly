@@ -214,18 +214,27 @@ function ReducedMonthEvents({}: {}) {
     }
     const result = [];
 
-    const checkEndDate = new Date(selectedDate)
-    checkEndDate.setDate(checkEndDate.getDate() + 1)
+    const checkEndDate = new Date(selectedDate);
+    checkEndDate.setDate(checkEndDate.getDate() + 1);
 
-    const newDayData = [...monthData[firstIndex].events].filter((e) => {return e.paulyEventType !== 'studentSchedule' && isEventDuringInterval({
-      checkStart: new Date(selectedDate.slice(0, 10) + "T00:00:00.000Z").getTime(),
-      checkEnd: new Date(checkEndDate.toISOString().slice(0, 10) + "T00:00:00.000Z").getTime(),
-      event: e
-    })}).sort(
-      function (a, b) {
+    const newDayData = [...monthData[firstIndex].events]
+      .filter(e => {
+        return (
+          e.paulyEventType !== 'studentSchedule' &&
+          isEventDuringInterval({
+            checkStart: new Date(
+              `${selectedDate.slice(0, 10)}T00:00:00.000Z`,
+            ).getTime(),
+            checkEnd: new Date(
+              `${checkEndDate.toISOString().slice(0, 10)}T00:00:00.000Z`,
+            ).getTime(),
+            event: e,
+          })
+        );
+      })
+      .sort(function (a, b) {
         return `${a.startTime}`.localeCompare(b.endTime);
-      },
-    );
+      });
     let longestText = '';
     for (let index = 0; index < newDayData.length; index += 1) {
       if (getEventTime(newDayData[index]).length > longestText.length) {
@@ -262,7 +271,7 @@ function ReducedMonthEvents({}: {}) {
       second: 'numeric',
     });
   }
-  
+
   useEffect(() => {
     setDayData(getDayData());
   }, [monthData, selectedDate]);

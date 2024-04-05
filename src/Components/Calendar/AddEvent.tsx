@@ -85,7 +85,7 @@ function setSelectedEventType(e: number) {
             ...selectedEvent,
             paulyEventType: 'schoolYear',
             timetableId: '',
-            paulyId: ''
+            paulyId: '',
           }),
         );
         break;
@@ -144,7 +144,7 @@ function setSelectedEventType(e: number) {
             ...selectedEvent,
             paulyEventType: 'schoolYear',
             timetableId: '',
-            paulyId: ''
+            paulyId: '',
           }),
         );
         break;
@@ -659,7 +659,9 @@ export default function AddEvent({
         >
           <CloseIcon width={20} height={20} />
         </Pressable>
-        <Text style={{ fontFamily: 'BukhariScript', marginBottom: 5, marginTop: 5 }}>
+        <Text
+          style={{ fontFamily: 'BukhariScript', marginBottom: 5, marginTop: 5 }}
+        >
           {selectedEvent.id !== 'create' ? 'Edit' : 'Add'} Event
         </Text>
         <TextInput

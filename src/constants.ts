@@ -310,7 +310,7 @@ declare global {
         paulyEventType: 'schoolYear';
         timetableId: string;
         microsoftEvent: true;
-        paulyId: string
+        paulyId: string;
       }
     | {
         paulyEventType: 'personal';
@@ -373,20 +373,20 @@ declare global {
     id: string;
   };
   type monthEventType = eventType & {
-    height: number | undefined
-    order: number
-  }
+    height: number | undefined;
+    order: number;
+  };
   type monthDataType = {
     id: string;
     showing: boolean;
     dayData: number;
-    hasEvents:  boolean; // weather or not there are events on the day
+    hasEvents: boolean; // weather or not there are events on the day
   };
   type monthRowType = {
     height: number;
     events: monthEventType[];
     days: monthDataType[]; // the length of this array should always be seven
-  }
+  };
   type microsoftUserType = {
     id: string;
     displayName: string;

@@ -114,7 +114,7 @@ export default function StyledButton({
         onPressIn={() => setIsAlt(true)}
         onPressOut={() => setIsAlt(false)}
         onPress={() => {
-          router.push(to)
+          router.push(to);
           if (onPress !== undefined) {
             onPress();
           }
@@ -148,7 +148,7 @@ export default function StyledButton({
                   : 36
                 : undefined,
             overflow: 'hidden',
-            padding: 10
+            padding: 10,
           }}
         >
           {children ? (

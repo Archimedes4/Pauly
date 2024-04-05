@@ -235,48 +235,48 @@ export const commissionsSubmissionsData = {
       name: 'userId',
       text: {},
       required: true,
-      indexed: true
+      indexed: true,
     },
     {
       name: 'submittedTime',
       required: true,
-      text: {}
+      text: {},
     },
     {
       name: 'submissionId',
       text: {},
       required: true,
       indexed: true,
-      enforceUniqueValues: true
+      enforceUniqueValues: true,
     },
     {
       name: 'submissionApproved',
       boolean: {},
       required: true,
-      indexed: true
+      indexed: true,
     },
     {
       name: 'submissionReviewed',
       boolean: {},
       required: true,
-      indexed: true
+      indexed: true,
     },
     {
       name: 'commissionId',
       text: {},
       required: true,
-      indexed: true
+      indexed: true,
     },
     {
       name: 'homeroomId',
       text: {},
       required: true,
-      indexed: true
+      indexed: true,
     },
     {
       name: 'submissionData',
-      text: { allowMultipleLines: true }
-    }
+      text: { allowMultipleLines: true },
+    },
   ],
   list: {
     template: 'genericList',
@@ -720,8 +720,8 @@ export const paulyClassExtensionData = {
     },
     {
       name: 'isHomeroom',
-      type: 'Boolean'
-    }
+      type: 'Boolean',
+    },
   ],
 };
 

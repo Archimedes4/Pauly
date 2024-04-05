@@ -16,12 +16,12 @@ import { ChevronLeft } from './Icons';
 export default function BackButton({
   to,
   style,
-  color
+  color,
 }: {
   to: string;
   // eslint-disable-next-line react/require-default-props
   style?: ViewStyle | undefined;
-  color?: string
+  color?: string;
 }) {
   const isTopTransparent = useSelector(
     (state: RootState) => state.safeAreaColors.isTopTransparent,
@@ -42,8 +42,8 @@ export default function BackButton({
         style,
       ]}
     >
-      <ChevronLeft color={color} width={14} height={14}/>
-      <Text style={{color: color}}>Back</Text>
+      <ChevronLeft color={color} width={14} height={14} />
+      <Text style={{ color }}>Back</Text>
     </Link>
   );
 }

@@ -14,9 +14,7 @@ export default function ProfileBlock() {
   const signOut = useSignOut();
   return (
     <Pressable
-      onPress={() => 
-        signOut()
-      }
+      onPress={() => signOut()}
       style={{
         position: 'absolute',
         bottom: 0,

@@ -24,7 +24,7 @@ export async function updateCommission(
       allowMultipleSubmissions: commissionsData.allowMultipleSubmissions,
       commissionID: commissionsData.commissionId,
       value: commissionsData.value,
-      homeValue: commissionsData.competitionType
+      homeValue: commissionsData.competitionType,
     },
   };
   if (commissionsData.postData !== undefined) {

@@ -294,7 +294,6 @@ export async function initializePaulyPartThree(
       update?.includes('paulyList') ? 'POST' : 'PATCH',
       JSON.stringify(paulyListNewData),
     );
-    const ourData = await addPaulyListResult.json();
     if (!addPaulyListResult.ok) {
       return loadingStateEnum.failed;
     }

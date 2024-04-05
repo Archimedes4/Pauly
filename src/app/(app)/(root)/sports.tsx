@@ -43,17 +43,15 @@ function TeamPickerBar({
   setIsShowingTeams,
   selectedTeam,
   setSelectedTeam,
-  setIsShowingRoster
-}:{
+  setIsShowingRoster,
+}: {
   isShowingTeams: boolean;
   setIsShowingTeams: (item: boolean) => void;
   selectedTeam: undefined | sportTeamType;
   setSelectedTeam: (item: undefined | sportTeamType) => void;
   setIsShowingRoster: (item: boolean) => void;
 }) {
-  const { width, height } = useSelector(
-    (state: RootState) => state.dimensions,
-  );
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [sportsTeams, setSportsTeams] = useState<sportTeamType[]>([]);
   const [sportsState, setSportsState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
@@ -83,7 +81,7 @@ function TeamPickerBar({
 
   useEffect(() => {
     loadSports();
-  }, [])
+  }, []);
 
   return (
     <ScrollView
@@ -260,23 +258,21 @@ function TeamPickerBar({
         ) : null}
       </View>
     </ScrollView>
-  )
+  );
 }
 
 function SportsBody({
   isShowingRoster,
   setIsShowingRoster,
   selectedTeam,
-  isShowingTeams
-}:{
+  isShowingTeams,
+}: {
   isShowingRoster: boolean;
-  setIsShowingRoster: (item: boolean) => void
-  selectedTeam: sportTeamType | undefined
-  isShowingTeams: boolean
+  setIsShowingRoster: (item: boolean) => void;
+  selectedTeam: sportTeamType | undefined;
+  isShowingTeams: boolean;
 }) {
-  const { width, height } = useSelector(
-    (state: RootState) => state.dimensions,
-  );
+  const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [loadingResult, setLoadingResult] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
@@ -294,7 +290,7 @@ function SportsBody({
     loadSportsContent();
   }, [selectedTeam]);
 
-  if (loadingResult === loadingStateEnum.loading)  {
+  if (loadingResult === loadingStateEnum.loading) {
     return (
       <View
         style={{
@@ -311,21 +307,29 @@ function SportsBody({
         />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
-  
-  if (loadingResult === loadingStateEnum.success && selectedTeam === undefined) {
+
+  if (
+    loadingResult === loadingStateEnum.success &&
+    selectedTeam === undefined
+  ) {
     return (
       <View style={{ height: height * 0.8 }}>
         <FlatList
           data={sportsPosts}
-          renderItem={post => (<SportsPostBlock key={post.item.data.fileId} post={post} />)}
+          renderItem={post => (
+            <SportsPostBlock key={post.item.data.fileId} post={post} />
+          )}
         />
       </View>
-    )
+    );
   }
 
-  if (loadingResult === loadingStateEnum.success && selectedTeam !== undefined) {
+  if (
+    loadingResult === loadingStateEnum.success &&
+    selectedTeam !== undefined
+  ) {
     return (
       <View style={{ height: height * 0.8 }}>
         <View style={{ marginLeft: 5, marginRight: 10, marginTop: 10 }}>
@@ -352,17 +356,19 @@ function SportsBody({
         ) : (
           <FlatList
             data={sportsPosts}
-            renderItem={post => (<SportsPostBlock key={post.item.data.fileId} post={post} />)}
+            renderItem={post => (
+              <SportsPostBlock key={post.item.data.fileId} post={post} />
+            )}
           />
         )}
       </View>
-    )
+    );
   }
   return (
     <View>
       <Text>Something went wrong</Text>
     </View>
-  )
+  );
 }
 
 export default function Sports() {
@@ -381,7 +387,7 @@ export default function Sports() {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
-        bottom: Colors.lightGray
+        bottom: Colors.lightGray,
       }),
     );
   }, []);
@@ -395,7 +401,7 @@ export default function Sports() {
         overflow: 'hidden',
       }}
     >
-      <StatusBar barStyle={'light-content'}/>
+      <StatusBar barStyle="light-content" />
       <View
         style={{
           height: height * 0.1,
@@ -406,7 +412,9 @@ export default function Sports() {
           justifyContent: 'center',
         }}
       >
-        {currentBreakPoint <= 0 ? <BackButton to="/home" color={Colors.white}/> : null}
+        {currentBreakPoint <= 0 ? (
+          <BackButton to="/home" color={Colors.white} />
+        ) : null}
         <Text
           style={{
             fontFamily: 'BukhariScript',
@@ -417,8 +425,19 @@ export default function Sports() {
           Sports
         </Text>
       </View>
-      <TeamPickerBar isShowingTeams={isShowingTeams} setIsShowingTeams={setIsShowingTeams} selectedTeam={selectedTeam} setSelectedTeam={setSelectedTeam} setIsShowingRoster={setIsShowingRoster} />
-      <SportsBody isShowingRoster={isShowingRoster} setIsShowingRoster={setIsShowingRoster} selectedTeam={selectedTeam} isShowingTeams={isShowingTeams}/>
+      <TeamPickerBar
+        isShowingTeams={isShowingTeams}
+        setIsShowingTeams={setIsShowingTeams}
+        selectedTeam={selectedTeam}
+        setSelectedTeam={setSelectedTeam}
+        setIsShowingRoster={setIsShowingRoster}
+      />
+      <SportsBody
+        isShowingRoster={isShowingRoster}
+        setIsShowingRoster={setIsShowingRoster}
+        selectedTeam={selectedTeam}
+        isShowingTeams={isShowingTeams}
+      />
     </View>
   );
 }
@@ -439,7 +458,7 @@ function SportsPostBlock({ post }: { post: ListRenderItemInfo<sportPost> }) {
         return (currentWidth * 9) / 16;
       }
       if (imageAspect == 0) {
-        return currentWidth * 0.9
+        return currentWidth * 0.9;
       }
       return (currentWidth * 0.9) / currentImageAspect;
     }

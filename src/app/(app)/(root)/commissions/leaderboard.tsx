@@ -107,7 +107,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
   }, []);
 
   useEffect(() => {
-    const newTopThree = []
+    const newTopThree = [];
     if (leaderboard.length >= 1) {
       newTopThree.push(leaderboard[0]);
     }
@@ -155,7 +155,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
             Leaderboard
           </Text>
         </View>
-        <View style={{backgroundColor: Colors.lightGray}}>
+        <View style={{ backgroundColor: Colors.lightGray }}>
           <SegmentedPicker
             options={['Individual', 'Homeroom']}
             selectedIndex={isHomeroom ? 1 : 0}
@@ -208,7 +208,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                   }}
                 >
                   {topThree.length >= 3 ? (
-                    <UserImage id={topThree[2].id}/>
+                    <UserImage id={topThree[2].id} />
                   ) : null}
                   <View
                     style={{
@@ -219,13 +219,22 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                     }}
                   >
                     {topThree.length >= 3 ? (
-                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[2].name}</Text>
+                      <Text
+                        style={{
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
+                          fontFamily: 'Roboto-Bold',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {topThree[2].name}
+                      </Text>
                     ) : null}
                   </View>
                 </View>
                 <View style={{ width: width * 0.2, height: height * 0.3 }}>
                   {topThree.length >= 1 ? (
-                    <UserImage id={topThree[0].id}/>
+                    <UserImage id={topThree[0].id} />
                   ) : null}
                   <View
                     style={{
@@ -237,7 +246,16 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                     }}
                   >
                     {topThree.length >= 1 ? (
-                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[0].name}</Text>
+                      <Text
+                        style={{
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
+                          fontFamily: 'Roboto-Bold',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {topThree[0].name}
+                      </Text>
                     ) : null}
                   </View>
                 </View>
@@ -250,7 +268,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                   }}
                 >
                   {topThree.length >= 2 ? (
-                    <UserImage id={topThree[1].id}/>
+                    <UserImage id={topThree[1].id} />
                   ) : null}
                   <View
                     style={{
@@ -262,7 +280,16 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
                     }}
                   >
                     {topThree.length >= 2 ? (
-                      <Text style={{marginLeft: 'auto', marginRight: 'auto', fontFamily: 'Roboto-Bold', textAlign: 'center'}}>{topThree[1].name}</Text>
+                      <Text
+                        style={{
+                          marginLeft: 'auto',
+                          marginRight: 'auto',
+                          fontFamily: 'Roboto-Bold',
+                          textAlign: 'center',
+                        }}
+                      >
+                        {topThree[1].name}
+                      </Text>
                     ) : null}
                   </View>
                 </View>
@@ -296,7 +323,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
           backgroundColor: Colors.white,
         }}
       >
-        {currentBreakPoint === 0 ? <BackButton to={'/commissions'} /> : null}
+        {currentBreakPoint === 0 ? <BackButton to="/commissions" /> : null}
         <ProgressView width={14} height={14} />
         <Text>Loading</Text>
       </View>
@@ -314,7 +341,7 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
         backgroundColor: Colors.white,
       }}
     >
-      {currentBreakPoint === 0 ? <BackButton to={'/commissions'} /> : null}
+      {currentBreakPoint === 0 ? <BackButton to="/commissions" /> : null}
       <Text>Something has gone wrong</Text>
     </View>
   );

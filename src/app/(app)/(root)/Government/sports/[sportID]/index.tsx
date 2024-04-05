@@ -291,7 +291,14 @@ export default function GovernmentSport() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <Link href="/government/sports">Back</Link>
-      <Text style={{ marginLeft: 'auto', marginRight: 'auto', fontSize: 25, fontFamily: 'Comfortaa-Regular' }}>
+      <Text
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontSize: 25,
+          fontFamily: 'Comfortaa-Regular',
+        }}
+      >
         {sportName} Teams
       </Text>
       <GovernmentSportTeams sportID={sportID} />

@@ -28,7 +28,7 @@ export default function Main() {
   }
 
   if (!isAuthenticated.loading && Platform.OS !== 'web') {
-    return <Slot />
+    return <Slot />;
   }
 
   if (!isAuthenticated.loading) {

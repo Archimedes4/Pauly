@@ -24,12 +24,12 @@ import {
 function isEventSchoolDay(data: any): boolean {
   const singleValueResult = getSingleValueProperties(data);
   if (singleValueResult == undefined) {
-    return false
+    return false;
   }
   if (singleValueResult.eventType === 'schoolDay') {
-    return true
+    return true;
   }
-  return false
+  return false;
 }
 
 export function getSingleValueProperties(data: any):
@@ -77,16 +77,19 @@ export function getSingleValueProperties(data: any):
   } catch (e) {}
 }
 
-
-async function parseEventJSON(data: any, events?: eventType[]): Promise<{result: loadingStateEnum.failed} | {result: loadingStateEnum.success, data: eventType}> {
+async function parseEventJSON(
+  data: any,
+  events?: eventType[],
+): Promise<
+  | { result: loadingStateEnum.failed }
+  | { result: loadingStateEnum.success; data: eventType }
+> {
   const singleValueResult = getSingleValueProperties(data);
   if (
     singleValueResult !== undefined &&
     singleValueResult.eventType === 'schoolDay'
   ) {
-    const schoolDayEventData = decodeSchoolDayData(
-      singleValueResult.eventData,
-    );
+    const schoolDayEventData = decodeSchoolDayData(singleValueResult.eventData);
     if (schoolDayEventData === 'failed') {
       return { result: loadingStateEnum.failed };
     }
@@ -112,9 +115,7 @@ async function parseEventJSON(data: any, events?: eventType[]): Promise<{result:
     singleValueResult !== undefined &&
     singleValueResult.eventType === 'schoolYear'
   ) {
-    const schoolYearData = decodeSchoolYearData(
-      singleValueResult.eventData,
-    );
+    const schoolYearData = decodeSchoolYearData(singleValueResult.eventData);
     if (schoolYearData === 'failed') {
       return { result: loadingStateEnum.failed };
     }
@@ -129,7 +130,7 @@ async function parseEventJSON(data: any, events?: eventType[]): Promise<{result:
       microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.id}`,
       paulyEventType: 'schoolYear',
       timetableId: schoolYearData.timetableId,
-      paulyId: schoolYearData.paulyId
+      paulyId: schoolYearData.paulyId,
     };
     return { result: loadingStateEnum.success, data: event };
   }
@@ -162,14 +163,14 @@ async function parseEventJSON(data: any, events?: eventType[]): Promise<{result:
     microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.id}`,
     paulyEventType: 'regular',
   };
-  return { result: loadingStateEnum.success, data: event }
+  return { result: loadingStateEnum.success, data: event };
 }
 
 // Defaults to org wide events
 export async function getGraphEvents(
   url?: string,
   referenceUrl?: string,
-  events?: eventType[]
+  events?: eventType[],
 ): Promise<
   | {
       result: loadingStateEnum.success;
@@ -196,46 +197,57 @@ export async function getGraphEvents(
   if (result.ok) {
     const data = await result.json();
     let newEvents: eventType[] = [];
-    let ongoingRequests: Promise<{
-      result: loadingStateEnum.failed;
-    } | {
-      result: loadingStateEnum.success;
-      data: eventType;
-    }>[] = []
-    let schoolDayRequests: any[] = []
+    const ongoingRequests: Promise<
+      | {
+          result: loadingStateEnum.failed;
+        }
+      | {
+          result: loadingStateEnum.success;
+          data: eventType;
+        }
+    >[] = [];
+    const schoolDayRequests: any[] = [];
     for (let index = 0; index < data.value.length; index += 1) {
       if (isEventSchoolDay(data.value[index])) {
-        schoolDayRequests.push(data.value[index])
+        schoolDayRequests.push(data.value[index]);
       } else {
-        ongoingRequests.push(parseEventJSON(data.value[index]))
+        ongoingRequests.push(parseEventJSON(data.value[index]));
       }
     }
-    const resultRequests = await Promise.all(ongoingRequests)
+    const resultRequests = await Promise.all(ongoingRequests);
     for (let index = 0; index < resultRequests.length; index += 1) {
-      const resultRequest = resultRequests[index]
+      const resultRequest = resultRequests[index];
       if (resultRequest.result === loadingStateEnum.success) {
-        newEvents = [...newEvents, resultRequest.data]
+        newEvents = [...newEvents, resultRequest.data];
       } else {
         return {
-          result: loadingStateEnum.failed
-        }
+          result: loadingStateEnum.failed,
+        };
       }
     }
 
-    let ongoingSchoolDayRequests: Promise<{
-      result: loadingStateEnum.failed;
-    } | {
-      result: loadingStateEnum.success;
-      data: eventType;
-    }>[] = []
+    const ongoingSchoolDayRequests: Promise<
+      | {
+          result: loadingStateEnum.failed;
+        }
+      | {
+          result: loadingStateEnum.success;
+          data: eventType;
+        }
+    >[] = [];
     for (let index = 0; index < schoolDayRequests.length; index += 1) {
-      ongoingSchoolDayRequests.push(parseEventJSON(schoolDayRequests[index], (events !== undefined) ? [...events, ...newEvents]:[...newEvents]))
+      ongoingSchoolDayRequests.push(
+        parseEventJSON(
+          schoolDayRequests[index],
+          events !== undefined ? [...events, ...newEvents] : [...newEvents],
+        ),
+      );
     }
-    const resultSchoolDayRequests = await Promise.all(ongoingSchoolDayRequests)
+    const resultSchoolDayRequests = await Promise.all(ongoingSchoolDayRequests);
     for (let index = 0; index < resultSchoolDayRequests.length; index += 1) {
-      const resultRequest = resultSchoolDayRequests[index]
+      const resultRequest = resultSchoolDayRequests[index];
       if (resultRequest.result === loadingStateEnum.success) {
-        newEvents = [...newEvents, resultRequest.data]
+        newEvents = [...newEvents, resultRequest.data];
       }
     }
 
@@ -272,7 +284,7 @@ export async function getEvent(
   );
   if (result.ok) {
     const data = await result.json();
-    return parseEventJSON(data)
+    return parseEventJSON(data);
   }
   return { result: loadingStateEnum.failed };
 }
@@ -440,43 +452,42 @@ export async function getSchoolDays(date: Date): Promise<
     store.getState().paulyList.eventDataExtensionId
   }')&$filter=singleValueExtendedProperties/Any(ep:%20ep/id%20eq%20'${
     store.getState().paulyList.eventTypeExtensionId
-  }'%20and%20ep/value%20ne%20null)&$select=id,singleValueExtendedProperties,start,end,isAllDay`
-  let data: any[] = []
+  }'%20and%20ep/value%20ne%20null)&$select=id,singleValueExtendedProperties,start,end,isAllDay`;
+  let data: any[] = [];
   while (url !== undefined) {
-    const result = await callMsGraph(url,
-      'GET',
-      undefined,
-      [
-        {
-          key: 'Prefer',
-          value: 'outlook.timezone="Central America Standard Time"',
-        },
-      ],
-    );
+    const result = await callMsGraph(url, 'GET', undefined, [
+      {
+        key: 'Prefer',
+        value: 'outlook.timezone="Central America Standard Time"',
+      },
+    ]);
     if (result.ok) {
       const outData = await result.json();
-      data = [...outData.value, ...data]
-      url = outData["@odata.nextLink"]
+      data = [...outData.value, ...data];
+      url = outData['@odata.nextLink'];
     } else {
-      return {result: loadingStateEnum.failed }
+      return { result: loadingStateEnum.failed };
     }
   }
   const scheduleIds = new Map<string, number>();
   const schoolYearIds = new Map<string, string>();
   for (let index = 0; index < data.length; index += 1) {
-    const singleValue = getSingleValueProperties(data[index])
+    const singleValue = getSingleValueProperties(data[index]);
     if (singleValue == undefined) {
       return { result: loadingStateEnum.failed };
     }
     if (singleValue.eventType === 'schoolYear') {
-      const decodedSchoolYear = decodeSchoolYearData(singleValue.eventData)
+      const decodedSchoolYear = decodeSchoolYearData(singleValue.eventData);
       if (decodedSchoolYear === 'failed') {
         return { result: loadingStateEnum.failed };
       }
-      schoolYearIds.set(decodedSchoolYear.paulyId, decodedSchoolYear.timetableId);
-      continue
+      schoolYearIds.set(
+        decodedSchoolYear.paulyId,
+        decodedSchoolYear.timetableId,
+      );
+      continue;
     }
-    const schoolDayDecoded = decodeSchoolDayData(singleValue.eventData)
+    const schoolDayDecoded = decodeSchoolDayData(singleValue.eventData);
     if (schoolDayDecoded === 'failed') {
       return { result: loadingStateEnum.failed };
     }
@@ -534,19 +545,19 @@ export async function getSchoolDays(date: Date): Promise<
 
   const schoolDaysResult: eventType[] = [];
   for (let index = 0; index < data.length; index += 1) {
-    const singleValue = getSingleValueProperties(data[index])
+    const singleValue = getSingleValueProperties(data[index]);
     if (singleValue == undefined) {
       return { result: loadingStateEnum.failed };
     }
     if (singleValue.eventType !== 'schoolDay') {
-      continue
+      continue;
     }
-    const schoolDayDecoded = decodeSchoolDayData(singleValue.eventData)
+    const schoolDayDecoded = decodeSchoolDayData(singleValue.eventData);
     if (schoolDayDecoded === 'failed') {
       return { result: loadingStateEnum.failed };
     }
     const schedule = schedules.get(schoolDayDecoded.sId);
-    const timetableId = schoolYearIds.get(schoolDayDecoded.syeId)
+    const timetableId = schoolYearIds.get(schoolDayDecoded.syeId);
     if (timetableId === undefined) {
       return { result: loadingStateEnum.failed };
     }
@@ -581,7 +592,7 @@ export async function getSchoolDays(date: Date): Promise<
           dressCode,
           semester: schoolDayDecoded.sem,
           dressCodeIncentive: undefined,
-          schoolYearEventId: schoolDayDecoded.syeId, //TO Do make sure this event works
+          schoolYearEventId: schoolDayDecoded.syeId, // TO Do make sure this event works
         },
       });
     } else {
@@ -590,23 +601,25 @@ export async function getSchoolDays(date: Date): Promise<
   }
   return {
     result: loadingStateEnum.success,
-    data: schoolDaysResult
+    data: schoolDaysResult,
   };
 }
 
 function getHighestOrder(data: monthEventType[]): number {
-  let order = 0
-  let orderFound = true
+  let order = 0;
+  let orderFound = true;
   while (orderFound) {
-    if (data.some((e) => {
-      return e.order === order
-    })) {
-      order += 1
+    if (
+      data.some(e => {
+        return e.order === order;
+      })
+    ) {
+      order += 1;
     } else {
-      orderFound = false
+      orderFound = false;
     }
   }
-  return order
+  return order;
 }
 
 export function getMonthData(selectedDate: Date) {
@@ -618,23 +631,29 @@ export function getMonthData(selectedDate: Date) {
   );
   const firstDayWeek = findFirstDayinMonth(selectedDate);
   const { currentEvents } = store.getState();
-  const sortedCurrentEvents = [...currentEvents].sort((e) => {
-    if (e.paulyEventType === "schoolDay") {
-      return -1
-    } else {
-      return 0
+  const sortedCurrentEvents = [...currentEvents].sort(e => {
+    if (e.paulyEventType === 'schoolDay') {
+      return -1;
     }
-  })
-  let resultingMonthData: monthRowType[] = []
+    return 0;
+  });
+  const resultingMonthData: monthRowType[] = [];
   for (let weekIndex = 0; weekIndex < 6; weekIndex += 1) {
-    let resultWeekDays: monthDataType[] = []
-    let resultWeekEvents: monthEventType[] = []
+    const resultWeekDays: monthDataType[] = [];
+    let resultWeekEvents: monthEventType[] = [];
     // going through the seven days in a week
-    for (let dayIndex = (7 * weekIndex); dayIndex < ((7 * weekIndex) + 7); dayIndex += 1) {
-      let hasEvents: boolean = false
-      if (dayIndex >= firstDayWeek && (dayIndex - firstDayWeek) < lastDay.getDate()) {
+    for (
+      let dayIndex = 7 * weekIndex;
+      dayIndex < 7 * weekIndex + 7;
+      dayIndex += 1
+    ) {
+      let hasEvents: boolean = false;
+      if (
+        dayIndex >= firstDayWeek &&
+        dayIndex - firstDayWeek < lastDay.getDate()
+      ) {
         // Day in the current month
-        let eventsToOrder: monthEventType[] = []
+        const eventsToOrder: monthEventType[] = [];
         for (
           let indexEvent = 0;
           indexEvent < sortedCurrentEvents.length;
@@ -651,36 +670,49 @@ export function getMonthData(selectedDate: Date) {
             (event.paulyEventType !== 'schoolYear' ||
               store.getState().isGovernmentMode)
           ) {
-            hasEvents = true
-            if (!resultWeekEvents.some((e) => {return e.id === event.id})) {
+            hasEvents = true;
+            if (
+              !resultWeekEvents.some(e => {
+                return e.id === event.id;
+              })
+            ) {
               eventsToOrder.push({
                 ...event,
                 height: undefined,
-                order: -1
+                order: -1,
               });
             }
           }
         }
-        for (let eventIndex = 0; eventIndex < eventsToOrder.length; eventIndex += 1) {
+        for (
+          let eventIndex = 0;
+          eventIndex < eventsToOrder.length;
+          eventIndex += 1
+        ) {
           eventsToOrder[eventIndex] = {
             ...eventsToOrder[eventIndex],
-            order: getHighestOrder(getEventsWithEvent([...eventsToOrder, ...resultWeekEvents], eventsToOrder[eventIndex]))
-          }
+            order: getHighestOrder(
+              getEventsWithEvent(
+                [...eventsToOrder, ...resultWeekEvents],
+                eventsToOrder[eventIndex],
+              ),
+            ),
+          };
         }
-        resultWeekEvents = [...resultWeekEvents, ...eventsToOrder]
+        resultWeekEvents = [...resultWeekEvents, ...eventsToOrder];
         resultWeekDays.push({
           id: createUUID(),
           showing: true,
           dayData: dayIndex - firstDayWeek + 1,
-          hasEvents: hasEvents
-        })
+          hasEvents,
+        });
       } else {
         resultWeekDays.push({
           id: createUUID(),
           showing: false,
           dayData: 0,
-          hasEvents: hasEvents
-        })
+          hasEvents,
+        });
       }
     }
 
@@ -689,8 +721,8 @@ export function getMonthData(selectedDate: Date) {
     resultingMonthData.push({
       height: 0,
       events: resultWeekEvents,
-      days: resultWeekDays
-    })
+      days: resultWeekDays,
+    });
   }
 
   store.dispatch(monthDataSlice.actions.setMonthData(resultingMonthData));
@@ -698,22 +730,29 @@ export function getMonthData(selectedDate: Date) {
 
 async function getSchoolDayData(
   data: schoolDayDataCompressedType,
-  events?: eventType[]
+  events?: eventType[],
 ): Promise<
   | { result: loadingStateEnum.failed }
   | { result: loadingStateEnum.success; data: schoolDayDataType }
 > {
   // TODO if a getEvent request is made and is out of range of current events.
-  let schoolYearEvent: undefined | eventType = undefined
+  let schoolYearEvent: undefined | eventType;
   if (store.getState().currentEvents.length !== 0 && events == undefined) {
-    schoolYearEvent = store.getState().currentEvents.find((e) => {return e.paulyEventType === "schoolYear" && e.paulyId === data.syeId})
-  }
-  
-  if (events !== undefined) {
-    schoolYearEvent = events.find((e) => {return e.paulyEventType === "schoolYear" && e.paulyId === data.syeId})
+    schoolYearEvent = store.getState().currentEvents.find(e => {
+      return e.paulyEventType === 'schoolYear' && e.paulyId === data.syeId;
+    });
   }
 
-  if (schoolYearEvent === undefined || schoolYearEvent.paulyEventType !== 'schoolYear') {
+  if (events !== undefined) {
+    schoolYearEvent = events.find(e => {
+      return e.paulyEventType === 'schoolYear' && e.paulyId === data.syeId;
+    });
+  }
+
+  if (
+    schoolYearEvent === undefined ||
+    schoolYearEvent.paulyEventType !== 'schoolYear'
+  ) {
     return { result: loadingStateEnum.failed };
   }
 

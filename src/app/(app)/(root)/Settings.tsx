@@ -59,7 +59,7 @@ export default function Settings() {
 
   return (
     <View>
-      <BackButton to="/home" color={Colors.white}/>
+      <BackButton to="/home" color={Colors.white} />
       <View
         style={{
           alignContent: 'center',

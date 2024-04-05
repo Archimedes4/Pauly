@@ -86,8 +86,8 @@ export default function GovernmentCommissions() {
 
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
-      <BackButton to='/government'/>
-      <Text style={[styles.headerText, {paddingTop: 10}]}>Commissions</Text>
+      <BackButton to="/government" />
+      <Text style={[styles.headerText, { paddingTop: 10 }]}>Commissions</Text>
       <GovernmentCommissionsBody />
       <StyledButton
         style={{

@@ -268,7 +268,7 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
 
   return (
     <>
-      <StatusBar barStyle={'light-content'}/>
+      <StatusBar barStyle="light-content" />
       <View style={{ width, height, backgroundColor: Colors.lightGray }}>
         <View
           style={{
@@ -280,7 +280,9 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
             justifyContent: 'center',
           }}
         >
-          {currentBreakPoint <= 0 ? <BackButton to="/home" color={Colors.white} /> : null}
+          {currentBreakPoint <= 0 ? (
+            <BackButton to="/home" color={Colors.white} />
+          ) : null}
           <Text
             style={{
               fontFamily: 'BukhariScript',

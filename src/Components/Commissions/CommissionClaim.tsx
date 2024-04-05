@@ -37,12 +37,14 @@ export default function CommissionClaim({
       return;
     }
 
-    const classes = await getClasses(store)
+    const classes = await getClasses(store);
     if (classes.result !== loadingStateEnum.success) {
       setClaimCommissionState(loadingStateEnum.failed);
       return;
     }
-    const homeroom = classes.data.find((e) => {return e.isHomeroom === true})
+    const homeroom = classes.data.find(e => {
+      return e.isHomeroom === true;
+    });
     if (homeroom === undefined) {
       setClaimCommissionState(loadingStateEnum.failed);
       return;

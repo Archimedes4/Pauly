@@ -46,7 +46,9 @@ export default async function getSchoolYears(nextLink?: string): Promise<
     for (let index = 0; index < data.value.length; index += 1) {
       const singleValue = getSingleValueProperties(data.value[index]);
       if (singleValue !== undefined && singleValue.eventType === 'schoolYear') {
-        const decodedSchoolYearData = decodeSchoolYearData(singleValue.eventData)
+        const decodedSchoolYearData = decodeSchoolYearData(
+          singleValue.eventData,
+        );
         if (decodedSchoolYearData === 'failed') {
           return { result: loadingStateEnum.failed };
         }
@@ -61,7 +63,7 @@ export default async function getSchoolYears(nextLink?: string): Promise<
           timetableId: decodedSchoolYearData.timetableId,
           microsoftEvent: true,
           microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.value[index].id}`,
-          paulyId: decodedSchoolYearData.paulyId
+          paulyId: decodedSchoolYearData.paulyId,
         });
       }
     }
