@@ -126,7 +126,7 @@ export default function StyledButton({
             shadowOpacity: 0.8,
             shadowRadius: 10,
             flex: text !== undefined ? undefined : 1,
-            borderRadius: 15,
+            borderRadius: 12,
           },
           style,
         ]}
@@ -140,7 +140,7 @@ export default function StyledButton({
               mainColor,
               altColor,
             ),
-            borderRadius: 15,
+            borderRadius: 12,
             height:
               text !== undefined
                 ? caption !== undefined
@@ -208,7 +208,7 @@ export default function StyledButton({
           shadowOffset: { width: 2, height: 2 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
-          borderRadius: 15,
+          borderRadius: 12,
           padding: 10,
           height:
             text !== undefined ? (caption !== undefined ? 48 : 36) : undefined,

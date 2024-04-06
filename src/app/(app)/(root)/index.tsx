@@ -874,18 +874,6 @@ export default function Notifications() {
             </View>
           </View>
         )}
-        <TaskBlock />
-        <InsightsBlock />
-        {/* <Pressable onPress={() => {
-        if (Platform.OS == "web") {
-          Linking.openURL("https://www.stpauls.mb.ca/discipline/")
-        }
-      }}>
-        <Text>Discipline</Text>
-      </Pressable>
-      <Modal visible={isShowingDiscipline}>
-
-      </Modal> */}
       </ScrollView>
     </>
   );

@@ -235,13 +235,6 @@ export default function NavBarComponent() {
           <HomeIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         <NavBarBlock
-          des="/resources"
-          blockLength={blockLength}
-          text="Resources"
-        >
-          <BookIcon width={iconLength} height={iconLength} />
-        </NavBarBlock>
-        <NavBarBlock
           des="/commissions"
           blockLength={blockLength}
           text="Commissions"
@@ -250,16 +243,6 @@ export default function NavBarComponent() {
         </NavBarBlock>
         <NavBarBlock des="/calendar" blockLength={blockLength} text="Calendar">
           <CalendarIcon width={iconLength} height={iconLength} />
-        </NavBarBlock>
-        <NavBarBlock des="/sports" blockLength={blockLength} text="Sports">
-          <Image
-            source={require('../../assets/images/Football.png')}
-            resizeMode="contain"
-            style={{ width: iconLength, height: iconLength }}
-          />
-        </NavBarBlock>
-        <NavBarBlock des="/students" blockLength={blockLength} text="Students">
-          <StudentSearchIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         {isGovernmentMode ? (
           <NavBarBlock
