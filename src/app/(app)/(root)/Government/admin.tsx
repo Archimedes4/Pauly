@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  
+*/
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';

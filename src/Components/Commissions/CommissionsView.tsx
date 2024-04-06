@@ -1,4 +1,3 @@
-import * as ImagePicker from 'expo-image-picker';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, Pressable, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,44 +12,7 @@ import WebViewCross from '@components/WebViewCross';
 import { Colors, commissionTypeEnum, loadingStateEnum } from '@constants';
 import { Link, router } from 'expo-router';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
-
-enum CameraResult {
-  notStarted,
-  loading,
-  success,
-  permissionDenied,
-  goToSettings,
-  failed,
-}
-
-function getTextPickImage(result: CameraResult) {
-  if (result === CameraResult.notStarted) {
-    return 'CHOOSE PHOTO';
-  }
-  if (result === CameraResult.permissionDenied) {
-    return 'Permission Denied';
-  }
-  if (result === CameraResult.success) {
-    return 'USE A DIFFERENT PHOTO';
-  }
-  return 'AN ERROR OCCURED';
-}
-
-function getTextTakeImage(result: CameraResult) {
-  if (result === CameraResult.notStarted) {
-    return 'TAKE PHOTO';
-  }
-  if (result === CameraResult.goToSettings) {
-    return 'Go To Settings And Give Camera Permissions';
-  }
-  if (result === CameraResult.permissionDenied) {
-    return 'Permission Denied';
-  }
-  if (result === CameraResult.success) {
-    return 'TAKE DIFFERENT PHOTO';
-  }
-  return 'AN ERROR OCCURED';
-}
+import CommissionImageComponent from './CommissionImageComponent';
 
 export default function CommissionsView({ id }: { id: string }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
@@ -65,15 +27,8 @@ export default function CommissionsView({ id }: { id: string }) {
   );
   const [messageData, setMessageData] = useState<string>('');
   const [imageUri, setImageUri] = useState<string>('');
-  const [takeImageState, setTakeImageState] = useState<CameraResult>(
-    CameraResult.notStarted,
-  );
-  const [pickImageState, setPickerImageState] = useState<CameraResult>(
-    CameraResult.notStarted,
-  );
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [evaluatedOverflow, setEvaluatedOverflow] = useState<boolean>(false);
-  const [imageHeight, setImageHeight] = useState<number>(0);
 
   async function getPost(teamId: string, channelId: string, messageId: string) {
     setMessageState(loadingStateEnum.loading);
@@ -92,6 +47,7 @@ export default function CommissionsView({ id }: { id: string }) {
   const getCommissionInformation = useCallback(async () => {
     const result = await getCommission(id, store);
     if (result.result === loadingStateEnum.success) {
+      console.log(result)
       setCommissionData(result.data);
       if (result.data?.postData !== undefined) {
         getPost(
@@ -104,105 +60,55 @@ export default function CommissionsView({ id }: { id: string }) {
     setCommissionState(result.result);
   }, [id]);
 
-  async function pickImage() {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsMultipleSelection: false,
-      allowsEditing: false,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    });
-    if (!result.canceled) {
-      if (result.assets.length === 1) {
-        setImageUri(result.assets[0].uri);
-        Image.getSize(
-          result.assets[0].uri,
-          (imageMeasureWidth, imageMeasureHeight) => {
-            const heightPerWidth = imageMeasureHeight / imageMeasureWidth;
-            setImageHeight(width * 0.7 * heightPerWidth);
-          },
-        );
-        setPickerImageState(CameraResult.success);
-      } else {
-        setPickerImageState(CameraResult.failed);
-      }
-    } else {
-      setPickerImageState(CameraResult.notStarted);
-    }
-  }
-  const [status, requestPermission] = ImagePicker.useCameraPermissions();
-
-  async function takeImage() {
-    setTakeImageState(CameraResult.loading);
-    if (status?.status === ImagePicker.PermissionStatus.GRANTED) {
-      const result = await ImagePicker.launchCameraAsync({
-        allowsEditing: false,
-        allowsMultipleSelection: false,
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      });
-      if (!result.canceled) {
-        if (result.assets.length === 1) {
-          setImageUri(result.assets[0].uri);
-          Image.getSize(
-            result.assets[0].uri,
-            (imageMeasureWidth, imageMeasureHeight) => {
-              const heightPerWidth = imageMeasureHeight / imageMeasureWidth;
-              setImageHeight(width * 0.7 * heightPerWidth);
-            },
-          );
-          setTakeImageState(CameraResult.success);
-        } else {
-          setTakeImageState(CameraResult.failed);
-        }
-      } else {
-        setTakeImageState(CameraResult.notStarted);
-      }
-    } else if (status?.canAskAgain) {
-      const permissionResult = await requestPermission();
-      if (permissionResult.granted) {
-        takeImage();
-      } else {
-        setTakeImageState(CameraResult.permissionDenied);
-      }
-    } else {
-      setTakeImageState(CameraResult.goToSettings);
-    }
-  }
 
   useEffect(() => {
     getCommissionInformation();
   }, [getCommissionInformation]);
 
-  return (
-    <View
-      style={{
-        width: width * 0.9,
-        height: height * 0.8,
-        backgroundColor: Colors.white,
-        shadowColor: Colors.black,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.8,
-        shadowRadius: 10,
-        borderRadius: 15,
-      }}
-    >
-      {commissionState === loadingStateEnum.loading ? (
-        <View
-          style={{
-            height: height * 0.8,
-            width: width * 0.9,
-            alignItems: 'center',
-            justifyContent: 'center',
-            alignContent: 'center',
-          }}
-        >
-          <ProgressView
-            width={width * 0.8 < height * 0.7 ? width * 0.4 : height * 0.35}
-            height={width * 0.8 < height * 0.7 ? width * 0.4 : height * 0.35}
-          />
-          <Text>Loading</Text>
-        </View>
-      ) : commissionState === loadingStateEnum.success &&
-        commissionData !== undefined ? (
-        <View>
+
+  if (commissionState === loadingStateEnum.loading) {
+    return (
+      <View
+        style={{
+          height: height * 0.8,
+          width: width * 0.9,
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignContent: 'center',
+          backgroundColor: Colors.white,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          borderRadius: 15
+        }}
+      >
+        <ProgressView
+          width={width * 0.8 < height * 0.7 ? width * 0.4 : height * 0.35}
+          height={width * 0.8 < height * 0.7 ? width * 0.4 : height * 0.35}
+        />
+        <Text>Loading</Text>
+      </View>
+    )
+  }
+
+  if (commissionState === loadingStateEnum.success && commissionData !== undefined) {
+    return (
+      <View
+        style={{
+          height: height * 0.8,
+          width: width * 0.9,
+          alignItems: 'center',
+          justifyContent: 'center',
+          alignContent: 'center',
+          backgroundColor: Colors.white,
+          shadowColor: Colors.black,
+          shadowOffset: { width: 0, height: 1 },
+          shadowOpacity: 0.8,
+          shadowRadius: 10,
+          borderRadius: 15
+        }}
+      >
           <View style={{ height: height * 0.1, overflow: 'hidden' }}>
             <Pressable
               onPress={() => router.push('/commissions')}
@@ -224,13 +130,14 @@ export default function CommissionsView({ id }: { id: string }) {
               <Text
                 style={{
                   fontSize: calculateFontSize(
-                    width * 0.9,
-                    height * 0.1,
+                    width * 0.8,
+                    height * 0.047,
                     commissionData.title,
                   ),
                   position: 'absolute',
                   left: 'auto',
                   right: 'auto',
+                  fontFamily: 'Comfortaa-Regular'
                 }}
               >
                 {commissionData.title}
@@ -283,100 +190,7 @@ export default function CommissionsView({ id }: { id: string }) {
               </View>
               {commissionData.value === commissionTypeEnum.Image ||
               commissionData.value === commissionTypeEnum.ImageLocation ? (
-                <>
-                  {imageUri !== '' ? (
-                    <Image
-                      source={{ uri: imageUri }}
-                      width={width * 0.7}
-                      resizeMode="center"
-                      style={{
-                        width: width * 0.7,
-                        height: imageHeight,
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        alignContent: 'center',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: Colors.white,
-                        shadowOffset: { width: 0, height: 1 },
-                        shadowOpacity: 0.8,
-                        shadowRadius: 10,
-                        borderRadius: 15,
-                      }}
-                    />
-                  ) : (
-                    <View
-                      style={{
-                        width: width * 0.7,
-                        height: height * 0.3,
-                        marginLeft: 'auto',
-                        marginRight: 'auto',
-                        alignContent: 'center',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: Colors.white,
-                        shadowOffset: { width: 0, height: 1 },
-                        shadowOpacity: 0.8,
-                        shadowRadius: 10,
-                        borderRadius: 15,
-                      }}
-                    >
-                      <Text>No Photo Selected</Text>
-                    </View>
-                  )}
-                  <Pressable
-                    onPress={() => takeImage()}
-                    style={{
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                      marginTop: 15,
-                      backgroundColor: '#ededed',
-                      width: width * 0.7,
-                      borderRadius: 15,
-                      alignItems: 'center',
-                      alignContent: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {takeImageState === CameraResult.loading ? (
-                      <ProgressView
-                        width={14}
-                        height={14}
-                        style={{ margin: 10 }}
-                      />
-                    ) : (
-                      <Text style={{ margin: 10, fontWeight: 'bold' }}>
-                        {getTextTakeImage(takeImageState)}
-                      </Text>
-                    )}
-                  </Pressable>
-                  <Pressable
-                    onPress={() => pickImage()}
-                    style={{
-                      marginLeft: 'auto',
-                      marginRight: 'auto',
-                      marginTop: 10,
-                      backgroundColor: '#ededed',
-                      width: width * 0.7,
-                      borderRadius: 15,
-                      alignItems: 'center',
-                      alignContent: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {pickImageState === CameraResult.loading ? (
-                      <ProgressView
-                        width={14}
-                        height={14}
-                        style={{ margin: 10 }}
-                      />
-                    ) : (
-                      <Text style={{ margin: 10, fontWeight: 'bold' }}>
-                        {getTextPickImage(pickImageState)}
-                      </Text>
-                    )}
-                  </Pressable>
-                </>
+                <CommissionImageComponent imageUri={imageUri} setImageUri={setImageUri} />
               ) : null}
               <Link
                 href={`/commissions/${id}/leaderboard`}
@@ -422,11 +236,23 @@ export default function CommissionsView({ id }: { id: string }) {
             </View>
           ) : null}
         </View>
-      ) : (
-        <View>
-          <Text>Something Went Wrong</Text>
-        </View>
-      )}
+    )
+  }
+
+  return (
+    <View
+      style={{
+        width: width * 0.9,
+        height: height * 0.8,
+        backgroundColor: Colors.white,
+        shadowColor: Colors.black,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 10,
+        borderRadius: 15,
+      }}
+    >
+        <Text>Something Went Wrong</Text>
     </View>
   );
 }

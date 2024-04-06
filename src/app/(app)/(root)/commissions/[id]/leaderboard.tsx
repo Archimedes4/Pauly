@@ -1,6 +1,9 @@
+/*
+  Pauly
+  Andrew Mainella
+*/
 import { Redirect, useGlobalSearchParams } from 'expo-router';
 import React from 'react';
-import { View, Text } from 'react-native';
 import { LeaderboardBody } from '../leaderboard';
 
 export default function Leaderboard() {

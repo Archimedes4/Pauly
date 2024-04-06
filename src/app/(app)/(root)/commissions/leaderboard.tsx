@@ -1,3 +1,7 @@
+/*
+  Pauly
+  Andrew Mainella
+*/
 import { View, Text, FlatList, Image, StatusBar } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Colors, loadingStateEnum } from '@constants';

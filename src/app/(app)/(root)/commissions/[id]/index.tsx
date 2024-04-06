@@ -1,3 +1,7 @@
+/*
+  Pauly
+  Andrew Mainella
+*/
 import React from 'react';
 import { Redirect, useGlobalSearchParams } from 'expo-router';
 import { CommissionsMain } from '..';

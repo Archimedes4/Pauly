@@ -7,6 +7,15 @@ import createUUID from './createUUID';
 export const timer = (ms: number | undefined) =>
   new Promise(res => setTimeout(res, ms));
 
+
+/**
+ * Logic to get a value from a redux store. Call for one if it is their or wait for a call to finish.
+ * @param dispatch 
+ * @param cached A boolean wheather the item is chaced
+ * @param stateUpdating A boolean wheather the item is being updated
+ * @param store The redux store
+ * @returns 
+ */
 export async function getValueFromRedux<ReturnType>(
   dispatch: AsyncThunkAction<any, any, any>,
   cached: (store: RootState) => ReturnType | undefined,

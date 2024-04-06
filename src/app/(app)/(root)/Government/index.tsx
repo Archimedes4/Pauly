@@ -188,13 +188,6 @@ export default function Government() {
             <MedalIcon width={50} height={50} />
           </Block>
           <Block
-            width={100}
-            height={100}
-            text="Sports"
-            imageSource={require('assets/images/Football.png')}
-            href="/government/sports"
-          />
-          <Block
             href="/government/homepage"
             width={100}
             height={100}
@@ -220,22 +213,6 @@ export default function Government() {
           </Block>
           <Block href="/government/admin" width={100} height={100} text="Admin">
             <GearIcon width={50} height={50} />
-          </Block>
-          <Block
-            href="/government/resources"
-            width={100}
-            height={100}
-            text="Resources"
-          >
-            <BookIcon width={50} height={50} />
-          </Block>
-          <Block
-            href="/government/students"
-            width={100}
-            height={100}
-            text="Students"
-          >
-            <StudentSearchIcon width={50} height={50} />
           </Block>
         </View>
       </View>

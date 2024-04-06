@@ -8,6 +8,12 @@ import { StoreType } from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests/noStore';
 
+/**
+ * Gets the commission with the supplied commission Id
+ * @param commissionId The id of the commission
+ * @param store 
+ * @returns 
+ */
 export default async function getCommission(
   commissionId: string,
   store: StoreType,
@@ -50,11 +56,12 @@ export default async function getCommission(
       timed: data.value[0].fields.timed,
       maxNumberOfClaims: data.value[0].fields.maxNumberOfClaims,
       allowMultipleSubmissions: data.value[0].fields.allowMultipleSubmissions,
-      value: data.value[0].fields.value - 1,
+      value: data.value[0].fields.value,
       submissionsCount: 0,
       claimCount: 0,
       reviewedCount: 0,
       competitionType: data.value[0].fields.homeValue,
+      QRCodeData: []
     };
     return { result: loadingStateEnum.success, data: dataResult };
   }

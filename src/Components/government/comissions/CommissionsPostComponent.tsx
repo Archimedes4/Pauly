@@ -277,6 +277,17 @@ function PostSelection({
 
   return (
     <View style={{ width, height }}>
+      <StyledButton
+        text="Back"
+        onPress={() => onBack()}
+        second
+        style={{
+          marginLeft: 15,
+          marginRight: 15,
+          marginTop: 10,
+          marginBottom: 10,
+        }}
+      />
       <Text>Failed To Get Posts</Text>
     </View>
   );

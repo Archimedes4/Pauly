@@ -246,7 +246,6 @@ This is the sports page that shows sport highlights and has team rosters. The sp
 | @expo/config-plugins | 7 |  |
 | @react-google-maps/api | 2 | |
 | @react-native-async-storage/async-storage | 1 |
-| @react-native-community/datetimepicker | 7 |
 | @react-native-community/slider | 4 |
 | @reduxjs/toolkit | 1 |
 | @types/node" | 20 |

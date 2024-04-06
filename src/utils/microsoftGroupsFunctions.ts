@@ -6,7 +6,6 @@
   common function to access microsoft group/teams data
 */
 import { loadingStateEnum, resourceResponce } from '@constants';
-import getResource from '@utils/getResources';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 
 export async function getTeams(nextLink?: string): Promise<{
@@ -103,50 +102,6 @@ export async function getPosts(
       data: output,
       nextLink: data['@odata.nextLink'],
     };
-  }
-  return { result: loadingStateEnum.failed };
-}
-
-// Id group id of a microsoft teams group
-export async function getResourceChannels(
-  id: string,
-): Promise<
-  | { result: loadingStateEnum.success; data: channelType[] }
-  | { result: loadingStateEnum.failed }
-> {
-  const getResult = await callMsGraph(
-    `https://graph.microsoft.com/v1.0/teams/${id}/allChannels`,
-  );
-  const channelResult: channelType[] = [];
-  if (getResult.ok) {
-    const getResultData = await getResult.json();
-    const channelGetResultsAwait: Promise<{
-      result: resourceResponce;
-      itemId?: string | undefined;
-    }>[] = [];
-    for (
-      let indexResult = 0;
-      indexResult < getResultData.value.length;
-      indexResult += 1
-    ) {
-      channelGetResultsAwait.push(
-        getResource(id, getResultData.value[indexResult].id),
-      );
-    }
-    const channelGetResults: {
-      result: resourceResponce;
-      itemId?: string | undefined;
-    }[] = await Promise.all(channelGetResultsAwait);
-    for (let index = 0; index < channelGetResults.length; index += 1) {
-      channelResult.push({
-        id: getResultData.value[index].id,
-        selected: channelGetResults[index].result === resourceResponce.found,
-        loading: false,
-        displayName: getResultData.value[index].displayName,
-        error: channelGetResults[index].result === resourceResponce.failed,
-      });
-    }
-    return { result: loadingStateEnum.success, data: channelResult };
   }
   return { result: loadingStateEnum.failed };
 }

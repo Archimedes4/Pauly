@@ -8,7 +8,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import isOverrideReducer from './reducers/isOverrideReducer';
 import monthDataReducer from './reducers/monthDataReducer';
-import resourcesLastCallReducer from './reducers/resourcesLastCallReducer';
 import safeAreaColorsReducer from './reducers/safeAreaColorsReducer';
 import microsoftProfileDataReducer from './reducers/microsoftProfileDataReducer';
 import currentEventsReducer from './reducers/currentEventReducer';
@@ -18,9 +17,7 @@ import authenticationTokenReducer from './reducers/authenticationTokenReducer';
 import authenticationRefreshTokenReducer from './reducers/authenticationRefreshTokenReducer';
 import dimensionsReducer from './reducers/dimensionsReducer';
 import authenticationApiTokenReducer from './reducers/authenticationApiToken';
-import { tasksDeltaReducer } from './reducers/tasksReducers';
 import paulyDataReducer from './reducers/paulyDataReducer';
-import resourcesReducer from './reducers/resourcesReducer';
 import addEventReducer from './reducers/addEventReducer';
 import homepageDataReducer from './reducers/homepageDataReducer';
 import expandedModeReducer from './reducers/expandedModeReducer';
@@ -62,10 +59,7 @@ const store = configureStore({
     paulyData: paulyDataReducer,
     paulyList: paulyListReducer,
     pdfData: pdfDataReducer,
-    resources: resourcesReducer,
-    resourcesLastCalled: resourcesLastCallReducer,
     safeAreaColors: safeAreaColorsReducer,
-    tasksDeltaLink: tasksDeltaReducer,
     selectedDate: selectedDateReducer,
     studentSearch: studentSearchReducer,
     authLoading: authLoadingReducer,

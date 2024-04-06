@@ -55,6 +55,11 @@ const getCommissionThunk = createAsyncThunk(
   },
 );
 
+/**
+ * A function that gets multiple commissions based on filters
+ * @param params 
+ * @returns If successful returns Commissions and a next link
+ */
 export const getCommissions = (params: commissionApiParams) =>
   getValueFromRedux<commissionType[]>(
     getCommissionsThunk(params),
@@ -67,6 +72,12 @@ export const getCommissions = (params: commissionApiParams) =>
     params.store,
   );
 
+/**
+ * A function that gets a commission with a commissionId
+ * @param commissionId The commission Id of the commission to get
+ * @param store The redux store
+ * @returns 
+ */
 export const getCommission = (commissionId: string, store: StoreType) =>
   getValueFromRedux<commissionType>(
     getCommissionThunk({
@@ -74,6 +85,7 @@ export const getCommission = (commissionId: string, store: StoreType) =>
       store,
     }),
     store => {
+      console.log("Get commission")
       return store.commissions.currentCommissions.find(e => {
         return e.commissionId === commissionId;
       });
