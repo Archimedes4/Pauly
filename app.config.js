@@ -18,7 +18,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'Archimedes4.Pauly',
-      buildNumber: '82Y'
+      buildNumber: '82'
     },
     android: {
       adaptiveIcon: {
