@@ -49,14 +49,6 @@ import { getUsers } from '@utils/studentFunctions';
 import CommissionsPostComponent from '@components/government/comissions/CommissionsPostComponent';
 import CommissionsQRCodeComponent from '@components/government/comissions/CommissionsQRCodeComponent';
 
-enum datePickingMode {
-  none,
-  startTime,
-  endTime,
-  startDate,
-  endDate,
-}
-
 export function GovernmentCommissionUpdate({
   isCreate,
 }: {
@@ -74,8 +66,6 @@ export function GovernmentCommissionUpdate({
     commissionType | undefined
   >(undefined);
 
-  const [currentDatePickingMode, setCurrentDatePickingMode] =
-    useState<datePickingMode>(datePickingMode.none);
 
   const [getCommissionResult, setGetCommissionResult] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
@@ -210,13 +200,7 @@ export function GovernmentCommissionUpdate({
           }}
         >
           <Text
-            style={{
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              fontFamily: 'Comfortaa-Regular',
-              marginBottom: 5,
-              fontSize: 25,
-            }}
+            style={styles.headerText}
           >
             {isCreate ? 'Create New' : 'Edit'} Commission
           </Text>
@@ -371,221 +355,7 @@ export function GovernmentCommissionUpdate({
             }}
           />
         ) : null}
-        {commissionData.timed ? (
-          <View
-            style={{
-              shadowColor: Colors.black,
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 10,
-              borderRadius: 15,
-              padding: 10,
-              margin: 15,
-              marginBottom: 20,
-            }}
-          >
-            <View style={{ flexDirection: 'row' }}>
-              <Text>Timed: </Text>
-              <Switch
-                trackColor={{ false: '#767577', true: '#81b0ff' }}
-                thumbColor={commissionData.timed ? '#f5dd4b' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={e => {
-                  if (e) {
-                    setCommissionData({
-                      ...commissionData,
-                      timed: true,
-                      startDate: new Date()
-                        .toISOString()
-                        .replace(/.\d+Z$/g, 'Z'),
-                      endDate: new Date().toISOString().replace(/.\d+Z$/g, 'Z'),
-                    });
-                  }
-                }}
-                value={commissionData.timed}
-              />
-            </View>
-            <View
-              style={{
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width,
-              }}
-            >
-              <Text>Start Date</Text>
-              <Pressable
-                style={{ margin: 5 }}
-                onPress={() => {
-                  setCurrentDatePickingMode(datePickingMode.startDate);
-                }}
-              >
-                <Text>Pick Start Time</Text>
-              </Pressable>
-              <TimePickerModal
-                hours={new Date(commissionData.startDate).getHours()}
-                minutes={new Date(commissionData.startDate).getMinutes()}
-                visible={currentDatePickingMode === datePickingMode.startDate}
-                onDismiss={() =>
-                  setCurrentDatePickingMode(datePickingMode.none)
-                }
-                onConfirm={e => {
-                  const newDate = new Date(commissionData.startDate);
-                  newDate.setHours(e.hours);
-                  newDate.setMinutes(e.minutes);
-                  setCommissionData({
-                    ...commissionData,
-                    startDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
-                  });
-                  setCurrentDatePickingMode(datePickingMode.none);
-                }}
-              />
-              <Pressable
-                style={{ margin: 5 }}
-                onPress={() => {
-                  setCurrentDatePickingMode(datePickingMode.startDate);
-                }}
-              >
-                <Text>Pick Start Date</Text>
-              </Pressable>
-              <DatePickerModal
-                locale="en"
-                mode="single"
-                label="Select Date"
-                visible={currentDatePickingMode === datePickingMode.startDate}
-                onDismiss={() =>
-                  setCurrentDatePickingMode(datePickingMode.none)
-                }
-                date={new Date(commissionData.startDate)}
-                onConfirm={e => {
-                  if (e.date !== undefined) {
-                    const oldDate = new Date(commissionData.startDate);
-                    const newDate = new Date(
-                      e.date.getFullYear(),
-                      e.date.getMonth(),
-                      e.date.getDate(),
-                      oldDate.getHours(),
-                      oldDate.getMinutes(),
-                    );
-                    setCommissionData({
-                      ...commissionData,
-                      startDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
-                    });
-                  }
-                  setCurrentDatePickingMode(datePickingMode.none);
-                }}
-              />
-            </View>
-            <View
-              style={{
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width,
-              }}
-            >
-              <Text>End Date</Text>
-              <Pressable
-                style={{ margin: 5 }}
-                onPress={() => {
-                  setCurrentDatePickingMode(datePickingMode.endDate);
-                }}
-              >
-                <Text>Pick End Time</Text>
-              </Pressable>
-              <TimePickerModal
-                hours={new Date(commissionData.endDate).getHours()}
-                minutes={new Date(commissionData.endDate).getMinutes()}
-                visible={currentDatePickingMode === datePickingMode.endTime}
-                onDismiss={() =>
-                  setCurrentDatePickingMode(datePickingMode.none)
-                }
-                onConfirm={e => {
-                  const newDate = new Date(commissionData.endDate);
-                  newDate.setHours(e.hours);
-                  newDate.setMinutes(e.minutes);
-                  setCommissionData({
-                    ...commissionData,
-                    endDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
-                  });
-                  setCurrentDatePickingMode(datePickingMode.none);
-                }}
-              />
-              <Pressable
-                style={{ margin: 5 }}
-                onPress={() => {
-                  setCurrentDatePickingMode(datePickingMode.endDate);
-                }}
-              >
-                <Text>Pick End Date</Text>
-              </Pressable>
-              <DatePickerModal
-                locale="en"
-                mode="single"
-                label="Select Date"
-                visible={currentDatePickingMode === datePickingMode.endDate}
-                onDismiss={() =>
-                  setCurrentDatePickingMode(datePickingMode.none)
-                }
-                date={new Date(commissionData.endDate)}
-                onConfirm={e => {
-                  if (e.date !== undefined) {
-                    const oldDate = new Date(commissionData.endDate);
-                    const newDate = new Date(
-                      e.date.getFullYear(),
-                      e.date.getMonth(),
-                      e.date.getDate(),
-                      oldDate.getHours(),
-                      oldDate.getMinutes(),
-                    );
-                    setCommissionData({
-                      ...commissionData,
-                      endDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
-                    });
-                  }
-                  setCurrentDatePickingMode(datePickingMode.none);
-                }}
-              />
-            </View>
-          </View>
-        ) : (
-          <View
-            style={{
-              flexDirection: 'row',
-              shadowColor: Colors.black,
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.8,
-              shadowRadius: 10,
-              borderRadius: 15,
-              padding: 10,
-              margin: 15,
-              marginBottom: 20,
-            }}
-          >
-            <Text>Timed: </Text>
-            <Switch
-              trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={commissionData.timed ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={e => {
-                if (e) {
-                  setCommissionData({
-                    ...commissionData,
-                    timed: true,
-                    startDate: new Date().toISOString().replace(/.\d+Z$/g, 'Z'),
-                    endDate: new Date().toISOString().replace(/.\d+Z$/g, 'Z'),
-                  });
-                } else {
-                  setCommissionData({
-                    ...commissionData,
-                    timed: false,
-                  });
-                }
-              }}
-              value={commissionData.timed}
-            />
-          </View>
-        )}
+      
         <View
           style={{
             marginLeft: 15,

@@ -29,6 +29,12 @@ function getFilter(
   return '';
 }
 
+/**
+ * 
+ * @param commissionIds The commission Ids of the submissions to fetch
+ * @param store The Redux store
+ * @returns 
+ */
 async function getSubmissions(
   commissionIds: string[],
   store: StoreType,
@@ -383,6 +389,7 @@ export async function getUnclaimedCommissions(store: StoreType): Promise<
       index < submissionResultClaimedData.value.length;
       index += 1
     ) {
+      // check if submission approved
       if (
         submissionResultClaimedData.value[index].fields.submissionApproved ===
         false

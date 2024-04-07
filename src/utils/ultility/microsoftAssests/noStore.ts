@@ -47,33 +47,37 @@ export default async function callMsGraph(
       }
     }
   }
-
-  const response = await fetch(outUrl, options);
-  if (response.status === 401) {
-    if (secondAuth === undefined) {
-      store.dispatch(
-        authenticationCallSlice.actions.setAuthenticationCallIncrement(),
-      );
-      const previousValue: string = store.getState().authenticationToken;
-      return new Promise(resolve => {
-        const unsubscribe = store.subscribe(async () => {
-          const newValue = store.getState().authenticationToken;
-          if (newValue !== previousValue) {
-            const result = await callMsGraph(
-              url,
-              store,
-              method,
-              body,
-              headersIn,
-              true,
-            );
-            resolve(result);
-            unsubscribe(); // Unsubscribe after getting the new result
-          }
+  
+  try {
+    const response = await fetch(outUrl, options);
+    if (response.status === 401) {
+      if (secondAuth === undefined) {
+        store.dispatch(
+          authenticationCallSlice.actions.setAuthenticationCallIncrement(),
+        );
+        const previousValue: string = store.getState().authenticationToken;
+        return new Promise(resolve => {
+          const unsubscribe = store.subscribe(async () => {
+            const newValue = store.getState().authenticationToken;
+            if (newValue !== previousValue) {
+              const result = await callMsGraph(
+                url,
+                store,
+                method,
+                body,
+                headersIn,
+                true,
+              );
+              resolve(result);
+              unsubscribe(); // Unsubscribe after getting the new result
+            }
+          });
         });
-      });
+      }
+      return response;
     }
     return response;
+  } catch {
+    return await fetch("")
   }
-  return response;
 }

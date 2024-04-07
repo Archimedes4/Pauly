@@ -20,6 +20,7 @@ import {
 import { Provider, useSelector } from 'react-redux';
 import setDimentions from '@utils/ultility/setDimentions';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import useIsShowingZeroFooter from '@hooks/useIsShowingZeroFooter';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -57,13 +58,17 @@ function AppCore() {
     (state: RootState) => state.safeAreaColors,
   );
   const expandedMode = useSelector((state: RootState) => state.expandedMode);
-  const { currentBreakPoint, height } = useSelector(
+  const zeroFooterHeight = useSelector(
+    (state: RootState) => state.dimensions.zeroFooterHeight,
+  );
+  const { currentBreakPoint, totalHeight } = useSelector(
     (state: RootState) => state.dimensions,
   );
   const windowWidth = useWindowSize()[0];
   const windowHeight = useWindowSize()[1];
 
   const insets = useSafeAreaInsets();
+  const isShowingFooter = useIsShowingZeroFooter()
 
   useEffect(() => {
     setDimentions(
@@ -72,8 +77,9 @@ function AppCore() {
       insets,
       safeAreaColors.isTopTransparent,
       safeAreaColors.isBottomTransparent,
+      isShowingFooter
     );
-  }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets]);
+  }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets, isShowingFooter, zeroFooterHeight]);
 
   return (
     <>
@@ -90,7 +96,7 @@ function AppCore() {
         style={{
           backgroundColor: safeAreaColors.bottom,
           width: windowWidth,
-          height,
+          height: totalHeight,
           zIndex: 10,
           position: 'absolute',
           top: safeAreaColors.isTopTransparent ? 0 : insets.top,

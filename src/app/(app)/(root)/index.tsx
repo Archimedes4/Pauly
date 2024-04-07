@@ -24,6 +24,10 @@ import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
 import { getClasses } from '@redux/reducers/classesReducer';
+import { Link, useRouter } from 'expo-router';
+import { HomeIcon, MedalIcon, PersonIcon } from '@src/components/Icons';
+import CompressedMonthView from '@src/components/CompressedMonthView';
+import ScrollingTextAnimation from '@src/components/ScrollingTextAnimation';
 
 // Get Messages
 // Last Chat Message Channels Included
@@ -167,7 +171,6 @@ function WidgetView({ width, height }: { width: number; height: number }) {
   );
 }
 
-
 function BoardBlock() {
   const { width, height, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimensions,
@@ -263,15 +266,144 @@ function ClassBlock() {
   );
 }
 
-export default function Notifications() {
+function HomePageSmall() {
+  const router = useRouter();
+  const { siteId } = useSelector((state: RootState) => state.paulyList);
+  const authenticationToken = useSelector(
+    (state: RootState) => state.authenticationToken,
+  );
+  const { message, paulyDataState } = useSelector(
+    (state: RootState) => state.paulyData,
+  );
+  const { height, width, currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimensions,
+  );
+  const [footerHeight, setFooterHeight] = useState<number>(0);
+  const dispatch = useDispatch();
+  const insets = useSafeAreaInsets();
+
+  async function loadData() {
+    await getCurrentPaulyData();
+  }
+
+  const updateOutColors = useCallback(() => {
+    dispatch(
+      safeAreaColorsSlice.actions.setSafeArea({
+        top: Colors.maroon,
+        bottom: Colors.maroon,
+        isTopTransparent: false,
+        isBottomTransparent: false,
+        overflowHidden: false,
+      }),
+    );
+  }, [dispatch]);
+
+  useEffect(() => {
+    updateOutColors();
+  }, [updateOutColors]);
+
+  useEffect(() => {
+    if (
+      store.getState().authenticationToken !== '' &&
+      store.getState().paulyList.siteId !== ''
+    ) {
+      loadData();
+    }
+  }, [authenticationToken, siteId]);
+
+  const backToHome = useCallback(() => {
+    router.push('/');
+  }, [router]);
+
+  useEffect(() => {
+    if (currentBreakPoint > 0) {
+      backToHome();
+    }
+  }, [backToHome, currentBreakPoint]);
+
+  return (
+    <View>
+      <ScrollView style={{ backgroundColor: Colors.maroon, overflow: 'hidden', height: height - footerHeight }}>
+        <Link href="/" style={{ padding: 0, height: height * 0.08 }}>
+          <View style={{ width: width * 1.0, height: height * 0.08 }}>
+            {paulyDataState === loadingStateEnum.loading ? (
+              <View
+                style={{
+                  width: width * 1.0,
+                  height: height * 0.08,
+                  alignContent: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ProgressView
+                  width={width < height * 0.08 ? width * 0.1 : height * 0.07}
+                  height={width < height * 0.08 ? width * 0.1 : height * 0.07}
+                />
+              </View>
+            ) : (
+              <>
+                {paulyDataState === loadingStateEnum.success ? (
+                  <>
+                    {message !== '' ? (
+                      <ScrollingTextAnimation
+                        width={width * 1.0}
+                        height={height * 0.08}
+                        text={message}
+                      />
+                    ) : null}
+                  </>
+                ) : (
+                  <Text>Failed</Text>
+                )}
+              </>
+            )}
+          </View>
+        </Link>
+        <Link href="/calendar" style={{ padding: 0, height: height * 0.42 }}>
+          <View style={{ width: width * 0.999, height: height * 0.42 }}>
+            <View>
+              <View
+                style={{
+                  width: width * 1.0,
+                  height: height * 0.05,
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  borderTopColor: Colors.black,
+                  borderTopWidth: 2,
+                  borderBottomColor: Colors.black,
+                  borderBottomWidth: 2,
+                }}
+              >
+                <Text
+                  style={{
+                    margin: 'auto',
+                    color: Colors.white,
+                    fontFamily: 'Comfortaa-Regular',
+                  }}
+                >
+                  Calendar
+                </Text>
+              </View>
+              <CompressedMonthView width={width * 1.0} height={height * 0.37} />
+            </View>
+          </View>
+        </Link>
+        <BoardBlock />
+      </ScrollView>
+      
+    </View>
+  );
+}
+
+function HomePageLarge() {
   const { width, height, currentBreakPoint } = useSelector(
     (state: RootState) => state.dimensions,
   );
   const { message } = useSelector((state: RootState) => state.paulyData);
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
-  const [isShowingDiscipline, setIsShowingdiscipline] =
-    useState<boolean>(false);
 
   const loadData = useCallback(async () => {
     // Calendar Data
@@ -301,7 +433,6 @@ export default function Notifications() {
       <StatusBar barStyle="dark-content" />
       <ScrollView style={{ width, height, backgroundColor: Colors.lightGray }}>
         <View style={{ height: insets.top }} />
-        {currentBreakPoint === 0 ? <BackButton to="/home" /> : null}
         <View
           style={{
             width,
@@ -331,26 +462,29 @@ export default function Notifications() {
             </Text>
           </View>
         </View>
-        {currentBreakPoint === 0 ? (
-          <>
-            <WidgetView width={width * 0.9} height={height * 0.3} />
-            <BoardBlock />
-          </>
-        ) : (
-          <View
-            style={{
-              flexDirection: 'row',
-              width: width * 0.9,
-              marginLeft: width * 0.05,
-            }}
-          >
-            <BoardBlock />
-            <View style={{ marginTop: height * 0.03 }}>
-              <WidgetView width={width * 0.2} height={height * 0.2} />
-            </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            width: width * 0.9,
+            marginLeft: width * 0.05,
+          }}
+        >
+          <BoardBlock />
+          <View style={{ marginTop: height * 0.03 }}>
+            <WidgetView width={width * 0.2} height={height * 0.2} />
           </View>
-        )}
+        </View>
       </ScrollView>
     </>
   );
+}
+
+export default function HomePage() {
+  const { currentBreakPoint } = useSelector(
+    (state: RootState) => state.dimensions,
+  );
+  if (currentBreakPoint === 0) {
+    return <HomePageSmall />
+  }
+  return <HomePageLarge />
 }

@@ -280,9 +280,6 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
             justifyContent: 'center',
           }}
         >
-          {currentBreakPoint <= 0 ? (
-            <BackButton to="/home" color={Colors.white} />
-          ) : null}
           <Text
             style={{
               fontFamily: 'BukhariScript',

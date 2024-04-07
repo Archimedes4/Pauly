@@ -58,9 +58,8 @@ export default function Settings() {
   }, [currentBreakPoint, returnHome]);
 
   return (
-    <View>
+    <View style={{width, height}}>
       <StatusBar barStyle="light-content" />
-      <BackButton to="/home" color={Colors.white} />
       <View
         style={{
           alignContent: 'center',
@@ -156,7 +155,8 @@ export default function Settings() {
             shadowOffset: { width: 2, height: 4 },
             shadowOpacity: 0.8,
             borderRadius: 15,
-            marginBottom: 15,
+            marginTop: 15,
+            marginBottom: 60,
             shadowRadius: 10,
           }}
         >

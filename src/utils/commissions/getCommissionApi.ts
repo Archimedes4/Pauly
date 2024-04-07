@@ -61,7 +61,7 @@ export default async function getCommission(
       claimCount: 0,
       reviewedCount: 0,
       competitionType: data.value[0].fields.homeValue,
-      QRCodeData: []
+      QRCodeData: [] //TODO add QRCode data
     };
     return { result: loadingStateEnum.success, data: dataResult };
   }

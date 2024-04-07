@@ -16,6 +16,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
 import { useRefresh, useSilentLogin } from './authentication';
 
+/**
+ * Main hook that runs the startup. Should only be in one view (layout) at once.
+ * @returns 
+ */
 export default function useAuthentication() {
   const isLoading = useSelector((state: RootState) => state.authLoading);
   const authToken = useSelector(

@@ -4,15 +4,25 @@ import store from '@redux/store';
 import { breakPointMode } from '@constants';
 import getMainHeight from '../getMainHeight';
 
+/**
+ * 
+ * @param dimWidth The width of the entire screen
+ * @param dimHeight The height of the entire screen
+ * @param insets The dimentions of the areas that are not safe
+ * @param isTop If the top is hidden
+ * @param isBottom If the bottom is hidden
+ * @param isShowingZeroFooter If the footer is being shown
+ */
 export default function setDimentions(
   dimWidth: number,
   dimHeight: number,
   insets: EdgeInsets,
   isTop: boolean,
   isBottom: boolean,
+  isShowingZeroFooter: boolean,
 ) {
   const oldWidth = store.getState().dimensions.width;
-  const { height } = store.getState().dimensions;
+  const { height, totalHeight } = store.getState().dimensions;
   const newWidth = dimWidth - insets.left - insets.right;
   const newHeight = getMainHeight(
     dimHeight,
@@ -20,6 +30,7 @@ export default function setDimentions(
     insets.bottom,
     isTop,
     isBottom,
+    isShowingZeroFooter
   );
   if (oldWidth !== newWidth) {
     const oldCurrentBreakPointMode: breakPointMode =
@@ -110,7 +121,10 @@ export default function setDimentions(
       );
     }
   }
-  if (height !== newHeight) {
-    store.dispatch(dimensionsSlice.actions.setDimentionsHeight(newHeight));
+  if (height !== newHeight || totalHeight !== dimHeight) {
+    store.dispatch(dimensionsSlice.actions.setDimentionsHeight({
+      totalHeight: dimHeight,
+      height: newHeight
+    }));
   }
 }
