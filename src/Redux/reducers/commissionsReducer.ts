@@ -85,7 +85,6 @@ export const getCommission = (commissionId: string, store: StoreType) =>
       store,
     }),
     store => {
-      console.log("Get commission")
       return store.commissions.currentCommissions.find(e => {
         return e.commissionId === commissionId;
       });

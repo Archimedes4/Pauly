@@ -22,6 +22,7 @@ import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@components/Calendar/MonthView';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import { lastCalledSelectedDateSlice } from '@redux/reducers/lastCalledSelectedDateReducer';
+import ZeroFooterComponent from '@src/components/ZeroFooterComponent';
 
 function getCalendarFontSize(breakPoint: number, height: number) {
   if (breakPoint === 0) {
@@ -161,7 +162,7 @@ export default function Calendar() {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
-        bottom: Colors.white,
+        bottom: Colors.maroon,
       }),
     );
   }, [dispatch]);

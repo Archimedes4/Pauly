@@ -373,7 +373,7 @@ export async function getUnclaimedCommissions(store: StoreType): Promise<
     store.getState().paulyList.siteId
   }/lists/${
     store.getState().paulyList.commissionSubmissionsListId
-  }/items?expand=fields&$filter=fields/userId%20eq%20'${
+  }/items?expand=fields&$select=id,fields&$filter=fields/userId%20eq%20'${
     store.getState().microsoftProfileData.id
   }'%20and%20fields/submissionApproved%20ne%20false`;
   // The first value in the map is the commission id and the second is the submissions count b/c all are unclaimed

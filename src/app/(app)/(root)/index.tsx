@@ -28,6 +28,7 @@ import { Link, useRouter } from 'expo-router';
 import { HomeIcon, MedalIcon, PersonIcon } from '@src/components/Icons';
 import CompressedMonthView from '@src/components/CompressedMonthView';
 import ScrollingTextAnimation from '@src/components/ScrollingTextAnimation';
+import ZeroFooterComponent from '@src/components/ZeroFooterComponent';
 
 // Get Messages
 // Last Chat Message Channels Included
@@ -266,21 +267,65 @@ function ClassBlock() {
   );
 }
 
+
+/*
+  TODO
+  The code below is should be looked at with much confusion.
+  Everything works and looks the way it should on the web.
+  But on iOS there is some bug when using the height directly and it gets updated.
+  This happens right away as the zero footer comes in.
+  Therefore calendarHeight is needed to force a rerender and all is well. I have placed a marker beside the buggy heights.
+  This is a very small performance issue, one that I believe to be expo-routers fault.
+  This might be fixed in the future. To test remove the calendar height and replace it with height. OR just find the bug I cannot see.
+*/
+function HomePageSmallCalendar({width, height}:{width: number; height: number}) {
+  const [calendarHeight, setCalendarHeight] = useState<number>(0);
+  useEffect(() => {setCalendarHeight(height)}, [height])
+  if (calendarHeight !== height) {
+    return null
+  }
+  return (
+    <View style={{ width: width, height: height * 0.42 }}>
+      <View
+        style={{
+          width: width,
+          height: Math.round(calendarHeight * 0.05), //buggy height
+          alignItems: 'center',
+          alignContent: 'center',
+          justifyContent: 'center',
+          borderTopColor: Colors.black,
+          borderTopWidth: 2,
+          borderBottomColor: Colors.black,
+          borderBottomWidth: 2,
+        }}
+      >
+        <Text
+          style={{
+            margin: 'auto',
+            color: Colors.white,
+            fontFamily: 'Comfortaa-Regular',
+            width: width,
+            textAlign: 'center',
+          }}
+        >
+          Calendar
+        </Text>
+      </View>
+      <CompressedMonthView width={width} height={calendarHeight * 0.37}//buggy height 
+      />
+    </View>
+  )
+}
+//End TODO
+
 function HomePageSmall() {
-  const router = useRouter();
-  const { siteId } = useSelector((state: RootState) => state.paulyList);
-  const authenticationToken = useSelector(
-    (state: RootState) => state.authenticationToken,
-  );
   const { message, paulyDataState } = useSelector(
     (state: RootState) => state.paulyData,
   );
-  const { height, width, currentBreakPoint } = useSelector(
+  const { height, width } = useSelector(
     (state: RootState) => state.dimensions,
   );
-  const [footerHeight, setFooterHeight] = useState<number>(0);
   const dispatch = useDispatch();
-  const insets = useSafeAreaInsets();
 
   async function loadData() {
     await getCurrentPaulyData();
@@ -303,97 +348,50 @@ function HomePageSmall() {
   }, [updateOutColors]);
 
   useEffect(() => {
-    if (
-      store.getState().authenticationToken !== '' &&
-      store.getState().paulyList.siteId !== ''
-    ) {
-      loadData();
-    }
-  }, [authenticationToken, siteId]);
-
-  const backToHome = useCallback(() => {
-    router.push('/');
-  }, [router]);
-
-  useEffect(() => {
-    if (currentBreakPoint > 0) {
-      backToHome();
-    }
-  }, [backToHome, currentBreakPoint]);
+    loadData();
+  }, []);
 
   return (
-    <View>
-      <ScrollView style={{ backgroundColor: Colors.maroon, overflow: 'hidden', height: height - footerHeight }}>
-        <Link href="/" style={{ padding: 0, height: height * 0.08 }}>
-          <View style={{ width: width * 1.0, height: height * 0.08 }}>
-            {paulyDataState === loadingStateEnum.loading ? (
-              <View
-                style={{
-                  width: width * 1.0,
-                  height: height * 0.08,
-                  alignContent: 'center',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <ProgressView
-                  width={width < height * 0.08 ? width * 0.1 : height * 0.07}
-                  height={width < height * 0.08 ? width * 0.1 : height * 0.07}
-                />
-              </View>
-            ) : (
+    <ScrollView style={{ backgroundColor: Colors.maroon, height: height }}>
+      <View style={{ width: width * 1.0, height: height * 0.08 }}>
+        {paulyDataState === loadingStateEnum.loading ? (
+          <View
+            style={{
+              width: width * 1.0,
+              height: height * 0.08,
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <ProgressView
+              width={width < height * 0.08 ? width * 0.1 : height * 0.07}
+              height={width < height * 0.08 ? width * 0.1 : height * 0.07}
+            />
+          </View>
+        ) : (
+          <>
+            {paulyDataState === loadingStateEnum.success ? (
               <>
-                {paulyDataState === loadingStateEnum.success ? (
-                  <>
-                    {message !== '' ? (
-                      <ScrollingTextAnimation
-                        width={width * 1.0}
-                        height={height * 0.08}
-                        text={message}
-                      />
-                    ) : null}
-                  </>
-                ) : (
-                  <Text>Failed</Text>
-                )}
+                {message !== '' ? (
+                  <ScrollingTextAnimation
+                    width={width * 1.0}
+                    height={height * 0.08}
+                    text={message}
+                  />
+                ) : null}
               </>
+            ) : (
+              <Text>Failed</Text>
             )}
-          </View>
-        </Link>
-        <Link href="/calendar" style={{ padding: 0, height: height * 0.42 }}>
-          <View style={{ width: width * 0.999, height: height * 0.42 }}>
-            <View>
-              <View
-                style={{
-                  width: width * 1.0,
-                  height: height * 0.05,
-                  alignItems: 'center',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  borderTopColor: Colors.black,
-                  borderTopWidth: 2,
-                  borderBottomColor: Colors.black,
-                  borderBottomWidth: 2,
-                }}
-              >
-                <Text
-                  style={{
-                    margin: 'auto',
-                    color: Colors.white,
-                    fontFamily: 'Comfortaa-Regular',
-                  }}
-                >
-                  Calendar
-                </Text>
-              </View>
-              <CompressedMonthView width={width * 1.0} height={height * 0.37} />
-            </View>
-          </View>
-        </Link>
-        <BoardBlock />
-      </ScrollView>
-      
-    </View>
+          </>
+        )}
+      </View>
+      <Link href="/calendar" style={{ padding: 0, height: height * 0.42 }}>
+        <HomePageSmallCalendar width={width} height={height}/>
+      </Link>
+      <BoardBlock />
+    </ScrollView>
   );
 }
 

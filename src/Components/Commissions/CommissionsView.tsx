@@ -4,7 +4,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import CommissionClaim from '@components/Commissions/CommissionClaim';
-import getCommission from '@utils/commissions/getCommissionApi';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 import ProgressView from '@components/ProgressView';
 import { CloseIcon } from '@components/Icons';
@@ -13,6 +12,7 @@ import { Colors, commissionTypeEnum, loadingStateEnum } from '@constants';
 import { Link, router } from 'expo-router';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
 import CommissionImageComponent from './CommissionImageComponent';
+import { getCommission } from '@redux/reducers/commissionsReducer';
 
 export default function CommissionsView({ id }: { id: string }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
@@ -47,7 +47,6 @@ export default function CommissionsView({ id }: { id: string }) {
   const getCommissionInformation = useCallback(async () => {
     const result = await getCommission(id, store);
     if (result.result === loadingStateEnum.success) {
-      console.log(result)
       setCommissionData(result.data);
       if (result.data?.postData !== undefined) {
         getPost(

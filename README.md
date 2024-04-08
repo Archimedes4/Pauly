@@ -13,6 +13,7 @@ Saint Paul's High School Student Council 2023-2024
 * [About the app](#about-the-app)
 * [Dependencies](#dependencies)
 * [Setup and mantiance](#setup)
+* [Road Map](#road-map)
 
 # General Reference
 
@@ -450,3 +451,7 @@ body
 
 ### Maintenance
 Rotating client secrets after 160 days. Follow the steps in Set Environment Variables no need to change teant id and client id.
+
+# Road Map
+-Working Commission Submissions
+-Live dashboard of scores and submissions for a commission. Using change notifications.

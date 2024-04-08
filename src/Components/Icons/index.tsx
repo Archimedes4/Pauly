@@ -1807,7 +1807,6 @@ export function DeniedIcon({ width, height, style, props }: iconProps) {
 export function ZeroFooterIcon({ width, height, style, color }: colorIconProps) {
   function getDistance(margins: number, symbols: number) {
     let marginLength = (width - (height * 0.2))/8
-    console.log((marginLength * margins + (height * 0.05) * symbols))
     return (marginLength * margins + (height * 0.05) * symbols)
   }
 
@@ -1889,11 +1888,14 @@ export function ZeroFooterIcon({ width, height, style, color }: colorIconProps) 
       <Rect x="0" y="0" width={width} height={height * 0.0125} fill={color || "#000000"}/>
       <Rect x="0" y={height * 0.0625 - 1} width={width} height={height * 0.0125 + 1} fill={color || "#000000"}/>
       <Rect x="0" y="0"  width={getDistance(1, 0) + 1} height={height * 0.075} fill={color || "#000000"}/>
-      <Use href='#House' width={height * 0.05} height={height * 0.05} x={getDistance(1, 0)} y={height * 0.0125 - 1}/>
+      <Use href='#House' width={height * 0.05} height={Math.max(height * 0.05) + 1} x={getDistance(1, 0)} y={height * 0.0125 - 1}/>
       <Rect x={getDistance(1, 1) - 1} y="0"  width={getDistance(2, 0) + 2} height={height * 0.075} fill={color || "#000000"}/>
       <Use href='#Medal' width={height * 0.05} height={height * 0.05} x={getDistance(3, 1)} y={height * 0.0125 - 1}/>
       <Rect x={getDistance(3, 2) - 1} y="0"  width={getDistance(2, 0) + 2} height={height * 0.075} fill={color || "#000000"}/>
-      <Use href='#Calendar' width={height * 0.05} height={height * 0.05} x={getDistance(5, 2)} y={height * 0.0125 - 1}/>
+      <Use href='#Calendar' width={Math.max(height * 0.05)} height={Math.max(height * 0.05)} x={getDistance(5, 2)} y={height * 0.0125 - 1}/>
+
+      <Rect x={getDistance(5, 2)}  y={height * 0.0625 - 4}  width={Math.max(height * 0.05) + 2} height={height * 0.0125} fill={color || "#000000"}/>
+
       <Rect x={getDistance(5, 3) - 1} y="0"  width={getDistance(2, 0) + 2} height={height * 0.075} fill={color || "#000000"}/>
       <Use href='#Person' width={height * 0.05} height={height * 0.05} x={getDistance(7, 3)} y={height * 0.0125 - 1}/>
       <Rect x={getDistance(7, 4) - 1} y="0"  width={getDistance(1, 0) + 1} height={height * 0.075} fill={color || "#000000"}/>

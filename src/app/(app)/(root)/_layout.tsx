@@ -15,8 +15,8 @@ import { Colors } from '@constants';
 import { Slot, useFocusEffect, useRouter } from 'expo-router';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
 import { SignInComponent } from '../(public)/sign-in';
-import useIsShowingZeroFooter from '@src/hooks/useIsShowingZeroFooter';
-import ZeroFooterComponent from '@src/components/ZeroFooterComponent';
+import useIsShowingZeroFooter from '@hooks/useIsShowingZeroFooter';
+import ZeroFooterComponent from '@components/ZeroFooterComponent';
 
 function AuthenticatedView() {
   const { currentBreakPoint, totalWidth, width } = useSelector(
@@ -53,14 +53,14 @@ function AuthenticatedView() {
           }}
         >
           <Slot />
-          {isShowingFooter ?
-            <ZeroFooterComponent />:null
-          }
           {currentBreakPoint >= 1 && isShowingProfileBlock ? (
             <ProfileBlock />
           ) : null}
         </View>
       </View>
+      {isShowingFooter ?
+        <ZeroFooterComponent />:null
+      }
     </View>
   );
 }

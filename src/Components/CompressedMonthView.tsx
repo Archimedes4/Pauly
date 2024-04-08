@@ -149,7 +149,6 @@ export default function CompressedMonthView({
   width: number;
   height: number;
 }) {
-  const Count = getDaysInMonth(new Date());
   const StartDate = findFirstDayinMonth(new Date());
   const thirtyValue = [...Array(30).keys()];
   const monthViewData = useSelector((state: RootState) => state.monthView);

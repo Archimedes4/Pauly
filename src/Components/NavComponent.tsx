@@ -13,13 +13,11 @@ import store, { RootState } from '@redux/store';
 import { expandedModeSlice } from '@redux/reducers/expandedModeReducer';
 import { isShowingProfileBlockSlice } from '@redux/reducers/isShowingProfileBlockReducer';
 import {
-  BookIcon,
   CalendarIcon,
   GovernmentIcon,
   HomeIcon,
   MedalIcon,
   PersonIcon,
-  StudentSearchIcon,
 } from './Icons';
 import { Colors } from '../constants';
 

@@ -257,7 +257,7 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
-        bottom: Colors.lightGray,
+        bottom: Colors.maroon
       }),
     );
   }, [dispatch]);
