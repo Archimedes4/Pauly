@@ -149,7 +149,8 @@ export default function AddCommissionSubmission({
         style={{
           width: width * 0.8,
           height: height * 0.8,
-          margin: 'auto',
+          marginHorizontal: width * 0.1,
+          marginVertical: height * 0.1,
           borderRadius: 15,
           borderWidth: 2,
           borderColor: Colors.black,
@@ -170,7 +171,8 @@ export default function AddCommissionSubmission({
       style={{
         width: width * 0.8,
         height: height * 0.8,
-        margin: 'auto',
+        marginHorizontal: width * 0.1,
+        marginVertical: height * 0.1,
         borderRadius: 15,
         borderWidth: 2,
         borderColor: Colors.black,

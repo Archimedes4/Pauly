@@ -5,12 +5,13 @@
 */
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useEffect, useState } from 'react';
-import { Image } from 'react-native';
+import { Image, View, Text } from 'react-native';
 import WebView from 'react-native-webview';
 import { GestureDetector, Gesture } from 'react-native-gesture-handler';
 import { runOnJS } from 'react-native-reanimated';
 import { pdfDataSlice } from '@redux/reducers/pdfDataReducer';
 import store, { RootState } from '@redux/store';
+import ProgressView from '../ProgressView';
 
 export default function PDFView({ width }: { width: number }) {
   const { images, pageNumber } = useSelector(
@@ -74,17 +75,31 @@ export default function PDFView({ width }: { width: number }) {
       );
     }
   }, [pageNumber, images, width]);
-  return (
-    <>
-      <WebViewInject />
-      {pageNumber < images.length ? (
-        <GestureDetector gesture={compound}>
-          <Image
+  if (pageNumber < images.length) {
+    return (
+      <GestureDetector gesture={compound}>
+        <Image
             source={{ uri: images[pageNumber] }}
             style={{ width, height: imageHeight, borderRadius: 15 }}
           />
-        </GestureDetector>
-      ) : null}
+      </GestureDetector>
+    );
+  }
+  return (
+    <>
+      <WebViewInject />
+      <View
+        style={{
+          width,
+          height: width * (9/16),
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ProgressView width={100} height={100} />
+        <Text>Loading</Text>
+      </View>
     </>
   );
 }

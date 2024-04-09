@@ -1,3 +1,5 @@
+import store from '@src/redux/store';
+import { isDateToday } from '@src/utils/calendar/calendarFunctions';
 import { useEffect, useState } from 'react';
 
 export function calculateHiddenTime(currentTime: Date): string {
@@ -31,7 +33,11 @@ export default function useTimeHidden() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setHiddenTime(calculateHiddenTime(new Date()));
+      if (isDateToday(new Date(store.getState().selectedDate))) {
+        setHiddenTime(calculateHiddenTime(new Date())); 
+      } else {
+        setHiddenTime("")
+      }
     }, 1000);
 
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.

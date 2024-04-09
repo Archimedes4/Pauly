@@ -91,6 +91,16 @@ function getTextColor(isAlt: boolean, selected?: boolean, second?: boolean) {
   return Colors.black;
 }
 
+function getHeight(text?: string, caption?: string) {
+  if (text !== undefined && caption !== undefined) {
+    return 52
+  }
+  if (text !== undefined) {
+    return 40
+  }
+  return
+}
+
 export default function StyledButton({
   to,
   text,
@@ -141,12 +151,7 @@ export default function StyledButton({
               altColor,
             ),
             borderRadius: 12,
-            height:
-              text !== undefined
-                ? caption !== undefined
-                  ? 48
-                  : 36
-                : undefined,
+            height: getHeight(text, caption),
             overflow: 'hidden',
             padding: 10,
           }}
@@ -161,6 +166,7 @@ export default function StyledButton({
                     fontSize: 16,
                     color: getTextColor(isAlt, selected, second),
                     fontFamily: 'Roboto',
+                    height: 20
                   },
                   textStyle,
                 ]}
@@ -229,6 +235,7 @@ export default function StyledButton({
                   fontSize: 16,
                   color: getTextColor(isAlt, selected, second),
                   fontFamily: 'Roboto',
+                  height: 20
                 },
                 textStyle,
               ]}

@@ -15,6 +15,7 @@ import {
   Image,
   Modal,
   ListRenderItemInfo,
+  Platform,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
@@ -385,11 +386,14 @@ export function GovernmentCommissionUpdate({
           <View style={{ flexDirection: 'row' }}>
             <Text>Allow Multiple Submissions: </Text>
             <Switch
-              trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={
-                commissionData.allowMultipleSubmissions ? '#f5dd4b' : '#f4f3f4'
-              }
-              ios_backgroundColor="#3e3e3e"
+              trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
+              thumbColor={commissionData.allowMultipleSubmissions ? Colors.maroon : Colors.darkGray}
+              {...Platform.select({
+                web: {
+                  activeThumbColor: Colors.maroon,
+                },
+              })}
+              ios_backgroundColor={Colors.lightGray}
               onValueChange={e => {
                 setCommissionData({
                   ...commissionData,
@@ -397,14 +401,20 @@ export function GovernmentCommissionUpdate({
                 });
               }}
               value={commissionData.allowMultipleSubmissions}
+              style={{ marginLeft: 10 }}
             />
           </View>
           <View style={{ flexDirection: 'row' }}>
             <Text>Is Hidden: </Text>
             <Switch
-              trackColor={{ false: '#767577', true: '#81b0ff' }}
-              thumbColor={commissionData.hidden ? '#f5dd4b' : '#f4f3f4'}
-              ios_backgroundColor="#3e3e3e"
+              trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
+              thumbColor={commissionData.hidden ? Colors.maroon : Colors.darkGray}
+              {...Platform.select({
+                web: {
+                  activeThumbColor: Colors.maroon,
+                },
+              })}
+              ios_backgroundColor={Colors.lightGray}
               onValueChange={e => {
                 setCommissionData({
                   ...commissionData,
@@ -412,6 +422,7 @@ export function GovernmentCommissionUpdate({
                 });
               }}
               value={commissionData.hidden}
+              style={{ marginLeft: 10 }}
             />
           </View>
           <View style={{ flexDirection: 'row' }}>

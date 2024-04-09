@@ -1,4 +1,4 @@
-import { View, Text, Switch, Pressable } from 'react-native'
+import { View, Text, Switch, Pressable, Platform } from 'react-native'
 import React, { useState } from 'react'
 import { Colors } from '@constants';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
@@ -35,9 +35,14 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
         <View style={{ flexDirection: 'row' }}>
           <Text>Timed: </Text>
           <Switch
-            trackColor={{ false: '#767577', true: '#81b0ff' }}
-            thumbColor={commission.timed ? '#f5dd4b' : '#f4f3f4'}
-            ios_backgroundColor="#3e3e3e"
+            trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
+            thumbColor={commission.timed ? Colors.maroon : Colors.darkGray}
+            {...Platform.select({
+              web: {
+                activeThumbColor: Colors.maroon,
+              },
+            })}
+            ios_backgroundColor={Colors.lightGray}
             onValueChange={e => {
               if (!e) {
                 setCommissionData({
@@ -47,6 +52,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
               }
             }}
             value={commission.timed}
+            style={{ marginLeft: 10 }}
           />
         </View>
         <View
@@ -211,9 +217,14 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
     >
       <Text>Timed: </Text>
       <Switch
-        trackColor={{ false: '#767577', true: '#81b0ff' }}
-        thumbColor={commission.timed ? '#f5dd4b' : '#f4f3f4'}
-        ios_backgroundColor="#3e3e3e"
+        trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
+        thumbColor={commission.timed ? Colors.maroon : Colors.darkGray}
+        {...Platform.select({
+          web: {
+            activeThumbColor: Colors.maroon,
+          },
+        })}
+        ios_backgroundColor={Colors.lightGray}
         onValueChange={e => {
           if (e) {
             setCommissionData({

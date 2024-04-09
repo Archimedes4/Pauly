@@ -137,75 +137,82 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
       href={`/government/commissions/${commission.commissionId}`}
       key={`Commission_${commission.commissionId}_${createUUID()}`}
       style={{
-        margin: 10,
-        borderRadius: 15,
-        backgroundColor: Colors.white,
+        margin: 15,
+        marginBottom: 5,
+        borderRadius: 12,
         shadowColor: Colors.black,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.8,
         shadowRadius: 10,
       }}
     >
-      <View style={{ margin: 10 }}>
-        <Text selectable={false}>{commission.title}</Text>
+      <View style={{
+        borderRadius: 12,
+        backgroundColor: Colors.white,
+        overflow: "hidden",
+        width: width-30
+      }}>
+        <View style={{ margin: 10 }}>
+          <Text selectable={false}>{commission.title}</Text>
+        </View>
+        {unclaimedCount !== '0' ? (
+          <View
+            key={createUUID()}
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 50,
+              backgroundColor: 'red',
+              position: 'absolute',
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              top: -2,
+              left: width - 25,
+            }}
+          >
+            <Text style={{ color: Colors.white }}>{unclaimedCount}</Text>
+          </View>
+        ) : null}
+        {unclaimedState === loadingStateEnum.loading ? (
+          <View
+            key={createUUID()}
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 50,
+              backgroundColor: '#FF6700',
+              position: 'absolute',
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              top: -2,
+              left: width - 25,
+            }}
+          >
+            <ProgressView width={10} height={10} />
+          </View>
+        ) : null}
+        {unclaimedState === loadingStateEnum.failed ? (
+          <View
+            key={createUUID()}
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 50,
+              backgroundColor: 'red',
+              position: 'absolute',
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              top: -2,
+              left: width - 25,
+            }}
+          >
+            <Text style={{ color: Colors.white }}>!</Text>
+          </View>
+        ) : null}
       </View>
-      {unclaimedCount !== '0' ? (
-        <View
-          key={createUUID()}
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 50,
-            backgroundColor: 'red',
-            position: 'absolute',
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            top: -2,
-            left: width - 25,
-          }}
-        >
-          <Text style={{ color: Colors.white }}>{unclaimedCount}</Text>
-        </View>
-      ) : null}
-      {unclaimedState === loadingStateEnum.loading ? (
-        <View
-          key={createUUID()}
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 50,
-            backgroundColor: '#FF6700',
-            position: 'absolute',
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            top: -2,
-            left: width - 25,
-          }}
-        >
-          <ProgressView width={10} height={10} />
-        </View>
-      ) : null}
-      {unclaimedState === loadingStateEnum.failed ? (
-        <View
-          key={createUUID()}
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 50,
-            backgroundColor: 'red',
-            position: 'absolute',
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            top: -2,
-            left: width - 25,
-          }}
-        >
-          <Text style={{ color: Colors.white }}>!</Text>
-        </View>
-      ) : null}
     </Link>
   );
 }

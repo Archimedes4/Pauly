@@ -18,6 +18,7 @@ import {
 import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';
 import { useSignOut } from '@hooks/authentication';
+import getUserImage from '@src/hooks/useGetUserProfile/getUserImage';
 
 export default function Settings() {
   const router = useRouter();
@@ -33,6 +34,7 @@ export default function Settings() {
   const [imageLoadState, setImageLoadState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
+  const [triedReload, setTiredReload] = useState<boolean>(false)
   const dispatch = useDispatch();
   const signOut = useSignOut();
 
@@ -94,8 +96,15 @@ export default function Settings() {
         {uri !== '' && imageLoadState !== loadingStateEnum.failed ? (
           <Image
             source={{ uri }}
-            onError={() => {
-              setImageLoadState(loadingStateEnum.failed);
+            onError={async (e) => {
+              if (e.nativeEvent.error === "The operation couldn’t be completed. (NSURLErrorDomain error -1000.)" && !triedReload) {
+                setImageLoadState(loadingStateEnum.failed);
+                await getUserImage()
+                setImageLoadState(loadingStateEnum.loading);
+                setTiredReload(true)
+              } else {
+                setImageLoadState(loadingStateEnum.failed); 
+              }
             }}
             style={{
               width: width * 0.3,

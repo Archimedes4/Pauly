@@ -47,7 +47,7 @@ function CurrentTimeLine({
         style={{
           position: 'absolute',
           top: dayData.heightOffsetTop,
-          height: height * 0.005,
+          height: 20,
           width: width * highestHorizontalOffset,
           flexDirection: 'row',
           alignItems: 'center',
@@ -59,7 +59,7 @@ function CurrentTimeLine({
             setTimeWidth(e.nativeEvent.layout.width);
           }}
           selectable={false}
-          style={{ color: 'red', zIndex: 2 }}
+          style={{ color: 'red', zIndex: 2, height: 20 }}
         >
           {dayData.currentTime}
         </Text>

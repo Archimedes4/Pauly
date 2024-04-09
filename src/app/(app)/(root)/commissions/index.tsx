@@ -158,7 +158,7 @@ function CommissionsBody() {
     return undefined;
   }
 
-  if (commissionsState === loadingStateEnum.loading) {
+  if (commissionsState === loadingStateEnum.loading || commissionsState === loadingStateEnum.notStarted) {
     return (
       <View
         style={{
@@ -224,7 +224,7 @@ function CommissionsBody() {
   }
   return (
     <View>
-      <Text>Failed</Text>
+      <Text>Something went wrong. {"):"}</Text>
     </View>
   );
 }
