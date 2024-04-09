@@ -19,16 +19,13 @@ import { Colors, loadingStateEnum } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import PDFView from '@components/PDF';
-import BackButton from '@components/BackButton';
 import { getClassEventsFromDay } from '@utils/classesFunctions';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
 import { getClasses } from '@redux/reducers/classesReducer';
-import { Link, useRouter } from 'expo-router';
-import { HomeIcon, MedalIcon, PersonIcon } from '@src/components/Icons';
-import CompressedMonthView from '@src/components/CompressedMonthView';
-import ScrollingTextAnimation from '@src/components/ScrollingTextAnimation';
-import ZeroFooterComponent from '@src/components/ZeroFooterComponent';
+import { Link } from 'expo-router';
+import CompressedMonthView from '@components/CompressedMonthView';
+import ScrollingTextAnimation from '@components/ScrollingTextAnimation';
 
 // Get Messages
 // Last Chat Message Channels Included

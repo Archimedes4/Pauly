@@ -5,8 +5,8 @@ import { RootState } from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 import { Colors, loadingStateEnum, semesters, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
-import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
+import BackButton from '@components/BackButton';
 
 function GovernmentClassesBody() {
   const [classState, setClassState] = useState<loadingStateEnum>(
@@ -100,13 +100,9 @@ function GovernmentClassesBody() {
 export default function GovernmentClasses() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
-    <View style={{ width, height, backgroundColor: Colors.white }}>
-      <View>
-        <Link href="/government">
-          <Text>Back</Text>
-        </Link>
-        <Text style={styles.headerText}>Classes</Text>
-      </View>
+    <View style={{ width, height, backgroundColor: Colors.lightGray }}>
+      <BackButton to='/government'/>
+      <Text style={styles.headerText}>Classes</Text>
       <GovernmentClassesBody />
       <StyledButton
         to="/government/classes/rooms"

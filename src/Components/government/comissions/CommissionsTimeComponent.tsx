@@ -29,6 +29,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
           padding: 10,
           margin: 15,
           marginBottom: 20,
+          backgroundColor: Colors.white
         }}
       >
         <View style={{ flexDirection: 'row' }}>
@@ -38,14 +39,10 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
             thumbColor={commission.timed ? '#f5dd4b' : '#f4f3f4'}
             ios_backgroundColor="#3e3e3e"
             onValueChange={e => {
-              if (e) {
+              if (!e) {
                 setCommissionData({
                   ...commission,
-                  timed: true,
-                  startDate: new Date()
-                    .toISOString()
-                    .replace(/.\d+Z$/g, 'Z'),
-                  endDate: new Date().toISOString().replace(/.\d+Z$/g, 'Z'),
+                  timed: false
                 });
               }
             }}
@@ -209,6 +206,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
         padding: 10,
         margin: 15,
         marginBottom: 20,
+        backgroundColor: Colors.white
       }}
     >
       <Text>Timed: </Text>
@@ -223,11 +221,6 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
               timed: true,
               startDate: new Date().toISOString().replace(/.\d+Z$/g, 'Z'),
               endDate: new Date().toISOString().replace(/.\d+Z$/g, 'Z'),
-            });
-          } else {
-            setCommissionData({
-              ...commission,
-              timed: false,
             });
           }
         }}

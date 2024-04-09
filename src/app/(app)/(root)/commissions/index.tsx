@@ -230,7 +230,7 @@ function CommissionsBody() {
 }
 
 export function CommissionsMain({ commissionId }: { commissionId?: string }) {
-  const { height, width, currentBreakPoint } = useSelector(
+  const { height, width } = useSelector(
     (state: RootState) => state.dimensions,
   );
 
@@ -244,7 +244,10 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
     const pointResult = await getPoints();
     if (pointResult.result === loadingStateEnum.success) {
       dispatch(commissionsSlice.actions.setPoints(pointResult.data));
-      getCommissions({ store });
+      const commissionResult = await getCommissions({ store })
+      if (commissionResult.result === loadingStateEnum.success) {
+        dispatch(commissionsSlice.actions.setCurrentCommissions(commissionResult.data))
+      }
     } else {
       dispatch(
         commissionsSlice.actions.setCommissionsState(pointResult.result),

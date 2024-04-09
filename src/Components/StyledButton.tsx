@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import React, { useState } from 'react';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import { Colors } from '@constants';
 
 interface StyledTextButtonProps {

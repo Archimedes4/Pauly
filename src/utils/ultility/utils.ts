@@ -25,7 +25,6 @@ export async function getValueFromRedux<ReturnType>(
   | { result: loadingStateEnum.failed }
   | { result: loadingStateEnum.success; data: ReturnType }
 > {
-  const id = createUUID();
   const cachedData: undefined | ReturnType = cached(store.getState());
   if (cachedData === undefined) {
     if (!stateUpdating(store.getState())) {

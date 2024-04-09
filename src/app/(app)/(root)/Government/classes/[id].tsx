@@ -14,7 +14,6 @@ import callMsGraph from '@utils/ultility/microsoftAssests';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum, semesters, styles } from '@constants';
 import getSchoolYears from '@utils/calendar/getSchoolYears';
-import { getEvent } from '@utils/calendar/calendarFunctionsGraph';
 import { CloseIcon, WarningIcon } from '@components/Icons';
 import Dropdown from '@components/Dropdown';
 import { getRoom, getRooms } from '@utils/classesFunctions';

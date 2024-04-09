@@ -1,12 +1,17 @@
-import { View, Text, Easing } from 'react-native'
+/*
+  Pauly
+  Andrew Mainella
+  8 April 2024
+*/
+import { View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Link, usePathname } from 'expo-router'
 import { ZeroFooterIcon } from './Icons'
-import { useDispatch, useSelector } from 'react-redux';
-import store, { RootState } from '@src/redux/store';
-import { dimensionsSlice } from '@src/redux/reducers/dimensionsReducer';
-import Animated, { runOnUI, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { Colors } from '@src/constants';
+import { useSelector } from 'react-redux';
+import store, { RootState } from '@redux/store';
+import { dimensionsSlice } from '@redux/reducers/dimensionsReducer';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { Colors } from '@constants';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ZeroFooterComponent() {
@@ -25,22 +30,6 @@ export default function ZeroFooterComponent() {
     return (value * totalWidth/4) + (((totalWidth/4) - (totalHeight * 0.05))/2)
   }
 
-  function animate(value: number) {
-    // if (!mounted) {
-    //   setMounted(true)
-    //   if (pan.value !== value) {
-    //     pan.value = value
-    //   }
-    //   return
-    // }
-   
-    pan.value = withTiming(value, {
-      duration: 250,
-      easing: Easing.linear,
-    });
-   
-  }
-
   const setPan = useCallback(
     (value: number) => {
       pan.value = withTiming(value);
@@ -48,19 +37,9 @@ export default function ZeroFooterComponent() {
     [pan],
   );
 
+  // Set pan on path change. This also set the pan on mount.
   useEffect(() => {
     if (pathname === "/commissions") {
-      // if (!mounted) {
-      //   setMounted(true)
-      //   pan.value = (1 * totalWidth/4) + (((totalWidth/4) - (totalHeight * 0.05))/2)
-      //   return
-      // }
-      // let newVal = 1 * totalWidth/4 + (((totalWidth/4) - (totalHeight * 0.05))/2)
-     
-      // pan.value = withTiming(newVal, {
-      //   duration: 250,
-      //   easing: Easing.linear,
-      // });
       setPan(getLeft(1))
     } else if (pathname === "/calendar") {
       setPan(getLeft(2))

@@ -1,10 +1,17 @@
+/*
+  Pauly
+  Andrew Mainella
+  8 April 2024
+  CommissionImageComponent.tsx
+  This is a block in the commission view to pick the image.
+*/
 import { View, Text, Pressable, Image } from 'react-native'
 import React, { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
 import ProgressView from '../ProgressView';
 import { useSelector } from 'react-redux';
-import { RootState } from '@src/redux/store';
-import { Colors } from '@src/constants';
+import { RootState } from '@redux/store';
+import { Colors } from '@constants';
 
 enum CameraResult {
   notStarted,

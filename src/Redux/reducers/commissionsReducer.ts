@@ -14,7 +14,7 @@ type commissionsStateType = {
 };
 
 const initalState: commissionsStateType = {
-  commissionsState: loadingStateEnum.loading,
+  commissionsState: loadingStateEnum.notStarted,
   points: 0,
   currentCommissions: [],
   selectedCommission: '',
@@ -67,7 +67,7 @@ export const getCommissions = (params: commissionApiParams) =>
       return undefined;
     },
     store => {
-      return store.commissions.commissionsState !== loadingStateEnum.loading;
+      return store.commissions.commissionsState === loadingStateEnum.loading;
     },
     params.store,
   );
@@ -122,27 +122,27 @@ export const commissionsSlice = createSlice({
     builder.addCase(getCommissionsThunk.pending, state => {
       state.commissionsState = loadingStateEnum.loading;
     }),
-      builder.addCase(getCommissionsThunk.fulfilled, (state, payload) => {
-        state.commissionsState = loadingStateEnum.success;
-        state.currentCommissions = payload.payload.data;
-        state.commissionNextLink = payload.payload.nextLink;
-      }),
-      builder.addCase(getCommissionsThunk.rejected, state => {
-        state.commissionsState = loadingStateEnum.failed;
-      }),
-      builder.addCase(getCommissionThunk.pending, state => {
-        state.commissionsState = loadingStateEnum.loading;
-      }),
-      builder.addCase(getCommissionThunk.fulfilled, (state, payload) => {
-        state.commissionsState = loadingStateEnum.success;
-        state.currentCommissions = [
-          ...state.currentCommissions,
-          payload.payload,
-        ];
-      }),
-      builder.addCase(getCommissionThunk.rejected, state => {
-        state.commissionsState = loadingStateEnum.failed;
-      });
+    builder.addCase(getCommissionsThunk.fulfilled, (state, payload) => {
+      state.commissionsState = loadingStateEnum.success;
+      state.currentCommissions = payload.payload.data;
+      state.commissionNextLink = payload.payload.nextLink;
+    }),
+    builder.addCase(getCommissionsThunk.rejected, state => {
+      state.commissionsState = loadingStateEnum.failed;
+    }),
+    builder.addCase(getCommissionThunk.pending, state => {
+      state.commissionsState = loadingStateEnum.loading;
+    }),
+    builder.addCase(getCommissionThunk.fulfilled, (state, payload) => {
+      state.commissionsState = loadingStateEnum.success;
+      state.currentCommissions = [
+        ...state.currentCommissions,
+        payload.payload,
+      ];
+    }),
+    builder.addCase(getCommissionThunk.rejected, state => {
+      state.commissionsState = loadingStateEnum.failed;
+    });
   },
 });
 

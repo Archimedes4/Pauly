@@ -45,7 +45,8 @@ import { useGlobalSearchParams } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 import CommissionsPostComponent from '@components/government/comissions/CommissionsPostComponent';
 import CommissionsQRCodeComponent from '@components/government/comissions/CommissionsQRCodeComponent';
-import AddCommissionSubmission from '@src/components/government/comissions/CommissionsAddSubmission';
+import AddCommissionSubmission from '@components/government/comissions/CommissionsAddSubmission';
+import CommissionsTimeComponent from '@components/government/comissions/CommissionsTimeComponent';
 
 export function GovernmentCommissionUpdate({
   isCreate,
@@ -184,29 +185,21 @@ export function GovernmentCommissionUpdate({
         overflow: 'hidden',
         width,
         height,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.lightGray,
       }}
     >
       <ScrollView style={{ height, width, zIndex: 1 }}>
         <BackButton to="/government/commissions" />
-        <View
-          style={{
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+        <Text
+          style={[styles.headerText, {marginTop: 15, marginBottom: 5}]}
         >
-          <Text
-            style={styles.headerText}
-          >
-            {isCreate ? 'Create New' : 'Edit'} Commission
-          </Text>
-        </View>
+          {isCreate ? 'Create New' : 'Edit'} Commission
+        </Text>
         {isCreate ? (
           <View
             style={{
               width,
-              height: height * 0.25 + 10,
+              height: 80,
               alignContent: 'center',
               alignItems: 'center',
               justifyContent: 'center',
@@ -250,8 +243,8 @@ export function GovernmentCommissionUpdate({
                 'Image and Location',
                 'QRCode',
               ]}
-              width={width * 0.8}
-              height={height * 0.1}
+              width={width - 30}
+              height={35}
             />
             <SegmentedPicker
               options={['Individual', 'Home Room', 'Both']}
@@ -262,21 +255,22 @@ export function GovernmentCommissionUpdate({
                   competitionType: e,
                 });
               }}
-              width={width * 0.8}
-              height={height * 0.1}
+              width={width - 30}
+              height={35}
               style={{ marginTop: 10 }}
             />
           </View>
         ) : null}
-        <Text style={{ marginLeft: 25, marginBottom: 2 }}>Commission Name</Text>
+        <Text style={{ marginLeft: 25, marginBottom: 2, marginTop: 5 }}>Commission Name</Text>
         <TextInput
           value={commissionData.title}
           onChangeText={text => {
             setCommissionData({ ...commissionData, title: text });
           }}
           placeholder="Commission Name"
-          style={styles.textInputStyle}
+          style={[styles.textInputStyle, {backgroundColor: Colors.white}]}
         />
+        <CommissionsTimeComponent commission={commissionData} setCommissionData={setCommissionData} />
         {(commissionData.value === commissionTypeEnum.ImageLocation ||
           commissionData.value === commissionTypeEnum.Location) &&
         commissionData.proximity !== undefined ? (
@@ -364,6 +358,7 @@ export function GovernmentCommissionUpdate({
             borderRadius: 15,
             padding: 10,
             marginBottom: 20,
+            backgroundColor: Colors.white
           }}
         >
           <View style={{ flexDirection: 'row' }}>
@@ -450,6 +445,7 @@ export function GovernmentCommissionUpdate({
             shadowRadius: 10,
             borderRadius: 15,
             padding: 10,
+            backgroundColor: Colors.white
           }}
         >
           <Text>Post</Text>
@@ -478,6 +474,8 @@ export function GovernmentCommissionUpdate({
               shadowRadius: 10,
               borderRadius: 15,
               padding: 10,
+              backgroundColor: Colors.white
+              
             }}
           >
             <CommissionSubmissions

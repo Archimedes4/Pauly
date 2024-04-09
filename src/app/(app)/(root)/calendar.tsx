@@ -15,14 +15,12 @@ import { AddIcon } from '@components/Icons';
 import store, { RootState } from '@redux/store';
 import { Colors, calendarMode } from '@constants';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
-import BackButton from '@components/BackButton';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import getEvents, { getClassEvents } from '@utils/calendar/getEvents';
 import EventView from '@components/Calendar/EventView';
 import MonthViewMain from '@components/Calendar/MonthView';
 import { currentEventsSlice } from '@redux/reducers/currentEventReducer';
 import { lastCalledSelectedDateSlice } from '@redux/reducers/lastCalledSelectedDateReducer';
-import ZeroFooterComponent from '@src/components/ZeroFooterComponent';
 
 function getCalendarFontSize(breakPoint: number, height: number) {
   if (breakPoint === 0) {

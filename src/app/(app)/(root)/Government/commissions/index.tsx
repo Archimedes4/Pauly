@@ -85,7 +85,7 @@ export default function GovernmentCommissions() {
   const { height, width } = useSelector((state: RootState) => state.dimensions);
 
   return (
-    <View style={{ height, width, backgroundColor: Colors.white }}>
+    <View style={{ height, width, backgroundColor: Colors.lightGray }}>
       <BackButton to="/government" />
       <Text style={[styles.headerText, { paddingTop: 10 }]}>Commissions</Text>
       <GovernmentCommissionsBody />

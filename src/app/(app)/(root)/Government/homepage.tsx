@@ -93,7 +93,7 @@ export default function GovernmentHomePage() {
         style={{
           width,
           height,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.lightGray,
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
@@ -107,10 +107,8 @@ export default function GovernmentHomePage() {
   }
 
   return (
-    <View style={{ width, height, backgroundColor: Colors.white }}>
-      <Link href="/government">
-        <Text>Back</Text>
-      </Link>
+    <View style={{ width, height, backgroundColor: Colors.lightGray }}>
+      <BackButton to='/government'/>
       <Text style={styles.headerText}>Home Page</Text>
       <View>
         <TextInput
@@ -118,7 +116,9 @@ export default function GovernmentHomePage() {
           onChangeText={e => {
             setNewText(e);
           }}
-          style={styles.textInputStyle}
+          style={[styles.textInputStyle, {
+            backgroundColor: Colors.white
+          }]}
           placeholder="Header Text"
         />
         {isAutoUpdatingText ? (
