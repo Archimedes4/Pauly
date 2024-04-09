@@ -5,23 +5,55 @@
   Authenticated layout
 */
 import { View, Text, Pressable } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import useIsConnected from '@hooks/useIsConnected';
 import { Colors } from '@constants';
 import { OfflineIcon } from '@components/Icons';
 import { Slot } from 'expo-router';
 import { useSelector } from 'react-redux';
-import { RootState } from '@redux/store';
+import store, { RootState } from '@redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useAuthentication from '@hooks/useAuthentication';
 import { useSignOut } from '@hooks/authentication';
 import ProgressView from '@components/ProgressView';
 import useIsShowingLogout from '@hooks/useIsShowingLogout';
+import { safeAreaColorsSlice } from '@src/redux/reducers/safeAreaColorsReducer';
 
 export const unstable_settings = {
   // Ensure any route can link back to `/`
   initialRouteName: '',
 };
+
+function OfflineView() {
+  const { totalHeight, totalWidth } = useSelector(
+    (state: RootState) => state.dimensions,
+  );
+  const insets = useSafeAreaInsets();
+  
+  useEffect(() => {
+    store.dispatch(
+      safeAreaColorsSlice.actions.setSafeAreaColors({
+        top: Colors.maroon,
+        bottom: Colors.maroon,
+      }),
+    );
+  }, []);
+
+  return (
+    <View
+      style={{
+        width: totalWidth,
+        top: -insets.top,
+        height: totalHeight,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <OfflineIcon width={50} height={50} color={Colors.white} />
+    </View>
+  )
+}
 
 function Loading() {
   const isGovernmentMode = useSelector(
@@ -82,18 +114,5 @@ export default function Layout() {
     return <Loading />;
   }
 
-  return (
-    <View
-      style={{
-        width: totalWidth,
-        top: -insets.top,
-        height,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <OfflineIcon width={50} height={50} color={Colors.white} />
-    </View>
-  );
+  return <OfflineView />
 }

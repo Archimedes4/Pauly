@@ -112,10 +112,10 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
   const [unclaimedCount, setUnclaimedCount] = useState<string>('0');
 
   async function loadData() {
-    const result = await getSubmissions(
-      commission.commissionId,
-      submissionTypeEnum.unReviewed,
-    );
+    const result = await getSubmissions({
+      commissionId: commission.commissionId,
+      submissionType: submissionTypeEnum.unReviewed,
+    });
     if (
       result.result === loadingStateEnum.success &&
       result.count !== undefined

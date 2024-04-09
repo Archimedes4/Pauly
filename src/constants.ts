@@ -332,6 +332,12 @@ declare global {
         paulyEventType: 'studentSchedule';
       };
   type eventType = eventTypeBase & eventTypePauly;
+  type getSubmissionsInput = {
+    commissionId: string
+    submissionType: submissionTypeEnum
+  } | {
+    url: string
+  }
   type groupType = {
     name: string;
     id: string;

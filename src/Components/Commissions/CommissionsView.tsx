@@ -13,6 +13,7 @@ import { Link, router } from 'expo-router';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
 import CommissionImageComponent from './CommissionImageComponent';
 import { getCommission } from '@redux/reducers/commissionsReducer';
+import CommissionsViewSubmissions from './CommissionsViewSubmissions';
 
 export default function CommissionsView({ id }: { id: string }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
@@ -209,6 +210,10 @@ export default function CommissionsView({ id }: { id: string }) {
               >
                 Leaderboard
               </Link>
+              <View>
+                <Text>Your Submissions</Text>
+                <CommissionsViewSubmissions commissionId={commissionData.commissionId}/>
+              </View>
               {isOverflowing ? null : (
                 <View style={{ marginTop: 10, marginBottom: 10 }}>
                   <CommissionClaim
