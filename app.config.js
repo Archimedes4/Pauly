@@ -18,7 +18,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'Archimedes4.Pauly',
-      buildNumber: '83',
+      buildNumber: '84',
       associatedDomains: ["applinks:paulysphs.ca"]
     },
     android: {
