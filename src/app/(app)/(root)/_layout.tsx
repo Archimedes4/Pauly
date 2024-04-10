@@ -5,20 +5,18 @@
   AuthenticatedViewMain.tsx
   This holds the main router to Pauly once authenticated.
 */
-import React from 'react';
-import { View, Text, Platform } from 'react-native';
+import React, { useEffect } from 'react';
+import { Platform, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import NavBarComponent from '@components/NavComponent';
 import { RootState } from '@redux/store';
 import ProfileBlock from '@components/ProfileBlock';
 import { Colors } from '@constants';
-import { Slot, useFocusEffect, useRouter } from 'expo-router';
-import useIsAuthenticated from '@hooks/useIsAuthenticated';
-import { SignInComponent } from '../(public)/sign-in';
+import { Slot, router, useGlobalSearchParams } from 'expo-router';
 import useIsShowingZeroFooter from '@hooks/useIsShowingZeroFooter';
 import ZeroFooterComponent from '@components/ZeroFooterComponent';
 
-function AuthenticatedView() {
+export default function AuthenticatedView() {
   const { currentBreakPoint, totalWidth, width } = useSelector(
     (state: RootState) => state.dimensions,
   );
@@ -29,6 +27,13 @@ function AuthenticatedView() {
     (state: RootState) => state.safeAreaColors.overflowHidden,
   );
   const isShowingFooter = useIsShowingZeroFooter()
+  const { deepLink } = useGlobalSearchParams()
+
+  useEffect(() => {
+    if (Platform.OS !== "web" && typeof deepLink === 'string') {
+      router.replace(deepLink)
+    }
+  }, [])
 
   return (
     <View
@@ -63,31 +68,4 @@ function AuthenticatedView() {
       }
     </View>
   );
-}
-
-function PushToAuth() {
-  const router = useRouter();
-  useFocusEffect(() => {
-    try {
-      router.push('/sign-in');
-    } catch (error) {}
-  });
-  return null;
-}
-
-export default function Main() {
-  const isAuthenticated = useIsAuthenticated();
-  if (isAuthenticated.authenticated) {
-    return <AuthenticatedView />;
-  }
-
-  if (!isAuthenticated.loading && Platform.OS !== 'web') {
-    return <PushToAuth />;
-  }
-
-  if (!isAuthenticated.loading) {
-    return <SignInComponent government={false} />;
-  }
-
-  return <Text>Loading</Text>;
 }

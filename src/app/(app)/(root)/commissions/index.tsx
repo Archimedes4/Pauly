@@ -23,7 +23,7 @@ import {
 } from '@redux/reducers/commissionsReducer';
 import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
-import getPoints from '@utils/commissions/getPoints';
+import getPoints from '@src/utils/commissions/getPointsApi';
 import ProgressView from '@components/ProgressView';
 import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
@@ -241,18 +241,8 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
   // Loading States
 
   const loadData = useCallback(async () => {
-    const pointResult = await getPoints();
-    if (pointResult.result === loadingStateEnum.success) {
-      dispatch(commissionsSlice.actions.setPoints(pointResult.data));
-      const commissionResult = await getCommissions({ store })
-      if (commissionResult.result === loadingStateEnum.success) {
-        dispatch(commissionsSlice.actions.setCurrentCommissions(commissionResult.data))
-      }
-    } else {
-      dispatch(
-        commissionsSlice.actions.setCommissionsState(pointResult.result),
-      );
-    }
+    getPoints(store);
+    getCommissions({ store })
     // TO DO pagination
   }, [dispatch]);
 

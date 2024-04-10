@@ -206,12 +206,13 @@ export default function CommissionsView({ id }: { id: string }) {
                   padding: 10,
                   fontFamily: 'Roboto-Bold',
                   overflow: 'hidden',
+                  marginTop: 10
                 }}
               >
                 Leaderboard
               </Link>
               <View>
-                <Text>Your Submissions</Text>
+                <Text style={{marginLeft: 2, marginTop: 10}}>Your Submissions</Text>
                 <CommissionsViewSubmissions commissionId={commissionData.commissionId}/>
               </View>
               {isOverflowing ? null : (

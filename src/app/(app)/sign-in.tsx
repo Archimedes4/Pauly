@@ -24,7 +24,7 @@ import ProgressView from '@components/ProgressView';
 import { useInvokeLogin } from '@hooks/authentication';
 import { RootState } from '@redux/store';
 import useIsAuthenticated from '@hooks/useIsAuthenticated';
-import { router } from 'expo-router';
+import { router, useGlobalSearchParams } from 'expo-router';
 
 export function SignInComponent({ government }: { government: boolean }) {
   // visual
@@ -35,6 +35,7 @@ export function SignInComponent({ government }: { government: boolean }) {
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(0);
   const dispatch = useDispatch();
+  const { deepLink } = useGlobalSearchParams()
 
   const safeArea = useCallback(
     async function setSafeAreaColors() {
@@ -65,22 +66,10 @@ export function SignInComponent({ government }: { government: boolean }) {
   }, [height, totalWidth]);
 
   // authentication
-  const login = useInvokeLogin();
+  const login = useInvokeLogin((typeof deepLink === "string") ? deepLink:undefined);
   const authActive = useSelector((state: RootState) => state.authActive);
   const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
     useState<boolean>(false);
-  const isAuthenticated = useIsAuthenticated();
-  const currentBreakPoint = useSelector(
-    (state: RootState) => state.dimensions.currentBreakPoint,
-  );
-
-  useEffect(() => {
-    if (currentBreakPoint === 0 && isAuthenticated.authenticated) {
-      router.push('/home');
-    } else if (isAuthenticated.authenticated) {
-      router.push('/');
-    }
-  }, [isAuthenticated]);
 
   return (
     <Pressable

@@ -4,9 +4,11 @@ import getCommissionsApi from '@utils/commissions/getCommissionsApi';
 import { getValueFromRedux } from '@utils/ultility/utils';
 import getCommissionApi from '@utils/commissions/getCommissionApi';
 import { StoreType } from '../store';
+import getPointsApi from '@src/utils/commissions/getPointsApi';
 
 type commissionsStateType = {
   commissionsState: loadingStateEnum;
+  pointsState: loadingStateEnum;
   points: number;
   currentCommissions: commissionType[];
   selectedCommission: string;
@@ -15,6 +17,7 @@ type commissionsStateType = {
 
 const initalState: commissionsStateType = {
   commissionsState: loadingStateEnum.notStarted,
+  pointsState: loadingStateEnum.notStarted,
   points: 0,
   currentCommissions: [],
   selectedCommission: '',
@@ -55,6 +58,22 @@ const getCommissionThunk = createAsyncThunk(
   },
 );
 
+const getPointsThunk = createAsyncThunk(
+  'commissions/getPoints',
+  async (
+    store: StoreType,
+    {
+      rejectWithValue
+    }
+  ) => {
+    const pointsResult = await getPointsApi(store)
+    if (pointsResult.result === loadingStateEnum.success) {
+      return pointsResult.data
+    }
+    return rejectWithValue(null)
+  }
+)
+
 /**
  * A function that gets multiple commissions based on filters
  * @param params 
@@ -94,6 +113,21 @@ export const getCommission = (commissionId: string, store: StoreType) =>
     },
     store,
   );
+
+export const getPoints = (store: StoreType) =>
+  getValueFromRedux<number>(
+    getPointsThunk(store),
+    store => {
+      if (store.commissions.pointsState === loadingStateEnum.success) {
+        return store.commissions.points
+      }
+      return undefined
+    },
+    store => {
+      return store.commissions.pointsState === loadingStateEnum.loading;
+    },
+    store,
+  )
 
 export const commissionsSlice = createSlice({
   name: 'commissions',
@@ -141,6 +175,17 @@ export const commissionsSlice = createSlice({
       ];
     }),
     builder.addCase(getCommissionThunk.rejected, state => {
+      state.commissionsState = loadingStateEnum.failed;
+    });
+    builder.addCase(getPointsThunk.pending, state => {
+      state.pointsState = loadingStateEnum.loading;
+    }),
+    builder.addCase(getPointsThunk.fulfilled, (state, payload) => {
+      state.pointsState = loadingStateEnum.success;
+      state.points = payload.payload
+    }),
+    builder.addCase(getPointsThunk.rejected, state => {
+      state.pointsState = loadingStateEnum.failed;
       state.commissionsState = loadingStateEnum.failed;
     });
   },

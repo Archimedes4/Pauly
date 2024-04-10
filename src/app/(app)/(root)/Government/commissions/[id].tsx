@@ -10,15 +10,11 @@ import {
   Text,
   TextInput,
   ScrollView,
-  Pressable,
   Switch,
-  Image,
   Modal,
-  ListRenderItemInfo,
   Platform,
 } from 'react-native';
 import { useSelector } from 'react-redux';
-import { FlatList } from 'react-native-gesture-handler';
 import store, { RootState } from '@redux/store';
 import {
   Colors,
@@ -26,18 +22,14 @@ import {
   commissionTypeEnum,
   loadingStateEnum,
   styles,
-  submissionTypeEnum,
 } from '@constants';
 import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import ProgressView from '@components/ProgressView';
-import { ApprovedIcon, CloseIcon, DeniedIcon, WarningIcon } from '@components/Icons';
 import Map from '@components/Map';
 import BackButton from '@components/BackButton';
 import {getCommission} from  '@redux/reducers/commissionsReducer';
-import getSubmissions from '@utils/commissions/getSubmissions';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
-import { getFileWithShareID } from '@utils/ultility/handleShareID';
 import {
   updateCommission,
 } from '@utils/commissions/updateCommissionFunctions';
@@ -48,7 +40,25 @@ import CommissionsPostComponent from '@components/government/comissions/Commissi
 import CommissionsQRCodeComponent from '@components/government/comissions/CommissionsQRCodeComponent';
 import AddCommissionSubmission from '@components/government/comissions/CommissionsAddSubmission';
 import CommissionsTimeComponent from '@components/government/comissions/CommissionsTimeComponent';
-import CommissionSubmissions from '@src/components/government/comissions/CommissionSubmissions';
+import CommissionSubmissions from '@components/government/comissions/CommissionSubmissions';
+
+function commissionTypeText(commissionType: commissionTypeEnum) {
+  if (commissionType === commissionTypeEnum.Issued) {
+    return "Issued"
+  }
+  if (commissionType === commissionTypeEnum.Image) {
+    return "Image"
+  }
+  if (commissionType === commissionTypeEnum.ImageLocation) {
+    return "Image and location"
+  }
+  if (commissionType === commissionTypeEnum.Location) {
+    return "Location"
+  }
+  if (commissionType === commissionTypeEnum.QRCode) {
+    return "QR code"
+  }
+}
 
 export function GovernmentCommissionUpdate({
   isCreate,
@@ -272,6 +282,24 @@ export function GovernmentCommissionUpdate({
           placeholder="Commission Name"
           style={[styles.textInputStyle, {backgroundColor: Colors.white}]}
         />
+        {!isCreate ?
+          <View
+            style={{
+              marginLeft: 15,
+              marginRight: 15,
+              shadowColor: Colors.black,
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.8,
+              shadowRadius: 10,
+              borderRadius: 15,
+              padding: 10,
+              marginBottom: 20,
+              backgroundColor: Colors.white
+            }}
+          >
+            <Text>Commission Type: {commissionTypeText(commissionData.value)}</Text>
+          </View>:null
+        }
         <CommissionsTimeComponent commission={commissionData} setCommissionData={setCommissionData} />
         {(commissionData.value === commissionTypeEnum.ImageLocation ||
           commissionData.value === commissionTypeEnum.Location) &&

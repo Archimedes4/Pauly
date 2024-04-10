@@ -1,3 +1,4 @@
+import SubmissionStatusIcon from "@src/components/Commissions/SubmissionStatusIcon";
 import { ApprovedIcon, CloseIcon, DeniedIcon, WarningIcon } from "@src/components/Icons";
 import ProgressView from "@src/components/ProgressView";
 import { Colors, loadingStateEnum, submissionTypeEnum } from "@src/constants";
@@ -362,23 +363,7 @@ function CommissionSubmissionButton({submission, setSelectedSubmission}:{submiss
           )}
         </Text>
       </View>
-      <View style={{margin: 'auto', marginLeft: 'auto', marginRight: 0}}>
-        {submission.item.approved ?
-          <View>
-            <ApprovedIcon width={14} height={14}/>
-          </View>:null
-        }
-        {submission.item.reviewed && !submission.item.approved ?
-          <View style={{margin: 'auto', marginRight: 0}}>
-            <DeniedIcon width={14} height={14}/>
-          </View>:null
-        }
-        {(!submission.item.approved && !submission.item.reviewed) ?
-          <View style={{margin: 'auto', marginLeft: 'auto', marginRight: 0, borderRadius: 100, backgroundColor: Colors.danger}}>
-            <WarningIcon width={14} height={14} outlineColor={Colors.white}/>
-          </View>:null
-        }
-      </View>
+      <SubmissionStatusIcon submission={submission.item}/>
     </Pressable>
   )
 }

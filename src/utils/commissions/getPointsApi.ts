@@ -4,13 +4,14 @@
   November 9 2023
   getPoints.ts
 */
-import store from '@redux/store';
+import { StoreType } from '@redux/store';
 import { loadingStateEnum } from '@constants';
-import callMsGraph from '../ultility/microsoftAssests';
+import callMsGraph from '../ultility/microsoftAssests/noStore';
 
 // Gets points when given an array of commission ids
 async function getPointsBatch(
   commissions: string[],
+  store: StoreType
 ): Promise<{ result: loadingStateEnum; points: number }> {
   const outputRequests: { id: string; method: string; url: string }[] = [];
   for (let index = 0; index < commissions.length; index += 1) {
@@ -30,6 +31,7 @@ async function getPointsBatch(
 
   const result = await callMsGraph(
     'https://graph.microsoft.com/v1.0/$batch',
+    store,
     'POST',
     JSON.stringify(batchData),
     [{ key: 'Accept', value: 'application/json' }],
@@ -60,7 +62,7 @@ async function getPointsBatch(
   return { result: loadingStateEnum.failed, points: 0 };
 }
 
-export default async function getPoints(): Promise<
+export default async function getPointsApi(store: StoreType): Promise<
   | {
       result: loadingStateEnum.success;
       data: number;
@@ -79,7 +81,7 @@ export default async function getPoints(): Promise<
   let points: number = 0;
   let commissions: string[] = [];
   while (nextUrl !== '') {
-    const submissionResultClaimed = await callMsGraph(nextUrl);
+    const submissionResultClaimed = await callMsGraph(nextUrl, store);
     if (!submissionResultClaimed.ok) {
       return { result: loadingStateEnum.failed };
     }
@@ -96,7 +98,7 @@ export default async function getPoints(): Promise<
           submissionResultClaimedData.value[0].fields.commissionId,
         );
         if (commissions.length >= 20) {
-          const batchResult = await getPointsBatch(commissions);
+          const batchResult = await getPointsBatch(commissions, store);
           if (batchResult.result !== loadingStateEnum.success) {
             return { result: loadingStateEnum.failed };
           }
@@ -110,7 +112,7 @@ export default async function getPoints(): Promise<
     } else {
       nextUrl = '';
       if (commissions.length !== 0) {
-        const batchResult = await getPointsBatch(commissions);
+        const batchResult = await getPointsBatch(commissions, store);
         if (batchResult.result !== loadingStateEnum.success) {
           return { result: loadingStateEnum.failed };
         }

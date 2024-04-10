@@ -12,6 +12,7 @@ import { authActiveSlice } from '@redux/reducers/authActiveReducer';
 import { ResultState, useMSAL } from '@archimedes4/expo-msal';
 import { Platform } from 'react-native';
 import store from '@redux/store';
+import getAuthWebRedirectUrl from '@src/utils/getAuthWebRedirectUrl';
 
 export const useRefresh = () => {
   const { acquireTokenSilently } = useMSAL({
@@ -65,7 +66,7 @@ export function useSilentLogin(): () => Promise<void> {
   return main;
 }
 
-export function useInvokeLogin(): (government?: boolean) => Promise<void> {
+export function useInvokeLogin(redirectUrl?: string): (government?: boolean) => Promise<void> {
   const { acquireTokenInteractively } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
@@ -73,10 +74,12 @@ export function useInvokeLogin(): (government?: boolean) => Promise<void> {
     redirectUri: Platform.select({
       ios: 'msauth.Archimedes4.Pauly://auth',
       android: 'msauth://expo.modules.msal.example',
+      web: getAuthWebRedirectUrl(redirectUrl),
       default: '',
     }),
   });
   const main = async (government?: boolean) => {
+    console.log("INVOKE", redirectUrl)
     if (store.getState().authActive) {
       return;
     }

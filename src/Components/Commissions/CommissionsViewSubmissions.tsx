@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import getSubmissions from '@src/utils/commissions/getSubmissions'
 import store from '@src/redux/store'
 import { loadingStateEnum } from '@src/constants'
+import SubmissionStatusIcon from './SubmissionStatusIcon'
 
 export default function CommissionsViewSubmissions({
   commissionId
@@ -45,8 +46,18 @@ export default function CommissionsViewSubmissions({
     <FlatList
       data={submissions}
       renderItem={(submission) => (
-        <View>
-          <Text>{submission.item.submissionTime}</Text>
+        <View style={{flexDirection: 'row', margin: 2}}>
+          <Text>{new Date(submission.item.submissionTime).toLocaleString('en-us', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+          })}
+          </Text>
+          <SubmissionStatusIcon submission={submission.item}/>
         </View>
       )}
       ListEmptyComponent={() => (

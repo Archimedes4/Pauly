@@ -7,7 +7,7 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Head from 'expo-router/head';
 import { loadAsync } from 'expo-font';
-import { Slot, SplashScreen } from 'expo-router';
+import { Slot, SplashScreen, router, useGlobalSearchParams, useLocalSearchParams, usePathname } from 'expo-router';
 import { Dimensions, Platform, View } from 'react-native';
 import { ExpoMsalProvider } from '@archimedes4/expo-msal';
 import store, { RootState } from '@redux/store';
@@ -151,7 +151,7 @@ export default function App(): React.JSX.Element | null {
   // Fixing hydration issues
   const [mounted, setMounted] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
-
+  
   useEffect(() => {
     if (!mounted) {
       loadAsync({

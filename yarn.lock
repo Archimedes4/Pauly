@@ -20,10 +20,10 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
-"@archimedes4/expo-msal@^0.1.10":
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/@archimedes4/expo-msal/-/expo-msal-0.1.10.tgz#513e61788eb5cf351ed1fae8fecaccedb34eaee7"
-  integrity sha512-3xrBdLI1xVZI45OeSHLaPJ1pidL0rm+YqndOilTze9pWcS0PoeceIOvfPTq9RU5zUV9aSJftlbIYFC8dj9uCZQ==
+"@archimedes4/expo-msal@^0.1.11":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@archimedes4/expo-msal/-/expo-msal-0.1.11.tgz#0d44f93fdd0ce890caae3352aac7c033f13afb94"
+  integrity sha512-pDkPcZNR1w32UnE/GEH5un3H6aI/HCbTG8pMymZfsA8VYoAN87L5M+FWioIn0YHQ5QmXZfv7epq8iMJcePGMhA==
   dependencies:
     "@azure/msal-browser" "^3.10.0"
     "@azure/msal-react" "^2.0.12"

@@ -391,7 +391,7 @@ Then navigate to Certificates & Secrets. Click "New Client Secret" the set the d
 https://learn.microsoft.com/en-us/cli/azure/functionapp/deployment/github-actions?view=azure-cli-latest
 
 ```
-  az functionapp deployment github-actions add --resource-group Pauly-SWA --repo "https://github.com/AMCanada16/Pauly" --name Pauly-Functions --login-with-github --build-path "/api"
+  az functionapp deployment github-actions add --resource-group Pauly-SWA --repo "https://github.com/AMCanada16/Pauly-Functions" --name Pauly-Functions --login-with-github --build-path "/api"
 ```
 
 ### Step #2
