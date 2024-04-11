@@ -27,6 +27,9 @@ export default function Root({ children }: PropsWithChildren) {
           }
         `}
         </style>
+
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Pauly" />
       </head>
       <body>{children}</body>
     </html>

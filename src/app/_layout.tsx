@@ -21,6 +21,7 @@ import { Provider, useSelector } from 'react-redux';
 import setDimentions from '@utils/ultility/setDimentions';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import useIsShowingZeroFooter from '@hooks/useIsShowingZeroFooter';
+import { useAssets } from 'expo-asset';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -151,7 +152,9 @@ export default function App(): React.JSX.Element | null {
   // Fixing hydration issues
   const [mounted, setMounted] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
-  
+  const pathname = usePathname()
+  const [asset, error] = useAssets(require('assets/images/Pauly-og-Image.png'));
+
   useEffect(() => {
     if (!mounted) {
       loadAsync({
@@ -184,6 +187,10 @@ export default function App(): React.JSX.Element | null {
     <Provider store={store}>
       <Head>
         <title>Pauly</title>
+        <meta property="og:url" content={process.env.EXPO_PUBLIC_PAULYHOST + pathname} />
+        { (asset !== undefined && asset.length >= 1 && asset[0].localUri !== null) ? 
+          <meta property="og:image" content={process.env.EXPO_PUBLIC_PAULYHOST + asset[0] + ""} />:null
+        }
       </Head>
       <RootLayout />
     </Provider>

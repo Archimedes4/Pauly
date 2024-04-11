@@ -8,14 +8,14 @@
       "rewrite": "/index.html"
     },
     "401": {
-      "redirect": "/login",
+      "redirect": "/sign-in",
       "statusCode": 302
     },
     "403": {
-      "rewrite": "/custom-forbidden-page.html"
+      "rewrite": "/sign-in"
     },
     "404": {
-      "rewrite": "/index.html"
+      "rewrite": "/index"
     }
   }
 }
