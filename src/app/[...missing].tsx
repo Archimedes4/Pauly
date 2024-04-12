@@ -6,7 +6,7 @@
 */
 import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View, Text } from 'react-native';
 
 // takes the user back to the main page
 export default function Missing() {
@@ -18,5 +18,10 @@ export default function Missing() {
       } catch (error) {}
     });
   }
-  return <Redirect href={"/"}/>;
+  //return <Redirect href={"/"}/>;
+  return (
+    <View>
+      <Text>This is a test for web</Text>
+    </View>
+  )
 }

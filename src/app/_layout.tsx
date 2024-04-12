@@ -179,11 +179,6 @@ export default function App(): React.JSX.Element | null {
     hideSplash();
   }, [fontsLoaded]);
 
-  useEffect(() => {
-    console.log("START", Image.resolveAssetSource(require('assets/images/Pauly-og-Image.png')).uri)
-    console.log(asset)
-  }, [asset])
-
   if (!mounted && !fontsLoaded) {
     return null;
   }
@@ -194,7 +189,7 @@ export default function App(): React.JSX.Element | null {
         <title>Pauly</title>
         <meta property="og:url" content={process.env.EXPO_PUBLIC_PAULYHOST + pathname} />
         { (asset !== undefined && asset.length >= 1 && asset[0].localUri !== null) ? 
-          <meta property="og:image" content={process.env.EXPO_PUBLIC_PAULYHOST + "" + ""} />:null
+          <meta property="og:image" content={"/assets/images/Pauly-og-Image.png"} />:null
         }
       </Head>
       <RootLayout />
