@@ -3,27 +3,6 @@
     "rewrite": "index.html",
     "exclude": ["/assets/*"]
   },
-  "routes": [
-    {
-      "route": "/settings*",
-      "rewrite": "/settings.html"
-    },
-    {
-      "route": "/government",
-      "rewrite": "/government/index.html"
-    },
-    {
-      "route": "/assets/*"
-    },
-    {
-      "route": "/sign-in*",
-      "rewrite": "/sign-in.html"
-    },
-    {
-      "route": "/calendar*",
-      "rewrite": "/calendar.html"
-    }
-  ],
   "trailingSlash": "auto",
   "mimeTypes": {
     ".json": "text/json"
