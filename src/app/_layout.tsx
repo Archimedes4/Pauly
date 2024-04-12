@@ -186,7 +186,6 @@ export default function App(): React.JSX.Element | null {
       <Head>
         <title>Pauly</title>
         <meta property="og:url" content={process.env.EXPO_PUBLIC_PAULYHOST + pathname} />
-        <meta property="og:image" content={process.env.EXPO_PUBLIC_PAULYHOST + "/Pauly-og-Image.png"} />  
       </Head>
       <RootLayout />
     </Provider>

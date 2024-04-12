@@ -30,6 +30,7 @@ export default function Root({ children }: PropsWithChildren) {
 
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Pauly" />
+        <meta property="og:image" content={process.env.EXPO_PUBLIC_PAULYHOST + "/Pauly-og-Image.png"} />  
       </head>
       <body>{children}</body>
     </html>
