@@ -8,7 +8,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Head from 'expo-router/head';
 import { loadAsync } from 'expo-font';
 import { Slot, SplashScreen, router, useGlobalSearchParams, useLocalSearchParams, usePathname } from 'expo-router';
-import { Dimensions, Platform, View } from 'react-native';
+import { Dimensions, Image, Platform, View } from 'react-native';
 import { ExpoMsalProvider } from '@archimedes4/expo-msal';
 import store, { RootState } from '@redux/store';
 import { Colors, paperTheme } from '@constants';
@@ -178,6 +178,11 @@ export default function App(): React.JSX.Element | null {
     }
     hideSplash();
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    console.log("START", Image.resolveAssetSource(require('assets/images/Pauly-og-Image.png')).uri)
+    console.log(asset)
+  }, [asset])
 
   if (!mounted && !fontsLoaded) {
     return null;

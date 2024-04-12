@@ -2,9 +2,5 @@
   "navigationFallback": {
     "rewrite": "index.html",
     "exclude": ["/assets/*"]
-  },
-  "trailingSlash": "auto",
-  "mimeTypes": {
-    ".json": "text/json"
   }
 }
