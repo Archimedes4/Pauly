@@ -3,19 +3,7 @@
     "rewrite": "index.html",
     "exclude": ["/assets/*"]
   },
-  "responseOverrides": {
-    "400": {
-      "rewrite": "/index.html"
-    },
-    "401": {
-      "redirect": "/sign-in.html",
-      "statusCode": 302
-    },
-    "403": {
-      "rewrite": "/sign-in.html"
-    },
-    "404": {
-      "rewrite": "/index.html"
-    }
+  "mimeTypes": {
+    ".json": "text/json"
   }
 }
