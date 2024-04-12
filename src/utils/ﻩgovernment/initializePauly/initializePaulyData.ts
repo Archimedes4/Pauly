@@ -2,7 +2,7 @@ export const paulyListData = {
   displayName: 'PaulyList',
   columns: [
     {
-      name: 'studentFilesListId',
+      name: 'commissionQRCodeListId',
       text: {},
       required: true,
     },
@@ -27,37 +27,12 @@ export const paulyListData = {
       required: true,
     },
     {
-      name: 'sportsListId',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'sportsApprovedSubmissionsListId',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'sportsSubmissionsListId',
-      text: {},
-      required: true,
-    },
-    {
       name: 'timetablesListId',
       text: {},
       required: true,
     },
     {
-      name: 'resourceListId',
-      text: {},
-      required: true,
-    },
-    {
       name: 'dressCodeListId',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'tagedResourceId',
       text: {},
       required: true,
     },
@@ -179,7 +154,7 @@ export const commissionsData = {
       required: true,
     },
     {
-      name: 'commissionID',
+      name: 'commissionId',
       text: {},
       required: true,
       indexed: true,
@@ -208,8 +183,8 @@ export const commissionsData = {
       number: {},
     },
     {
-      name: 'qrCodeData',
-      text: { allowMultipleLines: true },
+      name: 'hasQrCodes',
+      boolean: {},
     },
     {
       name: 'postTeamId',
