@@ -22,7 +22,7 @@ export async function updateCommission(
       hidden: commissionsData.hidden,
       maxNumberOfClaims: commissionsData.maxNumberOfClaims,
       allowMultipleSubmissions: commissionsData.allowMultipleSubmissions,
-      commissionID: commissionsData.commissionId,
+      commissionId: commissionsData.commissionId,
       value: commissionsData.value,
       homeValue: commissionsData.competitionType,
     },
@@ -43,9 +43,6 @@ export async function updateCommission(
     data.fields.proximity = commissionsData.proximity;
     data.fields.coordinateLat = commissionsData.coordinateLat;
     data.fields.coordinateLng = commissionsData.coordinateLng;
-  }
-  if (commissionsData.value === commissionTypeEnum.QRCode) {
-    data.fields.qrCodeData = '[]';
   }
 
   const result = await callMsGraph(

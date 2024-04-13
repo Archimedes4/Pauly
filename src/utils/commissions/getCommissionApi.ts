@@ -29,7 +29,7 @@ export default async function getCommission(
         store.getState().paulyList.siteId
       }/lists/${
         store.getState().paulyList.commissionListId
-      }/items?expand=fields($select=Title,timed,points,hidden,maxNumberOfClaims,allowMultipleSubmissions,commissionID,value,postTeamId,postChannelId,postId,id)&$filter=fields/commissionID%20eq%20'${commissionId}'&$select=fields,id`,
+      }/items?expand=fields($select=Title,timed,points,hidden,maxNumberOfClaims,allowMultipleSubmissions,commissionId,value,postTeamId,postChannelId,postId,id)&$filter=fields/commissionId%20eq%20'${commissionId}'&$select=fields,id`,
       store,
     );
     if (result.ok) {
@@ -45,7 +45,7 @@ export default async function getCommission(
         endDate: data.value[0].fields.endDate,
         points: data.value[0].fields.points,
         hidden: data.value[0].fields.hidden,
-        commissionId: data.value[0].fields.commissionID,
+        commissionId: data.value[0].fields.commissionId,
         proximity: data.value[0].fields.proximity,
         coordinateLat: data.value[0].fields.coordinateLat,
         coordinateLng: data.value[0].fields.coordinateLng,

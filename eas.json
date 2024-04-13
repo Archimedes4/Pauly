@@ -11,14 +11,11 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_ORGWIDEGROUPID":"451cc145-cc7b-433a-9e52-70e646a13d50",
+        "EXPO_PUBLIC_ORGWIDEGROUPID":"6b6f8c01-0e8e-4b6a-8431-335612b6c127",
         "EXPO_PUBLIC_TENANTID":"551df04d-543a-4d61-955e-e4294c4cf950",
-        "EXPO_PUBLIC_CLIENTID":"08624b03-1aa6-40c4-8fb3-149c39026dff",
+        "EXPO_PUBLIC_CLIENTID":"d585b96d-aa24-4276-9d4f-a3538789a10e",
         "EXPO_PUBLIC_DOMAINNAME":"@8td1tk.onmicrosoft.com",
         "EXPO_PUBLIC_PAULYHOST":"https://polite-plant-0871d590f.4.azurestaticapps.net",
-        "EXPO_PUBLIC_YOUTUBEDATAKEY":"AIzaSyCO1po5qtWDKRQ7koQd07Xo6u13Yp-hPEE",
-        "EXPO_PUBLIC_YOUTUBEUPLOADSID":"UU8HbRWjbR0xjOeE6OlQ1sLA",
-        "EXPO_PUBLIC_RAINDROPTOKEN":"8ea167d6-0792-4b10-a3a1-e8571743c3e6",
         "EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT":"https://pauly-functions.azurewebsites.net",
         "EXPO_PUBLIC_PAULY_FUNCTION_KEY":"7tojyRh5Yu-0FblbWNhmjZsLDKMpjVbS0EJR08jZO_-4AzFut0sMgg=="
       }
@@ -28,14 +25,11 @@
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_ORGWIDEGROUPID":"451cc145-cc7b-433a-9e52-70e646a13d50",
+        "EXPO_PUBLIC_ORGWIDEGROUPID":"6b6f8c01-0e8e-4b6a-8431-335612b6c127",
         "EXPO_PUBLIC_TENANTID":"551df04d-543a-4d61-955e-e4294c4cf950",
-        "EXPO_PUBLIC_CLIENTID":"08624b03-1aa6-40c4-8fb3-149c39026dff",
+        "EXPO_PUBLIC_CLIENTID":"d585b96d-aa24-4276-9d4f-a3538789a10e",
         "EXPO_PUBLIC_DOMAINNAME":"@8td1tk.onmicrosoft.com",
         "EXPO_PUBLIC_PAULYHOST":"https://polite-plant-0871d590f.4.azurestaticapps.net",
-        "EXPO_PUBLIC_YOUTUBEDATAKEY":"AIzaSyCO1po5qtWDKRQ7koQd07Xo6u13Yp-hPEE",
-        "EXPO_PUBLIC_YOUTUBEUPLOADSID":"UU8HbRWjbR0xjOeE6OlQ1sLA",
-        "EXPO_PUBLIC_RAINDROPTOKEN":"8ea167d6-0792-4b10-a3a1-e8571743c3e6",
         "EXPO_PUBLIC_PAULY_FUNCTION_ENDPOINT":"https://pauly-functions.azurewebsites.net",
         "EXPO_PUBLIC_PAULY_FUNCTION_KEY":"7tojyRh5Yu-0FblbWNhmjZsLDKMpjVbS0EJR08jZO_-4AzFut0sMgg==",
         "NODE_ENV":"production"
@@ -48,9 +42,9 @@
         "simulator":true
       },
       "env": {
-        "EXPO_PUBLIC_ORGWIDEGROUPID":"451cc145-cc7b-433a-9e52-70e646a13d50",
+        "EXPO_PUBLIC_ORGWIDEGROUPID":"6b6f8c01-0e8e-4b6a-8431-335612b6c127",
         "EXPO_PUBLIC_TENANTID":"551df04d-543a-4d61-955e-e4294c4cf950",
-        "EXPO_PUBLIC_CLIENTID":"08624b03-1aa6-40c4-8fb3-149c39026dff",
+        "EXPO_PUBLIC_CLIENTID":"d585b96d-aa24-4276-9d4f-a3538789a10e",
         "EXPO_PUBLIC_DOMAINNAME":"@8td1tk.onmicrosoft.com",
         "EXPO_PUBLIC_PAULYHOST":"https://polite-plant-0871d590f.4.azurestaticapps.net",
         "EXPO_PUBLIC_YOUTUBEDATAKEY":"AIzaSyCO1po5qtWDKRQ7koQd07Xo6u13Yp-hPEE",

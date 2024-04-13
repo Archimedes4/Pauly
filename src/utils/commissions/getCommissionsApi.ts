@@ -229,7 +229,7 @@ export default async function getCommissionsApi(
           const resultCommissions: commissionType[] = [];
           for (let index = 0; index < data.value.length; index += 1) {
             const submissionData = submissions.data.get(
-              data.value[index].fields.commissionID as string,
+              data.value[index].fields.commissionId as string,
             );
             resultCommissions.push({
               itemId: data.value[index].id,
@@ -243,7 +243,7 @@ export default async function getCommissionsApi(
               reviewedCount: submissionData ? submissionData.reviewedCount : 0,
               points: data.value[index].fields.points as number,
               proximity: data.value[index].fields.proximity as number,
-              commissionId: data.value[index].fields.commissionID as string,
+              commissionId: data.value[index].fields.commissionId as string,
               hidden: data.value[index].fields.hidden,
               timed: data.value[index].fields.timed,
               maxNumberOfClaims: data.value[index].fields.maxNumberOfClaims,
@@ -288,7 +288,7 @@ async function getCommissionsBatch(
       method: 'GET',
       url: `/sites/${store.getState().paulyList.siteId}/lists/${
         store.getState().paulyList.commissionListId
-      }/items?$expand=fields&$filter=fields/commissionID%20eq%20'${
+      }/items?$expand=fields&$filter=fields/commissionId%20eq%20'${
         commissions[index]
       }' `,
     });
@@ -339,7 +339,7 @@ async function getCommissionsBatch(
             proximity: data.responses[requestIndex].body.value[index].fields
               .proximity as number,
             commissionId: data.responses[requestIndex].body.value[index].fields
-              .commissionID as string,
+              .commissionId as string,
             hidden:
               data.responses[requestIndex].body.value[index].fields.hidden,
             timed: data.responses[requestIndex].body.value[index].fields.timed,

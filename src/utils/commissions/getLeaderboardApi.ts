@@ -47,7 +47,7 @@ export default async function getLeaderboardApi(
   }
   const commissionBatchResult = await largeBatch(
     {
-      firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items?$expand=fields($select=points,commissionID)&$select=id,fields&$filter=fields/commissionID%20eq%20'`,
+      firstUrl: `/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionListId}/items?$expand=fields($select=points,commissionId)&$select=id,fields&$filter=fields/commissionId%20eq%20'`,
       secondUrl: "'",
       map: commissions,
       method: 'GET',
@@ -62,7 +62,7 @@ export default async function getLeaderboardApi(
       // Failed
     } else {
       commissions.set(
-        commissionBatchResult.data[index].body.value[0].fields.commissionID,
+        commissionBatchResult.data[index].body.value[0].fields.commissionId,
         commissionBatchResult.data[index].body.value[0].fields.points,
       );
     }

@@ -330,7 +330,7 @@ https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#a
 https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update \
 update azure ad app
 ```
-  az rest --method patch --uri 'https://graph.microsoft.com/v1.0/applications/{id}' --headers 'Content-Type=application/json' --body "{"spa":{"redirectUris":["http://localhost:19006/auth","https://paulysphs.ca","https://www.paulysphs.ca"]},"publicClientApplication":{"redirectUris":["com.Archimedes4.Pauly://auth"]},"signInAudience":"AzureADMyOrg","api":{"oauth2PermissionScopes":[{"adminConsentDescription":"All the scopes required to claim commissions in Pauly. This is to access the main function of the commissions api.","adminConsentDisplayName":"claim commission","id":"c62762bd-6568-4f5f-b9d5-eb0eae3882cf","isEnabled":true,"type":"User","userConsentDescription":null,"userConsentDisplayName":null,"value":"commissions"}]}}"
+  az rest --method patch --uri 'https://graph.microsoft.com/v1.0/applications/18e8faf2-1739-4895-80fa-3c8cf0b32fc6' --headers 'Content-Type=application/json' --body "{\"spa\":{\"redirectUris\":[\"http://localhost:19006/auth\",\"https://paulysphs.ca\",\"https://www.paulysphs.ca\"]},\"publicClient\":{\"redirectUris\":[\"com.Archimedes4.Pauly://auth\"]},\"signInAudience\":\"AzureADMyOrg\",\"api\":{\"oauth2PermissionScopes\":[{\"adminConsentDescription\":\"AllthescopesrequiredtoclaimcommissionsinPauly.Thisistoaccessthemainfunctionofthecommissionsapi.\",\"adminConsentDisplayName\":\"claimcommission\",\"id\":\"c62762bd-6568-4f5f-b9d5-eb0eae3882cf\",\"isEnabled\":true,\"type\":\"User\",\"userConsentDescription\":null,\"userConsentDisplayName\":null,\"value\":\"commissions\"}]}}"
 ```
 
 #### Create Static Web App
@@ -348,7 +348,7 @@ Note: The resource group that you use will be tied to the web app. Some other re
   az staticwebapp create \
     --name Pauly-Static-Web-App \
     --resource-group Pauly-SWA \
-    --source https://github.com/AMCanada16/Pauly.git \
+    --source https://github.com/Archimedes4/Pauly.git \
     --location "eastus2" \
     --branch master \
     --app-location "/web-build" \
@@ -384,7 +384,7 @@ Then copy the client Id and Tenant Id
 Then navigate to Certificates & Secrets. Click "New Client Secret" the set the description to "Pauly Functions" or whatever. Press add and copy the newly created client secret and add it to this function.
 ![client secret](./documentation/READMEImages/PortalCert.png)
 ```
-  az functionapp config appsettings set --name Pauly-Functions --resource-group Pauly-SWA --settings "CLIENTID={ClientId goes here (remove brakets)} TENANTID={TenantId goes here} CLIENTSECRET={client secret goes here}"
+  az functionapp config appsettings set --name Pauly-Functions --resource-group Pauly-SWA --settings CLIENTID={ClientId goes here (remove brakets)} TENANTID={TenantId goes here} CLIENTSECRET={client secret goes here}
 ```
 
 #### Attach to github workflow

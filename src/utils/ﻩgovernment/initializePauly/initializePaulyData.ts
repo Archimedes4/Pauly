@@ -17,6 +17,11 @@ export const paulyListData = {
       required: true,
     },
     {
+      name: 'commissionQRCodeListId',
+      text: {},
+      required: true,
+    },
+    {
       name: 'paulyDataListId',
       text: {},
       required: true,
@@ -179,12 +184,12 @@ export const commissionsData = {
       number: {},
     },
     {
-      name: 'proximity',
-      number: {},
+      name: 'locationVisable',
+      boolean: {},
     },
     {
-      name: 'hasQrCodes',
-      boolean: {},
+      name: 'proximity',
+      number: {},
     },
     {
       name: 'postTeamId',
@@ -257,6 +262,39 @@ export const commissionsSubmissionsData = {
     template: 'genericList',
   },
 };
+export const commissionsQRCodeData = {
+  displayName: 'CommissionsQRCode',
+  columns: [
+    {
+      name: 'qrCodeStart',
+      text: {},
+    },
+    {
+      name: 'qrCodeEnd',
+      text: {},
+    },
+    {
+      name: 'timed',
+      boolean: {},
+      required: true
+    },
+    {
+      name: 'qrCodeId',
+      text: {},
+      required: true,
+      indexed: true,
+    },
+    {
+      name: 'commissionId',
+      text: {},
+      required: true,
+      indexed: true,
+    },
+  ],
+  list: {
+    template: 'genericList',
+  },
+};
 export const paulyDataData = {
   displayName: 'PaulyData',
   columns: [
@@ -315,132 +353,6 @@ export const scheduleData = {
     template: 'genericList',
   },
 };
-export const sportsData = {
-  displayName: 'Sports',
-  columns: [
-    {
-      name: 'sportName',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'sportSvg',
-      text: { allowMultipleLines: true },
-      required: true,
-    },
-    {
-      name: 'sportId',
-      text: {},
-      required: true,
-      indexed: true,
-      enforceUniqueValues: true,
-    },
-  ],
-  list: {
-    template: 'genericList',
-  },
-};
-export const sportsApprovedSubmissionsData = {
-  displayName: 'SportsApprovedSubmissions',
-  columns: [
-    {
-      name: 'fileId',
-      text: {},
-      required: true,
-      indexed: true,
-    },
-    {
-      name: 'fileType',
-      number: {},
-      required: true,
-      indexed: true,
-    },
-    {
-      name: 'submissionId',
-      text: {},
-      required: true,
-      indexed: true,
-      enforceUniqueValues: true,
-    },
-    {
-      name: 'caption',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'selectedSportId',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'selectedTeamId',
-      text: {},
-      indexed: true,
-      required: true,
-    },
-  ],
-  list: {
-    template: 'genericList',
-  },
-};
-export const sportsSubmissionsData = {
-  displayName: 'SportsSubmissions',
-  columns: [
-    {
-      name: 'accepted',
-      boolean: {},
-      required: true,
-    },
-    {
-      name: 'reviewed',
-      boolean: {},
-      indexed: true,
-      required: true,
-    },
-    {
-      name: 'user',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'timeCreated',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'submissionId',
-      text: {},
-      required: true,
-      indexed: true,
-      enforceUniqueValues: true,
-    },
-    {
-      name: 'fileId',
-      text: {},
-      required: true,
-    },
-    {
-      name: 'fileType',
-      number: {},
-      required: true,
-    },
-    {
-      name: 'selectedSportId',
-      text: {},
-      indexed: true,
-      required: true,
-    },
-    {
-      name: 'selectedTeamId',
-      text: {},
-      indexed: true,
-      required: true,
-    },
-  ],
-  list: {
-    template: 'genericList',
-  },
-};
 export const timetablesData = {
   displayName: 'Timetables',
   columns: [
@@ -475,26 +387,6 @@ export const timetablesData = {
       name: 'timetableDressCodeId',
       text: {},
       required: true,
-    },
-  ],
-  list: {
-    template: 'genericList',
-  },
-};
-export const resourceData = {
-  displayName: 'Resources',
-  columns: [
-    {
-      name: 'resourceGroupId',
-      text: {},
-      required: true,
-      indexed: true,
-    },
-    {
-      name: 'resourceConversationId',
-      text: {},
-      required: true,
-      indexed: true,
     },
   ],
   list: {
@@ -708,18 +600,6 @@ export const addDataArray: addDataType[] = [
     id: 'classExtensionId',
   },
   {
-    data: paulyTagedResourceData,
-    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
-    urlTwo: '/lists',
-    id: 'tagedResourceId',
-  },
-  {
-    data: studentFilesData,
-    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
-    urlTwo: '/lists',
-    id: 'studentFilesListId',
-  },
-  {
     data: commissionsData,
     urlOne: 'https://graph.microsoft.com/v1.0/sites/',
     urlTwo: '/lists',
@@ -732,40 +612,22 @@ export const addDataArray: addDataType[] = [
     id: 'commissionSubmissionsListId',
   },
   {
+    data: commissionsQRCodeData,
+    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
+    urlTwo: '/lists',
+    id: 'commissionQRCodeListId'
+  },
+  {
     data: scheduleData,
     urlOne: 'https://graph.microsoft.com/v1.0/sites/',
     urlTwo: '/lists',
     id: 'scheduleListId',
   },
   {
-    data: sportsData,
-    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
-    urlTwo: '/lists',
-    id: 'sportsListId',
-  },
-  {
-    data: sportsApprovedSubmissionsData,
-    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
-    urlTwo: '/lists',
-    id: 'sportsApprovedSubmissionsListId',
-  },
-  {
-    data: sportsSubmissionsData,
-    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
-    urlTwo: '/lists',
-    id: 'sportsSubmissionsListId',
-  },
-  {
     data: timetablesData,
     urlOne: 'https://graph.microsoft.com/v1.0/sites/',
     urlTwo: '/lists',
     id: 'timetablesListId',
-  },
-  {
-    data: resourceData,
-    urlOne: 'https://graph.microsoft.com/v1.0/sites/',
-    urlTwo: '/lists',
-    id: 'resourceListId',
   },
   {
     data: dressCodeData,

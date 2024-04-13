@@ -20,7 +20,7 @@ async function getPointsBatch(
       method: 'GET',
       url: `/sites/${store.getState().paulyList.siteId}/lists/${
         store.getState().paulyList.commissionListId
-      }/items?$expand=fields&$filter=fields/commissionID%20eq%20'${
+      }/items?$expand=fields&$filter=fields/commissionId%20eq%20'${
         commissions[index]
       }' `,
     });

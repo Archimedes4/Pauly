@@ -245,7 +245,6 @@ declare global {
       }
     | {
         value: commissionTypeEnum.QRCode;
-        QRCodeData: commissionQRCode[];
       };
   type commissionType = commissionTypeDefault &
     commissionTypeTimed &
@@ -593,22 +592,17 @@ declare global {
   };
   type paulyListType = {
     siteId: string;
-    studentFilesListId: string;
     commissionListId: string;
     commissionSubmissionsListId: string;
+    commissionQRCodeListId: string;
     paulyDataListId: string;
     scheduleListId: string;
-    sportsListId: string;
-    sportsApprovedSubmissionsListId: string;
-    sportsSubmissionsListId: string;
     timetablesListId: string;
-    resourceListId: string;
     dressCodeListId: string;
     roomListId: string;
     eventTypeExtensionId: string;
     eventDataExtensionId: string;
     classExtensionId: string;
-    tagedResourceId: string;
     calendarSyncStateListId: string;
   };
   type insightResult = {

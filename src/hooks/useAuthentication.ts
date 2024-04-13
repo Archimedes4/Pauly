@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
 import { useRefresh, useSilentLogin } from './authentication';
+import { isGovernmentModeSlice } from '@src/redux/reducers/isGovernmentModeReducer';
 
 /**
  * Main hook that runs the startup. Should only be in one view (layout) at once.
@@ -45,9 +46,13 @@ export default function useAuthentication() {
       await getUserProfile();
       if (await getWantGovernment()) {
         await validateGovernmentMode();
+      } else {
+        store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
       }
       dispatch(authLoadingSlice.actions.setAuthLoading(false));
     } else {
+      const isGovernment = await getWantGovernment()
+      store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(isGovernment))
       dispatch(authLoadingSlice.actions.setAuthLoading(false));
     }
   }

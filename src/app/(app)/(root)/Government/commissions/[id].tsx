@@ -235,13 +235,7 @@ export function GovernmentCommissionUpdate({
                     coordinateLat: 49.85663823299096,
                     coordinateLng: -97.22659526509193,
                   });
-                } else if (e === commissionTypeEnum.QRCode) {
-                  setCommissionData({
-                    ...commissionData,
-                    value: e,
-                    QRCodeData: [],
-                  });
-                } else {
+                } {
                   setCommissionData({
                     ...commissionData,
                     value: e,
@@ -369,12 +363,7 @@ export function GovernmentCommissionUpdate({
           </View>
         ) : null}
         {commissionData.value === commissionTypeEnum.QRCode ? (
-          <CommissionsQRCodeComponent
-            QRCodes={commissionData.QRCodeData}
-            setQRCodes={e => {
-              setCommissionData({ ...commissionData, QRCodeData: e });
-            }}
-          />
+          <CommissionsQRCodeComponent commissionId={commissionData.commissionId}/>
         ) : null}
       
         <View
