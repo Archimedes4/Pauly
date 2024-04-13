@@ -293,7 +293,7 @@ export function GovernmentCommissionUpdate({
               shadowRadius: 10,
               borderRadius: 15,
               padding: 10,
-              marginBottom: 20,
+              marginTop: 10,
               backgroundColor: Colors.white
             }}
           >

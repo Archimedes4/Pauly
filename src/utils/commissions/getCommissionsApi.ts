@@ -195,74 +195,78 @@ export default async function getCommissionsApi(
       result: loadingStateEnum.failed;
     }
 > {
-  const { nextLink, claimed, startDate, endDate } = params || {};
-  if (claimed === true) {
-    const result = await getUnclaimedCommissions(params.store);
-    if (result.result === loadingStateEnum.success) {
-      return { result: result.result, data: result.data };
-    }
-    return { result: loadingStateEnum.failed };
-  }
-  const filter = getFilter(startDate, endDate);
-  const result = await callMsGraph(
-    nextLink ||
-      `https://graph.microsoft.com/v1.0/sites/${
-        params.store.getState().paulyList.siteId
-      }/lists/${
-        params.store.getState().paulyList.commissionListId
-      }/items?expand=fields${filter}`,
-    params.store,
-  );
-  if (result.ok) {
-    const data = await result.json();
-    if (data.value !== null && data.value !== undefined) {
-      const commissionsIds: string[] = [];
-      for (let index = 0; index < data.value.length; index += 1) {
-        commissionsIds.push(data.value[index].fields.commissionId);
+  try {
+    const { nextLink, claimed, startDate, endDate } = params || {};
+    if (claimed === true) {
+      const result = await getUnclaimedCommissions(params.store);
+      if (result.result === loadingStateEnum.success) {
+        return { result: result.result, data: result.data };
       }
-      const submissions = await getSubmissions(commissionsIds, params.store);
-      if (
-        submissions.result === loadingStateEnum.success &&
-        submissions.data !== undefined
-      ) {
-        const resultCommissions: commissionType[] = [];
+      return { result: loadingStateEnum.failed };
+    }
+    const filter = getFilter(startDate, endDate);
+    const result = await callMsGraph(
+      nextLink ||
+        `https://graph.microsoft.com/v1.0/sites/${
+          params.store.getState().paulyList.siteId
+        }/lists/${
+          params.store.getState().paulyList.commissionListId
+        }/items?expand=fields${filter}`,
+      params.store,
+    );
+    if (result.ok) {
+      const data = await result.json();
+      if (data.value !== null && data.value !== undefined) {
+        const commissionsIds: string[] = [];
         for (let index = 0; index < data.value.length; index += 1) {
-          const submissionData = submissions.data.get(
-            data.value[index].fields.commissionID as string,
-          );
-          resultCommissions.push({
-            itemId: data.value[index].id,
-            title: data.value[index].fields.Title,
-            startDate: data.value[index].fields.startDate,
-            endDate: data.value[index].fields.endDate,
-            claimCount: submissionData ? submissionData.claimCount : 0,
-            submissionsCount: submissionData
-              ? submissionData.submissionsCount
-              : 0,
-            reviewedCount: submissionData ? submissionData.reviewedCount : 0,
-            points: data.value[index].fields.points as number,
-            proximity: data.value[index].fields.proximity as number,
-            commissionId: data.value[index].fields.commissionID as string,
-            hidden: data.value[index].fields.hidden,
-            timed: data.value[index].fields.timed,
-            maxNumberOfClaims: data.value[index].fields.maxNumberOfClaims,
-            allowMultipleSubmissions:
-              data.value[index].fields.allowMultipleSubmissions,
-            value: data.value[index].fields.value - 1,
-            competitionType: data.value[index].fields.homeValue,
-          });
+          commissionsIds.push(data.value[index].fields.commissionId);
         }
-        return {
-          result: loadingStateEnum.success,
-          data: resultCommissions,
-          nextLink: data['@odata.nextLink'],
-        };
+        const submissions = await getSubmissions(commissionsIds, params.store);
+        if (
+          submissions.result === loadingStateEnum.success &&
+          submissions.data !== undefined
+        ) {
+          const resultCommissions: commissionType[] = [];
+          for (let index = 0; index < data.value.length; index += 1) {
+            const submissionData = submissions.data.get(
+              data.value[index].fields.commissionID as string,
+            );
+            resultCommissions.push({
+              itemId: data.value[index].id,
+              title: data.value[index].fields.Title,
+              startDate: data.value[index].fields.startDate,
+              endDate: data.value[index].fields.endDate,
+              claimCount: submissionData ? submissionData.claimCount : 0,
+              submissionsCount: submissionData
+                ? submissionData.submissionsCount
+                : 0,
+              reviewedCount: submissionData ? submissionData.reviewedCount : 0,
+              points: data.value[index].fields.points as number,
+              proximity: data.value[index].fields.proximity as number,
+              commissionId: data.value[index].fields.commissionID as string,
+              hidden: data.value[index].fields.hidden,
+              timed: data.value[index].fields.timed,
+              maxNumberOfClaims: data.value[index].fields.maxNumberOfClaims,
+              allowMultipleSubmissions:
+                data.value[index].fields.allowMultipleSubmissions,
+              value: data.value[index].fields.value - 1,
+              competitionType: data.value[index].fields.homeValue,
+            });
+          }
+          return {
+            result: loadingStateEnum.success,
+            data: resultCommissions,
+            nextLink: data['@odata.nextLink'],
+          };
+        }
+        return { result: loadingStateEnum.failed };
       }
       return { result: loadingStateEnum.failed };
     }
     return { result: loadingStateEnum.failed };
+  } catch {
+    return { result: loadingStateEnum.failed };
   }
-  return { result: loadingStateEnum.failed };
 }
 
 type unclaimedCommissionSubmissionType = {

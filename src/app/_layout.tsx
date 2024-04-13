@@ -3,6 +3,7 @@
   Andrew Mainella
   1 December 2023
   _layout.tsx
+  Main layout for the app.
 */
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import Head from 'expo-router/head';

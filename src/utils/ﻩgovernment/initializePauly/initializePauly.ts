@@ -10,7 +10,7 @@ import {
 } from './initializePaulyData';
 
 export async function initializePaulyPartOne(
-  secondUserId: string,
+  owners: string[],
 ): Promise<{ result: loadingStateEnum; groupId?: string }> {
   const currentUsersIdResult = await callMsGraph(
     'https://graph.microsoft.com/v1.0/me',
@@ -18,6 +18,11 @@ export async function initializePaulyPartOne(
   );
   if (currentUsersIdResult.ok) {
     const currentUsersIdResultData = await currentUsersIdResult.json();
+    let bindedOwners: string[] = []
+    bindedOwners.push(`https://graph.microsoft.com/v1.0/users/${currentUsersIdResultData.id}`)
+    for (let index = 0; index < owners.length; index += 1) {
+      bindedOwners.push(`https://graph.microsoft.com/v1.0/users/${owners[index]}`)
+    }
     const createGroupData = {
       description: "Pauly's Team Containing all it's data",
       displayName: 'Pauly',
@@ -27,10 +32,7 @@ export async function initializePaulyPartOne(
       visibility: 'HiddenMembership',
       //membershipRule: '(user.accountEnabled -eq true)',
       //membershipRuleProcessingState: 'on',
-      'owners@odata.bind': [
-        `https://graph.microsoft.com/v1.0/users/${currentUsersIdResultData.id}`,
-        `https://graph.microsoft.com/v1.0/users/${secondUserId}`,
-      ],
+      'owners@odata.bind': bindedOwners,
       securityEnabled: false,
     };
     const createGroupResult = await callMsGraph(

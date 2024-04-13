@@ -18,7 +18,7 @@ import {
 import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';
 import { useSignOut } from '@hooks/authentication';
-import getUserImage from '@src/hooks/useGetUserProfile/getUserImage';
+import getUserImage from '@hooks/useGetUserProfile/getUserImage';
 
 export default function Settings() {
   const router = useRouter();

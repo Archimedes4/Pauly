@@ -14,9 +14,9 @@ import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useAuthentication from '@hooks/useAuthentication';
-import { safeAreaColorsSlice } from '@src/redux/reducers/safeAreaColorsReducer';
-import LoadingComponent from '@src/components/LoadingComponent';
-import useIsAuthenticated from '@src/hooks/useIsAuthenticated';
+import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
+import LoadingComponent from '@components/LoadingComponent';
+import useIsAuthenticated from '@hooks/useIsAuthenticated';
 
 function OfflineView() {
   const { totalHeight, totalWidth } = useSelector(

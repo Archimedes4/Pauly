@@ -19,6 +19,8 @@ import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 import { getTextState } from '@utils/ultility/createUUID';
 import { getUsers } from '@utils/studentFunctions';
+import BackButton from '@src/components/BackButton';
+import SearchBar from '@src/components/SearchBar';
 
 enum initStage {
   notStarted,
@@ -33,9 +35,7 @@ enum initStage {
 export default function GovernmentAdmin() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
 
-  const [selectedUser, setSelectedUser] = useState<
-    microsoftUserType | undefined
-  >(undefined);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [timeLeft, setTimeLeft] = useState<string>('');
   const [timeElapsed, setTimeElapsed] = useState<string>('Not Started');
   const [createdGroupId, setCreatedGroupId] = useState<string>('');
@@ -61,11 +61,11 @@ export default function GovernmentAdmin() {
   );
 
   async function initializePauly() {
-    if (selectedUser !== undefined) {
+    if (selectedUsers.length >= 1) {
       setStartTime(new Date());
       setCurrentInitStage(initStage.partOne);
       setInitResult(loadingStateEnum.loading);
-      const partOneResult = await initializePaulyPartOne(selectedUser.id);
+      const partOneResult = await initializePaulyPartOne(selectedUsers);
       if (
         partOneResult.result === loadingStateEnum.success &&
         partOneResult.groupId !== undefined
@@ -256,9 +256,10 @@ export default function GovernmentAdmin() {
 
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
-      <View>
-        <Link href="/government">Back</Link>
-      </View>
+      <BackButton to='/government'/>
+      <Text style={[styles.headerText, {
+        marginVertical: 15
+      }]}>Admin</Text>
       <View style={{ flexDirection: 'row' }}>
         <View>
           <View
@@ -369,16 +370,21 @@ export default function GovernmentAdmin() {
         </View>
         <View>
           <UserBlock
-            setSelectedUser={setSelectedUser}
+            selectedUsers={selectedUsers}
+            setSelectedUsers={setSelectedUsers}
             setInitResult={setInitResult}
           />
           <TextInput
             value={createdGroupId}
             onChangeText={setCreatedGroupId}
             placeholder="Group Id"
-            style={styles.textInputStyle}
+            style={[styles.textInputStyle, {
+              marginTop: 10
+            }]}
           />
-          <Text>Time Elapsed: {timeElapsed}</Text>
+          <Text style={{
+            marginVertical: 10
+          }}>Time Elapsed: {timeElapsed}</Text>
           <StyledButton
             text={getTextState(initResult, {
               cannotStart: 'Please Pick a User',
@@ -451,10 +457,12 @@ export default function GovernmentAdmin() {
 }
 
 function UserBlock({
-  setSelectedUser,
+  selectedUsers,
+  setSelectedUsers,
   setInitResult,
 }: {
-  setSelectedUser: (item: microsoftUserType) => void;
+  selectedUsers: string[]
+  setSelectedUsers: (item: string[]) => void;
   setInitResult: (item: loadingStateEnum) => void;
 }) {
   const [currentUserId, setCurrentUserId] = useState<string>('');
@@ -464,6 +472,7 @@ function UserBlock({
   );
   const [nextLink, setNextLink] = useState<string | undefined>(undefined);
   const { height, width } = useSelector((state: RootState) => state.dimensions);
+  const [search, setSearch] = useState<string>("");
 
   async function getUserId() {
     const result = await callMsGraph('https://graph.microsoft.com/v1.0/me');
@@ -473,8 +482,8 @@ function UserBlock({
     }
   }
 
-  async function loadUsers(nextLink?: string) {
-    const userResult = await getUsers(nextLink);
+  async function loadUsers(nextLink?: string, search?: string) {
+    const userResult = await getUsers(nextLink, search);
     if (userResult.result === loadingStateEnum.success) {
       setNextLink(userResult.nextLink);
       if (nextLink) {
@@ -495,38 +504,57 @@ function UserBlock({
 
   if (loadUsersResult === loadingStateEnum.loading) {
     return (
-      <View style={{ height: height * 0.4 }}>
+      <View style={{ height: height * 0.4, width: (width - height * 0.1) }}>
         <Text>Loading</Text>
       </View>
     );
   }
   if (loadUsersResult === loadingStateEnum.success) {
     return (
-      <FlatList
-        data={loadedUsers}
-        renderItem={user => {
-          if (user.item.id !== currentUserId) {
-            return (
-              <StyledButton
-                key={`User_${user.item.id}`}
-                text={user.item.displayName}
-                onPress={() => {
-                  setSelectedUser(user.item);
-                  setInitResult(loadingStateEnum.notStarted);
-                }}
-                style={{ margin: 15, marginBottom: 0 }}
-              />
-            );
-          }
-          return null;
-        }}
-        onEndReached={() => {
-          if (nextLink !== undefined) {
-            loadUsers(nextLink);
-          }
-        }}
-        style={{ width: width - height * 0.1, height: height * 0.4 }}
-      />
+      <View>
+        <SearchBar value={search} onChangeText={setSearch} onSearch={() => {
+          setLoadUsersResult(loadingStateEnum.loading)
+          setNextLink(undefined)
+          loadUsers(undefined, search)
+        }} style={{position: "relative", top: 0, width: (width - height * 0.1)}}/>
+        <FlatList
+          data={loadedUsers}
+          renderItem={user => {
+            if (user.item.id !== currentUserId) {
+              return (
+                <StyledButton
+                  key={`User_${user.item.id}`}
+                  text={user.item.displayName}
+                  onPress={() => {
+                    if (selectedUsers.includes(user.item.id)) {
+                      setSelectedUsers([...selectedUsers].filter((e) => {
+                        return e !== user.item.id
+                      }));
+                      if (selectedUsers.length > 1) {
+                        setInitResult(loadingStateEnum.notStarted);
+                      } else {
+                        setInitResult(loadingStateEnum.cannotStart);
+                      }
+                    } else {
+                      setSelectedUsers([...selectedUsers, user.item.id]);
+                      setInitResult(loadingStateEnum.notStarted);
+                    }
+                  }}
+                  selected={selectedUsers.includes(user.item.id)}
+                  style={{ margin: 15, marginBottom: 0 }}
+                />
+              );
+            }
+            return null;
+          }}
+          onEndReached={() => {
+            if (nextLink !== undefined) {
+              loadUsers(nextLink);
+            }
+          }}
+          style={{ width: width - height * 0.1, height: height * 0.4 }}
+        />
+      </View>
     );
   }
   return (

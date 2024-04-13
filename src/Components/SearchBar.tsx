@@ -14,6 +14,7 @@ import {
   Text,
   StyleProp,
   TextStyle,
+  ViewStyle,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { SearchIcon } from './Icons';
@@ -23,17 +24,19 @@ export default function SearchBar({
   onChangeText,
   onSearch,
   top,
+  style
 }: {
   value: string;
   onChangeText: (change: string) => void;
   onSearch: () => void;
   top?: number;
+  style?: ViewStyle
 }) {
   // Dimensions
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [mounted, setMounted] = useState<boolean>(false);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false); // Boolean true if text overflowing. This is telling the search icon to show or not.
-  const style: StyleProp<TextStyle> =
+  const webStyle: StyleProp<TextStyle> =
     // @ts-expect-error: web platform has a needs a style not support in native
     Platform.OS === 'web' ? { outlineStyle: 'none' } : undefined; // Style to remove ourline around textbox on web
 
@@ -49,7 +52,7 @@ export default function SearchBar({
   return (
     <View
       key="Search_View_Top"
-      style={{
+      style={[{
         width,
         alignContent: 'center',
         alignItems: 'center',
@@ -57,7 +60,7 @@ export default function SearchBar({
         position: 'absolute',
         top: top || height * 0.1 - 19,
         zIndex: 2,
-      }}
+      },style]}
     >
       <View
         key="Search_View_Mid"
@@ -101,7 +104,7 @@ export default function SearchBar({
                 margin: 10,
                 borderWidth: 0,
               },
-              style,
+              webStyle,
             ]}
             enterKeyHint="search"
             inputMode="search"

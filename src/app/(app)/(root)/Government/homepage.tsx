@@ -11,7 +11,6 @@ import MicrosoftFilePicker from '@components/MicrosoftFilePicker';
 import store, { RootState } from '@redux/store';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
 import { Colors, loadingStateEnum, styles } from '@constants';
-import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 import { powerpointTypes } from '@components/Icons/MimeTypeIcon';
 import { getTextState } from '@utils/ultility/createUUID';
