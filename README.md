@@ -356,6 +356,8 @@ Note: The resource group that you use will be tied to the web app. Some other re
     --login-with-github
 ```
 
+Upon creation of the static web app a workflow file will be created. There should only be one static web app workflow file, delete the old ones. Two the location should be changed to /dist
+
 #### Create Azure Functions App and deploy functions
 ##### Create Function app and storage account
 https://learn.microsoft.com/en-us/cli/azure/storage/account?view=azure-cli-latest#az-storage-account-create
