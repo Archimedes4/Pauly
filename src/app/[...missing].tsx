@@ -4,7 +4,7 @@
   23 November 2023
   [...missing.tsx]
 */
-import { Redirect, useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import React from 'react';
 import { Platform, View, Text } from 'react-native';
 

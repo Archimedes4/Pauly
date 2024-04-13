@@ -18,14 +18,12 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
 import {
-  commissionsSlice,
   getCommissions,
 } from '@redux/reducers/commissionsReducer';
 import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
-import getPoints from '@src/utils/commissions/getPointsApi';
+import getPoints from '@utils/commissions/getPointsApi';
 import ProgressView from '@components/ProgressView';
-import BackButton from '@components/BackButton';
 import { Colors, loadingStateEnum } from '@constants';
 import {
   CurrentIcon,

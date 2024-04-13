@@ -12,7 +12,7 @@ import { authActiveSlice } from '@redux/reducers/authActiveReducer';
 import { ResultState, useMSAL } from '@archimedes4/expo-msal';
 import { Platform } from 'react-native';
 import store from '@redux/store';
-import getAuthWebRedirectUrl from '@src/utils/getAuthWebRedirectUrl';
+import getAuthWebRedirectUrl from '@utils/getAuthWebRedirectUrl';
 
 export const useRefresh = () => {
   const { acquireTokenSilently } = useMSAL({
@@ -79,7 +79,6 @@ export function useInvokeLogin(redirectUrl?: string): (government?: boolean) => 
     }),
   });
   const main = async (government?: boolean) => {
-    console.log("INVOKE", redirectUrl)
     if (store.getState().authActive) {
       return;
     }

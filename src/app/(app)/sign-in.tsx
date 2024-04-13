@@ -23,8 +23,7 @@ import { Colors } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { useInvokeLogin } from '@hooks/authentication';
 import { RootState } from '@redux/store';
-import useIsAuthenticated from '@hooks/useIsAuthenticated';
-import { router, useGlobalSearchParams } from 'expo-router';
+import { useGlobalSearchParams } from 'expo-router';
 
 export function SignInComponent({ government }: { government: boolean }) {
   // visual
@@ -183,7 +182,9 @@ export function SignInComponent({ government }: { government: boolean }) {
         {isShowingGovernmentLogin || government ? (
           <Pressable
             onPress={() => {
-              login(true);
+              if (!authActive) {
+                login(true);
+              }
             }}
             onHoverIn={() => {
               setIsGovernmentHover(true);
