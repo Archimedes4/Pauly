@@ -1,14 +1,14 @@
 import { View, Text, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'expo-router';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { Colors, loadingStateEnum } from '@constants';
-import useSyncCalendar from '@hooks/useSyncCalendar';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 import StyledButton from '@components/StyledButton';
 import ProgressView from '@components/ProgressView';
 import BackButton from '@components/BackButton';
+import usePaulyApi from '@hooks/usePaulyApi';
+import syncCalendar from '@utils/calendar/syncCalendar';
 
 async function getPastCalendarSyncs(): Promise<
   | {
@@ -127,7 +127,7 @@ function CalendarSyncBody({
 
 export default function CalendarSync() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
-  const syncCalendar = useSyncCalendar();
+  const token = usePaulyApi()
   const [loadState, setLoadState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );
@@ -169,17 +169,19 @@ export default function CalendarSync() {
         second
         text="Sync Calendar"
         onPress={() => {
-          syncCalendar();
-          new Promise<void>(resolve => {
-            setTimeout(async () => {
-              const result = await getPastCalendarSyncs();
-              if (result.result === loadingStateEnum.success) {
-                setSyncStates(result.data);
-              }
-              setLoadState(result.result);
-              resolve();
-            }, 15000);
-          });
+          if (typeof token === 'string') {
+            syncCalendar(token);
+            new Promise<void>(resolve => {
+              setTimeout(async () => {
+                const result = await getPastCalendarSyncs();
+                if (result.result === loadingStateEnum.success) {
+                  setSyncStates(result.data);
+                }
+                setLoadState(result.result);
+                resolve();
+              }, 15000);
+            });
+          }
         }}
         style={{ margin: 15 }}
       />

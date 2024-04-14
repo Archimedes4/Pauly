@@ -8,7 +8,7 @@ import React from "react";
 import { Colors, loadingStateEnum } from "@constants";
 import StyledButton from "@components/StyledButton";
 import createUUID, { getTextState } from "@utils/ultility/createUUID";
-import { CloseIcon } from "@components/Icons";
+import { CloseIcon, WarningIcon } from "@components/Icons";
 import callMsGraph from "@src/utils/ultility/microsoftAssests";
 import ProgressView from "@src/components/ProgressView";
 
@@ -274,6 +274,9 @@ export default function CommissionsQRCodeComponent({
         marginBottom: 20,
         backgroundColor: Colors.white
       }}>
+        <View style={{borderRadius: 12, backgroundColor: '#FF6700', margin: 10, marginBottom: 0, padding: 5}}>
+          <Text>{<WarningIcon width={16} height={16}/>}Add QRCodes, this commission can still be claimed if it is claimed. The hidden atribute only affects wheather it is shown in commissions and can be claimed as issued. These QRCodes act independently, the only thing that effects them is if the commission is timed, or is removed.</Text>
+        </View>
         <FlatList
           data={QRCodes}
           renderItem={item => (

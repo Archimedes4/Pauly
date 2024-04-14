@@ -3,12 +3,11 @@ import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { monthDataSlice } from '@redux/reducers/monthDataReducer';
 import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
 import store, { RootState } from '@redux/store';
+import getEventTop from '@src/utils/calendar/getEventTop';
 import {
   findFirstDayEventWeek,
   findFirstDayinMonth,
   getDateWithDay,
-  getEventsOnDay,
-  getHeightEventsAbove,
   getWeekLengthOfEvent,
 } from '@utils/calendar/calendarFunctions';
 import React, { useEffect, useState } from 'react';
@@ -224,10 +223,14 @@ function CalendarRowEvent({
   const [eventHeight, setEventHeight] = useState<number>(0);
   const dispatch = useDispatch();
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
+  const [mounted, setMounted] = useState<boolean>(false)
 
   useEffect(() => {
+    if (!mounted) {
+      return
+    }
     const newEventHeight =
-      getHeightEventsAbove(
+      getEventTop(
         value.item.events,
         event,
         selectedDate,
@@ -244,7 +247,7 @@ function CalendarRowEvent({
     if (eventHeight !== newEventHeight) {
       setEventHeight(newEventHeight);
     }
-  }, [value.item, event, selectedDate]);
+  }, [value.item, event, selectedDate, mounted]);
 
   if (event.paulyEventType !== 'studentSchedule') {
     return (
@@ -292,6 +295,7 @@ function CalendarRowEvent({
               }),
             );
           }
+          setMounted(true)
         }}
       >
         <Text style={{ fontSize: 10, color: Colors.white }}>{event.name}</Text>

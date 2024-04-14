@@ -14,7 +14,7 @@ import callMsGraph from '../ultility/microsoftAssests/noStore';
  * @param store 
  * @returns 
  */
-export default async function getCommission(
+export default async function getCommissionApi(
   commissionId: string,
   store: StoreType,
 ): Promise<

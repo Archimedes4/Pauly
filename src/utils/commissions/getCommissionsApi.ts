@@ -249,7 +249,7 @@ export default async function getCommissionsApi(
               maxNumberOfClaims: data.value[index].fields.maxNumberOfClaims,
               allowMultipleSubmissions:
                 data.value[index].fields.allowMultipleSubmissions,
-              value: data.value[index].fields.value - 1,
+              value: data.value[index].fields.value,
               competitionType: data.value[index].fields.homeValue,
             });
           }

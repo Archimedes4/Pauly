@@ -325,43 +325,6 @@ export function getWeekLengthOfEvent(event: eventType, day: Date) {
   return result;
 }
 
-function getHeightAbove(events: monthEventType[], order: number) {
-  let heightAbove = 0;
-  for (let index = 0; index < events.length; index += 1) {
-    const event = events[index];
-    if (event.order < order && event.height !== undefined) {
-      heightAbove += event.height + 6;
-    }
-  }
-  return heightAbove;
-}
-
-export function getHeightEventsAbove(
-  events: monthEventType[],
-  event: monthEventType,
-  selectedDate: string,
-  days: monthDataType[],
-) {
-  const dateOfFirstDay = getDateWithDay(
-    selectedDate,
-    findFirstDayEventWeek(event, days),
-  );
-  const delta =
-    getWeekLengthOfEvent(event, dateOfFirstDay) + dateOfFirstDay.getDate();
-  let heightestHeight = 0;
-  for (let day = dateOfFirstDay.getDate(); day < delta; day += 1) {
-    const heightEvents = getEventsOnDay(
-      events,
-      getDateWithDay(selectedDate, day),
-    );
-    const newHeight = getHeightAbove(heightEvents, event.order);
-    if (newHeight > heightestHeight) {
-      heightestHeight = newHeight;
-    }
-  }
-  return heightestHeight;
-}
-
 export function getEventsOnDay(
   events: monthEventType[],
   day: Date,

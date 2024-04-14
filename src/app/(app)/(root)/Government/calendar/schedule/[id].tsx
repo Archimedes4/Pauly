@@ -406,7 +406,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           }
           onPress={() => {
             if (
-              createScheduleLoadingState === loadingStateEnum.notStarted &&
+              createScheduleLoadingState === loadingStateEnum.notStarted || createScheduleLoadingState === loadingStateEnum.failed &&
               isValidHexaCode(color)
             ) {
               submitSchedule();
