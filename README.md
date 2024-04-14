@@ -393,7 +393,15 @@ Then navigate to Certificates & Secrets. Click "New Client Secret" the set the d
 https://learn.microsoft.com/en-us/cli/azure/functionapp/deployment/github-actions?view=azure-cli-latest
 
 ```
-  az functionapp deployment github-actions add --resource-group Pauly-SWA --repo "https://github.com/AMCanada16/Pauly-Functions" --name Pauly-Functions --login-with-github --build-path "/api"
+  az functionapp deployment github-actions add --resource-group Pauly-SWA --repo "https://github.com/Archimedes4/Pauly-Functions" --name Pauly-Functions --login-with-github --build-path "/api"
+```
+
+Update function workflow env like:
+```
+env:
+  AZURE_FUNCTIONAPP_NAME: 'Pauly-Functions'   # set this to your function app name on Azure
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # set this to the path to your function app project, defaults to the repository root
+  NODE_VERSION: '18.x'                      # set this to the node version to use (e.g. '8.x', '10.x', '12.x')
 ```
 
 ### Step #2
@@ -406,6 +414,8 @@ Pauly has a config file named PaulyConfig which contains three values these valu
 ### Step #3 Initilize Pauly
 Go to the admin panel and initilize pauly. Code will break if Pauly is already initilized. If hard reseting Pauly delete Pauly group and Pauly extensions. This can all be done in the graph section of Government.
 ![Graph Permissions](./documentation/ReamMeImages/GraphPermissions.png)
+
+Once Pauly has been setup copy the group Id of pauly and set an environment variable ORGWIDEGROUPID as in Set Environment Variables. This is for the functions.
 
 ### Step # 4 Give function permissions
 Give the application the Sties.Selected permission. \

@@ -18,11 +18,10 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
 import {
-  getCommissions,
+  getCommissions, getPoints,
 } from '@redux/reducers/commissionsReducer';
 import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
-import getPoints from '@utils/commissions/getPointsApi';
 import ProgressView from '@components/ProgressView';
 import { Colors, loadingStateEnum } from '@constants';
 import {

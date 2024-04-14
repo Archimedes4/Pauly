@@ -108,7 +108,7 @@ export default function GovernmentHomePage() {
   return (
     <View style={{ width, height, backgroundColor: Colors.lightGray }}>
       <BackButton to='/government'/>
-      <Text style={styles.headerText}>Home Page</Text>
+      <Text style={[styles.headerText, { marginTop: 15 }]}>Home Page</Text>
       <View>
         <TextInput
           value={newText}
@@ -146,21 +146,20 @@ export default function GovernmentHomePage() {
           />
         </View>
       </View>
-      <View style={{ marginBottom: 20, paddingLeft: 5, paddingRight: 5 }}>
-        <View>
-          <Text style={{ margin: 5 }}>
-            Select Powerpoint: {selectedPowerpoint?.name}
-          </Text>
-        </View>
+      <View style={{ marginBottom: 'auto', marginHorizontal: 5, backgroundColor: Colors.white, padding: 10, borderRadius: 15, overflow: 'hidden' }}>
+        <Text style={{ margin: 5, marginLeft: 0 }}>
+          Select Powerpoint: {selectedPowerpoint?.name}
+        </Text>
         <MicrosoftFilePicker
           height={height * 0.6 - 15}
-          width={width}
+          width={width - 30}
           onSelectedFile={selectedFile => {
             setSelectedPowerpoint(selectedFile);
           }}
           onSetIsShowingUpload={undefined}
           onSetIsShowingMicrosoftUpload={undefined}
           allowedTypes={powerpointTypes}
+          selectedFile={selectedPowerpoint?.id}
         />
       </View>
       <StyledButton

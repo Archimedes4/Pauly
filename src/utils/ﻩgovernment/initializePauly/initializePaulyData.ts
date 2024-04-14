@@ -2,11 +2,6 @@ export const paulyListData = {
   displayName: 'PaulyList',
   columns: [
     {
-      name: 'commissionQRCodeListId',
-      text: {},
-      required: true,
-    },
-    {
       name: 'commissionListId',
       text: {},
       required: true,
@@ -266,11 +261,11 @@ export const commissionsQRCodeData = {
   displayName: 'CommissionsQRCode',
   columns: [
     {
-      name: 'qrCodeStart',
+      name: 'QRCodeStart',
       text: {},
     },
     {
-      name: 'qrCodeEnd',
+      name: 'QRCodeEnd',
       text: {},
     },
     {
@@ -279,7 +274,24 @@ export const commissionsQRCodeData = {
       required: true
     },
     {
-      name: 'qrCodeId',
+      name: 'maxNumberOfClaims',// undefined is infinate
+      number: {},
+    },
+    {
+      name: 'timeout',// in ms, the number of ms before can be claimed again.
+      number: {},
+    },
+    {
+      name: 'userTimeout',// in ms, the number of ms before can be claimed again by the same user.
+      number: {},
+    },
+    {
+      name: 'active',
+      boolean: {},
+      required: true
+    },
+    {
+      name: 'QRCodeId',
       text: {},
       required: true,
       indexed: true,

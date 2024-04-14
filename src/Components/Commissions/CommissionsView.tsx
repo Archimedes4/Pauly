@@ -109,7 +109,7 @@ export default function CommissionsView({ id }: { id: string }) {
           borderRadius: 15
         }}
       >
-          <View style={{ height: height * 0.1, overflow: 'hidden' }}>
+          <View style={{ height: height * 0.125, overflow: 'hidden' }}>
             <Pressable
               onPress={() => router.push('/commissions')}
               style={{ marginTop: 10, marginLeft: 10 }}
@@ -137,7 +137,8 @@ export default function CommissionsView({ id }: { id: string }) {
                   position: 'absolute',
                   left: 'auto',
                   right: 'auto',
-                  fontFamily: 'Comfortaa-Regular'
+                  fontFamily: 'Comfortaa-Regular',
+                  marginTop: height * 0.06
                 }}
               >
                 {commissionData.title}
@@ -145,7 +146,8 @@ export default function CommissionsView({ id }: { id: string }) {
             </View>
           </View>
           <ScrollView
-            style={{ height: isOverflowing ? height * 0.6 : height * 0.7 }}
+            style={{ height: isOverflowing ? height * 0.575 : height * 0.675, width: width * 0.9}}
+            showsVerticalScrollIndicator={false}
           >
             <View
               onLayout={e => {
@@ -164,6 +166,8 @@ export default function CommissionsView({ id }: { id: string }) {
                   backgroundColor: Colors.maroon,
                   borderRadius: 15,
                   shadowOffset: { width: 2, height: 3 },
+                  width: width * 0.7,
+                  marginHorizontal: 'auto'
                 }}
               >
                 <View style={{ margin: 10, flexDirection: 'row' }}>
@@ -211,8 +215,8 @@ export default function CommissionsView({ id }: { id: string }) {
               >
                 Leaderboard
               </Link>
-              <View>
-                <Text style={{marginLeft: 2, marginTop: 10}}>Your Submissions</Text>
+              <View style={{width: width * 0.7, marginHorizontal: 'auto'}}>
+                <Text style={{marginTop: 10, marginBottom: 2, fontFamily: "Roboto-Bold"}}>Your Submissions</Text>
                 <CommissionsViewSubmissions commissionId={commissionData.commissionId}/>
               </View>
               {isOverflowing ? null : (

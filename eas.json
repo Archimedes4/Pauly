@@ -11,7 +11,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_ORGWIDEGROUPID":"6b6f8c01-0e8e-4b6a-8431-335612b6c127",
+        "EXPO_PUBLIC_ORGWIDEGROUPID":"a8aa0a0d-faad-4d81-98cc-40baf7f7564f",
         "EXPO_PUBLIC_TENANTID":"551df04d-543a-4d61-955e-e4294c4cf950",
         "EXPO_PUBLIC_CLIENTID":"d585b96d-aa24-4276-9d4f-a3538789a10e",
         "EXPO_PUBLIC_DOMAINNAME":"@8td1tk.onmicrosoft.com",
@@ -25,7 +25,7 @@
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_ORGWIDEGROUPID":"6b6f8c01-0e8e-4b6a-8431-335612b6c127",
+        "EXPO_PUBLIC_ORGWIDEGROUPID":"a8aa0a0d-faad-4d81-98cc-40baf7f7564f",
         "EXPO_PUBLIC_TENANTID":"551df04d-543a-4d61-955e-e4294c4cf950",
         "EXPO_PUBLIC_CLIENTID":"d585b96d-aa24-4276-9d4f-a3538789a10e",
         "EXPO_PUBLIC_DOMAINNAME":"@8td1tk.onmicrosoft.com",
@@ -42,7 +42,7 @@
         "simulator":true
       },
       "env": {
-        "EXPO_PUBLIC_ORGWIDEGROUPID":"6b6f8c01-0e8e-4b6a-8431-335612b6c127",
+        "EXPO_PUBLIC_ORGWIDEGROUPID":"a8aa0a0d-faad-4d81-98cc-40baf7f7564f",
         "EXPO_PUBLIC_TENANTID":"551df04d-543a-4d61-955e-e4294c4cf950",
         "EXPO_PUBLIC_CLIENTID":"d585b96d-aa24-4276-9d4f-a3538789a10e",
         "EXPO_PUBLIC_DOMAINNAME":"@8td1tk.onmicrosoft.com",

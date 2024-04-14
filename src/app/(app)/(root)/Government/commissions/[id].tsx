@@ -362,8 +362,26 @@ export function GovernmentCommissionUpdate({
             </View>
           </View>
         ) : null}
-        {commissionData.value === commissionTypeEnum.QRCode ? (
+        {commissionData.value === commissionTypeEnum.QRCode && !isCreate ? (
           <CommissionsQRCodeComponent commissionId={commissionData.commissionId}/>
+        ) : null}
+        {commissionData.value === commissionTypeEnum.QRCode && isCreate ? (
+          <View
+            style={{
+              marginLeft: 15,
+              marginRight: 15,
+              shadowColor: Colors.black,
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.8,
+              shadowRadius: 10,
+              borderRadius: 15,
+              padding: 10,
+              marginBottom: 20,
+              backgroundColor: Colors.white
+            }}
+          >
+            <Text>Add QRCode data after the creation of the commission.</Text>
+          </View>
         ) : null}
       
         <View

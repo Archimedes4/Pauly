@@ -7,7 +7,7 @@ import { Platform, Switch, View, Pressable, Text, Modal, FlatList } from "react-
 import React from "react";
 import { Colors, loadingStateEnum } from "@constants";
 import StyledButton from "@components/StyledButton";
-import createUUID from "@utils/ultility/createUUID";
+import createUUID, { getTextState } from "@utils/ultility/createUUID";
 import { CloseIcon } from "@components/Icons";
 import callMsGraph from "@src/utils/ultility/microsoftAssests";
 import ProgressView from "@src/components/ProgressView";
@@ -40,7 +40,7 @@ function QRCodeBlockWebPrint({
   return (
     <View style={{ alignItems: 'center' }}>
       <QRCode
-        value={`https://www.paulysphs.ca/commissions/${QRCodeItem.code}`}
+        value={`https://www.paulysphs.ca/commissions/${QRCodeItem.QRCodeId}`}
         // @ts-expect-error
         logo={paulyLogo}
         logoSize={width * 0.3}
@@ -53,15 +53,62 @@ function QRCodeBlockWebPrint({
 
 function QRCodeBlockModal({
   QRCodeItem,
-  setQRCodeItem,
-  setIsEditing,
+  setEditingQRCode,
+  onUpdate,
+  onClose,
+  commissionId
 }: {
   QRCodeItem: commissionQRCode;
-  setQRCodeItem: (e: commissionQRCode) => void;
-  setIsEditing: (item: boolean) => void;
+  onUpdate: (e: commissionQRCode | undefined) => void;
+  setEditingQRCode: (e: commissionQRCode) => void;
+  onClose: () => void;
+  commissionId: string
 }) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [showingWebPrint, setShowingWebPrint] = useState<boolean>();
+  const [updateState, setUpdateState] = useState(loadingStateEnum.notStarted)
+
+  const [deleteState, setDeleteState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+
+  async function updateQRCode() {
+    setUpdateState(loadingStateEnum.loading)
+    let savedQRCode = QRCodeItem
+    let data: any = {
+      "fields": {
+        "commissionId":commissionId,
+        "QRCodeId":savedQRCode.QRCodeId,
+        "active":savedQRCode.active,
+        "maxNumberOfClaims":savedQRCode.maxNumberOfClaims,
+        "timed":savedQRCode.timed
+      }
+    }
+    if (savedQRCode.timed) {
+      data["fields"]["QRCodeStart"] = savedQRCode.startDate
+      data["fields"]["QRCodeEnd"] = savedQRCode.endDate
+    }
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionQRCodeListId}/items${savedQRCode.itemId === "create" ? "":"/" + savedQRCode.itemId}?select=id`, (savedQRCode.itemId === "create") ? "POST":"PATCH", JSON.stringify(data))
+    if (result.ok) {
+      const data = await result.json()
+      savedQRCode.itemId = data["id"]
+      onUpdate(savedQRCode)
+      setUpdateState(loadingStateEnum.success)
+    } else {
+      setUpdateState(loadingStateEnum.failed)
+    }
+  }
+
+  async function deleteQRCode() {
+    // TODO check if there is dependant submissions and handle in some way.
+    setDeleteState(loadingStateEnum.loading)
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionQRCodeListId}/items/${QRCodeItem.itemId}`, "DELETE")
+    if (result.ok) {
+      onUpdate(undefined)
+      setDeleteState(loadingStateEnum.success)
+    } else {
+      setDeleteState(loadingStateEnum.failed)
+    }
+  }
+  
   async function print() {
     if (Platform.OS === 'web') {
       setShowingWebPrint(true);
@@ -77,6 +124,15 @@ function QRCodeBlockModal({
     }
   }
 
+  if (deleteState === loadingStateEnum.success) {
+    return (
+      <View>
+        <Text>The QRCode has successfully been deleted.</Text>
+        <StyledButton text="Close" onPress={() => onClose()}/>
+      </View>
+    )
+  }
+
   if (showingWebPrint) {
     return (
       <QRCodeBlockWebPrint
@@ -89,7 +145,7 @@ function QRCodeBlockModal({
   return (
     <View style={{ padding: height * 0.05 + 20 }}>
       <Pressable
-        onPress={() => setIsEditing(false)}
+        onPress={() => onClose()}
         style={{
           position: 'absolute',
           top: height * 0.05,
@@ -99,7 +155,7 @@ function QRCodeBlockModal({
         <CloseIcon width={20} height={20} />
       </Pressable>
       <QRCode
-        value={`https://www.paulysphs.ca/commissions/${QRCodeItem.code}`}
+        value={`https://www.paulysphs.ca/commissions/${QRCodeItem.QRCodeId}`}
         // @ts-expect-error
         logo={paulyLogo}
         logoSize={30}
@@ -112,14 +168,14 @@ function QRCodeBlockModal({
         ios_backgroundColor={Colors.lightGray}
         onValueChange={e => {
           if (e) {
-            setQRCodeItem({
+            setEditingQRCode({
               ...QRCodeItem,
               timed: true,
               startDate: new Date().toISOString(),
               endDate: new Date().toISOString(),
             });
           } else {
-            setQRCodeItem({
+            setEditingQRCode({
               ...QRCodeItem,
               timed: e,
             });
@@ -134,7 +190,7 @@ function QRCodeBlockModal({
         thumbColor={QRCodeItem.active ? Colors.maroon : Colors.darkGray}
         ios_backgroundColor={Colors.lightGray}
         onValueChange={e => {
-          setQRCodeItem({
+          setEditingQRCode({
             ...QRCodeItem,
             active: e,
           });
@@ -148,33 +204,15 @@ function QRCodeBlockModal({
         second
         style={{ margin: 15 }}
       />
-      <StyledButton text="Update" second style={{ margin: 15 }} />
+      <StyledButton onPress={() => updateQRCode()} text={getTextState(updateState, {
+        notStarted: QRCodeItem.itemId === "create" ? "Create":"Update"
+      })} second style={{ margin: 15 }} />
+      {QRCodeItem.itemId !== "create" ?
+        <StyledButton onPress={() => deleteQRCode()} text={getTextState(deleteState, {
+          notStarted: "Delete"
+        })} second style={{ margin: 15 }} />:null
+      }
     </View>
-  );
-}
-
-function QRCodeBlock({
-  QRCodeItem,
-  setQRCodeItem,
-}: {
-  QRCodeItem: commissionQRCode;
-  setQRCodeItem: (e: commissionQRCode) => void;
-}) {
-  const [isEditing, setIsEditing] = useState<boolean>();
-
-  return (
-    <>
-      <StyledButton onPress={() => setIsEditing(true)}>
-        <Text>{QRCodeItem.code}</Text>
-      </StyledButton>
-      <Modal visible={isEditing}>
-        <QRCodeBlockModal
-          QRCodeItem={QRCodeItem}
-          setIsEditing={setIsEditing}
-          setQRCodeItem={setQRCodeItem}
-        />
-      </Modal>
-    </>
   );
 }
 
@@ -185,18 +223,29 @@ export default function CommissionsQRCodeComponent({
 }) {
   const [QRCodes, setQRCodes] = useState<commissionQRCode[]>([])
   const [QRCodesState, setQRCodesState] = useState<loadingStateEnum>(loadingStateEnum.notStarted)
+
+  const [editingQRCode, setEditingQRCode] = useState<commissionQRCode | undefined>(undefined)
+
   async function getQRCodeData() {
     setQRCodesState(loadingStateEnum.loading)
-    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionQRCodeListId}/items?$filter=fields/commissionId%20eq%20'${commissionId}'`)
+    const result = await callMsGraph(`https://graph.microsoft.com/v1.0/sites/${store.getState().paulyList.siteId}/lists/${store.getState().paulyList.commissionQRCodeListId}/items?$filter=fields/commissionId%20eq%20'${commissionId}'&$expand=fields&$select=id,fields`)
     if (!result.ok) {
       setQRCodesState(loadingStateEnum.failed)
       return
     }
     const data = await result.json()
-    let resultQRCodes = []
+    let resultQRCodes: commissionQRCode[] = []
     for (let index = 0; index < data["value"].length; index += 1) {
-
+      let resultQRCode: commissionQRCode = {
+        timed: false,
+        QRCodeId: data["value"][index]["fields"]["QRCodeId"],
+        maxNumberOfClaims: undefined,
+        active: data["value"][index]["fields"]["active"],
+        itemId: data["value"][index]["id"]
+      }
+      resultQRCodes.push(resultQRCode)
     }
+    setQRCodes(resultQRCodes)
     setQRCodesState(loadingStateEnum.success)
   }
 
@@ -215,35 +264,67 @@ export default function CommissionsQRCodeComponent({
 
   if (QRCodesState === loadingStateEnum.success) {
     return (
-      <View>
+      <View style={{
+        marginHorizontal: 15,
+        shadowColor: Colors.black,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 10,
+        borderRadius: 15,
+        marginBottom: 20,
+        backgroundColor: Colors.white
+      }}>
         <FlatList
           data={QRCodes}
           renderItem={item => (
-            <QRCodeBlock
-              QRCodeItem={item.item}
-              setQRCodeItem={e => {
-                const newQRCodes = [...QRCodes];
-                newQRCodes[item.index] = e;
-                setQRCodes(newQRCodes);
-              }}
-            />
+            <StyledButton text={item.item.QRCodeId} onPress={() => setEditingQRCode(item.item)} style={{marginVertical: 10}}/>
           )}
+          style={{
+            padding: 10
+          }}
         />
         <StyledButton
           text="Add New QR Code"
           onPress={() => {
-            setQRCodes([
-              ...QRCodes,
+            setEditingQRCode(
               {
-                code: createUUID(),
+                QRCodeId: createUUID(),
                 maxNumberOfClaims: 1,
                 timed: false,
-                timeOut: 0,
                 active: false,
+                itemId: 'create'
               },
-            ]);
+            );
           }}
+          second
+          style={{margin: 10, marginTop: 2}}
         />
+        
+        <Modal visible={editingQRCode !== undefined}>
+          {(editingQRCode !== undefined) ?
+            <QRCodeBlockModal
+              QRCodeItem={editingQRCode}
+              onUpdate={(e) => {
+                if (e === undefined) {
+                  let newQRCodes = [...QRCodes].filter((y) => {return y.QRCodeId !== editingQRCode.QRCodeId})
+                  setQRCodes(newQRCodes);
+                  return
+                }
+                let newQRCodes = [...QRCodes];
+                if (e.itemId === "create") {
+                  newQRCodes.push(e)
+                } else {
+                  let index = [...QRCodes].findIndex((y) => {return y.QRCodeId === e.QRCodeId})
+                  newQRCodes[index] = e;
+                }
+                setQRCodes(newQRCodes);
+              }}
+              onClose={() => { setEditingQRCode(undefined); } }
+              commissionId={commissionId}
+              setEditingQRCode={setEditingQRCode}
+            />:null 
+          }
+        </Modal>
       </View>
     );
   }

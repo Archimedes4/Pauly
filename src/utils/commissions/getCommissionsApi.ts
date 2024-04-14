@@ -211,7 +211,7 @@ export default async function getCommissionsApi(
           params.store.getState().paulyList.siteId
         }/lists/${
           params.store.getState().paulyList.commissionListId
-        }/items?expand=fields${filter}`,
+        }/items?expand=fields${filter}&$select=id,fields`,
       params.store,
     );
     if (result.ok) {

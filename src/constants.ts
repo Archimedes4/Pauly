@@ -206,10 +206,10 @@ declare global {
         timed: false;
       };
   type commissionQRCode = commissionQRCodeTimed & {
-    code: string;
-    maxNumberOfClaims: number;
-    timeOut: number; // Stored in seconds
+    QRCodeId: string;
+    maxNumberOfClaims: number | undefined;
     active: boolean;
+    itemId: string
   };
   type commissionTypeDefault = {
     itemId: string;
