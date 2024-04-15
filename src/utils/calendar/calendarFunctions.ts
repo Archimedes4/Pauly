@@ -222,6 +222,7 @@ export function encodeSchoolDayData(data: schoolDayDataCompressedType): string {
   return result;
 }
 
+// This code is used in Pauly functions. If this code is broken or gets changed please updated the code in Pauly-Functions.
 export function decodeSchoolDayData(
   data: string,
 ): schoolDayDataCompressedType | 'failed' {

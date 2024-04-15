@@ -15,16 +15,15 @@ import { RootState } from '@redux/store';
 import { Colors, styles } from '@constants';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
+import BackButton from '@src/components/BackButton';
 
 export default function GovernmentTimetable() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <View style={{ height: height * 0.1 }}>
-        <Link href="/government/calendar/">
-          <Text>Back</Text>
-        </Link>
-        <Text style={styles.headerText}>Timetables</Text>
+      <View>
+        <BackButton to="/government/calendar/"/>
+        <Text style={[styles.headerText, {marginTop: 15}]}>Timetables</Text>
       </View>
       <View
         style={{

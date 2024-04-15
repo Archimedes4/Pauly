@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { FlatList } from 'react-native-gesture-handler';
 import { RootState } from '@redux/store';
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, loadingStateEnum, styles } from '@constants';
 import ProgressView from '@components/ProgressView';
 import { getSchedules } from '@utils/calendar/calendarFunctionsGraph';
 import { Link } from 'expo-router';
 import SecondStyledButton from '@components/StyledButton';
 import StyledButton from '@components/StyledButton';
+import BackButton from '@src/components/BackButton';
 
 function GovernmentScheduleBody() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
@@ -99,22 +100,14 @@ export default function GovernmentSchedule() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <View style={{ height: height * 0.1 }}>
-        <Link href="/government/calendar">
-          <Text>Back</Text>
-        </Link>
-        <Text
-          style={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            fontFamily: 'Comfortaa-Regular',
-            marginBottom: 5,
-            fontSize: 25,
-          }}
-        >
-          Schedules
-        </Text>
-      </View>
+      <BackButton to="/government/calendar"/>
+      <Text
+        style={[styles.headerText, {
+          marginTop: 15
+        }]}
+      >
+        Schedules
+      </Text>
       <GovernmentScheduleBody />
       <SecondStyledButton
         style={{ margin: 15 }}

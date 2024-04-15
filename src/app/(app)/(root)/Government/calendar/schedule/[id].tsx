@@ -27,6 +27,7 @@ import ProgressView from '@components/ProgressView';
 import { Link, useGlobalSearchParams } from 'expo-router';
 import SecondStyledButton from '@components/StyledButton';
 import { getSchedule } from '@utils/calendar/calendarFunctionsGraphNoStore';
+import BackButton from '@src/components/BackButton';
 
 function isValidHexaCode(input: string) {
   // Define the regular expression pattern for a valid hexadecimal color code
@@ -173,12 +174,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           alignItems: 'center',
         }}
       >
-        <Link
-          href="/government/calendar/schedule"
-          style={{ position: 'absolute', left: 0, top: 0 }}
-        >
-          <Text>Back</Text>
-        </Link>
+        <BackButton to="/government/calendar/schedule"/>
         <Text>Schedule Deleted</Text>
       </View>
     );
@@ -193,17 +189,9 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           backgroundColor: Colors.white,
         }}
       >
-        <Link href="/government/calendar/schedule">
-          <Text>Back</Text>
-        </Link>
+        <BackButton to="/government/calendar/schedule"/>
         <Text
-          style={{
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            fontFamily: 'Comfortaa-Regular',
-            marginBottom: 5,
-            fontSize: 25,
-          }}
+          style={[styles.headerText, {marginTop: 15}]}
         >
           {create ? 'Create' : 'Edit'} Schedule
         </Text>
@@ -236,13 +224,13 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           }}
         >
           <View style={{ margin: 10, flexDirection: 'row' }}>
-            <WarningIcon width={14} height={14} />
-            <Text>
-              Keep descriptive name short as it is used in the calendar widget
+            <WarningIcon width={14} height={14} style={{marginVertical: 1.5}}/>
+            <Text style={{marginLeft: 3, fontFamily: "Roboto"}}>
+              Keep descriptive name short as it is used in the calendar widget.
             </Text>
           </View>
         </View>
-        <Text style={{ marginLeft: 15 }}>New Periods</Text>
+        <Text style={{ marginLeft: 15, fontFamily: "Roboto-Bold", fontSize: 25 }}>New Periods</Text>
         <FlatList
           data={newPeriods}
           renderItem={period => (
@@ -254,7 +242,6 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
               }}
             />
           )}
-          style={{ height: height * 0.5 }}
         />
         {newPeriods.length < 20 ? (
           <SecondStyledButton
@@ -427,10 +414,11 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
             style={{
               margin: 10,
               backgroundColor: Colors.danger,
-              borderRadius: 15,
+              borderRadius: 12,
+              marginHorizontal: 15
             }}
           >
-            <Text style={{ margin: 10 }}>
+            <Text style={{ margin: 15, color: Colors.white, fontFamily: "Roboto-Bold" }}>
               {getTextState(deleteState, {
                 notStarted: 'DELETE',
               })}
@@ -453,11 +441,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           justifyContent: 'center',
         }}
       >
-        <Link href="/government/calendar/schedule">
-          <View style={{ position: 'absolute', top: 0, left: 0 }}>
-            <Text>Back</Text>
-          </View>
-        </Link>
+        <BackButton to="/government/calendar/schedule"/>
         <ProgressView width={width * 0.1} height={height * 0.1} />
         <Text>Loading</Text>
       </View>

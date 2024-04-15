@@ -467,3 +467,7 @@ Rotating client secrets after 160 days. Follow the steps in Set Environment Vari
 # Road Map
 -Working Commission Submissions
 -Live dashboard of scores and submissions for a commission. Using change notifications.
+
+Know bugs to fix.
+-In the calendar don't allow the user to create a school year during existing school years.
+-In the calendar don't allow the user to create a school day during existing school days.

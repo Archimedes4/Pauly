@@ -224,9 +224,15 @@ function CalendarRowEvent({
   const dispatch = useDispatch();
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
   const [mounted, setMounted] = useState<boolean>(false)
+  const [heightMounted, setHeightMounted] = useState<boolean>(true)
 
-  useEffect(() => {
+
+  function loadData() {
     if (!mounted) {
+      return
+    }
+    if (!heightMounted) {
+      setHeightMounted(true)
       return
     }
     const newEventHeight =
@@ -236,17 +242,22 @@ function CalendarRowEvent({
         selectedDate,
         value.item.days,
       ) + 21;
-    if (newEventHeight + (event.height ?? 0) + 27 > value.item.height) {
+    if (newEventHeight + (event.height ?? 0) + 3 > value.item.height) {
       dispatch(
         monthDataSlice.actions.setRowHeight({
           rowIndex: value.index,
-          height: newEventHeight + (event.height ?? 0) + 27,
+          height: newEventHeight + (event.height ?? 0) + 6,
         }),
       );
+      setHeightMounted(false)
     }
     if (eventHeight !== newEventHeight) {
       setEventHeight(newEventHeight);
     }
+  }
+
+  useEffect(() => {
+    loadData()
   }, [value.item, event, selectedDate, mounted]);
 
   if (event.paulyEventType !== 'studentSchedule') {
@@ -284,7 +295,7 @@ function CalendarRowEvent({
           opacity: event.height !== 0 ? 1 : 0,
         }}
         onLayout={e => {
-          if (event.height === undefined) {
+          if (event.height === undefined || event.height !== e.nativeEvent.layout.height) {
             store.dispatch(
               monthDataSlice.actions.setEventHeight({
                 rowIndex: value.index,

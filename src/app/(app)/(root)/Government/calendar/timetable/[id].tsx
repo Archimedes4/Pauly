@@ -25,6 +25,7 @@ import { createTimetable } from '@utils/calendar/timetableFunctions';
 import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import getDressCodeData from '@utils/calendar/dressCodeFunctions';
+import BackButton from '@src/components/BackButton';
 
 // TO DO longest amount of school days is 20 make sure this is enforced
 export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
@@ -48,18 +49,15 @@ export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
   >(undefined);
 
   return (
-    <View
+    <ScrollView
       style={{
         height,
         width,
-        overflow: 'scroll',
         backgroundColor: Colors.white,
       }}
     >
-      <Link href="/government/calendar/timetable/">
-        <Text>Back</Text>
-      </Link>
-      <Text style={styles.headerText}>
+      <BackButton to="/government/calendar/timetable/"/>
+      <Text style={[styles.headerText, {marginTop: 10}]}>
         {creating ? 'Create' : 'Edit'} Timetable
       </Text>
       <View style={{ backgroundColor: '#FF6700', borderRadius: 15, margin: 5 }}>
@@ -68,14 +66,14 @@ export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
             Warning: because of the way that timetables work some properties
             cannot be edited.
           </Text>
-          <Text>The dress code you pick cannot change</Text>
+          <Text>The dress code you pick cannot change.</Text>
           <Text>
             Schedules can be added but they have to have the same number of
-            periods
+            periods.
           </Text>
           <Text>
             The number of days in a schedule cannot go up or down only the order
-            and the name can be changed
+            and the name can be changed.
           </Text>
         </View>
       </View>
@@ -86,6 +84,7 @@ export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
             setTimetableName(e);
           }}
           placeholder="Timetable Name"
+          style={styles.textInputStyle}
         />
       </View>
       <ScheduleBlock
@@ -123,8 +122,9 @@ export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
           }
         }}
         second
+        style={{margin: 15}}
       />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -174,7 +174,7 @@ function DressCodeBlock({
   if (dressCodeState === loadingStateEnum.success) {
     return (
       <View style={{ height: height * 0.2 }}>
-        <Text>Dress Codes</Text>
+        <Text style={{fontSize: 25, fontFamily: "Roboto-Bold", marginLeft: 15, marginVertical: 10}}>Dress Codes</Text>
         {dressCodes.map(dressCode => (
           <StyledButton
             text={dressCode.name}
@@ -184,6 +184,7 @@ function DressCodeBlock({
             style={{
               backgroundColor:
                 selectedDressCode?.id === dressCode.id ? 'blue' : Colors.white,
+                marginHorizontal: 15
             }}
           />
         ))}
@@ -193,7 +194,7 @@ function DressCodeBlock({
   // Failed
   return (
     <View>
-      <Text>Dress Codes</Text>
+       <Text style={{fontSize: 25, fontFamily: "Roboto-Bold", marginLeft: 15}}>Dress Codes</Text>
       <View
         style={{
           height: height * 0.2,
@@ -219,7 +220,7 @@ function SchoolDays({
 }) {
   return (
     <View>
-      <Text>School Days</Text>
+      <Text style={{fontSize: 25, fontFamily: "Roboto-Bold", marginLeft: 15}}>School Days</Text>
       <ScrollView style={{ height: height * 0.2 }}>
         {schoolDays.map((item, index) => (
           <SchoolDayItem
@@ -232,6 +233,7 @@ function SchoolDays({
       </ScrollView>
       <StyledButton
         text="Add"
+        second
         onPress={() => {
           setSchoolDays([
             ...schoolDays,
@@ -246,6 +248,7 @@ function SchoolDays({
             },
           ]);
         }}
+        style={{marginHorizontal: 15}}
       />
     </View>
   );
@@ -263,9 +266,22 @@ function SchoolDayItem({
   setSchoolDays: (item: schoolDayType[]) => void;
 }) {
   const [selected, setSelected] = useState<boolean>(false);
+  const { width } = useSelector((state: RootState) => state.dimensions);
+
   return (
     <Pressable
-      style={{ flexDirection: 'row' }}
+      style={{ 
+        flexDirection: 'row',
+        width: width - 30,
+        backgroundColor: selected ? Colors.lightGray:Colors.white,
+        padding: 10,
+        marginHorizontal: 15,
+        overflow: 'hidden',
+        borderRadius: 5,
+        borderColor: Colors.black,
+        borderWidth: 1,
+        marginBottom: 5
+      }}
       onHoverIn={() => {
         setSelected(true);
       }}
@@ -273,90 +289,89 @@ function SchoolDayItem({
         setSelected(false);
       }}
     >
-      <View style={{ margin: 10, flexDirection: 'row' }}>
-        <View style={{ marginRight: 'auto' }}>
-          <View style={{ flexDirection: 'row' }}>
-            {item.name === '' ? (
-              <WarningIcon width={14} height={14} outlineColor="red" />
-            ) : null}
-            <Text>Name: </Text>
-            {selected ? (
-              <TextInput
-                value={item.name}
-                onChangeText={e => {
-                  const newSchoolDays = schoolDays;
-                  newSchoolDays[index].name = e;
-                  setSchoolDays([...newSchoolDays]);
-                }}
-              />
-            ) : (
-              <Text>{item.name}</Text>
-            )}
-          </View>
-          <View style={{ flexDirection: 'row' }}>
-            {item.shorthand === '' ? (
-              <WarningIcon width={14} height={14} outlineColor="red" />
-            ) : null}
-            <Text>Shorthand: </Text>
-            {selected ? (
-              <TextInput
-                maxLength={1}
-                value={item.shorthand}
-                onChangeText={e => {
-                  const newSchoolDays = schoolDays;
-                  newSchoolDays[index].shorthand = e;
-                  setSchoolDays([...newSchoolDays]);
-                }}
-              />
-            ) : (
-              <Text>{item.shorthand}</Text>
-            )}
-          </View>
+      <View style={{ marginRight: 'auto' }}>
+        <View style={{ flexDirection: 'row' }}>
+          {item.name === '' ? (
+            <WarningIcon width={14} height={14} outlineColor="red" />
+          ) : null}
+          <Text>Name: </Text>
+          {selected ? (
+            <TextInput
+              value={item.name}
+              onChangeText={e => {
+                const newSchoolDays = schoolDays;
+                newSchoolDays[index].name = e;
+                setSchoolDays([...newSchoolDays]);
+              }}
+            />
+          ) : (
+            <Text>{item.name}</Text>
+          )}
         </View>
-        <View>
-          {item.order !== 0 ? (
-            <Pressable
-              onPress={() => {
+        <View style={{ flexDirection: 'row' }}>
+          {item.shorthand === '' ? (
+            <WarningIcon width={14} height={14} outlineColor="red" />
+          ) : null}
+          <Text>Shorthand: </Text>
+          {selected ? (
+            <TextInput
+              maxLength={1}
+              value={item.shorthand}
+              onChangeText={e => {
                 const newSchoolDays = schoolDays;
-                newSchoolDays[index].order = newSchoolDays[index].order - 1;
-                newSchoolDays[index - 1].order =
-                  newSchoolDays[index - 1].order + 1;
-                const saveCurrent = newSchoolDays[index];
-                newSchoolDays[index] = newSchoolDays[index - 1];
-                newSchoolDays[index - 1] = saveCurrent;
+                newSchoolDays[index].shorthand = e;
                 setSchoolDays([...newSchoolDays]);
               }}
-            >
-              <UpIcon width={10} height={10} />
-            </Pressable>
-          ) : null}
-          {item.order + 1 < schoolDays.length ? (
-            <Pressable
-              onPress={() => {
-                const newSchoolDays = schoolDays;
-                newSchoolDays[index].order = newSchoolDays[index].order + 1;
-                newSchoolDays[index + 1].order =
-                  newSchoolDays[index + 1].order - 1;
-                const saveCurrent = newSchoolDays[index];
-                newSchoolDays[index] = newSchoolDays[index + 1];
-                newSchoolDays[index + 1] = saveCurrent;
-                setSchoolDays([...newSchoolDays]);
-              }}
-            >
-              <DownIcon width={10} height={10} />
-            </Pressable>
-          ) : null}
+            />
+          ) : (
+            <Text>{item.shorthand}</Text>
+          )}
+        </View>
+      </View>
+      <View style={{marginRight: 10}}>
+        {item.order !== 0 ? (
           <Pressable
             onPress={() => {
               const newSchoolDays = schoolDays;
-              newSchoolDays.splice(index, 1);
+              newSchoolDays[index].order = newSchoolDays[index].order - 1;
+              newSchoolDays[index - 1].order =
+                newSchoolDays[index - 1].order + 1;
+              const saveCurrent = newSchoolDays[index];
+              newSchoolDays[index] = newSchoolDays[index - 1];
+              newSchoolDays[index - 1] = saveCurrent;
               setSchoolDays([...newSchoolDays]);
             }}
           >
-            <Text>X</Text>
+            <UpIcon width={10} height={10} />
           </Pressable>
-        </View>
+        ) : null}
+        {item.order + 1 < schoolDays.length ? (
+          <Pressable
+            onPress={() => {
+              const newSchoolDays = schoolDays;
+              newSchoolDays[index].order = newSchoolDays[index].order + 1;
+              newSchoolDays[index + 1].order =
+                newSchoolDays[index + 1].order - 1;
+              const saveCurrent = newSchoolDays[index];
+              newSchoolDays[index] = newSchoolDays[index + 1];
+              newSchoolDays[index + 1] = saveCurrent;
+              setSchoolDays([...newSchoolDays]);
+            }}
+          >
+            <DownIcon width={10} height={10} />
+          </Pressable>
+        ) : null}
+        <Pressable
+          onPress={() => {
+            const newSchoolDays = schoolDays;
+            newSchoolDays.splice(index, 1);
+            setSchoolDays([...newSchoolDays]);
+          }}
+        >
+          <Text>X</Text>
+        </Pressable>
       </View>
+  
     </Pressable>
   );
 }
@@ -399,8 +414,8 @@ function ScheduleBlock({
   if (scheduleState === loadingStateEnum.success) {
     return (
       <View>
-        <Text>Schedules</Text>
-        <Text>Selected Schedules</Text>
+        <Text style={{fontFamily: "Roboto-Bold", fontSize: 25, marginLeft: 15, marginTop: 5}}>Schedules</Text>
+        <Text style={{fontFamily: "Roboto", fontSize: 20, marginLeft: 15, marginTop: 5}}>Selected Schedules</Text>
         <FlatList
           data={selectedSchedules}
           renderItem={item => (
@@ -431,9 +446,7 @@ function ScheduleBlock({
           )}
           style={{ height: height * 0.4 }}
         />
-        <View style={{ alignItems: 'center' }}>
-          <Text>Other Schedules</Text>
-        </View>
+        <Text style={{fontFamily: "Roboto", fontSize: 20, marginLeft: 15, marginTop: 5}}>Selected Schedules</Text>
         <FlatList
           data={loadedSchedules}
           renderItem={item => {
@@ -470,4 +483,6 @@ function ScheduleBlock({
   return <View>Failed</View>;
 }
 
-export default <GovernmentTimetableEdit creating={false} />;
+export default function GovernmentEditTimetableMain() {
+  return <GovernmentTimetableEdit creating={false} />
+};

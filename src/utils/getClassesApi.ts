@@ -36,8 +36,6 @@ export default async function getClassesApi(store: StoreType): Promise<
     }
   }
   // Run Queries
-  const batchHeaders = new Headers();
-  batchHeaders.append('Accept', 'application/json');
   const classes: classType[] = [];
   for (let index = 0; index < batchDataRequests.length; index += 1) {
     const batchData = {
@@ -48,6 +46,10 @@ export default async function getClassesApi(store: StoreType): Promise<
       store,
       'POST',
       JSON.stringify(batchData),
+      [{
+        key: 'Accept',
+        value: 'application/json'
+      }]
     );
     if (batchResult.ok) {
       const batchResultData = await batchResult.json();
