@@ -126,6 +126,7 @@ async function getClassEvents(
   return { result: loadingStateEnum.success, data: outputEvents };
 }
 
+// This function is heavily mocked in Pauly-Functions getWidgetInfo. If core changes to this is made please check that Pauly-Functions still does work.
 export async function getClassEventsFromDay(
   date?: Date,
 ): Promise<

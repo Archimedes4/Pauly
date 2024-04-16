@@ -114,6 +114,8 @@ export function isTimeOnDay(lhs: string, rhs: string): boolean {
   return true;
 }
 
+
+// Pauly-Functions dependant on this code. If breaks or wrong please update Pauly-Functions.
 export function isTimeDuringInterval(
   start: number,
   end: number,
@@ -268,13 +270,14 @@ export function encodeSchoolYearData(timetableId: string) {
   return timetableId + createUUID();
 }
 
+// Code in Pauly-Functions is dependant on this code. If the changes or breaks change Pauly-Functions getWidgetInfo.
 export function decodeSchoolYearData(input: string) {
   if (input.length !== 72) {
     return 'failed';
   }
   return {
     timetableId: input.substring(0, 36),
-    paulyId: input.substring(36, 72),
+    paulyId: input.substring(36, 72), // The school year pauly event Id
   };
 }
 
