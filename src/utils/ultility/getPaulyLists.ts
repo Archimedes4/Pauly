@@ -1,4 +1,3 @@
-import { commissionsQRCodeData } from './../ﻩgovernment/initializePauly/initializePaulyData';
 import { Platform } from 'react-native';
 import store from '@redux/store';
 import { paulyListSlice } from '@redux/reducers/paulyListReducer';
