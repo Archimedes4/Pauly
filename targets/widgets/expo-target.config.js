@@ -5,6 +5,6 @@ module.exports = {
     "com.apple.security.keychain-access-groups": ["$(AppIdentifierPrefix)com.microsoft.adalcache"],
   },
   widgetBackgroundColor: "#DB739C",
-  accentColor: "#F09458",
-  teamId: "SYV2CK2N9N"
+  teamId: "SYV2CK2N9N",
+  appleTeamId: "SYV2CK2N9N"
 };
