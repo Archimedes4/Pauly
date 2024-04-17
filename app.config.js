@@ -87,12 +87,6 @@ module.exports = {
         {
           "androidPackageSignatureHash": ""
         }
-      ],
-      [
-        '@bacons/apple-targets',
-        {
-          "teamId": "SYV2CK2N9N"
-        }
       ]
     ],
     experiments: {
