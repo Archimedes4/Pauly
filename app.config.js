@@ -17,9 +17,12 @@ module.exports = {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'Archimedes4.Pauly',
+      bundleIdentifier: 'com.Archimedes4.Pauly',
       buildNumber: '84',
-      associatedDomains: ["applinks:paulysphs.ca"]
+      associatedDomains: ["applinks:paulysphs.ca"],
+      infoPlist: {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     android: {
       adaptiveIcon: {
@@ -49,7 +52,25 @@ module.exports = {
     extra: {
       eas: {
         projectId: '41b62420-4ae0-49b3-be2c-3eeb912dc208',
-      },
+        build: {
+          "experimental": {
+            "ios": {
+              "appExtensions": [
+                {
+                  "targetName": "Pauly_Widget",
+                  "bundleIdentifier": "com.Archimedes4.Pauly.Pauly-Widget",
+                  "entitlements": {
+                    "com.apple.keychain-access-groups":[
+                      "$(AppIdentifierPrefix)Archimedes4.Pauly",
+                      "$(AppIdentifierPrefix)com.microsoft.adalcache"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
     },
     plugins: [
       [
@@ -65,6 +86,12 @@ module.exports = {
         '@archimedes4/expo-msal',
         {
           "androidPackageSignatureHash": ""
+        }
+      ],
+      [
+        '@bacons/apple-targets',
+        {
+          "teamId": "SYV2CK2N9N"
         }
       ]
     ],
