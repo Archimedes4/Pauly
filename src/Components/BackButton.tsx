@@ -27,7 +27,6 @@ export default function BackButton({
     (state: RootState) => state.safeAreaColors.isTopTransparent,
   );
   const insets = useSafeAreaInsets();
-  const [height, setHeight] = useState<number>(0);
   return (
     <Link
       href={to}

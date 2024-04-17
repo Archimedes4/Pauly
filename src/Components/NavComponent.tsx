@@ -19,7 +19,7 @@ import {
   MedalIcon,
   PersonIcon,
 } from './Icons';
-import { Colors } from '../constants';
+import { Colors } from '@constants';
 
 function NavBarBlock({
   des,

@@ -2,7 +2,14 @@ import { View } from 'react-native';
 import React from 'react';
 import MapView from 'react-native-maps';
 
-export default function Map() {
+export default function Map({
+  proximity,
+  onSetSelectedPositionIn,
+  width,
+  height,
+  coordinateLat,
+  coordinateLng,
+}: MapProps) {
   return (
     <View>
       <MapView

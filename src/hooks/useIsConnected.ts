@@ -8,6 +8,10 @@
 import { useState, useEffect } from 'react';
 import * as Network from 'expo-network';
 
+/**
+ * A hook that checks every 5 seconds if the user has a connection.
+ * @returns Boolean of connection state
+ */
 export default function useIsConnected() {
   const [isConnected, setIsConnected] = useState<boolean>(true);
   async function checkIfConnected() {

@@ -2,6 +2,17 @@ import { authenticationCallSlice } from '@redux/reducers/authenticationCallReduc
 import { StoreType } from '@redux/store';
 import { Platform } from 'react-native';
 
+/**
+ * A function fetch a url with auth for ms graph. This needs the store, this is needed in some thunks.
+ * @param url The url of the endpoint being called
+ * @param store The redux store which is used to get the access token
+ * @param method The method of the request
+ * @param body The body as a String or Bold of the request
+ * @param headersIn The headers in the form of key with value
+ * @param secondAuth This is for recursion and is not to be used
+ * @param abort Abort controller to be passed to abort the function
+ * @returns 
+ */
 export default async function callMsGraph(
   url: string,
   store: StoreType,

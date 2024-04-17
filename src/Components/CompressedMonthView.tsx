@@ -5,13 +5,12 @@
   CompressedMonthView.tsx
   This is the componet used on the home page of the app
 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   findFirstDayinMonth,
   getDay,
-  getDaysInMonth,
 } from '@utils/calendar/calendarFunctions';
 import { getSchoolDays } from '@utils/calendar/calendarFunctionsGraph';
 import { RootState } from '@redux/store';

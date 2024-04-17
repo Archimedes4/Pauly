@@ -4,9 +4,9 @@
   23 November 2023
   [...missing.tsx]
 */
-import { useFocusEffect, useRouter } from 'expo-router';
+import { Redirect, useFocusEffect, useRouter } from 'expo-router';
 import React from 'react';
-import { Platform, View, Text } from 'react-native';
+import { Platform } from 'react-native';
 
 // takes the user back to the main page
 export default function Missing() {
@@ -18,10 +18,5 @@ export default function Missing() {
       } catch (error) {}
     });
   }
-  //return <Redirect href={"/"}/>;
-  return (
-    <View>
-      <Text>This is a test for web</Text>
-    </View>
-  )
+  return <Redirect href={"/"}/>;
 }

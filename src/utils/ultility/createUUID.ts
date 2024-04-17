@@ -13,7 +13,12 @@ export default function createUUID() {
   return uuid;
 }
 
-// Get text from a loadingStateEnum
+/**
+ *  Get text from a loadingStateEnum
+ * @param state The state to check
+ * @param labels The different labels to return. If none provided generic label will be returned
+ * @returns 
+ */
 export function getTextState(
   state: loadingStateEnum,
   labels?: {
@@ -36,9 +41,6 @@ export function getTextState(
   }
   if (state === loadingStateEnum.loading) {
     return labels?.loading ? labels.loading : 'Loading';
-  }
-  if (state === loadingStateEnum.offline) {
-    return labels?.offline ? labels.offline : 'Offline';
   }
   if (state === loadingStateEnum.success) {
     return labels?.success ? labels.success : 'Success';

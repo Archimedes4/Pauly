@@ -7,6 +7,10 @@
 */
 import { useEffect, useState } from 'react';
 
+/**
+ * A function that determines weather 10 seconds has past and the logout button should be shown.
+ * @returns Boolean
+ */
 export default function useIsShowingLogout() {
   const [isShowingLogout, setIsShowingLogout] = useState<boolean>(false);
   useEffect(() => {

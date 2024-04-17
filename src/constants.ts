@@ -27,7 +27,6 @@ export enum loadingStateEnum {
   failed,
   notStarted,
   cannotStart,
-  offline,
   notFound,
 }
 
