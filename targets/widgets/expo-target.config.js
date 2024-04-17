@@ -6,4 +6,5 @@ module.exports = {
   },
   widgetBackgroundColor: "#DB739C",
   accentColor: "#F09458",
+  teamId: "SYV2CK2N9N"
 };
