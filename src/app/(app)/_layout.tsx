@@ -4,12 +4,12 @@
   17 December 2023
   Authenticated layout
 */
-import { View, Text, Pressable } from 'react-native';
+import { View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import useIsConnected from '@hooks/useIsConnected';
 import { Colors } from '@constants';
 import { OfflineIcon } from '@components/Icons';
-import { Redirect, Slot, useFocusEffect, usePathname, useRouter } from 'expo-router';
+import { Slot, useFocusEffect, usePathname, useRouter } from 'expo-router';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -52,7 +52,6 @@ function OfflineView() {
 function PushToAuth({deepLink}:{deepLink: string}) {
   const router = useRouter();
   useFocusEffect(() => {
-    console.log("AUTH PUSHING")
     try {
       if (deepLink !== "/") {
         router.push({
@@ -74,7 +73,6 @@ function PushToAuth({deepLink}:{deepLink: string}) {
 function PushToMain({deepLink}:{deepLink: string}) {
   const router = useRouter();
   useFocusEffect(() => {
-    console.log("PSUHING", store.getState().authenticationToken)
     try {
       if (deepLink !== "/") {
         router.push({
@@ -112,7 +110,6 @@ export default function Layout() {
 
   if (!isAuthenticated.authenticated && (pathname === "/sign-in" || pathname === "/admin-sign-in")) {
     // User is *not* auth, on sign in
-    console.log("HERE", pathname)
     return <Slot />;
   }
 
@@ -127,7 +124,6 @@ export default function Layout() {
 
 
   if (isConnected && !isLoading && !isAuthenticated.loading) {
-    console.log("HERE", pathname)
     return <Slot />;
   }
 

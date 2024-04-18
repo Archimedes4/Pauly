@@ -25,7 +25,6 @@ export default function useIsAuthenticated() {
   const isOveride = useSelector((state: RootState) => state.isOverride);
   const isLoading = useSelector((state: RootState) => state.authLoading);
   async function checkAuthentication() {
-    console.log("AUTH EHRER", authenticationToken)
     const wantGovernment = await getWantGovernment();
     if (wantGovernment) {
       if ((siteId !== '' || isOveride) && authenticationToken !== '') {

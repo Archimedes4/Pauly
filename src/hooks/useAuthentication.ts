@@ -37,14 +37,12 @@ export default function useAuthentication() {
   const [mounted, setMounted] = useState(false);
   // main function
   async function loadContent() {
-    await silentLogin();
-    console.log(store.getState().authenticationToken)
+    await silentLogin(true);
     if (store.getState().authenticationToken !== '') {
       const webResult = webSession();
       if (!webResult) {
         await getPaulyLists();
       }
-      console.log("MArk On")
       await getUserProfile();
       if (await getWantGovernment()) {
         await validateGovernmentMode();

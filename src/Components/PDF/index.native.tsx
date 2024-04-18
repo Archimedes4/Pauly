@@ -65,6 +65,7 @@ export default function PDFView({ width }: { width: number }) {
   const compound = Gesture.Simultaneous(fling, taps);
 
   useEffect(() => {
+    console.log(images.length)
     if (pageNumber < images.length) {
       Image.getSize(
         images[pageNumber],
@@ -75,6 +76,7 @@ export default function PDFView({ width }: { width: number }) {
       );
     }
   }, [pageNumber, images, width]);
+
   if (pageNumber < images.length) {
     return (
       <GestureDetector gesture={compound}>
@@ -138,7 +140,7 @@ function WebViewInject() {
               try {
                 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
               } catch (e) {
-                window.ReactNativeWebView.postMessage('farc')
+                window.ReactNativeWebView.postMessage('failed')
               } 
               
               let loadingTask = pdfjsLib.getDocument(docInitParams);
@@ -177,7 +179,7 @@ function WebViewInject() {
           
               }, function(reason) {
                 // PDF loading error
-                window.ReactNativeWebView.postMessage('failr')
+                window.ReactNativeWebView.postMessage('failed')
               });
             }
             loadData()
@@ -188,8 +190,11 @@ function WebViewInject() {
       }}
       style={{ width: 0, height: 0 }}
       onMessage={e => {
+        console.log("Length", e.nativeEvent.data.length)
         if (e.nativeEvent.data.length >= 7) {
           dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data));
+        } else {
+          console.log(e.nativeEvent.data)
         }
       }}
     />

@@ -31,6 +31,8 @@ export default function CommissionsView({ id }: { id: string }) {
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [evaluatedOverflow, setEvaluatedOverflow] = useState<boolean>(false);
 
+  const [topCompHeight, setTopCompHeight] = useState<number>(0)
+
   async function getPost(teamId: string, channelId: string, messageId: string) {
     setMessageState(loadingStateEnum.loading);
     const result = await callMsGraph(
@@ -109,142 +111,132 @@ export default function CommissionsView({ id }: { id: string }) {
           borderRadius: 15
         }}
       >
-          <View style={{ height: height * 0.125, overflow: 'hidden' }}>
-            <Pressable
-              onPress={() => router.push('/commissions')}
-              style={{ marginTop: 10, marginLeft: 10 }}
-            >
-              <CloseIcon
-                width={width < height ? width * 0.05 : height * 0.05}
-                height={width < height ? width * 0.05 : height * 0.05}
-              />
-            </Pressable>
-            <View
-              style={{
-                width: width * 0.9,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: calculateFontSize(
-                    width * 0.8,
-                    height * 0.047,
-                    commissionData.title,
-                  ),
-                  position: 'absolute',
-                  left: 'auto',
-                  right: 'auto',
-                  fontFamily: 'Comfortaa-Regular',
-                  marginTop: height * 0.06
-                }}
-              >
-                {commissionData.title}
-              </Text>
-            </View>
-          </View>
-          <ScrollView
-            style={{ height: isOverflowing ? height * 0.575 : height * 0.675, width: width * 0.9}}
-            showsVerticalScrollIndicator={false}
+        <View onLayout={(e) => {
+          setTopCompHeight(e.nativeEvent.layout.height)
+        }}>
+          <Pressable
+            onPress={() => router.push('/commissions')}
+            style={{ marginTop: 10, marginLeft: 10 }}
+          >
+            <CloseIcon
+              width={width < height ? width * 0.05 : height * 0.05}
+              height={width < height ? width * 0.05 : height * 0.05}
+            />
+          </Pressable>
+          <Text
+            style={{
+              fontSize: calculateFontSize(
+                width * 0.8,
+                height * 0.047,
+                commissionData.title,
+              ),
+              fontFamily: 'Comfortaa-Regular',
+              marginTop: height * 0.01
+            }}
+          >
+            {commissionData.title}
+          </Text>
+        </View>
+        <ScrollView
+          style={{ height: isOverflowing ? (height * 0.8 - topCompHeight) : (height * 0.9 - topCompHeight), width: width * 0.9}}
+          showsVerticalScrollIndicator={false}
+        >
+          <View
+            onLayout={e => {
+              if (e.nativeEvent.layout.height >= height * 0.6) {
+                setIsOverflowing(true);
+                setEvaluatedOverflow(true);
+              } else if (!evaluatedOverflow) {
+                setIsOverflowing(false);
+              }
+            }}
           >
             <View
-              onLayout={e => {
-                if (e.nativeEvent.layout.height >= height * 0.6) {
-                  setIsOverflowing(true);
-                  setEvaluatedOverflow(true);
-                } else if (!evaluatedOverflow) {
-                  setIsOverflowing(false);
-                }
-              }}
-            >
-              <View
-                style={{
-                  flexDirection: 'row',
-                  margin: 10,
-                  backgroundColor: Colors.maroon,
-                  borderRadius: 15,
-                  shadowOffset: { width: 2, height: 3 },
-                  width: width * 0.7,
-                  marginHorizontal: 'auto'
-                }}
-              >
-                <View style={{ margin: 10, flexDirection: 'row' }}>
-                  <Image
-                    source={require('../../../assets/images/PaulyLogo.png')}
-                    resizeMode="contain"
-                    style={{ width: 50, height: 50 }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: 45,
-                      color: Colors.white,
-                      fontFamily: 'BukhariScript',
-                      width: 100,
-                      paddingLeft: 10,
-                    }}
-                  >
-                    {commissionData.points}
-                  </Text>
-                </View>
-              </View>
-              <View style={{ marginLeft: width * 0.05 }}>
-                <WebViewCross html={messageData} width={width * 0.7} />
-              </View>
-              {commissionData.value === commissionTypeEnum.Image ||
-              commissionData.value === commissionTypeEnum.ImageLocation ? (
-                <CommissionImageComponent imageUri={imageUri} setImageUri={setImageUri} />
-              ) : null}
-              <Link
-                href={`/commissions/${id}/leaderboard`}
-                style={{
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                  backgroundColor: '#ededed',
-                  width: width * 0.7,
-                  borderRadius: 15,
-                  alignItems: 'center',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  padding: 10,
-                  fontFamily: 'Roboto-Bold',
-                  overflow: 'hidden',
-                  marginTop: 10
-                }}
-              >
-                Leaderboard
-              </Link>
-              <View style={{width: width * 0.7, marginHorizontal: 'auto'}}>
-                <Text style={{marginTop: 10, marginBottom: 2, fontFamily: "Roboto-Bold"}}>Your Submissions</Text>
-                <CommissionsViewSubmissions commissionId={commissionData.commissionId}/>
-              </View>
-              {isOverflowing ? null : (
-                <View style={{ marginTop: 10, marginBottom: 10 }}>
-                  <CommissionClaim
-                    commission={commissionData}
-                    imageData={imageUri !== '' ? imageUri : undefined}
-                  />
-                </View>
-              )}
-            </View>
-          </ScrollView>
-          {isOverflowing ? (
-            <View
               style={{
-                height: height * 0.1,
-                alignContent: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
+                flexDirection: 'row',
+                margin: 10,
+                backgroundColor: Colors.maroon,
+                borderRadius: 15,
+                shadowOffset: { width: 2, height: 3 },
+                width: width * 0.7,
+                marginHorizontal: width * 0.1
               }}
             >
-              <CommissionClaim
-                commission={commissionData}
-                imageData={imageUri !== '' ? imageUri : undefined}
-              />
+              <View style={{ margin: 10, flexDirection: 'row' }}>
+                <Image
+                  source={require('../../../assets/images/PaulyLogo.png')}
+                  resizeMode="contain"
+                  style={{ width: 50, height: 50 }}
+                />
+                <Text
+                  style={{
+                    fontSize: 45,
+                    color: Colors.white,
+                    fontFamily: 'BukhariScript',
+                    width: 100,
+                    paddingLeft: 10,
+                  }}
+                >
+                  {commissionData.points}
+                </Text>
+              </View>
             </View>
-          ) : null}
-        </View>
+            <View style={{ marginLeft: width * 0.05 }}>
+              <WebViewCross html={messageData} width={width * 0.7} />
+            </View>
+            {commissionData.value === commissionTypeEnum.Image ||
+            commissionData.value === commissionTypeEnum.ImageLocation ? (
+              <CommissionImageComponent imageUri={imageUri} setImageUri={setImageUri} />
+            ) : null}
+            <Link
+              href={`/commissions/${id}/leaderboard`}
+              style={{
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                backgroundColor: '#ededed',
+                width: width * 0.7,
+                borderRadius: 15,
+                alignItems: 'center',
+                alignContent: 'center',
+                justifyContent: 'center',
+                padding: 10,
+                fontFamily: 'Roboto-Bold',
+                overflow: 'hidden',
+                marginTop: 10
+              }}
+            >
+              Leaderboard
+            </Link>
+            <View style={{width: width * 0.7, marginHorizontal: width * 0.1}}>
+              <Text style={{marginTop: 10, marginBottom: 2, fontFamily: "Roboto-Bold"}}>Your Submissions</Text>
+              <CommissionsViewSubmissions commissionId={commissionData.commissionId}/>
+            </View>
+            {isOverflowing ? null : (
+              <View style={{ marginTop: 10, marginBottom: 10 }}>
+                <CommissionClaim
+                  commission={commissionData}
+                  imageData={imageUri !== '' ? imageUri : undefined}
+                />
+              </View>
+            )}
+          </View>
+        </ScrollView>
+        {isOverflowing ? (
+          <View
+            style={{
+              height: height * 0.1,
+              alignContent: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <CommissionClaim
+              commission={commissionData}
+              imageData={imageUri !== '' ? imageUri : undefined}
+            />
+          </View>
+        ) : null}
+      </View>
     )
   }
 

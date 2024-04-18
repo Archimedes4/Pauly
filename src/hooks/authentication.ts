@@ -49,7 +49,7 @@ export const useRefresh = () => {
  * A hook for a silent login (non- user initiated)
  * @returns A function that make a silent login request
  */
-export function useSilentLogin(): () => Promise<void> {
+export function useSilentLogin(): (inital: boolean) => Promise<void> {
   const { acquireTokenSilently } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
@@ -60,15 +60,14 @@ export function useSilentLogin(): () => Promise<void> {
       default: '',
     }),
   });
-  const main = async () => {
+  const main = async (inital: boolean) => {
     const result = await acquireTokenSilently();
-    console.log(result)
     if (result !== undefined && result.result !== ResultState.error) {
       reloadTimelines("Archimedes4.Pauly.Pauly-Widget")
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(result.data),
       );
-    } else {
+    } else if (!inital) {
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(''),
       );
