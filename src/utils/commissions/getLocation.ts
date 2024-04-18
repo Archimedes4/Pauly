@@ -8,6 +8,11 @@ import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import { commissionTypeEnum, locationStateEnum } from '@constants';
 
+/**
+ * Get the location and checks how close the user is to the commission.
+ * @param commission The commission Id
+ * @returns 
+ */
 export default async function getUsersLocation(
   commission: commissionType,
 ): Promise<{ result: locationStateEnum; data?: locationCoords }> {

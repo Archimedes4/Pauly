@@ -8,6 +8,11 @@ import store from '@redux/store';
 import { loadingStateEnum, submissionTypeEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests';
 
+/**
+ * Converts a submissionTypeEnum to a filter to be used in an ms graph query.
+ * @param submissionType The submission to convert.
+ * @returns The filter.
+ */
 function convertSubmissionTypeToFilter(
   submissionType: submissionTypeEnum,
 ): string {
@@ -23,6 +28,11 @@ function convertSubmissionTypeToFilter(
   return '';
 }
 
+/**
+ * Given paramerters get submissios.
+ * @param input Data on how to get the submissions
+ * @returns Result, if successful returns submissions.
+ */
 export default async function getSubmissions(
   input: getSubmissionsInput
 ): Promise<{

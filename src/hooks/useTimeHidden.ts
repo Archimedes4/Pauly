@@ -2,6 +2,11 @@ import store from '@src/redux/store';
 import { isDateToday } from '@src/utils/calendar/calendarFunctions';
 import { useEffect, useState } from 'react';
 
+/**
+ * Gets the time that is within 15 of the start of the hour. 15-45 -> "" 45-25 -> "{Time}""
+ * @param currentTime Time to check
+ * @returns Returns the time that should be hidden or ""
+ */
 export function calculateHiddenTime(currentTime: Date): string {
   const hourInt = currentTime.getHours();
   const minuiteInt = currentTime.getMinutes();
@@ -24,10 +29,10 @@ export function calculateHiddenTime(currentTime: Date): string {
   return '';
 }
 
-// calculates if the time is showing withing 15 min of the shown time (the red line). This is used in day and weekDay.
-// Params:
-// value: The string to calculate if showing
-// Time the current time that the view is showing
+/**
+ * calculates if the time is showing withing 15 min of the shown time (the red line). This is used in day and weekDay.
+ * @returns Time the current time that the view is showing
+ */
 export default function useTimeHidden() {
   const [hiddenTime, setHiddenTime] = useState<string>('');
 

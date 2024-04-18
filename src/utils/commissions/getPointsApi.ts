@@ -8,7 +8,12 @@ import { StoreType } from '@redux/store';
 import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests/noStore';
 
-// Gets points when given an array of commission ids
+/**
+ * A function that given commissionId calculates the points
+ * @param commissions An array with commissionIds to get the points of
+ * @param store A redux store
+ * @returns The total of all the points
+ */
 async function getPointsBatch(
   commissions: string[],
   store: StoreType
@@ -62,6 +67,11 @@ async function getPointsBatch(
   return { result: loadingStateEnum.failed, points: 0 };
 }
 
+/**
+ * Gets all the points of the current user.
+ * @param store A redux store
+ * @returns If succesful returns the points
+ */
 export default async function getPointsApi(store: StoreType): Promise<
   | {
       result: loadingStateEnum.success;

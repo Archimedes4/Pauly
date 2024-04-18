@@ -24,6 +24,12 @@ enum calendarMode {
   day,
 }
 
+/**
+ * The picker in the calendar. Picks Month, Week or Day.
+ * @param Width The Width of the picker
+ * @param Height The height of the picker
+ * @returns 
+ */
 export default function CalendarTypePicker({
   width,
   height,
@@ -44,6 +50,7 @@ export default function CalendarTypePicker({
   );
 
   useEffect(() => {
+    // Update on width resize and on mount of the view.
     setComponentWidth(width / 3);
     pan.value = selectedCalendarMode * (width / 3) + (width / 3) * 0.005;
   }, [width]);
@@ -70,6 +77,7 @@ export default function CalendarTypePicker({
           setPanValue(calendarMode.month);
         }}
         key="Month_Button"
+        id="Calendar_Picker_Month_Button"
         style={{
           position: 'absolute',
           width: compoentWidth,
@@ -96,6 +104,7 @@ export default function CalendarTypePicker({
           setPanValue(calendarMode.week);
         }}
         key="Week_Button"
+        id="Calendar_Picker_Week_Button"
         style={{
           position: 'absolute',
           transform: [{ translateX: 1 * compoentWidth }],
@@ -123,6 +132,7 @@ export default function CalendarTypePicker({
           setPanValue(calendarMode.day);
         }}
         key="Day_Button"
+        id="Calendar_Picker_Day_Button"
         style={{
           position: 'absolute',
           transform: [{ translateX: 2 * compoentWidth }],

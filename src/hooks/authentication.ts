@@ -13,14 +13,19 @@ import { ResultState, useMSAL } from '@archimedes4/expo-msal';
 import { Platform } from 'react-native';
 import store from '@redux/store';
 import getAuthWebRedirectUrl from '@utils/getAuthWebRedirectUrl';
+import { reloadAllTimelines, reloadTimelines } from 'react-native-widgetkit';
 
+/**
+ * A hook that aquires the token silently without government checks.
+ * @returns A function to initate the request.
+ */
 export const useRefresh = () => {
   const { acquireTokenSilently } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
     scopes: governmentScopes,
     redirectUri: Platform.select({
-      ios: 'msauth.com.Archimedes4.Pauly://auth',
+      ios: 'msauth.Archimedes4.Pauly://auth',
       android: 'msauth://expo.modules.msal.example',
       default: '',
     }),
@@ -40,20 +45,26 @@ export const useRefresh = () => {
   return main;
 };
 
+/**
+ * A hook for a silent login (non- user initiated)
+ * @returns A function that make a silent login request
+ */
 export function useSilentLogin(): () => Promise<void> {
   const { acquireTokenSilently } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
     scopes: governmentScopes,
     redirectUri: Platform.select({
-      ios: 'msauth.com.Archimedes4.Pauly://auth',
+      ios: 'msauth.Archimedes4.Pauly://auth',
       android: 'msauth://expo.modules.msal.example',
       default: '',
     }),
   });
   const main = async () => {
     const result = await acquireTokenSilently();
+    console.log(result)
     if (result !== undefined && result.result !== ResultState.error) {
+      reloadTimelines("Archimedes4.Pauly.Pauly-Widget")
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(result.data),
       );
@@ -66,6 +77,11 @@ export function useSilentLogin(): () => Promise<void> {
   return main;
 }
 
+/**
+ * A hook for a inoked (user interaction) login.
+ * @param redirectUrl Redirect Url
+ * @returns A function that is for invoking the login.
+ */
 export function useInvokeLogin(redirectUrl?: string): (government?: boolean) => Promise<void> {
   const { acquireTokenInteractively } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
@@ -91,6 +107,9 @@ export function useInvokeLogin(redirectUrl?: string): (government?: boolean) => 
     const result = await acquireTokenInteractively();
     // On web the result is always undefined
     if (result !== undefined && result.result !== ResultState.error) {
+      console.log("RE RUN", result)
+      reloadTimelines("Archimedes4.Pauly.Pauly-Widget")
+      console.log("mark")
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(result.data),
       );
@@ -104,6 +123,10 @@ export function useInvokeLogin(redirectUrl?: string): (government?: boolean) => 
   return main;
 }
 
+/**
+ * A hook that signs the user out updates the widget and removes the accesstoken
+ * @returns A function that initates the signout process.
+ */
 export function useSignOut(): () => void {
   const { signOut } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
@@ -116,6 +139,7 @@ export function useSignOut(): () => void {
     }),
   });
   const main = async () => {
+    reloadTimelines("Archimedes4.Pauly.Pauly-Widget")
     await signOut();
     store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
   };

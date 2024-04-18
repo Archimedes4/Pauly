@@ -52,6 +52,7 @@ function OfflineView() {
 function PushToAuth({deepLink}:{deepLink: string}) {
   const router = useRouter();
   useFocusEffect(() => {
+    console.log("AUTH PUSHING")
     try {
       if (deepLink !== "/") {
         router.push({
@@ -63,6 +64,25 @@ function PushToAuth({deepLink}:{deepLink: string}) {
       } else {
         router.push({
           pathname: "/sign-in",
+        });
+      }
+    } catch (error) {}
+  });
+  return null;
+}
+
+function PushToMain({deepLink}:{deepLink: string}) {
+  const router = useRouter();
+  useFocusEffect(() => {
+    console.log("PSUHING", store.getState().authenticationToken)
+    try {
+      if (deepLink !== "/") {
+        router.push({
+          pathname: deepLink
+        });
+      } else {
+        router.push({
+          pathname: "/",
         });
       }
     } catch (error) {}
@@ -92,12 +112,13 @@ export default function Layout() {
 
   if (!isAuthenticated.authenticated && (pathname === "/sign-in" || pathname === "/admin-sign-in")) {
     // User is *not* auth, on sign in
+    console.log("HERE", pathname)
     return <Slot />;
   }
 
   if (isAuthenticated.authenticated && (pathname === "/sign-in" || pathname === "/admin-sign-in")) {
     // User *is* auth, on sign in
-    return <Redirect href={"/"}/>
+    return <PushToMain deepLink={deepLink}/>
   }
 
   if (!isAuthenticated.authenticated) {
@@ -106,6 +127,7 @@ export default function Layout() {
 
 
   if (isConnected && !isLoading && !isAuthenticated.loading) {
+    console.log("HERE", pathname)
     return <Slot />;
   }
 

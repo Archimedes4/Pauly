@@ -3,6 +3,12 @@ import { loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests/noStore';
 import largeBatch from '../ultility/batchRequest';
 
+/**
+ * Get a single leaderboard with a commission Id.
+ * @param store The Redux store
+ * @param commissionId The commission Id of the leaderboard
+ * @returns The state, if successful an array of users and the amount of points. The points can be used to make a leaderboard.
+ */
 export default async function getLeaderboardApi(
   store: StoreType,
   commissionId?: string,

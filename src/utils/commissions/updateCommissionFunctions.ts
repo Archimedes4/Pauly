@@ -9,6 +9,12 @@ import { commissionTypeEnum, loadingStateEnum } from '@constants';
 import callMsGraph from '../ultility/microsoftAssests';
 import createUUID from '../ultility/createUUID';
 
+/**
+ * Updates or creates a commission.
+ * @param isCreating If the commission is to be created
+ * @param commissionsData The data to be updaed
+ * @returns A result on the state of the update.
+ */
 export async function updateCommission(
   isCreating: boolean,
   commissionsData: commissionType,

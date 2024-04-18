@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
 import { useRefresh, useSilentLogin } from './authentication';
-import { isGovernmentModeSlice } from '@src/redux/reducers/isGovernmentModeReducer';
+import { isGovernmentModeSlice } from '@redux/reducers/isGovernmentModeReducer';
 
 /**
  * Main hook that runs the startup. Should only be in one view (layout) at once.
@@ -38,11 +38,13 @@ export default function useAuthentication() {
   // main function
   async function loadContent() {
     await silentLogin();
+    console.log(store.getState().authenticationToken)
     if (store.getState().authenticationToken !== '') {
       const webResult = webSession();
       if (!webResult) {
         await getPaulyLists();
       }
+      console.log("MArk On")
       await getUserProfile();
       if (await getWantGovernment()) {
         await validateGovernmentMode();

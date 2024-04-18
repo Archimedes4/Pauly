@@ -11,7 +11,7 @@ import callMsGraph from '../ultility/microsoftAssests/noStore';
 /**
  * Gets the commission with the supplied commission Id
  * @param commissionId The id of the commission
- * @param store 
+ * @param store The redux store
  * @returns 
  */
 export default async function getCommissionApi(

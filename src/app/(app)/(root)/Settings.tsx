@@ -34,7 +34,7 @@ export default function Settings() {
   const [imageLoadState, setImageLoadState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
-  const [triedReload, setTiredReload] = useState<boolean>(false)
+  const [triedReload, setTiredReload] = useState<boolean>(false) // Tried reloading the image
   const dispatch = useDispatch();
   const signOut = useSignOut();
 

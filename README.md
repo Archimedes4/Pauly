@@ -330,7 +330,7 @@ https://learn.microsoft.com/en-us/cli/azure/ad/app/owner?view=azure-cli-latest#a
 https://learn.microsoft.com/en-us/cli/azure/ad/app?view=azure-cli-latest#az-ad-app-update \
 update azure ad app
 ```
-  az rest --method patch --uri 'https://graph.microsoft.com/v1.0/applications/18e8faf2-1739-4895-80fa-3c8cf0b32fc6' --headers 'Content-Type=application/json' --body "{\"spa\":{\"redirectUris\":[\"http://localhost:19006/auth\",\"https://paulysphs.ca\",\"https://www.paulysphs.ca\"]},\"publicClient\":{\"redirectUris\":[\"com.Archimedes4.Pauly://auth\"]},\"signInAudience\":\"AzureADMyOrg\",\"api\":{\"oauth2PermissionScopes\":[{\"adminConsentDescription\":\"AllthescopesrequiredtoclaimcommissionsinPauly.Thisistoaccessthemainfunctionofthecommissionsapi.\",\"adminConsentDisplayName\":\"claimcommission\",\"id\":\"c62762bd-6568-4f5f-b9d5-eb0eae3882cf\",\"isEnabled\":true,\"type\":\"User\",\"userConsentDescription\":null,\"userConsentDisplayName\":null,\"value\":\"commissions\"}]}}"
+  az rest --method patch --uri 'https://graph.microsoft.com/v1.0/applications/18e8faf2-1739-4895-80fa-3c8cf0b32fc6' --headers 'Content-Type=application/json' --body "{\"spa\":{\"redirectUris\":[\"http://localhost:19006/auth\",\"https://paulysphs.ca\",\"https://www.paulysphs.ca\"]},\"publicClient\":{\"redirectUris\":[\"Archimedes4.Pauly://auth\"]},\"signInAudience\":\"AzureADMyOrg\",\"api\":{\"oauth2PermissionScopes\":[{\"adminConsentDescription\":\"AllthescopesrequiredtoclaimcommissionsinPauly.Thisistoaccessthemainfunctionofthecommissionsapi.\",\"adminConsentDisplayName\":\"claimcommission\",\"id\":\"c62762bd-6568-4f5f-b9d5-eb0eae3882cf\",\"isEnabled\":true,\"type\":\"User\",\"userConsentDescription\":null,\"userConsentDisplayName\":null,\"value\":\"commissions\"}]}}"
 ```
 
 #### Create Static Web App
@@ -463,6 +463,11 @@ body
 
 ### Maintenance
 Rotating client secrets after 160 days. Follow the steps in Set Environment Variables no need to change teant id and client id.
+
+### Create a build
+Add the widget as a target and copy the code from the widget.
+Add https://github.com/AzureAD/microsoft-authentication-library-for-objc as a package dependancy
+Add the dependancy to both the widget and pauly. (The widget needs pauly to have the depndancy) This is added in the build face.
 
 # Road Map
 -Working Commission Submissions

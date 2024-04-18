@@ -8,6 +8,12 @@ import { loadingStateEnum } from '@constants';
 import { StoreType } from '@redux/store';
 import callMsGraph from '../ultility/microsoftAssests/noStore';
 
+/**
+ * 
+ * @param startDate 
+ * @param endDate 
+ * @returns 
+ */
 function getFilter(
   startDate?: { date: Date; filter: 'ge' | 'le' },
   endDate?: { date: Date; filter: 'ge' | 'le' },

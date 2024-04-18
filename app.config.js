@@ -3,7 +3,7 @@ module.exports = {
   expo: {
     name: 'Pauly',
     slug: 'Pauly',
-    scheme: 'com.Archimedes4.Pauly',
+    scheme: 'Archimedes4.Pauly',
     version: '1.1.1',
     orientation: 'portrait',
     jsEngine: 'hermes',
@@ -17,7 +17,7 @@ module.exports = {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.Archimedes4.Pauly',
+      bundleIdentifier: 'Archimedes4.Pauly',
       buildNumber: '84',
       associatedDomains: ["applinks:paulysphs.ca"],
       infoPlist: {
