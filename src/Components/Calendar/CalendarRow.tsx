@@ -3,7 +3,7 @@ import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { monthDataSlice } from '@redux/reducers/monthDataReducer';
 import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
 import store, { RootState } from '@redux/store';
-import getEventTop from '@src/utils/calendar/getEventTop';
+import getEventTop from '@utils/calendar/getEventTop';
 import {
   findFirstDayEventWeek,
   findFirstDayinMonth,

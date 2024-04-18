@@ -111,9 +111,9 @@ export default function NavBarComponent() {
   useEffect(() => {
     // checking to see if the width or the height is going to be the limiting factor.
     if (totalWidth * 0.06 > (height * 0.6) / 8) {
-      setBlockLength((height * 0.6) / 8);
+      setBlockLength((height * 0.6) / 8 + 10);
     } else {
-      setBlockLength(totalWidth * 0.06);
+      setBlockLength(totalWidth * 0.06 + 10);
     }
     if (totalWidth * 0.07 > (height * 0.7) / 8) {
       setIconLength((height * 0.6) / 8);

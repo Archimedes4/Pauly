@@ -218,21 +218,16 @@ function ReducedMonthEvents({}: {}) {
     checkStartDate.setHours(0)
     checkStartDate.setMinutes(0)
     checkStartDate.setSeconds(0)
-    const checkEndDate = checkStartDate
+    const checkEndDate = new Date(checkStartDate)
     checkEndDate.setDate(checkEndDate.getDate() + 1);
-    console.log(checkStartDate, checkEndDate)
 
     const newDayData = [...monthData[firstIndex].events]
       .filter(e => {
         return (
           e.paulyEventType !== 'studentSchedule' &&
           isEventDuringInterval({
-            checkStart: new Date(
-              `${checkStartDate}`,
-            ).getTime(),
-            checkEnd: new Date(
-              `${checkEndDate.toISOString()}`,
-            ).getTime(),
+            checkStart: checkStartDate.getTime(),
+            checkEnd: checkEndDate.getTime() - 1000,
             event: e,
           })
         );
