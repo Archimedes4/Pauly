@@ -7,7 +7,7 @@
 */
 import { authenticationTokenSlice } from '@redux/reducers/authenticationTokenReducer';
 import { setWantGovernment } from '@utils/handleGovernmentLogin';
-import { governmentScopes } from '@constants';
+import { governmentScopes, scopes } from '@constants';
 import { authActiveSlice } from '@redux/reducers/authActiveReducer';
 import { ResultState, useMSAL } from '@archimedes4/expo-msal';
 import { Platform } from 'react-native';
@@ -49,19 +49,21 @@ export const useRefresh = () => {
  * A hook for a silent login (non- user initiated)
  * @returns A function that make a silent login request
  */
-export function useSilentLogin(): (inital: boolean) => Promise<void> {
+export function useSilentLogin(): (inital: boolean, isGovernment: boolean) => Promise<void> {
   const { acquireTokenSilently } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
-    scopes: governmentScopes,
+    scopes: scopes,
     redirectUri: Platform.select({
       ios: 'msauth.Archimedes4.Pauly://auth',
       android: 'msauth://expo.modules.msal.example',
       default: '',
     }),
   });
-  const main = async (inital: boolean) => {
-    const result = await acquireTokenSilently();
+  const main = async (inital: boolean, isGovernment: boolean) => {
+    const result = await acquireTokenSilently({
+      scopes: isGovernment ? governmentScopes:scopes
+    });
     if (result !== undefined && result.result !== ResultState.error) {
       reloadTimelines('Archimedes4.Pauly.Pauly-Widget');
       store.dispatch(
@@ -87,7 +89,7 @@ export function useInvokeLogin(
   const { acquireTokenInteractively } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
-    scopes: governmentScopes,
+    scopes: scopes,
     redirectUri: Platform.select({
       ios: 'msauth.Archimedes4.Pauly://auth',
       android: 'msauth://expo.modules.msal.example',
@@ -105,11 +107,12 @@ export function useInvokeLogin(
       setWantGovernment(false);
     }
     store.dispatch(authActiveSlice.actions.setAuthActive(true));
-    const result = await acquireTokenInteractively();
+    const result = await acquireTokenInteractively({
+      scopes: (government === true) ? governmentScopes:scopes
+    });
     // On web the result is always undefined
     if (result !== undefined && result.result !== ResultState.error) {
       reloadTimelines('Archimedes4.Pauly.Pauly-Widget');
-      console.log('mark');
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(result.data),
       );
@@ -131,7 +134,7 @@ export function useSignOut(): () => void {
   const { signOut } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
-    scopes: governmentScopes,
+    scopes: scopes,
     redirectUri: Platform.select({
       ios: 'msauth.expo.modules.msal.example://auth',
       android: 'msauth://expo.modules.msal.example',
@@ -140,8 +143,8 @@ export function useSignOut(): () => void {
   });
   const main = async () => {
     reloadTimelines('Archimedes4.Pauly.Pauly-Widget');
-    await signOut();
     store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
+    await signOut();
   };
   return main;
 }

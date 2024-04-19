@@ -1,4 +1,4 @@
-import { Colors } from '@constants';
+import { Colors, calendarViewingMode } from '@constants';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import { monthDataSlice } from '@redux/reducers/monthDataReducer';
 import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
@@ -19,6 +19,16 @@ import {
   ScrollView,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+
+function getCardHeight(calendarWidth: number, valueHeight: number, height: number, calendarViewMode: calendarViewingMode) {
+  if (calendarWidth > 519 && calendarViewMode === calendarViewingMode.full && valueHeight < height) {
+    return height
+  }
+  if (calendarWidth > 519) {
+    return valueHeight
+  }
+  return height
+}
 
 function getBackgroundColor(selectedDate: string, dayData: number): string {
   if (dayData === new Date(selectedDate).getDate()) {
@@ -325,7 +335,12 @@ export default function CalendarRow({
   calendarWidth: number;
 }) {
   const [isOverflow, setIsOverflow] = useState<boolean>(true);
+  const calendarViewMode = useSelector((state: RootState) => state.paulySettings.calendarViewingMode);
   useEffect(() => {
+    if (calendarViewMode === calendarViewingMode.full || calendarViewMode === calendarViewingMode.fullRemoved) {
+      setIsOverflow(false)
+      return
+    }
     if (value.item.height === 0) {
       store.dispatch(
         monthDataSlice.actions.setRowHeight({
@@ -340,6 +355,43 @@ export default function CalendarRow({
       setIsOverflow(true);
     }
   }, [value.item.height, height]);
+  if (calendarViewMode === calendarViewingMode.full || calendarViewMode === calendarViewingMode.fullRemoved) {
+    return (
+      <View
+        style={{
+          minHeight: (calendarViewMode === calendarViewingMode.full) ? height:0,
+          borderTopWidth:
+            width <= 74.14285714285714 ? 0 : value.index === 0 ? 2 : 1,
+          borderColor: Colors.lightGray,
+        }}
+      >
+        <View style={{ flexDirection: 'row' }}>
+          {value.item.days.map((day, dayIndex) => (
+            <CalendarCardView
+              key={`${value.item.days[dayIndex].id}Card`}
+              value={day}
+              width={width}
+              calendarWidth={calendarWidth}
+              height={getCardHeight(calendarWidth, value.item.height, height, calendarViewMode)}
+            />
+          ))}
+          {calendarWidth > 519 &&
+            [...value.item.events]
+              .sort((a, b) => {
+                return a.order - b.order;
+              })
+              .map((event: monthEventType) => (
+                <CalendarRowEvent
+                  key={`Week_${value.index}_${event.id}`}
+                  event={event}
+                  value={value}
+                  width={width}
+                />
+              ))}
+        </View>
+      </View>
+    );
+  }
   return (
     <ScrollView
       scrollEnabled={isOverflow}
@@ -357,7 +409,7 @@ export default function CalendarRow({
             value={day}
             width={width}
             calendarWidth={calendarWidth}
-            height={calendarWidth > 519 ? value.item.height : height}
+            height={getCardHeight(calendarWidth, value.item.height, height, calendarViewMode)}
           />
         ))}
         {calendarWidth > 519 &&

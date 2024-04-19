@@ -373,3 +373,13 @@ export function convertMicrosoftDateTimeToISO(dateTime: string): string {
   }
   return msDate.toISOString()
 }
+
+export function getNumberOfWeeksInMonth(selectedDate: Date): number {
+  const lastDay = new Date(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth() + 1,
+    0,
+  );
+  const firstDayWeek = findFirstDayinMonth(selectedDate);
+  return Math.floor((lastDay.getDate() + firstDayWeek)/7) + 1
+}

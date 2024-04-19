@@ -1,7 +1,7 @@
 import createUUID from '@utils/ultility/createUUID';
 import { selectedDateSlice } from '@redux/reducers/selectedDateReducer';
 import store, { RootState } from '@redux/store';
-import { Colors } from '@constants';
+import { Colors, calendarViewingMode } from '@constants';
 import React, { useEffect, useState } from 'react';
 import {
   FlatList,
@@ -16,11 +16,31 @@ import { getMonthData } from '@utils/calendar/calendarFunctionsGraph';
 import { addEventSlice } from '@redux/reducers/addEventReducer';
 import {
   findFirstDayinMonth,
+  getNumberOfWeeksInMonth,
   isDateToday,
   isEventDuringInterval,
 } from '@utils/calendar/calendarFunctions';
 import { ChevronLeft, ChevronRight } from '../Icons';
 import CalendarRow from './CalendarRow';
+
+function getHeight(calendarViewMode: calendarViewingMode, selectedDate: string, height: number) {
+  if (calendarViewMode === calendarViewingMode.collapsedRemoved || calendarViewMode === calendarViewingMode.fullRemoved) {
+    return (height - 20) / (getNumberOfWeeksInMonth(new Date(selectedDate)) + 1)
+  }
+  return (height - 20) / 7
+}
+
+function getFlatListHeight(calendarViewMode: calendarViewingMode, selectedDate: string, height: number) {
+  if (calendarViewMode === calendarViewingMode.collapsed || calendarViewMode == calendarViewingMode.collapsedRemoved) {
+    return undefined
+  }
+  if (calendarViewMode === calendarViewingMode.full) {
+    return getHeight(calendarViewMode, selectedDate, height) * 6
+  }
+  if (calendarViewMode === calendarViewingMode.fullRemoved) {
+    return getHeight(calendarViewMode, selectedDate, height) * getNumberOfWeeksInMonth(new Date(selectedDate)) 
+  }
+}
 
 function MonthView({ width, height }: { width: number; height: number }) {
   const daysInWeek: { DOW: string; id: string }[] = [
@@ -37,19 +57,20 @@ function MonthView({ width, height }: { width: number; height: number }) {
     (state: RootState) => state.selectedDate,
   );
   const monthData = useSelector((state: RootState) => state.monthData);
+  const calendarViewMode = useSelector((state: RootState) => state.paulySettings.calendarViewingMode);
   const { fontScale } = useWindowDimensions();
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    return getMonthData(new Date(selectedDate));
+    return getMonthData(new Date(selectedDate), calendarViewMode);
   }, [selectedDate, currentEvents]);
 
   return (
     <>
       <View
         style={{
-          height: (height - 20) / 7,
+          height: getHeight(calendarViewMode, selectedDate, height),
           width,
           justifyContent: 'center',
           alignContent: 'center',
@@ -161,13 +182,14 @@ function MonthView({ width, height }: { width: number; height: number }) {
           renderItem={value => (
             <CalendarRow
               width={width / 7}
-              height={(height - 20) / 7}
+              height={getHeight(calendarViewMode, selectedDate, height)}
               value={value}
               calendarWidth={width}
               key={`Row_${value.item.days[0].id}`}
             />
           )}
-          scrollEnabled={false}
+          style={{height: getFlatListHeight(calendarViewMode, selectedDate, height)}}
+          scrollEnabled={(calendarViewMode === calendarViewingMode.full || calendarViewMode === calendarViewingMode.fullRemoved)}
         />
       </View>
     </>

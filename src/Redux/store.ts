@@ -35,6 +35,7 @@ import classesReducer from './reducers/classesReducer';
 import timetableReducer from './reducers/timetableReducer';
 import leaderboardReducer from './reducers/leaderboardReducer';
 import monthViewReducer from './reducers/monthViewReducer';
+import paulySettingsReducer from './reducers/paulySettingsReducer';
 
 const store = configureStore({
   reducer: {
@@ -58,6 +59,7 @@ const store = configureStore({
     monthView: monthViewReducer,
     paulyData: paulyDataReducer,
     paulyList: paulyListReducer,
+    paulySettings: paulySettingsReducer,
     pdfData: pdfDataReducer,
     safeAreaColors: safeAreaColorsReducer,
     selectedDate: selectedDateReducer,

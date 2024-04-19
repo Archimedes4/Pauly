@@ -4,6 +4,12 @@ import { Colors, loadingStateEnum, semesters } from '@constants';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 import { getClasses } from '@redux/reducers/classesReducer';
 
+/**
+ * Get rooms from Pauly api.
+ * @param nextLink Get more room
+ * @param search Search for room name. Does nothing if next link doesn;t exist
+ * @returns 
+ */
 export async function getRooms(
   nextLink?: string,
   search?: string,

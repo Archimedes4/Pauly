@@ -34,6 +34,13 @@ export enum postType {
   youtubeVideo,
 }
 
+export enum calendarViewingMode {
+  full,
+  fullRemoved,
+  collapsed,
+  collapsedRemoved
+}
+
 export enum dataContentTypeOptions {
   video,
   image,
@@ -605,6 +612,9 @@ declare global {
     classExtensionId: string;
     calendarSyncStateListId: string;
   };
+  type paulySettingsType = {
+    calendarViewingMode: calendarViewingMode
+  };
   type insightResult = {
     userState: loadingStateEnum;
     trendingState: loadingStateEnum;
@@ -747,27 +757,18 @@ export const paperTheme: ThemeProp = {
 // DO NOT CHANGE SCOPES
 // See README.md for more imformation about the scopes.
 export const scopes = [
-  'User.Read',
+  'User.ReadWrite',
   'User.ReadBasic.All',
   'ChannelMessage.Read.All',
   'Channel.ReadBasic.All',
   'Calendars.ReadWrite',
   'Team.ReadBasic.All',
-  'Tasks.ReadWrite',
   'Sites.Read.All',
   'Group.ReadWrite.All',
 ];
 
 export const governmentScopes = [
-  'User.Read',
-  'User.ReadBasic.All',
-  'Sites.Read.All',
-  'ChannelMessage.Read.All',
-  'Calendars.ReadWrite',
-  'Team.ReadBasic.All',
-  'Group.ReadWrite.All',
-  'Tasks.ReadWrite',
-  'Channel.ReadBasic.All',
+  ...scopes,
   'Sites.Manage.All',
   'Application.ReadWrite.All',
   'TeamMember.Read.All',

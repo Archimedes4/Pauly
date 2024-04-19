@@ -37,14 +37,15 @@ export default function useAuthentication() {
   const [mounted, setMounted] = useState(false);
   // main function
   async function loadContent() {
-    await silentLogin(true);
+    const wantGovernment = await getWantGovernment()
+    await silentLogin(true, wantGovernment);
     if (store.getState().authenticationToken !== '') {
       const webResult = webSession();
       if (!webResult) {
         await getPaulyLists();
       }
       await getUserProfile();
-      if (await getWantGovernment()) {
+      if (wantGovernment) {
         await validateGovernmentMode();
       } else {
         store.dispatch(
@@ -53,9 +54,8 @@ export default function useAuthentication() {
       }
       dispatch(authLoadingSlice.actions.setAuthLoading(false));
     } else {
-      const isGovernment = await getWantGovernment();
       store.dispatch(
-        isGovernmentModeSlice.actions.setIsGovernmentMode(isGovernment),
+        isGovernmentModeSlice.actions.setIsGovernmentMode(wantGovernment),
       );
       dispatch(authLoadingSlice.actions.setAuthLoading(false));
     }

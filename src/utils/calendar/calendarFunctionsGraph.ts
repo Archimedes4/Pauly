@@ -5,7 +5,7 @@
   calendarFunctionsGraph.ts
   calender function that use microsoft grap
 */
-import { Colors, loadingStateEnum } from '@constants';
+import { Colors, calendarViewingMode, loadingStateEnum } from '@constants';
 import store from '@redux/store';
 import { monthDataSlice } from '@redux/reducers/monthDataReducer';
 import { getTimetable } from '@redux/reducers/timetableReducer';
@@ -18,6 +18,7 @@ import {
   decodeSchoolYearData,
   findFirstDayinMonth,
   getEventsWithEvent,
+  getNumberOfWeeksInMonth,
   isEventDuringInterval,
 } from './calendarFunctions';
 
@@ -627,7 +628,7 @@ function getHighestOrder(data: monthEventType[]): number {
   return order;
 }
 
-export function getMonthData(selectedDate: Date) {
+export function getMonthData(selectedDate: Date, viewingMode: calendarViewingMode) {
   // Check if this month
   const lastDay = new Date(
     selectedDate.getFullYear(),
@@ -643,7 +644,7 @@ export function getMonthData(selectedDate: Date) {
     return 0;
   });
   const resultingMonthData: monthRowType[] = [];
-  for (let weekIndex = 0; weekIndex < 6; weekIndex += 1) {
+  for (let weekIndex = 0; weekIndex < ((viewingMode === calendarViewingMode.collapsedRemoved || viewingMode === calendarViewingMode.fullRemoved) ? getNumberOfWeeksInMonth(selectedDate):6); weekIndex += 1) {
     const resultWeekDays: monthDataType[] = [];
     let resultWeekEvents: monthEventType[] = [];
     // going through the seven days in a week

@@ -1,7 +1,8 @@
-import { RootState } from '@src/redux/store';
+import { RootState } from '@redux/store';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { usePathname } from 'expo-router';
+
 
 export default function useIsShowingZeroFooter() {
   const [isShowingFooter, setIsShowingFooter] = useState<boolean>(false);

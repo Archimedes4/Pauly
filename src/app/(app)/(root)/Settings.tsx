@@ -15,6 +15,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';
 import { useSignOut } from '@hooks/authentication';
 import getUserImage from '@hooks/useGetUserProfile/getUserImage';
+import PaulySettingsComponent from '@src/components/PaulySettingsComponent';
 
 export default function Settings() {
   const router = useRouter();
@@ -163,7 +164,6 @@ export default function Settings() {
             shadowOpacity: 0.8,
             borderRadius: 15,
             marginTop: 15,
-            marginBottom: 60,
             shadowRadius: 10,
           }}
         >
@@ -189,6 +189,7 @@ export default function Settings() {
           </View>
         </Link>
       ) : null}
+      <PaulySettingsComponent margin={width * 0.05} textColor={Colors.white}/>
     </View>
   );
 }

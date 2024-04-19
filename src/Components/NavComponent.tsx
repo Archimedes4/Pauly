@@ -111,9 +111,9 @@ export default function NavBarComponent() {
   useEffect(() => {
     // checking to see if the width or the height is going to be the limiting factor.
     if (totalWidth * 0.06 > (height * 0.6) / 8) {
-      setBlockLength((height * 0.6) / 8 + 10);
+      setBlockLength((height * 0.6) / 8);
     } else {
-      setBlockLength(totalWidth * 0.06 + 10);
+      setBlockLength(totalWidth * 0.06);
     }
     if (totalWidth * 0.07 > (height * 0.7) / 8) {
       setIconLength((height * 0.6) / 8);
@@ -229,23 +229,23 @@ export default function NavBarComponent() {
             ) : null}
           </View>
         </Pressable>
-        <NavBarBlock des="/" blockLength={blockLength} text="Home">
+        <NavBarBlock des="/" blockLength={blockLength + 10} text="Home">
           <HomeIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         <NavBarBlock
           des="/commissions"
-          blockLength={blockLength}
+          blockLength={blockLength + 10}
           text="Commissions"
         >
           <MedalIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
-        <NavBarBlock des="/calendar" blockLength={blockLength} text="Calendar">
+        <NavBarBlock des="/calendar" blockLength={blockLength + 10} text="Calendar">
           <CalendarIcon width={iconLength} height={iconLength} />
         </NavBarBlock>
         {isGovernmentMode ? (
           <NavBarBlock
             des="/government"
-            blockLength={blockLength}
+            blockLength={blockLength + 10}
             text="Government"
           >
             <GovernmentIcon width={iconLength} height={iconLength} />

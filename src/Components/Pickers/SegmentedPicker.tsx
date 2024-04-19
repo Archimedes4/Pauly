@@ -27,7 +27,7 @@ export default function SegmentedPicker({
   style,
 }: PickerWrapperProps) {
   const pan = useRef(new Animated.Value(0)).current;
-  const [compoentWidth, setComponentWidth] = useState(width / 3);
+  const [compoentWidth, setComponentWidth] = useState(width / options.length);
   function fadeIn(id: number) {
     // Will change fadeAnim value to 1 in 5 seconds
     Animated.timing(pan, {
@@ -42,8 +42,9 @@ export default function SegmentedPicker({
   }, []);
 
   useEffect(() => {
-    setComponentWidth(width / options.length);
-    pan.setValue(selectedIndex * compoentWidth + compoentWidth * 0.005);
+    let newComponentWidth = width / options.length;
+    setComponentWidth(newComponentWidth);
+    pan.setValue(selectedIndex * newComponentWidth + newComponentWidth * 0.005);
   }, [width]);
 
   return (
@@ -86,6 +87,7 @@ export default function SegmentedPicker({
               textAlign: 'center',
               width: compoentWidth,
             }}
+            selectable={false}
           >
             {option}
           </Text>
