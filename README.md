@@ -465,9 +465,13 @@ body
 Rotating client secrets after 160 days. Follow the steps in Set Environment Variables no need to change teant id and client id.
 
 ### Create a build
-Add the widget as a target and copy the code from the widget.
-Add https://github.com/AzureAD/microsoft-authentication-library-for-objc as a package dependancy
-Add the dependancy to both the widget and pauly. (The widget needs pauly to have the depndancy) This is added in the build face.
+1. Add the widget as a target and copy the code from the widget.
+![Keychain](./documentation/READMEImages/XcodeAddPaulyWidgetTarget.png)
+2. Add https://github.com/AzureAD/microsoft-authentication-library-for-objc as a package dependancy.
+3. Add the dependancy to both the widget and pauly. (The widget needs pauly to have the depndancy) This is added in the build face.
+4. Add the keychain services entitlement and add com.microsoft.adalcache.
+5. Update the info plist
+![Keychain](./documentation/READMEImages/XcodePaulyWidgetInfoPlist.png)
 
 # Road Map
 -Working Commission Submissions

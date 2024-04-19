@@ -2,10 +2,9 @@
   Pauly
   Andrew Mainella
   October 3 2023
-  types.ts
+  constants.ts
   Stores all of paulys types
 */
-
 import { DefaultTheme, configureFonts } from 'react-native-paper';
 import { ColorValue, Platform, StyleSheet } from 'react-native';
 import Animated from 'react-native-reanimated';

@@ -106,7 +106,6 @@ export function useInvokeLogin(redirectUrl?: string): (government?: boolean) => 
     const result = await acquireTokenInteractively();
     // On web the result is always undefined
     if (result !== undefined && result.result !== ResultState.error) {
-      console.log("RE RUN", result)
       reloadTimelines("Archimedes4.Pauly.Pauly-Widget")
       console.log("mark")
       store.dispatch(

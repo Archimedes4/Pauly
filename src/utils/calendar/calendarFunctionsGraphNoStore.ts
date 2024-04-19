@@ -1,7 +1,6 @@
 import { loadingStateEnum } from '@constants';
 import { StoreType } from '@redux/store';
 import getDressCode from './dressCodeFunctionsNoStore';
-import { timer } from '../ultility/utils';
 import callMsGraph from '../ultility/microsoftAssests/noStore';
 
 export async function getTimetableApi(
@@ -31,10 +30,7 @@ export async function getTimetableApi(
         const newSchedules: scheduleType[] = [];
         for (let index = 0; index < scheduleData.length; index += 1) {
           const result = await getSchedule(scheduleData[index], store);
-          if (
-            result.result === loadingStateEnum.success &&
-            result.schedule !== undefined
-          ) {
+          if (result.result === loadingStateEnum.success) {
             newSchedules.push(result.schedule);
           } else {
             return { result: loadingStateEnum.failed };

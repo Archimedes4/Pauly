@@ -5,7 +5,7 @@
   microsoftGroupsFunctions.ts
   common function to access microsoft group/teams data
 */
-import { loadingStateEnum, resourceResponce } from '@constants';
+import { loadingStateEnum } from '@constants';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 
 export async function getTeams(nextLink?: string): Promise<{
