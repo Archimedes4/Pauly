@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Colors, loadingStateEnum } from '@constants'
+import { loadingStateEnum } from '@constants'
 import SegmentedPicker from './Pickers/SegmentedPicker';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import { getPaulySettings, paulySettingsSlice } from '@redux/reducers/paulySettingsReducer';
 import ProgressView from './ProgressView';
-import { setCalendarSetting } from '@src/utils/calendar/paulySettingsFunctions';
+import { setCalendarSetting } from '@utils/calendar/paulySettingsFunctions';
 
 export default function PaulySettingsComponent({
   margin,

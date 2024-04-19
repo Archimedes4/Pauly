@@ -324,6 +324,8 @@ declare global {
     | {
         paulyEventType: 'regular';
         paulyEventData?: string;
+        grade?: string, 
+        mandatory?: boolean
         microsoftEvent: true;
       }
     | {

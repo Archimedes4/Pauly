@@ -209,7 +209,7 @@ function ReducedMonthEvents({}: {}) {
   const [longestText, setLongestText] = useState<string>('');
   const [dayData, setDayData] = useState<monthEventType[][]>([]);
   function getDayData(): monthEventType[][] {
-    if (monthData.length !== 6) {
+    if (monthData.length !== getNumberOfWeeksInMonth(new Date(selectedDate))) {
       return [];
     }
     let firstIndex = Math.floor(

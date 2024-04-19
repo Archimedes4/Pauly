@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
 import { isGovernmentModeSlice } from '@redux/reducers/isGovernmentModeReducer';
 import { useRefresh, useSilentLogin } from './authentication';
+import { getPaulySettings } from '@redux/reducers/paulySettingsReducer';
 
 /**
  * Main hook that runs the startup. Should only be in one view (layout) at once.
@@ -53,6 +54,7 @@ export default function useAuthentication() {
         );
       }
       dispatch(authLoadingSlice.actions.setAuthLoading(false));
+      getPaulySettings(store)
     } else {
       store.dispatch(
         isGovernmentModeSlice.actions.setIsGovernmentMode(wantGovernment),

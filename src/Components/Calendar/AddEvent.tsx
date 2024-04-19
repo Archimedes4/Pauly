@@ -166,7 +166,7 @@ function GovernmentCalendarOptions({
   width: number;
   height: number;
 }) {
-  const { selectedEvent, selectedTimetable, selectedSchoolYear } = useSelector(
+  const { selectedEvent, selectedTimetable } = useSelector(
     (state: RootState) => state.addEvent,
   );
   const dispatch = useDispatch();
@@ -219,11 +219,7 @@ function GovernmentCalendarOptions({
         </PickerWrapper>
       ) : null}
       {selectedEvent.paulyEventType === 'schoolDay' ? (
-        <View style={{ width, height: 100 }}>
-          <Text>
-            Selected School Year:{' '}
-            {selectedSchoolYear ? selectedSchoolYear.name : 'None selected'}
-          </Text>
+        <View style={{ width: width + 20, marginLeft: -10, height: height * 0.5 }}>
           <SelectSchoolDayData />
         </View>
       ) : null}
@@ -648,7 +644,7 @@ export default function AddEvent({
         borderWidth: 5,
       }}
     >
-      <View style={{ margin: 10, width }}>
+      <View style={{ padding: 10, width: width + 20 }}>
         <Pressable
           onPress={() => {
             dispatch(addEventSlice.actions.setIsShowingAddDate(false));

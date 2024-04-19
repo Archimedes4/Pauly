@@ -26,6 +26,6 @@ export default function useIsShowingZeroFooter() {
       return;
     }
     setIsShowingFooter(false);
-  }, [currentBreakPoint]);
+  }, [currentBreakPoint, pathname]);
   return isShowingFooter;
 }
