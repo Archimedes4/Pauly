@@ -18,5 +18,5 @@ export default function Missing() {
       } catch (error) {}
     });
   }
-  return <Redirect href={"/"}/>;
+  return <Redirect href="/" />;
 }

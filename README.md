@@ -472,6 +472,7 @@ Rotating client secrets after 160 days. Follow the steps in Set Environment Vari
 4. Add the keychain services entitlement and add com.microsoft.adalcache.
 5. Update the info plist
 ![Keychain](./documentation/READMEImages/XcodePaulyWidgetInfoPlist.png)
+6. Set the widget marketing version the current short version of pauly (ex: 1.1.1)
 
 # Road Map
 -Working Commission Submissions

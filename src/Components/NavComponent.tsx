@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import store, { RootState } from '@redux/store';
 import { expandedModeSlice } from '@redux/reducers/expandedModeReducer';
 import { isShowingProfileBlockSlice } from '@redux/reducers/isShowingProfileBlockReducer';
+import { Colors } from '@constants';
 import {
   CalendarIcon,
   GovernmentIcon,
@@ -19,7 +20,6 @@ import {
   MedalIcon,
   PersonIcon,
 } from './Icons';
-import { Colors } from '@constants';
 
 function NavBarBlock({
   des,

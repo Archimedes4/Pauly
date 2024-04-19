@@ -65,7 +65,7 @@ export default function PDFView({ width }: { width: number }) {
   const compound = Gesture.Simultaneous(fling, taps);
 
   useEffect(() => {
-    console.log(images.length)
+    console.log(images.length);
     if (pageNumber < images.length) {
       Image.getSize(
         images[pageNumber],
@@ -81,9 +81,9 @@ export default function PDFView({ width }: { width: number }) {
     return (
       <GestureDetector gesture={compound}>
         <Image
-            source={{ uri: images[pageNumber] }}
-            style={{ width, height: imageHeight, borderRadius: 15 }}
-          />
+          source={{ uri: images[pageNumber] }}
+          style={{ width, height: imageHeight, borderRadius: 15 }}
+        />
       </GestureDetector>
     );
   }
@@ -93,7 +93,7 @@ export default function PDFView({ width }: { width: number }) {
       <View
         style={{
           width,
-          height: width * (9/16),
+          height: width * (9 / 16),
           alignContent: 'center',
           alignItems: 'center',
           justifyContent: 'center',
@@ -190,11 +190,11 @@ function WebViewInject() {
       }}
       style={{ width: 0, height: 0 }}
       onMessage={e => {
-        console.log("Length", e.nativeEvent.data.length)
+        console.log('Length', e.nativeEvent.data.length);
         if (e.nativeEvent.data.length >= 7) {
           dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data));
         } else {
-          console.log(e.nativeEvent.data)
+          console.log(e.nativeEvent.data);
         }
       }}
     />

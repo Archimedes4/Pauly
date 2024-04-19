@@ -13,10 +13,10 @@ import callMsGraph from '../ultility/microsoftAssests';
 import batchRequest from '../ultility/batchRequest';
 import createUUID from '../ultility/createUUID';
 import {
+  convertMicrosoftDateTimeToISO,
   decodeSchoolDayData,
   decodeSchoolYearData,
   findFirstDayinMonth,
-  getEventsOnDay,
   getEventsWithEvent,
   isEventDuringInterval,
 } from './calendarFunctions';
@@ -79,7 +79,9 @@ export function getSingleValueProperties(data: any):
 
 async function parseEventJSON(
   data: any,
+  personal: boolean,
   events?: eventType[],
+  referenceUrl?: string
 ): Promise<
   | { result: loadingStateEnum.failed }
   | { result: loadingStateEnum.success; data: eventType }
@@ -98,8 +100,8 @@ async function parseEventJSON(
       const event: eventType = {
         id: data.id,
         name: data.subject,
-        startTime: data.start.dateTime,
-        endTime: data.end.dateTime,
+        startTime: convertMicrosoftDateTimeToISO(data.start.dateTime),
+        endTime: convertMicrosoftDateTimeToISO(data.end.dateTime),
         allDay: data.isAllDay,
         eventColor: Colors.white,
         paulyEventType: 'schoolDay',
@@ -122,8 +124,8 @@ async function parseEventJSON(
     const event: eventType = {
       id: data.id,
       name: data.subject,
-      startTime: data.start.dateTime,
-      endTime: data.end.dateTime,
+      startTime: convertMicrosoftDateTimeToISO(data.start.dateTime),
+      endTime: convertMicrosoftDateTimeToISO(data.end.dateTime),
       allDay: data.isAllDay,
       eventColor: Colors.white,
       microsoftEvent: true,
@@ -142,8 +144,8 @@ async function parseEventJSON(
     const event: eventType = {
       id: data.id,
       name: data.subject,
-      startTime: data.start.dateTime,
-      endTime: data.end.dateTime,
+      startTime: convertMicrosoftDateTimeToISO(data.start.dateTime),
+      endTime: convertMicrosoftDateTimeToISO(data.end.dateTime),
       allDay: data.isAllDay,
       eventColor: Colors.white,
       microsoftEvent: true,
@@ -155,19 +157,20 @@ async function parseEventJSON(
   const event: eventType = {
     id: data.id,
     name: data.subject,
-    startTime: data.start.dateTime,
-    endTime: data.end.dateTime,
+    startTime: convertMicrosoftDateTimeToISO(data.start.dateTime),
+    endTime: convertMicrosoftDateTimeToISO(data.end.dateTime),
     allDay: data.isAllDay,
     eventColor: Colors.white,
     microsoftEvent: true,
-    microsoftReference: `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.id}`,
-    paulyEventType: 'regular',
+    microsoftReference: referenceUrl ? referenceUrl:`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.id}`,
+    paulyEventType: personal ? 'personal':'regular',
   };
   return { result: loadingStateEnum.success, data: event };
 }
 
 // Defaults to org wide events
 export async function getGraphEvents(
+  personal: boolean,
   url?: string,
   referenceUrl?: string,
   events?: eventType[],
@@ -211,7 +214,7 @@ export async function getGraphEvents(
       if (isEventSchoolDay(data.value[index])) {
         schoolDayRequests.push(data.value[index]);
       } else {
-        ongoingRequests.push(parseEventJSON(data.value[index]));
+        ongoingRequests.push(parseEventJSON(data.value[index], personal, undefined, referenceUrl));
       }
     }
     const resultRequests = await Promise.all(ongoingRequests);
@@ -239,7 +242,9 @@ export async function getGraphEvents(
       ongoingSchoolDayRequests.push(
         parseEventJSON(
           schoolDayRequests[index],
+          personal,
           events !== undefined ? [...events, ...newEvents] : [...newEvents],
+          referenceUrl
         ),
       );
     }
@@ -278,13 +283,13 @@ export async function getEvent(
     [
       {
         key: 'Prefer',
-        value: 'outlook.timezone="Central America Standard Time"',
+        value: 'outlook.timezone="UTC"',
       },
     ],
   );
   if (result.ok) {
     const data = await result.json();
-    return parseEventJSON(data);
+    return parseEventJSON(data, false);
   }
   return { result: loadingStateEnum.failed };
 }
@@ -383,7 +388,7 @@ export async function getSchoolDay(
     [
       {
         key: 'Prefer',
-        value: 'outlook.timezone="Central America Standard Time"',
+        value: 'outlook.timezone="UTC"',
       },
     ],
   );
@@ -458,7 +463,7 @@ export async function getSchoolDays(date: Date): Promise<
     const result = await callMsGraph(url, 'GET', undefined, [
       {
         key: 'Prefer',
-        value: 'outlook.timezone="Central America Standard Time"',
+        value: 'outlook.timezone="UTC"',
       },
     ]);
     if (result.ok) {

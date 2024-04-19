@@ -28,20 +28,32 @@ export default function Root({ children }: PropsWithChildren) {
         </style>
 
         <meta name="apple-itunes-app" content="app-id=6445966725" />
-        {/* Preview Meta Tags*/}
+        {/* Preview Meta Tags */}
         <meta name="author" content="Andrew Mainella" />
 
-        {/* OG Meta Tags*/}
+        {/* OG Meta Tags */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Pauly" />
-        <meta property="og:description" content="Pauly, an app for students by students. Built by the 2023-2024 Student Council."></meta>
-        <meta property="og:image" content={process.env.EXPO_PUBLIC_PAULYHOST + "/Pauly-og-Image.png"} />  
+        <meta
+          property="og:description"
+          content="Pauly, an app for students by students. Built by the 2023-2024 Student Council."
+        />
+        <meta
+          property="og:image"
+          content={`${process.env.EXPO_PUBLIC_PAULYHOST}/Pauly-og-Image.png`}
+        />
 
-        {/* Twitter Meta Tags*/}
+        {/* Twitter Meta Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Pauly" />
-        <meta name="twitter:description" content="Pauly, an app for students by students. Built by the 2023-2024 Student Council." />
-        <meta name="twitter:image" content={process.env.EXPO_PUBLIC_PAULYHOST +"/Pauly-og-Image.png"}/>
+        <meta
+          name="twitter:description"
+          content="Pauly, an app for students by students. Built by the 2023-2024 Student Council."
+        />
+        <meta
+          name="twitter:image"
+          content={`${process.env.EXPO_PUBLIC_PAULYHOST}/Pauly-og-Image.png`}
+        />
       </head>
       <body>{children}</body>
     </html>

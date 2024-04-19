@@ -22,8 +22,8 @@ export default function GovernmentTimetable() {
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <View>
-        <BackButton to="/government/calendar/"/>
-        <Text style={[styles.headerText, {marginTop: 15}]}>Timetables</Text>
+        <BackButton to="/government/calendar/" />
+        <Text style={[styles.headerText, { marginTop: 15 }]}>Timetables</Text>
       </View>
       <View
         style={{

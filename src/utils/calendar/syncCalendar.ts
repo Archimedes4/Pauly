@@ -1,4 +1,4 @@
-import { loadingStateEnum } from "@constants";
+import { loadingStateEnum } from '@constants';
 
 export default async function syncCalendar(token: string) {
   const result = await fetch(

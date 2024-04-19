@@ -107,7 +107,7 @@ export default function GovernmentHomePage() {
 
   return (
     <View style={{ width, height, backgroundColor: Colors.lightGray }}>
-      <BackButton to='/government'/>
+      <BackButton to="/government" />
       <Text style={[styles.headerText, { marginTop: 15 }]}>Home Page</Text>
       <View>
         <TextInput
@@ -115,9 +115,12 @@ export default function GovernmentHomePage() {
           onChangeText={e => {
             setNewText(e);
           }}
-          style={[styles.textInputStyle, {
-            backgroundColor: Colors.white
-          }]}
+          style={[
+            styles.textInputStyle,
+            {
+              backgroundColor: Colors.white,
+            },
+          ]}
           placeholder="Header Text"
         />
         {isAutoUpdatingText ? (
@@ -146,7 +149,16 @@ export default function GovernmentHomePage() {
           />
         </View>
       </View>
-      <View style={{ marginBottom: 'auto', marginHorizontal: 5, backgroundColor: Colors.white, padding: 10, borderRadius: 15, overflow: 'hidden' }}>
+      <View
+        style={{
+          marginBottom: 'auto',
+          marginHorizontal: 5,
+          backgroundColor: Colors.white,
+          padding: 10,
+          borderRadius: 15,
+          overflow: 'hidden',
+        }}
+      >
         <Text style={{ margin: 5, marginLeft: 0 }}>
           Select Powerpoint: {selectedPowerpoint?.name}
         </Text>

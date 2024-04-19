@@ -18,21 +18,26 @@ export async function initializePaulyPartOne(
   );
   if (currentUsersIdResult.ok) {
     const currentUsersIdResultData = await currentUsersIdResult.json();
-    let bindedOwners: string[] = []
-    bindedOwners.push(`https://graph.microsoft.com/v1.0/users/${currentUsersIdResultData.id}`)
+    const bindedOwners: string[] = [];
+    bindedOwners.push(
+      `https://graph.microsoft.com/v1.0/users/${currentUsersIdResultData.id}`,
+    );
     for (let index = 0; index < owners.length; index += 1) {
-      bindedOwners.push(`https://graph.microsoft.com/v1.0/users/${owners[index]}`)
+      bindedOwners.push(
+        `https://graph.microsoft.com/v1.0/users/${owners[index]}`,
+      );
     }
     const createGroupData = {
       description: "Pauly's Team Containing all it's data",
       displayName: 'Pauly',
-      groupTypes: ['Unified', //'DynamicMembership'
-    ],
+      groupTypes: [
+        'Unified', // 'DynamicMembership'
+      ],
       mailEnabled: true,
       mailNickname: 'pauly',
       visibility: 'HiddenMembership',
-      //membershipRule: '(user.accountEnabled -eq true)',
-      //membershipRuleProcessingState: 'on',
+      // membershipRule: '(user.accountEnabled -eq true)',
+      // membershipRuleProcessingState: 'on',
       'owners@odata.bind': bindedOwners,
       securityEnabled: false,
     };
@@ -76,7 +81,7 @@ async function createData(
   callData: addDataType,
   rootSiteId: string,
 ): Promise<
-    {result: loadingStateEnum.notFound, callData: addDataType } //For a 409
+  | { result: loadingStateEnum.notFound; callData: addDataType } // For a 409
   | { result: loadingStateEnum.failed }
   | { result: loadingStateEnum.success; id: string; callId: string }
 > {
@@ -89,7 +94,7 @@ async function createData(
   );
   if (!result.ok) {
     if (result.status === 409) {
-      console.log("409 returned", callData)
+      console.log('409 returned', callData);
       return { result: loadingStateEnum.notFound, callData };
     }
     return { result: loadingStateEnum.failed };
@@ -106,28 +111,28 @@ async function getData(
   callData: addDataType,
   rootSiteId: string,
 ): Promise<
-| { result: loadingStateEnum.failed }
-| { result: loadingStateEnum.success; id: string; callId: string }
+  | { result: loadingStateEnum.failed }
+  | { result: loadingStateEnum.success; id: string; callId: string }
 > {
   if ('displayName' in callData.data) {
     const result = await callMsGraph(
       callData.urlTwo !== undefined
-        ? callData.urlOne + rootSiteId + callData.urlTwo + `?$filter=displayName%20eq%20'${callData.data.displayName}'`
-        : callData.urlOne + `?$filter=displayName%20eq%20'${callData.data.displayName}'`
+        ? `${callData.urlOne + rootSiteId + callData.urlTwo}?$filter=displayName%20eq%20'${callData.data.displayName}'`
+        : `${callData.urlOne}?$filter=displayName%20eq%20'${callData.data.displayName}'`,
     );
     if (!result.ok) {
       return { result: loadingStateEnum.failed };
     }
     const data = await result.json();
-    if (data["value"].length < 1) {
+    if (data.value.length < 1) {
       return { result: loadingStateEnum.failed };
     }
-    if (data["value"][0]["id"] === undefined) {
+    if (data.value[0].id === undefined) {
       return { result: loadingStateEnum.failed };
     }
     return {
       result: loadingStateEnum.success,
-      id: data["value"][0]["id"] as string,
+      id: data.value[0].id as string,
       callId: callData.id,
     };
   }
@@ -222,7 +227,7 @@ export async function initializePaulyPartThree(
 
   // TO DO think about 409 if only half  of list where created and then interuption
   const ongoingRequests: Promise<
-    {result: loadingStateEnum.notFound, callData: addDataType }
+    | { result: loadingStateEnum.notFound; callData: addDataType }
     | { result: loadingStateEnum.failed }
     | { result: loadingStateEnum.success; id: string; callId: string }
   >[] = [];
@@ -248,7 +253,10 @@ export async function initializePaulyPartThree(
     if (finalRequest.result === loadingStateEnum.success) {
       paulyListNewData.fields[finalRequest.callId] = finalRequest.id;
     } else if (finalRequest.result === loadingStateEnum.notFound) {
-      const getDataResult = await getData(finalRequest.callData, getRootSiteIdResultData.id)
+      const getDataResult = await getData(
+        finalRequest.callData,
+        getRootSiteIdResultData.id,
+      );
       if (getDataResult.result !== loadingStateEnum.success) {
         return loadingStateEnum.failed;
       }
@@ -299,12 +307,12 @@ export async function initializePaulyPartThree(
     if (!paulyDataResult.ok || paulyDataResult.status === 409) {
       if (paulyDataResult.status === 409) {
         const paulyDataFourResult = await callMsGraph(
-          `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyData?$select=id`
+          `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyData?$select=id`,
         );
         if (!paulyDataFourResult.ok) {
           return loadingStateEnum.failed;
         }
-        paulyDataResult = paulyDataFourResult
+        paulyDataResult = paulyDataFourResult;
       } else {
         return loadingStateEnum.failed;
       }
@@ -336,9 +344,9 @@ export async function initializePaulyPartThree(
     );
     if (paulyListResult.status === 409) {
       const paulyListFourResult = await callMsGraph(
-        `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyList?$select=id`
+        `https://graph.microsoft.com/v1.0/sites/${getRootSiteIdResultData.id}/lists/PaulyList?$select=id`,
       );
-      paulyListResult = paulyListFourResult
+      paulyListResult = paulyListFourResult;
     }
     if (!paulyListResult.ok) {
       return loadingStateEnum.failed;

@@ -28,7 +28,7 @@ enum calendarMode {
  * The picker in the calendar. Picks Month, Week or Day.
  * @param Width The Width of the picker
  * @param Height The height of the picker
- * @returns 
+ * @returns
  */
 export default function CalendarTypePicker({
   width,

@@ -93,12 +93,11 @@ function getTextColor(isAlt: boolean, selected?: boolean, second?: boolean) {
 
 function getHeight(text?: string, caption?: string) {
   if (text !== undefined && caption !== undefined) {
-    return 52
+    return 52;
   }
   if (text !== undefined) {
-    return 40
+    return 40;
   }
-  return
 }
 
 export default function StyledButton({
@@ -166,7 +165,7 @@ export default function StyledButton({
                     fontSize: 16,
                     color: getTextColor(isAlt, selected, second),
                     fontFamily: 'Roboto',
-                    height: 20
+                    height: 20,
                   },
                   textStyle,
                 ]}
@@ -235,7 +234,7 @@ export default function StyledButton({
                   fontSize: 16,
                   color: getTextColor(isAlt, selected, second),
                   fontFamily: 'Roboto',
-                  height: 20
+                  height: 20,
                 },
                 textStyle,
               ]}

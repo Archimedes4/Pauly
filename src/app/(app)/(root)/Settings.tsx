@@ -10,11 +10,7 @@ import { View, Text, Pressable, Image, StatusBar } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
-import {
-  GearIcon,
-  GovernmentIcon,
-  PersonIcon,
-} from '@components/Icons';
+import { GearIcon, GovernmentIcon, PersonIcon } from '@components/Icons';
 import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';
 import { useSignOut } from '@hooks/authentication';
@@ -34,7 +30,7 @@ export default function Settings() {
   const [imageLoadState, setImageLoadState] = useState<loadingStateEnum>(
     loadingStateEnum.loading,
   );
-  const [triedReload, setTiredReload] = useState<boolean>(false) // Tried reloading the image
+  const [triedReload, setTiredReload] = useState<boolean>(false); // Tried reloading the image
   const dispatch = useDispatch();
   const signOut = useSignOut();
 
@@ -58,7 +54,7 @@ export default function Settings() {
   }, [currentBreakPoint, returnHome]);
 
   return (
-    <View style={{width, height}}>
+    <View style={{ width, height }}>
       <StatusBar barStyle="light-content" />
       <View
         style={{
@@ -96,14 +92,18 @@ export default function Settings() {
         {uri !== '' && imageLoadState !== loadingStateEnum.failed ? (
           <Image
             source={{ uri }}
-            onError={async (e) => {
-              if (e.nativeEvent.error === "The operation couldn’t be completed. (NSURLErrorDomain error -1000.)" && !triedReload) {
+            onError={async e => {
+              if (
+                e.nativeEvent.error ===
+                  'The operation couldn’t be completed. (NSURLErrorDomain error -1000.)' &&
+                !triedReload
+              ) {
                 setImageLoadState(loadingStateEnum.failed);
-                await getUserImage()
+                await getUserImage();
                 setImageLoadState(loadingStateEnum.loading);
-                setTiredReload(true)
+                setTiredReload(true);
               } else {
-                setImageLoadState(loadingStateEnum.failed); 
+                setImageLoadState(loadingStateEnum.failed);
               }
             }}
             style={{

@@ -13,8 +13,8 @@ export default async function getCurrentPaulyData() {
   try {
     const result = await callMsGraph(
       `https://graph.microsoft.com/v1.0/sites/${
-      store.getState().paulyList.siteId
-    }/lists/${store.getState().paulyList.paulyDataListId}/items/1/fields`,
+        store.getState().paulyList.siteId
+      }/lists/${store.getState().paulyList.paulyDataListId}/items/1/fields`,
     );
     if (result.ok) {
       const data = await result.json();

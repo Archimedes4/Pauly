@@ -23,7 +23,7 @@ function OfflineView() {
     (state: RootState) => state.dimensions,
   );
   const insets = useSafeAreaInsets();
-  
+
   useEffect(() => {
     store.dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
@@ -46,23 +46,23 @@ function OfflineView() {
     >
       <OfflineIcon width={50} height={50} color={Colors.white} />
     </View>
-  )
+  );
 }
 
-function PushToAuth({deepLink}:{deepLink: string}) {
+function PushToAuth({ deepLink }: { deepLink: string }) {
   const router = useRouter();
   useFocusEffect(() => {
     try {
-      if (deepLink !== "/") {
+      if (deepLink !== '/') {
         router.push({
-          pathname: "/sign-in",
+          pathname: '/sign-in',
           params: {
-            deepLink
-          }
+            deepLink,
+          },
         });
       } else {
         router.push({
-          pathname: "/sign-in",
+          pathname: '/sign-in',
         });
       }
     } catch (error) {}
@@ -70,17 +70,17 @@ function PushToAuth({deepLink}:{deepLink: string}) {
   return null;
 }
 
-function PushToMain({deepLink}:{deepLink: string}) {
+function PushToMain({ deepLink }: { deepLink: string }) {
   const router = useRouter();
   useFocusEffect(() => {
     try {
-      if (deepLink !== "/") {
+      if (deepLink !== '/') {
         router.push({
-          pathname: deepLink
+          pathname: deepLink,
         });
       } else {
         router.push({
-          pathname: "/",
+          pathname: '/',
         });
       }
     } catch (error) {}
@@ -89,43 +89,52 @@ function PushToMain({deepLink}:{deepLink: string}) {
 }
 
 export default function Layout() {
-  const [deepLink, setDeepLink] = useState<string>("/")
+  const [deepLink, setDeepLink] = useState<string>('/');
   const isConnected = useIsConnected();
   const isLoading = useAuthentication();
   const isAuthenticated = useIsAuthenticated();
-  const pathname = usePathname()
+  const pathname = usePathname();
   useEffect(() => {
-    if (pathname !== "/" && pathname !== "/sign-in" && pathname !== "/admin-sign-in") {
-      setDeepLink(pathname)
+    if (
+      pathname !== '/' &&
+      pathname !== '/sign-in' &&
+      pathname !== '/admin-sign-in'
+    ) {
+      setDeepLink(pathname);
     }
-  }, [])
-  
+  }, []);
+
   if (!isConnected) {
-    return <OfflineView />
+    return <OfflineView />;
   }
 
   if (isAuthenticated.loading || isLoading) {
     return <LoadingComponent />;
   }
 
-  if (!isAuthenticated.authenticated && (pathname === "/sign-in" || pathname === "/admin-sign-in")) {
+  if (
+    !isAuthenticated.authenticated &&
+    (pathname === '/sign-in' || pathname === '/admin-sign-in')
+  ) {
     // User is *not* auth, on sign in
     return <Slot />;
   }
 
-  if (isAuthenticated.authenticated && (pathname === "/sign-in" || pathname === "/admin-sign-in")) {
+  if (
+    isAuthenticated.authenticated &&
+    (pathname === '/sign-in' || pathname === '/admin-sign-in')
+  ) {
     // User *is* auth, on sign in
-    return <PushToMain deepLink={deepLink}/>
+    return <PushToMain deepLink={deepLink} />;
   }
 
   if (!isAuthenticated.authenticated) {
-    return <PushToAuth deepLink={deepLink}/>
+    return <PushToAuth deepLink={deepLink} />;
   }
-
 
   if (isConnected && !isLoading && !isAuthenticated.loading) {
     return <Slot />;
   }
 
-  return <OfflineView />
+  return <OfflineView />;
 }

@@ -256,10 +256,17 @@ export default function GovernmentAdmin() {
 
   return (
     <View style={{ height, width, backgroundColor: Colors.white }}>
-      <BackButton to='/government'/>
-      <Text style={[styles.headerText, {
-        marginVertical: 15
-      }]}>Admin</Text>
+      <BackButton to="/government" />
+      <Text
+        style={[
+          styles.headerText,
+          {
+            marginVertical: 15,
+          },
+        ]}
+      >
+        Admin
+      </Text>
       <View style={{ flexDirection: 'row' }}>
         <View>
           <View
@@ -378,13 +385,20 @@ export default function GovernmentAdmin() {
             value={createdGroupId}
             onChangeText={setCreatedGroupId}
             placeholder="Group Id"
-            style={[styles.textInputStyle, {
-              marginTop: 10
-            }]}
+            style={[
+              styles.textInputStyle,
+              {
+                marginTop: 10,
+              },
+            ]}
           />
-          <Text style={{
-            marginVertical: 10
-          }}>Time Elapsed: {timeElapsed}</Text>
+          <Text
+            style={{
+              marginVertical: 10,
+            }}
+          >
+            Time Elapsed: {timeElapsed}
+          </Text>
           <StyledButton
             text={getTextState(initResult, {
               cannotStart: 'Please Pick a User',
@@ -461,7 +475,7 @@ function UserBlock({
   setSelectedUsers,
   setInitResult,
 }: {
-  selectedUsers: string[]
+  selectedUsers: string[];
   setSelectedUsers: (item: string[]) => void;
   setInitResult: (item: loadingStateEnum) => void;
 }) {
@@ -472,7 +486,7 @@ function UserBlock({
   );
   const [nextLink, setNextLink] = useState<string | undefined>(undefined);
   const { height, width } = useSelector((state: RootState) => state.dimensions);
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string>('');
 
   async function getUserId() {
     const result = await callMsGraph('https://graph.microsoft.com/v1.0/me');
@@ -504,7 +518,7 @@ function UserBlock({
 
   if (loadUsersResult === loadingStateEnum.loading) {
     return (
-      <View style={{ height: height * 0.4, width: (width - height * 0.1) }}>
+      <View style={{ height: height * 0.4, width: width - height * 0.1 }}>
         <Text>Loading</Text>
       </View>
     );
@@ -512,11 +526,16 @@ function UserBlock({
   if (loadUsersResult === loadingStateEnum.success) {
     return (
       <View>
-        <SearchBar value={search} onChangeText={setSearch} onSearch={() => {
-          setLoadUsersResult(loadingStateEnum.loading)
-          setNextLink(undefined)
-          loadUsers(undefined, search)
-        }} style={{position: "relative", top: 0, width: (width - height * 0.1)}}/>
+        <SearchBar
+          value={search}
+          onChangeText={setSearch}
+          onSearch={() => {
+            setLoadUsersResult(loadingStateEnum.loading);
+            setNextLink(undefined);
+            loadUsers(undefined, search);
+          }}
+          style={{ position: 'relative', top: 0, width: width - height * 0.1 }}
+        />
         <FlatList
           data={loadedUsers}
           renderItem={user => {
@@ -527,9 +546,11 @@ function UserBlock({
                   text={user.item.displayName}
                   onPress={() => {
                     if (selectedUsers.includes(user.item.id)) {
-                      setSelectedUsers([...selectedUsers].filter((e) => {
-                        return e !== user.item.id
-                      }));
+                      setSelectedUsers(
+                        [...selectedUsers].filter(e => {
+                          return e !== user.item.id;
+                        }),
+                      );
                       if (selectedUsers.length > 1) {
                         setInitResult(loadingStateEnum.notStarted);
                       } else {

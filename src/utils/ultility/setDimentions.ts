@@ -5,7 +5,7 @@ import { breakPointMode } from '@constants';
 import getMainHeight from '../getMainHeight';
 
 /**
- * 
+ *
  * @param dimWidth The width of the entire screen
  * @param dimHeight The height of the entire screen
  * @param insets The dimentions of the areas that are not safe
@@ -30,7 +30,7 @@ export default function setDimentions(
     insets.bottom,
     isTop,
     isBottom,
-    isShowingZeroFooter
+    isShowingZeroFooter,
   );
   if (oldWidth !== newWidth) {
     const oldCurrentBreakPointMode: breakPointMode =
@@ -122,9 +122,11 @@ export default function setDimentions(
     }
   }
   if (height !== newHeight || totalHeight !== dimHeight) {
-    store.dispatch(dimensionsSlice.actions.setDimentionsHeight({
-      totalHeight: dimHeight,
-      height: newHeight
-    }));
+    store.dispatch(
+      dimensionsSlice.actions.setDimentionsHeight({
+        totalHeight: dimHeight,
+        height: newHeight,
+      }),
+    );
   }
 }

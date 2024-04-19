@@ -1,15 +1,26 @@
-import SubmissionStatusIcon from "@src/components/Commissions/SubmissionStatusIcon";
-import { ApprovedIcon, CloseIcon, DeniedIcon, WarningIcon } from "@src/components/Icons";
-import ProgressView from "@src/components/ProgressView";
-import { Colors, loadingStateEnum, submissionTypeEnum } from "@src/constants";
-import store from "@src/redux/store";
-import getSubmissions from "@src/utils/commissions/getSubmissions";
-import { getTextState } from "@src/utils/ultility/createUUID";
-import { getFileWithShareID } from "@src/utils/ultility/handleShareID";
-import callMsGraph from "@src/utils/ultility/microsoftAssests";
-import React, { useEffect } from "react";
-import { useState } from "react";
-import { Pressable, View, Text, Image, ListRenderItemInfo, FlatList } from "react-native";
+import SubmissionStatusIcon from '@src/components/Commissions/SubmissionStatusIcon';
+import {
+  ApprovedIcon,
+  CloseIcon,
+  DeniedIcon,
+  WarningIcon,
+} from '@src/components/Icons';
+import ProgressView from '@src/components/ProgressView';
+import { Colors, loadingStateEnum, submissionTypeEnum } from '@src/constants';
+import store from '@src/redux/store';
+import getSubmissions from '@src/utils/commissions/getSubmissions';
+import { getTextState } from '@src/utils/ultility/createUUID';
+import { getFileWithShareID } from '@src/utils/ultility/handleShareID';
+import callMsGraph from '@src/utils/ultility/microsoftAssests';
+import React, { useEffect, useState } from 'react';
+import {
+  Pressable,
+  View,
+  Text,
+  Image,
+  ListRenderItemInfo,
+  FlatList,
+} from 'react-native';
 
 export default function CommissionSubmissions({
   commissionId,
@@ -29,11 +40,14 @@ export default function CommissionSubmissions({
   const [selectedSubmissionMode, setSelectedSubmissionMode] =
     useState<submissionTypeEnum>(submissionTypeEnum.unApproved);
 
-  const [selectedSubmission, setSelectedSubmission] = useState<string>("");
+  const [selectedSubmission, setSelectedSubmission] = useState<string>('');
 
   async function loadData() {
     setSubmissionsState(loadingStateEnum.loading);
-    const result = await getSubmissions({commissionId, submissionType: selectedSubmissionMode});
+    const result = await getSubmissions({
+      commissionId,
+      submissionType: selectedSubmissionMode,
+    });
     if (
       result.result === loadingStateEnum.success &&
       result.data !== undefined
@@ -109,15 +123,21 @@ export default function CommissionSubmissions({
           <FlatList
             data={submissions}
             renderItem={submission => (
-              <CommissionSubmissionButton key={submission.item.id} submission={submission} setSelectedSubmission={setSelectedSubmission}/>
+              <CommissionSubmissionButton
+                key={submission.item.id}
+                submission={submission}
+                setSelectedSubmission={setSelectedSubmission}
+              />
             )}
           />
         </View>
         <SubmissionView
           width={width}
           height={height}
-          submissionData={submissions.find((e) => {return e.id === selectedSubmission})}
-          onClose={() => setSelectedSubmission("")}
+          submissionData={submissions.find(e => {
+            return e.id === selectedSubmission;
+          })}
+          onClose={() => setSelectedSubmission('')}
           onSetSubmissionData={e => {
             const newSubmissions = [...submissions];
             const index = newSubmissions.findIndex(sub => {
@@ -143,7 +163,7 @@ function SubmissionView({
   height,
   submissionData,
   onClose,
-  onSetSubmissionData
+  onSetSubmissionData,
 }: {
   width: number;
   height: number;
@@ -162,7 +182,7 @@ function SubmissionView({
 
   async function changeSubmissionApproved() {
     if (submissionData === undefined) {
-      return
+      return;
     }
     setChangeState(loadingStateEnum.loading);
     const data = {
@@ -185,8 +205,8 @@ function SubmissionView({
         onSetSubmissionData({
           ...submissionData,
           approved: !submissionData.approved,
-          reviewed: true
-        })
+          reviewed: true,
+        });
         setChangeState(loadingStateEnum.success);
       } else {
         setChangeState(loadingStateEnum.failed);
@@ -197,7 +217,10 @@ function SubmissionView({
   }
 
   async function loadImage() {
-    if (submissionData !== undefined && submissionData.submissionImage !== undefined) {
+    if (
+      submissionData !== undefined &&
+      submissionData.submissionImage !== undefined
+    ) {
       setImageState(loadingStateEnum.loading);
       const shareResult = await getFileWithShareID(
         submissionData.submissionImage,
@@ -222,12 +245,12 @@ function SubmissionView({
   }
 
   useEffect(() => {
-    setChangeState(loadingStateEnum.notStarted)
+    setChangeState(loadingStateEnum.notStarted);
     loadImage();
   }, []);
 
   if (submissionData === undefined) {
-    return null
+    return null;
   }
 
   return (
@@ -337,18 +360,38 @@ function SubmissionView({
   );
 }
 
-function CommissionSubmissionButton({submission, setSelectedSubmission}:{submission: ListRenderItemInfo<submissionType>, setSelectedSubmission: (item: string) => void}) {
-  const [isHover, setIsHover] = useState<boolean>(false)
+function CommissionSubmissionButton({
+  submission,
+  setSelectedSubmission,
+}: {
+  submission: ListRenderItemInfo<submissionType>;
+  setSelectedSubmission: (item: string) => void;
+}) {
+  const [isHover, setIsHover] = useState<boolean>(false);
   return (
     <Pressable
-      style={{ margin: 10, borderColor: Colors.darkGray, borderWidth: 2, borderRadius: 15, padding: 15, backgroundColor: isHover ? Colors.lightGray:Colors.white, flexDirection: 'row' }}
+      style={{
+        margin: 10,
+        borderColor: Colors.darkGray,
+        borderWidth: 2,
+        borderRadius: 15,
+        padding: 15,
+        backgroundColor: isHover ? Colors.lightGray : Colors.white,
+        flexDirection: 'row',
+      }}
       onPress={() => setSelectedSubmission(submission.item.id)}
-      onHoverIn={() => {setIsHover(true)}}
-      onHoverOut={() => {setIsHover(false)}}
+      onHoverIn={() => {
+        setIsHover(true);
+      }}
+      onHoverOut={() => {
+        setIsHover(false);
+      }}
     >
       <View>
-        <Text style={{fontFamily: "Roboto-Bold"}}>{submission.item.userName}</Text>
-        <Text style={{fontFamily: "Roboto"}}>
+        <Text style={{ fontFamily: 'Roboto-Bold' }}>
+          {submission.item.userName}
+        </Text>
+        <Text style={{ fontFamily: 'Roboto' }}>
           {new Date(submission.item.submissionTime).toLocaleDateString(
             'en-US',
             {
@@ -363,7 +406,7 @@ function CommissionSubmissionButton({submission, setSelectedSubmission}:{submiss
           )}
         </Text>
       </View>
-      <SubmissionStatusIcon submission={submission.item}/>
+      <SubmissionStatusIcon submission={submission.item} />
     </Pressable>
-  )
+  );
 }

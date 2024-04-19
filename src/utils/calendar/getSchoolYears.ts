@@ -36,7 +36,7 @@ export default async function getSchoolYears(nextLink?: string): Promise<
     [
       {
         key: 'Prefer',
-        value: 'outlook.timezone="Central America Standard Time"',
+        value: 'outlook.timezone="UTC"',
       },
     ],
   );

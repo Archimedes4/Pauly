@@ -215,10 +215,10 @@ function ReducedMonthEvents({}: {}) {
     const result = [];
 
     const checkStartDate = new Date(selectedDate);
-    checkStartDate.setHours(0)
-    checkStartDate.setMinutes(0)
-    checkStartDate.setSeconds(0)
-    const checkEndDate = new Date(checkStartDate)
+    checkStartDate.setHours(0);
+    checkStartDate.setMinutes(0);
+    checkStartDate.setSeconds(0);
+    const checkEndDate = new Date(checkStartDate);
     checkEndDate.setDate(checkEndDate.getDate() + 1);
 
     const newDayData = [...monthData[firstIndex].events]
@@ -252,7 +252,7 @@ function ReducedMonthEvents({}: {}) {
       }
     }
     setLongestText(longestText);
-    console.log(result)
+    console.log(result);
     return result;
   }
   function getEventTime(event: eventType) {

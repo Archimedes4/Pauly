@@ -9,10 +9,10 @@ import { StoreType } from '@redux/store';
 import callMsGraph from '../ultility/microsoftAssests/noStore';
 
 /**
- * 
- * @param startDate 
- * @param endDate 
- * @returns 
+ *
+ * @param startDate
+ * @param endDate
+ * @returns
  */
 function getFilter(
   startDate?: { date: Date; filter: 'ge' | 'le' },
@@ -36,10 +36,10 @@ function getFilter(
 }
 
 /**
- * 
+ *
  * @param commissionIds The commission Ids of the submissions to fetch
  * @param store The Redux store
- * @returns 
+ * @returns
  */
 async function getSubmissions(
   commissionIds: string[],

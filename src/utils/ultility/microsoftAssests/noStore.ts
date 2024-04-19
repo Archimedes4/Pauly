@@ -11,7 +11,7 @@ import { Platform } from 'react-native';
  * @param headersIn The headers in the form of key with value
  * @param secondAuth This is for recursion and is not to be used
  * @param abort Abort controller to be passed to abort the function
- * @returns 
+ * @returns
  */
 export default async function callMsGraph(
   url: string,

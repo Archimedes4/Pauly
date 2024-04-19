@@ -378,7 +378,10 @@ export function getNumberOfBlocks(width: number) {
     : 1;
 }
 
-export async function getUsers(nextLink?: string, search?: string): Promise<
+export async function getUsers(
+  nextLink?: string,
+  search?: string,
+): Promise<
   | {
       result: loadingStateEnum.success;
       data: microsoftUserType[];
@@ -388,15 +391,21 @@ export async function getUsers(nextLink?: string, search?: string): Promise<
       result: loadingStateEnum.failed;
     }
 > {
-  const filter = (search !== "" && search !== undefined) ? `&$search="displayName:${search}"`:""
+  const filter =
+    search !== '' && search !== undefined
+      ? `&$search="displayName:${search}"`
+      : '';
   const result = await callMsGraph(
     nextLink ||
       `https://graph.microsoft.com/v1.0/users?$top=10&$select,id,displayName&$orderby=displayName${filter}`,
-    "GET",
+    'GET',
     undefined,
-    [{
-      key: "ConsistencyLevel", value: "eventual"
-    }]
+    [
+      {
+        key: 'ConsistencyLevel',
+        value: 'eventual',
+      },
+    ],
   );
   if (result.ok) {
     const data = await result.json();

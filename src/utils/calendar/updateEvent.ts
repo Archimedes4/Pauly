@@ -28,11 +28,11 @@ export default async function createEvent(): Promise<void> {
       subject: selectedEvent.name,
       start: {
         dateTime: selectedEvent.startTime.replace(/.\d+Z$/g, 'Z'),
-        timeZone: 'Central America Standard Time',
+        timeZone: 'UTC',
       },
       end: {
         dateTime: selectedEvent.endTime.replace(/.\d+Z$/g, 'Z'),
-        timeZone: 'Central America Standard Time',
+        timeZone: 'UTC',
       },
     };
     if (selectedEvent.allDay) {
@@ -82,11 +82,11 @@ export default async function createEvent(): Promise<void> {
       subject: selectedEvent.name,
       start: {
         dateTime: selectedEvent.startTime.replace(/.\d+Z$/g, 'Z'),
-        timeZone: 'Central America Standard Time',
+        timeZone: 'UTC',
       },
       end: {
         dateTime: selectedEvent.endTime.replace(/.\d+Z$/g, 'Z'),
-        timeZone: 'Central America Standard Time',
+        timeZone: 'UTC',
       },
     };
     const schoolYearId = getSchoolYearId();

@@ -34,30 +34,30 @@ function convertSubmissionTypeToFilter(
  * @returns Result, if successful returns submissions.
  */
 export default async function getSubmissions(
-  input: getSubmissionsInput
-): Promise<{
-  result: loadingStateEnum.failed;
-} | {
-  result: loadingStateEnum.success;
-  data: submissionType[];
-  nextLink?: string;
-  count: number;
-}> {
-  let url = ""
-  if ("url" in input) {
-    url = input.url
+  input: getSubmissionsInput,
+): Promise<
+  | {
+      result: loadingStateEnum.failed;
+    }
+  | {
+      result: loadingStateEnum.success;
+      data: submissionType[];
+      nextLink?: string;
+      count: number;
+    }
+> {
+  let url = '';
+  if ('url' in input) {
+    url = input.url;
   } else {
     const filter: string = convertSubmissionTypeToFilter(input.submissionType);
     url = `https://graph.microsoft.com/v1.0/sites/${
       store.getState().paulyList.siteId
     }/lists/${
       store.getState().paulyList.commissionSubmissionsListId
-    }/items?expand=fields&$select=id&$filter=fields/commissionId%20eq%20'${input.commissionId}'${filter}`
+    }/items?expand=fields&$select=id&$filter=fields/commissionId%20eq%20'${input.commissionId}'${filter}`;
   }
-  const result = await callMsGraph(
-    url,
-    'GET',
-  );
+  const result = await callMsGraph(url, 'GET');
   if (result.ok) {
     const data = await result.json();
 

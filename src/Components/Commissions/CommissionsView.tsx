@@ -11,8 +11,8 @@ import WebViewCross from '@components/WebViewCross';
 import { Colors, commissionTypeEnum, loadingStateEnum } from '@constants';
 import { Link, router } from 'expo-router';
 import calculateFontSize from '@utils/ultility/calculateFontSize';
-import CommissionImageComponent from './CommissionImageComponent';
 import { getCommission } from '@redux/reducers/commissionsReducer';
+import CommissionImageComponent from './CommissionImageComponent';
 import CommissionsViewSubmissions from './CommissionsViewSubmissions';
 
 export default function CommissionsView({ id }: { id: string }) {
@@ -31,7 +31,7 @@ export default function CommissionsView({ id }: { id: string }) {
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [evaluatedOverflow, setEvaluatedOverflow] = useState<boolean>(false);
 
-  const [topCompHeight, setTopCompHeight] = useState<number>(0)
+  const [topCompHeight, setTopCompHeight] = useState<number>(0);
 
   async function getPost(teamId: string, channelId: string, messageId: string) {
     setMessageState(loadingStateEnum.loading);
@@ -62,11 +62,9 @@ export default function CommissionsView({ id }: { id: string }) {
     setCommissionState(result.result);
   }, [id]);
 
-
   useEffect(() => {
     getCommissionInformation();
   }, [getCommissionInformation]);
-
 
   if (commissionState === loadingStateEnum.loading) {
     return (
@@ -82,7 +80,7 @@ export default function CommissionsView({ id }: { id: string }) {
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
-          borderRadius: 15
+          borderRadius: 15,
         }}
       >
         <ProgressView
@@ -91,10 +89,13 @@ export default function CommissionsView({ id }: { id: string }) {
         />
         <Text>Loading</Text>
       </View>
-    )
+    );
   }
 
-  if (commissionState === loadingStateEnum.success && commissionData !== undefined) {
+  if (
+    commissionState === loadingStateEnum.success &&
+    commissionData !== undefined
+  ) {
     return (
       <View
         style={{
@@ -108,12 +109,14 @@ export default function CommissionsView({ id }: { id: string }) {
           shadowOffset: { width: 0, height: 1 },
           shadowOpacity: 0.8,
           shadowRadius: 10,
-          borderRadius: 15
+          borderRadius: 15,
         }}
       >
-        <View onLayout={(e) => {
-          setTopCompHeight(e.nativeEvent.layout.height)
-        }}>
+        <View
+          onLayout={e => {
+            setTopCompHeight(e.nativeEvent.layout.height);
+          }}
+        >
           <Pressable
             onPress={() => router.push('/commissions')}
             style={{ marginTop: 10, marginLeft: 10 }}
@@ -131,14 +134,19 @@ export default function CommissionsView({ id }: { id: string }) {
                 commissionData.title,
               ),
               fontFamily: 'Comfortaa-Regular',
-              marginTop: height * 0.01
+              marginTop: height * 0.01,
             }}
           >
             {commissionData.title}
           </Text>
         </View>
         <ScrollView
-          style={{ height: isOverflowing ? (height * 0.8 - topCompHeight) : (height * 0.9 - topCompHeight), width: width * 0.9}}
+          style={{
+            height: isOverflowing
+              ? height * 0.8 - topCompHeight
+              : height * 0.9 - topCompHeight,
+            width: width * 0.9,
+          }}
           showsVerticalScrollIndicator={false}
         >
           <View
@@ -159,7 +167,7 @@ export default function CommissionsView({ id }: { id: string }) {
                 borderRadius: 15,
                 shadowOffset: { width: 2, height: 3 },
                 width: width * 0.7,
-                marginHorizontal: width * 0.1
+                marginHorizontal: width * 0.1,
               }}
             >
               <View style={{ margin: 10, flexDirection: 'row' }}>
@@ -186,7 +194,10 @@ export default function CommissionsView({ id }: { id: string }) {
             </View>
             {commissionData.value === commissionTypeEnum.Image ||
             commissionData.value === commissionTypeEnum.ImageLocation ? (
-              <CommissionImageComponent imageUri={imageUri} setImageUri={setImageUri} />
+              <CommissionImageComponent
+                imageUri={imageUri}
+                setImageUri={setImageUri}
+              />
             ) : null}
             <Link
               href={`/commissions/${id}/leaderboard`}
@@ -202,14 +213,24 @@ export default function CommissionsView({ id }: { id: string }) {
                 padding: 10,
                 fontFamily: 'Roboto-Bold',
                 overflow: 'hidden',
-                marginTop: 10
+                marginTop: 10,
               }}
             >
               Leaderboard
             </Link>
-            <View style={{width: width * 0.7, marginHorizontal: width * 0.1}}>
-              <Text style={{marginTop: 10, marginBottom: 2, fontFamily: "Roboto-Bold"}}>Your Submissions</Text>
-              <CommissionsViewSubmissions commissionId={commissionData.commissionId}/>
+            <View style={{ width: width * 0.7, marginHorizontal: width * 0.1 }}>
+              <Text
+                style={{
+                  marginTop: 10,
+                  marginBottom: 2,
+                  fontFamily: 'Roboto-Bold',
+                }}
+              >
+                Your Submissions
+              </Text>
+              <CommissionsViewSubmissions
+                commissionId={commissionData.commissionId}
+              />
             </View>
             {isOverflowing ? null : (
               <View style={{ marginTop: 10, marginBottom: 10 }}>
@@ -237,7 +258,7 @@ export default function CommissionsView({ id }: { id: string }) {
           </View>
         ) : null}
       </View>
-    )
+    );
   }
 
   return (
@@ -253,7 +274,7 @@ export default function CommissionsView({ id }: { id: string }) {
         borderRadius: 15,
       }}
     >
-        <Text>Something Went Wrong</Text>
+      <Text>Something Went Wrong</Text>
     </View>
   );
 }

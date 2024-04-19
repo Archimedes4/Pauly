@@ -8,6 +8,11 @@ import calculateFontSize from '@utils/ultility/calculateFontSize';
 import { isTimeOnDay } from '@utils/calendar/calendarFunctions';
 import { UpIcon } from '../Icons';
 
+/**
+ * 
+ * @param param0 
+ * @returns 
+ */
 export default function AllDayComponent({
   day,
   width,
@@ -21,13 +26,14 @@ export default function AllDayComponent({
   const [allDayEvents, setAllDayEvents] = useState<eventType[]>([]);
   const [allDayEventsExpanded, setAllDayEventsExpanded] =
     useState<boolean>(false);
+
   useEffect(() => {
     setAllDayEvents(
       currentEvents.filter(e => {
         return e.allDay === true && isTimeOnDay(e.startTime, day);
       }),
     );
-  }, [currentEvents]);
+  }, [currentEvents, day]);
 
   if (allDayEvents.length >= 1) {
     return (

@@ -1,12 +1,12 @@
-import { useSignOut } from "@hooks/authentication";
-import useIsShowingLogout from "@hooks/useIsShowingLogout";
-import { RootState } from "@redux/store";
-import { View, Text, Pressable } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useSelector } from "react-redux";
-import ProgressView from "./ProgressView";
-import React from "react";
-import { Colors } from "@constants";
+import { useSignOut } from '@hooks/authentication';
+import useIsShowingLogout from '@hooks/useIsShowingLogout';
+import { RootState } from '@redux/store';
+import { View, Text, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import React from 'react';
+import { Colors } from '@constants';
+import ProgressView from './ProgressView';
 
 export default function LoadingComponent() {
   const isGovernmentMode = useSelector(

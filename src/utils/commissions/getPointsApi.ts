@@ -16,7 +16,7 @@ import callMsGraph from '../ultility/microsoftAssests/noStore';
  */
 async function getPointsBatch(
   commissions: string[],
-  store: StoreType
+  store: StoreType,
 ): Promise<{ result: loadingStateEnum; points: number }> {
   const outputRequests: { id: string; method: string; url: string }[] = [];
   for (let index = 0; index < commissions.length; index += 1) {

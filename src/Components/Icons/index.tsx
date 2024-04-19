@@ -17,7 +17,7 @@ import Svg, {
   Stop,
   SvgProps,
   Symbol,
-  Use
+  Use,
 } from 'react-native-svg';
 import { Colors } from '@constants';
 
@@ -1776,46 +1776,60 @@ export function NewsIcon({ width, height, style, props }: iconProps) {
 
 export function ApprovedIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg       width={width}
-    height={height}
-    style={style}
-    {...props} fill="#000000" viewBox="-1.7 0 20.4 20.4">
-      <G id="SVGRepo_iconCarrier">
-        <Path d="M16.417 10.283A7.917 7.917 0 1 1 8.5 2.366a7.916 7.916 0 0 1 7.917 7.917zm-4.105-4.498a.791.791 0 0 0-1.082.29l-3.828 6.63-1.733-2.08a.791.791 0 1 0-1.216 1.014l2.459 2.952a.792.792 0 0 0 .608.285.83.83 0 0 0 .068-.003.791.791 0 0 0 .618-.393L12.6 6.866a.791.791 0 0 0-.29-1.081z"/>
-      </G>
-    </Svg>
-  )
-}
-
-export function DeniedIcon({ width, height, style, props }: iconProps) {
-  return (
-    <Svg 
+    <Svg
       width={width}
       height={height}
       style={style}
       {...props}
       fill="#000000"
       viewBox="-1.7 0 20.4 20.4"
-      >
+    >
       <G id="SVGRepo_iconCarrier">
-        <Path d="M16.417 10.283A7.917 7.917 0 1 1 8.5 2.366a7.916 7.916 0 0 1 7.917 7.917zm-6.804.01 3.032-3.033a.792.792 0 0 0-1.12-1.12L8.494 9.173 5.46 6.14a.792.792 0 0 0-1.12 1.12l3.034 3.033-3.033 3.033a.792.792 0 0 0 1.12 1.119l3.032-3.033 3.033 3.033a.792.792 0 0 0 1.12-1.12z"/>
+        <Path d="M16.417 10.283A7.917 7.917 0 1 1 8.5 2.366a7.916 7.916 0 0 1 7.917 7.917zm-4.105-4.498a.791.791 0 0 0-1.082.29l-3.828 6.63-1.733-2.08a.791.791 0 1 0-1.216 1.014l2.459 2.952a.792.792 0 0 0 .608.285.83.83 0 0 0 .068-.003.791.791 0 0 0 .618-.393L12.6 6.866a.791.791 0 0 0-.29-1.081z" />
       </G>
     </Svg>
-  )
+  );
 }
 
-export function ZeroFooterIcon({ width, height, style, color }: colorIconProps) {
+export function DeniedIcon({ width, height, style, props }: iconProps) {
+  return (
+    <Svg
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+      fill="#000000"
+      viewBox="-1.7 0 20.4 20.4"
+    >
+      <G id="SVGRepo_iconCarrier">
+        <Path d="M16.417 10.283A7.917 7.917 0 1 1 8.5 2.366a7.916 7.916 0 0 1 7.917 7.917zm-6.804.01 3.032-3.033a.792.792 0 0 0-1.12-1.12L8.494 9.173 5.46 6.14a.792.792 0 0 0-1.12 1.12l3.034 3.033-3.033 3.033a.792.792 0 0 0 1.12 1.119l3.032-3.033 3.033 3.033a.792.792 0 0 0 1.12-1.12z" />
+      </G>
+    </Svg>
+  );
+}
+
+export function ZeroFooterIcon({
+  width,
+  height,
+  style,
+  color,
+}: colorIconProps) {
   function getDistance(margins: number, symbols: number) {
-    let marginLength = (width - (height * 0.2))/8
-    return (marginLength * margins + (height * 0.05) * symbols)
+    const marginLength = (width - height * 0.2) / 8;
+    return marginLength * margins + height * 0.05 * symbols;
   }
 
   return (
-    <Svg width={width} height={height * 0.075} style={style} viewBox={`0 0 ${width} ${height * 0.075}`}>
+    <Svg
+      width={width}
+      height={height * 0.075}
+      style={style}
+      viewBox={`0 0 ${width} ${height * 0.075}`}
+    >
       <Symbol id="House" viewBox="0 0 460.298 460.297">
         <Defs>
           <Mask id="HomeMask">
-            <Rect x="0" y="0" width="460.298" height="460.297" fill={"white"} />
+            <Rect x="0" y="0" width="460.298" height="460.297" fill="white" />
             <Path
               d="M230.149,120.939L65.986,256.274c0,0.191-0.048,0.472-0.144,0.855c-0.094,0.38-0.144,0.656-0.144,0.852v137.041
             c0,4.948,1.809,9.236,5.426,12.847c3.616,3.613,7.898,5.431,12.847,5.431h109.63V303.664h73.097v109.64h109.629
@@ -1832,22 +1846,36 @@ export function ZeroFooterIcon({ width, height, style, color }: colorIconProps) 
             />
           </Mask>
         </Defs>
-        <Rect x="0" y="0" width="460.298" height="460.297" fill={color || "#000000"} mask="url(#HomeMask)"/>
+        <Rect
+          x="0"
+          y="0"
+          width="460.298"
+          height="460.297"
+          fill={color || '#000000'}
+          mask="url(#HomeMask)"
+        />
       </Symbol>
-      <Symbol id='Person' viewBox="0 0 512 512">
+      <Symbol id="Person" viewBox="0 0 512 512">
         <Defs>
           <Mask id="PersonMask">
-            <Rect x="0" y="0" width="512" height="512" fill={"white"} />
+            <Rect x="0" y="0" width="512" height="512" fill="white" />
             <Path d="M258.9,48C141.92,46.42,46.42,141.92,48,258.9,49.56,371.09,140.91,462.44,253.1,464c117,1.6,212.48-93.9,210.88-210.88C462.44,140.91,371.09,49.56,258.9,48ZM385.32,375.25a4,4,0,0,1-6.14-.32,124.27,124.27,0,0,0-32.35-29.59C321.37,329,289.11,320,256,320s-65.37,9-90.83,25.34a124.24,124.24,0,0,0-32.35,29.58,4,4,0,0,1-6.14.32A175.32,175.32,0,0,1,80,259C78.37,161.69,158.22,80.24,255.57,80S432,158.81,432,256A175.32,175.32,0,0,1,385.32,375.25Z" />
             <Path d="M256,144c-19.72,0-37.55,7.39-50.22,20.82s-19,32-17.57,51.93C191.11,256,221.52,288,256,288s64.83-32,67.79-71.24c1.48-19.74-4.8-38.14-17.68-51.82C293.39,151.44,275.59,144,256,144Z" />
           </Mask>
         </Defs>
-        <Rect x="0" y="0" width="512" height="512" fill={color || "#000000"} mask="url(#PersonMask)"/>
+        <Rect
+          x="0"
+          y="0"
+          width="512"
+          height="512"
+          fill={color || '#000000'}
+          mask="url(#PersonMask)"
+        />
       </Symbol>
       <Symbol id="Medal" viewBox="0 0 297.334 297.334">
         <Defs>
           <Mask id="MedalMask">
-            <Rect x="0" y="0" width="297.334" height="297.334" fill={"white"} />
+            <Rect x="0" y="0" width="297.334" height="297.334" fill="white" />
             <G id="SVGRepo_bgCarrier" strokeWidth="0" />
             <G
               id="SVGRepo_tracerCarrier"
@@ -1865,12 +1893,19 @@ export function ZeroFooterIcon({ width, height, style, color }: colorIconProps) 
             </G>
           </Mask>
         </Defs>
-        <Rect x="0" y="0" width="297.334" height="297.334" fill={color || "#000000"} mask="url(#MedalMask)"/>
+        <Rect
+          x="0"
+          y="0"
+          width="297.334"
+          height="297.334"
+          fill={color || '#000000'}
+          mask="url(#MedalMask)"
+        />
       </Symbol>
       <Symbol id="Calendar" viewBox="0 0 24 24">
         <Defs>
           <Mask id="CalendarMask">
-            <Rect x="0" y="0" width="24" height="24" fill={"white"} />
+            <Rect x="0" y="0" width="24" height="24" fill="white" />
             <Path
               d="M7.75 2.5C7.75 2.08579 7.41421 1.75 7 1.75C6.58579 1.75 6.25 2.08579 6.25 2.5V4.07926C4.81067 4.19451 3.86577 4.47737 3.17157 5.17157C2.47737 5.86577 2.19451 6.81067 2.07926 8.25H21.9207C21.8055 6.81067 21.5226 5.86577 20.8284 5.17157C20.1342 4.47737 19.1893 4.19451 17.75 4.07926V2.5C17.75 2.08579 17.4142 1.75 17 1.75C16.5858 1.75 16.25 2.08579 16.25 2.5V4.0129C15.5847 4 14.839 4 14 4H10C9.16097 4 8.41527 4 7.75 4.0129V2.5Z"
               fill={color || '#000000'}
@@ -1882,36 +1917,134 @@ export function ZeroFooterIcon({ width, height, style, color }: colorIconProps) 
             />
           </Mask>
         </Defs>
-        <Rect x="0" y="0" width="24" height="24" fill={color || "#000000"} mask="url(#CalendarMask)"/>
+        <Rect
+          x="0"
+          y="0"
+          width="24"
+          height="24"
+          fill={color || '#000000'}
+          mask="url(#CalendarMask)"
+        />
       </Symbol>
-      
-      <Rect x="0" y="0" width={width} height={height * 0.0125} fill={color || "#000000"}/>
-      <Rect x="0" y={height * 0.0625 - 1} width={width} height={height * 0.0125 + 1} fill={color || "#000000"}/>
-      <Rect x="0" y="0"  width={getDistance(1, 0) + 1} height={height * 0.075} fill={color || "#000000"}/>
-      <Use href='#House' width={height * 0.05} height={Math.max(height * 0.05) + 1} x={getDistance(1, 0)} y={height * 0.0125 - 1}/>
-      <Rect x={getDistance(1, 1) - 1} y="0"  width={getDistance(2, 0) + 2} height={height * 0.075} fill={color || "#000000"}/>
-      <Use href='#Medal' width={height * 0.05} height={height * 0.05} x={getDistance(3, 1)} y={height * 0.0125 - 1}/>
-      <Rect x={getDistance(3, 2) - 1} y="0"  width={getDistance(2, 0) + 2} height={height * 0.075} fill={color || "#000000"}/>
-      <Use href='#Calendar' width={Math.max(height * 0.05)} height={Math.max(height * 0.05)} x={getDistance(5, 2)} y={height * 0.0125 - 1}/>
 
-      <Rect x={getDistance(5, 2)}  y={height * 0.0625 - 4}  width={Math.max(height * 0.05) + 2} height={height * 0.0125} fill={color || "#000000"}/>
+      <Rect
+        x="0"
+        y="0"
+        width={width}
+        height={height * 0.0125}
+        fill={color || '#000000'}
+      />
+      <Rect
+        x="0"
+        y={height * 0.0625 - 1}
+        width={width}
+        height={height * 0.0125 + 1}
+        fill={color || '#000000'}
+      />
+      <Rect
+        x="0"
+        y="0"
+        width={getDistance(1, 0) + 1}
+        height={height * 0.075}
+        fill={color || '#000000'}
+      />
+      <Use
+        href="#House"
+        width={height * 0.05}
+        height={Math.max(height * 0.05) + 1}
+        x={getDistance(1, 0)}
+        y={height * 0.0125 - 1}
+      />
+      <Rect
+        x={getDistance(1, 1) - 1}
+        y="0"
+        width={getDistance(2, 0) + 2}
+        height={height * 0.075}
+        fill={color || '#000000'}
+      />
+      <Use
+        href="#Medal"
+        width={height * 0.05}
+        height={height * 0.05}
+        x={getDistance(3, 1)}
+        y={height * 0.0125 - 1}
+      />
+      <Rect
+        x={getDistance(3, 2) - 1}
+        y="0"
+        width={getDistance(2, 0) + 2}
+        height={height * 0.075}
+        fill={color || '#000000'}
+      />
+      <Use
+        href="#Calendar"
+        width={Math.max(height * 0.05)}
+        height={Math.max(height * 0.05)}
+        x={getDistance(5, 2)}
+        y={height * 0.0125 - 1}
+      />
 
-      <Rect x={getDistance(5, 3) - 1} y="0"  width={getDistance(2, 0) + 2} height={height * 0.075} fill={color || "#000000"}/>
-      <Use href='#Person' width={height * 0.05} height={height * 0.05} x={getDistance(7, 3)} y={height * 0.0125 - 1}/>
-      <Rect x={getDistance(7, 4) - 1} y="0"  width={getDistance(1, 0) + 1} height={height * 0.075} fill={color || "#000000"}/>
+      <Rect
+        x={getDistance(5, 2)}
+        y={height * 0.0625 - 4}
+        width={Math.max(height * 0.05) + 2}
+        height={height * 0.0125}
+        fill={color || '#000000'}
+      />
+
+      <Rect
+        x={getDistance(5, 3) - 1}
+        y="0"
+        width={getDistance(2, 0) + 2}
+        height={height * 0.075}
+        fill={color || '#000000'}
+      />
+      <Use
+        href="#Person"
+        width={height * 0.05}
+        height={height * 0.05}
+        x={getDistance(7, 3)}
+        y={height * 0.0125 - 1}
+      />
+      <Rect
+        x={getDistance(7, 4) - 1}
+        y="0"
+        width={getDistance(1, 0) + 1}
+        height={height * 0.075}
+        fill={color || '#000000'}
+      />
     </Svg>
-  )
+  );
 }
 
 export function ShareIcon({ width, height, style, props }: iconProps) {
   return (
-    <Svg width={width} height={height} style={style} {...props} viewBox="0 0 20 20" fill="none">
+    <Svg
+      width={width}
+      height={height}
+      style={style}
+      {...props}
+      viewBox="0 0 20 20"
+      fill="none"
+    >
       <G id="SVGRepo_iconCarrier">
-        <Path d="M9 3C9 2.44772 9.44772 2 10 2C10.5523 2 11 2.44772 11 3L11 13.5C11 14.0523 10.5523 14.5 10 14.5C9.44772 14.5 9 14.0523 9 13.5L9 3Z" fill="#000000"/>
-        <Path d="M10.6402 2.76826C11.0645 2.41469 11.1218 1.78413 10.7682 1.35985C10.4147 0.935575 9.7841 0.878251 9.35982 1.23181L6.35982 3.73181C5.93554 4.08538 5.87822 4.71594 6.23178 5.14022C6.58535 5.5645 7.21591 5.62182 7.64019 5.26826L10.6402 2.76826Z" fill="#000000"/>
-        <Path d="M9.35981 2.76826C8.93553 2.41469 8.87821 1.78413 9.23177 1.35985C9.58534 0.935575 10.2159 0.878251 10.6402 1.23181L13.6402 3.73181C14.0645 4.08538 14.1218 4.71594 13.7682 5.14022C13.4147 5.5645 12.7841 5.62182 12.3598 5.26826L9.35981 2.76826Z" fill="#000000"/>
-        <Path d="M13 9C12.4477 9 12 8.55228 12 8C12 7.44772 12.4477 7 13 7H14C15.6233 7 17 8.16491 17 9.69231V17.3077C17 18.8351 15.6233 20 14 20L6 20C4.37672 20 3 18.8351 3 17.3077L3 9.69231C3 8.16491 4.37672 7 6 7H7C7.55228 7 8 7.44772 8 8C8 8.55228 7.55228 9 7 9H6C5.41414 9 5 9.35043 5 9.69231L5 17.3077C5 17.6496 5.41414 18 6 18L14 18C14.5859 18 15 17.6496 15 17.3077L15 9.69231C15 9.35043 14.5859 9 14 9L13 9Z" fill="#000000"/>  
+        <Path
+          d="M9 3C9 2.44772 9.44772 2 10 2C10.5523 2 11 2.44772 11 3L11 13.5C11 14.0523 10.5523 14.5 10 14.5C9.44772 14.5 9 14.0523 9 13.5L9 3Z"
+          fill="#000000"
+        />
+        <Path
+          d="M10.6402 2.76826C11.0645 2.41469 11.1218 1.78413 10.7682 1.35985C10.4147 0.935575 9.7841 0.878251 9.35982 1.23181L6.35982 3.73181C5.93554 4.08538 5.87822 4.71594 6.23178 5.14022C6.58535 5.5645 7.21591 5.62182 7.64019 5.26826L10.6402 2.76826Z"
+          fill="#000000"
+        />
+        <Path
+          d="M9.35981 2.76826C8.93553 2.41469 8.87821 1.78413 9.23177 1.35985C9.58534 0.935575 10.2159 0.878251 10.6402 1.23181L13.6402 3.73181C14.0645 4.08538 14.1218 4.71594 13.7682 5.14022C13.4147 5.5645 12.7841 5.62182 12.3598 5.26826L9.35981 2.76826Z"
+          fill="#000000"
+        />
+        <Path
+          d="M13 9C12.4477 9 12 8.55228 12 8C12 7.44772 12.4477 7 13 7H14C15.6233 7 17 8.16491 17 9.69231V17.3077C17 18.8351 15.6233 20 14 20L6 20C4.37672 20 3 18.8351 3 17.3077L3 9.69231C3 8.16491 4.37672 7 6 7H7C7.55228 7 8 7.44772 8 8C8 8.55228 7.55228 9 7 9H6C5.41414 9 5 9.35043 5 9.69231L5 17.3077C5 17.6496 5.41414 18 6 18L14 18C14.5859 18 15 17.6496 15 17.3077L15 9.69231C15 9.35043 14.5859 9 14 9L13 9Z"
+          fill="#000000"
+        />
       </G>
     </Svg>
-  )
+  );
 }

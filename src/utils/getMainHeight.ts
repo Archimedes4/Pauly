@@ -4,7 +4,7 @@
   26 December 2023
   Calculating height of safe area
 */
-import store from "@redux/store";
+import store from '@redux/store';
 
 export default function getMainHeight(
   full: number,
@@ -12,7 +12,7 @@ export default function getMainHeight(
   bottom: number,
   isTop: boolean,
   isBottom: boolean,
-  isShowingZeroFooter: boolean
+  isShowingZeroFooter: boolean,
 ) {
   let result = full;
   if (!isTop) {
@@ -22,7 +22,7 @@ export default function getMainHeight(
     result -= bottom;
   }
   if (isShowingZeroFooter) {
-    result -= store.getState().dimensions.zeroFooterHeight
+    result -= store.getState().dimensions.zeroFooterHeight;
   }
   return result;
 }

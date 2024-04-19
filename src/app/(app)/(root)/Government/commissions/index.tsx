@@ -146,12 +146,14 @@ function CommissionBlock({ commission }: { commission: commissionType }) {
         shadowRadius: 10,
       }}
     >
-      <View style={{
-        borderRadius: 12,
-        backgroundColor: Colors.white,
-        overflow: "hidden",
-        width: width-30
-      }}>
+      <View
+        style={{
+          borderRadius: 12,
+          backgroundColor: Colors.white,
+          overflow: 'hidden',
+          width: width - 30,
+        }}
+      >
         <View style={{ margin: 10 }}>
           <Text selectable={false}>{commission.title}</Text>
         </View>

@@ -271,24 +271,24 @@ export const commissionsQRCodeData = {
     {
       name: 'timed',
       boolean: {},
-      required: true
+      required: true,
     },
     {
-      name: 'maxNumberOfClaims',// undefined is infinate
+      name: 'maxNumberOfClaims', // undefined is infinate
       number: {},
     },
     {
-      name: 'timeout',// in ms, the number of ms before can be claimed again.
+      name: 'timeout', // in ms, the number of ms before can be claimed again.
       number: {},
     },
     {
-      name: 'userTimeout',// in ms, the number of ms before can be claimed again by the same user.
+      name: 'userTimeout', // in ms, the number of ms before can be claimed again by the same user.
       number: {},
     },
     {
       name: 'active',
       boolean: {},
-      required: true
+      required: true,
     },
     {
       name: 'QRCodeId',
@@ -627,7 +627,7 @@ export const addDataArray: addDataType[] = [
     data: commissionsQRCodeData,
     urlOne: 'https://graph.microsoft.com/v1.0/sites/',
     urlTwo: '/lists',
-    id: 'commissionQRCodeListId'
+    id: 'commissionQRCodeListId',
   },
   {
     data: scheduleData,

@@ -24,13 +24,13 @@ export default function SearchBar({
   onChangeText,
   onSearch,
   top,
-  style
+  style,
 }: {
   value: string;
   onChangeText: (change: string) => void;
   onSearch: () => void;
   top?: number;
-  style?: ViewStyle
+  style?: ViewStyle;
 }) {
   // Dimensions
   const { width, height } = useSelector((state: RootState) => state.dimensions);
@@ -52,15 +52,18 @@ export default function SearchBar({
   return (
     <View
       key="Search_View_Top"
-      style={[{
-        width,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        top: top || height * 0.1 - 19,
-        zIndex: 2,
-      },style]}
+      style={[
+        {
+          width,
+          alignContent: 'center',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'absolute',
+          top: top || height * 0.1 - 19,
+          zIndex: 2,
+        },
+        style,
+      ]}
     >
       <View
         key="Search_View_Mid"

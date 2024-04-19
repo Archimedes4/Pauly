@@ -35,6 +35,7 @@ function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
 
   async function getData() {
     const result = await getGraphEvents(
+      false,
       `https://graph.microsoft.com/v1.0/groups/${
         process.env.EXPO_PUBLIC_ORGWIDEGROUPID
       }/calendar/events?$expand=singleValueExtendedProperties($filter=id%20eq%20'${
@@ -53,7 +54,7 @@ function SchoolYearsSelect({ onSelect }: { onSelect: () => void }) {
       let url: string = result.nextLink !== undefined ? result.nextLink : '';
       let notFound: boolean = result.nextLink !== undefined;
       while (notFound) {
-        const furtherResult = await getGraphEvents(url);
+        const furtherResult = await getGraphEvents(false, url);
         if (
           furtherResult.result === loadingStateEnum.success &&
           furtherResult.events !== undefined

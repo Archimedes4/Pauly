@@ -57,6 +57,7 @@ export default async function getEvents() {
   let nextUrl: string = `https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=${startDate.toISOString()}&endDateTime=${endDate.toISOString()}`;
   while (nextUrl !== '') {
     const furtherResult = await getGraphEvents(
+      true,
       nextUrl,
       'https://graph.microsoft.com/v1.0/me/events/',
     );
@@ -88,6 +89,7 @@ export default async function getEvents() {
   }')&$select=singleValueExtendedProperties,id,subject,start,end,isAllDay`;
   while (url !== '') {
     const furtherResult = await getGraphEvents(
+      false,
       url,
       `https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/`,
       outputEvents,

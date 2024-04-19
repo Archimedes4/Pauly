@@ -36,15 +36,21 @@ async function deleteEvents() {
 
 export default function GovernmentClaendarUtility() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
-  const [isShowingDelete, setIsShowingDelete] = useState<boolean>(false)
+  const [isShowingDelete, setIsShowingDelete] = useState<boolean>(false);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
       <Link href="/government/calendar/">
         <Text>Back</Text>
       </Link>
       <Text style={styles.headerText}>Calendar Ultility</Text>
-      <Text>THIS IS A VERY DANGEROUS BUTTON BE CARFUL. THIS DELETES ALL EVENTS IN THE PAULY CALENDAR ONLY USE IN TESTING.</Text>
-      <StyledButton text="Delete Calendar" onPress={() => setIsShowingDelete(true)} />
+      <Text>
+        THIS IS A VERY DANGEROUS BUTTON BE CARFUL. THIS DELETES ALL EVENTS IN
+        THE PAULY CALENDAR ONLY USE IN TESTING.
+      </Text>
+      <StyledButton
+        text="Delete Calendar"
+        onPress={() => setIsShowingDelete(true)}
+      />
       <Modal visible={isShowingDelete}>
         <Text>DO NOT DELETE</Text>
         <StyledButton text="Delete Calendar" onPress={() => deleteEvents()} />

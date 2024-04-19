@@ -27,12 +27,10 @@ import SegmentedPicker from '@components/Pickers/SegmentedPicker';
 import ProgressView from '@components/ProgressView';
 import Map from '@components/Map';
 import BackButton from '@components/BackButton';
-import {getCommission} from  '@redux/reducers/commissionsReducer';
+import { getCommission } from '@redux/reducers/commissionsReducer';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 import createUUID, { getTextState } from '@utils/ultility/createUUID';
-import {
-  updateCommission,
-} from '@utils/commissions/updateCommissionFunctions';
+import { updateCommission } from '@utils/commissions/updateCommissionFunctions';
 import Slider from '@react-native-community/slider';
 import { useGlobalSearchParams } from 'expo-router';
 import StyledButton from '@components/StyledButton';
@@ -44,19 +42,19 @@ import CommissionSubmissions from '@components/government/comissions/CommissionS
 
 function commissionTypeText(commissionType: commissionTypeEnum) {
   if (commissionType === commissionTypeEnum.Issued) {
-    return "Issued"
+    return 'Issued';
   }
   if (commissionType === commissionTypeEnum.Image) {
-    return "Image"
+    return 'Image';
   }
   if (commissionType === commissionTypeEnum.ImageLocation) {
-    return "Image and location"
+    return 'Image and location';
   }
   if (commissionType === commissionTypeEnum.Location) {
-    return "Location"
+    return 'Location';
   }
   if (commissionType === commissionTypeEnum.QRCode) {
-    return "QR code"
+    return 'QR code';
   }
 }
 
@@ -76,7 +74,6 @@ export function GovernmentCommissionUpdate({
   const [commissionData, setCommissionData] = useState<
     commissionType | undefined
   >(undefined);
-
 
   const [getCommissionResult, setGetCommissionResult] =
     useState<loadingStateEnum>(loadingStateEnum.notStarted);
@@ -202,9 +199,7 @@ export function GovernmentCommissionUpdate({
     >
       <ScrollView style={{ height, width, zIndex: 1 }}>
         <BackButton to="/government/commissions" />
-        <Text
-          style={[styles.headerText, {marginTop: 15, marginBottom: 5}]}
-        >
+        <Text style={[styles.headerText, { marginTop: 15, marginBottom: 5 }]}>
           {isCreate ? 'Create New' : 'Edit'} Commission
         </Text>
         {isCreate ? (
@@ -235,7 +230,8 @@ export function GovernmentCommissionUpdate({
                     coordinateLat: 49.85663823299096,
                     coordinateLng: -97.22659526509193,
                   });
-                } {
+                }
+                {
                   setCommissionData({
                     ...commissionData,
                     value: e,
@@ -267,16 +263,18 @@ export function GovernmentCommissionUpdate({
             />
           </View>
         ) : null}
-        <Text style={{ marginLeft: 25, marginBottom: 2, marginTop: 5 }}>Commission Name</Text>
+        <Text style={{ marginLeft: 25, marginBottom: 2, marginTop: 5 }}>
+          Commission Name
+        </Text>
         <TextInput
           value={commissionData.title}
           onChangeText={text => {
             setCommissionData({ ...commissionData, title: text });
           }}
           placeholder="Commission Name"
-          style={[styles.textInputStyle, {backgroundColor: Colors.white}]}
+          style={[styles.textInputStyle, { backgroundColor: Colors.white }]}
         />
-        {!isCreate ?
+        {!isCreate ? (
           <View
             style={{
               marginLeft: 15,
@@ -288,13 +286,18 @@ export function GovernmentCommissionUpdate({
               borderRadius: 15,
               padding: 10,
               marginTop: 10,
-              backgroundColor: Colors.white
+              backgroundColor: Colors.white,
             }}
           >
-            <Text>Commission Type: {commissionTypeText(commissionData.value)}</Text>
-          </View>:null
-        }
-        <CommissionsTimeComponent commission={commissionData} setCommissionData={setCommissionData} />
+            <Text>
+              Commission Type: {commissionTypeText(commissionData.value)}
+            </Text>
+          </View>
+        ) : null}
+        <CommissionsTimeComponent
+          commission={commissionData}
+          setCommissionData={setCommissionData}
+        />
         {(commissionData.value === commissionTypeEnum.ImageLocation ||
           commissionData.value === commissionTypeEnum.Location) &&
         commissionData.proximity !== undefined ? (
@@ -363,7 +366,9 @@ export function GovernmentCommissionUpdate({
           </View>
         ) : null}
         {commissionData.value === commissionTypeEnum.QRCode && !isCreate ? (
-          <CommissionsQRCodeComponent commissionId={commissionData.commissionId}/>
+          <CommissionsQRCodeComponent
+            commissionId={commissionData.commissionId}
+          />
         ) : null}
         {commissionData.value === commissionTypeEnum.QRCode && isCreate ? (
           <View
@@ -377,13 +382,13 @@ export function GovernmentCommissionUpdate({
               borderRadius: 15,
               padding: 10,
               marginBottom: 20,
-              backgroundColor: Colors.white
+              backgroundColor: Colors.white,
             }}
           >
             <Text>Add QRCode data after the creation of the commission.</Text>
           </View>
         ) : null}
-      
+
         <View
           style={{
             marginLeft: 15,
@@ -395,7 +400,7 @@ export function GovernmentCommissionUpdate({
             borderRadius: 15,
             padding: 10,
             marginBottom: 20,
-            backgroundColor: Colors.white
+            backgroundColor: Colors.white,
           }}
         >
           <View style={{ flexDirection: 'row' }}>
@@ -423,7 +428,11 @@ export function GovernmentCommissionUpdate({
             <Text>Allow Multiple Submissions: </Text>
             <Switch
               trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
-              thumbColor={commissionData.allowMultipleSubmissions ? Colors.maroon : Colors.darkGray}
+              thumbColor={
+                commissionData.allowMultipleSubmissions
+                  ? Colors.maroon
+                  : Colors.darkGray
+              }
               {...Platform.select({
                 web: {
                   activeThumbColor: Colors.maroon,
@@ -444,7 +453,9 @@ export function GovernmentCommissionUpdate({
             <Text>Is Hidden: </Text>
             <Switch
               trackColor={{ false: Colors.lightGray, true: Colors.darkGray }}
-              thumbColor={commissionData.hidden ? Colors.maroon : Colors.darkGray}
+              thumbColor={
+                commissionData.hidden ? Colors.maroon : Colors.darkGray
+              }
               {...Platform.select({
                 web: {
                   activeThumbColor: Colors.maroon,
@@ -492,7 +503,7 @@ export function GovernmentCommissionUpdate({
             shadowRadius: 10,
             borderRadius: 15,
             padding: 10,
-            backgroundColor: Colors.white
+            backgroundColor: Colors.white,
           }}
         >
           <Text>Post</Text>
@@ -521,8 +532,7 @@ export function GovernmentCommissionUpdate({
               shadowRadius: 10,
               borderRadius: 15,
               padding: 10,
-              backgroundColor: Colors.white
-              
+              backgroundColor: Colors.white,
             }}
           >
             <CommissionSubmissions

@@ -1,11 +1,14 @@
-import { Colors, loadingStateEnum } from "@constants";
-import ProgressView from "@components/ProgressView";
-import StyledButton from "@components/StyledButton";
-import WebViewCross from "@components/WebViewCross";
-import { getChannels, getPosts, getTeams } from "@utils/microsoftGroupsFunctions";
-import React from "react";
-import { useEffect, useState } from "react";
-import { FlatList, View, Text, ScrollView } from "react-native";
+import { Colors, loadingStateEnum } from '@constants';
+import ProgressView from '@components/ProgressView';
+import StyledButton from '@components/StyledButton';
+import WebViewCross from '@components/WebViewCross';
+import {
+  getChannels,
+  getPosts,
+  getTeams,
+} from '@utils/microsoftGroupsFunctions';
+import React, { useEffect, useState } from 'react';
+import { FlatList, View, Text, ScrollView } from 'react-native';
 
 enum postPickingMode {
   team,
@@ -292,7 +295,6 @@ function PostSelection({
     </View>
   );
 }
-
 
 export default function CommissionsPostComponent({
   width,

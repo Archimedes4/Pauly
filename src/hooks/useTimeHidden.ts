@@ -39,9 +39,9 @@ export default function useTimeHidden() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (isDateToday(new Date(store.getState().selectedDate))) {
-        setHiddenTime(calculateHiddenTime(new Date())); 
+        setHiddenTime(calculateHiddenTime(new Date()));
       } else {
-        setHiddenTime("")
+        setHiddenTime('');
       }
     }, 1000);
 

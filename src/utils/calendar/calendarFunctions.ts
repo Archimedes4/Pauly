@@ -114,7 +114,6 @@ export function isTimeOnDay(lhs: string, rhs: string): boolean {
   return true;
 }
 
-
 // Pauly-Functions dependant on this code. If breaks or wrong please update Pauly-Functions.
 export function isTimeDuringInterval(
   start: number,
@@ -359,4 +358,18 @@ export function getEventsWithEvent(
     }
   }
   return result;
+}
+
+/**
+ * A function that converts a microsoft dateTime that is in the UTC timezone to a ISO formated date (as a string).s
+ * @param dateTime A dateTime in the UTC timezone conforming to the specification defined in https://learn.microsoft.com/en-us/graph/api/resources/datetimetimezone?view=graph-rest-1.0
+ * @returns An ISO String
+ */
+export function convertMicrosoftDateTimeToISO(dateTime: string): string {
+  let offset = new Date(dateTime).getTimezoneOffset()
+  let msDate = new Date(dateTime)
+  if (dateTime.slice(10) !== "T00:00:00.0000000") {
+    msDate.setMinutes(msDate.getMinutes() - offset)
+  }
+  return msDate.toISOString()
 }

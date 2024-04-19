@@ -17,7 +17,7 @@ export default function createUUID() {
  *  Get text from a loadingStateEnum
  * @param state The state to check
  * @param labels The different labels to return. If none provided generic label will be returned
- * @returns 
+ * @returns
  */
 export function getTextState(
   state: loadingStateEnum,

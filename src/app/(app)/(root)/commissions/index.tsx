@@ -17,9 +17,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import CommissionsView from '@components/Commissions/CommissionsView';
-import {
-  getCommissions, getPoints,
-} from '@redux/reducers/commissionsReducer';
+import { getCommissions, getPoints } from '@redux/reducers/commissionsReducer';
 import store, { RootState } from '@redux/store';
 import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 import ProgressView from '@components/ProgressView';
@@ -155,7 +153,10 @@ function CommissionsBody() {
     return undefined;
   }
 
-  if (commissionsState === loadingStateEnum.loading || commissionsState === loadingStateEnum.notStarted) {
+  if (
+    commissionsState === loadingStateEnum.loading ||
+    commissionsState === loadingStateEnum.notStarted
+  ) {
     return (
       <View
         style={{
@@ -221,15 +222,13 @@ function CommissionsBody() {
   }
   return (
     <View>
-      <Text>Something went wrong. {"):"}</Text>
+      <Text>Something went wrong. ):</Text>
     </View>
   );
 }
 
 export function CommissionsMain({ commissionId }: { commissionId?: string }) {
-  const { height, width } = useSelector(
-    (state: RootState) => state.dimensions,
-  );
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
 
   const [isHoverPicker, setIsHoverPicker] = useState<boolean>(false);
 
@@ -239,7 +238,7 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
 
   const loadData = useCallback(async () => {
     getPoints(store);
-    getCommissions({ store })
+    getCommissions({ store });
     // TO DO pagination
   }, [dispatch]);
 
@@ -247,7 +246,7 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
     dispatch(
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
-        bottom: Colors.maroon
+        bottom: Colors.maroon,
       }),
     );
   }, [dispatch]);

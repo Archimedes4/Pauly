@@ -127,7 +127,7 @@ function CalendarSyncBody({
 
 export default function CalendarSync() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
-  const token = usePaulyApi()
+  const token = usePaulyApi();
   const [loadState, setLoadState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
   );

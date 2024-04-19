@@ -34,7 +34,7 @@ export function SignInComponent({ government }: { government: boolean }) {
   const [isGovernmentHover, setIsGovernmentHover] = useState<boolean>(false);
   const [fontSize, setFontSize] = useState<number>(0);
   const dispatch = useDispatch();
-  const { deepLink } = useGlobalSearchParams()
+  const { deepLink } = useGlobalSearchParams();
 
   const safeArea = useCallback(
     async function setSafeAreaColors() {
@@ -65,7 +65,9 @@ export function SignInComponent({ government }: { government: boolean }) {
   }, [height, totalWidth]);
 
   // authentication
-  const login = useInvokeLogin((typeof deepLink === "string") ? deepLink:undefined);
+  const login = useInvokeLogin(
+    typeof deepLink === 'string' ? deepLink : undefined,
+  );
   const authActive = useSelector((state: RootState) => state.authActive);
   const [isShowingGovernmentLogin, setIsShowingGovernmentLogin] =
     useState<boolean>(false);

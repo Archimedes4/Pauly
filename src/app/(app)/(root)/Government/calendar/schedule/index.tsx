@@ -100,11 +100,14 @@ export default function GovernmentSchedule() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View style={{ width, height, backgroundColor: Colors.white }}>
-      <BackButton to="/government/calendar"/>
+      <BackButton to="/government/calendar" />
       <Text
-        style={[styles.headerText, {
-          marginTop: 15
-        }]}
+        style={[
+          styles.headerText,
+          {
+            marginTop: 15,
+          },
+        ]}
       >
         Schedules
       </Text>

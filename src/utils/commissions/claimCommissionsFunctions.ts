@@ -18,9 +18,9 @@ async function b64toBlob(b64Data: string): Promise<Blob | undefined> {
 }
 
 /**
- * 
+ *
  * @param base64 The base 64 image to be added
- * @returns 
+ * @returns
  */
 export async function addImage(
   base64: string,
@@ -152,7 +152,7 @@ export async function addImage(
  * @param homeroomId The homeroom Id the user is in
  * @param imageShare The shareId of the image if any
  * @param location The location of the user if needed.
- * @returns 
+ * @returns
  */
 export async function claimCommissionPost(
   auth: string,
@@ -180,8 +180,8 @@ export async function claimCommissionPost(
     );
     if (result.ok) {
       return loadingStateEnum.success;
-    } 
-    const data = await result.json()
+    }
+    const data = await result.json();
     return loadingStateEnum.failed;
   } catch {
     return loadingStateEnum.failed;

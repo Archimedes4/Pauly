@@ -174,7 +174,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           alignItems: 'center',
         }}
       >
-        <BackButton to="/government/calendar/schedule"/>
+        <BackButton to="/government/calendar/schedule" />
         <Text>Schedule Deleted</Text>
       </View>
     );
@@ -189,10 +189,8 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           backgroundColor: Colors.white,
         }}
       >
-        <BackButton to="/government/calendar/schedule"/>
-        <Text
-          style={[styles.headerText, {marginTop: 15}]}
-        >
+        <BackButton to="/government/calendar/schedule" />
+        <Text style={[styles.headerText, { marginTop: 15 }]}>
           {create ? 'Create' : 'Edit'} Schedule
         </Text>
         <Text style={{ fontFamily: 'Roboto', marginLeft: 25, marginBottom: 2 }}>
@@ -224,13 +222,21 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           }}
         >
           <View style={{ margin: 10, flexDirection: 'row' }}>
-            <WarningIcon width={14} height={14} style={{marginVertical: 1.5}}/>
-            <Text style={{marginLeft: 3, fontFamily: "Roboto"}}>
+            <WarningIcon
+              width={14}
+              height={14}
+              style={{ marginVertical: 1.5 }}
+            />
+            <Text style={{ marginLeft: 3, fontFamily: 'Roboto' }}>
               Keep descriptive name short as it is used in the calendar widget.
             </Text>
           </View>
         </View>
-        <Text style={{ marginLeft: 15, fontFamily: "Roboto-Bold", fontSize: 25 }}>New Periods</Text>
+        <Text
+          style={{ marginLeft: 15, fontFamily: 'Roboto-Bold', fontSize: 25 }}
+        >
+          New Periods
+        </Text>
         <FlatList
           data={newPeriods}
           renderItem={period => (
@@ -393,8 +399,9 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           }
           onPress={() => {
             if (
-              createScheduleLoadingState === loadingStateEnum.notStarted || createScheduleLoadingState === loadingStateEnum.failed &&
-              isValidHexaCode(color)
+              createScheduleLoadingState === loadingStateEnum.notStarted ||
+              (createScheduleLoadingState === loadingStateEnum.failed &&
+                isValidHexaCode(color))
             ) {
               submitSchedule();
             }
@@ -415,10 +422,16 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
               margin: 10,
               backgroundColor: Colors.danger,
               borderRadius: 12,
-              marginHorizontal: 15
+              marginHorizontal: 15,
             }}
           >
-            <Text style={{ margin: 15, color: Colors.white, fontFamily: "Roboto-Bold" }}>
+            <Text
+              style={{
+                margin: 15,
+                color: Colors.white,
+                fontFamily: 'Roboto-Bold',
+              }}
+            >
               {getTextState(deleteState, {
                 notStarted: 'DELETE',
               })}
@@ -441,7 +454,7 @@ export function GovernmentSchedule({ create }: { create: boolean }) {
           justifyContent: 'center',
         }}
       >
-        <BackButton to="/government/calendar/schedule"/>
+        <BackButton to="/government/calendar/schedule" />
         <ProgressView width={width * 0.1} height={height * 0.1} />
         <Text>Loading</Text>
       </View>

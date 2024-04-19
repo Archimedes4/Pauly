@@ -5,13 +5,7 @@
   Notifications.tsx
 */
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StatusBar,
-  FlatList,
-} from 'react-native';
+import { View, Text, ScrollView, StatusBar, FlatList } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
 import getCurrentPaulyData from '@utils/notifications/getCurrentPaulyData';
@@ -249,21 +243,18 @@ function ClassBlock() {
     getClasses(store);
   }, []);
   return (
-    <>
-      <View>
-        <FlatList
-          data={classes.classes}
-          renderItem={e => (
-            <View>
-              <Text>{e.item.name}</Text>
-            </View>
-          )}
-        />
-      </View>
-    </>
+    <View>
+      <FlatList
+        data={classes.classes}
+        renderItem={e => (
+          <View>
+            <Text>{e.item.name}</Text>
+          </View>
+        )}
+      />
+    </View>
   );
 }
-
 
 /*
   TODO
@@ -275,18 +266,26 @@ function ClassBlock() {
   This is a very small performance issue, one that I believe to be expo-routers fault.
   This might be fixed in the future. To test remove the calendar height and replace it with height. OR just find the bug I cannot see.
 */
-function HomePageSmallCalendar({width, height}:{width: number; height: number}) {
+function HomePageSmallCalendar({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) {
   const [calendarHeight, setCalendarHeight] = useState<number>(0);
-  useEffect(() => {setCalendarHeight(height)}, [height])
+  useEffect(() => {
+    setCalendarHeight(height);
+  }, [height]);
   if (calendarHeight !== height) {
-    return null
+    return null;
   }
   return (
-    <View style={{ width: width, height: height * 0.42 }}>
+    <View style={{ width, height: height * 0.42 }}>
       <View
         style={{
-          width: width,
-          height: Math.round(calendarHeight * 0.05), //buggy height
+          width,
+          height: Math.round(calendarHeight * 0.05), // buggy height
           alignItems: 'center',
           alignContent: 'center',
           justifyContent: 'center',
@@ -301,27 +300,27 @@ function HomePageSmallCalendar({width, height}:{width: number; height: number}) 
             margin: 'auto',
             color: Colors.white,
             fontFamily: 'Comfortaa-Regular',
-            width: width,
+            width,
             textAlign: 'center',
           }}
         >
           Calendar
         </Text>
       </View>
-      <CompressedMonthView width={width} height={calendarHeight * 0.37}//buggy height 
+      <CompressedMonthView
+        width={width}
+        height={calendarHeight * 0.37} // buggy height
       />
     </View>
-  )
+  );
 }
-//End TODO
+// End TODO
 
 function HomePageSmall() {
   const { message, paulyDataState } = useSelector(
     (state: RootState) => state.paulyData,
   );
-  const { height, width } = useSelector(
-    (state: RootState) => state.dimensions,
-  );
+  const { height, width } = useSelector((state: RootState) => state.dimensions);
   const dispatch = useDispatch();
 
   async function loadData() {
@@ -349,7 +348,7 @@ function HomePageSmall() {
   }, []);
 
   return (
-    <ScrollView style={{ backgroundColor: Colors.maroon, height: height }}>
+    <ScrollView style={{ backgroundColor: Colors.maroon, height }}>
       <View style={{ width: width * 1.0, height: height * 0.08 }}>
         {paulyDataState === loadingStateEnum.loading ? (
           <View
@@ -385,7 +384,7 @@ function HomePageSmall() {
         )}
       </View>
       <Link href="/calendar" style={{ padding: 0, height: height * 0.42 }}>
-        <HomePageSmallCalendar width={width} height={height}/>
+        <HomePageSmallCalendar width={width} height={height} />
       </Link>
       <BoardBlock />
     </ScrollView>
@@ -404,7 +403,7 @@ function HomePageLarge() {
     // Calendar Data
     getClassEventsFromDay();
 
-    await getCurrentPaulyData()
+    await getCurrentPaulyData();
   }, [dispatch]);
 
   useEffect(() => {
@@ -479,7 +478,7 @@ export default function HomePage() {
     (state: RootState) => state.dimensions,
   );
   if (currentBreakPoint === 0) {
-    return <HomePageSmall />
+    return <HomePageSmall />;
   }
-  return <HomePageLarge />
+  return <HomePageLarge />;
 }

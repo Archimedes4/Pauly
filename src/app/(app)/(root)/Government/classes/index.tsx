@@ -34,7 +34,7 @@ function GovernmentClassesBody() {
             schoolYearId: '',
             semester: [semesters.semesterOne],
             teamLink: '',
-            isHomeroom: false
+            isHomeroom: false,
           });
         }
         setClasses(outputData);
@@ -101,7 +101,7 @@ export default function GovernmentClasses() {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   return (
     <View style={{ width, height, backgroundColor: Colors.lightGray }}>
-      <BackButton to='/government'/>
+      <BackButton to="/government" />
       <Text style={styles.headerText}>Classes</Text>
       <GovernmentClassesBody />
       <StyledButton

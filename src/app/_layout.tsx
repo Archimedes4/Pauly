@@ -69,7 +69,7 @@ function AppCore() {
   const windowHeight = useWindowSize()[1];
 
   const insets = useSafeAreaInsets();
-  const isShowingFooter = useIsShowingZeroFooter()
+  const isShowingFooter = useIsShowingZeroFooter();
 
   useEffect(() => {
     setDimentions(
@@ -78,9 +78,17 @@ function AppCore() {
       insets,
       safeAreaColors.isTopTransparent,
       safeAreaColors.isBottomTransparent,
-      isShowingFooter
+      isShowingFooter,
     );
-  }, [expandedMode, safeAreaColors, windowHeight, windowWidth, insets, isShowingFooter, zeroFooterHeight]);
+  }, [
+    expandedMode,
+    safeAreaColors,
+    windowHeight,
+    windowWidth,
+    insets,
+    isShowingFooter,
+    zeroFooterHeight,
+  ]);
 
   return (
     <>
@@ -139,7 +147,10 @@ function RootLayout() {
     <PaperProvider theme={paperTheme}>
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
-          <ExpoMsalProvider clientId={process.env.EXPO_PUBLIC_CLIENTID ?? ""} tenantId={process.env.EXPO_PUBLIC_TENANTID}>
+          <ExpoMsalProvider
+            clientId={process.env.EXPO_PUBLIC_CLIENTID ?? ''}
+            tenantId={process.env.EXPO_PUBLIC_TENANTID}
+          >
             <AppCore />
           </ExpoMsalProvider>
         </GestureHandlerRootView>
@@ -152,7 +163,7 @@ export default function App(): React.JSX.Element | null {
   // Fixing hydration issues
   const [mounted, setMounted] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!mounted) {
@@ -186,7 +197,10 @@ export default function App(): React.JSX.Element | null {
     <Provider store={store}>
       <Head>
         <title>Pauly</title>
-        <meta property="og:url" content={process.env.EXPO_PUBLIC_PAULYHOST + pathname} />
+        <meta
+          property="og:url"
+          content={process.env.EXPO_PUBLIC_PAULYHOST + pathname}
+        />
       </Head>
       <RootLayout />
     </Provider>

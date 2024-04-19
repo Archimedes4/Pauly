@@ -223,25 +223,19 @@ function CalendarRowEvent({
   const [eventHeight, setEventHeight] = useState<number>(0);
   const dispatch = useDispatch();
   const selectedDate = useSelector((state: RootState) => state.selectedDate);
-  const [mounted, setMounted] = useState<boolean>(false)
-  const [heightMounted, setHeightMounted] = useState<boolean>(true)
-
+  const [mounted, setMounted] = useState<boolean>(false);
+  const [heightMounted, setHeightMounted] = useState<boolean>(true);
 
   function loadData() {
     if (!mounted) {
-      return
+      return;
     }
     if (!heightMounted) {
-      setHeightMounted(true)
-      return
+      setHeightMounted(true);
+      return;
     }
     const newEventHeight =
-      getEventTop(
-        value.item.events,
-        event,
-        selectedDate,
-        value.item.days,
-      ) + 21;
+      getEventTop(value.item.events, event, selectedDate, value.item.days) + 21;
     if (newEventHeight + (event.height ?? 0) + 3 > value.item.height) {
       dispatch(
         monthDataSlice.actions.setRowHeight({
@@ -249,7 +243,7 @@ function CalendarRowEvent({
           height: newEventHeight + (event.height ?? 0) + 6,
         }),
       );
-      setHeightMounted(false)
+      setHeightMounted(false);
     }
     if (eventHeight !== newEventHeight) {
       setEventHeight(newEventHeight);
@@ -257,8 +251,8 @@ function CalendarRowEvent({
   }
 
   useEffect(() => {
-    loadData()
-  }, [value.item, event, selectedDate, mounted]);
+    loadData();
+  }, [value.item, event, selectedDate, mounted, loadData]);
 
   if (event.paulyEventType !== 'studentSchedule') {
     return (
@@ -295,18 +289,21 @@ function CalendarRowEvent({
           opacity: event.height !== 0 ? 1 : 0,
         }}
         onLayout={e => {
-          if (event.height === undefined || event.height !== e.nativeEvent.layout.height) {
+          if (
+            event.height === undefined ||
+            event.height !== e.nativeEvent.layout.height
+          ) {
             store.dispatch(
               monthDataSlice.actions.setEventHeight({
                 rowIndex: value.index,
-                eventIndex: value.item.events.findIndex(e => {
-                  return e.id === event.id;
+                eventIndex: value.item.events.findIndex(x => {
+                  return x.id === event.id;
                 }),
                 height: e.nativeEvent.layout.height,
               }),
             );
           }
-          setMounted(true)
+          setMounted(true);
         }}
       >
         <Text style={{ fontSize: 10, color: Colors.white }}>{event.name}</Text>

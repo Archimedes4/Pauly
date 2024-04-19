@@ -46,10 +46,12 @@ export default async function getClassesApi(store: StoreType): Promise<
       store,
       'POST',
       JSON.stringify(batchData),
-      [{
-        key: 'Accept',
-        value: 'application/json'
-      }]
+      [
+        {
+          key: 'Accept',
+          value: 'application/json',
+        },
+      ],
     );
     if (batchResult.ok) {
       const batchResultData = await batchResult.json();

@@ -8,10 +8,7 @@
 import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  findFirstDayinMonth,
-  getDay,
-} from '@utils/calendar/calendarFunctions';
+import { findFirstDayinMonth, getDay } from '@utils/calendar/calendarFunctions';
 import { getSchoolDays } from '@utils/calendar/calendarFunctionsGraph';
 import { RootState } from '@redux/store';
 import { monthViewSlice } from '@redux/reducers/monthViewReducer';

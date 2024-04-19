@@ -56,8 +56,8 @@ export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
         backgroundColor: Colors.white,
       }}
     >
-      <BackButton to="/government/calendar/timetable/"/>
-      <Text style={[styles.headerText, {marginTop: 10}]}>
+      <BackButton to="/government/calendar/timetable/" />
+      <Text style={[styles.headerText, { marginTop: 10 }]}>
         {creating ? 'Create' : 'Edit'} Timetable
       </Text>
       <View style={{ backgroundColor: '#FF6700', borderRadius: 15, margin: 5 }}>
@@ -122,7 +122,7 @@ export function GovernmentTimetableEdit({ creating }: { creating: boolean }) {
           }
         }}
         second
-        style={{margin: 15}}
+        style={{ margin: 15 }}
       />
     </ScrollView>
   );
@@ -174,7 +174,16 @@ function DressCodeBlock({
   if (dressCodeState === loadingStateEnum.success) {
     return (
       <View style={{ height: height * 0.2 }}>
-        <Text style={{fontSize: 25, fontFamily: "Roboto-Bold", marginLeft: 15, marginVertical: 10}}>Dress Codes</Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontFamily: 'Roboto-Bold',
+            marginLeft: 15,
+            marginVertical: 10,
+          }}
+        >
+          Dress Codes
+        </Text>
         {dressCodes.map(dressCode => (
           <StyledButton
             text={dressCode.name}
@@ -184,7 +193,7 @@ function DressCodeBlock({
             style={{
               backgroundColor:
                 selectedDressCode?.id === dressCode.id ? 'blue' : Colors.white,
-                marginHorizontal: 15
+              marginHorizontal: 15,
             }}
           />
         ))}
@@ -194,7 +203,9 @@ function DressCodeBlock({
   // Failed
   return (
     <View>
-       <Text style={{fontSize: 25, fontFamily: "Roboto-Bold", marginLeft: 15}}>Dress Codes</Text>
+      <Text style={{ fontSize: 25, fontFamily: 'Roboto-Bold', marginLeft: 15 }}>
+        Dress Codes
+      </Text>
       <View
         style={{
           height: height * 0.2,
@@ -220,7 +231,9 @@ function SchoolDays({
 }) {
   return (
     <View>
-      <Text style={{fontSize: 25, fontFamily: "Roboto-Bold", marginLeft: 15}}>School Days</Text>
+      <Text style={{ fontSize: 25, fontFamily: 'Roboto-Bold', marginLeft: 15 }}>
+        School Days
+      </Text>
       <ScrollView style={{ height: height * 0.2 }}>
         {schoolDays.map((item, index) => (
           <SchoolDayItem
@@ -248,7 +261,7 @@ function SchoolDays({
             },
           ]);
         }}
-        style={{marginHorizontal: 15}}
+        style={{ marginHorizontal: 15 }}
       />
     </View>
   );
@@ -270,17 +283,17 @@ function SchoolDayItem({
 
   return (
     <Pressable
-      style={{ 
+      style={{
         flexDirection: 'row',
         width: width - 30,
-        backgroundColor: selected ? Colors.lightGray:Colors.white,
+        backgroundColor: selected ? Colors.lightGray : Colors.white,
         padding: 10,
         marginHorizontal: 15,
         overflow: 'hidden',
         borderRadius: 5,
         borderColor: Colors.black,
         borderWidth: 1,
-        marginBottom: 5
+        marginBottom: 5,
       }}
       onHoverIn={() => {
         setSelected(true);
@@ -328,7 +341,7 @@ function SchoolDayItem({
           )}
         </View>
       </View>
-      <View style={{marginRight: 10}}>
+      <View style={{ marginRight: 10 }}>
         {item.order !== 0 ? (
           <Pressable
             onPress={() => {
@@ -371,7 +384,6 @@ function SchoolDayItem({
           <Text>X</Text>
         </Pressable>
       </View>
-  
     </Pressable>
   );
 }
@@ -414,8 +426,26 @@ function ScheduleBlock({
   if (scheduleState === loadingStateEnum.success) {
     return (
       <View>
-        <Text style={{fontFamily: "Roboto-Bold", fontSize: 25, marginLeft: 15, marginTop: 5}}>Schedules</Text>
-        <Text style={{fontFamily: "Roboto", fontSize: 20, marginLeft: 15, marginTop: 5}}>Selected Schedules</Text>
+        <Text
+          style={{
+            fontFamily: 'Roboto-Bold',
+            fontSize: 25,
+            marginLeft: 15,
+            marginTop: 5,
+          }}
+        >
+          Schedules
+        </Text>
+        <Text
+          style={{
+            fontFamily: 'Roboto',
+            fontSize: 20,
+            marginLeft: 15,
+            marginTop: 5,
+          }}
+        >
+          Selected Schedules
+        </Text>
         <FlatList
           data={selectedSchedules}
           renderItem={item => (
@@ -446,7 +476,16 @@ function ScheduleBlock({
           )}
           style={{ height: height * 0.4 }}
         />
-        <Text style={{fontFamily: "Roboto", fontSize: 20, marginLeft: 15, marginTop: 5}}>Selected Schedules</Text>
+        <Text
+          style={{
+            fontFamily: 'Roboto',
+            fontSize: 20,
+            marginLeft: 15,
+            marginTop: 5,
+          }}
+        >
+          Selected Schedules
+        </Text>
         <FlatList
           data={loadedSchedules}
           renderItem={item => {
@@ -484,5 +523,5 @@ function ScheduleBlock({
 }
 
 export default function GovernmentEditTimetableMain() {
-  return <GovernmentTimetableEdit creating={false} />
-};
+  return <GovernmentTimetableEdit creating={false} />;
+}

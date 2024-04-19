@@ -26,14 +26,14 @@ export default function AuthenticatedView() {
   const overflowHidden = useSelector(
     (state: RootState) => state.safeAreaColors.overflowHidden,
   );
-  const isShowingFooter = useIsShowingZeroFooter()
-  const { deepLink } = useGlobalSearchParams()
+  const isShowingFooter = useIsShowingZeroFooter();
+  const { deepLink } = useGlobalSearchParams();
 
   useEffect(() => {
-    if (Platform.OS !== "web" && typeof deepLink === 'string') {
-      router.replace(deepLink)
+    if (Platform.OS !== 'web' && typeof deepLink === 'string') {
+      router.replace(deepLink);
     }
-  }, [])
+  }, []);
 
   return (
     <View
@@ -63,9 +63,7 @@ export default function AuthenticatedView() {
           ) : null}
         </View>
       </View>
-      {isShowingFooter ?
-        <ZeroFooterComponent />:null
-      }
+      {isShowingFooter ? <ZeroFooterComponent /> : null}
     </View>
   );
 }

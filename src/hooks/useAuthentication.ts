@@ -14,12 +14,12 @@ import {
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { authLoadingSlice } from '@redux/reducers/authLoadingReducer';
-import { useRefresh, useSilentLogin } from './authentication';
 import { isGovernmentModeSlice } from '@redux/reducers/isGovernmentModeReducer';
+import { useRefresh, useSilentLogin } from './authentication';
 
 /**
  * Main hook that runs the startup. Should only be in one view (layout) at once.
- * @returns 
+ * @returns
  */
 export default function useAuthentication() {
   const isLoading = useSelector((state: RootState) => state.authLoading);
@@ -47,12 +47,16 @@ export default function useAuthentication() {
       if (await getWantGovernment()) {
         await validateGovernmentMode();
       } else {
-        store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(false))
+        store.dispatch(
+          isGovernmentModeSlice.actions.setIsGovernmentMode(false),
+        );
       }
       dispatch(authLoadingSlice.actions.setAuthLoading(false));
     } else {
-      const isGovernment = await getWantGovernment()
-      store.dispatch(isGovernmentModeSlice.actions.setIsGovernmentMode(isGovernment))
+      const isGovernment = await getWantGovernment();
+      store.dispatch(
+        isGovernmentModeSlice.actions.setIsGovernmentMode(isGovernment),
+      );
       dispatch(authLoadingSlice.actions.setAuthLoading(false));
     }
   }

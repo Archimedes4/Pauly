@@ -1,5 +1,5 @@
-import { View, Text, Switch, Pressable, Platform } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Switch, Pressable, Platform } from 'react-native';
+import React, { useState } from 'react';
 import { Colors } from '@constants';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 import { useSelector } from 'react-redux';
@@ -13,9 +13,15 @@ enum datePickingMode {
   endDate,
 }
 
-export default function CommissionsTimeComponent({commission, setCommissionData}:{commission: commissionType, setCommissionData: (item: commissionType) => void}) {
+export default function CommissionsTimeComponent({
+  commission,
+  setCommissionData,
+}: {
+  commission: commissionType;
+  setCommissionData: (item: commissionType) => void;
+}) {
   const [currentDatePickingMode, setCurrentDatePickingMode] =
-  useState<datePickingMode>(datePickingMode.none);
+    useState<datePickingMode>(datePickingMode.none);
   const { width } = useSelector((state: RootState) => state.dimensions);
   if (commission.timed) {
     return (
@@ -29,7 +35,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
           padding: 10,
           margin: 15,
           marginBottom: 20,
-          backgroundColor: Colors.white
+          backgroundColor: Colors.white,
         }}
       >
         <View style={{ flexDirection: 'row' }}>
@@ -47,7 +53,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
               if (!e) {
                 setCommissionData({
                   ...commission,
-                  timed: false
+                  timed: false,
                 });
               }
             }}
@@ -76,9 +82,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
             hours={new Date(commission.startDate).getHours()}
             minutes={new Date(commission.startDate).getMinutes()}
             visible={currentDatePickingMode === datePickingMode.startDate}
-            onDismiss={() =>
-              setCurrentDatePickingMode(datePickingMode.none)
-            }
+            onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
             onConfirm={e => {
               const newDate = new Date(commission.startDate);
               newDate.setHours(e.hours);
@@ -103,9 +107,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
             mode="single"
             label="Select Date"
             visible={currentDatePickingMode === datePickingMode.startDate}
-            onDismiss={() =>
-              setCurrentDatePickingMode(datePickingMode.none)
-            }
+            onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
             date={new Date(commission.startDate)}
             onConfirm={e => {
               if (e.date !== undefined) {
@@ -147,9 +149,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
             hours={new Date(commission.endDate).getHours()}
             minutes={new Date(commission.endDate).getMinutes()}
             visible={currentDatePickingMode === datePickingMode.endTime}
-            onDismiss={() =>
-              setCurrentDatePickingMode(datePickingMode.none)
-            }
+            onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
             onConfirm={e => {
               const newDate = new Date(commission.endDate);
               newDate.setHours(e.hours);
@@ -174,11 +174,9 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
             mode="single"
             label="Select Date"
             visible={currentDatePickingMode === datePickingMode.endDate}
-            onDismiss={() =>
-              setCurrentDatePickingMode(datePickingMode.none)
-            }
+            onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
             date={new Date(commission.endDate)}
-            onConfirm={(e) => {
+            onConfirm={e => {
               if (e.date !== undefined) {
                 const oldDate = new Date(commission.endDate);
                 const newDate = new Date(
@@ -198,7 +196,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
           />
         </View>
       </View>
-    )
+    );
   }
   return (
     <View
@@ -212,7 +210,7 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
         padding: 10,
         margin: 15,
         marginBottom: 20,
-        backgroundColor: Colors.white
+        backgroundColor: Colors.white,
       }}
     >
       <Text>Timed: </Text>
@@ -238,5 +236,5 @@ export default function CommissionsTimeComponent({commission, setCommissionData}
         value={commission.timed}
       />
     </View>
-  )
+  );
 }

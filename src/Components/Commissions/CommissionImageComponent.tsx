@@ -5,13 +5,13 @@
   CommissionImageComponent.tsx
   This is a block in the commission view to pick the image.
 */
-import { View, Text, Pressable, Image } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Pressable, Image } from 'react-native';
+import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import ProgressView from '../ProgressView';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
 import { Colors } from '@constants';
+import ProgressView from '../ProgressView';
 
 enum CameraResult {
   notStarted,
@@ -51,7 +51,13 @@ function getTextTakeImage(result: CameraResult) {
   return 'AN ERROR OCCURED';
 }
 
-export default function CommissionImageComponent({imageUri, setImageUri}:{imageUri: string; setImageUri: (item: string) => void}) {
+export default function CommissionImageComponent({
+  imageUri,
+  setImageUri,
+}: {
+  imageUri: string;
+  setImageUri: (item: string) => void;
+}) {
   const { width, height } = useSelector((state: RootState) => state.dimensions);
   const [takeImageState, setTakeImageState] = useState<CameraResult>(
     CameraResult.notStarted,
@@ -178,11 +184,7 @@ export default function CommissionImageComponent({imageUri, setImageUri}:{imageU
         }}
       >
         {takeImageState === CameraResult.loading ? (
-          <ProgressView
-            width={14}
-            height={14}
-            style={{ margin: 10 }}
-          />
+          <ProgressView width={14} height={14} style={{ margin: 10 }} />
         ) : (
           <Text style={{ margin: 10, fontWeight: 'bold' }}>
             {getTextTakeImage(takeImageState)}
@@ -204,11 +206,7 @@ export default function CommissionImageComponent({imageUri, setImageUri}:{imageU
         }}
       >
         {pickImageState === CameraResult.loading ? (
-          <ProgressView
-            width={14}
-            height={14}
-            style={{ margin: 10 }}
-          />
+          <ProgressView width={14} height={14} style={{ margin: 10 }} />
         ) : (
           <Text style={{ margin: 10, fontWeight: 'bold' }}>
             {getTextPickImage(pickImageState)}
@@ -216,5 +214,5 @@ export default function CommissionImageComponent({imageUri, setImageUri}:{imageU
         )}
       </Pressable>
     </>
-  )
+  );
 }

@@ -11,7 +11,7 @@ import { commissionTypeEnum, locationStateEnum } from '@constants';
 /**
  * Get the location and checks how close the user is to the commission.
  * @param commission The commission Id
- * @returns 
+ * @returns
  */
 export default async function getUsersLocation(
   commission: commissionType,

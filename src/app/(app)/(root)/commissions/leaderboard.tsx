@@ -129,7 +129,6 @@ export function LeaderboardBody({ commissionId }: { commissionId?: string }) {
       safeAreaColorsSlice.actions.setSafeAreaColors({
         top: Colors.darkGray,
         bottom: Colors.white,
-        
       }),
     );
   }, []);

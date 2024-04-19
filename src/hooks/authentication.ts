@@ -63,7 +63,7 @@ export function useSilentLogin(): (inital: boolean) => Promise<void> {
   const main = async (inital: boolean) => {
     const result = await acquireTokenSilently();
     if (result !== undefined && result.result !== ResultState.error) {
-      reloadTimelines("Archimedes4.Pauly.Pauly-Widget")
+      reloadTimelines('Archimedes4.Pauly.Pauly-Widget');
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(result.data),
       );
@@ -81,7 +81,9 @@ export function useSilentLogin(): (inital: boolean) => Promise<void> {
  * @param redirectUrl Redirect Url
  * @returns A function that is for invoking the login.
  */
-export function useInvokeLogin(redirectUrl?: string): (government?: boolean) => Promise<void> {
+export function useInvokeLogin(
+  redirectUrl?: string,
+): (government?: boolean) => Promise<void> {
   const { acquireTokenInteractively } = useMSAL({
     clientId: process.env.EXPO_PUBLIC_CLIENTID ?? '',
     authority: `https://login.microsoftonline.com/${process.env.EXPO_PUBLIC_TENANTID ?? ''}`,
@@ -106,8 +108,8 @@ export function useInvokeLogin(redirectUrl?: string): (government?: boolean) => 
     const result = await acquireTokenInteractively();
     // On web the result is always undefined
     if (result !== undefined && result.result !== ResultState.error) {
-      reloadTimelines("Archimedes4.Pauly.Pauly-Widget")
-      console.log("mark")
+      reloadTimelines('Archimedes4.Pauly.Pauly-Widget');
+      console.log('mark');
       store.dispatch(
         authenticationTokenSlice.actions.setAuthenticationToken(result.data),
       );
@@ -137,7 +139,7 @@ export function useSignOut(): () => void {
     }),
   });
   const main = async () => {
-    reloadTimelines("Archimedes4.Pauly.Pauly-Widget")
+    reloadTimelines('Archimedes4.Pauly.Pauly-Widget');
     await signOut();
     store.dispatch(authenticationTokenSlice.actions.setAuthenticationToken(''));
   };

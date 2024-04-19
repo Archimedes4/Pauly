@@ -13,7 +13,14 @@ const initalState: {
   totalHeight: number; // the heigth of the whole screen including not safe area
   currentBreakPoint: number;
   zeroFooterHeight: number;
-} = { width: 0, totalWidth: 0, height: 0, totalHeight: 0, currentBreakPoint: 0, zeroFooterHeight: 0 };
+} = {
+  width: 0,
+  totalWidth: 0,
+  height: 0,
+  totalHeight: 0,
+  currentBreakPoint: 0,
+  zeroFooterHeight: 0,
+};
 
 export const dimensionsSlice = createSlice({
   name: 'dimensions',
@@ -29,7 +36,7 @@ export const dimensionsSlice = createSlice({
         height: state.height,
         totalHeight: state.totalHeight,
         currentBreakPoint: state.currentBreakPoint,
-        zeroFooterHeight: state.zeroFooterHeight
+        zeroFooterHeight: state.zeroFooterHeight,
       };
     },
     setDimentionsWidthCurrentBreakPoint: (
@@ -46,17 +53,20 @@ export const dimensionsSlice = createSlice({
         height: state.height,
         totalHeight: state.totalHeight,
         currentBreakPoint: action.payload.currentBreakPoint,
-        zeroFooterHeight: state.zeroFooterHeight
+        zeroFooterHeight: state.zeroFooterHeight,
       };
     },
-    setDimentionsHeight: (state, action: PayloadAction<{ height: number; totalHeight: number }>) => {
+    setDimentionsHeight: (
+      state,
+      action: PayloadAction<{ height: number; totalHeight: number }>,
+    ) => {
       return {
         width: state.width,
         totalWidth: state.totalWidth,
         height: action.payload.height,
         totalHeight: action.payload.totalHeight,
         currentBreakPoint: state.currentBreakPoint,
-        zeroFooterHeight: state.zeroFooterHeight
+        zeroFooterHeight: state.zeroFooterHeight,
       };
     },
     setZeroFooterHeight: (state, action: PayloadAction<number>) => {
@@ -66,7 +76,7 @@ export const dimensionsSlice = createSlice({
         height: state.height,
         totalHeight: state.totalHeight,
         currentBreakPoint: state.currentBreakPoint,
-        zeroFooterHeight: action.payload
+        zeroFooterHeight: action.payload,
       };
     },
   },

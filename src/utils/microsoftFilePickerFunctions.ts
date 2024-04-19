@@ -10,7 +10,10 @@ import callMsGraph from '@utils/ultility/microsoftAssests';
 
 export async function getUserMicrosoftFiles(
   path: string,
-): Promise<{ result: loadingStateEnum.success; data: microsoftFileType[] } | { result: loadingStateEnum.failed }> {
+): Promise<
+  | { result: loadingStateEnum.success; data: microsoftFileType[] }
+  | { result: loadingStateEnum.failed }
+> {
   try {
     const result = await callMsGraph(path);
     if (result.ok) {
@@ -24,7 +27,8 @@ export async function getUserMicrosoftFiles(
           folder: data.value[index].folder !== undefined,
           parentDriveId: data.value[index].parentReference.driveId,
           parentPath: data.value[index].parentReference.path,
-          itemGraphPath: data.value[index].folder === undefined ? path : 'FOLDER',
+          itemGraphPath:
+            data.value[index].folder === undefined ? path : 'FOLDER',
           callPath: `https://graph.microsoft.com/v1.0/me/drives/${data.value[index].parentReference.driveId}/items/${data.value[index].id}`,
           type:
             data.value[index].folder === undefined
@@ -34,9 +38,9 @@ export async function getUserMicrosoftFiles(
       }
       return { result: loadingStateEnum.success, data: newFiles };
     }
-    return { result: loadingStateEnum.failed }; 
+    return { result: loadingStateEnum.failed };
   } catch {
-    return { result: loadingStateEnum.failed }; 
+    return { result: loadingStateEnum.failed };
   }
 }
 

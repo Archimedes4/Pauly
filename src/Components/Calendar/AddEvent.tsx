@@ -550,9 +550,10 @@ export default function AddEvent({
   // Not editable event
   if (
     (!isGovernmentMode &&
-    ['schoolDay', 'schoolYear', 'regular', 'studentCouncil'].includes(
-      selectedEvent.paulyEventType,
-    )) || selectedEvent.paulyEventType === "studentSchedule"
+      ['schoolDay', 'schoolYear', 'regular', 'studentCouncil'].includes(
+        selectedEvent.paulyEventType,
+      )) ||
+    selectedEvent.paulyEventType === 'studentSchedule'
   ) {
     return (
       <View

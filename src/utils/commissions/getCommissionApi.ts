@@ -12,7 +12,7 @@ import callMsGraph from '../ultility/microsoftAssests/noStore';
  * Gets the commission with the supplied commission Id
  * @param commissionId The id of the commission
  * @param store The redux store
- * @returns 
+ * @returns
  */
 export default async function getCommissionApi(
   commissionId: string,
@@ -61,7 +61,7 @@ export default async function getCommissionApi(
         submissionsCount: 0,
         claimCount: 0,
         reviewedCount: 0,
-        competitionType: data.value[0].fields.homeValue
+        competitionType: data.value[0].fields.homeValue,
       };
       return { result: loadingStateEnum.success, data: dataResult };
     }

@@ -1,14 +1,13 @@
-import StyledButton from "@components/StyledButton";
-import { Colors, loadingStateEnum, styles } from "@constants";
-import { RootState } from "@redux/store";
-import { createCommissionSubmission } from "@utils/commissions/updateCommissionFunctions";
-import { getUsers } from "@utils/studentFunctions";
-import { getTextState } from "@utils/ultility/createUUID";
-import callMsGraph from "@utils/ultility/microsoftAssests";
-import React from "react";
-import { useEffect, useState } from "react";
-import { View, Text, FlatList } from "react-native";
-import { useSelector } from "react-redux";
+import StyledButton from '@components/StyledButton';
+import { Colors, loadingStateEnum, styles } from '@constants';
+import { RootState } from '@redux/store';
+import { createCommissionSubmission } from '@utils/commissions/updateCommissionFunctions';
+import { getUsers } from '@utils/studentFunctions';
+import { getTextState } from '@utils/ultility/createUUID';
+import callMsGraph from '@utils/ultility/microsoftAssests';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList } from 'react-native';
+import { useSelector } from 'react-redux';
 
 function PickUser({
   setSelectedUser,
