@@ -137,6 +137,21 @@ async function parseEventJSON(
     };
     return { result: loadingStateEnum.success, data: event };
   }
+  if (singleValueResult !== undefined && singleValueResult.eventType === 'regular') {
+    const event: eventType = {
+      id: data.id,
+      name: data.subject,
+      startTime: convertMicrosoftDateTimeToISO(data.start.dateTime),
+      endTime: convertMicrosoftDateTimeToISO(data.end.dateTime),
+      allDay: data.isAllDay,
+      eventColor: Colors.white,
+      microsoftEvent: true,
+      microsoftReference: referenceUrl ? referenceUrl:`https://graph.microsoft.com/v1.0/groups/${process.env.EXPO_PUBLIC_ORGWIDEGROUPID}/calendar/events/${data.id}`,
+      paulyEventType: 'regular',
+      eventData: JSON.parse(singleValueResult.eventData)
+    };
+    return { result: loadingStateEnum.success, data: event };
+  }
   if (
     singleValueResult !== undefined &&
     singleValueResult.eventType !== 'schoolYear' &&

@@ -21,7 +21,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 function getCardHeight(calendarWidth: number, valueHeight: number, height: number, calendarViewMode: calendarViewingMode) {
-  if (calendarWidth > 519 && calendarViewMode === calendarViewingMode.full && valueHeight < height) {
+  if (calendarWidth > 519 && (calendarViewMode === calendarViewingMode.full || calendarViewMode === calendarViewingMode.fullRemoved) && valueHeight < height) {
     return height
   }
   if (calendarWidth > 519) {
@@ -359,7 +359,7 @@ export default function CalendarRow({
     return (
       <View
         style={{
-          minHeight: (calendarViewMode === calendarViewingMode.full) ? height:0,
+          minHeight: (calendarViewMode === calendarViewingMode.full || calendarViewMode === calendarViewingMode.fullRemoved) ? height:0,
           borderTopWidth:
             width <= 74.14285714285714 ? 0 : value.index === 0 ? 2 : 1,
           borderColor: Colors.lightGray,

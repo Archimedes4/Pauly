@@ -125,6 +125,7 @@ export enum commissionCompetitionType {
 }
 
 declare global {
+  type grade = "9"|"10"|"11"|"12"
   type animatedCheckMarkColor =
     | ColorValue
     | Animated.SharedValue<ColorValue | undefined>
@@ -323,9 +324,10 @@ declare global {
       }
     | {
         paulyEventType: 'regular';
-        paulyEventData?: string;
-        grade?: string, 
-        mandatory?: boolean
+        eventData?: {
+          mandatory: boolean,
+          grade: "all"|grade[]
+        }
         microsoftEvent: true;
       }
     | {

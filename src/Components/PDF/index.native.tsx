@@ -45,27 +45,26 @@ export default function PDFView({ width }: { width: number }) {
 
   const singleTap = Gesture.Tap().onEnd((_event, success) => {
     if (success) {
-      runOnJS(tapChangePage);
+      runOnJS(tapChangePage)()
     }
   });
   const doubleTap = Gesture.Tap()
     .numberOfTaps(2)
     .onEnd((_event, success) => {
       if (success) {
-        runOnJS(doubleTapChangePage);
+        runOnJS(doubleTapChangePage)();
       }
     });
 
   const taps = Gesture.Exclusive(doubleTap, singleTap);
 
   const fling = Gesture.Fling().onEnd(() => {
-    runOnJS(flingChangePage);
+    runOnJS(flingChangePage)();
   });
 
   const compound = Gesture.Simultaneous(fling, taps);
 
   useEffect(() => {
-    console.log(images.length);
     if (pageNumber < images.length) {
       Image.getSize(
         images[pageNumber],
@@ -79,7 +78,7 @@ export default function PDFView({ width }: { width: number }) {
 
   if (pageNumber < images.length) {
     return (
-      <GestureDetector gesture={compound}>
+      <GestureDetector gesture={compound} >
         <Image
           source={{ uri: images[pageNumber] }}
           style={{ width, height: imageHeight, borderRadius: 15 }}
@@ -111,6 +110,7 @@ function WebViewInject() {
     (state: RootState) => state.paulyData,
   );
   const dispatch = useDispatch();
+  const [imageResult, setImageResult] = useState<string[]>([])
 
   return (
     <WebView
@@ -139,48 +139,32 @@ function WebViewInject() {
 
               try {
                 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js';
+                let pdf = await pdfjsLib.getDocument(docInitParams).promise;
+          
+                let totalPages = pdf.numPages
+  
+                let canvas = document.createElement('canvas');
+  
+                for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+                  const page = await pdf.getPage(pageNumber);
+                  let viewport = page.getViewport({ scale: 1 });
+        
+                  // Prepare canvas using PDF page dimensions
+                  let context = canvas.getContext('2d');
+                  canvas.height = viewport.height;
+                  canvas.width = viewport.width;
+        
+                  // Render PDF page into canvas context
+                  let renderContext = { canvasContext: context, viewport: viewport };
+        
+                  await page.render(renderContext).promise;
+                  
+                  window.ReactNativeWebView.postMessage(canvas.toDataURL('image/png'));
+                }
+                window.ReactNativeWebView.postMessage("done");
               } catch (e) {
                 window.ReactNativeWebView.postMessage('failed')
               } 
-              
-              let loadingTask = pdfjsLib.getDocument(docInitParams);
-              loadingTask.promise.then(function(pdf) {
-          
-                let canvasdiv = document.getElementById('canvas');
-                let totalPages = pdf.numPages
-                let data = [];
-          
-                for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
-                  pdf.getPage(pageNumber).then(function(page) {
-          
-                    let scale = 1.5;
-                    let viewport = page.getViewport({ scale: scale });
-          
-                    let canvas = document.createElement('canvas');
-                    canvasdiv.appendChild(canvas);
-          
-                    // Prepare canvas using PDF page dimensions
-                    let context = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-          
-                    // Render PDF page into canvas context
-                    let renderContext = { canvasContext: context, viewport: viewport };
-          
-                    let renderTask = page.render(renderContext);
-                    renderTask.promise.then(function() {
-                      data.push(canvas.toDataURL('image/png'))
-                     
-                      window.ReactNativeWebView.postMessage(data);
-                      
-                    });
-                  });
-                }
-          
-              }, function(reason) {
-                // PDF loading error
-                window.ReactNativeWebView.postMessage('failed')
-              });
             }
             loadData()
           </script>
@@ -190,11 +174,10 @@ function WebViewInject() {
       }}
       style={{ width: 0, height: 0 }}
       onMessage={e => {
-        console.log('Length', e.nativeEvent.data.length);
         if (e.nativeEvent.data.length >= 7) {
-          dispatch(pdfDataSlice.actions.addImage(e.nativeEvent.data));
-        } else {
-          console.log(e.nativeEvent.data);
+          setImageResult([...imageResult, e.nativeEvent.data])
+        } else if (e.nativeEvent.data === "done") {
+          dispatch(pdfDataSlice.actions.setImages(imageResult));
         }
       }}
     />

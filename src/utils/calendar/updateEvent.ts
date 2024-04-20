@@ -175,6 +175,17 @@ export default async function createEvent(): Promise<void> {
           value: encodedSchoolDayData,
         },
       ];
+    } else if (selectedEvent.paulyEventType === 'regular') {
+      data.singleValueExtendedProperties = [
+        {
+          id: store.getState().paulyList.eventTypeExtensionId,
+          value: 'regular',
+        },
+        {
+          id: store.getState().paulyList.eventDataExtensionId,
+          value: JSON.stringify(selectedEvent.eventData),
+        },
+      ];
     }
     // TODO Reocurring
     const result = await callMsGraph(

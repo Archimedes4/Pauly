@@ -91,6 +91,7 @@ export default function CalendarTypePicker({
           style={{
             textAlign: 'center',
             fontSize: Math.sqrt((compoentWidth * 0.8 * height) / 5),
+            fontFamily: 'Roboto'
           }}
         >
           Month
@@ -119,6 +120,7 @@ export default function CalendarTypePicker({
           style={{
             textAlign: 'center',
             fontSize: Math.sqrt((compoentWidth * 0.8 * height) / 5),
+            fontFamily: 'Roboto'
           }}
         >
           Week
@@ -147,6 +149,7 @@ export default function CalendarTypePicker({
           style={{
             textAlign: 'center',
             fontSize: Math.sqrt((compoentWidth * 0.8 * height) / 5),
+            fontFamily: 'Roboto'
           }}
         >
           Day

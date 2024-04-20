@@ -319,10 +319,10 @@ export default function CommissionsQRCodeComponent({
         >
           <Text>
             <WarningIcon width={16} height={16} />
-            Add QRCodes, this commission can still be claimed if it is claimed.
+            Add QRCodes, this commission can still be claimed if QRCodes exist. 
             The hidden atribute only affects wheather it is shown in commissions
             and can be claimed as issued. These QRCodes act independently, the
-            only thing that effects them is if the commission is timed, or is
+            only thing that effects them is if the commission is timed, active, or is
             removed.
           </Text>
         </View>
