@@ -15,12 +15,11 @@ import { RootState } from '@redux/store';
 import { addDataArray } from '@utils/ﻩgovernment/initializePauly/initializePaulyData';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 import { Colors, loadingStateEnum, styles } from '@constants';
-import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 import { getTextState } from '@utils/ultility/createUUID';
 import { getUsers } from '@utils/studentFunctions';
-import BackButton from '@src/components/BackButton';
-import SearchBar from '@src/components/SearchBar';
+import BackButton from '@components/BackButton';
+import SearchBar from '@components/SearchBar';
 
 enum initStage {
   notStarted,

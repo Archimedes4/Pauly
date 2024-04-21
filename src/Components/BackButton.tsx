@@ -6,7 +6,7 @@
   Default back button for all of Pauly to keep same style and cut down on redudant code. Manly used when the current break point is 0.
 */
 import { Text, ViewStyle } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'expo-router';
 import { RootState } from '@redux/store';
 import { useSelector } from 'react-redux';

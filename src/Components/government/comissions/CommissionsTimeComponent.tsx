@@ -4,6 +4,7 @@ import { Colors } from '@constants';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
+import { CalendarIcon, TimeIcon } from '@src/components/Icons';
 
 enum datePickingMode {
   none,
@@ -23,6 +24,7 @@ export default function CommissionsTimeComponent({
   const [currentDatePickingMode, setCurrentDatePickingMode] =
     useState<datePickingMode>(datePickingMode.none);
   const { width } = useSelector((state: RootState) => state.dimensions);
+
   if (commission.timed) {
     return (
       <View
@@ -61,139 +63,197 @@ export default function CommissionsTimeComponent({
             style={{ marginLeft: 10 }}
           />
         </View>
-        <View
-          style={{
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width,
-          }}
-        >
-          <Text>Start Date</Text>
-          <Pressable
-            style={{ margin: 5 }}
-            onPress={() => {
-              setCurrentDatePickingMode(datePickingMode.startDate);
-            }}
-          >
-            <Text>Pick Start Time</Text>
-          </Pressable>
-          <TimePickerModal
-            hours={new Date(commission.startDate).getHours()}
-            minutes={new Date(commission.startDate).getMinutes()}
-            visible={currentDatePickingMode === datePickingMode.startDate}
-            onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
-            onConfirm={e => {
-              const newDate = new Date(commission.startDate);
-              newDate.setHours(e.hours);
-              newDate.setMinutes(e.minutes);
-              setCommissionData({
-                ...commission,
-                startDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
-              });
-              setCurrentDatePickingMode(datePickingMode.none);
-            }}
-          />
-          <Pressable
-            style={{ margin: 5 }}
-            onPress={() => {
-              setCurrentDatePickingMode(datePickingMode.startDate);
-            }}
-          >
-            <Text>Pick Start Date</Text>
-          </Pressable>
-          <DatePickerModal
-            locale="en"
-            mode="single"
-            label="Select Date"
-            visible={currentDatePickingMode === datePickingMode.startDate}
-            onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
-            date={new Date(commission.startDate)}
-            onConfirm={e => {
-              if (e.date !== undefined) {
-                const oldDate = new Date(commission.startDate);
-                const newDate = new Date(
-                  e.date.getFullYear(),
-                  e.date.getMonth(),
-                  e.date.getDate(),
-                  oldDate.getHours(),
-                  oldDate.getMinutes(),
-                );
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', margin: 10 }}>
+            <Pressable
+              onPress={() => {
+                setCurrentDatePickingMode(datePickingMode.startDate)
+              }}
+            >
+              <Text>
+                {new Date(commission.startDate).toLocaleString('en-us', {
+                  month: 'long',
+                })}{' '}
+                {new Date(commission.startDate).getDate()}{' '}
+                {new Date(commission.startDate).getFullYear()}{' '}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setCurrentDatePickingMode(datePickingMode.startTime)
+              }}
+            >
+              <Text>
+                {new Date(commission.startDate).getHours() % 12 || 12}:
+                {new Date(commission.startDate).getMinutes().toString()
+                  .length === 1
+                  ? `0${new Date(commission.startDate).getMinutes()}`
+                  : new Date(commission.startDate).getMinutes()}{' '}
+                {new Date(commission.startDate).getHours() >= 12
+                  ? 'pm'
+                  : 'am'}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setCurrentDatePickingMode(datePickingMode.startDate)
+              }}
+            >
+              <CalendarIcon width={24} height={15} />
+            </Pressable>
+            <DatePickerModal
+              locale="en"
+              mode="single"
+              label="Select Start Date"
+              visible={currentDatePickingMode === datePickingMode.startDate}
+              onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
+              date={new Date(commission.startDate)}
+              onConfirm={e => {
+                if (e.date !== undefined) {
+                  const oldDate = new Date(commission.startDate);
+                  const newDate = new Date(
+                    e.date.getFullYear(),
+                    e.date.getMonth(),
+                    e.date.getDate(),
+                    oldDate.getHours(),
+                    oldDate.getMinutes(),
+                  );
+                  setCommissionData({
+                    ...commission,
+                    startDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
+                  });
+                }
+                setCurrentDatePickingMode(datePickingMode.none);
+              }}
+            />
+          </View>
+          <View style={{ margin: 5 }}>
+            <Pressable
+              onPress={() => {
+                setCurrentDatePickingMode(datePickingMode.startTime)
+              }}
+              style={{
+                height: 26.4,
+                alignContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <TimeIcon width={15} height={15} />
+            </Pressable>
+            <TimePickerModal
+              hours={new Date(commission.startDate).getHours()}
+              minutes={new Date(commission.startDate).getMinutes()}
+              visible={currentDatePickingMode === datePickingMode.startTime}
+              onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
+              onConfirm={e => {
+                const newDate = new Date(commission.startDate);
+                newDate.setHours(e.hours);
+                newDate.setMinutes(e.minutes);
                 setCommissionData({
                   ...commission,
                   startDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
                 });
-              }
-              setCurrentDatePickingMode(datePickingMode.none);
-            }}
-          />
+                setCurrentDatePickingMode(datePickingMode.none);
+              }}
+            />
+          </View>
         </View>
-        <View
-          style={{
-            alignContent: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width,
-          }}
-        >
-          <Text>End Date</Text>
-          <Pressable
-            style={{ margin: 5 }}
-            onPress={() => {
-              setCurrentDatePickingMode(datePickingMode.endDate);
-            }}
-          >
-            <Text>Pick End Time</Text>
-          </Pressable>
-          <TimePickerModal
-            hours={new Date(commission.endDate).getHours()}
-            minutes={new Date(commission.endDate).getMinutes()}
-            visible={currentDatePickingMode === datePickingMode.endTime}
-            onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
-            onConfirm={e => {
-              const newDate = new Date(commission.endDate);
-              newDate.setHours(e.hours);
-              newDate.setMinutes(e.minutes);
-              setCommissionData({
-                ...commission,
-                endDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
-              });
-              setCurrentDatePickingMode(datePickingMode.none);
-            }}
-          />
-          <Pressable
-            style={{ margin: 5 }}
-            onPress={() => {
-              setCurrentDatePickingMode(datePickingMode.endDate);
-            }}
-          >
-            <Text>Pick End Date</Text>
-          </Pressable>
-          <DatePickerModal
-            locale="en"
-            mode="single"
-            label="Select Date"
-            visible={currentDatePickingMode === datePickingMode.endDate}
-            onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
-            date={new Date(commission.endDate)}
-            onConfirm={e => {
-              if (e.date !== undefined) {
-                const oldDate = new Date(commission.endDate);
-                const newDate = new Date(
-                  e.date.getFullYear(),
-                  e.date.getMonth(),
-                  e.date.getDate(),
-                  oldDate.getHours(),
-                  oldDate.getMinutes(),
-                );
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', margin: 10 }}>
+            <Pressable
+              onPress={() => {
+                setCurrentDatePickingMode(datePickingMode.endDate)
+              }}
+            >
+              <Text>
+                {new Date(commission.endDate).toLocaleString('en-us', {
+                  month: 'long',
+                })}{' '}
+                {new Date(commission.endDate).getDate()}{' '}
+                {new Date(commission.endDate).getFullYear()}{' '}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setCurrentDatePickingMode(datePickingMode.endTime)
+              }}
+            >
+              <Text>
+                {new Date(commission.endDate).getHours() % 12 || 12}:
+                {new Date(commission.endDate).getMinutes().toString()
+                  .length === 1
+                  ? `0${new Date(commission.endDate).getMinutes()}`
+                  : new Date(commission.endDate).getMinutes()}{' '}
+                {new Date(commission.endDate).getHours() >= 12
+                  ? 'pm'
+                  : 'am'}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => {
+                setCurrentDatePickingMode(datePickingMode.endDate)
+              }}
+            >
+              <CalendarIcon width={24} height={15} />
+            </Pressable>
+            <DatePickerModal
+              locale="en"
+              mode="single"
+              label="Select End Date"
+              visible={currentDatePickingMode === datePickingMode.endDate}
+              onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
+              date={new Date(commission.endDate)}
+              onConfirm={e => {
+                if (e.date !== undefined) {
+                  const oldDate = new Date(commission.endDate);
+                  const newDate = new Date(
+                    e.date.getFullYear(),
+                    e.date.getMonth(),
+                    e.date.getDate(),
+                    oldDate.getHours(),
+                    oldDate.getMinutes(),
+                  );
+                  setCommissionData({
+                    ...commission,
+                    endDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
+                  });
+                }
+                setCurrentDatePickingMode(datePickingMode.none);
+              }}
+            />
+          </View>
+          <View style={{ margin: 5 }}>
+            <Pressable
+              onPress={() => {
+                setCurrentDatePickingMode(datePickingMode.endTime)
+              }}
+              style={{
+                height: 26.4,
+                alignContent: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <TimeIcon width={15} height={15} />
+            </Pressable>
+            <TimePickerModal
+              hours={new Date(commission.endDate).getHours()}
+              minutes={new Date(commission.endDate).getMinutes()}
+              visible={currentDatePickingMode === datePickingMode.endTime}
+              onDismiss={() => setCurrentDatePickingMode(datePickingMode.none)}
+              onConfirm={e => {
+                const newDate = new Date(commission.endDate);
+                newDate.setHours(e.hours);
+                newDate.setMinutes(e.minutes);
                 setCommissionData({
                   ...commission,
                   endDate: newDate.toISOString().replace(/.\d+Z$/g, 'Z'),
                 });
-              }
-              setCurrentDatePickingMode(datePickingMode.none);
-            }}
-          />
+                setCurrentDatePickingMode(datePickingMode.none);
+              }}
+            />
+          </View>
         </View>
       </View>
     );

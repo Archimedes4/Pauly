@@ -143,8 +143,15 @@ function CommissionsBody() {
   const { height, width } = useSelector((state: RootState) => state.dimensions);
 
   function getItemCaption(item: commissionType) {
+
     if (item.timed && item.startDate !== undefined) {
-      return new Date('en-US').toLocaleDateString('en-US', {
+      if (new Date(item.startDate).getMinutes() === 0) {
+        return new Date(item.startDate).toLocaleDateString('en-US', {
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+      return new Date(item.startDate).toLocaleDateString('en-US', {
         month: 'long',
         day: 'numeric',
         minute: 'numeric',

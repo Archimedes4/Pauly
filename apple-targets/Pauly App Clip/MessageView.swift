@@ -21,7 +21,7 @@ struct MessageView: View {
     var body: some View {
         VStack {
             Text("Hello, welcome to Pauly!")
-            Text("Student Counil, would like to thank you for perticipatiting in the early version of Pauly. We have been hard at work to make Pauly the best possible.")
+            Text("Student Counil, would like to thank you for perticipatiting in the early version of Pauly. We have been hard at work to make Pauly the best possible. We would apretiate your feedback, and hope you enjoy the rest of the bing!")
             
             Text("Submit feedback on your experience.")
             Text("Watch Pauly promo video.")
