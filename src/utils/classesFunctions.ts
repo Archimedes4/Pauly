@@ -148,10 +148,10 @@ export async function getClassEventsFromDay(
       defindedDate.getMonth(),
       defindedDate.getDate(),
       0,
+      defindedDate.getTimezoneOffset()
     ),
   )
-    .toISOString()
-    .slice(0, -1)}0000`;
+    .toISOString()}`;
   const foundEvent = store.getState().currentEvents.find(e => {
     return e.paulyEventType === 'schoolDay' && e.startTime === startTime;
   });

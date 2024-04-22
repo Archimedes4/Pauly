@@ -47,7 +47,8 @@ export default function ProfileBlock() {
           margin: 5,
           borderRadius: 15,
           zIndex: 10,
-          marginTop: 10
+          marginTop: 10,
+          backgroundColor: Colors.white
         }}
       >
         <Text numberOfLines={1} style={{ fontSize: 20, margin: 10 }}>

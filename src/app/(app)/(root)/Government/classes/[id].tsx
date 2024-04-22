@@ -270,6 +270,7 @@ export default function GovernmentClassesEdit() {
   const [selectedSchoolYear, setSelectedSchoolYear] = useState<
     eventType | undefined
   >(undefined);
+  const [schoolYearPaulyId, setSchoolYearPaulyId] = useState<string>("")
 
   const [classState, setClassState] = useState<loadingStateEnum>(
     loadingStateEnum.notStarted,
