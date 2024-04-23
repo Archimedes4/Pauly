@@ -31,6 +31,8 @@ export async function updateCommission(
       commissionId: commissionsData.commissionId,
       value: commissionsData.value,
       homeValue: commissionsData.competitionType,
+      commissionImageShareId: commissionsData.commissionImageShareId,
+      commissionIcon: commissionsData.commissionIcon
     },
   };
   if (commissionsData.postData !== undefined) {

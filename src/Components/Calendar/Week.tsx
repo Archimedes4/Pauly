@@ -82,22 +82,10 @@ export default function Week({
   const [daysOfWeek, setDaysOfWeek] = useState<Date[]>([]);
   const [topPadding, setTopPadding] = useState<number>(0);
   const dispatch = useDispatch();
-  const weekScollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     setDaysOfWeek(getDOW(new Date(selectedDateRedux)));
   }, [selectedDateRedux]);
-
-  useEffect(() => {
-    if (weekScollRef !== null) {
-      const resultHeightTopOffset = findTimeOffset(new Date(), height);
-      weekScollRef.current?.scrollTo({
-        x: 0,
-        y: resultHeightTopOffset,
-        animated: false,
-      });
-    }
-  }, [weekScollRef]);
 
   if (width >= 768) {
     return (
@@ -148,7 +136,7 @@ export default function Week({
               </Text>
               <AllDayComponent
                 day={dow.toISOString()}
-                width={width / 7}
+                width={(width - 36) / 7}
                 topPadding={topPadding}
               />
             </View>
@@ -166,8 +154,19 @@ export default function Week({
             <ChevronRight width={16} height={16} />
           </Pressable>
         </View>
-        <ScrollView style={{ height }} ref={weekScollRef}>
-          <View style={{ flexDirection: 'row' }}>
+        <ScrollView          
+          ref={(ref) => {
+            let resultHeightTopOffset = findTimeOffset(new Date(), height) - (height/2);
+            if (resultHeightTopOffset > 0) {
+              ref?.scrollTo({
+                x: 0,
+                y: resultHeightTopOffset,
+                animated: false
+              })
+            }
+          }}
+        >  
+          <View style={{ flexDirection: 'row', height: height * 2.4 }}>
             {daysOfWeek.map((day, index) => (
               <View key={day.getDate()} id={day.getDate().toString()}>
                 <WeekDayView

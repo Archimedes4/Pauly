@@ -13,6 +13,7 @@ import {
   Switch,
   Modal,
   Platform,
+  Pressable,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import store, { RootState } from '@redux/store';
@@ -39,6 +40,7 @@ import CommissionsQRCodeComponent from '@components/government/comissions/Commis
 import AddCommissionSubmission from '@components/government/comissions/CommissionsAddSubmission';
 import CommissionsTimeComponent from '@components/government/comissions/CommissionsTimeComponent';
 import CommissionSubmissions from '@components/government/comissions/CommissionSubmissions';
+import CommissionSelectImage from '@src/components/government/comissions/CommissionSelectImage';
 
 function commissionTypeText(commissionType: commissionTypeEnum) {
   if (commissionType === commissionTypeEnum.Issued) {
@@ -101,7 +103,9 @@ export function GovernmentCommissionUpdate({
         timed: false,
         value: commissionTypeEnum.Issued,
         competitionType: commissionCompetitionType.individual,
-      });
+        commissionIcon: undefined,
+        commissionImageShareId: undefined
+      } satisfies commissionType);
     } else if (typeof id === 'string') {
       setGetCommissionResult(loadingStateEnum.loading);
       const result = await getCommission(id, store);
@@ -274,6 +278,9 @@ export function GovernmentCommissionUpdate({
           placeholder="Commission Name"
           style={[styles.textInputStyle, { backgroundColor: Colors.white }]}
         />
+        <CommissionSelectImage selectedIcon={commissionData.commissionIcon} onPickIcon={(e) => {
+          setCommissionData({ ...commissionData, commissionIcon: e });
+        }}/>
         {!isCreate ? (
           <View
             style={{
@@ -294,6 +301,7 @@ export function GovernmentCommissionUpdate({
             </Text>
           </View>
         ) : null}
+
         <CommissionsTimeComponent
           commission={commissionData}
           setCommissionData={setCommissionData}

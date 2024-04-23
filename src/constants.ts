@@ -229,6 +229,8 @@ declare global {
     reviewedCount: number;
     commissionId: string;
     competitionType: commissionCompetitionType;
+    commissionImageShareId?: string;
+    commissionIcon?: vectorIconType
   };
   type commissionTypeTimed =
     | {

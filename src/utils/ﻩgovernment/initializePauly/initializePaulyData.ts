@@ -80,7 +80,7 @@ export const paulyListData = {
       name: 'calendarSyncStateListId',
       text: {},
       required: true,
-    },
+    }
   ],
   list: {
     template: 'genericList',
@@ -198,6 +198,14 @@ export const commissionsData = {
       name: 'postId',
       text: {},
     },
+    {
+      name: "commissionIcon",
+      text: { allowMultipleLines: true }
+    },
+    {
+      name: "commissionImageShareId",
+      text: {}
+    }
   ],
   list: {
     template: 'genericList',

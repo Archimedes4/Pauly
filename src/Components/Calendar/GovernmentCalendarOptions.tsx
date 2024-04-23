@@ -1,14 +1,14 @@
 import store, { RootState } from "@redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import PickerWrapper from "../Pickers/Picker";
-import React, { useState } from "react";
+import React from "react";
 import { View, Text, Pressable, Platform } from "react-native";
 import SelectSchoolDayData from "./SelectSchoolDayData";
 import SelectTimetable from "./SelectTimetable";
 import { addEventSlice } from "@redux/reducers/addEventReducer";
-import { Colors, semesters } from "@src/constants";
+import { Colors, semesters } from "@constants";
 import { Switch } from "react-native";
-import calculateFontSize from "@src/utils/ultility/calculateFontSize";
+import calculateFontSize from "@utils/ultility/calculateFontSize";
 
 function setSelectedEventType(e: number) {
   const { selectedEvent } = store.getState().addEvent;

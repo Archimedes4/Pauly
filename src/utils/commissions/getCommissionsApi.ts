@@ -257,6 +257,8 @@ export default async function getCommissionsApi(
                 data.value[index].fields.allowMultipleSubmissions,
               value: data.value[index].fields.value,
               competitionType: data.value[index].fields.homeValue,
+              commissionIcon: (data.value[index].fields.commissionIcon !== undefined) ? JSON.parse(data.value[index].fields.commissionIcon):undefined,
+              commissionImageShareId: data.value[index].fields.commissionImageShareId
             });
           }
           return {
@@ -359,6 +361,8 @@ async function getCommissionsBatch(
               data.responses[requestIndex].body.value[index].fields.hidden - 1,
             competitionType:
               data.responses[requestIndex].body.value[index].fields.homeValue,
+            commissionIcon: JSON.parse(data.value[index].fields.commissionIcon),
+            commissionImageShareId: data.value[index].fields.commissionImageShareId
           });
         }
       } else {
