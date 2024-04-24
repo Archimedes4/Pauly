@@ -14,9 +14,10 @@ import calculateFontSize from '@utils/ultility/calculateFontSize';
 import { getCommission } from '@redux/reducers/commissionsReducer';
 import CommissionImageComponent from './CommissionImageComponent';
 import CommissionsViewSubmissions from './CommissionsViewSubmissions';
+import { safeAreaColorsSlice } from '@src/redux/reducers/safeAreaColorsReducer';
 
 export default function CommissionsView({ id }: { id: string }) {
-  const { width, height } = useSelector((state: RootState) => state.dimensions);
+  const { width, totalHeight } = useSelector((state: RootState) => state.dimensions);
   const [commissionData, setCommissionData] = useState<
     commissionType | undefined
   >(undefined);
@@ -66,11 +67,22 @@ export default function CommissionsView({ id }: { id: string }) {
     getCommissionInformation();
   }, [getCommissionInformation]);
 
+  useEffect(() => {
+    console.log("MARK")
+    store.dispatch(safeAreaColorsSlice.actions.setSafeArea({
+      top: Colors.darkGray,
+      bottom: Colors.maroon,
+      isTopTransparent: false,
+      isBottomTransparent: false,
+      overflowHidden: false
+    }))
+  }, [])
+
   if (commissionState === loadingStateEnum.loading) {
     return (
       <View
         style={{
-          height: height * 0.8,
+          height: totalHeight * 0.8,
           width: width * 0.9,
           alignItems: 'center',
           justifyContent: 'center',
@@ -81,11 +93,12 @@ export default function CommissionsView({ id }: { id: string }) {
           shadowOpacity: 0.8,
           shadowRadius: 10,
           borderRadius: 15,
+          zIndex: 10
         }}
       >
         <ProgressView
-          width={width * 0.8 < height * 0.7 ? width * 0.4 : height * 0.35}
-          height={width * 0.8 < height * 0.7 ? width * 0.4 : height * 0.35}
+          width={width * 0.8 < totalHeight * 0.7 ? width * 0.4 : totalHeight * 0.35}
+          height={width * 0.8 < totalHeight * 0.7 ? width * 0.4 : totalHeight * 0.35}
         />
         <Text>Loading</Text>
       </View>
@@ -99,7 +112,7 @@ export default function CommissionsView({ id }: { id: string }) {
     return (
       <View
         style={{
-          height: height * 0.8,
+          height: totalHeight * 0.8,
           width: width * 0.9,
           alignItems: 'center',
           justifyContent: 'center',
@@ -110,6 +123,7 @@ export default function CommissionsView({ id }: { id: string }) {
           shadowOpacity: 0.8,
           shadowRadius: 10,
           borderRadius: 15,
+          zIndex: 10
         }}
       >
         <View
@@ -119,22 +133,22 @@ export default function CommissionsView({ id }: { id: string }) {
         >
           <Pressable
             onPress={() => router.push('/commissions')}
-            style={{ marginTop: 10, marginLeft: 10 }}
+            style={{ marginTop: 10, marginLeft: 0 }}
           >
             <CloseIcon
-              width={width < height ? width * 0.05 : height * 0.05}
-              height={width < height ? width * 0.05 : height * 0.05}
+              width={width < totalHeight ? width * 0.05 : totalHeight * 0.05}
+              height={width < totalHeight ? width * 0.05 : totalHeight * 0.05}
             />
           </Pressable>
           <Text
             style={{
               fontSize: calculateFontSize(
                 width * 0.8,
-                height * 0.047,
+                totalHeight * 0.047,
                 commissionData.title,
               ),
               fontFamily: 'Comfortaa-Regular',
-              marginTop: height * 0.01,
+              marginTop: totalHeight * 0.01,
             }}
           >
             {commissionData.title}
@@ -143,15 +157,15 @@ export default function CommissionsView({ id }: { id: string }) {
         <ScrollView
           style={{
             height: isOverflowing
-              ? height * 0.8 - topCompHeight
-              : height * 0.9 - topCompHeight,
+              ? totalHeight * 0.8 - topCompHeight
+              : totalHeight * 0.9 - topCompHeight,
             width: width * 0.9,
           }}
           showsVerticalScrollIndicator={false}
         >
           <View
             onLayout={e => {
-              if (e.nativeEvent.layout.height >= height * 0.6) {
+              if (e.nativeEvent.layout.height >= totalHeight * 0.6) {
                 setIsOverflowing(true);
                 setEvaluatedOverflow(true);
               } else if (!evaluatedOverflow) {
@@ -245,7 +259,7 @@ export default function CommissionsView({ id }: { id: string }) {
         {isOverflowing ? (
           <View
             style={{
-              height: height * 0.1,
+              height: totalHeight * 0.1,
               alignContent: 'center',
               alignItems: 'center',
               justifyContent: 'center',
@@ -265,7 +279,7 @@ export default function CommissionsView({ id }: { id: string }) {
     <View
       style={{
         width: width * 0.9,
-        height: height * 0.8,
+        height: totalHeight * 0.8,
         backgroundColor: Colors.white,
         shadowColor: Colors.black,
         shadowOffset: { width: 0, height: 1 },

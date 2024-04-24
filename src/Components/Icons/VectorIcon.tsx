@@ -62,21 +62,21 @@ declare global {
 }
 
 export default function VectorIcon({
-  icon
+  icon,
+  size = 40
 }:{
+  size?: number
   icon: vectorIconType
 }) {
-  let SIZE = 40
-
   if (icon.family === 'AntDesign') {
     return (
       <AntDesign
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -85,10 +85,10 @@ export default function VectorIcon({
       <Entypo
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -97,10 +97,10 @@ export default function VectorIcon({
       <EvilIcons
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -109,10 +109,10 @@ export default function VectorIcon({
       <Feather
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -121,10 +121,10 @@ export default function VectorIcon({
       <FontAwesome
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -133,10 +133,10 @@ export default function VectorIcon({
       <Fontisto
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -145,10 +145,10 @@ export default function VectorIcon({
       <Foundation
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -157,10 +157,10 @@ export default function VectorIcon({
       <Ionicons
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -169,10 +169,10 @@ export default function VectorIcon({
       <MaterialCommunityIcons
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -181,10 +181,10 @@ export default function VectorIcon({
       <MaterialIcons
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -193,10 +193,10 @@ export default function VectorIcon({
       <Octicons
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -205,10 +205,10 @@ export default function VectorIcon({
       <SimpleLineIcons
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -217,10 +217,10 @@ export default function VectorIcon({
       <Zocial
         name={icon.name}
         style={{
-          width: SIZE,
-          height: SIZE
+          width: size,
+          height: size
         }}
-        size={SIZE}
+        size={size}
       />
     )
   }
@@ -347,7 +347,6 @@ export function VectorIconPicker({
 
     return result
   }
-  let SIZE = 40
   const [results, setResults] = useState<vectorIconType[]>([])
   const [search, setSearch] = useState<string>("")
   const data = useMemo(() => getIcons(), [])

@@ -31,6 +31,7 @@ import {
 } from '@components/Icons';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
+import VectorIcon from '@src/components/Icons/VectorIcon';
 
 function PickerPiece({
   text,
@@ -191,11 +192,22 @@ function CommissionsBody() {
           <StyledButton
             key={`Link_${item.commissionId}`}
             to={`/commissions/${item.commissionId}`}
-            text={item.title}
-            caption={getItemCaption(item)}
             style={{ margin: 10 }}
             mainColor={Colors.white}
-          />
+          >
+            {/* To keep the button strechted */}
+            <View style={{flexDirection: 'row'}}>
+              { (item.commissionIcon !== undefined) ?
+                <VectorIcon icon={item.commissionIcon} size={30}/>:null
+              }
+              <View style={{marginLeft: 6}}>
+                <Text>{item.title}</Text>
+                { (getItemCaption(item) !== undefined) ? 
+                  <Text>{getItemCaption(item)}</Text>:null
+                }
+              </View>
+            </View>
+          </StyledButton>
         )}
         onEndReachedThreshold={1}
         onEndReached={() => {
@@ -405,7 +417,7 @@ export function CommissionsMain({ commissionId }: { commissionId?: string }) {
       <View
         style={{
           position: 'absolute',
-          zIndex: 2,
+          zIndex: 20,
           top: height * 0.1,
           left: width * 0.05,
         }}

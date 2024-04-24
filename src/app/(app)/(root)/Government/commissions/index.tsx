@@ -15,7 +15,7 @@ import ProgressView from '@components/ProgressView';
 import { Link } from 'expo-router';
 import StyledButton from '@components/StyledButton';
 import BackButton from '@components/BackButton';
-import { safeAreaColorsSlice } from '@src/redux/reducers/safeAreaColorsReducer';
+import { safeAreaColorsSlice } from '@redux/reducers/safeAreaColorsReducer';
 
 function GovernmentCommissionsBody() {
   const [commissions, setCommissions] = useState<commissionType[]>([]);

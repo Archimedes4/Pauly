@@ -28,7 +28,6 @@ export default function usePaulyApi() {
   async function loadApi() {
     const apiResult = await acquireTokenSilently();
     if (apiResult.result === ResultState.success) {
-      console.log(apiResult.data);
       setApiToken(apiResult.data);
     } else {
       setApiToken(loadingStateEnum.failed);

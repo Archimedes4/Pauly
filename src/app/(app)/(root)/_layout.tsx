@@ -47,6 +47,7 @@ export default function AuthenticatedView() {
           flexDirection: 'row',
           width: totalWidth,
           overflow: overflowHidden ? 'hidden' : 'visible',
+          zIndex: 2
         }}
       >
         {currentBreakPoint >= 1 ? <NavBarComponent /> : null}
@@ -58,12 +59,13 @@ export default function AuthenticatedView() {
           }}
         >
           <Slot />
+          {isShowingFooter ? <ZeroFooterComponent /> : null}
           {currentBreakPoint >= 1 && isShowingProfileBlock ? (
             <ProfileBlock />
           ) : null}
         </View>
       </View>
-      {isShowingFooter ? <ZeroFooterComponent /> : null}
+      
     </View>
   );
 }

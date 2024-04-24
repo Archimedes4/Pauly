@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, FlatList, SectionList } from 'react-native';
+import { View, Text, FlatList, SectionList } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import callMsGraph from '@utils/ultility/microsoftAssests';

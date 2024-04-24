@@ -43,11 +43,18 @@ export default function ZeroFooterComponent() {
 
   // Set pan on path change. This also set the pan on mount.
   useEffect(() => {
-    if (pathname === '/commissions') {
+    const split =  pathname.split("/")
+    let first = ""
+    if (split.length >= 2) {
+      first = split[1]
+    } else {
+      first = split[0]
+    }
+    if (first === 'commissions') {
       setPan(getLeft(1));
-    } else if (pathname === '/calendar') {
+    } else if (first === 'calendar') {
       setPan(getLeft(2));
-    } else if (pathname === '/settings') {
+    } else if (first === 'settings') {
       setPan(getLeft(3));
     } else {
       setPan(getLeft(0));
@@ -60,6 +67,7 @@ export default function ZeroFooterComponent() {
         flexDirection: 'row',
         height: totalHeight * 0.075,
         backgroundColor: Colors.black,
+        zIndex: -1
       }}
       onLayout={e => {
         store.dispatch(

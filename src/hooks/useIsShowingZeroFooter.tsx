@@ -15,12 +15,19 @@ export default function useIsShowingZeroFooter() {
       setIsShowingFooter(false);
       return;
     }
+    const split =  pathname.split("/")
+    let first = ""
+    if (split.length >= 2) {
+      first = split[1]
+    } else {
+      first = split[0]
+    }
     if (
-      pathname === '/' ||
-      pathname === '/settings' ||
-      pathname === '/commissions' ||
-      pathname === '' ||
-      pathname === '/calendar'
+      first === '' ||
+      first === 'settings' ||
+      first === 'commissions' ||
+      first === '' ||
+      first === 'calendar'
     ) {
       setIsShowingFooter(true);
       return;

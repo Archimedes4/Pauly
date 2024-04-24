@@ -42,7 +42,7 @@ export default function CommissionsImage({
           marginHorizontal: (totalWidth % 80)/2
         }} onPickIcon={onPickIcon} selectedIcon={selectedIcon} width={totalWidth - (totalWidth % 80)} height={height * 0.8}/>
       </Modal>
-      <Modal>
+      <Modal visible={isPickingImage}>
 
       </Modal>
       <Pressable onPress={() => {

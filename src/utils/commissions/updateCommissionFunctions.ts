@@ -32,7 +32,7 @@ export async function updateCommission(
       value: commissionsData.value,
       homeValue: commissionsData.competitionType,
       commissionImageShareId: commissionsData.commissionImageShareId,
-      commissionIcon: commissionsData.commissionIcon
+      commissionIcon: JSON.stringify(commissionsData.commissionIcon)
     },
   };
   if (commissionsData.postData !== undefined) {

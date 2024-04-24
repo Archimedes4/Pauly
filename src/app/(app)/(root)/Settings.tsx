@@ -15,7 +15,7 @@ import { Colors, loadingStateEnum } from '@constants';
 import { Link, useRouter } from 'expo-router';
 import { useSignOut } from '@hooks/authentication';
 import getUserImage from '@hooks/useGetUserProfile/getUserImage';
-import PaulySettingsComponent from '@src/components/PaulySettingsComponent';
+import PaulySettingsComponent from '@components/PaulySettingsComponent';
 
 function SettingsImageComponent() {
   const { height, width } = useSelector(
