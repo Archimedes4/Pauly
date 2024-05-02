@@ -468,15 +468,17 @@ Rotating client secrets after 160 days. Follow the steps in Set Environment Vari
 ![Keychain](./documentation/READMEImages/XcodeAddPaulyWidgetTarget.png)
 2. Add https://github.com/AzureAD/microsoft-authentication-library-for-objc as a package dependancy.
 3. Add the dependancy to both the widget and pauly. (The widget needs pauly to have the depndancy) This is added in the build face.
-4. Add the keychain services entitlement and add com.microsoft.adalcache.
+4. Add the keychain services entitlement (just to the widget) and add com.microsoft.adalcache.
 
 5. Put the entitlements file in the proper folder and make sure the release and debug code signing point to it.
 ![File in xcode](./documentation/READMEImages/XcodePaulyWidgetEntitlement.png)
 ![Xcode build settings](./documentation/READMEImages/XcodeBuildPaulyWidgetEntitlement.png)
 6. Update the info plist
 ![Keychain](./documentation/READMEImages/XcodePaulyWidgetInfoPlist.png)
-7. Set the widget marketing version the current short version of pauly (ex: 1.1.1)
-If a validate imbeded binary error is being given make sure the current project version above the marketing version matches Pauly. Consult app.config.js or error log to get the curent version. \
+7. Set the widget marketing version the current short version of pauly (ex: 1.1.1). In build settings.
+
+
+If a validate imbeded binary error is being given make sure the current project version above the marketing version matches Pauly. Consult app.config.js or error log to get the curent version.
 
 If the Widget says please login but the user is logged in, double check the entitlments file.
 

@@ -36,6 +36,7 @@ export async function initializePaulyPartOne(
       mailEnabled: true,
       mailNickname: 'pauly',
       visibility: 'HiddenMembership',
+      // commented due to testing
       // membershipRule: '(user.accountEnabled -eq true)',
       // membershipRuleProcessingState: 'on',
       'owners@odata.bind': bindedOwners,
