@@ -9,10 +9,10 @@ import { useSelector } from "react-redux";
 
 export default function ScheduleSelect({
   onSelect,
-  onBack
+  onClose
 }: {
   onSelect: (item: scheduleType) => void;
-  onBack: () => void;
+  onClose: () => void;
 }) {
   const { selectedSchoolYear } = useSelector(
     (state: RootState) => state.addEvent,

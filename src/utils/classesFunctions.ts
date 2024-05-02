@@ -48,6 +48,11 @@ export async function getRooms(
   return { result: loadingStateEnum.failed };
 }
 
+/**
+ * A function to get a room with a roomId
+ * @param roomId The id of the room to get data
+ * @returns Return a roomType if successful
+ */
 export async function getRoom(roomId: string): Promise<
   | { result: loadingStateEnum.success; data: roomType }
   | {

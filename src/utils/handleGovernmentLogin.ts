@@ -1,8 +1,15 @@
+/*
+  Pauly
+  Andrew Mainella
+*/
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isGovernmentModeSlice } from '@redux/reducers/isGovernmentModeReducer';
 import store from '@redux/store';
 import callMsGraph from '@utils/ultility/microsoftAssests';
 
+/**
+ * Check that the user can be in government mode, set the result in redux.
+ */
 export async function validateGovernmentMode() {
   const userResult = await callMsGraph(
     'https://graph.microsoft.com/v1.0/me?$select=id',

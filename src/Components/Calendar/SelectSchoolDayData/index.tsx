@@ -131,7 +131,7 @@ export default function SelectSchoolDayData() {
         onSelect={() => {
           setSchoolDayMode(pickSchoolDayMode.schedule);
         }}
-        onBack={() => {
+        onClose={() => {
           setSchoolDayMode(pickSchoolDayMode.schoolYear);
         }}
       />
@@ -155,7 +155,7 @@ export default function SelectSchoolDayData() {
           // The dress code semester and dress code incentive can stay the same b/c in same timetable
           setSchoolDayMode(pickSchoolDayMode.dressCode);
         }}
-        onBack={() => {
+        onClose={() => {
           setSchoolDayMode(pickSchoolDayMode.schoolDay);
         }}
       />
@@ -179,7 +179,7 @@ export default function SelectSchoolDayData() {
           );
           setSchoolDayMode(pickSchoolDayMode.semester);
         }}
-        onBack={() => {
+        onClose={() => {
           setSchoolDayMode(pickSchoolDayMode.schedule);
         }}
       />
@@ -249,7 +249,7 @@ export default function SelectSchoolDayData() {
             }),
           );
         }}
-        onBack={() => {
+        onClose={() => {
           setSchoolDayMode(pickSchoolDayMode.semester);
         }}
       />

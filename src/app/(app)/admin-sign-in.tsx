@@ -1,3 +1,8 @@
+/*
+  Pauly
+  Andrew Mainella
+  A route for admin sign in
+*/
 import React from 'react';
 import { SignInComponent } from './sign-in';
 

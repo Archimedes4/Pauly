@@ -4,7 +4,6 @@
   16 January 2024
   Original Code from https://github.com/Rakha112/react-native-custom-checkbox/blob/main/src/components/CustomCheckBox.js
 */
-
 import React from 'react';
 import Svg, { Circle } from 'react-native-svg';
 import { Easing, useDerivedValue, withTiming } from 'react-native-reanimated';

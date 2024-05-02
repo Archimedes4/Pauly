@@ -1,3 +1,6 @@
+/*
+
+*/
 import StyledButton from '@components/StyledButton';
 import { Colors, loadingStateEnum, styles } from '@constants';
 import { RootState } from '@redux/store';
@@ -9,13 +12,20 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 
+/**
+ * A functional component to pick a microsoft user
+ * @param setSelectedUser Set the new selected user
+ * @param onClose Close the window
+ * @param selectedUser The current selected user
+ * @returns A view
+ */
 function PickUser({
   setSelectedUser,
-  onBack,
+  onClose,
   selectedUser,
 }: {
   setSelectedUser: (item: microsoftUserType) => void;
-  onBack: () => void;
+  onClose: () => void;
   selectedUser: undefined | microsoftUserType;
 }) {
   const [currentUserId, setCurrentUserId] = useState<string>('');
@@ -57,7 +67,7 @@ function PickUser({
   if (loadUsersResult === loadingStateEnum.loading) {
     return (
       <View style={{ height: height * 0.4 }}>
-        <StyledButton text="Back" onPress={() => onBack()} />
+        <StyledButton text="Back" onPress={() => onClose()} />
         <Text>Loading</Text>
       </View>
     );
@@ -65,7 +75,7 @@ function PickUser({
   if (loadUsersResult === loadingStateEnum.success) {
     return (
       <>
-        <StyledButton text="Back" onPress={() => onBack()} />
+        <StyledButton text="Back" onPress={() => onClose()} />
         <FlatList
           data={loadedUsers}
           renderItem={user => {
@@ -96,12 +106,18 @@ function PickUser({
   }
   return (
     <View style={{ height: height * 0.4 }}>
-      <StyledButton text="Back" onPress={() => onBack()} />
+      <StyledButton text="Back" onPress={() => onClose()} />
       <Text>Failed</Text>
     </View>
   );
 }
 
+/**
+ * 
+ * @param commissionId The commissionId of the commission to add
+ * @param onClose Class when the user wants to dismiss the view
+ * @returns 
+ */
 export default function AddCommissionSubmission({
   commissionId,
   onClose,
@@ -158,7 +174,7 @@ export default function AddCommissionSubmission({
       >
         <PickUser
           selectedUser={selectedUser}
-          onBack={() => setIsPickingUser(false)}
+          onClose={() => setIsPickingUser(false)}
           setSelectedUser={setSelectedUser}
         />
       </View>

@@ -7,10 +7,10 @@ import { useSelector } from "react-redux";
 
 export default function DressCodeSelect({
   onSelect,
-  onBack,
+  onClose,
 }: {
   onSelect: (item: dressCodeDataType) => void;
-  onBack: () => void;
+  onClose: () => void;
 }) {
   const { selectedSchoolYear } = useSelector(
     (state: RootState) => state.addEvent,
@@ -47,7 +47,7 @@ export default function DressCodeSelect({
       <View>
         <Pressable
           onPress={() => {
-            onBack();
+            onClose();
           }}
         >
           <Text>Back</Text>

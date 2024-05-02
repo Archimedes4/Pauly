@@ -13,6 +13,11 @@ import { pdfDataSlice } from '@redux/reducers/pdfDataReducer';
 import store, { RootState } from '@redux/store';
 import ProgressView from '../ProgressView';
 
+/**
+ * 
+ * @param Width The width of the view
+ * @returns 
+ */
 export default function PDFView({ width }: { width: number }) {
   const { images, pageNumber } = useSelector(
     (state: RootState) => state.pdfData,

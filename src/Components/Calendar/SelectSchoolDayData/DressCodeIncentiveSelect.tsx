@@ -6,10 +6,10 @@ import { Pressable, View, Text } from "react-native";
 import { useSelector } from "react-redux";
 
 export default function DressCodeIncentivesSelect({
-  onBack,
+  onClose,
 }: {
   onSelect: (item: dressCodeIncentiveType) => void;
-  onBack: () => void;
+  onClose: () => void;
 }) {
   const { selectedSchoolYear } = useSelector(
     (state: RootState) => state.addEvent,
@@ -44,7 +44,7 @@ export default function DressCodeIncentivesSelect({
   if (timetableState === loadingStateEnum.success && timetable !== undefined) {
     return (
       <View>
-        <Pressable onPress={() => onBack()}>
+        <Pressable onPress={() => onClose()}>
           <Text>Back</Text>
         </Pressable>
         {timetable.dressCode.dressCodeIncentives.map(incentive => (

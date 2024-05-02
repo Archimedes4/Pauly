@@ -9,10 +9,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function SchoolDaySelect({
   onSelect,
-  onBack,
+  onClose,
 }: {
   onSelect: () => void;
-  onBack: () => void;
+  onClose: () => void;
 }) {
   const dispatch = useDispatch();
   const { selectedSchoolYear } = useSelector(
@@ -59,7 +59,7 @@ export default function SchoolDaySelect({
       <View>
         <Pressable
           onPress={() => {
-            onBack();
+            onClose();
           }}
         >
           <Text>Back</Text>
@@ -104,7 +104,7 @@ export default function SchoolDaySelect({
     <View>
       <Pressable
         onPress={() => {
-          onBack();
+          onClose();
         }}
       >
         <Text>Back</Text>

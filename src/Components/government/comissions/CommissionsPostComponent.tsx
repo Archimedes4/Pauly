@@ -100,13 +100,13 @@ function ChannelSelection({
   height,
   teamId,
   onSelect,
-  onBack,
+  onClose,
 }: {
   width: number;
   height: number;
   teamId: string;
   onSelect: (item: string) => void;
-  onBack: () => void;
+  onClose: () => void;
 }) {
   const [backLink, setBackLink] = useState(undefined);
   const [nextLink, setNextLink] = useState(undefined);
@@ -152,7 +152,7 @@ function ChannelSelection({
       <View style={{ width, height }}>
         <StyledButton
           text="Back"
-          onPress={() => onBack()}
+          onPress={() => onClose()}
           second
           style={{ marginLeft: 15, marginRight: 15, marginTop: 10 }}
         />
@@ -187,7 +187,7 @@ function PostSelection({
   channelId,
   selectedPostId,
   onSelect,
-  onBack,
+  onClose,
 }: {
   width: number;
   height: number;
@@ -195,7 +195,7 @@ function PostSelection({
   channelId: string;
   selectedPostId: string;
   onSelect: (item: string) => void;
-  onBack: () => void;
+  onClose: () => void;
 }) {
   const [backLink, setBackLink] = useState(undefined);
   const [nextLink, setNextLink] = useState(undefined);
@@ -241,7 +241,7 @@ function PostSelection({
       <ScrollView style={{ width, height }}>
         <StyledButton
           text="Back"
-          onPress={() => onBack()}
+          onPress={() => onClose()}
           second
           style={{
             marginLeft: 15,
@@ -282,7 +282,7 @@ function PostSelection({
     <View style={{ width, height }}>
       <StyledButton
         text="Back"
-        onPress={() => onBack()}
+        onPress={() => onClose()}
         second
         style={{
           marginLeft: 15,
@@ -359,7 +359,7 @@ export default function CommissionsPostComponent({
             setSelectedChannelId(e);
             setCurrentPostPickingMode(postPickingMode.post);
           }}
-          onBack={() => {
+          onClose={() => {
             setSelectedChannelId('');
             setSelectedTeamId('');
             setSelectedPost(undefined);
@@ -382,7 +382,7 @@ export default function CommissionsPostComponent({
               postId: e,
             });
           }}
-          onBack={() => {
+          onClose={() => {
             setSelectedPostId('');
             setSelectedChannelId('');
             setCurrentPostPickingMode(postPickingMode.channel);

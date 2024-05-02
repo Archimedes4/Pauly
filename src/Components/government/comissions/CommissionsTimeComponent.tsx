@@ -1,10 +1,14 @@
+/*
+  Pauly
+  Andrew Mainella
+*/
 import { View, Text, Switch, Pressable, Platform } from 'react-native';
 import React, { useState } from 'react';
 import { Colors } from '@constants';
 import { DatePickerModal, TimePickerModal } from 'react-native-paper-dates';
 import { useSelector } from 'react-redux';
 import { RootState } from '@redux/store';
-import { CalendarIcon, TimeIcon } from '@src/components/Icons';
+import { CalendarIcon, TimeIcon } from '@components/Icons';
 
 enum datePickingMode {
   none,
@@ -14,6 +18,12 @@ enum datePickingMode {
   endDate,
 }
 
+/**
+ * A function to update the commissions time.
+ * @param commission The current value of the convision
+ * @param setCommissionData A function called to update the commission with it's new data. Set commissions should update the commission param.
+ * @returns A view
+ */
 export default function CommissionsTimeComponent({
   commission,
   setCommissionData,

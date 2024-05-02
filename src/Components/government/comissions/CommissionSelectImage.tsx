@@ -1,8 +1,8 @@
 import { View, Text, Pressable, Modal } from 'react-native'
 import React, { useState } from 'react'
-import { Colors } from '@src/constants'
-import { VectorIconPicker } from '@src/components/Icons/VectorIcon'
-import { RootState } from '@src/redux/store'
+import { Colors } from '@constants'
+import { VectorIconPicker } from '@components/Icons/VectorIcon'
+import { RootState } from '@redux/store'
 import { useSelector } from 'react-redux'
 
 export default function CommissionsImage({

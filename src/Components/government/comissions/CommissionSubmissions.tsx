@@ -1,17 +1,18 @@
-import SubmissionStatusIcon from '@src/components/Commissions/SubmissionStatusIcon';
+/*
+  Pauly
+  Andrew Mainella
+*/
+import SubmissionStatusIcon from '@components/Commissions/SubmissionStatusIcon';
 import {
-  ApprovedIcon,
   CloseIcon,
-  DeniedIcon,
-  WarningIcon,
-} from '@src/components/Icons';
-import ProgressView from '@src/components/ProgressView';
-import { Colors, loadingStateEnum, submissionTypeEnum } from '@src/constants';
-import store from '@src/redux/store';
-import getSubmissions from '@src/utils/commissions/getSubmissions';
-import { getTextState } from '@src/utils/ultility/createUUID';
-import { getFileWithShareID } from '@src/utils/ultility/handleShareID';
-import callMsGraph from '@src/utils/ultility/microsoftAssests';
+} from '@components/Icons';
+import ProgressView from '@components/ProgressView';
+import { Colors, loadingStateEnum, submissionTypeEnum } from '@constants';
+import store from '@redux/store';
+import getSubmissions from '@utils/commissions/getSubmissions';
+import { getTextState } from '@utils/ultility/createUUID';
+import { getFileWithShareID } from '@utils/ultility/handleShareID';
+import callMsGraph from '@utils/ultility/microsoftAssests';
 import React, { useEffect, useState } from 'react';
 import {
   Pressable,
@@ -22,6 +23,13 @@ import {
   FlatList,
 } from 'react-native';
 
+/**
+ * A view that can shows commissions current submissions.
+ * @param commissionId The commission id that the submission is apart of.
+ * @param width the width of the view
+ * @param height the height of the view
+ * @returns A view
+ */
 export default function CommissionSubmissions({
   commissionId,
   width,
@@ -360,6 +368,12 @@ function SubmissionView({
   );
 }
 
+/**
+ * A button apart of commission submissions that represents a commissions submission.
+ * @param submission A ListRenderItemInfo of the submission.
+ * @param setSelectedSubmission Called when the button is pressed and set the selected submission
+ * @returns A view of the button
+ */
 function CommissionSubmissionButton({
   submission,
   setSelectedSubmission,
